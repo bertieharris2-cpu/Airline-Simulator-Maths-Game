@@ -24,8 +24,9 @@ Progress autosaves on every decision (browser storage on that machine). The teac
 
 **Ctrl+Shift+T**, or tap the top-right corner of the control window three times.
 
-- Release the current gate (fills the open forecast cell) · fill the whole table · skip or go back one screen · high/low nudge toggle (off by default) · auto-advance after landing.
-- Forecast tables: help level on live rows, which tables are live (as scripted / all / none), working space on the board, next round's live table, and "Check the time maths" (runs the Change Request 2 time cases).
+- Accept this answer (fills the open cell) · fill the whole table · skip or go back one screen · high/low nudge toggle (off by default) · auto-advance after landing.
+- **Text size**: Standard (22px text, 32px numbers), Large or Extra large. Saved with the run, so it travels in the save code; the IWB follows it.
+- Forecast tables: help level on typed rows, which tables are live (as scripted / all / none), working space on the board, **next round's choice** (as scripted, or force ticket price / trips / fuel / seat layout), and "Check the time maths" (runs the Change Request 2 time cases).
 - Repeat this round (back to the start-of-round state).
 - Trigger, delay or skip events · fire a Captain's challenge now.
 - Queue or remove jobs for the next round · set depth (1–3) per job.
@@ -35,13 +36,16 @@ Progress autosaves on every decision (browser storage on that machine). The teac
 
 ## Game structure
 
-- **Setup phase** (one lesson): name + two livery colours → tail-fin symbol → home airport (landing fees and passenger numbers differ) → buy the first plane (whole shop visible) → pick Dublin or Paris (people shown as icons, one box per plane-load) → buy the starting fuel (fuel forecast table) → set the price (price forecast table: he works out the income for three prices, then chooses) → the first flight lands and money arrives.
-- **Rounds** run from the **HQ desk**. The briefing (world script plus consequence lines about his own past decisions) sits above the task cards. The main card is the **planning desk** for the focus plane, in three steps:
-  1. **Who's flying:** demand as people icons with plane-load brackets, and the *How many trips?* forecast table (trips needed with remainder, income and cost of the last trip, is it worth it?). Choosing a column sets the day.
-  2. **The fare:** the *Set the price* forecast table for three prices (people, seats, tickets sold, income, costs, profit) with a seats bar and break-even marker under each column. Choosing a column sets the fare.
-  3. **The day:** the day timeline (out, turnaround, back, home turnaround), the fuel tank with today's use marked, add or remove trips, and *Compare with another day* (e.g. one Madrid trip against two Paris trips).
-  Other cards: Buy fuel (two suppliers compared), Run the cabin (three layouts compared), and a Plan-the-day card for every other plane. The plane shop compares up to three planes in a forecast table before buying.
-- **Forecast tables replace the old one-question screens.** Each cell is *given*, *enter* (only the correct value is accepted; calm retry wording; teacher can release it) or *derived* (appears once the rows above are complete). When the table is complete, nothing is announced as best: he taps the column he wants. One table per round is live, as set by the world script (`calc`); the others are filled in by "your finance team" as tick cards he can tap to check. Help on live rows: Shown (the sum is given), Choose the sum (pick two number cards and an operation), Free (row name only), Fluent (pre-filled). Until Stage C's skills engine exists, the help level is one teacher setting.
+- **Setup phase** (one lesson): name + two livery colours → tail-fin symbol → home airport → buy the first plane → *Where should your first plane fly?* (Paris or Dublin) → *How much fuel will you start with?* (Enough for today or Stock up, shown as a ghost fill on the tank) → *How much should a Paris ticket cost?* (£80 / £100 / £120: he types the three incomes, £1,520 / £1,900 / £1,560; tickets sold and profit are given) → the first flight.
+- **Rounds are decision-led (Change Request 4).** Standing choices carry over from round to round.
+  1. **HQ**: today's news, *Your airline today* (planes, trips, ticket prices, the tank) and one big **Start the day**. Plane shop and Fleet sit here.
+  2. **What will you do?** The news again and two or three choices. **Carry on as usual** is always first and is never wrong.
+  3. **The table for his choice**, only if he acts: ticket price, trips (Step 1: full planes and people left over; Step 2: income from the extra trip, then *Fly the extra trip today* / *Don't fly it*), fuel (litres × price per litre = bill), or seat layout. If today's trips need more fuel than the tank holds, buying fuel comes next; that is the only place the "not enough fuel" warning shows.
+  4. **Quick income sum** (passengers × ticket price) on every round where the ticket-price table didn't open, until income is fluent (the fluency engine is CR4 Stage 4).
+  5. Flights, results (forecast against actual, including what the extra trip made or would have made), the optional event and Captain's challenge, summary.
+- **Every task screen is in focus mode**: the top bar, bottom strip and Shop / Fleet / Menu / Present hide; only the big plain question, the story, the table, Back and Working space remain (the teacher shortcut still works).
+- **Forecast tables**: every number a sum uses is a row. The open cell has an amber outline, the two numbers it uses have cyan outlines, everything else dims, and the next cell opens by itself. Beside the table the sum is said as a sentence in the same colours ("19 tickets × £100 ticket price = ?"); what he types appears in the sentence and the cell. When every sum is done the side panel holds the choice. "What's in this?" on *Cost of the trip* lists running cost, landing fee and fuel. In *Choose the sum* mode nothing is outlined until he taps the two numbers in the table and the sign.
+- **Unlocks**: routes and tools open by phase (`data-phases`). Phase 1 shows only Paris and Dublin (no Madrid, no day planner, no break-even bars).
 - **Time** comes from one shared module: a trip is out + turnaround away + back, with a turnaround at home between trips; planes leave at 09:00; the airport is open 06:00–22:00. The board, timeline, planner and map all use it.
 - **Fuel is a tank** with a capacity (5,000 L plus storage that comes with each plane). Every trip burns fuel both ways. A trip the tank can't cover stays on the ground, calmly.
 - **Forecast against actual:** after landing, "You expected £X · you got £Y" for income and profit, with one plain line if they differ.
@@ -56,9 +60,10 @@ All tunables are JSON blocks at the top of `airline-simulator.html`, each with a
 | Block | Contains |
 | --- | --- |
 | `data-planes` | The shop: price, seats, speed, range, running cost per trip, fuel use per 100 km (a trip burns it both ways), tank storage the plane adds, typical profit per trip (for the pay-back sum), optional turnaround and `minReputation`. |
-| `data-world` | Starting cash, opening hours, first departure, turnaround, tank base size, fuel suppliers, demand-icon scale, home airports (landing fee, passenger bonus), routes (distance, base price and demand, the published demand rule, price options), and the round-by-round script: fuel price, jobs, which calculation is gated, demand changes, competitor fares, events, news, challenges. A new world is a new copy of this block. |
+| `data-world` | Starting cash, opening hours, first departure, turnaround, tank base size, fuel suppliers, demand-icon scale, home airports (landing fee, passenger bonus), routes (distance, base price and demand, the published demand rule, price options), and the round-by-round script: fuel price, the morning `choice` (news plus options: carry on, ticket price, trips, fuel, seat layout or an effect), demand changes, competitor fares, events, news, challenges. Each route has an `unlockPhase`. A new world is a new copy of this block. |
 | `data-fins` | The tail-fin motifs offered in setup (SVG symbols sit just below the data blocks). |
-| `data-tables` | The forecast tables: for each job, its rows (given / enter / derived), how each row is worked out, and the skill id it will report to. |
+| `data-tables` | The forecast tables: for each table, its question, its rows (given or calc), which calc rows are typed in setup and in rounds, the sum sentence for each typed row, and the skill id it will report to. |
+| `data-phases` | Which features unlock in each phase (rounds 1–7, 8–14, 15–22, 23–30). |
 | `data-jobs` | Job titles and icons. |
 | `data-reviews` | Review card pools by cause. |
 | `data-challenges` | Captain's challenge questions (long multiplication / division) and rewards. |
@@ -73,7 +78,7 @@ Market rules (in the engine, published on screen): demand falls by `drop` passen
 - Two windows sync three ways: direct `postMessage` to the opened window, `BroadcastChannel`, and a `localStorage` storage-event fallback (needed on `file://` in Chrome).
 - No `Math.random()` anywhere in outcome logic. Same world + same decisions = same result.
 - Read-aloud uses `speechSynthesis`; the speaker buttons only appear when a voice is available. Test on the classroom machine (teacher panel → Test read-aloud).
-- Styling: one shared style block at the top of the CSS (tokens, spacing scale, the panel and heading styles) is used by both windows. Two fonts only: Courier New for airport hardware and numbers, the system sans for interface copy.
+- Styling: one shared style block at the top of the CSS is used by both windows. Change Request 4 adds a reading layer at the end of it: Atkinson Hyperlegible (SIL Open Font Licence, embedded as base64, falls back to the system sans), text at least 22px and numbers at least 32px, mixed case, no letter-spacing on running text, no scanlines behind text, task panels at least 90% of the width and no scrolling at 1920×1080 or 1366×768 at the Standard text size.
 - Stage 1 ships depth 1 for every job. Depth 2 is live for pricing (rival fare shown), fuel (two suppliers), check-the-flight (time zones) and cabin (break-even); depth 3 is live for pricing (demand bar) and fuel (bulk deal). Headwinds for check-the-flight are a placeholder.
 
 ## Open items (from the brief)
