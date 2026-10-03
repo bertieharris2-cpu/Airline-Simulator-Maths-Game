@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Airline Simulator — Paper Backup Pack</title>
+<style>
+  @page{size:A4 portrait;margin:14mm}
+  :root{--ink:#111;--grey:#666;--line:#999;--amber:#b57d00}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);font-size:16pt;line-height:1.4;margin:0;background:#fff}
+  .page{page-break-after:always;padding:0;min-height:250mm;position:relative}
+  .page:last-child{page-break-after:auto}
+  .screen-note{background:#fff7d6;border:1px solid #e0c060;padding:8px 14px;font-size:12pt;margin:12px}
+  @media print{.screen-note{display:none}}
+  @media screen{body{background:#ddd}.page{background:#fff;width:210mm;min-height:297mm;margin:12px auto;padding:14mm;box-shadow:0 2px 12px rgba(0,0,0,.2)}}
+  h1{font-family:"Courier New",monospace;font-size:26pt;letter-spacing:2px;margin:0 0 4px;border-bottom:3px solid var(--ink);padding-bottom:4px}
+  h2{font-size:18pt;margin:18px 0 6px;font-family:"Courier New",monospace;letter-spacing:1px}
+  .tag{display:inline-block;border:2px solid var(--ink);border-radius:20px;padding:2px 12px;font-size:12pt;font-family:"Courier New",monospace;letter-spacing:1px;margin-bottom:8px}
+  .box{border:2px solid var(--ink);border-radius:10px;padding:10px 14px;margin:8px 0}
+  .box.light{border-color:var(--line)}
+  .facts{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .fact{border:2px solid var(--ink);border-radius:10px;padding:6px 14px;min-width:120px}
+  .fact small{display:block;font-size:10pt;color:var(--grey);letter-spacing:1px;text-transform:uppercase}
+  .fact b{font-family:"Courier New",monospace;font-size:22pt}
+  .rule{border-left:6px solid var(--amber);padding:6px 12px;background:#f7f7f7;margin:8px 0}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+  .opt{border:2px solid var(--ink);border-radius:12px;padding:10px 14px;min-height:64px}
+  .opt b{font-family:"Courier New",monospace;font-size:22pt}
+  .opt small{display:block;color:var(--grey);font-size:12pt}
+  .circle{font-size:12pt;color:var(--grey);margin:4px 0 10px}
+  .work{border:2px dashed var(--line);border-radius:10px;min-height:150px;margin:8px 0;background-image:linear-gradient(#e6e6e6 1px,transparent 1px),linear-gradient(90deg,#e6e6e6 1px,transparent 1px);background-size:10mm 10mm;background-position:-1px -1px}
+  .work.tall{min-height:230px}
+  .ans{display:flex;align-items:center;gap:12px;margin:8px 0;font-size:18pt}
+  .ans span.blank{display:inline-block;border:2px solid var(--ink);border-radius:8px;min-width:160px;height:44px;vertical-align:middle}
+  .sum{font-family:"Courier New",monospace;font-size:20pt;margin:6px 0}
+  table{border-collapse:collapse;width:100%;font-size:14pt}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left}
+  th{background:#eee;font-size:11pt;letter-spacing:1px;text-transform:uppercase}
+  td.num,th.num{text-align:right;font-family:"Courier New",monospace}
+  .review{border:2px solid var(--ink);border-radius:12px;padding:10px;display:flex;gap:12px;align-items:center;margin:8px 0;min-height:70px}
+  .face{width:52px;height:52px;border:2px solid var(--ink);border-radius:50%;flex:none}
+  .stars{font-size:22pt;letter-spacing:4px;color:#bbb}
+  .lines{flex:1;border-bottom:1px solid var(--line);height:1.4em}
+  .foot{position:absolute;bottom:0;left:0;right:0;font-size:10pt;color:var(--grey);display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:4px}
+  @media screen{.foot{bottom:10mm;left:14mm;right:14mm}}
+  .answers td{font-family:"Courier New",monospace}
+  ul{margin:6px 0 6px 20px}
+</style>
+</head>
+<body>
+<div class="screen-note">Print this file (Ctrl+P, A4 portrait). It contains one round's decision cards and calculation sheets for when the computer or whiteboard misbehaves. Numbers match Round 1–2 of the <b>Clear Skies</b> world with the starter plane (DHC-6 Twin Otter, Cardiff → Dublin). Teacher answers are on the last page.</div>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <h1>&#9992; AIRLINE SIMULATOR — PAPER BACKUP PACK</h1>
+  <p>One round of the airline game on paper. Use it when the laptop or whiteboard won't play.</p>
+  <h2>How to run a paper round</h2>
+  <ol>
+    <li><b>Briefing.</b> Read the round card aloud. One decision at a time.</li>
+    <li><b>Decision cards.</b> He circles a choice. Talk about the numbers first, then decide.</li>
+    <li><b>The big calculation.</b> One sheet per round. You scaffold the method; the sheet gives the numbers and space.</li>
+    <li><b>The flight plays out.</b> Fill in the round record together: seats sold, ticket money, costs, profit, cash.</li>
+    <li><b>Why did that happen?</b> Say it in one or two lines. Fill in a review card.</li>
+    <li><b>Problem event</b> (optional) and <b>Captain's challenge</b> (optional, every second round).</li>
+  </ol>
+  <h2>The airline so far</h2>
+  <div class="facts">
+    <div class="fact"><small>Airline</small><b>&nbsp;</b></div>
+    <div class="fact"><small>Cash at start</small><b>£&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></div>
+    <div class="fact"><small>Reputation</small><b>★ ★ ★ ☆ ☆</b></div>
+    <div class="fact"><small>Fuel in tank</small><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L</b></div>
+  </div>
+  <h2>Round record</h2>
+  <table>
+    <tr><th>Round</th><th class="num">Seats sold</th><th class="num">Ticket money</th><th class="num">Costs</th><th class="num">Profit / loss</th><th class="num">Cash after</th><th>Stars</th></tr>
+    <tr><td style="height:36px"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td style="height:36px"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td style="height:36px"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  <p style="font-size:12pt;color:var(--grey)">When the computer is back, the teacher panel can adjust cash and reputation to match this sheet (Ctrl+Shift+T → Money &amp; rounds).</p>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Teacher notes</span></div>
+</div>
+
+<!-- PAGE 2: pricing decision -->
+<div class="page">
+  <span class="tag">DECISION CARD</span>
+  <h1>Set the ticket price</h1>
+  <div class="facts">
+    <div class="fact"><small>Route</small><b>Cardiff → Dublin</b></div>
+    <div class="fact"><small>Plane</small><b>Twin Otter</b></div>
+    <div class="fact"><small>Seats</small><b>19</b></div>
+    <div class="fact"><small>Distance</small><b>300 km</b></div>
+  </div>
+  <div class="rule">At <b>£60</b>, <b>30</b> people want to fly. Every <b>£10 more</b> → <b>5 fewer</b> people. Every £10 less → 5 more.</div>
+  <p class="circle">Circle one price.</p>
+  <div class="opts">
+    <div class="opt"><b>£50</b><small>👥 35 want to fly</small></div>
+    <div class="opt"><b>£57.50</b><small>👥 31 want to fly</small></div>
+    <div class="opt"><b>£65</b><small>👥 27 want to fly</small></div>
+    <div class="opt"><b>£75</b><small>👥 22 want to fly</small></div>
+  </div>
+  <div class="box light">
+    <p><b>Think about it:</b> the plane only has 19 seats. If more people want to fly than there are seats, the plane is full. A high price earns more per seat, but very high prices get bad reviews (−½ star), and a lower price than usual gets good reviews (+½ star).</p>
+  </div>
+  <div class="ans">Seats sold = <span class="blank"></span> <small>(the smaller of: seats, or people who want to fly)</small></div>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Job: Set the ticket price</span></div>
+</div>
+
+<!-- PAGE 3: revenue calc -->
+<div class="page">
+  <span class="tag">THE BIG CALCULATION</span>
+  <h1>Count the money</h1>
+  <h2>Part 1 — Ticket money</h2>
+  <p class="sum">seats sold × price per ticket = ticket money</p>
+  <div class="ans"><span class="blank" style="min-width:90px"></span> × £<span class="blank" style="min-width:110px"></span> = £<span class="blank"></span></div>
+  <div class="work tall"></div>
+  <h2>Part 2 — Profit</h2>
+  <p class="sum">ticket money − costs = profit</p>
+  <div class="facts"><div class="fact"><small>Running cost</small><b>£250</b></div><div class="fact"><small>Fuel bought today</small><b>£&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></div><div class="fact"><small>Total costs</small><b>£&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></div></div>
+  <div class="ans">£<span class="blank"></span> − £<span class="blank"></span> = £<span class="blank"></span></div>
+  <div class="work"></div>
+  <p style="font-size:12pt;color:var(--grey)">If costs are bigger than ticket money, work out the <b>loss</b>: costs − ticket money.</p>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Calculation: revenue and profit</span></div>
+</div>
+
+<!-- PAGE 4: fuel -->
+<div class="page">
+  <span class="tag">DECISION CARD + CALCULATION</span>
+  <h1>Buy fuel</h1>
+  <div class="facts">
+    <div class="fact"><small>Fuel needed per flight</small><b>60 L</b></div>
+    <div class="fact"><small>Price today</small><b>£1.30 /L</b></div>
+    <div class="fact"><small>Sold in lots of</small><b>500 L</b></div>
+  </div>
+  <div class="rule">Fuel has been getting dearer every round. Is it worth buying extra now?</div>
+  <p class="circle">Circle one.</p>
+  <div class="opts">
+    <div class="opt"><b>500 L</b><small>lasts about 8 flights</small></div>
+    <div class="opt"><b>1,000 L</b><small>lasts about 16 flights</small></div>
+    <div class="opt"><b>2,000 L</b><small>lasts about 33 flights</small></div>
+    <div class="opt"><b>Not today</b><small>keep your cash</small></div>
+  </div>
+  <h2>The fuel bill</h2>
+  <p class="sum">litres × price per litre = bill</p>
+  <div class="ans"><span class="blank"></span> × £1.30 = £<span class="blank"></span></div>
+  <div class="work tall"></div>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Job: Buy fuel</span></div>
+</div>
+
+<!-- PAGE 5: check the flight -->
+<div class="page">
+  <span class="tag">DECISION CARD + CALCULATION</span>
+  <h1>Check the flight</h1>
+  <p>Air traffic control need the flight plan checked before take-off.</p>
+  <div class="facts">
+    <div class="fact"><small>Route</small><b>Cardiff → Dublin</b></div>
+    <div class="fact"><small>Distance</small><b>300 km</b></div>
+    <div class="fact"><small>Speed</small><b>300 km/h</b></div>
+    <div class="fact"><small>Departs</small><b>09:00</b></div>
+  </div>
+  <h2>Part 1 — Flight time</h2>
+  <p class="sum">distance ÷ speed = hours</p>
+  <div class="ans">300 ÷ 300 = <span class="blank"></span> hours</div>
+  <div class="work"></div>
+  <h2>Part 2 — Landing time</h2>
+  <div class="ans">09:00 + <span class="blank" style="min-width:110px"></span> = <span class="blank"></span></div>
+  <div class="box light">
+    <p><b>Extra flight (Paris):</b> 450 km at 300 km/h, departs 10:00. Flight time = ______ Landing time = ______</p>
+  </div>
+  <div class="work"></div>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Job: Check the flight</span></div>
+</div>
+
+<!-- PAGE 6: cabin -->
+<div class="page">
+  <span class="tag">DECISION CARD + CALCULATION</span>
+  <h1>Run the cabin</h1>
+  <p>Your Twin Otter costs <b>£250</b> to run each flight. How should the seats be laid out?</p>
+  <p class="circle">Circle one.</p>
+  <div class="opts">
+    <div class="opt"><b>22 seats</b> — Squeeze them in<small>Earns more, reviews drop (−½ star)</small></div>
+    <div class="opt"><b>19 seats</b> — Standard<small>The normal layout</small></div>
+    <div class="opt"><b>15 seats</b> — Roomy<small>Fewer seats, reviews rise (+½ star)</small></div>
+  </div>
+  <h2>Cost per seat (with remainder)</h2>
+  <p class="sum">running cost ÷ seats = £ per seat, remainder</p>
+  <div class="ans">£250 ÷ 19 = £<span class="blank" style="min-width:90px"></span> remainder <span class="blank" style="min-width:90px"></span></div>
+  <div class="work"></div>
+  <div class="ans">£250 ÷ 22 = £<span class="blank" style="min-width:90px"></span> remainder <span class="blank" style="min-width:90px"></span></div>
+  <div class="ans">£250 ÷ 15 = £<span class="blank" style="min-width:90px"></span> remainder <span class="blank" style="min-width:90px"></span></div>
+  <div class="work"></div>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Job: Run the cabin</span></div>
+</div>
+
+<!-- PAGE 7: event + reviews -->
+<div class="page">
+  <span class="tag">PROBLEM EVENT</span>
+  <h1>⚠ Storm!</h1>
+  <p>A storm hits as your plane is loading. The captain asks what to do.</p>
+  <p class="circle">Circle one.</p>
+  <div class="opts">
+    <div class="opt"><b>Fly anyway</b><small>2 hour delay, bumpy ride. −½ star.</small></div>
+    <div class="opt"><b>Wait it out (£200)</b><small>Hotel vouchers. Passengers safe and happy.</small></div>
+    <div class="opt"><b>Cancel the flight</b><small>Refund everyone. No money today. +½ star.</small></div>
+  </div>
+  <h2>Why did that happen?</h2>
+  <div class="box" style="min-height:90px"></div>
+  <h2>Reviews</h2>
+  <div class="review"><div class="face"></div><div class="lines"></div><div class="stars">★★★★★</div></div>
+  <div class="review"><div class="face"></div><div class="lines"></div><div class="stars">★★★★★</div></div>
+  <p style="font-size:12pt;color:var(--grey)">Draw the face, write the review, colour in the stars. Funny is good.</p>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Event + reviews</span></div>
+</div>
+
+<!-- PAGE 8: captain's challenge -->
+<div class="page">
+  <span class="tag">CAPTAIN'S CHALLENGE — OPTIONAL</span>
+  <h1>Negotiate a fuel discount</h1>
+  <p>Dragon Fuels will give you <b>10% off</b> your next fuel if you can check their invoice. 24 lorries each carried 36 barrels. How many barrels?</p>
+  <div class="ans">24 × 36 = <span class="blank"></span></div>
+  <div class="work tall"></div>
+  <h1 style="margin-top:14px">Win the catering contract</h1>
+  <p>Tasty Trays want a caterer who can count. 648 sandwiches shared equally across 6 flights. How many per flight? Reward: <b>+½ star</b>.</p>
+  <div class="ans">648 ÷ 6 = <span class="blank"></span></div>
+  <div class="work tall"></div>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Captain's challenge</span></div>
+</div>
+
+<!-- PAGE 9: answers -->
+<div class="page">
+  <span class="tag">TEACHER ANSWER SHEET</span>
+  <h1>Answers</h1>
+  <h2>Set the ticket price (Twin Otter, 19 seats, Dublin)</h2>
+  <table class="answers">
+    <tr><th>Price</th><th class="num">Want to fly</th><th class="num">Seats sold</th><th class="num">Ticket money</th><th class="num">Profit (costs £250, no fuel bought)</th><th>Stars</th></tr>
+    <tr><td>£50</td><td class="num">35</td><td class="num">19</td><td class="num">£950</td><td class="num">£700</td><td>+½ (great price)</td></tr>
+    <tr><td>£57.50</td><td class="num">31</td><td class="num">19</td><td class="num">£1,092.50</td><td class="num">£842.50</td><td>no change</td></tr>
+    <tr><td>£65</td><td class="num">27</td><td class="num">19</td><td class="num">£1,235</td><td class="num">£985</td><td>no change</td></tr>
+    <tr><td>£75</td><td class="num">22</td><td class="num">19</td><td class="num">£1,425</td><td class="num">£1,175</td><td>no change (−½ only at £80+)</td></tr>
+  </table>
+  <h2>Buy fuel (£1.30 per litre)</h2>
+  <table class="answers"><tr><th>Litres</th><th class="num">Bill</th></tr><tr><td>500 L</td><td class="num">£650</td></tr><tr><td>1,000 L</td><td class="num">£1,300</td></tr><tr><td>2,000 L</td><td class="num">£2,600</td></tr></table>
+  <h2>Check the flight</h2>
+  <ul><li>Dublin: 300 ÷ 300 = <b>1 hour</b>. Lands <b>10:00</b>.</li><li>Paris: 450 ÷ 300 = <b>1.5 hours (1 h 30 min)</b>. Lands <b>11:30</b>.</li></ul>
+  <h2>Run the cabin (£250 running cost)</h2>
+  <ul><li>19 seats: <b>£13 remainder 3</b></li><li>22 seats: <b>£11 remainder 8</b></li><li>15 seats: <b>£16 remainder 10</b></li></ul>
+  <h2>Captain's challenge</h2>
+  <ul><li>24 × 36 = <b>864</b></li><li>648 ÷ 6 = <b>108</b></li></ul>
+  <h2>Storm event outcomes</h2>
+  <ul><li>Fly anyway: flight DELAYED, −½ star.</li><li>Wait it out: −£200 cash, flight DELAYED, no star change.</li><li>Cancel: no ticket money this round (refund), +½ star.</li></ul>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Answers</span></div>
+</div>
+</body>
+</html>
