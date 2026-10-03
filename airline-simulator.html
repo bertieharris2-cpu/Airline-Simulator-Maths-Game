@@ -439,14 +439,21 @@ body.display #display{display:grid;flex:1;grid-template-columns:1fr 1fr;grid-tem
      reward: {"cash":N} or {"rep":0.5} or {"fuelDiscount":0.1} (10% off the next fuel purchase). -->
 <script type="application/json" id="data-challenges">
 [
- {"title":"Negotiate a fuel discount","story":"Dragon Fuels will give you a discount if you can check their invoice. 24 lorries each carried 36 barrels. How many barrels?","q":"24 × 36","answer":864,"unit":"barrels","reward":{"fuelDiscount":0.1},"rewardText":"10% off your next fuel purchase"},
- {"title":"Win the catering contract","story":"Tasty Trays want a caterer who can count. 648 sandwiches are shared equally across 6 flights. How many per flight?","q":"648 ÷ 6","answer":108,"unit":"sandwiches","reward":{"rep":0.5},"rewardText":"Passengers love the new snacks: +½ star"},
- {"title":"The charter deal","story":"A football club wants to charter your plane. 47 fans on each of 23 trips. How many fans altogether?","q":"47 × 23","answer":1081,"unit":"fans","reward":{"cash":1000},"rewardText":"£1,000 charter fee"},
- {"title":"The cargo contract","story":"A parcel company has 1,296 boxes to split evenly between 8 flights. How many boxes on each flight?","q":"1,296 ÷ 8","answer":162,"unit":"boxes","reward":{"cash":1500},"rewardText":"£1,500 cargo fee"},
- {"title":"Airport slot auction","story":"The airport sells landing slots. 68 slots a week for 54 weeks. How many slots in a year?","q":"68 × 54","answer":3672,"unit":"slots","reward":{"rep":0.5},"rewardText":"Better take-off times: +½ star"},
- {"title":"Airline of the Year bonus","story":"The judges share £2,184 of prize money equally between 7 airlines. How much does each airline get?","q":"2,184 ÷ 7","answer":312,"unit":"£","reward":{"cash":3000},"rewardText":"£3,000 prize money"},
- {"title":"The baggage count","story":"Each of 36 flights carried 29 suitcases in the hold. How many suitcases?","q":"36 × 29","answer":1044,"unit":"suitcases","reward":{"cash":1200},"rewardText":"£1,200 baggage fees"},
- {"title":"Pilot training deal","story":"A flying school pays £1,575 for lessons shared across 9 pilots. How much per pilot?","q":"1,575 ÷ 9","answer":175,"unit":"£","reward":{"rep":0.5},"rewardText":"Smoother landings: +½ star"}
+ {"title": "Negotiate a fuel discount", "story": "Dragon Fuels will give you a discount if you can check their invoice. 24 lorries each carried 36 barrels. How many barrels?", "q": "24 × 36", "answer": 864, "unit": "barrels", "reward": {"fuelDiscount": 0.1}, "rewardText": "10% off your next fuel purchase"},
+ {"title": "Win the catering contract", "story": "Tasty Trays want a caterer who can count. 648 sandwiches are shared equally across 6 flights. How many per flight?", "q": "648 ÷ 6", "answer": 108, "unit": "sandwiches", "reward": {"rep": 0.5}, "rewardText": "Passengers love the new snacks: +½ star"},
+ {"title": "The charter deal", "story": "A football club wants to charter your plane. 47 fans on each of 23 trips. How many fans altogether?", "q": "47 × 23", "answer": 1081, "unit": "fans", "reward": {"cash": 1000}, "rewardText": "£1,000 charter fee"},
+ {"title": "The cargo contract", "story": "A parcel company has 1,296 boxes to split evenly between 8 flights. How many boxes on each flight?", "q": "1,296 ÷ 8", "answer": 162, "unit": "boxes", "reward": {"cash": 1500}, "rewardText": "£1,500 cargo fee"},
+ {"title": "Airport slot auction", "story": "The airport sells landing slots. 68 slots a week for 54 weeks. How many slots in a year?", "q": "68 × 54", "answer": 3672, "unit": "slots", "reward": {"rep": 0.5}, "rewardText": "Better take-off times: +½ star"},
+ {"title": "Mid-season bonus", "story": "The judges share £2,184 of prize money equally between 7 airlines. How much does each airline get?", "q": "2,184 ÷ 7", "answer": 312, "unit": "£", "reward": {"cash": 3000}, "rewardText": "£3,000 prize money"},
+ {"title": "The baggage count", "story": "Each of 36 flights carried 29 suitcases in the hold. How many suitcases?", "q": "36 × 29", "answer": 1044, "unit": "suitcases", "reward": {"cash": 1200}, "rewardText": "£1,200 baggage fees"},
+ {"title": "Pilot training deal", "story": "A flying school pays £1,575 for lessons shared across 9 pilots. How much per pilot?", "q": "1,575 ÷ 9", "answer": 175, "unit": "£", "reward": {"rep": 0.5}, "rewardText": "Smoother landings: +½ star"},
+ {"title": "The spare parts order", "story": "Your engineers order spare bolts: 57 boxes with 38 bolts in each. How many bolts?", "q": "57 × 38", "answer": 2166, "unit": "bolts", "reward": {"cash": 1200}, "rewardText": "£1,200 maintenance saving"},
+ {"title": "The de-icing contract", "story": "2,952 litres of de-icing fluid is shared equally between 6 planes. How many litres each?", "q": "2,952 ÷ 6", "answer": 492, "unit": "litres", "reward": {"rep": 0.5}, "rewardText": "Winter-ready fleet: +½ star"},
+ {"title": "The duty-free deal", "story": "A chocolate maker sends 84 trays of 46 chocolates for your flights. How many chocolates?", "q": "84 × 46", "answer": 3864, "unit": "chocolates", "reward": {"cash": 1500}, "rewardText": "£1,500 duty-free profit"},
+ {"title": "The Olympic charter", "story": "1,708 athletes must be shared equally across 7 charter flights. How many athletes per flight?", "q": "1,708 ÷ 7", "answer": 244, "unit": "athletes", "reward": {"cash": 2000}, "rewardText": "£2,000 charter fee"},
+ {"title": "The tyre order", "story": "The hangar stocks up: 73 crates with 58 tyres in each. How many tyres?", "q": "73 × 58", "answer": 4234, "unit": "tyres", "reward": {"cash": 1500}, "rewardText": "£1,500 maintenance saving"},
+ {"title": "Runway lights", "story": "3,445 new bulbs are shared equally between 5 runways. How many bulbs per runway?", "q": "3,445 ÷ 5", "answer": 689, "unit": "bulbs", "reward": {"rep": 0.5}, "rewardText": "Night flights approved: +½ star"},
+ {"title": "The grand bonus", "story": "The awards pot of £2,912 is shared equally between 8 shortlisted airlines. How much each?", "q": "2,912 ÷ 8", "answer": 364, "unit": "£", "reward": {"cash": 5000}, "rewardText": "£5,000 Airline of the Year prize"}
 ]
 </script>
 
@@ -463,10 +470,12 @@ body.display #display{display:grid;flex:1;grid-template-columns:1fr 1fr;grid-tem
        demandMod: extra demand per route.  competitor: rival's fare per route (if lower than yours, you lose 20% of passengers).
        event: a problem with 2-3 responses. effects: cash, rep, status (board status for this round's flights),
               setPrice {route:price}, groundNext (featured plane misses next round), fuelDiscount.
-       news: lines for the ticker. challenge: true = Captain's challenge this round (every 2 rounds). -->
+       news: lines for the ticker. challenge: true = Captain's challenge this round (every 2 rounds).
+       checkpoint: snapshot the run to Best Runs and carry on (round 12). finale: record the run (round 30); play can continue after it.
+       30 rounds in five acts, from the Clear Skies 30-round workbook. -->
 <script type="application/json" id="data-world">
 {
- "id":"clear-skies","name":"Clear Skies","lesson":"Fuel gets dearer every round. Buying fuel early, in bulk, saves a lot.",
+ "id":"clear-skies","name":"Clear Skies","lesson":"Rounds 1–12: fuel climbs every round, so buying early in bulk wins. Rounds 13–30: fuel crashes to £1.10 in round 14 (the oil find) then climbs to £3.20 — buy the dip.",
  "startingCash":5000,"startingReputation":3,"fuelLot":500,"rival":"Red Kite Air",
  "dayStart":"06:00","dayEnd":"22:00","turnaroundMin":45,"maxTrips":4,
  "homes":[
@@ -491,69 +500,37 @@ body.display #display{display:grid;flex:1;grid-template-columns:1fr 1fr;grid-tem
   {"id":"syd","city":"Sydney","country":"Australia","flag":"au","lat":-33.87,"lon":151.21,"km":17600,"band":"long","basePrice":600,"baseDemand":300,"step":100,"drop":30,"prices":[500,600,700,800],"gate":"13","dep":"22:00","utc":10,"blurb":"The longest flight in the world. Only one plane can do it."}
  ],
  "rounds":[
-  {"fuel":1.2,"news":["Welcome to the skies! Your first flight is ready."]},
-  {"fuel":1.2,"jobs":["schedule","pricing"],"calc":"schedule",
-   "brief":"Day 1 as a real airline. Your plane can fly more than once a day — plan its day, then watch the money come in.",
-   "news":["New airline launches from Cardiff.","Fuel steady at £1.20 a litre."]},
-  {"fuel":1.3,"jobs":["fuel","pricing"],"calc":"fuel","challenge":true,
-   "brief":"Your fuel tank is running low. Time to buy some — and fuel is getting dearer.",
-   "news":["Fuel rises to £1.30 a litre.","Oil experts say fuel will keep rising this year."]},
-  {"fuel":1.4,"jobs":["pricing"],"calc":"revenue","competitor":{"focus":0.85},
-   "brief":"Trouble: Red Kite Air has started flying your route, and they're cheap.",
-   "news":["Red Kite Air starts flying from Cardiff — and undercuts the new airline.","Fuel now £1.40 a litre."],
-   "event":{"id":"undercut","title":"Red Kite Air is undercutting you","text":"Red Kite Air sells {city} tickets for {price}. Some of your passengers have switched to them.",
-     "options":[
-       {"label":"Match their price","sub":"{city} tickets become {price} next round","effects":{"setPrice":{"focus":"match"}},"why":"You matched Red Kite's {price}. More passengers next round, but less money each."},
-       {"label":"Hold your price","sub":"Keep your fare; fewer people book","effects":{},"why":"You held your price. Red Kite keeps stealing a few passengers."},
-       {"label":"Advertise (£300)","sub":"Posters all over Cardiff","effects":{"cash":-300,"rep":0.5},"why":"Your posters worked — people like your airline more (+½ star). It cost £300."}]}},
-  {"fuel":1.5,"jobs":["schedule","pricing"],"calc":"schedule","competitor":{"focus":0.85},"challenge":true,
-   "brief":"Air traffic control want today's schedule checked. And a storm is brewing…",
-   "news":["Storm warning: strong winds over the Irish Sea.","Fuel £1.50 a litre and rising."],
-   "event":{"id":"storm","title":"Storm!","text":"A storm hits as your plane is loading. The captain asks what to do.",
-     "options":[
-       {"label":"Fly anyway","sub":"2 hour delay, bumpy ride","effects":{"rep":-0.5,"status":"DELAYED"},"why":"You flew through the storm. Passengers were late and shaken: −½ star."},
-       {"label":"Wait it out (£200)","sub":"Hotel vouchers for passengers","effects":{"cash":-200,"status":"DELAYED"},"why":"You waited for the storm to pass. Vouchers cost £200 but passengers were safe and happy."},
-       {"label":"Cancel the flight","sub":"Refund everyone","effects":{"refund":true,"rep":0.5,"status":"CANCELLED"},"why":"You cancelled and refunded everyone. No money today, but people trust you: +½ star."}]}},
-  {"fuel":1.6,"jobs":["cabin","pricing"],"calc":"cabin","competitor":{"focus":0.85},
-   "brief":"Your cabin crew ask: should we fit more seats in, or give people more room?",
-   "news":["Fuel £1.60 a litre.","Passengers rate legroom as their top wish."]},
-  {"fuel":1.7,"jobs":["pricing"],"calc":"revenue","challenge":true,
-   "brief":"A normal day — until the phone rings.",
-   "news":["Fuel £1.70 a litre.","Flu going round Cardiff this week."],
-   "event":{"id":"crew","title":"Crew sickness","text":"Your captain has flu and can't fly. What do you do?",
-     "options":[
-       {"label":"Hire a stand-in captain (£400)","sub":"Flight goes ahead as normal","effects":{"cash":-400},"why":"A stand-in captain flew the route. It cost £400."},
-       {"label":"Cancel the flight","sub":"Refund everyone","effects":{"refund":true,"rep":-0.5,"status":"CANCELLED"},"why":"Cancelled. Passengers got refunds but were annoyed: −½ star."},
-       {"label":"Let the co-pilot captain","sub":"Free, but a bumpy landing","effects":{"rep":-0.5},"why":"The co-pilot did their best, but it was a bumpy landing: −½ star."}]}},
-  {"fuel":3.0,"jobs":["pricing"],"calc":"revenue",
-   "brief":"FUEL SHOCK: the price of fuel has nearly doubled overnight.",
-   "news":["FUEL SPIKE! £3.00 a litre today.","Airlines that stocked up early are laughing."]},
-  {"fuel":1.9,"jobs":["schedule","pricing"],"calc":"schedule","challenge":true,
-   "brief":"Fuel has calmed down a bit. But your engineers have spotted something.",
-   "news":["Fuel back down to £1.90 a litre.","Engineers find a warning light on one plane."],
-   "event":{"id":"fault","title":"Technical fault","text":"A warning light is on in the cockpit. The engineers say it's probably fine, but…",
-     "options":[
-       {"label":"Fix it now (£800)","sub":"Safe and sound","effects":{"cash":-800,"rep":0.5},"why":"You paid £800 to fix the fault. Passengers trust you: +½ star."},
-       {"label":"Fly anyway","sub":"Free, but risky","effects":{"rep":-1,"status":"DELAYED"},"why":"The fault grounded the plane for 3 hours mid-trip. Passengers were scared: −1 star."},
-       {"label":"Wait for the part","sub":"Plane misses next round","effects":{"groundNext":true},"why":"The plane waits for a spare part. It will miss the next round."}]}},
-  {"fuel":2.0,"jobs":["pricing"],"calc":"revenue","demandMod":{"mad":40,"par":10,"dub":10},
-   "brief":"Good news! A big football final means everyone wants to travel this round.",
-   "news":["Football final: demand jumps on European routes!","Fuel £2.00 a litre."]},
-  {"fuel":2.1,"jobs":["fuel","pricing"],"calc":"fuel","challenge":true,
-   "competitor":{"dub":48,"par":72,"mad":80,"rak":96,"cai":120,"los":160,"nyc":160,"dxb":200,"del":200,"cpt":280,"tyo":320,"sin":320,"syd":480},
-   "brief":"Price war! Red Kite Air has cut fares on every route.",
-   "news":["PRICE WAR: Red Kite Air slashes fares by 20%.","Fuel £2.10 a litre."],
-   "event":{"id":"pricewar","title":"Price war","text":"Red Kite Air has cut every fare by 20%. How do you answer?",
-     "options":[
-       {"label":"Cut your price one step","sub":"On your featured route","effects":{"priceStep":-1},"why":"You cut your fare one step. More bookings next round, less money each."},
-       {"label":"Hold your prices","sub":"Trust your passengers","effects":{},"why":"You held firm. Some passengers went to Red Kite."},
-       {"label":"Free snacks (£500)","sub":"Win them over with biscuits","effects":{"cash":-500,"rep":0.5},"why":"Free snacks! People love you a bit more: +½ star. It cost £500."}]}},
-  {"fuel":2.2,"jobs":["cabin","pricing"],"calc":"cabin",
-   "brief":"Red Kite's price war is over. Time to look after your passengers.",
-   "news":["Red Kite Air ends its price war.","Fuel £2.20 a litre."]},
-  {"fuel":2.4,"jobs":["pricing"],"calc":"revenue","challenge":true,"finale":true,
-   "brief":"The last round of the season: the Airline of the Year awards are tonight!",
-   "news":["Airline of the Year awards tonight.","Fuel hits £2.40 a litre — double what it was."]}
+  {"fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."]},
+  {"act": "Act 1 — Start-up", "title": "First day as a real airline", "fuel": 1.2, "jobs": ["schedule", "pricing"], "calc": "schedule", "brief": "Day 1 as a real airline. Your plane can fly more than once a day — plan its day, then watch the money come in.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."]},
+  {"act": "Act 1 — Start-up", "title": "The tank runs low", "fuel": 1.3, "jobs": ["fuel", "pricing"], "calc": "fuel", "challenge": true, "brief": "Your fuel tank is running low. Time to buy some — and fuel is getting dearer.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."]},
+  {"act": "Act 1 — Start-up", "title": "Red Kite arrives", "fuel": 1.4, "jobs": ["pricing"], "calc": "revenue", "competitor": {"focus": 0.85}, "brief": "Trouble: Red Kite Air has started flying your route, and they're cheap.", "news": ["Red Kite Air starts flying from Cardiff — and undercuts the new airline.", "Fuel now £1.40 a litre."], "event": {"id": "undercut", "title": "Red Kite Air is undercutting you", "text": "Red Kite Air sells {city} tickets for {price}. Some of your passengers have switched to them.", "options": [{"label": "Match their price", "sub": "{city} tickets become {price} next round", "effects": {"setPrice": {"focus": "match"}}, "why": "You matched Red Kite's {price}. More passengers next round, but less money each."}, {"label": "Hold your price", "sub": "Keep your fare; fewer people book", "effects": {}, "why": "You held your price. Red Kite keeps stealing a few passengers."}, {"label": "Advertise (£300)", "sub": "Posters all over Cardiff", "effects": {"cash": -300, "rep": 0.5}, "why": "Your posters worked — people like your airline more (+½ star). It cost £300."}]}},
+  {"act": "Act 1 — Start-up", "title": "The storm", "fuel": 1.5, "jobs": ["schedule", "pricing"], "calc": "schedule", "challenge": true, "competitor": {"focus": 0.85}, "brief": "Air traffic control want today's schedule checked. And a storm is brewing…", "news": ["Storm warning: strong winds over the Irish Sea.", "Fuel £1.50 a litre and rising."], "event": {"id": "storm", "title": "Storm!", "text": "A storm hits as your plane is loading. The captain asks what to do.", "options": [{"label": "Fly anyway", "sub": "2 hour delay, bumpy ride", "effects": {"rep": -0.5, "status": "DELAYED"}, "why": "You flew through the storm. Passengers were late and shaken: −½ star."}, {"label": "Wait it out (£200)", "sub": "Hotel vouchers for passengers", "effects": {"cash": -200, "status": "DELAYED"}, "why": "You waited for the storm to pass. Vouchers cost £200 but passengers were safe and happy."}, {"label": "Cancel the flight", "sub": "Refund everyone", "effects": {"rep": 0.5, "status": "CANCELLED", "refund": true}, "why": "You cancelled and refunded everyone. No money today, but people trust you: +½ star."}]}},
+  {"act": "Act 1 — Start-up", "title": "Legroom or profit", "fuel": 1.6, "jobs": ["cabin", "pricing"], "calc": "cabin", "competitor": {"focus": 0.85}, "brief": "Your cabin crew ask: should we fit more seats in, or give people more room?", "news": ["Fuel £1.60 a litre.", "Passengers rate legroom as their top wish."]},
+  {"act": "Act 1 — Start-up", "title": "Crew sickness", "fuel": 1.7, "jobs": ["pricing"], "calc": "revenue", "challenge": true, "brief": "A normal day — until the phone rings.", "news": ["Fuel £1.70 a litre.", "Flu going round Cardiff this week."], "event": {"id": "crew", "title": "Crew sickness", "text": "Your captain has flu and can't fly. What do you do?", "options": [{"label": "Hire a stand-in captain (£400)", "sub": "Flight goes ahead as normal", "effects": {"cash": -400}, "why": "A stand-in captain flew the route. It cost £400."}, {"label": "Cancel the flight", "sub": "Refund everyone", "effects": {"rep": -0.5, "status": "CANCELLED", "refund": true}, "why": "Cancelled. Passengers got refunds but were annoyed: −½ star."}, {"label": "Let the co-pilot captain", "sub": "Free, but a bumpy landing", "effects": {"rep": -0.5}, "why": "The co-pilot did their best, but it was a bumpy landing: −½ star."}]}},
+  {"act": "Act 2 — Turbulence", "title": "FUEL SHOCK", "fuel": 3.0, "jobs": ["pricing"], "calc": "revenue", "brief": "FUEL SHOCK: the price of fuel has nearly doubled overnight.", "news": ["FUEL SPIKE! £3.00 a litre today.", "Airlines that stocked up early are laughing."]},
+  {"act": "Act 2 — Turbulence", "title": "The warning light", "fuel": 1.9, "jobs": ["schedule", "pricing"], "calc": "schedule", "challenge": true, "brief": "Fuel has calmed down a bit. But your engineers have spotted something.", "news": ["Fuel back down to £1.90 a litre.", "Engineers find a warning light on one plane."], "event": {"id": "fault", "title": "Technical fault", "text": "A warning light is on in the cockpit. The engineers say it's probably fine, but…", "options": [{"label": "Fix it now (£800)", "sub": "Safe and sound", "effects": {"cash": -800, "rep": 0.5}, "why": "You paid £800 to fix the fault. Passengers trust you: +½ star."}, {"label": "Fly anyway", "sub": "Free, but risky", "effects": {"rep": -1.0, "status": "DELAYED"}, "why": "The fault grounded the plane for 3 hours mid-trip. Passengers were scared: −1 star."}, {"label": "Wait for the part", "sub": "Plane misses next round", "effects": {"groundNext": true}, "why": "The plane waits for a spare part. It will miss the next round."}]}},
+  {"act": "Act 2 — Turbulence", "title": "The football final", "fuel": 2.0, "jobs": ["pricing"], "calc": "revenue", "demandMod": {"mad": 40, "par": 10, "dub": 10}, "brief": "Good news! A big football final means everyone wants to travel this round.", "news": ["Football final: demand jumps on European routes!", "Fuel £2.00 a litre."]},
+  {"act": "Act 2 — Turbulence", "title": "Price war", "fuel": 2.1, "jobs": ["fuel", "pricing"], "calc": "fuel", "challenge": true, "competitor": {"dub": 48, "par": 72, "mad": 80, "rak": 96, "cai": 120, "los": 160, "nyc": 160, "dxb": 200, "del": 200, "cpt": 280, "tyo": 320, "sin": 320, "syd": 480}, "brief": "Price war! Red Kite Air has cut fares on every route.", "news": ["PRICE WAR: Red Kite Air slashes fares by 20%.", "Fuel £2.10 a litre."], "event": {"id": "pricewar", "title": "Price war", "text": "Red Kite Air has cut every fare by 20%. How do you answer?", "options": [{"label": "Cut your price one step", "sub": "On your featured route", "effects": {"priceStep": -1}, "why": "You cut your fare one step. More bookings next round, less money each."}, {"label": "Hold your prices", "sub": "Trust your passengers", "effects": {}, "why": "You held firm. Some passengers went to Red Kite."}, {"label": "Free snacks (£500)", "sub": "Win them over with biscuits", "effects": {"cash": -500, "rep": 0.5}, "why": "Free snacks! People love you a bit more: +½ star. It cost £500."}]}},
+  {"act": "Act 2 — Turbulence", "title": "Peace", "fuel": 2.2, "jobs": ["cabin", "pricing"], "calc": "cabin", "brief": "Red Kite's price war is over. Time to look after your passengers.", "news": ["Red Kite Air ends its price war.", "Fuel £2.20 a litre."]},
+  {"act": "Act 2 — Turbulence", "title": "Mid-season awards", "fuel": 2.4, "jobs": ["pricing"], "calc": "revenue", "challenge": true, "checkpoint": true, "brief": "Mid-season awards tonight. Half the season flown — how is the airline doing?", "news": ["Mid-season awards tonight.", "Fuel hits £2.40 a litre — double what it was."]},
+  {"act": "Act 3 — The oil find", "title": "Picking up the pieces", "fuel": 2.3, "jobs": ["pricing"], "calc": "revenue", "brief": "A quiet day. Red Kite is counting the cost of its price war.", "news": ["Red Kite counts the cost of its price war.", "Fuel £2.30 a litre."]},
+  {"act": "Act 3 — The oil find", "title": "The oil find", "fuel": 1.1, "jobs": ["fuel", "pricing"], "calc": "fuel", "challenge": true, "brief": "A huge oil field has been found. Fuel has crashed to £1.10 — cheaper than day one.", "news": ["HUGE oil field discovered — fuel crashes to £1.10!", "Experts: prices will climb again once the excitement fades."]},
+  {"act": "Act 3 — The oil find", "title": "The travel blogger", "fuel": 1.3, "jobs": ["cabin", "pricing"], "calc": "cabin", "brief": "A famous travel blogger is flying with you today. Everyone will read what they write.", "news": ["Fuel creeps back up to £1.30.", "Famous travel blogger is reviewing Cardiff's airlines this week."], "event": {"id": "blogger", "title": "The travel blogger", "text": "A famous travel blogger has booked a seat on your airline today. A good review reaches millions.", "options": [{"label": "Full VIP treatment (£400)", "sub": "Champagne, big seat, goody bag", "effects": {"cash": -400, "rep": 1.0}, "why": "The blogger raved about you to millions: +1 star. The goody bag cost £400."}, {"label": "A free upgrade (£150)", "sub": "A nice touch, nothing flashy", "effects": {"cash": -150, "rep": 0.5}, "why": "A kind touch. The review was warm: +½ star. It cost £150."}, {"label": "Treat them like everyone else", "sub": "Free — let the airline speak for itself", "effects": {}, "why": "The blogger wrote a fair, honest review. Nothing gained, nothing lost — and nothing spent."}]}},
+  {"act": "Act 3 — The oil find", "title": "Fog at Cardiff", "fuel": 1.5, "jobs": ["schedule", "pricing"], "calc": "schedule", "challenge": true, "brief": "Thick fog has closed Cardiff's runway to normal take-offs this morning.", "news": ["Thick fog blankets Cardiff Airport.", "Fuel £1.50 a litre."], "event": {"id": "fog", "title": "Fog at Cardiff", "text": "Thick fog has closed the runway to normal take-offs. What do you do?", "options": [{"label": "Hire the instrument-landing crew (£350)", "sub": "Flights leave on time", "effects": {"cash": -350}, "why": "Specialists guided every flight out on time. It cost £350."}, {"label": "Wait for the fog to lift", "sub": "Free, but everything runs late", "effects": {"status": "DELAYED"}, "why": "You waited. Flights left two hours late, but nothing was spent."}, {"label": "Cancel this morning's flights", "sub": "Refund everyone", "effects": {"status": "CANCELLED", "refund": true}, "why": "Cancelled and refunded. Passengers understood — fog is fog."}]}},
+  {"act": "Act 3 — The oil find", "title": "Red Kite returns", "fuel": 1.7, "jobs": ["pricing"], "calc": "revenue", "competitor": {"focus": 0.8}, "brief": "Red Kite Air is back on your route with cheap fares. You've seen this before.", "news": ["Red Kite Air is back — undercutting your fares.", "Fuel £1.70 a litre."], "event": {"id": "undercut2", "title": "Red Kite Air is undercutting you", "text": "Red Kite Air is back, selling {city} tickets for {price}. Sound familiar?", "options": [{"label": "Match their price", "sub": "{city} tickets become {price} next round", "effects": {"setPrice": {"focus": "match"}}, "why": "You matched Red Kite's {price}. More passengers next round, but less money each."}, {"label": "Hold your price", "sub": "Keep your fare; fewer people book", "effects": {}, "why": "You held your price. Red Kite keeps stealing a few {city} passengers."}, {"label": "Launch a loyalty club (£350)", "sub": "Points for every flight", "effects": {"cash": -350, "rep": 0.5}, "why": "Passengers love collecting points: +½ star. Setting it up cost £350."}]}},
+  {"act": "Act 3 — The oil find", "title": "The party is over", "fuel": 1.9, "jobs": ["fuel", "pricing"], "calc": "fuel", "challenge": true, "competitor": {"focus": 0.8}, "brief": "The oil-find party is over. Fuel is climbing again, and it won't stop.", "news": ["Fuel £1.90 and climbing — the oil-find party is over.", "Red Kite watching your prices closely."]},
+  {"act": "Act 4 — Going global", "title": "The trade fair", "fuel": 2.0, "jobs": ["pricing"], "calc": "revenue", "demandMod": {"nyc": 30, "dxb": 30}, "brief": "A world trade fair means business travellers want New York and Dubai this week.", "news": ["World trade fair: business demand jumps on New York and Dubai.", "Fuel £2.00 a litre."]},
+  {"act": "Act 4 — Going global", "title": "The ash cloud", "fuel": 2.1, "jobs": ["schedule", "pricing"], "calc": "schedule", "challenge": true, "brief": "A volcano in Iceland has sent an ash cloud over Europe. Ash wrecks jet engines.", "news": ["Volcano erupts in Iceland — ash cloud drifts over Europe.", "Fuel £2.10 a litre."], "event": {"id": "ash", "title": "The ash cloud", "text": "A volcanic ash cloud is drifting over Europe. Ash wrecks jet engines. What are your orders?", "options": [{"label": "Cancel today's European flights", "sub": "Refund everyone — safety first", "effects": {"rep": 0.5, "status": "CANCELLED", "refund": true}, "why": "You grounded everything under the cloud and refunded everyone. No money today, but total trust: +½ star."}, {"label": "Fly the long way round (£600)", "sub": "South around the cloud, extra fuel", "effects": {"cash": -600, "status": "DELAYED"}, "why": "Your planes dodged the cloud. Late and £600 dearer, but safe."}, {"label": "Fly straight through", "sub": "Free. Through an ash cloud.", "effects": {"rep": -1.0, "status": "DELAYED"}, "why": "Engines needed emergency checks after landing. Passengers were terrified: −1 star."}]}},
+  {"act": "Act 4 — Going global", "title": "Baggage chaos", "fuel": 2.2, "jobs": ["cabin", "pricing"], "calc": "cabin", "brief": "Cardiff's baggage belt has broken down. Suitcases are piling up.", "news": ["Cardiff's baggage belt breaks down.", "Fuel £2.20 a litre."], "event": {"id": "baggage", "title": "Baggage chaos", "text": "The baggage belt has broken and suitcases are piling up. What do you do?", "options": [{"label": "Hire extra handlers (£300)", "sub": "Bags loaded by hand, flights on time", "effects": {"cash": -300}, "why": "A small army of handlers saved the day. It cost £300."}, {"label": "Carry-on bags only today", "sub": "Free, but holidaymakers hate it", "effects": {"rep": -0.5}, "why": "People had to leave suitcases behind. They were not happy: −½ star."}, {"label": "Delay until it's fixed", "sub": "Free, everything runs late", "effects": {"status": "DELAYED"}, "why": "Everything left late, with every bag aboard. Nothing spent."}]}},
+  {"act": "Act 4 — Going global", "title": "Winter sun", "fuel": 2.3, "jobs": ["fuel", "pricing"], "calc": "fuel", "challenge": true, "demandMod": {"rak": 40, "cai": 20}, "brief": "A cold snap at home — everyone wants winter sun. And fuel needs buying.", "news": ["Cold snap in Wales — everyone wants winter sun!", "Fuel £2.30 a litre."]},
+  {"act": "Act 4 — Going global", "title": "Red Kite goes big", "fuel": 2.4, "jobs": ["pricing"], "calc": "revenue", "competitor": {"nyc": 180, "dxb": 220}, "brief": "Red Kite has gone long-haul: cheap New York and Dubai fares.", "news": ["Red Kite launches long-haul: cheap New York and Dubai fares.", "Fuel £2.40 a litre."]},
+  {"act": "Act 4 — Going global", "title": "The Olympics", "fuel": 2.5, "jobs": ["schedule", "pricing"], "calc": "schedule", "challenge": true, "competitor": {"nyc": 180, "dxb": 220}, "demandMod": {"tyo": 60, "sin": 20}, "brief": "The Olympic Games open in Tokyo. Demand for the Far East is soaring.", "news": ["Olympic Games open in Tokyo: demand soars!", "Fuel £2.50 a litre."]},
+  {"act": "Act 5 — Airline of the Year", "title": "The home stretch", "fuel": 2.6, "jobs": ["pricing"], "calc": "revenue", "competitor": {"nyc": 180, "dxb": 220}, "brief": "You're on the Airline of the Year shortlist! And the airport wants more money.", "news": ["Airline of the Year shortlist announced — you're on it!", "Cardiff Airport announces higher landing fees."], "event": {"id": "fees", "title": "The airport raises its fees", "text": "Cardiff Airport is putting its landing fees up. Every airline must respond.", "options": [{"label": "Pay the new fees (£500)", "sub": "Business as usual", "effects": {"cash": -500}, "why": "You paid up. £500 gone, nothing else changes."}, {"label": "Switch to cheap night slots", "sub": "Free, but passengers hate 3am flights", "effects": {"rep": -0.5}, "why": "Night flights saved the fees but passengers grumbled: −½ star."}, {"label": "Sign a two-season deal (£300)", "sub": "Cheaper, locked in", "effects": {"cash": -300}, "why": "You negotiated a long-term deal for £300 — cheaper than paying up."}]}},
+  {"act": "Act 5 — Airline of the Year", "title": "Spies in the cabin", "fuel": 2.7, "jobs": ["fuel", "pricing"], "calc": "fuel", "challenge": true, "brief": "Rumour has it Red Kite's mystery shoppers are flying your routes.", "news": ["Rumour: Red Kite mystery shoppers are flying your routes.", "Fuel £2.70 a litre."]},
+  {"act": "Act 5 — Airline of the Year", "title": "The mystery shopper", "fuel": 2.8, "jobs": ["cabin", "pricing"], "calc": "cabin", "brief": "The mystery shopper report is out — and it lists every little fault.", "news": ["Mystery shopper report on your airline is published!", "Fuel £2.80 a litre."], "event": {"id": "shopper", "title": "The mystery shopper report", "text": "Red Kite's mystery shoppers have published a report on your airline — and it lists every little fault.", "options": [{"label": "Fix everything they found (£600)", "sub": "The full works", "effects": {"cash": -600, "rep": 1.0}, "why": "You fixed the lot. Even Red Kite's spies were impressed: +1 star."}, {"label": "Fix the cheap things (£200)", "sub": "The quick wins", "effects": {"cash": -200, "rep": 0.5}, "why": "The easy fixes made a real difference: +½ star. It cost £200."}, {"label": "Ignore the report", "sub": "It's just Red Kite stirring", "effects": {"rep": -0.5}, "why": "Passengers read the report too. Ignoring it looked bad: −½ star."}]}},
+  {"act": "Act 5 — Airline of the Year", "title": "Storm season", "fuel": 2.9, "jobs": ["schedule", "pricing"], "calc": "schedule", "challenge": true, "brief": "Storm warning again, just like earlier in the season. Wiser this time?", "news": ["Storm warning: gales over the Irish Sea again.", "Fuel £2.90 a litre."], "event": {"id": "storm2", "title": "Storm — again", "text": "Another storm hits during boarding, just like earlier in the season. Same choice, wiser airline?", "options": [{"label": "Fly anyway", "sub": "2 hour delay, bumpy ride", "effects": {"rep": -0.5, "status": "DELAYED"}, "why": "You flew through the storm. Passengers were late and shaken: −½ star."}, {"label": "Wait it out (£200)", "sub": "Hotel vouchers for passengers", "effects": {"cash": -200, "status": "DELAYED"}, "why": "You waited for the storm to pass. Vouchers cost £200 but passengers were safe and happy."}, {"label": "Cancel the flight", "sub": "Refund everyone", "effects": {"rep": 0.5, "status": "CANCELLED", "refund": true}, "why": "You cancelled and refunded everyone. No money today, but people trust you: +½ star."}]}},
+  {"act": "Act 5 — Airline of the Year", "title": "Final fuel call", "fuel": 3.1, "jobs": ["fuel", "pricing"], "calc": "fuel", "brief": "Fuel is £3.10. The last chance to fill up before awards week.", "news": ["Fuel £3.10 — last chance to fill up before awards week.", "Judges are watching every airline this week."]},
+  {"act": "Act 5 — Airline of the Year", "title": "Airline of the Year — the finale", "fuel": 3.2, "jobs": ["pricing"], "calc": "revenue", "challenge": true, "finale": true, "brief": "Airline of the Year is tonight. One last day of flying.", "news": ["AIRLINE OF THE YEAR TONIGHT.", "Fuel peaks at £3.20 a litre."]}
  ]
 }
 </script>
@@ -818,12 +795,12 @@ function hasRun(){ const s = load(); return !!(s && s.airline && s.airline.name)
 function saveCode(){ return 'ASIM2.'+b64e(JSON.stringify(S)); }
 function loadCode(code){ code = String(code||'').trim(); if(!code.startsWith('ASIM2.')) throw new Error('Not a save code for this version'); const s = JSON.parse(b64d(code.slice(6))); if(!s || s.v!==2 || !s.steps) throw new Error('Code damaged'); return s; }
 function loadRuns(){ try{ const r = JSON.parse(localStorage.getItem(RUNS_KEY)||'[]'); return Array.isArray(r)?r:[]; }catch(e){ return []; } }
-function recordRun(){
-  if(!S.airline.name || S.finished) return;
+function recordRun(checkpoint){
+  if(!S.airline.name || (S.finished && !checkpoint)) return;
   const runs = loadRuns();
-  runs.push({ world:WORLD.name, name:S.airline.name, rounds:S.round, cash:Math.round(S.cash), rep:S.rep, fleet:S.fleet.map(f=>planeById(f.planeId).name), date:new Date().toISOString().slice(0,10) });
+  runs.push({ world:WORLD.name, name:S.airline.name, rounds:S.round, cash:Math.round(S.cash), rep:S.rep, fleet:S.fleet.map(f=>planeById(f.planeId).name), date:new Date().toISOString().slice(0,10), checkpoint:!!checkpoint });
   try{ localStorage.setItem(RUNS_KEY, JSON.stringify(runs)); }catch(e){}
-  S.finished = true;
+  if(!checkpoint) S.finished = true;
 }
 
 /* ---------- sync between windows ---------- */
@@ -866,7 +843,8 @@ function tripHours(plane, route){ return 2 * route.km / plane.speed; }        //
 function quarterRule(plane, route){ const h = flightHours(plane, route); return Math.abs(h*4 - Math.round(h*4)) < 1e-9 && h <= 24; }
 const dayStart = () => toMin(WORLD.dayStart||'06:00'), dayEnd = () => toMin(WORLD.dayEnd||'22:00'), turnaround = () => WORLD.turnaroundMin||45;
 function scheduleMinutes(plane, sched){ return sched.reduce((t, id) => t + tripHours(plane, routeById(id))*60, 0) + Math.max(0, sched.length-1)*turnaround(); }
-function canAddTrip(plane, sched, route){ if(!planeCanFly(plane, route)) return false; if(sched.length >= (WORLD.maxTrips||4)) return false; return scheduleMinutes(plane, sched.concat([route.id])) <= dayEnd() - dayStart(); }
+function canAddTrip(plane, sched, route){ if(!planeCanFly(plane, route)) return false; if(sched.length >= (WORLD.maxTrips||4)) return false; if(!sched.length) return true; /* one long trip may fill (or overrun) the day */ return scheduleMinutes(plane, sched.concat([route.id])) <= dayEnd() - dayStart(); }
+function fmtTimeDay(min){ const d = Math.floor(min/1440); return fmtTime(min) + (d >= 1 ? (d===1 ? ' next day' : ` +${d} days`) : ''); }
 function schedOf(f){ return f.schedule && f.schedule.length ? f.schedule : (f.route ? [f.route] : []); }
 function activeFleet(){ return S.fleet.filter(f => schedOf(f).length && !f.grounded); }
 function fuelNeeded(){ return activeFleet().reduce((t,f)=> t + schedOf(f).reduce((u,id) => u + fuelForFlight(planeById(f.planeId), routeById(id)), 0), 0); }
@@ -1006,6 +984,7 @@ function enterStep(){
   if(st.t==='fly') startFlight();
   if(st.t==='results') applyResults();
   if(st.t==='summary' && roundData(S.round).finale && !S.finished) recordRun();
+  if(st.t==='summary' && roundData(S.round).checkpoint && !S.rnd.checkpointed){ S.rnd.checkpointed = true; recordRun(true); }
   publish();
 }
 
@@ -1035,7 +1014,7 @@ function buildParts(kind){
     const ff = featuredFleet(), p = planeById(ff.planeId), sched = schedOf(ff);
     if(!sched.length) return parts;
     const r1 = routeById(sched[0]), h1 = flightHours(p, r1), dep1 = dayStart(), arr1 = dep1 + 2*h1*60;
-    parts.push({ title:'Back home', q:`Trip 1 departs <b>${fmtTime(dep1)}</b>. ${esc(r1.city)} is <b>${num(r1.km)} km</b> away at <b>${num(p.speed)} km/h</b>, so it's <b>${fmtHours(h1)}</b> each way. When does the plane land back home?`, numbers:[['Departs', fmtTime(dep1)],['Distance', num(r1.km)+' km'],['Speed', num(p.speed)+' km/h'],['Each way', fmtHours(h1)]], answer:arr1, kind:'time', explain:`${fmtTime(dep1)} + ${fmtHours(h1)} + ${fmtHours(h1)} = ${fmtTime(arr1)}` });
+    parts.push({ title:'Back home', q:`Trip 1 departs <b>${fmtTime(dep1)}</b>. ${esc(r1.city)} is <b>${num(r1.km)} km</b> away at <b>${num(p.speed)} km/h</b>, so it's <b>${fmtHours(h1)}</b> each way. When does the plane land back home?${arr1 >= 1440 ? ' (Clock time — it lands the next day.)' : ''}`, numbers:[['Departs', fmtTime(dep1)],['Distance', num(r1.km)+' km'],['Speed', num(p.speed)+' km/h'],['Each way', fmtHours(h1)]], answer:arr1, kind:'time', explain:`${fmtTime(dep1)} + ${fmtHours(h1)} + ${fmtHours(h1)} = ${fmtTimeDay(arr1)}` });
     if(sched.length > 1){
       const dep2 = arr1 + turnaround(), r2_ = routeById(sched[1]), h2 = flightHours(p, r2_), arr2 = dep2 + 2*h2*60;
       parts.push({ title:'Next departure', q:`The plane lands at <b>${fmtTime(arr1)}</b> and needs <b>${turnaround()} minutes</b> on the ground. When does trip 2 depart?`, numbers:[['Lands', fmtTime(arr1)],['Turnaround', turnaround()+' min']], answer:dep2, kind:'time', explain:`${fmtTime(arr1)} + ${turnaround()} min = ${fmtTime(dep2)}` });
@@ -1080,7 +1059,7 @@ function parseAnswer(raw, kind){
   if(kind==='hours'){ let m = s.match(/^(\d+)[:h](\d{1,2})(min|m)?$/); if(m) return parseInt(m[1],10)+parseInt(m[2],10)/60; m = s.match(/^(\d+)h$/); if(m) return parseInt(m[1],10); m = s.match(/^(\d+)(?:min|m)$/); if(m) return parseInt(m[1],10)/60; s = s.replace(/h(ours?)?$/,'').replace('½','.5'); }
   const v = parseFloat(s.replace(/[^0-9.\-]/g,'')); return isNaN(v) ? null : v;
 }
-function checkAnswer(part, raw){ const v = parseAnswer(raw, part.kind); if(v===null) return 'blank'; if(Math.abs(v - part.answer) < 0.005) return 'ok'; return v > part.answer ? 'high' : 'low'; }
+function checkAnswer(part, raw){ const v = parseAnswer(raw, part.kind); if(v===null) return 'blank'; if(part.kind==='time'){ const a = ((part.answer % 1440)+1440)%1440; if(Math.abs(v - a) < 0.5) return 'ok'; return v > a ? 'high' : 'low'; } if(Math.abs(v - part.answer) < 0.005) return 'ok'; return v > part.answer ? 'high' : 'low'; }
 
 /* ---------- flight, results, reputation, reviews ---------- */
 function consumeFuel(L){ if(L <= 0 || S.fuel <= 0) return 0; const v = r2(S.fuelValue * (L / S.fuel)); S.fuel = r2(S.fuel - L); S.fuelValue = r2(S.fuelValue - v); if(S.fuel <= 0){ S.fuel = 0; S.fuelValue = 0; } return v; }
@@ -1391,7 +1370,7 @@ function releaseGate(){
 /* ----- HQ: the desk ----- */
 function dayTimeline(f, compact){
   const p = planeById(f.planeId), sched = schedOf(f), span = dayEnd()-dayStart();
-  let t = 0; const segs = sched.map((id,k) => { const r = routeById(id), m = tripHours(p, r)*60; const seg = { left: 100*t/span, width: 100*m/span, city:r.city, dep:fmtTime(dayStart()+t), arr:fmtTime(dayStart()+t+m), k }; t += m + turnaround(); return seg; });
+  let t = 0; const segs = sched.map((id,k) => { const r = routeById(id), m = tripHours(p, r)*60; const seg = { left: Math.min(100, 100*t/span), width: Math.min(100 - Math.min(100, 100*t/span), 100*m/span), city:r.city + (t+m > span ? ' ⟶' : ''), dep:fmtTime(dayStart()+t), arr:fmtTimeDay(dayStart()+t+m), k }; t += m + turnaround(); return seg; });
   return `<div class="tl ${compact?'compact':''}"><div class="tl-axis"><span>${fmtTime(dayStart())}</span><span>${fmtTime(dayEnd())}</span></div><div class="tl-bar">${segs.map(s=>`<div class="tl-seg" style="left:${s.left}%;width:${s.width}%" title="${s.dep}–${s.arr} ${esc(s.city)}"><span>${esc(s.city)}</span></div>`).join('')}</div>${compact?'':`<div class="tl-list">${segs.map(s=>`<span><b class="mono">${s.dep}</b> ${esc(s.city)} <span class="muted">back ${s.arr}</span></span>`).join('')}</div>`}</div>`;
 }
 R.hq = () => {
@@ -1551,10 +1530,11 @@ R.challengeCalc = st => { renderCalc(st, { title:"Captain's challenge", noAwait:
 R.summary = () => {
   const w = roundData(S.round), h = S.history[S.history.length-1] || {}, tone = roundTone();
   const best = loadRuns().filter(r => !S.finished || r.name !== S.airline.name || r.cash !== Math.round(S.cash)).sort((a,b)=>b.cash-a.cash)[0];
-  const title = w.finale ? 'End of the season' : tone==='good' ? 'Round '+S.round+': a good round' : 'Round '+S.round+' complete';
+  const title = w.finale ? 'End of the season' : w.checkpoint ? 'Mid-season checkpoint' : tone==='good' ? 'Round '+S.round+': a good round' : 'Round '+S.round+' complete';
   screen().innerHTML = `<div class="card stack ${tone==='good'?'tone-good':''}">${header(title, null, w.finale ? 'FINALE' : 'ROUND '+S.round)}
     ${factsHtml([['Ticket money', money(h.revenue||0), 'white'],['Costs', money(h.costs||0), 'white'],[(h.profit||0)>=0?'Profit':'Loss', money(Math.abs(h.profit||0)), (h.profit||0)>=0?'':'red'],['Cash', money(S.cash)],['Reputation', starsHtml(S.rep), 'small'],['Fleet', S.fleet.length+' plane'+(S.fleet.length===1?'':'s'), 'white']])}
     ${S.rnd.challengeWon ? `<div class="rule" style="border-color:var(--green)">Captain's challenge won: <b>${esc(S.rnd.challenge.rewardText)}</b></div>` : ''}
+    ${w.checkpoint ? `<div class="rule" style="border-color:var(--amber)">Half-time snapshot saved to Best runs: ${money(S.cash)} and ${S.rep} stars after ${S.round} rounds. The season carries on.</div>` : ''}
     ${w.finale ? `<div class="rule" style="border-color:var(--amber)">This run is recorded. ${best && best.cash <= S.cash ? '<b>Your best run so far.</b>' : best ? 'Best run so far: <b>'+money(best.cash)+'</b>.' : ''} Keep flying, or start again from the menu.</div>` : ''}
     <div class="actions left"><button class="btn primary big" id="nx">Next round: back to HQ &#9654;</button><button class="btn big" id="shop">🛒 Plane shop</button><button class="btn big" id="end">Save &amp; finish for today</button>${w.finale?'<button class="btn big" id="runs">Best runs</button>':''}</div></div>`;
   on('nx', () => startRound(S.round+1)); on('shop', () => openShop()); on('end', () => showCode(true)); on('runs', () => showRuns());
@@ -1610,7 +1590,7 @@ function renderOverlay(){
   if(o.type==='runs'){
     const runs = loadRuns().sort((a,b)=>b.cash-a.cash);
     screen().innerHTML = `<div class="card stack">${header('Best runs', null, plural(runs.length,'run').toUpperCase())}
-      ${runs.length ? `<table class="data"><thead><tr><th>#</th><th>Airline</th><th>World</th><th class="num">Rounds</th><th class="num">Final cash</th><th>Stars</th><th>Fleet</th><th>Date</th></tr></thead><tbody>${runs.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.world)}</td><td class="num">${r.rounds}</td><td class="num amber">${money(r.cash)}</td><td class="stars">${starsHtml(r.rep)}</td><td class="small">${r.fleet.map(esc).join(', ')}</td><td class="small">${esc(r.date)}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">No completed runs yet. Finish a season to record one.</p>'}
+      ${runs.length ? `<table class="data"><thead><tr><th>#</th><th>Airline</th><th>World</th><th class="num">Rounds</th><th class="num">Final cash</th><th>Stars</th><th>Fleet</th><th>Date</th></tr></thead><tbody>${runs.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}${r.checkpoint?' <span class="pill" style="font-size:10px">half-time</span>':''}</td><td>${esc(r.world)}</td><td class="num">${r.rounds}</td><td class="num amber">${money(r.cash)}</td><td class="stars">${starsHtml(r.rep)}</td><td class="small">${r.fleet.map(esc).join(', ')}</td><td class="small">${esc(r.date)}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">No completed runs yet. Finish a season to record one.</p>'}
       <div class="actions"><button class="btn big" id="cl">Back</button></div></div>`;
     on('cl', closeOverlay); return;
   }
@@ -1770,7 +1750,7 @@ function gameClock(){
 /* ----- live market charts (SVG, two series max, direct labels + legend) ----- */
 function svgChart(w, h, inner){ return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" class="cs" aria-hidden="true">${inner}</svg>`; }
 function fuelChart(){
-  const n = Math.max(S.round, 1), rounds = []; for(let i=1;i<=Math.max(n, 6);i++) rounds.push(i);
+  const n = Math.max(S.round, 1), total = WORLD.rounds.length-1, rounds = []; for(let i=1;i<=Math.max(Math.min(total, n <= 12 ? 12 : total), 6);i++) rounds.push(i);
   const known = rounds.filter(i => i <= S.round).map(i => ({i, p: fuelPrice(i)}));
   const paid = S.history.map(h => ({i:h.round, p:h.fuelPaid})).filter(x => x.i >= 1);
   const all = known.map(x=>x.p).concat(paid.map(x=>x.p), [avgFuelPrice()]);
@@ -1779,7 +1759,7 @@ function fuelChart(){
   const x = i => L + (W-L-R) * (i-1) / Math.max(1, rounds.length-1), y = p => T + (H-T-B) * (1 - (p-ymin)/(ymax-ymin));
   let g = '';
   for(let v = ymin; v <= ymax+1e-9; v += 0.5) g += `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="grid"/><text x="${L-8}" y="${y(v)+4}" class="ax" text-anchor="end">£${v.toFixed(2)}</text>`;
-  rounds.forEach(i => { g += `<text x="${x(i)}" y="${H-12}" class="ax" text-anchor="middle">${i}</text>`; });
+  rounds.forEach(i => { if(rounds.length <= 14 || i % 5 === 0 || i === 1 || i === S.round) g += `<text x="${x(i)}" y="${H-12}" class="ax" text-anchor="middle">${i}</text>`; });
   if(known.length > 1) g += `<polyline class="ln fuel" points="${known.map(k=>x(k.i)+','+y(k.p)).join(' ')}"/>`;
   known.forEach(k => { g += `<circle cx="${x(k.i)}" cy="${y(k.p)}" r="${k.i===S.round?7:4}" class="dot fuel"/>`; });
   if(paid.length > 1) g += `<polyline class="ln paid" points="${paid.map(k=>x(k.i)+','+y(k.p)).join(' ')}"/>`;
