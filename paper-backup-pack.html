@@ -45,10 +45,20 @@
   @media screen{.foot{bottom:10mm;left:14mm;right:14mm}}
   .answers td{font-family:"Courier New",monospace}
   ul{margin:6px 0 6px 20px}
+  table.ft td{height:52px} table.ft small{color:var(--grey)}
+  .tlp{position:relative;margin:24px 0 8px}
+  .tlp-axis{position:relative;height:18px;font-family:"Courier New",monospace;font-size:11pt}
+  .tlp-axis span{position:absolute;transform:translateX(-50%)}
+  .tlp-grid{position:relative;height:28mm;border:2px solid var(--ink);margin-bottom:6mm}
+  .tlp-grid i{position:absolute;top:0;bottom:0;border-left:1px solid #ccc}
+  .tlp-grid i.h{border-left:1px solid #888}
+  .tankp{position:relative;width:60mm;height:150mm;border:3px solid var(--ink);border-radius:10mm 10mm 4mm 4mm;margin:10mm auto 0}
+  .tankp i{position:absolute;left:0;right:0;border-top:1px dashed #999}
+  .tankp i span{position:absolute;left:64mm;transform:translateY(-50%);font-family:"Courier New",monospace;font-size:10pt;white-space:nowrap}
 </style>
 </head>
 <body>
-<div class="screen-note">Print this file (Ctrl+P, A4 portrait). It contains one round's decision cards and calculation sheets for when the computer or whiteboard misbehaves. Numbers match Round 1–2 of the <b>Clear Skies</b> world with the starter plane (DHC-6 Twin Otter, Cardiff → Dublin). Teacher answers are on the last page.</div>
+<div class="screen-note">Print this file (Ctrl+P, A4 portrait). It contains one round's decision cards and calculation sheets for when the computer or whiteboard misbehaves. Includes blank planning sheets that match the screens (forecast table, day timeline, fuel tank). Numbers match Round 1–2 of the <b>Clear Skies</b> world with the starter plane (DHC-6 Twin Otter, Cardiff → Dublin). Teacher answers are on the last page.</div>
 
 <!-- PAGE 1 -->
 <div class="page">
@@ -158,14 +168,17 @@
     <div class="fact"><small>Speed</small><b>300 km/h</b></div>
     <div class="fact"><small>Departs</small><b>09:00</b></div>
   </div>
-  <h2>Part 1 — Flight time</h2>
-  <p class="sum">distance ÷ speed = hours</p>
+  <h2>Part 1 — Flight time (one way)</h2>
+  <p class="sum">distance ÷ speed = flight time</p>
   <div class="ans">300 ÷ 300 = <span class="blank"></span> hours</div>
-  <div class="work"></div>
-  <h2>Part 2 — Landing time</h2>
+  <h2>Part 2 — There and back</h2>
+  <p class="sum">out + turnaround (45 min) + back</p>
+  <div class="ans"><span class="blank" style="min-width:110px"></span> + 45 min + <span class="blank" style="min-width:110px"></span> = <span class="blank"></span></div>
+  <h2>Part 3 — Back home</h2>
   <div class="ans">09:00 + <span class="blank" style="min-width:110px"></span> = <span class="blank"></span></div>
   <div class="box light">
-    <p><b>Extra flight (Paris):</b> 450 km at 300 km/h, departs 10:00. Flight time = ______ Landing time = ______</p>
+    <p><b>Paris:</b> 450 km at 300 km/h. One way = ______ There and back = ______ Leaves 09:00, home at ______</p>
+    <p><b>Two Paris trips:</b> 45 min at home between them. Second take-off ______ Home at ______</p>
   </div>
   <div class="work"></div>
   <div class="foot"><span>Airline Simulator · paper backup</span><span>Job: Check the flight</span></div>
@@ -226,6 +239,62 @@
   <div class="foot"><span>Airline Simulator · paper backup</span><span>Captain's challenge</span></div>
 </div>
 
+<!-- PAGE: blank forecast table -->
+<div class="page">
+  <span class="tag">PLANNING SHEET</span>
+  <h1>Forecast table</h1>
+  <p>Write the options across the top. Work down each column, then choose.</p>
+  <table class="ft">
+    <tr><th style="width:34%">Row</th><th>Option 1</th><th>Option 2</th><th>Option 3</th></tr>
+    <tr><td>People who want to fly</td><td></td><td></td><td></td></tr>
+    <tr><td>Seats on the planned trips</td><td></td><td></td><td></td></tr>
+    <tr><td>Tickets sold <small>(the smaller)</small></td><td></td><td></td><td></td></tr>
+    <tr><td>Income <small>(tickets × price)</small></td><td></td><td></td><td></td></tr>
+    <tr><td>Costs <small>(running + fuel)</small></td><td></td><td></td><td></td></tr>
+    <tr><td>Profit <small>(income − costs)</small></td><td></td><td></td><td></td></tr>
+    <tr><td style="height:46px"></td><td></td><td></td><td></td></tr>
+    <tr><td style="height:46px"></td><td></td><td></td><td></td></tr>
+  </table>
+  <p style="margin-top:10px"><b>I choose:</b> ______________________ <b>because</b> ____________________________________</p>
+  <div class="work"></div>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Blank forecast table</span></div>
+</div>
+
+<!-- PAGE: blank day timeline -->
+<div class="page">
+  <span class="tag">PLANNING SHEET</span>
+  <h1>The day</h1>
+  <p>Shade each trip: <b>out</b>, <b>turnaround (45 min)</b>, <b>back</b>. Leave 45 min at home between trips. The airport closes at 22:00.</p>
+  <div class="tlp">
+    <div class="tlp-axis"><span style="left:0.000%">06:00</span><span style="left:12.500%">08:00</span><span style="left:25.000%">10:00</span><span style="left:37.500%">12:00</span><span style="left:50.000%">14:00</span><span style="left:62.500%">16:00</span><span style="left:75.000%">18:00</span><span style="left:87.500%">20:00</span><span style="left:100.000%">22:00</span></div>
+    <div class="tlp-grid"><i style="left:0.000%" class="h"></i><i style="left:1.562%" class="q"></i><i style="left:3.125%" class="q"></i><i style="left:4.688%" class="q"></i><i style="left:6.250%" class="h"></i><i style="left:7.812%" class="q"></i><i style="left:9.375%" class="q"></i><i style="left:10.938%" class="q"></i><i style="left:12.500%" class="h"></i><i style="left:14.062%" class="q"></i><i style="left:15.625%" class="q"></i><i style="left:17.188%" class="q"></i><i style="left:18.750%" class="h"></i><i style="left:20.312%" class="q"></i><i style="left:21.875%" class="q"></i><i style="left:23.438%" class="q"></i><i style="left:25.000%" class="h"></i><i style="left:26.562%" class="q"></i><i style="left:28.125%" class="q"></i><i style="left:29.688%" class="q"></i><i style="left:31.250%" class="h"></i><i style="left:32.812%" class="q"></i><i style="left:34.375%" class="q"></i><i style="left:35.938%" class="q"></i><i style="left:37.500%" class="h"></i><i style="left:39.062%" class="q"></i><i style="left:40.625%" class="q"></i><i style="left:42.188%" class="q"></i><i style="left:43.750%" class="h"></i><i style="left:45.312%" class="q"></i><i style="left:46.875%" class="q"></i><i style="left:48.438%" class="q"></i><i style="left:50.000%" class="h"></i><i style="left:51.562%" class="q"></i><i style="left:53.125%" class="q"></i><i style="left:54.688%" class="q"></i><i style="left:56.250%" class="h"></i><i style="left:57.812%" class="q"></i><i style="left:59.375%" class="q"></i><i style="left:60.938%" class="q"></i><i style="left:62.500%" class="h"></i><i style="left:64.062%" class="q"></i><i style="left:65.625%" class="q"></i><i style="left:67.188%" class="q"></i><i style="left:68.750%" class="h"></i><i style="left:70.312%" class="q"></i><i style="left:71.875%" class="q"></i><i style="left:73.438%" class="q"></i><i style="left:75.000%" class="h"></i><i style="left:76.562%" class="q"></i><i style="left:78.125%" class="q"></i><i style="left:79.688%" class="q"></i><i style="left:81.250%" class="h"></i><i style="left:82.812%" class="q"></i><i style="left:84.375%" class="q"></i><i style="left:85.938%" class="q"></i><i style="left:87.500%" class="h"></i><i style="left:89.062%" class="q"></i><i style="left:90.625%" class="q"></i><i style="left:92.188%" class="q"></i><i style="left:93.750%" class="h"></i><i style="left:95.312%" class="q"></i><i style="left:96.875%" class="q"></i><i style="left:98.438%" class="q"></i><i style="left:100.000%" class="h"></i></div>
+    <div class="tlp-grid"><i style="left:0.000%" class="h"></i><i style="left:1.562%" class="q"></i><i style="left:3.125%" class="q"></i><i style="left:4.688%" class="q"></i><i style="left:6.250%" class="h"></i><i style="left:7.812%" class="q"></i><i style="left:9.375%" class="q"></i><i style="left:10.938%" class="q"></i><i style="left:12.500%" class="h"></i><i style="left:14.062%" class="q"></i><i style="left:15.625%" class="q"></i><i style="left:17.188%" class="q"></i><i style="left:18.750%" class="h"></i><i style="left:20.312%" class="q"></i><i style="left:21.875%" class="q"></i><i style="left:23.438%" class="q"></i><i style="left:25.000%" class="h"></i><i style="left:26.562%" class="q"></i><i style="left:28.125%" class="q"></i><i style="left:29.688%" class="q"></i><i style="left:31.250%" class="h"></i><i style="left:32.812%" class="q"></i><i style="left:34.375%" class="q"></i><i style="left:35.938%" class="q"></i><i style="left:37.500%" class="h"></i><i style="left:39.062%" class="q"></i><i style="left:40.625%" class="q"></i><i style="left:42.188%" class="q"></i><i style="left:43.750%" class="h"></i><i style="left:45.312%" class="q"></i><i style="left:46.875%" class="q"></i><i style="left:48.438%" class="q"></i><i style="left:50.000%" class="h"></i><i style="left:51.562%" class="q"></i><i style="left:53.125%" class="q"></i><i style="left:54.688%" class="q"></i><i style="left:56.250%" class="h"></i><i style="left:57.812%" class="q"></i><i style="left:59.375%" class="q"></i><i style="left:60.938%" class="q"></i><i style="left:62.500%" class="h"></i><i style="left:64.062%" class="q"></i><i style="left:65.625%" class="q"></i><i style="left:67.188%" class="q"></i><i style="left:68.750%" class="h"></i><i style="left:70.312%" class="q"></i><i style="left:71.875%" class="q"></i><i style="left:73.438%" class="q"></i><i style="left:75.000%" class="h"></i><i style="left:76.562%" class="q"></i><i style="left:78.125%" class="q"></i><i style="left:79.688%" class="q"></i><i style="left:81.250%" class="h"></i><i style="left:82.812%" class="q"></i><i style="left:84.375%" class="q"></i><i style="left:85.938%" class="q"></i><i style="left:87.500%" class="h"></i><i style="left:89.062%" class="q"></i><i style="left:90.625%" class="q"></i><i style="left:92.188%" class="q"></i><i style="left:93.750%" class="h"></i><i style="left:95.312%" class="q"></i><i style="left:96.875%" class="q"></i><i style="left:98.438%" class="q"></i><i style="left:100.000%" class="h"></i></div>
+  </div>
+  <table style="margin-top:12px">
+    <tr><th>Trip</th><th>Route</th><th>Takes off</th><th>One way</th><th>There and back</th><th>Home at</th></tr>
+    <tr><td>1</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>2</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>3</td><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  <p style="margin-top:10px"><b>Does it fit before 22:00?</b> Yes / No</p>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Blank day timeline</span></div>
+</div>
+
+<!-- PAGE: blank fuel tank -->
+<div class="page">
+  <span class="tag">PLANNING SHEET</span>
+  <h1>The fuel tank</h1>
+  <p>Shade what is in the tank. Mark what today's trips will use. If they need more than the tank holds, shade the extra in red.</p>
+  <div class="tankp"><i style="bottom:0%"><span>0 L</span></i><i style="bottom:10%"><span>500 L</span></i><i style="bottom:20%"><span>1,000 L</span></i><i style="bottom:30%"><span>1,500 L</span></i><i style="bottom:40%"><span>2,000 L</span></i><i style="bottom:50%"><span>2,500 L</span></i><i style="bottom:60%"><span>3,000 L</span></i><i style="bottom:70%"><span>3,500 L</span></i><i style="bottom:80%"><span>4,000 L</span></i><i style="bottom:90%"><span>4,500 L</span></i><i style="bottom:100%"><span>5,000 L</span></i></div>
+  <table style="margin-top:12px;max-width:120mm">
+    <tr><th>In the tank now</th><td style="width:40mm"></td></tr>
+    <tr><th>Today's trips use</th><td></td></tr>
+    <tr><th>Left after today</th><td></td></tr>
+    <tr><th>Space to buy more</th><td></td></tr>
+  </table>
+  <div class="foot"><span>Airline Simulator · paper backup</span><span>Blank fuel tank</span></div>
+</div>
+
 <!-- PAGE 9: answers -->
 <div class="page">
   <span class="tag">TEACHER ANSWER SHEET</span>
@@ -241,7 +310,7 @@
   <h2>Buy fuel (£1.30 per litre)</h2>
   <table class="answers"><tr><th>Litres</th><th class="num">Bill</th></tr><tr><td>500 L</td><td class="num">£650</td></tr><tr><td>1,000 L</td><td class="num">£1,300</td></tr><tr><td>2,000 L</td><td class="num">£2,600</td></tr></table>
   <h2>Check the flight</h2>
-  <ul><li>Dublin: 300 ÷ 300 = <b>1 hour</b>. Lands <b>10:00</b>.</li><li>Paris: 450 ÷ 300 = <b>1.5 hours (1 h 30 min)</b>. Lands <b>11:30</b>.</li></ul>
+  <ul><li>Dublin: 300 ÷ 300 = <b>1 h</b> one way. There and back 1 h + 45 min + 1 h = <b>2 h 45</b>. Home at <b>11:45</b>.</li><li>Paris: 450 ÷ 300 = <b>1 h 30</b> one way. There and back <b>3 h 45</b>. Home at <b>12:45</b>.</li><li>Two Paris trips: second take-off <b>13:30</b>, home at <b>17:15</b> (8 h 15 in all).</li></ul>
   <h2>Run the cabin (£250 running cost)</h2>
   <ul><li>19 seats: <b>£13 remainder 3</b></li><li>22 seats: <b>£11 remainder 8</b></li><li>15 seats: <b>£16 remainder 10</b></li></ul>
   <h2>Captain's challenge</h2>

@@ -24,7 +24,9 @@ Progress autosaves on every decision (browser storage on that machine). The teac
 
 **Ctrl+Shift+T**, or tap the top-right corner of the control window three times.
 
-- Release the current gate · skip or go back one screen · high/low nudge toggle (off by default) · auto-advance after landing.
+- Release the current gate (fills the open forecast cell) · fill the whole table · skip or go back one screen · high/low nudge toggle (off by default) · auto-advance after landing.
+- Forecast tables: help level on live rows, which tables are live (as scripted / all / none), working space on the board, next round's live table, and "Check the time maths" (runs the Change Request 2 time cases).
+- Repeat this round (back to the start-of-round state).
 - Trigger, delay or skip events · fire a Captain's challenge now.
 - Queue or remove jobs for the next round · set depth (1–3) per job.
 - Starting cash for new runs · adjust cash or reputation now · start the next round now · flight animation length.
@@ -33,13 +35,18 @@ Progress autosaves on every decision (browser storage on that machine). The teac
 
 ## Game structure
 
-- **Setup phase** (one lesson): name + two livery colours → tail-fin symbol → home airport (three options with different landing fees and passenger numbers) → buy the first plane (whole shop visible) → pick Dublin or Paris → buy the starting fuel → set a price → one revenue calculation → first flight lands and money arrives.
-- **Rounds** run from the **HQ desk**. The briefing (world script plus consequence lines about his own past decisions) sits above a clipboard of task cards: assign a plane, plan the day, buy fuel, run the cabin, set the fare. He opens them in any order. Cards marked *needed* must be done before **Run the flights**; fuel is only needed when the tank is actually short, and the fare card is only needed when the route is new or the rival has moved (otherwise last round's price stands). Exactly one card per round carries the gated calculation (📐), and the engine never sets the same sum twice in a row (it swaps between the day's timing and the day's money). Then the day plays out on the IWB, the landing screen reports honestly per trip (LANDED / FULL FLIGHT / DELAYED / DIVERTED / CANCELLED / NO FUEL), a problem event may follow, then the Captain's challenge (every two rounds, optional) and a summary.
-- **Plan the day.** Each plane flies a planned day of trips, out and back, from 06:00 to 22:00 with 45 minutes on the ground between trips (all in `data-world`). A route's passengers are per day and shared across the trips flown there, so flying Paris three times stops paying; mixing routes is the decision. The schedule calculation is time arithmetic: departure + flight time out + back = landing; + turnaround = next departure.
-- **Fuel is a tank.** Every flight drains it by the plane's fuel use × distance; fuel bought adds to it at the price paid, and the landing report values fuel used at the average price in the tank. A flight the tank can't cover stays on the ground ("not enough fuel"), calmly, with no other penalty. Buying ahead when fuel is cheap is the whole hidden lesson, now playable.
-- **Flights happen regardless**: once a plane has a route it flies every round. The pupil tunes the business; nothing is unlocked by answering. "Cleared for take-off" only ever means the maths gate passed.
-- The plane shop is open at any point between tasks; buying runs its own small calculation (cash left, flights to pay it back).
-- **World "Clear Skies"**: 30 scripted rounds in five acts (about six lessons at five rounds each), fully deterministic, from the *Clear Skies 30 Rounds* workbook. Two hidden lessons: rounds 1–12 fuel climbs every round (spiking to £3.00 in round 7), so buying early in bulk wins; rounds 13–30 fuel crashes to £1.10 in round 14 (the oil find) then climbs to £3.20, so buying the dip wins. Thirteen events (undercut, storm, crew, fault, price war, blogger, fog, second undercut, ash cloud, baggage, fees, mystery shopper, second storm) and fifteen Captain's challenges. Rival undercuts always target the route the pupil's focus plane flies. Round 12 is a mid-season checkpoint (snapshot to Best runs, play continues); round 30 is the finale that records the run.
+- **Setup phase** (one lesson): name + two livery colours → tail-fin symbol → home airport (landing fees and passenger numbers differ) → buy the first plane (whole shop visible) → pick Dublin or Paris (people shown as icons, one box per plane-load) → buy the starting fuel (fuel forecast table) → set the price (price forecast table: he works out the income for three prices, then chooses) → the first flight lands and money arrives.
+- **Rounds** run from the **HQ desk**. The briefing (world script plus consequence lines about his own past decisions) sits above the task cards. The main card is the **planning desk** for the focus plane, in three steps:
+  1. **Who's flying:** demand as people icons with plane-load brackets, and the *How many trips?* forecast table (trips needed with remainder, income and cost of the last trip, is it worth it?). Choosing a column sets the day.
+  2. **The fare:** the *Set the price* forecast table for three prices (people, seats, tickets sold, income, costs, profit) with a seats bar and break-even marker under each column. Choosing a column sets the fare.
+  3. **The day:** the day timeline (out, turnaround, back, home turnaround), the fuel tank with today's use marked, add or remove trips, and *Compare with another day* (e.g. one Madrid trip against two Paris trips).
+  Other cards: Buy fuel (two suppliers compared), Run the cabin (three layouts compared), and a Plan-the-day card for every other plane. The plane shop compares up to three planes in a forecast table before buying.
+- **Forecast tables replace the old one-question screens.** Each cell is *given*, *enter* (only the correct value is accepted; calm retry wording; teacher can release it) or *derived* (appears once the rows above are complete). When the table is complete, nothing is announced as best: he taps the column he wants. One table per round is live, as set by the world script (`calc`); the others are filled in by "your finance team" as tick cards he can tap to check. Help on live rows: Shown (the sum is given), Choose the sum (pick two number cards and an operation), Free (row name only), Fluent (pre-filled). Until Stage C's skills engine exists, the help level is one teacher setting.
+- **Time** comes from one shared module: a trip is out + turnaround away + back, with a turnaround at home between trips; planes leave at 09:00; the airport is open 06:00–22:00. The board, timeline, planner and map all use it.
+- **Fuel is a tank** with a capacity (5,000 L plus storage that comes with each plane). Every trip burns fuel both ways. A trip the tank can't cover stays on the ground, calmly.
+- **Forecast against actual:** after landing, "You expected £X · you got £Y" for income and profit, with one plain line if they differ.
+- **Working space on the IWB:** a big amber "Go to working space" button on the board (also on every table screen and in the teacher panel) turns the board into a pen area with the current sum's key numbers pinned at the top. Three colours, two thicknesses, eraser, undo, clear. Drawings are not saved and clear when a new calculation starts.
+- **World "Clear Skies"**: 30 scripted rounds in five acts, from the *Clear Skies 30 Rounds* workbook. Round 12 is a mid-season checkpoint; round 30 records the run.
 - **No game over**: if cash goes negative the bank lends enough to keep flying, and says so.
 
 ## Editing the numbers (no engine knowledge needed)
@@ -48,10 +55,11 @@ All tunables are JSON blocks at the top of `airline-simulator.html`, each with a
 
 | Block | Contains |
 | --- | --- |
-| `data-planes` | The shop: price, seats, speed, range, running cost per flight, fuel use per 100 km, typical profit (for the pay-back sum), optional `minReputation` (unused in stage 1). |
-| `data-world` | Starting cash, day length and turnaround, home airports (landing fee, passenger bonus), routes (distance, base price and demand, the published demand rule, price options), and the round-by-round script: fuel price, jobs, which calculation is gated, demand changes, competitor fares, events, news, challenges. A new world is a new copy of this block. |
+| `data-planes` | The shop: price, seats, speed, range, running cost per trip, fuel use per 100 km (a trip burns it both ways), tank storage the plane adds, typical profit per trip (for the pay-back sum), optional turnaround and `minReputation`. |
+| `data-world` | Starting cash, opening hours, first departure, turnaround, tank base size, fuel suppliers, demand-icon scale, home airports (landing fee, passenger bonus), routes (distance, base price and demand, the published demand rule, price options), and the round-by-round script: fuel price, jobs, which calculation is gated, demand changes, competitor fares, events, news, challenges. A new world is a new copy of this block. |
 | `data-fins` | The tail-fin motifs offered in setup (SVG symbols sit just below the data blocks). |
-| `data-jobs` | Job titles, icons and depth-level notes. |
+| `data-tables` | The forecast tables: for each job, its rows (given / enter / derived), how each row is worked out, and the skill id it will report to. |
+| `data-jobs` | Job titles and icons. |
 | `data-reviews` | Review card pools by cause. |
 | `data-challenges` | Captain's challenge questions (long multiplication / division) and rewards. |
 | `data-text` | Retry messages and the nudge wording. |
