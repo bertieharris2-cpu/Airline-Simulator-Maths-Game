@@ -34,6 +34,30 @@ The opening is being made excellent before the later campaign continues. `airlin
 - ***Close the day*** moves to the next morning.
 - **The look:** near-black navy, quiet title-case headings, sans figures, smaller text and 8px corners. Courier remains only on the wall's departure boards.
 
+**Real airports, comparable plans, more to run.**
+- **Home airport and terminal:**
+  - London Heathrow (T5 or T4), London Gatwick (North or South), London Luton, Manchester (T1 or T3).
+  - Each airport has a landing fee and a market size (more passengers at busy airports, and more business travellers at Heathrow).
+  - Each terminal has a turnaround time (which the scheduling engine uses) and a charge per passenger.
+- **Distances are real:** worked out from the airport coordinates. Flying times are rounded to 5 minutes, and fuel to 10 L.
+  - From Heathrow, Paris is 1 h 10 and Dublin 1 h 30; from Manchester, Dublin is 55 min and Paris 2 h.
+  - The normal fare follows distance (about £30 + 14p a km, to the nearest £10). The fare buttons run from £10 below to £30 above it.
+- **Nothing is final until *Start operations*:**
+  - fuel is an **order** that can be changed or cancelled, and is paid at the start;
+  - every plan step stays editable from the plan rail.
+- **Compare plans:** on the timetable, fare and planner steps, the right-hand panel shows *This plan* with **Pin this plan**, plus up to three pinned plans.
+  - Each card shows passengers flown, people with no seat, when the aircraft is free, crews needed, revenue and costs, and profit "about" (nearest £50).
+  - **Use this plan** loads a pinned plan back. The forecast still asks for the exact sums.
+- **Day 1, on-board sales:** nothing, snacks at £3 (half of passengers buy), snacks at £5 (3 in 10 buy), or free snacks (£2 a passenger, +½ star). Stock costs £1 an item.
+- **Crew duty:** one crew works at most 9 hours, from the first departure to the last landing. A longer day needs a second crew (£300).
+- **Day 2, departure times:** the first departure moves between 06:00 and 10:00 in 15-minute steps.
+  - A route with a service before 08:00 attracts an extra group of business travellers (Paris 10, Dublin 6, more at Heathrow and T5).
+  - An earlier start can also free the evening for another service.
+- **Look and controls:**
+  - square corners;
+  - smaller titles;
+  - ⛶ toggles **full screen** in one click. The teacher's triple-tap corner, which used to sit on top of the button, is now top-left over the logo. *Present on two screens* is in the Home menu.
+
 **Flow:** name → strategy → paint your planes → home airport → **your start-up aircraft** (the Twin Otter's seats, speed, range and running cost, each explained; no shop) → **first market** (Paris or Dublin) → Launch Day → Day 1 → Day 2 → Day 3 → *Regular operations established*.
 
 **Launch Day (high scaffold: SHOW → TRY → RUN → EXPLAIN):**
@@ -53,7 +77,7 @@ The opening is being made excellent before the later campaign continues. `airlin
 | --- | --- | --- |
 | Passengers a day at the normal fare | 45 at £90 (each £10 more: 3 fewer) | 60 at £60 (each £10 more: 5 fewer) |
 | Flight | 450 km, 1 h 30 each way | 300 km, 1 h each way |
-| Running cost a service | £626 (£192 an hour in the air + £50 landing fee) | £434 |
+| Running cost a service | £192 an hour in the air + the home landing fee + the terminal charge per passenger | (same) |
 
 The Twin Otter also costs £900 a day. Examples (rep 3): Paris ×2 at £90 ≈ £836 a day, Paris ×2 at £100 ≈ £1,216; Dublin ×3 at £60 ≈ £786, at £70 ≈ £1,216; a third Paris service carrying 7 people loses money. Fuel: £1.20, £1.20, £1.30, £1.40.
 

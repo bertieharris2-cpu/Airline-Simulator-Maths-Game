@@ -1280,7 +1280,7 @@ b.pos,.mp-cash b.pos{color:var(--green)}b.neg,.mp-cash b.neg{color:var(--red)}
 .mp-note{padding:6px 14px;font-size:13px}
 .ws-main{min-width:0;min-height:0;height:100%}
 .ws-main > .tf{zoom:.8;height:100%}
-@media (min-width:1600px) and (min-height:880px){ .ws-main > .tf{zoom:.92} }
+@media (min-width:1600px) and (min-height:880px){ .ws-main > .tf{zoom:.88} }
 .ws-main .tf-story{border-left:2px solid var(--sel);background:rgba(57,185,255,.05);border-radius:0 6px 6px 0;padding:8px 14px}
 .ws-main .tf-story::before{content:'Briefing';display:block;width:100%;font-size:13px;font-weight:700;color:var(--sel);letter-spacing:.04em}
 /* views */
@@ -1325,6 +1325,63 @@ b.pos,.mp-cash b.pos{color:var(--green)}b.neg,.mp-cash b.neg{color:var(--red)}
 .ws-main .tf-story p{font-size:calc(21px * var(--tz))}
 .ws-main table.fx td.c,.ws-main table.fx thead th{min-width:120px}
 
+/* square corners (no rounded containers), smaller titles */
+:root{ --r:2px; --rb:3px }
+.nv,.kpi2 .ki,.ri,.dr-rcp > div,.fb-card,.fl-specs > div,.ii,.td-brief,.cashbal,.live-bar{border-radius:2px}
+.chip,.cops,.hchip,.ri-k{border-radius:3px}
+.ws-main h1.tq{font-size:calc(31px * var(--tz))}
+.ws-main .tf-top{gap:12px}
+h1.tq{font-size:min(var(--fq), 34px)}
+
+/* compare cards, planner controls, airports and terminals, fuel order */
+.ws-money{overflow:auto}
+.cmps{display:flex;flex-direction:column;gap:8px;padding:8px 10px 10px}
+.cmp{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border:1px solid var(--line);border-radius:2px;background:rgba(255,255,255,.02)}
+.cmp.cur{border-color:rgba(var(--sel-rgb),.55);background:rgba(57,185,255,.06)}
+.cmp-h{display:flex;justify-content:space-between;align-items:center;font-size:13.5px}.cmp-h .link{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px}
+.cmp-t{font-size:12.5px;line-height:1.3}
+.cmp-g{display:grid;grid-template-columns:auto auto auto auto;gap:2px 8px;font-size:12px;color:var(--muted)}.cmp-g b{color:#fff;text-align:right;font-weight:650}
+.cmp-p{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--hair);padding-top:4px;font-size:12.5px;color:var(--muted)}.cmp-p b{font-size:17px}
+.cmp .btn.small{min-height:28px;padding:2px 8px;font-size:12.5px;align-self:flex-start}
+.pl-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.pl-row .label{min-width:7.5em}
+.opt-chip{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:6px 10px;border:1px solid var(--line);border-radius:2px;background:rgba(110,160,255,.05);color:var(--white);font:inherit;cursor:pointer;text-align:left}
+.opt-chip b{font-size:15px}.opt-chip small{font-size:12px;color:var(--muted)}
+.opt-chip.on{border-color:var(--sel);background:rgba(57,185,255,.14);box-shadow:inset 3px 0 0 var(--sel)}
+.pl-note{margin:0;font-size:16px;color:var(--muted)}.pl-note b{color:#fff}
+.dep-t{font-size:24px;min-width:3.2em;text-align:center}
+.chip.biz{color:var(--cy);border:1px solid rgba(var(--sel-rgb),.5);background:rgba(57,185,255,.08);font-size:13px;padding:1px 6px}
+.order-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 12px;margin-bottom:12px;border:1px solid rgba(245,196,81,.4);background:rgba(245,196,81,.06);font-size:18px}
+.lede.sm{font-size:17px;margin:0}
+.airports{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.apt,.term{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:12px 14px;text-align:left;color:var(--white);font:inherit;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:2px}
+.apt.on,.term.on{border-color:var(--sel);box-shadow:inset 0 3px 0 var(--sel), 0 0 18px rgba(57,185,255,.18)}
+.apt-code{font-size:28px;font-weight:800;letter-spacing:.06em;color:var(--cy)}
+.apt b{font-size:17px}.apt .muted,.term .muted{font-size:13.5px;line-height:1.35}
+.apt-f{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--muted)}.apt-f b{color:#fff}
+.terms{display:flex;gap:10px;flex-wrap:wrap}.term{flex:1;min-width:240px}
+.term b{font-size:17px}
+
+/* the teacher's triple-tap corner sat on top of the full-screen button: move it over the logo */
+.corner{left:0;right:auto;width:44px;height:44px}
+
+/* denser planner and compare cards at laptop size */
+.cmp-l{font-size:12.5px;color:var(--muted);line-height:1.35}.cmp-l b{color:#fff;font-weight:650}
+.planner{gap:8px}
+.planner .plan-route{padding:8px 12px;gap:5px}
+.planner .pr-head{font-size:20px}.planner .pr-head .muted{font-size:14px}
+.fare.sm{padding:3px 8px}.fare.sm b{font-size:16px}.fare.sm span{font-size:11px}
+.svc.sm{padding:3px 12px}.svc.sm b{font-size:17px}
+.planner .cap-line{font-size:calc(18px * var(--tz));margin:2px 0}
+.pgroups.small .pg-dots{grid-template-columns:repeat(10,7px);gap:2px}.pgroups.small .pg-dots i{width:7px;height:7px}.pgroups.small .pg{padding:4px 6px}.pgroups.small .pg-foot b{font-size:15px}.pgroups.small .pg-foot span{font-size:12px}
+.opt-chip{padding:5px 10px}.opt-chip b{font-size:14.5px;font-weight:600}
+.pl-note{font-size:15px}
+.plan-sum{font-size:15.5px;padding:6px 12px}
+.ov.compact .td-brief + .td-brief{display:none}
+.ov.compact .td-news2{font-size:16px}
+.ov.compact .td-list > div{padding:3px 0;font-size:13.5px}
+
+.apt-rs{display:flex;flex-direction:column;gap:2px;font-size:14px;color:var(--muted)}.apt-r b{color:#fff}
 @media print{ body{background:#fff;color:#000} }
 </style>
 </head>
@@ -1368,7 +1425,7 @@ b.pos,.mp-cash b.pos{color:var(--green)}b.neg,.mp-cash b.neg{color:var(--red)}
      sentence: the sum in words shown above the number pad. {row} = a number from the table (highlighted cyan), {?row} = the answer box.
      op/from: how the row is worked out (used for highlighting and "Choose the sum"). labelN = label when the plan has n trips. explain = "What's in this?" link.
      skill = the skill id the row will report to once the skills engine (CR2 Stage C) is built. -->
-<script type="application/json" id="data-tables">{"price": {"title": "Ticket price", "question": "How much should a {city} ticket cost?", "pickLabel": "Choose {col}", "typed": {"setup": ["income"], "round": ["sold", "income", "profit"]}, "rows": [{"id": "people", "label": "People who want to fly", "type": "given", "unit": "n"}, {"id": "seats", "label": "Seats on the plane", "labelN": "Seats on {n} trips", "type": "given", "unit": "n"}, {"id": "sold", "label": "Tickets sold", "type": "calc", "unit": "n", "op": "min", "from": ["people", "seats"], "sentence": "The smaller of {people} people and {seats} seats = {?sold} tickets", "skill": "money.sold"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["sold", "fare"], "sentence": "{sold} tickets × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the trip", "labelN": "Cost of {n} trips", "type": "given", "unit": "£", "explain": true}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["income", "cost"], "sentence": "{income} income − {cost} cost = {?profit}", "skill": "money.profit"}]}, "tripsCount": {"title": "How many trips?", "question": "How many trips does {city} need?", "typed": {"round": ["full", "left"]}, "rows": [{"id": "people", "label": "People who want to fly", "type": "given", "unit": "n"}, {"id": "seats", "label": "The plane holds", "type": "given", "unit": "n"}, {"id": "full", "label": "Full planes", "type": "calc", "unit": "n", "op": "÷", "from": ["people", "seats"], "sentence": "{people} people ÷ {seats} seats = {?full} full planes and {?left} people left over", "skill": "money.trips"}, {"id": "left", "label": "People left over", "type": "calc", "unit": "n", "op": "÷", "from": ["people", "seats"], "sentence": "{people} people ÷ {seats} seats = {?full} full planes and {?left} people left over", "skill": "money.trips"}]}, "tripsExtra": {"title": "The extra trip", "question": "Should the extra trip fly?", "typed": {"round": ["income"]}, "rows": [{"id": "left", "label": "People left over", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income from the extra trip", "type": "calc", "unit": "£", "op": "×", "from": ["left", "fare"], "sentence": "{left} people × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the extra trip", "type": "given", "unit": "£", "explain": true}]}, "fuel": {"title": "Buy fuel", "question": "How much will the fuel cost?", "pickLabel": "Buy from {col}", "typed": {"round": ["bill"]}, "rows": [{"id": "litres", "label": "Litres", "type": "given", "unit": "L"}, {"id": "ppl", "label": "Price per litre", "type": "given", "unit": "ppl"}, {"id": "bill", "label": "Bill", "type": "calc", "unit": "£", "op": "×", "from": ["litres", "ppl"], "sentence": "{litres} × {ppl} per litre = {?bill}", "skill": "money.fuelBill"}]}, "cabin": {"title": "Seat layout", "question": "How should the seats be laid out?", "pickLabel": "Choose {col}", "typed": {"round": ["each", "rest", "breakEven"]}, "rows": [{"id": "seats", "label": "Seats", "type": "given", "unit": "n"}, {"id": "cost", "label": "Cost of the trip", "type": "given", "unit": "£", "explain": true}, {"id": "each", "label": "Cost per seat", "type": "calc", "unit": "£", "op": "÷", "from": ["cost", "seats"], "sentence": "{cost} cost ÷ {seats} seats = {?each} each and {?rest} left over", "skill": "money.perSeat"}, {"id": "rest", "label": "Left over", "type": "calc", "unit": "£", "op": "÷", "from": ["cost", "seats"], "sentence": "{cost} cost ÷ {seats} seats = {?each} each and {?rest} left over", "skill": "money.perSeat"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "breakEven", "label": "Passengers to cover the cost", "type": "calc", "unit": "n", "op": "÷", "from": ["cost", "fare"], "sentence": "{cost} cost ÷ {fare} ticket price, rounded up = {?breakEven} passengers", "skill": "money.breakEven"}]}, "plane": {"title": "Buy a plane", "question": "Which plane should you buy?", "pickLabel": "Buy the {col}", "typed": {"round": ["after", "payback"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} cash − {price} price = {?after}", "skill": "money.cashAfter"}, {"id": "ppf", "label": "Profit a trip (about)", "type": "given", "unit": "£"}, {"id": "payback", "label": "Trips to pay it back", "type": "calc", "unit": "n", "op": "÷", "from": ["price", "ppf"], "sentence": "{price} price ÷ {ppf} profit a trip, rounded up = {?payback} trips", "skill": "money.payback"}]}, "days": {"title": "Compare two days", "question": "Which day earns more?", "pickLabel": "Fly this day", "typed": {"round": ["income", "profit"]}, "rows": [{"id": "time", "label": "Time for the day", "type": "given", "unit": "dur"}, {"id": "passengers", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["passengers", "fare"], "sentence": "{passengers} passengers × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the day", "type": "given", "unit": "£", "explain": true}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["income", "cost"], "sentence": "{income} income − {cost} cost = {?profit}", "skill": "money.profit"}]}, "quick": {"title": "Today's income", "question": "How much will today's {city} tickets bring in?", "typed": {"round": ["income"]}, "rows": [{"id": "passengers", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["passengers", "fare"], "sentence": "{passengers} passengers × {fare} ticket price = {?income}", "skill": "money.income"}]}, "periodPlan": {"title": "The forecast", "question": "How much could the airline make?", "typed": {"round": ["total", "cashEnd"]}, "rows": [{"id": "day", "label": "Profit a day (about)", "type": "given", "unit": "£"}, {"id": "days", "label": "Days", "type": "given", "unit": "n"}, {"id": "total", "label": "Profit (about)", "type": "calc", "unit": "£", "op": "×", "from": ["day", "days"], "sentence": "{day} a day × {days} days = {?total}", "skill": "money.periodTotal"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Cash at the end (about)", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "total"], "sentence": "{cash} cash + {total} profit = {?cashEnd}", "skill": "money.cashForecast"}]}, "runPlan": {"title": "The forecast", "question": "How much could the airline make?", "typed": {"round": ["total", "cashEnd"]}, "rows": [{"id": "month", "label": "Profit a month (about)", "type": "given", "unit": "£"}, {"id": "months", "label": "Months", "type": "given", "unit": "n"}, {"id": "total", "label": "Profit (about)", "type": "calc", "unit": "£", "op": "×", "from": ["month", "months"], "sentence": "{month} a month × {months} months = {?total}", "skill": "money.periodTotal"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Cash at the end (about)", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "total"], "sentence": "{cash} cash + {total} profit = {?cashEnd}", "skill": "money.cashForecast"}]}, "afford": {"title": "Saving for a plane", "question": "When could you afford the {plane}?", "typed": {"round": ["investable", "needed", "months"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "investable", "label": "Cash you can spend", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "reserve"], "sentence": "{cash} cash − {reserve} kept back = {?investable}", "skill": "money.investable"}, {"id": "price", "label": "Price of the plane", "type": "given", "unit": "£"}, {"id": "needed", "label": "Still needed", "type": "calc", "unit": "£", "op": "−", "from": ["price", "investable"], "sentence": "{price} price − {investable} you can spend = {?needed}", "skill": "money.stillNeeded"}, {"id": "month", "label": "Profit a month (about)", "type": "given", "unit": "£"}, {"id": "months", "label": "Months to save", "type": "calc", "unit": "n", "op": "÷", "from": ["needed", "month"], "sentence": "{needed} needed ÷ {month} a month, rounded up = {?months} months", "skill": "money.monthsToAfford"}]}, "planeM": {"title": "Buy a plane", "question": "Which plane should you buy?", "pickLabel": "Buy the {col}", "typed": {"round": ["after"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} cash − {price} price = {?after}", "skill": "money.cashAfter"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "safe", "label": "Still above the emergency money?", "type": "calc", "unit": "yesno", "op": "−", "from": ["after", "reserve"]}, {"id": "dayCost", "label": "Its running costs a day", "type": "given", "unit": "£"}]}, "dayForecast": {"title": "Today's forecast", "question": "What do you expect to happen today?", "typed": {"launch": ["revenue", "profit"], "day1": ["profit"], "day2": ["profit"], "day3": ["revenue"]}, "rows": [{"id": "pax", "label": "Expected passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "revenue", "label": "Ticket revenue", "type": "calc", "unit": "£", "op": "×", "from": ["pax", "fare"], "sentence": "{pax} passengers × {fare} = {?revenue}", "skill": "money.income"}, {"id": "run", "label": "Running costs", "type": "given", "unit": "£"}, {"id": "fuel", "label": "Fuel", "type": "given", "unit": "£"}, {"id": "cost", "label": "Route costs", "type": "calc", "unit": "£", "op": "+", "from": ["run", "fuel"], "sentence": "{run} + {fuel} = {?cost}", "skill": "money.cost"}, {"id": "profit", "label": "Route profit", "type": "calc", "unit": "£", "op": "−", "from": ["revenue", "cost"], "sentence": "{revenue} − {cost} = {?profit}", "skill": "money.profit"}]}}</script>
+<script type="application/json" id="data-tables">{"price": {"title": "Ticket price", "question": "How much should a {city} ticket cost?", "pickLabel": "Choose {col}", "typed": {"setup": ["income"], "round": ["sold", "income", "profit"]}, "rows": [{"id": "people", "label": "People who want to fly", "type": "given", "unit": "n"}, {"id": "seats", "label": "Seats on the plane", "labelN": "Seats on {n} trips", "type": "given", "unit": "n"}, {"id": "sold", "label": "Tickets sold", "type": "calc", "unit": "n", "op": "min", "from": ["people", "seats"], "sentence": "The smaller of {people} people and {seats} seats = {?sold} tickets", "skill": "money.sold"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["sold", "fare"], "sentence": "{sold} tickets × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the trip", "labelN": "Cost of {n} trips", "type": "given", "unit": "£", "explain": true}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["income", "cost"], "sentence": "{income} income − {cost} cost = {?profit}", "skill": "money.profit"}]}, "tripsCount": {"title": "How many trips?", "question": "How many trips does {city} need?", "typed": {"round": ["full", "left"]}, "rows": [{"id": "people", "label": "People who want to fly", "type": "given", "unit": "n"}, {"id": "seats", "label": "The plane holds", "type": "given", "unit": "n"}, {"id": "full", "label": "Full planes", "type": "calc", "unit": "n", "op": "÷", "from": ["people", "seats"], "sentence": "{people} people ÷ {seats} seats = {?full} full planes and {?left} people left over", "skill": "money.trips"}, {"id": "left", "label": "People left over", "type": "calc", "unit": "n", "op": "÷", "from": ["people", "seats"], "sentence": "{people} people ÷ {seats} seats = {?full} full planes and {?left} people left over", "skill": "money.trips"}]}, "tripsExtra": {"title": "The extra trip", "question": "Should the extra trip fly?", "typed": {"round": ["income"]}, "rows": [{"id": "left", "label": "People left over", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income from the extra trip", "type": "calc", "unit": "£", "op": "×", "from": ["left", "fare"], "sentence": "{left} people × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the extra trip", "type": "given", "unit": "£", "explain": true}]}, "fuel": {"title": "Buy fuel", "question": "How much will the fuel cost?", "pickLabel": "Buy from {col}", "typed": {"round": ["bill"]}, "rows": [{"id": "litres", "label": "Litres", "type": "given", "unit": "L"}, {"id": "ppl", "label": "Price per litre", "type": "given", "unit": "ppl"}, {"id": "bill", "label": "Bill", "type": "calc", "unit": "£", "op": "×", "from": ["litres", "ppl"], "sentence": "{litres} × {ppl} per litre = {?bill}", "skill": "money.fuelBill"}]}, "cabin": {"title": "Seat layout", "question": "How should the seats be laid out?", "pickLabel": "Choose {col}", "typed": {"round": ["each", "rest", "breakEven"]}, "rows": [{"id": "seats", "label": "Seats", "type": "given", "unit": "n"}, {"id": "cost", "label": "Cost of the trip", "type": "given", "unit": "£", "explain": true}, {"id": "each", "label": "Cost per seat", "type": "calc", "unit": "£", "op": "÷", "from": ["cost", "seats"], "sentence": "{cost} cost ÷ {seats} seats = {?each} each and {?rest} left over", "skill": "money.perSeat"}, {"id": "rest", "label": "Left over", "type": "calc", "unit": "£", "op": "÷", "from": ["cost", "seats"], "sentence": "{cost} cost ÷ {seats} seats = {?each} each and {?rest} left over", "skill": "money.perSeat"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "breakEven", "label": "Passengers to cover the cost", "type": "calc", "unit": "n", "op": "÷", "from": ["cost", "fare"], "sentence": "{cost} cost ÷ {fare} ticket price, rounded up = {?breakEven} passengers", "skill": "money.breakEven"}]}, "plane": {"title": "Buy a plane", "question": "Which plane should you buy?", "pickLabel": "Buy the {col}", "typed": {"round": ["after", "payback"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} cash − {price} price = {?after}", "skill": "money.cashAfter"}, {"id": "ppf", "label": "Profit a trip (about)", "type": "given", "unit": "£"}, {"id": "payback", "label": "Trips to pay it back", "type": "calc", "unit": "n", "op": "÷", "from": ["price", "ppf"], "sentence": "{price} price ÷ {ppf} profit a trip, rounded up = {?payback} trips", "skill": "money.payback"}]}, "days": {"title": "Compare two days", "question": "Which day earns more?", "pickLabel": "Fly this day", "typed": {"round": ["income", "profit"]}, "rows": [{"id": "time", "label": "Time for the day", "type": "given", "unit": "dur"}, {"id": "passengers", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["passengers", "fare"], "sentence": "{passengers} passengers × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the day", "type": "given", "unit": "£", "explain": true}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["income", "cost"], "sentence": "{income} income − {cost} cost = {?profit}", "skill": "money.profit"}]}, "quick": {"title": "Today's income", "question": "How much will today's {city} tickets bring in?", "typed": {"round": ["income"]}, "rows": [{"id": "passengers", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["passengers", "fare"], "sentence": "{passengers} passengers × {fare} ticket price = {?income}", "skill": "money.income"}]}, "periodPlan": {"title": "The forecast", "question": "How much could the airline make?", "typed": {"round": ["total", "cashEnd"]}, "rows": [{"id": "day", "label": "Profit a day (about)", "type": "given", "unit": "£"}, {"id": "days", "label": "Days", "type": "given", "unit": "n"}, {"id": "total", "label": "Profit (about)", "type": "calc", "unit": "£", "op": "×", "from": ["day", "days"], "sentence": "{day} a day × {days} days = {?total}", "skill": "money.periodTotal"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Cash at the end (about)", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "total"], "sentence": "{cash} cash + {total} profit = {?cashEnd}", "skill": "money.cashForecast"}]}, "runPlan": {"title": "The forecast", "question": "How much could the airline make?", "typed": {"round": ["total", "cashEnd"]}, "rows": [{"id": "month", "label": "Profit a month (about)", "type": "given", "unit": "£"}, {"id": "months", "label": "Months", "type": "given", "unit": "n"}, {"id": "total", "label": "Profit (about)", "type": "calc", "unit": "£", "op": "×", "from": ["month", "months"], "sentence": "{month} a month × {months} months = {?total}", "skill": "money.periodTotal"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Cash at the end (about)", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "total"], "sentence": "{cash} cash + {total} profit = {?cashEnd}", "skill": "money.cashForecast"}]}, "afford": {"title": "Saving for a plane", "question": "When could you afford the {plane}?", "typed": {"round": ["investable", "needed", "months"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "investable", "label": "Cash you can spend", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "reserve"], "sentence": "{cash} cash − {reserve} kept back = {?investable}", "skill": "money.investable"}, {"id": "price", "label": "Price of the plane", "type": "given", "unit": "£"}, {"id": "needed", "label": "Still needed", "type": "calc", "unit": "£", "op": "−", "from": ["price", "investable"], "sentence": "{price} price − {investable} you can spend = {?needed}", "skill": "money.stillNeeded"}, {"id": "month", "label": "Profit a month (about)", "type": "given", "unit": "£"}, {"id": "months", "label": "Months to save", "type": "calc", "unit": "n", "op": "÷", "from": ["needed", "month"], "sentence": "{needed} needed ÷ {month} a month, rounded up = {?months} months", "skill": "money.monthsToAfford"}]}, "planeM": {"title": "Buy a plane", "question": "Which plane should you buy?", "pickLabel": "Buy the {col}", "typed": {"round": ["after"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} cash − {price} price = {?after}", "skill": "money.cashAfter"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "safe", "label": "Still above the emergency money?", "type": "calc", "unit": "yesno", "op": "−", "from": ["after", "reserve"]}, {"id": "dayCost", "label": "Its running costs a day", "type": "given", "unit": "£"}]}, "dayForecast": {"title": "Today's forecast", "question": "What do you expect to happen today?", "typed": {"launch": ["revenue", "profit"], "day1": ["profit"], "day2": ["profit"], "day3": ["revenue"]}, "rows": [{"id": "pax", "label": "Expected passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "revenue", "label": "Ticket revenue", "type": "calc", "unit": "£", "op": "×", "from": ["pax", "fare"], "sentence": "{pax} passengers × {fare} = {?revenue}", "skill": "money.income"}, {"id": "onboard", "label": "On-board sales", "type": "given", "unit": "£"}, {"id": "run", "label": "Flight costs", "type": "given", "unit": "£"}, {"id": "fuel", "label": "Fuel", "type": "given", "unit": "£"}, {"id": "term", "label": "Terminal charges", "type": "given", "unit": "£"}, {"id": "cost", "label": "Route costs", "type": "calc", "unit": "£", "op": "+", "from": ["run", "fuel"], "sentence": "{run} + {fuel} + {term} + on-board stock = {?cost}", "skill": "money.cost"}, {"id": "profit", "label": "Route profit", "type": "calc", "unit": "£", "op": "−", "from": ["revenue", "cost"], "sentence": "{revenue} + {onboard} − {cost} = {?profit}", "skill": "money.profit"}]}}</script>
 
 <!-- REVIEW CARD POOLS. Picked deterministically by round number. {price} {city} {airline} are filled in. -->
 <script type="application/json" id="data-reviews">
@@ -1460,7 +1517,7 @@ b.pos,.mp-cash b.pos{color:var(--green)}b.neg,.mp-cash b.neg{color:var(--red)}
        news: lines for the ticker. challenge: true = Captain's challenge this round (every 2 rounds).
        checkpoint: snapshot the run to Best Runs and carry on (round 12). finale: record the run (round 30); play can continue after it.
        30 rounds in five acts, from the Clear Skies 30-round workbook. -->
-<script type="application/json" id="data-world">{"id": "clear-skies", "name": "Opening prototype", "lesson": "Fuel climbs through the first year (with a shock in July), crashes in January after the oil find, then climbs to £3.20 by the final May — stock up when it is cheap.", "startingCash": 5000, "startingReputation": 3, "fuelLot": 500, "rival": "Red Kite Air", "dayStart": "06:00", "dayEnd": "22:00", "firstDeparture": "09:00", "turnaroundMin": 45, "maxTrips": 4, "tankBase": 5000, "suppliers": [{"name": "Dragon Fuels", "priceDelta": 0, "lot": 500, "note": "Sells in 500 L lots", "fromPhase": 1}, {"name": "Celtic Oil", "priceDelta": -0.1, "lot": 2000, "note": "10p cheaper, but only sells 2,000 L lots", "fromPhase": 3}], "icons": {"perIcon": 1, "bigAt": 150, "bigPerIcon": 10}, "homes": [{"id": "cwl", "city": "Cardiff", "country": "Wales", "flag": "uk", "lat": 51.4, "lon": -3.34, "utc": 0, "fee": 50, "demandPct": 0, "blurb": "The capital's airport. A fair landing fee, normal passenger numbers."}, {"id": "sws", "city": "Swansea", "country": "Wales", "flag": "uk", "lat": 51.6, "lon": -4.07, "utc": 0, "fee": 20, "demandPct": -10, "blurb": "A small airfield. Cheap to land, but 10% fewer passengers."}, {"id": "brs", "city": "Bristol", "country": "England", "flag": "uk", "lat": 51.38, "lon": -2.72, "utc": 0, "fee": 90, "demandPct": 10, "blurb": "A big, busy airport. Dear to land, but 10% more passengers."}], "setupRoutes": ["dub", "par"], "routes": [{"id": "dub", "city": "Dublin", "country": "Ireland", "flag": "ie", "lat": 53.35, "lon": -6.26, "km": 300, "band": "short", "basePrice": 60, "baseDemand": 60, "step": 10, "drop": 5, "prices": [50, 60, 70, 80], "gate": "1", "dep": "09:00", "utc": 0, "blurb": "Busier and cheaper. A short hop across the Irish Sea.", "unlockPhase": 1, "setupPrices": [50, 60, 70, 80], "growth": 0, "cap": 30, "fares": [50, 60, 70, 80]}, {"id": "par", "city": "Paris", "country": "France", "flag": "fr", "lat": 48.86, "lon": 2.35, "km": 450, "band": "short", "basePrice": 90, "baseDemand": 45, "step": 10, "drop": 3, "prices": [80, 90, 100, 110, 120], "gate": "2", "dep": "10:00", "utc": 1, "blurb": "Quieter, but passengers pay more. A longer flight.", "unlockPhase": 1, "setupPrices": [80, 90, 100, 110, 120], "growth": 0, "cap": 40, "fares": [80, 90, 100, 110, 120]}, {"id": "mad", "city": "Madrid", "country": "Spain", "flag": "es", "lat": 40.42, "lon": -3.7, "km": 1200, "band": "short", "basePrice": 100, "baseDemand": 60, "step": 10, "drop": 5, "prices": [80, 90, 100, 120], "gate": "3", "dep": "11:00", "utc": 1, "blurb": "Sunny city break. Steady demand.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "rak", "city": "Marrakech", "country": "Morocco", "flag": "ma", "lat": 31.63, "lon": -8.01, "km": 2400, "band": "medium", "basePrice": 120, "baseDemand": 90, "step": 20, "drop": 10, "prices": [100, 120, 140, 160], "gate": "4", "dep": "09:30", "utc": 1, "blurb": "Holiday route. Popular in winter.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "cai", "city": "Cairo", "country": "Egypt", "flag": "eg", "lat": 30.04, "lon": 31.24, "km": 3600, "band": "medium", "basePrice": 150, "baseDemand": 110, "step": 25, "drop": 10, "prices": [125, 150, 175, 200], "gate": "5", "dep": "08:30", "utc": 2, "blurb": "Pyramids! Good demand all year.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "los", "city": "Lagos", "country": "Nigeria", "flag": "ng", "lat": 6.52, "lon": 3.38, "km": 4800, "band": "medium", "basePrice": 200, "baseDemand": 100, "step": 25, "drop": 10, "prices": [150, 175, 200, 250], "gate": "6", "dep": "12:00", "utc": 1, "blurb": "Big city, business travellers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "nyc", "city": "New York", "country": "USA", "flag": "us", "lat": 40.71, "lon": -74.01, "km": 5600, "band": "medium", "basePrice": 200, "baseDemand": 140, "step": 50, "drop": 20, "prices": [150, 200, 250, 300], "gate": "7", "dep": "13:00", "utc": -5, "blurb": "The big one. Huge demand.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "dxb", "city": "Dubai", "country": "UAE", "flag": "ae", "lat": 25.2, "lon": 55.27, "km": 5600, "band": "medium", "basePrice": 250, "baseDemand": 150, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "8", "dep": "14:00", "utc": 4, "blurb": "Shopping and sunshine. Rich passengers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "del", "city": "Delhi", "country": "India", "flag": "in", "lat": 28.61, "lon": 77.21, "km": 7200, "band": "long", "basePrice": 250, "baseDemand": 200, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "9", "dep": "20:00", "utc": 5.5, "blurb": "Very busy. Overnight flight.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "cpt", "city": "Cape Town", "country": "South Africa", "flag": "za", "lat": -33.92, "lon": 18.42, "km": 9600, "band": "long", "basePrice": 350, "baseDemand": 180, "step": 50, "drop": 20, "prices": [300, 350, 400, 450], "gate": "10", "dep": "19:00", "utc": 2, "blurb": "Table Mountain. Long, popular route.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "tyo", "city": "Tokyo", "country": "Japan", "flag": "jp", "lat": 35.68, "lon": 139.69, "km": 9600, "band": "long", "basePrice": 400, "baseDemand": 250, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "11", "dep": "18:00", "utc": 9, "blurb": "Neon lights and bullet trains. Big demand.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "sin", "city": "Singapore", "country": "Singapore", "flag": "sg", "lat": 1.35, "lon": 103.82, "km": 10800, "band": "long", "basePrice": 400, "baseDemand": 220, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "12", "dep": "21:00", "utc": 8, "blurb": "Gateway to Asia. Famous airport.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "syd", "city": "Sydney", "country": "Australia", "flag": "au", "lat": -33.87, "lon": 151.21, "km": 17600, "band": "long", "basePrice": 600, "baseDemand": 300, "step": 100, "drop": 30, "prices": [500, 600, 700, 800], "gate": "13", "dep": "22:00", "utc": 10, "blurb": "The longest flight in the world. Only one plane can do it.", "unlockPhase": 4, "growth": 3, "cap": 60}], "rounds": [{"date": "2030-05-12", "period": "setup", "fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."]}, {"date": "2030-05-13", "period": "day", "fuel": 1.2, "title": "Day 1", "headline": "Your first full day as an airline.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."]}, {"date": "2030-05-14", "period": "day", "fuel": 1.3, "title": "Day 2", "headline": "Fuel prices are on the move.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."]}, {"date": "2030-05-15", "period": "day", "fuel": 1.4, "title": "Day 3", "headline": "A new market is opening up.", "opportunity": true, "news": ["Fuel now £1.40 a litre."]}], "fuelTopUp": 0.1, "reserveDefault": 10000}</script>
+<script type="application/json" id="data-world">{"id": "clear-skies", "name": "Opening prototype", "lesson": "Fuel climbs through the first year (with a shock in July), crashes in January after the oil find, then climbs to £3.20 by the final May — stock up when it is cheap.", "startingCash": 5000, "startingReputation": 3, "fuelLot": 500, "rival": "Red Kite Air", "dayStart": "06:00", "dayEnd": "22:00", "firstDeparture": "09:00", "turnaroundMin": 45, "maxTrips": 4, "tankBase": 5000, "suppliers": [{"name": "Dragon Fuels", "priceDelta": 0, "lot": 500, "note": "Sells in 500 L lots", "fromPhase": 1}, {"name": "Celtic Oil", "priceDelta": -0.1, "lot": 2000, "note": "10p cheaper, but only sells 2,000 L lots", "fromPhase": 3}], "icons": {"perIcon": 1, "bigAt": 150, "bigPerIcon": 10}, "homes": [{"id": "lhr", "code": "LHR", "city": "Heathrow", "name": "London Heathrow", "country": "England", "flag": "uk", "lat": 51.47, "lon": -0.454, "utc": 0, "fee": 120, "demandPct": 15, "biz": 1.5, "blurb": "The UK's busiest airport. Expensive to land, but lots of passengers, including business travellers.", "terminals": [{"id": "t5", "name": "Terminal 5", "turn": 35, "charge": 5, "biz": 1.2, "note": "Modern gates right by the runway: quick turnarounds. Business travellers like it."}, {"id": "t4", "name": "Terminal 4", "turn": 55, "charge": 3, "note": "Cheaper, but remote stands and buses make turnarounds slow."}]}, {"id": "lgw", "code": "LGW", "city": "Gatwick", "name": "London Gatwick", "country": "England", "flag": "uk", "lat": 51.153, "lon": -0.182, "utc": 0, "fee": 80, "demandPct": 5, "biz": 1.0, "blurb": "London's second airport. A fair landing fee and plenty of holiday passengers.", "terminals": [{"id": "north", "name": "North Terminal", "turn": 40, "charge": 4, "note": "Busy but well organised."}, {"id": "south", "name": "South Terminal", "turn": 45, "charge": 3, "note": "A little cheaper, a little slower."}]}, {"id": "ltn", "code": "LTN", "city": "Luton", "name": "London Luton", "country": "England", "flag": "uk", "lat": 51.875, "lon": -0.368, "utc": 0, "fee": 40, "demandPct": -5, "biz": 0.6, "blurb": "A low-cost airport north of London. Cheap to land, mostly leisure passengers.", "terminals": [{"id": "main", "name": "Main Terminal", "turn": 30, "charge": 2, "note": "Built for quick, cheap turnarounds. One terminal for everyone."}]}, {"id": "man", "code": "MAN", "city": "Manchester", "name": "Manchester", "country": "England", "flag": "uk", "lat": 53.354, "lon": -2.275, "utc": 0, "fee": 60, "demandPct": 0, "biz": 1.0, "blurb": "The North's biggest airport. Dublin is a short hop; Paris is a long way for a small plane.", "terminals": [{"id": "t1", "name": "Terminal 1", "turn": 40, "charge": 4, "note": "The main international terminal."}, {"id": "t3", "name": "Terminal 3", "turn": 45, "charge": 3, "note": "Smaller and cheaper, a little slower."}]}], "setupRoutes": ["dub", "par"], "routes": [{"id": "dub", "city": "Dublin", "country": "Ireland", "flag": "ie", "lat": 53.35, "lon": -6.26, "km": 300, "band": "short", "basePrice": 60, "baseDemand": 60, "step": 10, "drop": 5, "prices": [50, 60, 70, 80], "gate": "1", "dep": "09:00", "utc": 0, "blurb": "Busier and cheaper. A short hop across the Irish Sea.", "unlockPhase": 1, "setupPrices": [50, 60, 70, 80], "growth": 0, "cap": 30, "fares": [50, 60, 70, 80], "alat": 53.42, "alon": -6.27, "biz": 6}, {"id": "par", "city": "Paris", "country": "France", "flag": "fr", "lat": 48.86, "lon": 2.35, "km": 450, "band": "short", "basePrice": 90, "baseDemand": 45, "step": 10, "drop": 3, "prices": [80, 90, 100, 110, 120], "gate": "2", "dep": "10:00", "utc": 1, "blurb": "Quieter, but passengers pay more. A longer flight.", "unlockPhase": 1, "setupPrices": [80, 90, 100, 110, 120], "growth": 0, "cap": 40, "fares": [80, 90, 100, 110, 120], "alat": 49.01, "alon": 2.55, "biz": 10}, {"id": "mad", "city": "Madrid", "country": "Spain", "flag": "es", "lat": 40.42, "lon": -3.7, "km": 1200, "band": "short", "basePrice": 100, "baseDemand": 60, "step": 10, "drop": 5, "prices": [80, 90, 100, 120], "gate": "3", "dep": "11:00", "utc": 1, "blurb": "Sunny city break. Steady demand.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "rak", "city": "Marrakech", "country": "Morocco", "flag": "ma", "lat": 31.63, "lon": -8.01, "km": 2400, "band": "medium", "basePrice": 120, "baseDemand": 90, "step": 20, "drop": 10, "prices": [100, 120, 140, 160], "gate": "4", "dep": "09:30", "utc": 1, "blurb": "Holiday route. Popular in winter.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "cai", "city": "Cairo", "country": "Egypt", "flag": "eg", "lat": 30.04, "lon": 31.24, "km": 3600, "band": "medium", "basePrice": 150, "baseDemand": 110, "step": 25, "drop": 10, "prices": [125, 150, 175, 200], "gate": "5", "dep": "08:30", "utc": 2, "blurb": "Pyramids! Good demand all year.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "los", "city": "Lagos", "country": "Nigeria", "flag": "ng", "lat": 6.52, "lon": 3.38, "km": 4800, "band": "medium", "basePrice": 200, "baseDemand": 100, "step": 25, "drop": 10, "prices": [150, 175, 200, 250], "gate": "6", "dep": "12:00", "utc": 1, "blurb": "Big city, business travellers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "nyc", "city": "New York", "country": "USA", "flag": "us", "lat": 40.71, "lon": -74.01, "km": 5600, "band": "medium", "basePrice": 200, "baseDemand": 140, "step": 50, "drop": 20, "prices": [150, 200, 250, 300], "gate": "7", "dep": "13:00", "utc": -5, "blurb": "The big one. Huge demand.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "dxb", "city": "Dubai", "country": "UAE", "flag": "ae", "lat": 25.2, "lon": 55.27, "km": 5600, "band": "medium", "basePrice": 250, "baseDemand": 150, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "8", "dep": "14:00", "utc": 4, "blurb": "Shopping and sunshine. Rich passengers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "del", "city": "Delhi", "country": "India", "flag": "in", "lat": 28.61, "lon": 77.21, "km": 7200, "band": "long", "basePrice": 250, "baseDemand": 200, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "9", "dep": "20:00", "utc": 5.5, "blurb": "Very busy. Overnight flight.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "cpt", "city": "Cape Town", "country": "South Africa", "flag": "za", "lat": -33.92, "lon": 18.42, "km": 9600, "band": "long", "basePrice": 350, "baseDemand": 180, "step": 50, "drop": 20, "prices": [300, 350, 400, 450], "gate": "10", "dep": "19:00", "utc": 2, "blurb": "Table Mountain. Long, popular route.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "tyo", "city": "Tokyo", "country": "Japan", "flag": "jp", "lat": 35.68, "lon": 139.69, "km": 9600, "band": "long", "basePrice": 400, "baseDemand": 250, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "11", "dep": "18:00", "utc": 9, "blurb": "Neon lights and bullet trains. Big demand.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "sin", "city": "Singapore", "country": "Singapore", "flag": "sg", "lat": 1.35, "lon": 103.82, "km": 10800, "band": "long", "basePrice": 400, "baseDemand": 220, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "12", "dep": "21:00", "utc": 8, "blurb": "Gateway to Asia. Famous airport.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "syd", "city": "Sydney", "country": "Australia", "flag": "au", "lat": -33.87, "lon": 151.21, "km": 17600, "band": "long", "basePrice": 600, "baseDemand": 300, "step": 100, "drop": 30, "prices": [500, 600, 700, 800], "gate": "13", "dep": "22:00", "utc": 10, "blurb": "The longest flight in the world. Only one plane can do it.", "unlockPhase": 4, "growth": 3, "cap": 60}], "rounds": [{"date": "2030-05-12", "period": "setup", "fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."]}, {"date": "2030-05-13", "period": "day", "fuel": 1.2, "title": "Day 1", "headline": "Your first full day as an airline.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."], "onboard": true}, {"date": "2030-05-14", "period": "day", "fuel": 1.3, "title": "Day 2", "headline": "Fuel prices are on the move, and so could your timetable.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."], "departures": true}, {"date": "2030-05-15", "period": "day", "fuel": 1.4, "title": "Day 3", "headline": "A new market is opening up.", "opportunity": true, "news": ["Fuel now £1.40 a litre."]}], "fuelTopUp": 0.1, "reserveDefault": 10000, "crewDutyMin": 540, "crewCost": 300}</script>
 
 <!-- TAIL-FIN MOTIFS the pupil can pick in setup (drawn in the livery colours; SVG symbols are below). -->
 <script type="application/json" id="data-fins">
@@ -1542,7 +1599,7 @@ b.pos,.mp-cash b.pos{color:var(--green)}b.neg,.mp-cash b.neg{color:var(--red)}
     <button class="btn small" id="shopBtn" title="Plane shop" aria-label="Plane shop">&#128722;</button>
     <button class="btn small" id="fleetBtn" title="Your fleet" aria-label="Your fleet">&#9992;</button>
     <button class="btn small wallbtn" id="wallBtn" title="Operations Wall on this screen (W)">&#9635;<span class="lbl"> Operations Wall</span><span class="lbs"> Wall</span></button>
-    <button class="btn small primary" id="presentBtn" title="This screen full screen and the Operations Wall on the whiteboard">&#9974;<span class="lbl"> Present</span></button>
+    <button class="btn small primary" id="presentBtn" title="Full screen (F11 also works)">&#9974;<span class="lbl" id="fsLbl"> Full screen</span></button>
   </header>
   <main id="screen"></main>
   <button class="btn small homefab" id="homeFab" title="Home" aria-label="Home">&#8962; Home</button>
@@ -1589,7 +1646,7 @@ b.pos,.mp-cash b.pos{color:var(--green)}b.neg,.mp-cash b.neg{color:var(--red)}
 <!-- ============================ TEACHER PANEL ============================ -->
 <div id="teacher" class="overlay" hidden>
   <div class="box">
-    <div class="row spread"><h2>Teacher panel</h2><span class="muted small">Ctrl+Shift+T or tap the top-right corner three times</span><button class="btn small" id="tClose">Close</button></div>
+    <div class="row spread"><h2>Teacher panel</h2><span class="muted small">Ctrl+Shift+T or tap the top-left corner three times</span><button class="btn small" id="tClose">Close</button></div>
     <div class="tgrid">
       <div class="tsec"><h3>This moment</h3>
         <div class="row"><button class="btn small good" id="tRelease">Accept this answer</button><button class="btn small" id="tSkipStep">Skip this screen</button><button class="btn small" id="tBack">Back one screen</button></div>
@@ -1793,12 +1850,12 @@ function openDisplay(){ try{ displayWin = window.open(location.pathname + '?disp
    TIME — the one shared time module (CR2 Stage A). Every screen calls this.
    A trip = out + turnaround away + back. Between trips: a turnaround at home.
    ================================================================== */
-const dayStart = () => toMin(WORLD.dayStart||'06:00'), dayEnd = () => toMin(WORLD.dayEnd||'22:00'), firstDep = () => toMin(WORLD.firstDeparture||'09:00');
+const dayStart = () => toMin(WORLD.dayStart||'06:00'), dayEnd = () => toMin(WORLD.dayEnd||'22:00'), firstDep = () => (S && S.firstDep !== undefined && S.firstDep !== null) ? S.firstDep : toMin(WORLD.firstDeparture||'09:00');
 const firstOf = (...v) => { for(const x of v) if(x !== undefined && x !== null) return x; return 45; };
 const TIME = {
-  leg(plane, route){ return route.km / plane.speed * 60; },                                           // one way, minutes
+  leg(plane, route){ return legMinutes(plane, route); },                                           // one way, minutes
   away(plane, route){ return firstOf(route.turnaroundMin, plane.turnaroundMin, WORLD.turnaroundMin); }, // on the ground at the far end
-  home(plane){ return firstOf(homeData().turnaroundMin, plane.turnaroundMin, WORLD.turnaroundMin); },   // on the ground at home between trips
+  home(plane){ return firstOf(terminalData().turn, homeData().turnaroundMin, plane.turnaroundMin, WORLD.turnaroundMin); },   // on the ground at home between trips
   roundTrip(plane, route){ return 2*TIME.leg(plane, route) + TIME.away(plane, route); },               // out + one turnaround + back
   /* Every segment of a planned day, with start and end times (minutes from midnight). */
   day(plane, ids, start){
@@ -1816,6 +1873,32 @@ const TIME = {
   },
   fits(plane, ids){ return ids.length <= 1 || TIME.day(plane, ids).end <= dayEnd(); }
 };
+/* Real distances from the chosen home airport (great circle), rounded: km to 10, flying time to 5 minutes. */
+function routeKm(route, hh){ const h = hh || homeData(), la = route.alat !== undefined ? route.alat : route.lat, lo = route.alon !== undefined ? route.alon : route.lon, R = Math.PI / 180;
+  const a = Math.sin((la - h.lat) * R / 2) ** 2 + Math.cos(h.lat * R) * Math.cos(la * R) * Math.sin((lo - h.lon) * R / 2) ** 2;
+  return Math.round(6371 * 2 * Math.asin(Math.sqrt(a)) / 10) * 10; }
+function legMinutes(plane, route, hh){ return Math.max(15, Math.round(routeKm(route, hh) / plane.speed * 60 / 5) * 5); }
+function terminalData(){ const h = homeData(), T = h.terminals || []; return T.find(t => t.id === S.terminal) || T[0] || {}; }
+function termCharge(){ return terminalData().charge || 0; }
+/* Business travellers who only fly if there is an early service (before 08:00): more at a business airport and terminal. */
+function earlyBonus(route){
+  if(!route.biz || !S || !S.fleet) return 0;
+  const early = S.fleet.some(f => { const s = schedOf(f); return s.includes(route.id) && TIME.day(planeById(f.planeId), s).trips.some(t => t.route === route.id && t.dep < 480); });
+  return early ? Math.round(route.biz * (homeData().biz || 1) * (terminalData().biz || 1)) : 0;
+}
+function paxWant(route, fare){ return paxFor(route, fare) + earlyBonus(route); }
+/* On-board sales and crew: what the day adds beyond tickets, flights and fuel. */
+const ONBOARD = { none:{ label:'Nothing on board', sub:'No extra money, no extra cost' }, sell3:{ label:'Sell snacks at £3', price:3, share:0.5, costItem:1, sub:'Half of passengers buy · stock costs £1 an item' }, sell5:{ label:'Sell snacks at £5', price:5, share:0.3, costItem:1, sub:'3 in 10 passengers buy · stock costs £1 an item' }, free:{ label:'Free snacks', free:true, costPax:2, sub:'£2 a passenger · happier passengers' } };
+function onboardOf(){ return ONBOARD[S.onboard || 'none'] || ONBOARD.none; }
+function crewNeeded(sched){ const f = S.fleet[0]; if(!f) return 1; const s = sched || schedOf(f); if(!s.length) return 1; return TIME.day(planeById(f.planeId), s).elapsed > (WORLD.crewDutyMin || 540) ? 2 : 1; }
+function dayExtras(fl){
+  const flown = fl.filter(f => !f.grounded && !f.noFuel), ob = onboardOf(), by = {};
+  let term = 0, obRev = 0, obCost = 0, buyers = 0;
+  flown.forEach(f => { const x = by[f.route] || (by[f.route] = { pax:0 }); x.pax += f.sold; term += f.termCost || 0; });
+  Object.keys(by).forEach(id => { const x = by[id]; x.buyers = ob.share ? Math.floor(x.pax * ob.share) : 0; x.obRev = x.buyers * (ob.price || 0); x.obCost = ob.free ? x.pax * ob.costPax : x.buyers * (ob.costItem || 0); obRev += x.obRev; obCost += x.obCost; buyers += x.buyers; });
+  const crews = flown.length ? crewNeeded() : 1;
+  return { term, obRev, obCost, buyers, crews, crew: crews > 1 ? (WORLD.crewCost || 300) : 0, byRoute: by, free: !!ob.free };
+}
 /* The test cases from Change Request 2 — run from the teacher panel ("Check the time maths"). */
 function timeSelfTest(){
   const p = planeById('dhc6'), par = routeById('par'), mad = routeById('mad'), out = [];
@@ -1845,7 +1928,7 @@ function unlocked(feature){ return PHASES.some(p => p.phase <= phaseOf() && (p.u
 function routeOpen(r){ return (r.unlockPhase || 1) <= phaseOf(); }
 function seatsOf(f){ const p = planeById(f.planeId); return f.layout==='squeeze' ? Math.round(p.seats*1.15) : f.layout==='comfy' ? Math.round(p.seats*0.8) : p.seats; }
 function layoutSeats(plane){ return { squeeze:Math.round(plane.seats*1.15), standard:plane.seats, comfy:Math.round(plane.seats*0.8) }; }
-function fuelForTrip(plane, route){ return plane.fuelUse * 2 * route.km / 100; }          // out and back
+function fuelForTrip(plane, route){ return Math.round(plane.fuelUse * 2 * routeKm(route) / 100 / 10) * 10; }          // out and back
 function schedOf(f){ return f.schedule && f.schedule.length ? f.schedule : (f.route ? [f.route] : []); }
 function canAddTrip(plane, sched, route){ if(!planeCanFly(plane, route)) return false; if(sched.length >= (WORLD.maxTrips||4)) return false; if(!sched.length) return true; return TIME.fits(plane, sched.concat([route.id])); }
 function activeFleet(){ return S.fleet.filter(f => schedOf(f).length && !f.grounded); }
@@ -1870,7 +1953,7 @@ function competitorPrice(route, n){
   return undefined;
 }
 function ownedRoutes(){ const out = []; S.fleet.forEach(f => schedOf(f).forEach(id => { if(!out.includes(id)) out.push(id); })); return out; }
-function planeCanFly(plane, route){ return plane.range >= route.km; }
+function planeCanFly(plane, route){ return plane.range >= routeKm(route); }
 function airlineCode(name){ const w = name.replace(/[^A-Za-z ]/g,'').trim().split(/\s+/); let c = w.length>=2 ? w[0][0]+w[1][0] : (w[0]||'AS').slice(0,2); return (c||'AS').toUpperCase(); }
 function flightCode(idx, trip){ return (S.airline.code||'AS') + (101 + idx*20 + (trip||0)*2); }
 function featuredFleet(){ return S.fleet.find(f => f.uid === S.rnd.featured) || activeFleet()[0]; }
@@ -1878,7 +1961,7 @@ function featuredFlights(){ const ff = featuredFleet(); return ff ? S.rnd.flight
 function featuredFlight(){ const fl = featuredFlights(); return fl.slice().sort((a,b)=>b.revenue-a.revenue)[0] || S.rnd.flights[0]; }
 function focusRoute(){ return S.rnd.focusRoute ? routeById(S.rnd.focusRoute) : null; }
 /* Running cost of one service: an hourly cost for the time in the air (out and back) when the plane has one, plus the home landing fee. */
-function flyHours(plane, route){ return 2 * TIME.leg(plane, route) / 60; }
+function flyHours(plane, route){ return 2 * legMinutes(plane, route) / 60; }
 function runCostOf(plane, route){ return (route && plane.hourCost ? Math.round(plane.hourCost * flyHours(plane, route)) : plane.runCost) + homeData().fee; }
 function fareOf(id){ return S.prices[id] || routeById(id).basePrice; }
 /* Cost of n trips on a route: running (incl. landing fee) + fuel at the price paid for what's in the tank. */
@@ -1888,7 +1971,7 @@ function fillText(s){ const r = focusRoute(); const c = r ? competitorPrice(r) :
 /* Plan every trip of the day (no fuel taken yet). A route's passengers are per day, shared across the trips flown there. */
 function planFlights(){
   const out = [], left = {};
-  const pool = (route, price) => { if(left[route.id] === undefined){ const comp = competitorPrice(route); left[route.id] = { pax: paxFor(route, price), demand: demandAt(route, price), comp, cut: comp !== undefined && comp < price }; } return left[route.id]; };
+  const pool = (route, price) => { if(left[route.id] === undefined){ const comp = competitorPrice(route); left[route.id] = { pax: paxWant(route, price), demand: demandAt(route, price) + earlyBonus(route), comp, cut: comp !== undefined && comp < price }; } return left[route.id]; };
   S.fleet.forEach((f, i) => {
     const sched = schedOf(f); if(!sched.length) return;
     const plane = planeById(f.planeId), D = TIME.day(plane, sched);
@@ -1901,12 +1984,12 @@ function planFlights(){
       if(k === 0 || sold < base.seats){ if(S.rep >= 4) reasons.push(`Your ${S.rep} star reputation brought extra passengers.`); if(S.rep <= 2) reasons.push(`Your ${S.rep} star reputation put some people off.`); }
       if(d.cut) reasons.push(`${WORLD.rival} was cheaper (£${num(d.comp)}), so 1 in 5 passengers went to them.`);
       if(k > 0 && sold < base.seats) reasons.push(`Earlier trips had already taken most of today's ${route.city} passengers.`);
-      out.push(Object.assign(base, { demand:d.demand, sold, revenue: sold*price, compCut:d.cut, reasons, fuelCost: fuelValueOf(base.fuelL) }));
+      out.push(Object.assign(base, { demand:d.demand, sold, revenue: sold*price, termCost: sold * termCharge(), compCut:d.cut, reasons, fuelCost: fuelValueOf(base.fuelL) }));
     });
   });
   return out;
 }
-function forecastNow(){ const fl = planFlights(); const income = fl.reduce((t,f)=>t+f.revenue,0), over = fleetDayCost(), costs = r2(fl.reduce((t,f)=>t+f.runCost+f.fuelCost,0) + over); return { income, costs, over, profit: r2(income-costs), fuelNeed: fuelNeeded(), fuelHave: S.fuel }; }
+function forecastNow(){ const fl = planFlights(), X = dayExtras(fl); const income = fl.reduce((t,f)=>t+f.revenue,0) + X.obRev, over = fleetDayCost(), costs = r2(fl.reduce((t,f)=>t+f.runCost+f.fuelCost,0) + over + X.term + X.obCost + X.crew); return { income, costs, over, profit: r2(income-costs), fuelNeed: fuelNeeded(), fuelHave: S.fuel }; }
 
 /* ==================================================================
    FORECAST TABLES — the model. Every number a sum uses is a row (CR4 s3).
@@ -2407,11 +2490,12 @@ function outcomeLine(f){
 }
 function applyResults(){
   if(S.rnd.applied) return; S.rnd.applied = true;
-  const want = {}; S.rnd.flights.forEach(f => { if(!f.grounded && want[f.route] === undefined) want[f.route] = paxFor(routeById(f.route), f.price); });   // the market today, before reviews move the stars
+  const want = {}; S.rnd.flights.forEach(f => { if(!f.grounded && want[f.route] === undefined) want[f.route] = paxWant(routeById(f.route), f.price); });   // the market today, before reviews move the stars
   const fl = S.rnd.flights, rev = fl.reduce((t,f)=>t+f.revenue,0), run = fl.reduce((t,f)=>t+f.runCost,0), fuelUsed = r2(fl.reduce((t,f)=>t+(f.fuelCost||0),0));
-  const over = fleetDayCost();
-  S.cash = r2(S.cash + rev - run - over);
-  S.rnd.revenue = rev; S.rnd.costs = r2(run + fuelUsed + over); S.rnd.fuelUsedCost = fuelUsed; S.rnd.over = over; S.rnd.profit = r2(rev - run - fuelUsed - over);
+  const over = fleetDayCost(), X = dayExtras(fl), extraCost = X.term + X.obCost + X.crew;   // terminal charges, on-board stock, a second crew
+  S.cash = r2(S.cash + rev + X.obRev - run - over - extraCost);
+  S.rnd.extras = X; S.rnd.ticketRev = rev; S.rnd.revenue = rev + X.obRev; S.rnd.costs = r2(run + fuelUsed + over + extraCost); S.rnd.fuelUsedCost = fuelUsed; S.rnd.over = over; S.rnd.profit = r2(rev + X.obRev - run - fuelUsed - over - extraCost);
+  if(X.free && fl.some(f => !f.grounded && !f.noFuel) && S.rep < 4){ S.rep += 0.5; S.rnd.why.push({ic:'⭐', text:'Free snacks and drinks went down well: +½ star.'}); }
   fl.forEach(f => { if(!f.grounded && !f.noFuel) S.rnd.status[f.key] = (f.sold >= f.seats) ? 'FULL FLIGHT' : 'LANDED'; });
   const why = S.rnd.why, tags = [], F = featuredFlight(), repBefore = S.rep, ff = featuredFleet();
   if(F && !F.grounded && !F.noFuel){
@@ -2446,7 +2530,8 @@ function applyResults(){
     S.rnd.vs = vs; }
   S.rnd.reviews = tags.slice(0,3).map(t => pickReview(t, F)).filter(Boolean);
   const flown = fl.filter(f => !f.grounded && !f.noFuel), routes = {};
-  flown.forEach(f => { const x = routes[f.route] || (routes[f.route] = { pax:0, seats:0, rev:0, cost:0, trips:0, fare:f.price, want:want[f.route] || 0 }); x.pax += f.sold; x.seats += f.seats; x.rev += f.revenue; x.cost = r2(x.cost + f.runCost + (f.fuelCost||0)); x.trips++; });
+  flown.forEach(f => { const x = routes[f.route] || (routes[f.route] = { pax:0, seats:0, rev:0, cost:0, trips:0, fare:f.price, want:want[f.route] || 0 }); x.pax += f.sold; x.seats += f.seats; x.rev += f.revenue; x.cost = r2(x.cost + f.runCost + (f.fuelCost||0) + (f.termCost||0)); x.trips++; });
+  Object.keys(routes).forEach(id => { const b = X.byRoute[id]; if(b){ routes[id].rev += b.obRev; routes[id].cost = r2(routes[id].cost + b.obCost); routes[id].onboard = b.obRev; } });
   Object.keys(routes).forEach(id => { routes[id].profit = r2(routes[id].rev - routes[id].cost); });
   ledgerPut(S.day || 0, rev, S.rnd.costs, flown.reduce((t,f) => t+f.sold, 0), flown.reduce((t,f) => t+f.seats, 0));
   S.history.push({ round:S.round, type: S.phase === 'setup' ? 'setup' : 'day', from:S.day || 0, to:S.day || 0, over, revenue:rev, costs:S.rnd.costs, profit:S.rnd.profit, cash:S.cash, rep:S.rep, fuelPaid:avgFuelPrice(), fuelPrice:fuelPrice(), emptyTrips: fl.filter(f => !f.grounded && !f.noFuel && f.sold < f.seats/2).length,
@@ -2547,6 +2632,7 @@ const FOCUS_STEPS = ['strategy','plane','newRoute','results','route','setupFuel'
 function applyTextSize(){ const z = [1, 1.12, 1.25][S.textSize || 0] || 1; document.documentElement.style.setProperty('--tz', z); }
 function render(){
   if(IS_DISPLAY) return;
+  syncRoutesToHome();
   setLivery(); applyTextSize();
   updateTopBar();
   const st = step();
@@ -3261,8 +3347,8 @@ function renderOverlay(){
     screen().innerHTML = `<div class="hero"><h1 class="biglogo"><span class="a">AIRLINE</span><span class="b">SIM</span></h1></div><div class="card stack" style="align-items:center;text-align:center;padding:36px">${header('Home', null, 'HOME')}
       ${S.airline.name ? `<p class="lede">Saved game: <b>${esc(S.airline.name)}</b> ${strategyBadge()} · ${esc(S.phase === 'setup' ? 'Launch day' : periodLabel())} · <b class="amber mono">${money(S.cash)}</b></p>` : ''}
       ${S.migratedFrom ? '<p class="small muted">Saved before the calendar update: it carries on from the nearest point in the story.</p>' : ''}
-      <div class="row" style="justify-content:center"><button class="btn primary big" id="cont">${S.airline.name ? 'Continue: ' + esc(S.airline.name) : 'Continue'}</button><button class="btn primary big" id="newg">New game</button>${runs.length?'<button class="btn big" id="best">Best runs</button>':''}<button class="btn big" id="code">Save code</button><button class="btn big" id="iwb2">Open the wall in a window</button></div></div>`;
-    on('cont', () => { delete S.migratedFrom; closeOverlay(); }); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); return;
+      <div class="row" style="justify-content:center"><button class="btn primary big" id="cont">${S.airline.name ? 'Continue: ' + esc(S.airline.name) : 'Continue'}</button><button class="btn primary big" id="newg">New game</button>${runs.length?'<button class="btn big" id="best">Best runs</button>':''}<button class="btn big" id="code">Save code</button><button class="btn big" id="iwb2">Open the wall in a window</button><button class="btn big" id="present2">Present on two screens</button></div></div>`;
+    on('cont', () => { delete S.migratedFrom; closeOverlay(); }); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); on('present2', () => { closeOverlay(); presentBoth(); }); return;
   }
   if(o.type==='alerts'){
     const it = intelItems();
@@ -3557,27 +3643,27 @@ function helpHtml(topic){
    SETUP: the start-up aircraft and the first market
    ================================================================== */
 R.starter = () => {
-  const p = planeById('dhc6'), owned = S.fleet.length > 0, rs = WORLD.setupRoutes.map(routeById).sort((a, b) => b.km - a.km);
+  const p = planeById('dhc6'), owned = S.fleet.length > 0, rs = WORLD.setupRoutes.map(routeById).sort((a, b) => routeKm(b) - routeKm(a));
   const spec = (big, label, text) => `<div class="spec"><span class="label">${label}</span><b class="mono">${big}</b><p>${text}</p></div>`;
   screen().innerHTML = taskFrame({ question:'Your start-up aircraft', work:false,
     story:[`Every airline starts somewhere. Yours starts with one ${esc(p.name)}.`],
     say:`Your start-up aircraft is the ${p.name}. ${p.seats} seats. ${p.speed} kilometres an hour. A range of ${p.range} kilometres. It costs ${money(p.hourCost)} for every hour in the air, plus a ${money(homeData().fee)} landing fee, and ${money(p.dayCost)} a day.`,
     main:`<div class="starter"><div class="st-plane"><svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-${p.icon}"/></svg>${finSvg(S.airline.fin, 56)}<b>${esc(p.name)}</b><span class="muted">${esc(p.fact)}</span></div>
       <div class="specs4">${spec(p.seats, 'Seats', `Up to ${p.seats} passengers on every flight.`)}
-        ${spec(num(p.speed) + ' km/h', 'Speed', rs.map(r => `${esc(r.city)} (${num(r.km)} km): ${fmtDur(TIME.leg(p, r))} each way.`).join(' '))}
+        ${spec(num(p.speed) + ' km/h', 'Speed', rs.map(r => `${esc(r.city)} (${num(routeKm(r))} km): ${fmtDur(TIME.leg(p, r))} each way.`).join(' '))}
         ${spec(num(p.range) + ' km', 'Range', 'How far it can fly before it must land. Both first markets are well within reach.')}
         ${spec(money(p.hourCost) + ' an hour', 'Cost to operate', `Each hour in the air, plus a ${money(homeData().fee)} landing fee: ${rs.map(r => `${esc(r.city)} <b>${money(runCostOf(p, r))}</b>`).join(', ')} a service. Plus <b>${money(p.dayCost)} a day</b>. Fuel is extra.`)}</div></div>`,
     foot:`<span class="muted grow">${owned ? 'Delivered' : `Price <b class="amber mono">${money(p.price)}</b> · you have <b class="amber mono">${money(S.cash)}</b>`}</span><button class="btn primary big" id="nx">${owned ? 'Next' : 'Take delivery'} &#9654;</button>` });
   on('nx', () => { if(!S.fleet.length) buyPlane(p); next(); });
 };
 R.market = () => {
-  const p = ourPlane(), ids = WORLD.setupRoutes.slice().sort((a, b) => routeById(b).km - routeById(a).km);
+  const p = ourPlane(), ids = WORLD.setupRoutes.slice().sort((a, b) => routeKm(routeById(b)) - routeKm(routeById(a)));
   screen().innerHTML = taskFrame({ question:'Choose your first market', work:false, story:['Where will your airline fly first?'],
     say:'Choose your first market. ' + ids.map(id => { const r = routeById(id); return `${r.city}: ${paxFor(r, r.basePrice)} people a day at ${money(r.basePrice)}, ${fmtDur(TIME.leg(p, r))} each way.`; }).join(' '),
     main:`<div class="mkts">${ids.map(id => { const r = routeById(id);
       return `<button class="mkt ${S.market === id ? 'on' : ''}" data-mk="${id}" aria-pressed="${S.market === id}"><span class="row">${flagSvg(r.flag, 40)}<b class="mk-city">${esc(r.city)}</b></span>
         <span class="mk-fig"><b class="mono">${paxFor(r, r.basePrice)}</b> people a day</span>
-        <span class="mk-row"><span>Normal fare <b class="amber mono">${money(r.basePrice)}</b></span><span>Flight <b class="mono">${fmtDur(TIME.leg(p, r))}</b> each way</span><span><b class="mono">${num(r.km)} km</b></span></span>
+        <span class="mk-row"><span>Normal fare <b class="amber mono">${money(r.basePrice)}</b></span><span>Flight <b class="mono">${fmtDur(TIME.leg(p, r))}</b> each way</span><span><b class="mono">${num(routeKm(r))} km</b></span></span>
         <span class="muted">${esc(r.blurb)}</span></button>`; }).join('')}</div>`,
     foot:`<button class="btn primary big" id="nx" ${S.market ? '' : 'disabled'}>${S.market ? `Open ${esc(routeById(S.market).city)}` : 'Choose a market'} &#9654;</button>` });
   screen().querySelectorAll('[data-mk]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-mk'); S.market = id; S.prices = { [id]: routeById(id).basePrice }; const f = fleetOne(); if(f) f.schedule = []; render(); });
@@ -3615,7 +3701,7 @@ R.rotation = st => {
   const turnA = t.leaveAway - t.arriveAway, turnH = ready - t.arr, flying = (t.arriveAway - t.dep) + (t.arr - t.leaveAway);
   const notes = [
     [`${fmtTime(t.dep)} · Depart ${homeData().city}`, [`Passengers are on board. The aircraft takes off for ${r.city}.`]],
-    [`${fmtTime(t.arriveAway)} · Arrive ${r.city}`, [`${num(r.km)} km at ${num(p.speed)} km/h takes ${fmtDur(t.arriveAway - t.dep)}.`]],
+    [`${fmtTime(t.arriveAway)} · Arrive ${r.city}`, [`${num(routeKm(r))} km at ${num(p.speed)} km/h takes ${fmtDur(t.arriveAway - t.dep)}.`]],
     [`Turnaround in ${r.city} · ${fmtDur(turnA)}`, ['Passengers get off. New passengers board.', 'Bags are unloaded and loaded.', 'The aircraft is checked and prepared.', 'Then it can fly again.']],
     [`${fmtTime(t.leaveAway)} · Leave ${r.city} · ${fmtTime(t.arr)} · Back in ${homeData().city}`, [`Another ${fmtDur(t.arr - t.leaveAway)} in the air.`]],
     ['When is it ready to fly again?', [`It lands at ${fmtTime(t.arr)}. It needs a ${fmtDur(turnH)} turnaround at home, just like in ${r.city}.`]],
@@ -3677,58 +3763,68 @@ R.fareTry = () => {
 };
 
 /* ==================================================================
-   FUEL and FORECAST (launch day and every day)
+   FUEL and FORECAST (launch day and every day). Fuel is an ORDER: nothing is paid until Start operations.
    ================================================================== */
+function orderL(){ return S.rnd.fuelOrder ? S.rnd.fuelOrder.litres : 0; }
+function rateWithOrder(){ const o = S.rnd.fuelOrder, L = S.fuel + (o ? o.litres : 0); return L > 0 ? (S.fuelValue + (o ? o.total : 0)) / L : fuelPrice(); }
 R.fuelPlan = st => {
-  const sc = scaffold(), f = fleetOne(), sched = schedOf(f), need = fuelNeeded(), have = S.fuel, price = fuelPrice(), lot = WORLD.fuelLot, space = Math.floor(tankSpace() / lot) * lot;
+  const sc = scaffold(), f = fleetOne(), sched = schedOf(f), need = fuelNeeded(), have = S.fuel, price = fuelPrice(), lot = WORLD.fuelLot, space = Math.floor(tankSpace() / lot) * lot, order = S.rnd.fuelOrder;
   const yPrice = S.round > 0 ? fuelPrice(S.round - 1) : price, up = price > yPrice;
   if(st.buy){   // the bill: litres × price, typed on launch day and Day 2
     const t = ensureTable('fuelplan:' + S.day + ':' + st.buy, 'fuel', buildFuelCols(st.buy).slice(0, 1));
-    screen().innerHTML = taskFrame({ question:'What will the fuel cost?', work:true, back:true, story:[`You are buying ${num(st.buy)} litres at ${priceL(price)} a litre.`],
-      say:`What will the fuel cost? ${num(st.buy)} litres at ${priceL(price)} a litre.`, main: tankGauge({ ghost:st.buy, need }) + tableHtml(t, { onPick:true }), side: sideHtml(t, { onPick:true, pickQ:'Buy the fuel?' }) });
-    bindTable(t, { onPick: c => { buyFuel(c.values.litres, c.values.ppl); resetEntry(); st.buy = 0; next(); } });
+    screen().innerHTML = taskFrame({ question:'What will the fuel cost?', work:true, back:true, story:[`You are ordering ${num(st.buy)} litres at ${priceL(price)} a litre. You pay when operations start.`],
+      say:`What will the fuel cost? ${num(st.buy)} litres at ${priceL(price)} a litre.`, main: tankGauge({ ghost:st.buy, need }) + tableHtml(t, { onPick:true }), side: sideHtml(t, { onPick:true, pickQ:'Place this order?', pickLabel:'Order the fuel' }) });
+    bindTable(t, { onPick: c => { S.rnd.fuelOrder = { litres:c.values.litres, price:c.values.ppl, total:c.values.bill }; resetEntry(); st.buy = 0; next(); } });
     bindFrame(() => { st.buy = 0; resetEntry(); render(); });
     return;
   }
   const short = Math.max(0, need - have), planL = short > 0 ? Math.min(space, ceilLot(short)) : 0, extraL = Math.min(space, Math.max(planL + lot, ceilLot(Math.max(lot, need * 2 - have))));
   const opts = [];
   if(!short) opts.push({ id:'tank', label:'Use the fuel in the tank', litres:0, sub:`${num(have)} L covers today's ${num(need)} L` });
-  if(planL) opts.push({ id:'plan', label:'Buy enough for the plan', litres:planL, sub:`${num(planL)} L · ${money(planL * price)}` });
-  if(extraL > planL) opts.push({ id:'extra', label:`Buy extra while fuel is ${priceL(price)}`, litres:extraL, sub:`${num(extraL)} L · ${money(extraL * price)} · enough for tomorrow too` });
-  const story = sc === 0 ? ['Your timetable is ready. Now make sure there is enough fuel to fly it.', 'More flying needs more fuel, and fuel costs money.', `Fuel is sold in ${num(lot)} L lots.`]
-    : sc === 2 ? [up ? `Fuel costs ${priceL(price)} a litre today, up from ${priceL(yPrice)}.` : `Fuel costs ${priceL(price)} a litre today.`, 'Fuel left over stays in the tank for tomorrow.'] : [];
+  if(planL) opts.push({ id:'plan', label:'Order enough for the plan', litres:planL, sub:`${num(planL)} L · ${money(planL * price)}` });
+  if(extraL > planL) opts.push({ id:'extra', label:`Order extra while fuel is ${priceL(price)}`, litres:extraL, sub:`${num(extraL)} L · ${money(extraL * price)} · enough for tomorrow too` });
+  const story = (sc === 0 ? ['Your timetable is ready. Now make sure there is enough fuel to fly it.', 'More flying needs more fuel, and fuel costs money.', `Fuel is sold in ${num(lot)} L lots.`]
+    : sc === 2 ? [up ? `Fuel costs ${priceL(price)} a litre today, up from ${priceL(yPrice)}.` : `Fuel costs ${priceL(price)} a litre today.`, 'Fuel left over stays in the tank for tomorrow.'] : [])
+    .concat(sc <= 1 ? ['Nothing is paid until you start operations, so you can change your order.'] : []);
   const perRoute = Object.entries(serviceCounts(sched)).map(([id, k]) => `${k} × ${num(fuelForTrip(ourPlane(), routeById(id)))} L`).join(' + ');
+  const isOn = o => order ? o.litres === order.litres : (o.id === 'tank' && st.chosen);
   screen().innerHTML = taskFrame({ question: sc === 0 ? 'Is there enough fuel for your timetable?' : 'Fuel for today', work:false, story,
     say:`Today's schedule: ${svcLabel(sched)}. Fuel required ${num(need)} litres. In the tank ${num(have)} litres. Fuel costs ${priceL(price)} a litre.`,
     main:`<div class="fuel-facts"><div><span class="label">Today's schedule</span><b>${esc(svcLabel(sched))}</b></div><div><span class="label">Fuel required</span><b class="mono">${num(need)} L</b><small>${perRoute}</small></div>
       <div><span class="label">Current tank</span><b class="mono ${short ? 'orange' : ''}">${num(have)} L</b><small>${short ? `${num(short)} L short` : 'enough for today'}</small></div><div><span class="label">Current price</span><b class="mono amber">${priceL(price)}${up ? ' <span class="red">▲</span>' : ''}</b><small>a litre</small></div></div>
-      <div class="choices ${opts.length > 2 ? 'three' : 'two'}">${opts.map(o => `<button class="choice" data-fo="${o.id}"><b>${esc(o.label)}</b><span>${esc(o.sub)}</span>${tankGauge({ ghost:o.litres, need, compact:true })}</button>`).join('')}</div>`,
-    foot: sc >= 1 ? helpChip('fuel') : '' });
+      ${order ? `<div class="order-line">Ordered: <b>${num(order.litres)} L · ${money(order.total)}</b>, paid when operations start. <button class="btn small" id="cancelOrder">Cancel the order</button></div>` : ''}
+      <div class="choices ${opts.length > 2 ? 'three' : 'two'}">${opts.map(o => `<button class="choice ${isOn(o) ? 'on' : ''}" data-fo="${o.id}"><b>${esc(o.label)}</b><span>${esc(o.sub)}</span>${tankGauge({ ghost:o.litres, need, compact:true })}</button>`).join('')}</div>`,
+    foot: (sc >= 1 ? helpChip('fuel') : '') + (order || !short ? '<span class="grow"></span><button class="btn primary big" id="nx">Next &#9654;</button>' : '') });
+  on('cancelOrder', () => { S.rnd.fuelOrder = null; render(); });
+  on('nx', next);
   screen().querySelectorAll('[data-fo]').forEach(b => b.onclick = () => {
     const o = opts.find(x => x.id === b.getAttribute('data-fo')); if(!o) return;
-    if(!o.litres){ next(); return; }
+    if(!o.litres){ S.rnd.fuelOrder = null; st.chosen = true; next(); return; }
     if(sc === 0 || sc === 2){ st.buy = o.litres; render(); return; }
-    buyFuel(o.litres, price); next(); });
+    S.rnd.fuelOrder = { litres:o.litres, price, total:r2(o.litres * price) }; next(); });
 };
-/* One column per route: passengers, fare, revenue, running costs, fuel, route profit. */
+/* One column per route: passengers, fare, revenue, on-board, flight costs, fuel, terminal charges, route profit. */
 function forecastCols(){
-  const by = {};
-  planFlights().forEach(f => { if(f.grounded) return; const x = by[f.route] || (by[f.route] = { pax:0, fare:f.price, run:0, fuelL:0, n:0 }); x.pax += f.sold; x.run += f.runCost; x.fuelL += f.fuelL; x.n++; });
-  return Object.keys(by).map(id => { const x = by[id], r = routeById(id), revenue = x.pax * x.fare, fuel = Math.round(fuelValueOf(x.fuelL)), cost = x.run + fuel;
-    return { id, label:r.city, flag:r.flag, sub:plural(x.n, 'service'), values:{ pax:x.pax, fare:x.fare, revenue, run:x.run, fuel, cost, profit:revenue - cost } }; });
+  const fl = planFlights(), X = dayExtras(fl), rate = rateWithOrder(), by = {};
+  fl.forEach(f => { if(f.grounded) return; const x = by[f.route] || (by[f.route] = { pax:0, fare:f.price, run:0, fuelL:0, term:0, n:0 }); x.pax += f.sold; x.run += f.runCost; x.fuelL += f.fuelL; x.term += f.termCost || 0; x.n++; });
+  return Object.keys(by).map(id => { const x = by[id], r = routeById(id), b = X.byRoute[id] || { obRev:0, obCost:0 }, revenue = x.pax * x.fare, fuel = Math.round(x.fuelL * rate), cost = x.run + fuel + x.term + b.obCost;
+    return { id, label:r.city, flag:r.flag, sub:plural(x.n, 'service'), values:{ pax:x.pax, fare:x.fare, revenue, onboard:b.obRev, run:x.run, fuel, term:x.term, cost, profit:revenue + b.obRev - cost } }; });
 }
 R.dayForecast = () => {
-  const sc = scaffold(), cols = forecastCols(), ctx = ['launch', 'day1', 'day2', 'day3'][sc];
+  const sc = scaffold(), cols = forecastCols(), ctx = ['launch', 'day1', 'day2', 'day3'][sc], X = dayExtras(planFlights());
   const t = ensureTable('dayfc:' + S.day, 'dayForecast', cols, { context:ctx }), done = tableComplete(t), over = fleetDayCost();
-  const routeP = cols.reduce((s, c) => s + c.values.profit, 0), dayP = routeP - over;
-  const sum = `<div class="fc-sum">${cols.map(c => `<span>${esc(c.label)} route profit <b class="mono">${money(c.values.profit)}</b></span>`).join('')}<span>− aircraft's day cost <b class="mono">${money(over)}</b></span><span class="fc-total">Expected profit today <b class="mono ${dayP >= 0 ? 'green' : 'red'}">${money(dayP)}</b></span>${sc === 0 ? '<p class="muted">Tonight we will compare this with what actually happened.</p>' : ''}</div>`;
+  const routeP = cols.reduce((s, c) => s + c.values.profit, 0), dayP = routeP - over - X.crew;
+  const sum = `<div class="fc-sum">${cols.map(c => `<span>${esc(c.label)} route profit <b class="mono">${money(c.values.profit)}</b></span>`).join('')}<span>− aircraft's day cost <b class="mono">${money(over)}</b></span>${X.crew ? `<span>− second crew <b class="mono">${money(X.crew)}</b></span>` : ''}<span class="fc-total">Expected profit today <b class="mono ${dayP >= 0 ? 'green' : 'red'}">${money(dayP)}</b></span>${sc === 0 ? '<p class="muted">Tonight we will compare this with what actually happened.</p>' : ''}</div>`;
   screen().innerHTML = taskFrame({ question:'What do you expect to happen today?', back: sc > 0,
     story: sc === 0 ? ['A forecast is what we think will happen. After the flights, we will compare it with what actually happened.'] : [],
     say:'What do you expect to happen today? A forecast is what we think will happen.',
     main: tableHtml(t), side: done ? sum : sideHtml(t),
     foot: `${sc > 0 ? helpChip('forecast') + helpChip('money') : ''}<span class="grow"></span>${done ? '<button class="btn primary huge" id="startOps">Start operations &#9654;</button>' : ''}` });
   bindTable(t); bindFrame(() => { S.si = Math.max(0, S.si - 2); resetEntry(); render(); });
-  on('startOps', () => { S.rnd.myForecast = { profit:dayP, revenue:cols.reduce((s, c) => s + c.values.revenue, 0), run:cols.reduce((s, c) => s + c.values.run, 0), fuel:cols.reduce((s, c) => s + c.values.fuel, 0), over }; resetEntry(); UI.view = null; next(); });
+  on('startOps', () => {
+    S.rnd.myForecast = { profit:dayP, revenue:cols.reduce((s, c) => s + c.values.revenue + c.values.onboard, 0), run:cols.reduce((s, c) => s + c.values.run + c.values.term + (c.values.cost - c.values.run - c.values.fuel - c.values.term), 0), fuel:cols.reduce((s, c) => s + c.values.fuel, 0), over, crew:X.crew };
+    const o = S.rnd.fuelOrder; if(o){ buyFuel(o.litres, o.price); S.rnd.fuelOrder = null; }   // the order is paid now
+    resetEntry(); UI.view = null; next(); });
 };
 
 /* ==================================================================
@@ -3773,24 +3869,97 @@ function evidenceHtml(h, ids){
     const miss = Math.max(0, (x.want || x.pax) - x.pax);
     return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td class="num">${x.want || '—'}</td><td class="num">${x.seats}</td><td class="num">${x.pax}</td><td class="num ${miss ? 'orange' : ''}">${miss}</td><td class="num">${money(x.fare)}</td><td class="num">${money(x.rev)}</td><td class="num ${x.profit >= 0 ? 'green' : 'red'}">${money(x.profit)}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
-/* One screen: the day bar, and for each route its fare, its services and who gets a seat. */
+/* One screen: the day bar, each route's fare and services, on-board sales (Day 1 on), the first departure (Day 2 on), the crew. */
+const DEP_MIN = 360, DEP_MAX = 600;
 R.planner = () => {
-  const sc = scaffold(), p = ourPlane(), f = fleetOne(), sched = schedOf(f), ids = plannerRoutes(), counts = serviceCounts(sched), fc = forecastNow();
-  const card = id => { const r = routeById(id), n = counts[id] || 0, want = wantOf(id), isNew = !(lastDay() && lastDay().routes && lastDay().routes[id]) && id !== S.market;
-    return `<div class="plan-route ${n ? 'flying' : ''}"><div class="pr-head">${flagSvg(r.flag, 28)}<b>${esc(r.city)}</b>${isNew ? '<span class="chip new">New market</span>' : ''}<span class="muted">${fmtDur(TIME.roundTrip(p, r))} a service</span></div>
-      <div class="pr-fares"><span class="label">Fare</span>${(r.fares || [r.basePrice]).map(x => `<button class="fare sm ${x === fareOf(id) ? 'on' : ''}" data-pf="${id}|${x}" aria-pressed="${x === fareOf(id)}"><b class="mono">${money(x)}</b><span>${paxFor(r, x)}</span></button>`).join('')}</div>
+  const sc = scaffold(), p = ourPlane(), f = fleetOne(), sched = schedOf(f), ids = plannerRoutes(), counts = serviceCounts(sched), now = planOutcome(currentPlan());
+  const card = id => { const r = routeById(id), n = counts[id] || 0, want = wantOf(id), isNew = !(lastDay() && lastDay().routes && lastDay().routes[id]) && id !== S.market, eb = earlyBonus(r);
+    return `<div class="plan-route ${n ? 'flying' : ''}"><div class="pr-head">${flagSvg(r.flag, 28)}<b>${esc(r.city)}</b>${isNew ? '<span class="chip new">New market</span>' : ''}<span class="muted">${fmtDur(TIME.leg(p, r))} each way · ${fmtDur(TIME.roundTrip(p, r))} a service</span></div>
+      <div class="pr-fares"><span class="label">Fare</span>${(r.fares || [r.basePrice]).map(x => `<button class="fare sm ${x === fareOf(id) ? 'on' : ''}" data-pf="${id}|${x}" aria-pressed="${x === fareOf(id)}"><b class="mono">${money(x)}</b><span>${paxFor(r, x) + eb}</span></button>`).join('')}</div>
       <div class="pr-svc"><span class="label">Services</span>${[0, 1, 2, 3].map(k => { const s = schedFrom(Object.assign({}, counts, { [id]:k })), ok = k === 0 || schedFits(s); return `<button class="svc sm ${n === k ? 'on' : ''}" data-svc="${id}|${k}" aria-pressed="${n === k}" ${ok ? '' : 'disabled'}><b>×${k}</b></button>`; }).join('')}</div>
-      <p class="cap-line">${capLine(want, n * p.seats)}</p>${paxGroups(want, p.seats, n, { small:true })}</div>`; };
-  const end = sched.length ? TIME.day(p, sched).end : null;
-  screen().innerHTML = taskFrame({ question: sc >= 3 ? 'What will your airline do today?' : 'What timetable do you want to run today?', work:false,
-    story: sc === 1 ? ['Yesterday\'s results are on the HQ. You choose the services and the fare.'] : [],
+      <p class="cap-line">${capLine(want, n * p.seats)}${eb ? ` <span class="chip biz">+${eb} early business travellers</span>` : ''}</p>${paxGroups(want, p.seats, n, { small:true })}</div>`; };
+  const end = sched.length ? TIME.day(p, sched).end : null, D = sched.length ? TIME.day(p, sched) : null, crews = crewNeeded();
+  const ob = onboardOf(), X = now.X;
+  const obRow = sc >= 1 ? `<div class="pl-row"><span class="label">On board</span>${Object.keys(ONBOARD).map(k => `<button class="opt-chip ${(S.onboard || 'none') === k ? 'on' : ''}" data-ob="${k}" aria-pressed="${(S.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b></button>`).join('')}</div>
+    ${ob.share ? `<p class="pl-note">${esc(ob.sub)}. ${ob.share === 0.5 ? 'Half' : '3 in 10'} of ${now.pax} passengers buy: <b>${X.buyers} × ${money(ob.price)} = ${money(X.obRev)}</b> · stock ${money(X.obCost)}</p>` : ob.free ? `<p class="pl-note">${now.pax} passengers × ${money(ob.costPax)} = <b>${money(X.obCost)}</b> · passengers like it${S.rep < 4 ? ' (+½ star)' : ''}</p>` : ''}` : '';
+  const depRow = S.round >= 2 ? `<div class="pl-row"><span class="label">First departure</span><button class="btn small" id="depDown" ${firstDep() <= DEP_MIN ? 'disabled' : ''}>◀ 15 min</button><b class="dep-t">${fmtTime(firstDep())}</b><button class="btn small" id="depUp" ${firstDep() >= DEP_MAX ? 'disabled' : ''}>15 min ▶</button><span class="muted">Business travellers fly only if a service leaves before 08:00.</span></div>` : '';
+  const crewTxt = D ? (crews > 1 ? `<span class="orange">Crew day ${fmtDur(D.elapsed)}: needs a second crew (+${money(WORLD.crewCost)})</span>` : `<span>Crew day <b class="mono">${fmtDur(D.elapsed)}</b> of ${fmtDur(WORLD.crewDutyMin)}</span>`) : '';
+  const story = sc === 1 ? ['New today: on-board sales. A catering company can supply snacks and drinks for your flights.', `A crew can work up to ${fmtDur(WORLD.crewDutyMin)}, from the first departure to the last landing. A longer day needs a second crew (${money(WORLD.crewCost)}).`]
+    : sc === 2 ? ['New today: departure times. You can start the day earlier, or later.', 'Business travellers want to arrive in time for morning meetings. They only fly if a service leaves before 08:00.'] : [];
+  screen().innerHTML = taskFrame({ question: sc >= 3 ? 'What will your airline do today?' : 'What timetable do you want to run today?', work:false, story,
     say:`Plan today's operation. ${ids.map(id => `${routeById(id).city}: ${wantOf(id)} people want to fly at ${money(fareOf(id))}.`).join(' ')}`,
-    main:`<div class="planner">${dayTimeline(p, sched, { compact:true })}<div class="plan-routes n${ids.length}">${ids.map(card).join('')}</div>
-      <div class="plan-sum"><span>${esc(svcLabel(sched))}</span><span>Aircraft busy until <b class="mono">${end ? fmtTime(end) : '—'}</b></span><span>Fuel needed <b class="mono">${num(fuelNeeded())} L</b> · in the tank <b class="mono">${num(S.fuel)} L</b></span>${sc >= 3 && sched.length ? `<span>Expected profit today <b class="mono ${fc.profit >= 0 ? 'green' : 'red'}">${money(Math.round(fc.profit))}</b></span>` : ''}</div></div>`,
-    foot:`${helpChip('timing')}${helpChip('demand')}<span class="grow"></span><button class="btn primary big" id="nx" ${sched.length ? '' : 'disabled'}>${sched.length ? 'Use this timetable' : 'Choose some services'} &#9654;</button>` });
+    main:`<div class="planner">${depRow}${dayTimeline(p, sched, { compact:true })}<div class="plan-routes n${ids.length}">${ids.map(card).join('')}</div>${obRow}
+      <div class="plan-sum"><span>${esc(svcLabel(sched))}</span><span>Aircraft busy until <b class="mono">${end ? fmtTime(end) : '—'}</b></span>${crewTxt}<span>Fuel needed <b class="mono">${num(fuelNeeded())} L</b> · in the tank <b class="mono">${num(S.fuel)} L</b></span></div></div>`,
+    foot:`${helpChip('timing')}${helpChip('demand')}<span class="grow"></span><button class="btn primary big" id="nx" ${sched.length ? '' : 'disabled'}>${sched.length ? 'Use this plan' : 'Choose some services'} &#9654;</button>` });
   bindServices();
   screen().querySelectorAll('[data-pf]').forEach(b => b.onclick = () => { const [id, x] = b.getAttribute('data-pf').split('|'); S.prices[id] = +x; refreshPlan(); render(); });
-  on('nx', () => { S.rnd.committed = true; S.rnd.focusRoute = schedOf(f)[0]; next(); });
+  screen().querySelectorAll('[data-ob]').forEach(b => b.onclick = () => { S.onboard = b.getAttribute('data-ob'); render(); });
+  const moveDep = d => { const v = clamp(firstDep() + d, DEP_MIN, DEP_MAX), s = schedOf(f); S.firstDep = v; if(!schedFits(s)){ S.firstDep = v - d; toast("The timetable wouldn't fit."); } refreshPlan(); render(); };
+  on('depDown', () => moveDep(-15)); on('depUp', () => moveDep(15));
+  on('nx', () => { S.rnd.focusRoute = schedOf(f)[0]; next(); });
+};
+
+/* ==================================================================
+   COMPARE: pin plans and see them side by side before choosing. Profit is shown "about" (nearest £50);
+   the forecast still works the exact figures out.
+   ================================================================== */
+function currentPlan(){ const f = fleetOne(); return { sched: f ? schedOf(f).slice() : [], prices: Object.assign({}, S.prices), firstDep: firstDep(), onboard: S.onboard || 'none' }; }
+function planKey(pl){ return JSON.stringify([pl.sched, pl.sched.map(id => pl.prices[id]), pl.firstDep, pl.onboard]); }
+/* What a plan would do today, worked out on a copy of the state (nothing changes). */
+function planOutcome(pl){
+  const f = fleetOne(), keep = { sched: f ? f.schedule : [], route: f ? f.route : null, prices: S.prices, dep: S.firstDep, ob: S.onboard };
+  try{
+    if(f){ f.schedule = pl.sched.slice(); f.route = pl.sched[0] || null; } S.prices = Object.assign({}, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard;
+    const fl = planFlights().filter(x => !x.grounded), X = dayExtras(fl), rate = rateWithOrder(), p = ourPlane();
+    const tickets = fl.reduce((t, x) => t + x.revenue, 0), run = fl.reduce((t, x) => t + x.runCost, 0), fuelL = fl.reduce((t, x) => t + x.fuelL, 0), fuel = Math.round(fuelL * rate), over = fleetDayCost();
+    const routes = {}; fl.forEach(x => { routes[x.route] = (routes[x.route] || 0) + x.sold; });
+    const nos = Object.keys(routes).reduce((t, id) => t + Math.max(0, paxWant(routeById(id), fareOf(id)) - routes[id]), 0);
+    const pax = fl.reduce((t, x) => t + x.sold, 0), costs = run + fuel + over + X.term + X.obCost + X.crew;
+    return { pax, nos, seats: fl.reduce((t, x) => t + x.seats, 0), revenue: tickets + X.obRev, costs, profit: tickets + X.obRev - costs, end: pl.sched.length ? TIME.day(p, pl.sched).end : null, crews: X.crews, fuelL, X, label: svcLabel(pl.sched) };
+  } finally {
+    if(f){ f.schedule = keep.sched; f.route = keep.route; } S.prices = keep.prices; S.firstDep = keep.dep; S.onboard = keep.ob;
+  }
+}
+const aboutPounds = v => (v < 0 ? '−' : '') + money(Math.round(Math.abs(v) / 50) * 50);
+const COMPARE_STEPS = ['timetable', 'fareTry', 'planner'];
+function compareCard(pl, o, i){
+  const ob = ONBOARD[pl.onboard] || ONBOARD.none;
+  return `<div class="cmp ${i === undefined ? 'cur' : ''}"><div class="cmp-h"><b>${i === undefined ? 'This plan' : `Plan ${'ABC'[i]}`}</b>${i === undefined ? '' : `<button class="link" data-unpin="${i}" aria-label="Remove">✕</button>`}</div>
+    <div class="cmp-t">${esc(o.label)}${pl.sched.length ? ` · from ${fmtTime(pl.firstDep)}` : ''}</div>
+    <div class="cmp-t muted">${pl.sched.length ? [...new Set(pl.sched)].map(id => `${routeById(id).city} ${money(pl.prices[id] || routeById(id).basePrice)}`).join(' · ') : ''}${pl.onboard !== 'none' ? ' · ' + esc(ob.label.replace('Sell snacks at', 'snacks')) : ''}</div>
+    <div class="cmp-l"><b>${o.pax}</b> flew · <b class="${o.nos ? 'orange' : ''}">${o.nos}</b> no seat</div>
+    <div class="cmp-l">Free at <b>${o.end ? fmtTime(o.end) : '—'}</b> · <b class="${o.crews > 1 ? 'orange' : ''}">${o.crews}</b> crew${o.crews > 1 ? 's' : ''}</div>
+    <div class="cmp-l">Revenue <b>${aboutPounds(o.revenue)}</b> · costs <b>${aboutPounds(o.costs)}</b></div>
+    <div class="cmp-p"><span>Profit about</span><b class="${o.profit >= 0 ? 'pos' : 'neg'}">${aboutPounds(o.profit)}</b></div>
+    ${i === undefined ? `<button class="btn small" id="pinPlan" ${pl.sched.length && (S.rnd.pins || []).length < 3 ? '' : 'disabled'}>📌 Pin this plan</button>` : `<button class="btn small" data-useplan="${i}">Use this plan</button>`}</div>`;
+}
+function compareHtml(){
+  const pins = S.rnd.pins || [], cur = currentPlan();
+  return `<div class="ws-h sub">Compare plans</div><div class="cmps">${compareCard(cur, planOutcome(cur))}${pins.map((pl, i) => compareCard(pl, planOutcome(pl), i)).join('')}${pins.length ? '' : '<p class="muted mp-note">Pin a plan, change things, then compare.</p>'}</div>`;
+}
+function bindCompare(){
+  on('pinPlan', () => { const pl = currentPlan(), pins = S.rnd.pins || (S.rnd.pins = []); if(!pins.some(x => planKey(x) === planKey(pl)) && pins.length < 3) pins.push(pl); render(); });
+  screen().querySelectorAll('[data-unpin]').forEach(b => b.onclick = () => { S.rnd.pins.splice(+b.getAttribute('data-unpin'), 1); render(); });
+  screen().querySelectorAll('[data-useplan]').forEach(b => b.onclick = () => { const pl = S.rnd.pins[+b.getAttribute('data-useplan')]; const f = fleetOne(); setSchedule(f.uid, pl.sched.slice()); Object.assign(S.prices, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard; refreshPlan(); render(); });
+}
+
+/* ==================================================================
+   HOME AIRPORT AND TERMINAL (onboarding)
+   ================================================================== */
+R.home = () => {
+  const p = planeById('dhc6'), h = homeData(), T = h.terminals || [];
+  if(!T.some(t => t.id === S.terminal)) S.terminal = T[0] ? T[0].id : null;
+  const times = hh => WORLD.setupRoutes.map(routeById).sort((a, b) => a.city.localeCompare(b.city)).map(r => `<span class="apt-r">${flagSvg(r.flag, 16)} ${esc(r.city)} <b>${fmtDur(legMinutes(p, r, hh))}</b> · fare about <b>${money(normalFare(r, hh))}</b></span>`).join('');
+  screen().innerHTML = `<div class="card stack">${header('Choose your home airport', 'Choose your home airport. Every flight pays a landing fee. Busier airports cost more but bring more passengers.')}
+    <p class="lede sm">Every flight pays a <b>landing fee</b> at home. Busy airports cost more, but more people fly from them. Flight times are for your Twin Otter, each way.</p>
+    <div class="airports">${WORLD.homes.map(x => `<button class="apt ${S.home === x.id ? 'on' : ''}" data-h="${x.id}" aria-pressed="${S.home === x.id}"><span class="apt-code">${x.code}</span><b>${esc(x.name)}</b><span class="muted">${esc(x.blurb)}</span>
+      <span class="apt-f"><span>Landing fee <b>${money(x.fee)}</b></span><span>Passengers <b>${x.demandPct > 0 ? '+' : ''}${x.demandPct}%</b></span></span><span class="apt-rs">${times(x)}</span></button>`).join('')}</div>
+    <span class="label">Your terminal at ${esc(h.name)}</span>
+    <div class="terms">${T.map(t => `<button class="term ${S.terminal === t.id ? 'on' : ''}" data-tm="${t.id}" aria-pressed="${S.terminal === t.id}"><b>${esc(t.name)}</b><span class="apt-f"><span>Turnaround <b>${t.turn} min</b></span><span><b>${money(t.charge)}</b> a passenger</span></span><span class="muted">${esc(t.note)}</span></button>`).join('')}</div>
+    <div class="actions"><button class="btn primary big" id="nx">Base the airline at ${esc(h.code)}${T.length > 1 ? ' ' + esc((T.find(t => t.id === S.terminal) || T[0]).name) : ''} &#9654;</button></div></div>`;
+  screen().querySelectorAll('[data-h]').forEach(b => b.onclick = () => { S.home = b.getAttribute('data-h'); S.terminal = null; render(); });
+  screen().querySelectorAll('[data-tm]').forEach(b => b.onclick = () => { S.terminal = b.getAttribute('data-tm'); render(); });
+  on('nx', next);
 };
 
 /* ==================================================================
@@ -3877,6 +4046,7 @@ function afterRender(){
     if(v === 'plan'){ UI.view = null; if(step().t === 'hq'){ next(); return; } render(); return; }
     UI.view = v === 'overview' && !WS_STEPS.includes(step().t) ? null : v; render(); });
   screen().querySelectorAll('[data-ri]').forEach(b => b.onclick = () => { const i = +b.getAttribute('data-ri'); if(i < S.si){ S.si = i; resetEntry(); UI.view = null; render(); } });
+  bindCompare();
   clearInterval(fbTimer);
   const fb = screen().querySelector('.fb'); if(fb){ const n = +fb.getAttribute('data-n'); if(n > 1) fbTimer = setInterval(() => fbShow(1), 6000); }
   screen().querySelectorAll('[data-fb]').forEach(b => b.onclick = () => { fbShow(+b.getAttribute('data-fb')); clearInterval(fbTimer); });
@@ -3889,9 +4059,9 @@ function railValue(t, i){
   if(t === 'market') return S.market ? `${routeById(S.market).city} · ${paxFor(routeById(S.market), routeById(S.market).basePrice)} a day` : '';
   if(t === 'demand'){ const r = S.market && routeById(S.market); return passed && r ? `${paxFor(r, r.basePrice)} want to fly at ${money(r.basePrice)} · ${p.seats} seats` : ''; }
   if(t === 'rotation'){ if(!passed || !S.market) return ''; const D = TIME.day(p, [S.market, S.market]); return `ready again ${fmtTime(D.trips[1].dep)}`; }
-  if(t === 'timetable' || t === 'planner'){ if(!sched.length) return ''; const s = `${svcLabel(sched)} · until ${fmtTime(TIME.day(p, sched).end)}`; return t === 'planner' ? s + ' · ' + Object.keys(serviceCounts(sched)).map(id => money(fareOf(id))).join(' / ') : s; }
+  if(t === 'timetable' || t === 'planner'){ if(!sched.length) return ''; const s = `${svcLabel(sched)} · until ${fmtTime(TIME.day(p, sched).end)}`; return t === 'planner' ? s + ' · ' + Object.keys(serviceCounts(sched)).map(id => money(fareOf(id))).join(' / ') + (S.round >= 2 ? ` · from ${fmtTime(firstDep())}` : '') + (S.onboard && S.onboard !== 'none' ? ' · ' + ONBOARD[S.onboard].label.toLowerCase() : '') : s; }
   if(t === 'fareTry') return passed && S.market ? `${money(fareOf(S.market))} · ${wantOf(S.market)} people` : '';
-  if(t === 'fuelPlan'){ const b = S.rnd.fuelBought; if(b) return `${num(b.litres)} L bought · ${money(b.total)}`; return passed ? `tank covers it (${num(S.fuel)} L)` : ''; }
+  if(t === 'fuelPlan'){ const b = S.rnd.fuelBought, o = S.rnd.fuelOrder; if(o) return `${num(o.litres)} L ordered · ${money(o.total)}`; if(b) return `${num(b.litres)} L bought · ${money(b.total)}`; return passed ? `tank covers it (${num(S.fuel)} L)` : ''; }
   if(t === 'dayForecast') return S.rnd.myForecast ? `profit ${money(S.rnd.myForecast.profit)}` : '';
   return '';
 }
@@ -3908,12 +4078,14 @@ function moneyPanel(){
   if(S.phase === 'setup'){ lines.push(['Start-up money', settings.startingCash]); if(S.fleet.length){ const p = ourPlane(); lines.push([p.name.replace(/^DHC-6 /, ''), -p.price]); } }
   else if(S.rnd.cashStart !== undefined) lines.push(['Cash at the start of today', S.rnd.cashStart]);
   if(fb) lines.push([`Fuel · ${num(fb.litres)} L at ${priceL(fb.price)}`, -fb.total]);
-  const fc = S.rnd.myForecast, end = fc ? Math.round(S.cash + fc.revenue - fc.run - fc.over) : null;
+  const fo = S.rnd.fuelOrder; if(fo) lines.push([`Fuel order · ${num(fo.litres)} L (pay at start)`, -fo.total]);
+  const fc = S.rnd.myForecast, end = fc ? Math.round(S.cash + fc.revenue - fc.run - fc.over - (fc.crew || 0)) : null;
+  if(COMPARE_STEPS.includes(step().t)) return `<aside class="ws-money"><div class="ws-h">Money</div><div class="mp-cash"><span>Cash now</span><b>${money(S.cash)}</b></div><div class="mp-lines">${lines.map(([l, v]) => `<div><span>${esc(l)}</span><b class="${v < 0 ? 'neg' : ''}">${v < 0 ? '−' : ''}${money(Math.abs(v))}</b></div>`).join('')}</div>${compareHtml()}</aside>`;
   return `<aside class="ws-money"><div class="ws-h">Money</div>
-    <div class="mp-cash"><span>Cash now</span><b>${money(S.cash)}</b></div>
+    <div class="mp-cash"><span>Cash now</span><b>${money(S.cash)}</b></div>${fo ? `<div class="mp-cash small"><span>After today's orders</span><b>${money(r2(S.cash - fo.total))}</b></div>` : ''}
     <div class="mp-lines">${lines.map(([l, v]) => `<div><span>${esc(l)}</span><b class="${v < 0 ? 'neg' : ''}">${v < 0 ? '−' : ''}${money(Math.abs(v))}</b></div>`).join('')}</div>
     <div class="ws-h sub">Expected today</div>
-    ${fc ? `<div class="mp-lines"><div><span>Ticket revenue</span><b class="pos">+${money(fc.revenue)}</b></div><div><span>Flight running costs</span><b class="neg">−${money(fc.run)}</b></div><div><span>Fuel used <small>(already paid)</small></span><b class="muted">${money(fc.fuel)}</b></div><div><span>Aircraft's day</span><b class="neg">−${money(fc.over)}</b></div></div>
+    ${fc ? `<div class="mp-lines"><div><span>Ticket revenue</span><b class="pos">+${money(fc.revenue)}</b></div><div><span>Flight running costs</span><b class="neg">−${money(fc.run)}</b></div><div><span>Fuel used <small>(already paid)</small></span><b class="muted">${money(fc.fuel)}</b></div><div><span>Aircraft's day</span><b class="neg">−${money(fc.over)}</b></div>${fc.crew ? `<div><span>Second crew</span><b class="neg">−${money(fc.crew)}</b></div>` : ''}</div>
       <div class="mp-cash small"><span>Expected profit</span><b class="${fc.profit >= 0 ? 'pos' : 'neg'}">${money(fc.profit)}</b></div><div class="mp-cash small"><span>Cash at the end of today</span><b>≈ ${money(end)}</b></div>`
       : '<p class="muted mp-note">Complete the forecast to see what today should earn.</p>'}</aside>`;
 }
@@ -3972,7 +4144,7 @@ function todayCard(mode){
   // the morning: today's headline, the standing plan and one action
   const fares = Object.keys(serviceCounts(sched)).map(id => `${routeById(id).city} ${money(fareOf(id))}`).join(' · ');
   return `${hqHead("Today's Plan", periodTag().toUpperCase())}<div class="pb td2"><h3 class="td-news2">${esc(S.rnd.headline || "Today's operation")}</h3>${(S.rnd.brief || []).map(l => `<p class="td-brief">${esc(l)}</p>`).join('')}
-    <div class="td-list"><div><span>Timetable</span><b>${sched.length ? esc(svcLabel(sched)) + ` · until ${fmtTime(TIME.day(p, sched).end)}` : '—'}</b></div><div><span>Fares</span><b>${esc(fares || '—')}</b></div>
+    <div class="td-list"><div><span>Timetable</span><b>${sched.length ? esc(svcLabel(sched)) + ` · until ${fmtTime(TIME.day(p, sched).end)}` : '—'}</b></div><div><span>Fares</span><b>${esc(fares || '—')}</b></div>${S.round >= 1 ? `<div><span>On board</span><b>${esc(onboardOf().label)}</b></div>` : ''}${S.round >= 2 ? `<div><span>First departure</span><b>${fmtTime(firstDep())}</b></div>` : ''}
       <div><span>Fuel</span><b class="${need > S.fuel ? 'orange' : ''}">${num(S.fuel)} L · plan needs ${num(need)} L</b></div></div>
     <div class="td-act"><button class="btn primary act" id="startDay">Plan today's operation ▶</button></div></div>`;
 }
@@ -4030,6 +4202,26 @@ function renderView(v){
   if(v === 'network'){ if(hqMap) hqMap.destroy(); hqMap = makeMap($('hqMap'), { scale:1, pad:0.65, planes:true }); hqMap.layer = 'routes'; requestAnimationFrame(() => { if(!hqMap) return; hqMap.autoFit(true); hqMap.render(); }); }
   if(v === 'finance'){ const fb = screen().querySelector('.fin-pb'); requestAnimationFrame(() => { if(fb && S.history.length) fb.innerHTML = finChart({ n:14, w:fb.clientWidth - 28, h:Math.max(140, fb.clientHeight - 40) }); else if(fb) fb.innerHTML = '<p class="muted">The chart starts after the first flights.</p>'; }); }
 }
+
+/* Full screen in one click (the two-screen Present lives in the Home menu). */
+function fsEl(){ return document.fullscreenElement || document.webkitFullscreenElement; }
+function toggleFullscreen(){
+  const r = document.documentElement;
+  try{ if(fsEl()){ (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; } const p = (r.requestFullscreen || r.webkitRequestFullscreen).call(r); if(p && p.catch) p.catch(() => toast('Full screen was blocked by the browser. Press F11 instead.')); }catch(e){ toast('Press F11 for full screen.'); }
+}
+function syncFsBtn(){ const l = document.getElementById('fsLbl'); if(l) l.textContent = fsEl() ? ' Exit full screen' : ' Full screen'; }
+
+/* Fares follow distance from the chosen home airport (real airlines charge more for longer flights):
+   normal fare ≈ £30 + 14p a km, to the nearest £10; the fare buttons run from £10 below to £30 above it. */
+function normalFare(route, hh){ return Math.max(50, Math.round((30 + 0.14 * routeKm(route, hh)) / 10) * 10); }
+function syncRoutesToHome(){
+  if(!S || !S.home) return;
+  if(S.home === syncRoutesToHome.home) return; syncRoutesToHome.home = S.home;
+  WORLD.setupRoutes.map(routeById).forEach(r => { const b = normalFare(r); r.basePrice = b; r.fares = [b - 10, b, b + 10, b + 20, b + 30]; r.prices = r.fares.slice(); r.setupPrices = r.fares.slice();
+    if(S.phase === 'setup' && S.prices && S.prices[r.id] !== undefined && !r.fares.includes(S.prices[r.id])) S.prices[r.id] = b; });
+}
+/* For the balance checks in testing. */
+window.__proto = { WORLD, planOutcome, newState, buyPlane, planeById, routeById, schedFits, emptyRnd, syncRoutesToHome, setS: v => { S = v; }, getS: () => S };
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).
@@ -4477,7 +4669,8 @@ function boot(){
   initTeacher();
   $('shopBtn').onclick = () => { if(S.overlay && S.overlay.type==='shop') closeOverlay(); else if(step().t==='shop' || step().t==='welcome' || step().t==='name') toast('The shop opens after setup'); else openShop(); };
   $('fleetBtn').onclick = () => { if(!S.fleet.length){ toast('No planes yet'); return; } S.overlay = (S.overlay && S.overlay.type==='fleet') ? null : {type:'fleet'}; render(); };
-    $('presentBtn').onclick = presentBoth;
+    $('presentBtn').onclick = toggleFullscreen;
+    document.addEventListener('fullscreenchange', syncFsBtn); document.addEventListener('webkitfullscreenchange', syncFsBtn); syncFsBtn();
   $('menuBtn').onclick = openMenu;
   initTestBar();
   // the Operations Wall on this screen: ▣ in the top bar, the W key, Return to HQ / Esc to come back
