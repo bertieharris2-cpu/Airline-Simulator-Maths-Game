@@ -883,6 +883,116 @@ table.fx.dense td.c{font-size:calc(26px * var(--tz))}
 .homefab:hover{opacity:1}
 body.focus .homefab{display:inline-flex;align-items:center;justify-content:center}
 body.focus .testbar{left:110px}
+/* ============================================================
+   VISUAL POLISH (Visual Polish & Strategy brief): blue/cyan for action and selection, gold kept
+   for money, stars and achievements, layered surfaces lit from the top left.
+   ============================================================ */
+:root{ --act-a:#2a8fe0; --act-m:#1d79d0; --act-b:#1560b8; --sel:#46c8ff; --sel-rgb:70,200,255; --open:#e9f8ff; --op:#5cc8f5;
+  --surface:radial-gradient(130% 70% at 0% 0%, rgba(96,176,255,.14), transparent 55%), linear-gradient(160deg, #15407a 0%, #10305f 45%, #0b2448 100%);
+  --lift:inset 0 1px 0 rgba(170,225,255,.16), inset 0 -1px 0 rgba(0,8,25,.5), 0 12px 32px rgba(2,10,28,.38); }
+/* primary action: illuminated blue, not fluorescent */
+.btn.primary,.btn.huge,.btn.act,.pad button.check,.side2 .pad button.check{background:linear-gradient(160deg, var(--act-a) 0%, var(--act-m) 40%, var(--act-b) 100%);color:#fff;border:1px solid rgba(120,215,255,.7);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32), inset 0 -2px 0 rgba(5,25,60,.45), 0 0 16px rgba(41,185,239,.22), 0 6px 18px rgba(3,14,35,.35);text-shadow:0 1px 0 rgba(4,20,50,.45)}
+.btn.primary:hover:not(:disabled),.btn.huge:hover:not(:disabled),.btn.act:hover:not(:disabled),.pad button.check:hover{border-color:#9fe6ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4), inset 0 -2px 0 rgba(5,25,60,.45), 0 0 28px rgba(41,185,239,.5), 0 6px 18px rgba(3,14,35,.35);filter:brightness(1.06)}
+.btn.primary:disabled,.btn.huge:disabled{opacity:1;background:#173761;color:rgba(214,232,255,.5);border-color:rgba(127,200,255,.22);box-shadow:none;text-shadow:none}
+.btn{background:linear-gradient(180deg, rgba(127,200,255,.12), rgba(127,200,255,.03));box-shadow:inset 0 1px 0 rgba(170,225,255,.12)}
+.btn:focus-visible,.choice:focus-visible,.opt:focus-visible,.strat:focus-visible,.ptab:focus-visible{outline:2px solid #bdeeff;outline-offset:2px}
+.btn.good{background:linear-gradient(160deg,#3fd08a,#1f9d63);color:#04231a}
+/* selected: navy base, cyan edge, blue wash, a bright side marker */
+.choice.on,.opt.on,.opt[aria-pressed="true"],.card-n.on,.card.exec .opt.on,.plane-card.picked{border-color:var(--sel)!important;background:linear-gradient(135deg, rgba(41,140,230,.32), rgba(41,185,239,.10) 60%, rgba(8,29,61,.45));
+  box-shadow:inset 3px 0 0 #7fe0ff, inset 0 0 0 1px rgba(var(--sel-rgb),.45), 0 0 22px rgba(var(--sel-rgb),.26)}
+.choice,.opt,.plane-card,.card-n{background:linear-gradient(160deg, rgba(30,82,152,.38), rgba(8,26,56,.6));border:1px solid rgba(127,200,255,.24)}
+.choice{border-left:3px solid rgba(127,200,255,.55)}
+.choice:hover,.opt:hover{border-color:rgba(var(--sel-rgb),.7)}
+.card.exec .opt{border-left-color:rgba(var(--sel-rgb),.8)}
+.opt .big{font-family:var(--sans);color:var(--white);text-shadow:none;font-variant-numeric:tabular-nums}
+.sw.on{outline:2px solid var(--sel);box-shadow:0 0 14px rgba(var(--sel-rgb),.5)}
+.op.on{border-color:var(--sel);color:#dff6ff;background:rgba(41,140,230,.28)}
+.stepbar button.on,.parts span.on,.stage-scale span.on{background:linear-gradient(160deg, var(--act-a), var(--act-b));color:#fff;border-color:rgba(120,215,255,.75);box-shadow:0 0 18px rgba(41,185,239,.3)}
+.step-mark{color:#bfeeff;border-color:rgba(var(--sel-rgb),.6)}
+.sl-progress i.on{background:linear-gradient(90deg,#1f95dc,#7fe0ff);box-shadow:0 0 10px rgba(41,185,239,.6)}
+.ft-h.picked{background:rgba(41,140,230,.16);box-shadow:inset 0 -3px 0 var(--sel)}
+table.fx thead th.picked{box-shadow:inset 0 -4px 0 var(--sel)}
+table.fx thead th b,.ft-h b{color:#fff;text-shadow:none}
+table.fx td.c.done,.c.done{color:#fff;text-shadow:0 0 12px rgba(var(--sel-rgb),.35)}
+.c.enter.on{border-color:var(--open);color:var(--open);box-shadow:0 0 14px rgba(var(--sel-rgb),.4)}
+table.fx td.enter.on button{color:var(--open)}
+.say-it .s-ans,.big-sum .s-ans{color:var(--open);border-color:var(--open)}
+.say-it .s-done{color:#bfeeff}
+.answer input,.answer .unit,.calc .question b,.w-pins span{color:#fff;text-shadow:none}
+.task.main{border-left-color:var(--sel);background:rgba(41,140,230,.08)}
+.sl-bar i.got{background:linear-gradient(90deg,#1f95dc,#5fd3ff);box-shadow:0 0 14px rgba(41,185,239,.45)}
+.sl-callout{border-left-color:var(--sel);background:rgba(41,140,230,.10)}
+/* fuel is a quantity, not money: cyan-blue */
+.tank-bar i.keep{background:rgba(41,150,230,.38)}
+.tank-bar i.use{background:linear-gradient(90deg,#1f95dc,#5fd3ff);box-shadow:0 0 10px rgba(41,185,239,.5);background-image:repeating-linear-gradient(-45deg,transparent 0 5px,rgba(7,18,31,.22) 5px 8px), linear-gradient(90deg,#1f95dc,#5fd3ff)}
+.tank-bar i.ghost{background:repeating-linear-gradient(-45deg,rgba(95,211,255,.55) 0 6px,rgba(95,211,255,.18) 6px 12px);border:2px dashed #7fe0ff}
+.key-use{background:linear-gradient(90deg,#1f95dc,#5fd3ff)}
+.toast{background:linear-gradient(160deg, var(--act-a), var(--act-b));color:#fff;border:1px solid rgba(120,215,255,.7);box-shadow:0 0 24px rgba(41,185,239,.4)}
+/* identity and status */
+.biglogo .a{color:#fff;text-shadow:0 0 28px rgba(41,185,239,.45)}
+.biglogo .b{color:var(--sel);text-shadow:0 0 28px rgba(var(--sel-rgb),.45)}
+.boot{display:none}
+.name-input{color:#fff}.name-input:focus{border-color:var(--sel)}
+.cops.hold,.cops.idle,.w-live.hold,.w-live.idle{color:#a8e6ff;border-color:rgba(var(--sel-rgb),.5);background:rgba(41,140,230,.14)}
+.ptab sup{background:var(--orange);color:#1b0d00}
+.ii.warn{border-left-color:var(--orange)}.ii.warn .tag{color:var(--orange)}
+.p-today{border-color:rgba(var(--sel-rgb),.5);box-shadow:0 0 22px rgba(var(--sel-rgb),.12), var(--lift)}
+.k-cash .spark polyline{stroke:var(--amber)}.k-fuel{--x:0}
+/* surfaces lit from the top left */
+.card,.tf,.hp,.overlay .box{background:var(--surface);border:1px solid rgba(127,200,255,.32);box-shadow:var(--lift)}
+.hp .phead,.tf-bar,.screen-title{background:linear-gradient(180deg, rgba(127,200,255,.11), rgba(0,0,0,.12));box-shadow:inset 0 1px 0 rgba(170,225,255,.16)}
+.cbar{background:linear-gradient(180deg,#143e72 0%,#0d2c56 55%,#0a2142 100%);border-bottom:1px solid rgba(127,200,255,.3);box-shadow:inset 0 1px 0 rgba(170,225,255,.18), 0 2px 0 rgba(0,6,20,.45), 0 8px 24px rgba(2,10,28,.35);position:relative;z-index:2}
+.bname{display:flex;flex-direction:column;min-width:0;line-height:1.1}
+#cStrat{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9fe3ff;white-space:nowrap}
+#cStrat.sb-premium{color:var(--amber)}
+#cStrat:empty{display:none}
+.sbadge{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(var(--sel-rgb),.6);color:#a8e6ff;background:rgba(41,140,230,.14);border-radius:var(--rb);vertical-align:middle}
+.sbadge.premium{border-color:rgba(255,200,61,.65);color:var(--amber);background:rgba(255,200,61,.08)}
+/* the Operations Wall */
+.w-head,.w-status{background:linear-gradient(180deg,#123a6c,#0b2448);box-shadow:inset 0 1px 0 rgba(170,225,255,.16)}
+.w-map{box-shadow:var(--lift)}
+.w-clock b{color:#fff;text-shadow:0 0 16px rgba(41,185,239,.4)}
+.w-ticker{background:linear-gradient(180deg,#0f3264,#081d3d);color:#eaf6ff;border:1px solid rgba(127,200,255,.32)}
+.w-ticker > b{background:linear-gradient(160deg, var(--act-a), var(--act-b));color:#fff;border:0}
+.wt b{color:#fff}.wt.money b{color:var(--amber)}.wt.good b{color:var(--green)}.wt.bad b{color:var(--red)}
+.w-over{background:linear-gradient(160deg,#103463,#081d3f 60%)}
+.tapfs{color:#fff}
+/* ---------- the strategy screen ---------- */
+.strats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;height:100%;min-height:0}
+.strat{display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;padding:22px 24px 20px;color:var(--white);min-height:0;cursor:pointer;
+  background:var(--surface);border:1px solid rgba(127,200,255,.3);border-top:3px solid rgba(127,200,255,.45);box-shadow:var(--lift);border-radius:var(--r);transition:border-color .15s, box-shadow .2s, transform .2s}
+.strat:hover{border-color:rgba(var(--sel-rgb),.75);transform:translateY(-2px)}
+.strat.on{border-color:var(--sel);border-top-color:#7fe0ff;background:radial-gradient(120% 70% at 0% 0%, rgba(96,190,255,.28), transparent 60%), linear-gradient(160deg,#1a4c8c,#10305f 55%,#0b2448);
+  box-shadow:inset 0 0 0 1px rgba(var(--sel-rgb),.5), 0 0 30px rgba(var(--sel-rgb),.3), var(--lift)}
+.st-name{font-size:calc(15px * var(--tz));font-weight:800;letter-spacing:.24em;text-transform:uppercase;color:#9fe3ff}
+.strat.on .st-name{color:#dff6ff}
+.strat{position:relative}
+.st-on{position:absolute;top:14px;right:16px;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#04223f;background:linear-gradient(160deg,#9fe9ff,#46c8ff);padding:4px 10px;border-radius:var(--rb);box-shadow:0 0 14px rgba(70,200,255,.45)}
+.strats.has-pick .strat:not(.on){filter:saturate(.7) brightness(.86)}
+.strats.has-pick .strat:not(.on):hover{filter:none}
+.strat.on{border-top-width:4px;transform:translateY(-3px)}
+.st-slogan{font-size:calc(30px * var(--tz));line-height:1.12;color:#fff}
+.st-tags{font-size:calc(17px * var(--tz));color:var(--muted)}
+.cabin{display:block;width:100%;flex:1 1 0;min-height:56px;max-height:190px;margin:4px 0;filter:drop-shadow(0 6px 14px rgba(2,10,28,.45))}
+.cab-body{fill:rgba(220,236,255,.07);stroke:rgba(150,210,255,.45);stroke-width:1.5}
+.cab-seat{fill:var(--c2);opacity:.85}.cab-back{fill:#fff;opacity:.35}
+.strat.on .cab-seat{opacity:1}
+.st-meters{display:grid;grid-template-columns:repeat(3,auto);gap:6px 22px;width:100%;padding:10px 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.st-meters > span{display:flex;flex-direction:column;gap:2px}
+.st-meters small{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.st-meters b{font-size:calc(22px * var(--tz));letter-spacing:2px;white-space:nowrap}
+.st-meters i{font-style:normal;color:#2c4a72}
+.m-fare i.on{color:var(--amber)}.m-star i.on{color:var(--amber);text-shadow:0 0 10px rgba(255,200,61,.3)}.m-vol i.on{color:#7fe0ff}
+.st-text{font-size:calc(19px * var(--tz));line-height:1.35;color:var(--white)}
+.livery{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:28px;align-items:center}
+.livery-preview{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px;background:rgba(4,18,43,.35);border:1px solid var(--hair);border-radius:var(--r)}
+.livery .swatches{display:grid;grid-template-columns:repeat(6,52px);gap:10px}
+.lp-art{display:flex;align-items:center;gap:18px}
+.lp-name{font-family:var(--sans);font-size:28px;font-weight:800;letter-spacing:.14em;color:var(--c1)}
+@media (max-height:820px){ .st-slogan{font-size:calc(24px * var(--tz))} .strat{padding:16px 18px;gap:6px} .st-text{font-size:calc(17px * var(--tz))} .st-tags{font-size:15px} }
+@media (prefers-reduced-motion: reduce){ .strat{transition:none} .strat:hover{transform:none} }
+
 @media print{ body{background:#fff;color:#000} }
 </style>
 </head>
@@ -1087,7 +1197,7 @@ body.focus .testbar{left:110px}
 <!-- ============================ CONTROL WINDOW ============================ -->
 <div id="control">
   <header class="cbar">
-    <div class="brand"><svg class="fin" aria-hidden="true"><use id="cFin" href="#fin-stripe"/></svg><span id="cName">AIRLINE SIMULATOR</span></div>
+    <div class="brand"><svg class="fin" aria-hidden="true"><use id="cFin" href="#fin-stripe"/></svg><span class="bname"><span id="cName">AIRLINE SIMULATOR</span><i id="cStrat"></i></span></div>
     <div class="cdate"><b id="cDate">—</b><span><i id="cDay">—</i><i class="chip">Daily operations</i></span></div>
     <div class="stat"><span class="label">Cash</span><b id="cCash">£0</b></div>
     <div class="stat"><span class="label">Reputation</span><b id="cStars" class="stars"></b></div>
@@ -1237,6 +1347,16 @@ function dateLong(n){ const d = calDate(n); return `${WDAY[d.getUTCDay()]} ${d.g
 function dateShort(n){ const d = calDate(n); return `${WDAY[d.getUTCDay()].slice(0,3)} ${d.getUTCDate()} ${MONTH[d.getUTCMonth()].slice(0,3)}`; }
 function dayName(n){ return WDAY[calDate(n).getUTCDay()]; }
 function dayTag(n){ n = n === undefined ? (S && S.day !== undefined ? S.day : 0) : n; return n > 0 && S && S.phase !== 'setup' ? 'Day ' + n : 'Launch day'; }
+/* AIRLINE STRATEGY (Visual Polish & Strategy brief): chosen in setup, shown as the airline's identity.
+   For now it changes the story's words, not the numbers; economic modifiers come after testing. */
+const STRATEGIES = [
+  { id:'premium', name:'Premium', badge:'Premium airline', slogan:'Make flying feel special', tags:['Higher fares', 'Better service', 'Higher expectations'], fares:3, service:5, volume:2, seats:2, rows:3,
+    text:'Charge more, carry fewer people, and build a reputation passengers trust.' },
+  { id:'full', name:'Full Service', badge:'Full-service airline', slogan:'Balance price, comfort and profit', tags:['Flexible', 'Moderate fares', 'Balanced expectations'], fares:2, service:4, volume:3, seats:3, rows:4,
+    text:'Balance price and quality. Adapt as the airline grows.' },
+  { id:'value', name:'Value', badge:'Value carrier', slogan:'Keep fares low and planes full', tags:['Low fares', 'More passengers', 'Tight margins'], fares:1, service:3, volume:4, seats:4, rows:6,
+    text:'Keep costs and fares down. Success comes from filling the aircraft.' } ];
+function strategyOf(){ return S && S.airline && S.airline.strategy ? STRATEGIES.find(x => x.id === S.airline.strategy) : null; }
 function plural(n, s){ return n+' '+s+(n===1?'':'s'); }
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function flagSvg(id, h){ const a = FLAG_ASPECT[id]||1.5; return `<svg class="flag" viewBox="0 0 ${a*10} 10" style="height:${h}px;width:${a*h}px" aria-hidden="true"><use href="#flag-${id}" width="${a*10}" height="10"/></svg>`; }
@@ -1271,10 +1391,10 @@ let S = null;
 function emptyRnd(){ return { flights:[], status:{}, why:[], reviews:[], tasks:[], open:null, brief:[], tables:{}, activeTable:null }; }
 function newState(){
   return { v:4, world:WORLD.id, phase:'setup', round:0, day:0, period:{ type:'setup', from:0, to:0, run:{kind:'one'} }, ledger:{ rev:[], cost:[], pax:[], seats:[] }, home: WORLD.homes[0].id,
-    airline:{ name:'', code:'', c1:'#ffc83d', c2:'#6cc4ff', fin:'stripe' },
+    airline:{ name:'', code:'', c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'fin'},{t:'home'},{t:'shop'},{t:'route'},{t:'setupFuel'},{t:'setupPrice'},{t:'fly'},{t:'results'},{t:'setupDone'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'strategy'},{t:'fin'},{t:'home'},{t:'shop'},{t:'route'},{t:'setupFuel'},{t:'setupPrice'},{t:'fly'},{t:'results'},{t:'setupDone'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };
@@ -1588,6 +1708,8 @@ function buildChoice(w){
   const forced = S.teacherQueue && S.teacherQueue.choice;
   let c = JSON.parse(JSON.stringify(forced ? defaultChoice({calc: {fare:'revenue', trips:'schedule', fuel:'fuel', cabin:'cabin', plane:'fleet'}[forced], brief: w.brief}) : (w.choice || defaultChoice(w))));
   if(!c.options.some(o => o.do === 'carryOn')) c.options.unshift(Object.assign({}, CARRY_ON));
+  const sty = strategyOf(); if(sty && c.trigger === 'rival'){ const r = focusRoute(), cp = r ? competitorPrice(r) : undefined, diff = r && cp !== undefined ? money(Math.max(0, fareOf(r.id) - cp)) : 'a little';
+    c.news = { value:'{rival} has started a fare war on {city}.', premium:`{rival} is ${diff} cheaper on {city}. Do you match them, or trust passengers to pay more for your service?`, full:'{rival} is undercutting you on {city}. How should the airline respond?' }[sty.id]; }
   // "How many trips?" only makes sense when one plane can't carry everyone
   if(!forced){ const f = featuredFleet() || activeFleet()[0], rid = f && (schedOf(f)[0] || f.route); if(f && rid){ const fits = paxFor(routeById(rid), fareOf(rid)) <= seatsOf(f); if(fits) c.options = c.options.filter(o => o.do !== 'trips'); } }
   if(c.options.length < 2 && c.trigger === 'trips') c.options.push({ label:'Look at your ticket price', sub:'Compare three prices', do:'fare' });
@@ -2085,7 +2207,7 @@ function factsHtml(list){ return `<div class="facts">${list.map(([l,v,c]) => `<d
 function on(id, fn){ const e = $(id); if(e) e.onclick = fn; }
 function roundLabel(){ if(S.phase==='setup') return 'Launch day'; const P = S.period; if(!P || P.type === 'day') return dateShort() + ' · Day ' + S.day; if(P.type === 'gap') return fmtRange(P.from, P.to); if(P.type === 'week') return periodTag() + ' · ' + fmtRange(P.from, P.to); return periodTag() + ' · ' + periodLabel(P); }
 
-const FOCUS_STEPS = ['plane','newRoute','results','route','setupFuel','setupPrice','choice','fare','trips','day','fuel','cabin','quick','challenge','challengeCalc'];
+const FOCUS_STEPS = ['strategy','plane','newRoute','results','route','setupFuel','setupPrice','choice','fare','trips','day','fuel','cabin','quick','challenge','challengeCalc'];
 function applyTextSize(){ const z = [1, 1.12, 1.25][S.textSize || 0] || 1; document.documentElement.style.setProperty('--tz', z); }
 function render(){
   if(IS_DISPLAY) return;
@@ -2124,28 +2246,55 @@ function openMenu(){ S.overlay = {type:'menu'}; render(); }
 
 /* ----- setup ----- */
 R.name = () => {
-  screen().innerHTML = `<div class="card stack">${header('Name your airline', 'Name your airline and pick two colours.')}
+  screen().innerHTML = `<div class="card stack">${header('Name your airline', 'Name your airline.')}
     <input class="name-input" id="nm" maxlength="24" placeholder="e.g. Dragon Air" value="${esc(S.airline.name)}" autocomplete="off">
-    <div class="row" style="gap:40px;align-items:flex-start">
-      <div class="stack"><span class="label">Colour 1</span><div class="swatches" id="sw1">${SWATCHES.map(c=>`<button class="sw ${c===S.airline.c1?'on':''}" style="background:${c}" data-c="${c}" aria-label="colour"></button>`).join('')}</div></div>
-      <div class="stack"><span class="label">Colour 2</span><div class="swatches" id="sw2">${SWATCHES.map(c=>`<button class="sw ${c===S.airline.c2?'on':''}" style="background:${c}" data-c="${c}" aria-label="colour"></button>`).join('')}</div></div>
-    </div>
-    <div class="row"><svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-jet"/></svg><span id="pv" class="mono" style="font-size:30px;font-weight:700;color:var(--c1)"></span></div>
+    <p class="muted">The name goes on every plane, ticket and departure board.</p>
     <div class="actions"><button class="btn primary big" id="nx" ${S.airline.name.trim()?'':'disabled'}>Next &#9654;</button></div></div>`;
-  const nm = $('nm'), pv = $('pv'); pv.textContent = S.airline.name.toUpperCase();
-  nm.oninput = () => { S.airline.name = nm.value; S.airline.code = airlineCode(nm.value||'AS'); pv.textContent = nm.value.toUpperCase(); $('nx').disabled = !nm.value.trim(); $('cName').textContent = nm.value.toUpperCase()||'AIRLINE SIMULATOR'; };
-  ['sw1','sw2'].forEach((id,i) => $(id).querySelectorAll('.sw').forEach(b => b.onclick = () => { S.airline[i?'c2':'c1'] = b.getAttribute('data-c'); setLivery(); $(id).querySelectorAll('.sw').forEach(x=>x.classList.toggle('on', x===b)); }));
+  const nm = $('nm');
+  nm.oninput = () => { S.airline.name = nm.value; S.airline.code = airlineCode(nm.value||'AS'); $('nx').disabled = !nm.value.trim(); $('cName').textContent = nm.value.toUpperCase()||'AIRLINE SIMULATOR'; };
+  nm.onkeydown = e => { if(e.key === 'Enter' && nm.value.trim()) $('nx').click(); };
   on('nx', () => { S.airline.name = S.airline.name.trim(); S.airline.code = airlineCode(S.airline.name); next(); });
-  setTimeout(()=>nm.focus(), 50);
+  setTimeout(() => nm.focus(), 30);
+};
+/* A cabin seen from above: seats across each row, rows along the plane. */
+function cabinSvg(st){
+  const W = 320, H = 120, x0 = 54, x1 = 270, n = st.seats, R = st.rows, pitch = (x1 - x0) / R, aisle = 14, top = 26, bot = 94, across = (bot - top - aisle) / n, sw = Math.min(pitch * 0.66, 44), left = Math.ceil(n / 2);
+  let g = `<path class="cab-body" d="M30 20 H262 Q306 20 312 60 Q306 100 262 100 H30 Q14 100 14 60 Q14 20 30 20 Z"/>`;
+  for(let r = 0; r < R; r++){ const x = x0 + r * pitch + (pitch - sw) / 2;
+    for(let k = 0; k < n; k++){ const y = top + k * across + (k >= left ? aisle : 0) + 1.5, h = across - 3;
+      g += `<rect class="cab-seat" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${sw.toFixed(1)}" height="${h.toFixed(1)}" rx="3"/><rect class="cab-back" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(sw*0.24).toFixed(1)}" height="${h.toFixed(1)}" rx="2"/>`; } }
+  return `<svg class="cabin" viewBox="0 0 ${W} ${H}" aria-hidden="true">${g}</svg>`;
+}
+function meter(n, of, on, off){ return Array.from({ length: of }, (_, i) => `<i class="${i < n ? 'on' : ''}">${i < n ? on : off}</i>`).join(''); }
+/* "What kind of airline do you want to build?": the business strategy, chosen before the brand. */
+R.strategy = () => {
+  const cur = S.airline.strategy, pick = STRATEGIES.find(x => x.id === cur);
+  screen().innerHTML = taskFrame({ title:'Airline strategy', question:'What kind of airline do you want to build?', work:false,
+    story:['Every airline makes money a different way. Choose the one you want to run.'],
+    say:'What kind of airline do you want to build? ' + STRATEGIES.map(x => `${x.name}: ${x.slogan}. ${x.text}`).join(' '),
+    main:`<div class="strats ${pick ? 'has-pick' : ''}">${STRATEGIES.map(x => `<button class="strat ${cur === x.id ? 'on' : ''}" data-st="${x.id}" aria-pressed="${cur === x.id}">
+      <span class="st-name">${esc(x.name)}</span>${cur === x.id ? '<span class="st-on">&#10003; Selected</span>' : ''}<b class="st-slogan">${esc(x.slogan)}</b><span class="st-tags">${x.tags.map(esc).join(' · ')}</span>
+      ${cabinSvg(x)}
+      <span class="st-meters"><span><small>Fares</small><b class="m-fare">${meter(x.fares, 3, '£', '£')}</b></span><span><small>Service</small><b class="m-star">${meter(x.service, 5, '★', '★')}</b></span><span><small>Passengers</small><b class="m-vol">${meter(x.volume, 4, '●', '○')}</b></span></span>
+      <span class="st-text">${esc(x.text)}</span></button>`).join('')}</div>`,
+    foot:`<button class="btn primary big" id="nx" ${pick ? '' : 'disabled'}>${pick ? `Build a ${esc(pick.name.toLowerCase())} airline` : 'Choose a strategy'} &#9654;</button>` });
+  screen().querySelectorAll('[data-st]').forEach(b => b.onclick = () => { S.airline.strategy = b.getAttribute('data-st'); render(); });
+  on('nx', next);
 };
 R.fin = () => {
-  screen().innerHTML = `<div class="card stack">${header('Pick your tail fin', 'Pick a symbol for your tail fin. It uses your two colours.')}
-    <p class="lede">Every ${esc(S.airline.name)} plane will carry this on its tail.</p>
+  screen().innerHTML = `<div class="card stack">${header('Paint your planes', 'Choose two colours and a symbol for the tail fin.')}
+    <div class="livery">
+      <div class="stack"><span class="label">Main colour</span><div class="swatches" id="sw1">${SWATCHES.map(c=>`<button class="sw ${c===S.airline.c1?'on':''}" style="background:${c}" data-c="${c}" aria-label="colour"></button>`).join('')}</div>
+        <span class="label">Second colour</span><div class="swatches" id="sw2">${SWATCHES.map(c=>`<button class="sw ${c===S.airline.c2?'on':''}" style="background:${c}" data-c="${c}" aria-label="colour"></button>`).join('')}</div></div>
+      <div class="livery-preview"><div class="lp-art"><svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-jet"/></svg>${finSvg(S.airline.fin, 64)}</div><span class="lp-name">${esc(S.airline.name.toUpperCase())}</span>${strategyBadge()}</div></div>
+    <span class="label">Tail fin</span>
     <div class="options fins">${FINS.map(f=>`<button class="opt ${S.airline.fin===f.id?'on':''}" data-fin="${f.id}">${finSvg(f.id, 72)}<span class="sub">${esc(f.name)}</span></button>`).join('')}</div>
     <div class="actions"><button class="btn primary big" id="nx">Next &#9654;</button></div></div>`;
+  ['sw1','sw2'].forEach((id,i) => $(id).querySelectorAll('.sw').forEach(b => b.onclick = () => { S.airline[i?'c2':'c1'] = b.getAttribute('data-c'); setLivery(); $(id).querySelectorAll('.sw').forEach(x=>x.classList.toggle('on', x===b)); }));
   screen().querySelectorAll('[data-fin]').forEach(b => b.onclick = () => { S.airline.fin = b.getAttribute('data-fin'); render(); });
   on('nx', next);
 };
+function strategyBadge(){ const x = strategyOf(); return x ? `<span class="sbadge ${x.id}">${esc(x.badge)}</span>` : ''; }
 R.home = () => {
   screen().innerHTML = `<div class="card stack">${header('Choose your home airport', 'Choose your home airport. Every flight pays a landing fee. Busy airports cost more but bring more passengers.')}
     <p class="lede">Every flight pays a <b>landing fee</b> at home. Busier airports charge more, but more people fly from them.</p>
@@ -2497,6 +2646,7 @@ function hqFit(){
 /* The top bar: date and period, the operation's status, cash, stars, fleet, fuel, alerts. */
 function updateTopBar(){
   $('cName').textContent = S.airline.name || 'Airline Simulator';
+  const sx = strategyOf(), cs = $('cStrat'); if(cs){ cs.textContent = sx ? sx.badge : ''; cs.className = sx ? 'sb-' + sx.id : ''; }
   $('cDate').textContent = S.phase === 'setup' ? 'Sunday 12 May 2030' : periodLabel();
   $('cDay').textContent = periodTag(); const chip = document.querySelector('.cdate i.chip'); if(chip) chip.textContent = PERIOD_CHIP[S.phase === 'setup' ? 'setup' : periodType()] || '';
   $('cCash').textContent = money(S.cash); $('cStars').innerHTML = starsHtml(S.rep); $('cFuel').textContent = num(S.fuel)+' L';
@@ -2721,6 +2871,7 @@ document.addEventListener('keydown', e => { if(IS_DISPLAY || !S || !S.steps || S
 R.setupDone = () => {
   screen().innerHTML = `<div class="card stack" style="text-align:center;align-items:center;padding:40px">
     <h1>${esc(S.airline.name)} is flying</h1>
+    ${strategyBadge()}
     <div class="row">${finSvg(S.airline.fin, 80)}<svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1);width:260px"><use href="#pl-${planeById(S.fleet[0].planeId).icon}"/></svg></div>
     <p class="lede">Your airline is up and running with <b class="amber mono">${money(S.cash)}</b> in the bank and <b class="amber mono">${num(S.fuel)} L</b> in the tank.</p>
     <p class="muted">Next time: Day 1 at your HQ, Monday 13 May. Your progress is saved on this computer.</p>
@@ -2770,7 +2921,7 @@ function renderOverlay(){
   if(o.type==='menu'){
     const runs = loadRuns();
     screen().innerHTML = `<div class="hero"><h1 class="biglogo"><span class="a">AIRLINE</span><span class="b">SIM</span></h1></div><div class="card stack" style="align-items:center;text-align:center;padding:36px">${header('Home', null, 'HOME')}
-      ${S.airline.name ? `<p class="lede">Saved game: <b>${esc(S.airline.name)}</b> · ${esc(S.phase === 'setup' ? 'Launch day' : periodLabel())} · <b class="amber mono">${money(S.cash)}</b></p>` : ''}
+      ${S.airline.name ? `<p class="lede">Saved game: <b>${esc(S.airline.name)}</b> ${strategyBadge()} · ${esc(S.phase === 'setup' ? 'Launch day' : periodLabel())} · <b class="amber mono">${money(S.cash)}</b></p>` : ''}
       ${S.migratedFrom ? '<p class="small muted">Saved before the calendar update: it carries on from the nearest point in the story.</p>' : ''}
       <div class="row" style="justify-content:center"><button class="btn primary big" id="cont">${S.airline.name ? 'Continue: ' + esc(S.airline.name) : 'Continue'}</button><button class="btn primary big" id="newg">New game</button>${runs.length?'<button class="btn big" id="best">Best runs</button>':''}<button class="btn big" id="code">Save code</button><button class="btn big" id="iwb2">Open the wall in a window</button></div></div>`;
     on('cont', () => { delete S.migratedFrom; closeOverlay(); }); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); return;
@@ -3224,7 +3375,7 @@ function wallReviewHtml(){
   const tile = (l, v, c, sub) => `<div class="wt ${c||''}"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
   return `${ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
     <div class="wo-head"><small>DAILY RESULTS</small><h1>${esc(d)} RESULTS</h1></div>
-    <div class="wo-tiles">${tile('Ticket money', money(h.revenue||0))}${tile('Costs', money(h.costs||0))}${tile((h.profit||0) >= 0 ? 'Profit' : 'Loss', money(Math.abs(h.profit||0)), (h.profit||0) >= 0 ? 'good' : 'bad')}${tile('Passengers', num(h.pax||0), '', `on ${plural(h.trips||0,'flight')}`)}${tile('Seats filled', pct+'%', '', `${num(h.pax||0)} of ${num(h.seats||0)}`)}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>
+    <div class="wo-tiles">${tile('Ticket money', money(h.revenue||0), 'money')}${tile('Costs', money(h.costs||0), 'money')}${tile((h.profit||0) >= 0 ? 'Profit' : 'Loss', money(Math.abs(h.profit||0)), (h.profit||0) >= 0 ? 'good' : 'bad')}${tile('Passengers', num(h.pax||0), '', `on ${plural(h.trips||0,'flight')}`)}${tile('Seats filled', pct+'%', '', `${num(h.pax||0)} of ${num(h.seats||0)}`)}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>
     <div class="wo-body"><div class="wo-chart"><div class="wo-sub">PROFIT BY DAY</div>${finChart({n:14, w:1000, h:430, big:true})}</div>
       <div class="wo-report"><div class="wo-sub">LANDING REPORT</div>${S.rnd.flights.map(f => `<div><span class="status ${statusClass(S.rnd.status[f.key])}">${S.rnd.status[f.key]}</span><span>${esc(outcomeLine(f))}</span></div>`).join('')}${S.rnd.eventWhy ? `<div><span>⚠</span><span>${esc(S.rnd.eventWhy)}</span></div>` : ''}
         <div class="reviews">${(S.rnd.reviews||[]).map(v => `<div class="review"><span class="face">${v.face}</span><span class="txt">${esc(v.text)}</span><span class="stars">${starsHtml(v.stars)}</span></div>`).join('')}</div></div></div>`;
@@ -3248,6 +3399,7 @@ function renderDisplay(){
   const mode = wallMode(), ops = opsStatus(), focus = mode === 'alert' ? (S.rnd.focusRoute || null) : null;
   $('wall').className = 'wall mode-' + mode;
   $('dName').textContent = S.airline.name ? S.airline.name.toUpperCase() : 'YOUR AIRLINE';
+  const sx = strategyOf(); document.querySelector('.w-brand small').textContent = (sx ? sx.badge + ' · ' : '') + 'Network operations';
   const PT = periodType();
   $('wPeriod').textContent = S.phase === 'setup' ? 'LAUNCH DAY' : PT === 'day' ? "TODAY'S OPERATIONS" : PT === 'week' ? 'THIS WEEK' : PT === 'gap' ? 'THE WEEKEND' : `${monthName(S.period.from).toUpperCase()} OPERATIONS`;
   $('wDate').textContent = S.phase === 'setup' ? dateLong() : periodLabel() + ' · ' + periodTag();
@@ -3291,7 +3443,7 @@ function wallPeriodReviewHtml(){
   const b = T.parts.length > 1 ? T.parts.map(p => ({ label:p.label, tip:p.label, revenue:p.rev, costs:p.costs, profit:p.profit })) : T.days.map((p, i) => { const d = T.from + i, x = ledgerSum(d, d); return { label: dayAxis(d), tip: dateShort(d), revenue:x.rev, costs:x.cost, profit:x.profit }; });
   return `${ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
     <div class="wo-head"><small>${S.period.type === 'week' ? 'WEEKLY' : S.period.type === 'gap' ? 'WEEKEND' : 'MONTHLY'} RESULTS</small><h1>${esc(name)} RESULTS</h1></div>
-    <div class="wo-tiles">${tile('Ticket money', moneyK(T.rev))}${tile('Costs', moneyK(T.costs))}${tile(T.profit >= 0 ? 'Profit' : 'Loss', moneyK(Math.abs(T.profit)), T.profit >= 0 ? 'good' : 'bad')}${tile('Passengers', num(T.pax), '', `on ${plural(T.trips,'flight')}`)}${tile('Seats filled', pct+'%')}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>
+    <div class="wo-tiles">${tile('Ticket money', moneyK(T.rev), 'money')}${tile('Costs', moneyK(T.costs), 'money')}${tile(T.profit >= 0 ? 'Profit' : 'Loss', moneyK(Math.abs(T.profit)), T.profit >= 0 ? 'good' : 'bad')}${tile('Passengers', num(T.pax), '', `on ${plural(T.trips,'flight')}`)}${tile('Seats filled', pct+'%')}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>
     <div class="wo-body"><div class="wo-chart"><div class="wo-sub">${T.parts.length > 1 ? 'PROFIT BY MONTH' : 'PROFIT BY DAY'}</div>${finChart({ buckets:b, w:1000, h:430, big:true })}</div>
       <div class="wo-report"><div class="wo-sub">WHAT HAPPENED</div>${S.rnd.why.slice(0, 5).map(w => `<div><span>${w.ic}</span><span>${esc(w.text)}</span></div>`).join('')}${T.paused ? `<div class="wo-paused">⚠ SIMULATION PAUSED · ${esc(T.paused.title)}</div>` : ''}
         <div class="reviews">${(S.rnd.reviews||[]).map(v => `<div class="review"><span class="face">${v.face}</span><span class="txt">${esc(v.text)}</span><span class="stars">${starsHtml(v.stars)}</span></div>`).join('')}</div></div></div>`;
