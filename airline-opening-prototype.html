@@ -1617,7 +1617,7 @@ body.hqmode #screen{padding:10px 12px}
 .dock{display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;background:linear-gradient(160deg,#0F3060 0%,#0B2449 45%,#0A2142 100%);border:1px solid rgba(99,216,255,.36);box-shadow:-4px 0 18px rgba(0,8,24,.38), inset 0 1px 0 rgba(170,220,255,.07);border-radius:2px}
 .dk-h{display:flex;align-items:center;gap:8px;padding:11px 12px 10px 14px;border-bottom:1px solid var(--hair);flex:none}
 .dk-kind{display:none}
-.dock:not(.dk-context) .dk-kind{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#04223F;background:var(--cy);padding:2px 6px}
+.dock:not(.dock-context) .dk-kind{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#04223F;background:var(--cy);padding:2px 6px}
 .dk-t{flex:1;min-width:0;font-size:16.5px;font-weight:600;color:var(--cy);line-height:1.2}
 .dk-x{flex:none;width:32px;height:32px;display:grid;place-items:center;background:rgba(20,62,112,.5);border:1px solid var(--line);color:#E9F2FC;font:inherit;font-size:16px;cursor:pointer;border-radius:2px}
 .dk-x:hover{border-color:var(--cy)}
@@ -1691,7 +1691,7 @@ td.c.enter.on button{background:rgba(99,216,255,.24);color:#fff;border-color:var
 td.c.flash,b.flash{animation:cellFlash 1.6s ease-out}
 @keyframes cellFlash{0%{background:rgba(86,230,166,.45);color:#fff}100%{background:transparent}}
 /* the working space */
-.dk-work .dk-b{overflow:hidden}
+.dock-work .dk-b{overflow:hidden}
 .wpad{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
 .wp-pins{display:flex;flex-wrap:wrap;gap:4px 14px;padding:8px 10px;border:1px solid var(--hair);background:rgba(4,16,31,.45)}
 .wp-pins > b{width:100%;font-size:13px;color:var(--cy)}
@@ -1892,7 +1892,7 @@ body.hq-enter #screen{animation:hqIn .6s ease-out}
 .rb span{font-style:normal;font-weight:600;font-size:17px}.rb span small{font-weight:400;color:#CFE0F2}
 .ready-big p b{font-size:inherit;font-weight:700;line-height:inherit}
 .dk-tt{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.dock:not(.dk-context) .dk-kind{align-self:flex-start}
+.dock:not(.dock-context) .dk-kind{align-self:flex-start}
 .sumi{grid-template-columns:minmax(0,1.35fr) repeat(3,minmax(0,1fr))}
 .sumi b{white-space:nowrap}
 .pg-foot > span:last-child{white-space:nowrap}
@@ -1948,6 +1948,8 @@ body.hq-enter #screen{animation:hqIn .6s ease-out}
 .build .pg-dots,.tt .pg-dots{grid-template-columns:repeat(10,12px);gap:4px}.build .pg-dots i,.tt .pg-dots i{width:12px;height:12px}
 
 .toast{bottom:88px;background:rgba(6,20,38,.96);color:#E9F2FC;border:1px solid rgba(99,216,255,.6);box-shadow:0 6px 18px rgba(0,0,0,.45);font-size:16px;font-weight:600;padding:10px 20px;letter-spacing:.01em}
+
+.dock .help-fares > div{display:flex;flex-direction:column;gap:2px}.dock .help-fares > div > b{font-size:15px;display:flex;align-items:center;gap:6px}.dock .help-fares span,.dock .help-fares span b{font-size:14px;line-height:1.4;display:inline}
 
 @media print{ body{background:#fff;color:#000} }
 </style>
@@ -4744,7 +4746,7 @@ function dockHtml(o){
   else if(t && UI.justDone && UI.justDone.table === t.id){ kind = 'calc'; title = t.kind === 'fuel' ? 'Order cost confirmed' : 'Forecast updated'; body = calcDoneHtml(t); }
   if(UI.dockShut && kind === 'context') return `<aside class="dock shut" data-dock="shut"><button class="dk-open" id="dkOpen" title="Show ${esc(title)}" aria-label="Show the side panel"><span>‹</span><b>${esc(title)}</b></button></aside>`;
   const tools = kind === 'context' ? dockTools(o) : '';
-  return `<aside class="dock dk-${kind}" data-dock="${kind}" aria-label="${esc(DOCK_KIND[kind])}"><div class="dk-h"><span class="dk-tt"><span class="dk-kind">${DOCK_KIND[kind]}</span><b class="dk-t">${esc(title)}</b></span>${kind === 'context' ? '<button class="dk-x" id="dkShut" title="Hide the side panel" aria-label="Hide the side panel">›</button>' : '<button class="dk-x" id="dkClose" title="Close" aria-label="Close">✕</button>'}</div><div class="dk-b">${body}</div>${tools}</aside>`;
+  return `<aside class="dock dock-${kind}" data-dock="${kind}" aria-label="${esc(DOCK_KIND[kind])}"><div class="dk-h"><span class="dk-tt"><span class="dk-kind">${DOCK_KIND[kind]}</span><b class="dk-t">${esc(title)}</b></span>${kind === 'context' ? '<button class="dk-x" id="dkShut" title="Hide the side panel" aria-label="Hide the side panel">›</button>' : '<button class="dk-x" id="dkClose" title="Close" aria-label="Close">✕</button>'}</div><div class="dk-b">${body}</div>${tools}</aside>`;
 }
 const HELP_SUB = { timing:'How turnaround times work', demand:'How ticket prices affect demand', fuel:'How the tank and fuel prices work', money:'Revenue, costs and profit', forecast:'What a forecast is' };
 function dockTools(o){
