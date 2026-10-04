@@ -7,23 +7,50 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 | File | What it is |
 | --- | --- |
-| `airline-simulator.html` | The whole game: control window (laptop) and IWB display window in one file. Double-click to run in Edge/Chrome. No internet needed. |
+| `airline-simulator.html` | The whole game: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
+| `prototypes/hq/` | The HQ look-and-feel explorations that led to the current design. Standalone; not used by the game. |
 | `paper-backup-pack.html` | Printable A4 pack: decision cards, calculation sheets, review cards and a teacher answer sheet for one round. Open and press Ctrl+P. |
 
 ## Running it
 
-1. Open `airline-simulator.html` on the laptop. This is the pupil's office (control window).
-2. Click **Present**. The IWB window opens; drag it to the board and tap it once for full screen (browsers only allow one full-screen request per click, so the laptop goes full screen on your next tap anywhere in the office). Where the browser allows it (Chrome and Edge with the window-management permission, which is usually only offered on http pages) the IWB window moves itself to the second display. The laptop must be set to *extend*, not mirror (an operating-system setting the page cannot change).
-3. **Open IWB** opens the display window without full screen. If the display window isn't open, the game is still fully playable: a status strip at the bottom of the control window stands in for the board.
-4. The IWB shows four quadrants of live information: the departures board (one row per trip), the route map (planes fly out and back during the day), the market (fuel price by round against what the pupil paid, and his fares against the rival's), and news with the landing report and review cards. Finances and reputation live on the HQ, not the board.
+1. Open `airline-simulator.html` on the laptop. This is the **HQ**, where the pupil thinks and acts.
+2. Click **⛶ Present**. The **Operations Wall** opens; drag it to the board and tap it once for full screen (browsers only allow one full-screen request per click, so the laptop goes full screen on your next tap anywhere at HQ). Where the browser allows it (Chrome and Edge with the window-management permission, usually only offered on http pages) the wall window moves itself to the second display. The laptop must be set to *extend*, not mirror (an operating-system setting the page cannot change).
+3. **One screen only?** Press **▣ Operations Wall** in the top bar, or the **W** key, to see the wall on the same screen. **Return to HQ** (or W, or Esc) goes back. It is the same game either way, and the game never needs the whiteboard. *Menu → Open the wall in a window* opens it without full screen.
+4. **The HQ dashboard** (the start of every day):
+   - the date and period ("Thursday 16 May 2030 · Day 4 · Daily operations");
+   - what the operation is doing (Ready / Planning at HQ / Flights in progress / Paused · CEO decision);
+   - cash, reputation, fleet in service, and an alerts bell.
+   - **KPI cards:** cash, yesterday's profit, reputation and fuel position, each with a trend.
+   - **Today's briefing** with the main button, **Operate today's flights**.
+   - **Network map** with four layers: Routes, Demand (circle size only, never a number), Profit (route colour from the last day), Opportunities (routes he could open, dashed).
+   - **Fleet:** each aircraft, its seats, today's trips, how much of the day it is in use, and its status; plus the next aircraft in the shop.
+   - **Route performance:** passengers ÷ seats, % filled, fare, revenue, cost, profit and trend, from the last finished day.
+   - **Finance:** ticket money and costs as columns, with profit as a line, for the last 14 days, with a hover tooltip.
+   - **Fuel:** tank, today's price, the average paid and the price so far.
+   - **Intelligence:** situations, never solutions.
+   - At 1920×1080 every panel is visible. On a 1366×768 laptop the secondary panels share tabs (Route performance | Finance, Fleet | Intelligence | Fuel), so nothing scrolls.
+5. **The Operations Wall** shows the situation, while the HQ shows the numbers and decisions. It is a fixed 1920 × 1080 layout, scaled to fit any board. It has:
+   - the header ("TODAY'S OPERATIONS", date, airport clock, LIVE / PLANNING AT HQ / FLIGHTS IN PROGRESS / SIMULATION PAUSED);
+   - departures and arrivals boards (they page when there are more than 8 flights);
+   - the map, about half the screen;
+   - a status strip: aircraft active, flights today, destinations, delayed, grounded, fuel price, weather, alerts;
+   - the news ticker.
+   
+   It changes mode by itself:
+   - **Executive Alert** during an event: the map zooms to the affected route and flashes it, everything else dims, and a card says what has happened and that the CEO's decision is in progress at HQ. It shows no passenger numbers or costs.
+   - **Daily results** after landing: big tiles for ticket money, costs, profit, passengers, seats filled and reputation, the profit-by-day chart, the landing report and passenger reviews.
+   - **Welcome to the fleet** when a plane is bought.
+   - **Milestones** shown once: first flight, first profitable day, 100 / 500 / 1,000… passengers, new destinations.
+   
+   **✏ Working space** (the pen area) is on the wall's header.
 5. **Menu** (top bar, or from the teacher panel): Continue run, New game, Best runs, Save code. New game asks for confirmation and records the current run to Best runs first.
 
-Progress autosaves on every decision (browser storage on that machine). The teacher panel and the end-of-round screen also show a **save code** you can copy out and paste back in as a backup.
+Progress autosaves on every decision (browser storage on that machine). The teacher panel and the end-of-day screen also show a **save code** you can copy out and paste back in as a backup.
 
 ## Testing on one big monitor
 
-- **Split view**: Main menu → *Split view (game + board)*, the teacher panel's Testing row, or open `airline-simulator.html?split`. The game and the whiteboard sit side by side, each kept at its real screen shape (16:9) and scaled down like a picture of that screen, so line breaks and layout match the real laptop and board. The top strip switches the laptop pane between 1920×1080 and 1366×768, swaps sides, goes full screen, or leaves split view. The two panes stay in sync; Present and Open IWB are hidden inside it.
-- **Test mode**: tick *Test mode* in the teacher panel's Testing row (a device setting, never saved into a pupil's run), or add `?test` to the address (`?split&test` for both). A red TEST bar appears bottom-left: *Answer this one*, *Fill table*, *Skip screen*, *Auto-answer on/off*. With auto-answer on, each sum fills itself in correctly about 0.7 s after it opens; every decision is still yours. Answers filled in this way don't count towards his typed total.
+- **W** swaps between the HQ and the Operations Wall on the same screen (the split view was removed when the wall toggle arrived). Or open the wall with ⛶ Present and put the two windows side by side.
+- **Test mode**: tick *Test mode* in the teacher panel's Testing row (a device setting, never saved into a pupil's run), or add `?test` to the address. A red TEST bar appears bottom-left: *Answer this one*, *Fill table*, *Skip screen*, *Auto-answer on/off*. With auto-answer on, each sum fills itself in correctly about 0.7 s after it opens; every decision is still yours. Answers filled in this way don't count towards his typed total.
 
 ## Teacher panel
 
@@ -31,11 +58,11 @@ Progress autosaves on every decision (browser storage on that machine). The teac
 
 - Accept this answer (fills the open cell) · fill the whole table · skip or go back one screen · high/low nudge toggle (off by default) · auto-advance after landing.
 - **Text size**: Standard (22px text, 32px numbers), Large or Extra large. Saved with the run, so it travels in the save code; the IWB follows it.
-- Forecast tables: help level on typed rows, which tables are live (as scripted / all / none), working space on the board, **next round's choice** (as scripted, or force ticket price / trips / fuel / seat layout), and "Check the time maths" (runs the Change Request 2 time cases).
-- Repeat this round (back to the start-of-round state).
+- Forecast tables: help level on typed rows, which tables are live (as scripted / all / none), working space on the board, **tomorrow's choice** (as scripted, or force ticket price / trips / fuel / seat layout), and "Check the time maths" (runs the Change Request 2 time cases).
+- Repeat today (back to the start-of-day state).
 - Trigger, delay or skip events · fire a Captain's challenge now.
 - Queue or remove jobs for the next round · set depth (1–3) per job.
-- Starting cash for new runs · adjust cash or reputation now · start the next round now · flight animation length.
+- Starting cash for new runs · adjust cash or reputation now · start the next day now · flight animation length.
 - End session (save and show code) · main menu · best runs · record this run · new run from scratch · test read-aloud · load a save code.
 - **Question bank (printable)**: generates a page from the data blocks with every question template per job and depth level, the number ranges in use and a worked example of each. Regenerate after tuning; it never goes stale.
 
@@ -81,10 +108,12 @@ Market rules (in the engine, published on screen): demand falls by `drop` passen
 
 ## Technical notes
 
+- **Calendar:** the pupil never sees "Round". Launch day (the setup flight) is Sunday 12 May 2030 and day *n* of the game is *n* days later (Day 1 = Monday 13 May 2030). Internally the day number is still `S.round`. Weeks and months (time compression) are the next step of the time brief.
+- **One state, two views:** the HQ and the wall both draw from the same game state. Each day's history now also stores passengers, seats, trips and a per-route breakdown (passengers, seats, revenue, cost, profit, fare), which the HQ and the wall's results use. Older saves without them show "—".
 - Two windows sync three ways: direct `postMessage` to the opened window, `BroadcastChannel`, and a `localStorage` storage-event fallback (needed on `file://` in Chrome).
 - No `Math.random()` anywhere in outcome logic. Same world + same decisions = same result.
 - Read-aloud uses `speechSynthesis`; the speaker buttons only appear when a voice is available. Test on the classroom machine (teacher panel → Test read-aloud).
-- Styling: one shared style block at the top of the CSS is used by both windows, in the agent style (notched panels with glowing edges, uppercase header bars with a status dot, amber numbers). Fonts are the system sans for words and Courier New for numbers, so zeros are plain (no slash) and nothing is downloaded. Change Request 4 adds a reading layer at the end: running text at least 22px and numbers at least 32px at the Standard size, mixed case for questions, stories and tables (the small uppercase panel chrome stays), no scanlines over text, task panels at least 90% of the width and no scrolling at 1920×1080 or 1366×768.
+- Styling: one shared style block at the top of the CSS is used by both windows. Mid-blue with a navy structure, cyan highlights and white text; amber only for money and the main action, red only for real alerts, green for good news. Panels are square (2px corners) with thin borders; uppercase header bars with a status dot. Chart colours (ticket money blue, costs orange, profit green) pass the colour-blind checks on both the HQ and wall surfaces. Fonts are the system sans for words and Courier New for numbers, so zeros are plain (no slash) and nothing is downloaded. Change Request 4 adds a reading layer at the end: running text at least 22px and numbers at least 32px at the Standard size, mixed case for questions, stories and tables (the small uppercase panel chrome stays), no scanlines over text, task panels at least 90% of the width and no scrolling at 1920×1080 or 1366×768.
 - Stage 1 ships depth 1 for every job. Depth 2 is live for pricing (rival fare shown), fuel (two suppliers), check-the-flight (time zones) and cabin (break-even); depth 3 is live for pricing (demand bar) and fuel (bulk deal). Headwinds for check-the-flight are a placeholder.
 
 ## Open items (from the brief)
