@@ -1140,6 +1140,191 @@ table.ev td.orange{color:var(--orange);font-weight:700}
   .plan-route{padding:10px 14px;gap:6px}.pr-head{font-size:20px}
 }
 
+/* ============================================================
+   ALTAIR THEME (opening prototype): near-black navy, quiet title-case headings, sans figures,
+   denser type, 8px corners. The HQ shell: left nav, KPI row, Overview, plan workspace.
+   ============================================================ */
+:root{
+  --bg:#050d1c; --navy:#071226; --panel:#0b1830; --panel-solid:#0b1830; --tint:rgba(110,160,255,.02); --tint2:rgba(110,160,255,.04);
+  --cy:#4cc9ff; --cyrgb:76,201,255; --line:rgba(110,160,255,.2); --hair:rgba(110,160,255,.12);
+  --white:#e8f0fc; --muted:#93a7c6; --faint:#7d91b2; --grey:#8193ad;
+  --amber:#f5c451; --amber2:#ffe39a; --green:#3ddc97; --ok:#3ddc97; --red:#ff5d6c; --orange:#ff9f43; --blue:#4ea8ff;
+  --ocean:#040a16; --land:#14284a;
+  --mono:var(--sans); --r:8px; --rb:6px;
+  --surface:linear-gradient(180deg,#0d1c37 0%,#0a172e 100%);
+  --lift:0 8px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.035);
+  --act-a:#2196f3; --act-m:#1b84e0; --act-b:#1466c4; --sel:#39b9ff; --sel-rgb:57,185,255;
+}
+html,body{font-size:15px;font-variant-numeric:tabular-nums}
+body{background:radial-gradient(1400px 700px at 70% -20%, rgba(40,110,220,.12), transparent 60%), #050d1c}
+.mono,.num{font-family:var(--sans);font-variant-numeric:tabular-nums}
+/* surfaces */
+.card,.tf,.hp,.overlay .box,.strat,.mkt,.spec,.dm-big,.rot-note,.fuel-facts > div,.plan-route,.rcp-b,.pe-grid > div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--lift)}
+.hp .phead,.tf-bar,.screen-title{background:transparent;box-shadow:none}
+.phead{text-transform:none;letter-spacing:.01em;font-size:15px;font-weight:650;color:#fff;padding:9px 14px;border-bottom:1px solid var(--hair)}
+.hp .phead{font-size:15px;padding:9px 14px}
+.phead::after{font-size:11px;letter-spacing:.08em;font-weight:700;text-shadow:none}
+.tf-bar{margin:0 -24px;padding:9px 24px;font-size:14px;color:var(--muted)}
+.screen-title h2{text-transform:none;letter-spacing:0}
+.label{text-transform:none;letter-spacing:.02em;font-size:12.5px;font-weight:600;color:var(--muted)}
+.hq-t th{text-transform:none;letter-spacing:.02em;font-size:12px;color:var(--muted);font-weight:600}
+.hq-t td{font-size:14px;padding:6px 8px;border-bottom:1px solid var(--hair)}
+.hq-t .num,.hq-t td .num{font-family:var(--sans);font-size:14px}
+.ptab{text-transform:none;letter-spacing:.01em;font-size:13.5px}
+.ii{font-size:14px;background:rgba(255,255,255,.02);border-radius:6px}
+.ii .tag{font-family:var(--sans);font-size:11px;letter-spacing:.06em}
+.chip{border-radius:20px}
+/* buttons */
+.btn{border-radius:var(--rb);text-transform:none;letter-spacing:.02em;font-weight:650;background:rgba(110,160,255,.06);border:1px solid var(--line);box-shadow:none}
+.btn.big{font-size:17px;min-height:48px;padding:10px 22px}
+.btn.primary,.btn.huge,.btn.act,.pad button.check,.side2 .pad button.check{background:linear-gradient(180deg,#2399f5 0%,#1569cf 100%);border:1px solid rgba(120,200,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 4px 14px rgba(20,110,220,.35);text-shadow:none}
+.btn.primary:hover:not(:disabled),.btn.act:hover:not(:disabled),.btn.huge:hover:not(:disabled){box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 0 20px rgba(57,185,255,.45);filter:none}
+.btn.primary:disabled{background:#122440;color:rgba(200,220,255,.45);border-color:var(--hair)}
+.btn.huge{font-size:19px;padding:12px 26px;letter-spacing:.04em}
+.choice,.opt,.plane-card,.card-n,.svc,.fare,.cap-row{border-radius:var(--rb);background:rgba(110,160,255,.05);border:1px solid var(--line)}
+.choice{border-left:1px solid var(--line)}
+.choice.on,.opt.on,.svc.on,.fare.on,.cap-row.on,.strat.on,.mkt.on{background:linear-gradient(180deg, rgba(57,185,255,.16), rgba(57,185,255,.06));border-color:var(--sel);box-shadow:0 0 0 1px rgba(57,185,255,.35), 0 0 18px rgba(57,185,255,.18)}
+/* top bar */
+.cbar{background:#071226;border-bottom:1px solid var(--hair);box-shadow:none;min-height:56px;padding:6px 14px}
+.cbar .stat b,.stat b{font-family:var(--sans);color:#fff;text-shadow:none;font-size:18px}
+.cbar .s-fleet,.cbar .s-fuel{display:none}
+.cbar .btn.small{min-height:38px;padding:4px 12px;font-size:14px}
+.cdate b{font-size:16px}
+#cName{letter-spacing:.06em}
+.cashbal{display:flex;flex-direction:column;align-items:flex-end;line-height:1.1;padding:4px 14px;margin-right:6px;border:1px solid rgba(245,196,81,.35);border-radius:var(--rb);background:rgba(245,196,81,.06)}
+.cashbal b{font-size:22px;color:var(--amber);font-weight:750}
+.cashbal span{font-size:11.5px;color:var(--muted);letter-spacing:.02em}
+.cops{border-radius:20px;font-size:12px}
+/* the shell */
+body.hqmode #screen{padding:10px 12px}
+.shell{height:100%;min-height:0;display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px}
+.lnav{display:flex;flex-direction:column;gap:4px;padding:6px 0;background:#071226;border:1px solid var(--hair);border-radius:var(--r)}
+.nv{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px;margin:0 6px;border:0;border-radius:var(--rb);background:transparent;color:var(--muted);font:inherit;font-size:10.5px;font-weight:600;cursor:pointer}
+.nv svg{width:22px;height:22px;fill:currentColor}
+.nv span{line-height:1.1;text-align:center}
+.nv:hover:not(:disabled){color:#fff;background:rgba(110,160,255,.08)}
+.nv.on{color:#fff;background:linear-gradient(180deg,#1d86e6,#1462bf);box-shadow:0 0 14px rgba(33,150,243,.35)}
+.nv:disabled{opacity:.35;cursor:default}
+@media (min-width:1600px){ .shell{grid-template-columns:170px minmax(0,1fr)} .nv{flex-direction:row;gap:12px;padding:11px 14px;font-size:14.5px} .nv span{text-align:left} }
+.shell-main{min-width:0;min-height:0;height:100%}
+/* KPI row */
+.kpis{grid-area:k;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.kpi2{flex-direction:row;align-items:center;gap:12px;padding:10px 14px}
+.kpi2 .ki{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:rgba(57,185,255,.12)}
+.kpi2 .ki svg{width:22px;height:22px;fill:var(--cy)}
+.kpi2.k-cash .ki{background:rgba(245,196,81,.12)}.kpi2.k-cash .ki svg{fill:var(--amber)}
+.kpi2.k-profit .ki svg{fill:var(--green)}.kpi2.k-profit .ki{background:rgba(61,220,151,.12)}
+.kpi2.k-rep .ki svg{fill:var(--amber)}
+.kt{display:flex;flex-direction:column;min-width:0}
+.kl{font-size:12.5px;color:var(--muted);font-weight:600}
+.kv2{font-size:24px;font-weight:750;color:#fff;line-height:1.15;white-space:nowrap}
+.kv2 .stars{font-size:20px}
+.ks2{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi2 .spark{position:absolute;right:12px;top:10px;width:24%;height:26px}
+/* Overview grid */
+.ov{height:100%;min-height:0;display:grid;gap:10px;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:auto minmax(0,1.25fr) minmax(0,1fr);
+  grid-template-areas:"k k k k k k k k k k k k" "mp mp mp mp mp mp mp td td td td td" "rp rp rp rp lo lo lo lo fb fb fb fb"}
+.ov.wide{grid-template-rows:auto minmax(0,1.3fr) minmax(0,1fr);grid-template-areas:"k k k k k k k k k k k k" "mp mp mp mp mp mp mp mp td td td td" "rp rp rp fi fi fi lo lo lo fb fb fb"}
+.ov .p-map{grid-area:mp}.ov .p-td{grid-area:td}.ov .p-rp{grid-area:rp}.ov .p-fi{grid-area:fi}.ov .p-lo{grid-area:lo}.ov .p-fb{grid-area:fb}
+.ov .hp .pb{padding:8px 12px;overflow:hidden;flex:1;min-height:0}
+.td2{display:flex;flex-direction:column;gap:8px}
+.td-news2{margin:0;font-size:18px;color:#fff}
+.td-brief{margin:0;font-size:14px;color:var(--muted);border-left:2px solid var(--sel);padding-left:10px}
+.td-list{display:flex;flex-direction:column;gap:0;margin-top:2px}
+.td-list > div{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--hair);font-size:14px}
+.td-list > div span{color:var(--muted)}.td-list > div b{color:#fff;font-weight:600;text-align:right}
+.td-list > div.done span{color:var(--green)}.td-list > div.cur span{color:var(--sel)}
+.td2 .td-act{margin-top:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.td2 .btn.act{min-height:46px;font-size:16px;padding:8px 18px}
+.live-clock{display:flex;align-items:baseline;justify-content:space-between}.live-clock b{font-size:38px;font-weight:750;color:#fff}
+.live-bar{height:8px;border-radius:4px;background:rgba(110,160,255,.12);overflow:hidden}.live-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2196f3,#5fd3ff)}
+.dr-rcp{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center}
+.dr-rcp > div{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid var(--hair)}
+.dr-rcp b{font-size:22px;font-weight:750}.dr-rcp .rev b{color:var(--amber)}.dr-rcp .cost b{color:#fff}.dr-rcp .prof b{color:var(--green)}.dr-rcp .prof.neg b{color:var(--red)}
+.dr-rcp small{font-size:12px;color:var(--muted);line-height:1.25}
+.dr-rcp > i{font-style:normal;font-size:22px;color:var(--muted)}
+.dr-fc{margin:0;font-size:14px}
+.dr-routes{display:flex;flex-direction:column;gap:3px;font-size:14px}
+.lo .st-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;background:var(--grey);vertical-align:middle}
+.lo .st-dot.ok,.lo .st-dot.go{background:var(--green)}.lo .st-dot.warn{background:var(--orange)}.lo .st-dot.bad{background:var(--red)}.lo .st-dot.run{background:var(--sel)}
+.lo .lo-st.ok,.lo .lo-st.go{color:var(--green)}.lo .lo-st.warn{color:var(--orange)}.lo .lo-st.bad{color:var(--red)}.lo .lo-st.run{color:var(--sel)}
+.fb{position:relative;display:flex;flex-direction:column;gap:8px}
+.fb-card{display:none;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid var(--hair);animation:fbIn .4s ease-out}
+.fb-card.on{display:flex}.fb-face{font-size:30px;line-height:1}.fb-card p{margin:4px 0 0;font-size:14.5px;line-height:1.35}
+@keyframes fbIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.fb-nav{display:flex;align-items:center;gap:10px;justify-content:flex-end;color:var(--muted);font-size:13px}.fb-nav .btn{min-height:30px;padding:0 10px}
+@media (prefers-reduced-motion: reduce){ .fb-card{animation:none} }
+/* workspace: plan rail · task · money */
+.ws{height:100%;min-height:0;display:grid;grid-template-columns:220px minmax(0,1fr) 240px;gap:10px}
+@media (min-width:1600px){ .ws{grid-template-columns:260px minmax(0,1fr) 280px} }
+.ws-rail,.ws-money{display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--lift)}
+.ws-h{padding:9px 14px;font-size:15px;font-weight:650;color:#fff;border-bottom:1px solid var(--hair)}
+.ws-h.sub{font-size:13.5px;color:var(--muted);border-top:1px solid var(--hair);margin-top:4px}
+.rail{list-style:none;margin:0;padding:6px;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.ri{display:flex;gap:10px;align-items:flex-start;width:100%;padding:6px 8px;border:0;border-radius:6px;background:transparent;color:var(--muted);font:inherit;text-align:left;cursor:default}
+.ri.done{cursor:pointer;color:#fff}.ri.done:hover{background:rgba(110,160,255,.07)}
+.ri.on{background:linear-gradient(180deg, rgba(57,185,255,.16), rgba(57,185,255,.06));box-shadow:inset 3px 0 0 var(--sel);color:#fff}
+.ri-k{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;border:1px solid var(--line)}
+.ri.done .ri-k{background:rgba(61,220,151,.15);border-color:rgba(61,220,151,.5);color:var(--green)}
+.ri.on .ri-k{background:var(--sel);border-color:var(--sel);color:#04223f}
+.ri-t{display:flex;flex-direction:column;min-width:0}.ri-t b{font-size:14px;font-weight:650}.ri-t small{font-size:12.5px;color:var(--muted);line-height:1.3}
+.ri.done .ri-t small{color:#bcd0ee}
+.ri.last{opacity:.6}
+.mp-cash{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:10px 14px}
+.mp-cash span{font-size:13.5px;color:var(--muted)}.mp-cash b{font-size:24px;font-weight:750;color:var(--amber)}
+.mp-cash.small{padding:6px 14px}.mp-cash.small b{font-size:17px;color:#fff}
+.mp-lines{display:flex;flex-direction:column;padding:0 14px}
+.mp-lines > div{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--hair);font-size:13.5px}
+.mp-lines span{color:var(--muted)}.mp-lines b{font-weight:650;color:#fff}
+b.pos,.mp-cash b.pos{color:var(--green)}b.neg,.mp-cash b.neg{color:var(--red)}
+.mp-note{padding:6px 14px;font-size:13px}
+.ws-main{min-width:0;min-height:0;height:100%}
+.ws-main > .tf{zoom:.8;height:100%}
+@media (min-width:1600px) and (min-height:880px){ .ws-main > .tf{zoom:.92} }
+.ws-main .tf-story{border-left:2px solid var(--sel);background:rgba(57,185,255,.05);border-radius:0 6px 6px 0;padding:8px 14px}
+.ws-main .tf-story::before{content:'Briefing';display:block;width:100%;font-size:13px;font-weight:700;color:var(--sel);letter-spacing:.04em}
+/* views */
+.vw{height:100%;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.vw.net{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+.vw .hp .pb{padding:10px 14px;overflow:auto;flex:1;min-height:0}
+.vw .fin-pb{overflow:hidden}
+.fl-specs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:start}
+.fl-specs > div{display:flex;flex-direction:column;padding:10px;border:1px solid var(--hair);border-radius:6px}.fl-specs b{font-size:20px}.fl-specs small{color:var(--muted)}
+.proto-end{height:100%;align-items:center;text-align:center;gap:14px;padding-bottom:24px}
+/* map: dark land, near-black sea, glowing routes */
+.borders{stroke:#6f9ad8;stroke-opacity:.28}
+.route{stroke:#5fd3ff;filter:drop-shadow(0 0 5px rgba(95,211,255,.8))}
+.marker .dot{fill:#5fd3ff;stroke:#041022}
+.marker.home .dot{fill:var(--amber)}
+.zoomBtns .btn{width:36px;height:36px;font-size:18px;background:rgba(7,18,38,.9)}
+/* the wall keeps its split-flap boards in a monospaced face */
+.w-board,.w-board *{font-family:"Courier New",ui-monospace,Menlo,Consolas,monospace}
+.w-head,.w-status{background:#071226}
+.w-ticker{background:#071226}
+
+/* ALTAIR fixes: KPI cards sit in their own row; denser tables at laptop size */
+.kpis > .hp{grid-area:auto}
+.td-news2{text-transform:none;letter-spacing:0;font-family:var(--sans);font-weight:700}
+.ri:disabled{opacity:1}.ri.on{color:#fff}.ri.on .ri-t small{color:#bcd0ee}
+.ri:not(.on):not(.done) .ri-t b{color:var(--faint)}
+.ov.compact{grid-template-rows:auto minmax(0,1.45fr) minmax(0,1fr)}
+.ov table.ev th:nth-child(6),.ov table.ev td:nth-child(6),.ov table.ev th:nth-child(7),.ov table.ev td:nth-child(7),.ov table.ev th:nth-child(8),.ov table.ev td:nth-child(8){display:none}
+.ov table.ev th,.ov table.ev td{padding-left:6px;padding-right:6px}
+.ov.compact .td-list > div{padding:4px 0}
+.ov.compact .td-brief{font-size:13px}
+.ov.compact .dr-rcp b{font-size:19px}.ov.compact .dr-rcp > div{padding:6px 8px}
+.ov.compact .td2{gap:6px}
+.lo-st.s-scheduled{color:var(--muted)}.st-dot.s-scheduled{background:var(--grey)}
+.lo-st.s-boarding{color:var(--sel)}.st-dot.s-boarding{background:var(--sel)}
+.lo-st.s-departed,.lo-st.s-inflight{color:#7ab8ff}.st-dot.s-departed,.st-dot.s-inflight{background:#4ea8ff}
+.lo-st.s-landed,.lo-st.s-full,.lo-st.s-ontime{color:var(--green)}.st-dot.s-landed,.st-dot.s-full,.st-dot.s-ontime{background:var(--green)}
+.lo-st.s-delayed{color:var(--orange)}.st-dot.s-delayed{background:var(--orange)}
+.lo-st.s-cancelled,.lo-st.s-nofuel,.lo-st.s-grounded{color:var(--red)}.st-dot.s-cancelled,.st-dot.s-nofuel,.st-dot.s-grounded{background:var(--red)}
+.lo td{white-space:nowrap}
+.ws-main .tf-body.with-side{grid-template-columns:minmax(0,1fr) minmax(300px,36%)}
+.ws-main .tf-story p{font-size:calc(21px * var(--tz))}
+.ws-main table.fx td.c,.ws-main table.fx thead th{min-width:120px}
+
 @media print{ body{background:#fff;color:#000} }
 </style>
 </head>
@@ -1346,12 +1531,12 @@ table.ev td.orange{color:var(--orange);font-weight:700}
   <header class="cbar">
     <div class="brand"><svg class="fin" aria-hidden="true"><use id="cFin" href="#fin-stripe"/></svg><span class="bname"><span id="cName">AIRLINE SIMULATOR</span><i id="cStrat"></i></span></div>
     <div class="cdate"><b id="cDate">—</b><span><i id="cDay">—</i><i class="chip">Daily operations</i></span></div>
-    <div class="stat"><span class="label">Cash</span><b id="cCash">£0</b></div>
     <div class="stat"><span class="label">Reputation</span><b id="cStars" class="stars"></b></div>
     <div class="stat s-fleet"><span class="label">Fleet</span><b id="cFleet">0</b></div>
     <div class="stat s-fuel"><span class="label">Fuel held</span><b id="cFuel">0 L</b></div>
     <div class="cops" id="cOps"></div>
     <span class="grow"></span>
+    <div class="cashbal" title="Cash balance"><b id="cCash">£0</b><span>Cash balance</span></div>
     <button class="btn small bell" id="bellBtn" title="Alerts and intelligence" aria-label="Alerts">&#128276;<sup id="cBell" hidden>0</sup></button>
     <button class="btn small" id="menuBtn" title="Home: continue, new game, best runs">&#8962; Home</button>
     <button class="btn small" id="shopBtn" title="Plane shop" aria-label="Plane shop">&#128722;</button>
@@ -1542,7 +1727,7 @@ function newState(){
     airline:{ name:'', code:'', c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'strategy'},{t:'fin'},{t:'home'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'fuelPlan'},{t:'dayForecast'},{t:'fly'},{t:'results'},{t:'setupDone'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'strategy'},{t:'fin'},{t:'home'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'fuelPlan'},{t:'dayForecast'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };
@@ -2199,7 +2384,7 @@ function startFlight(){
     else { f.noFuel = true; f.sold = 0; f.revenue = 0; f.runCost = 0; f.fuelCost = 0; S.rnd.status[f.key] = 'NO FUEL'; f.reasons = ['Not enough fuel — trip grounded.']; }
   });
   const last = S.rnd.flights.reduce((m,f)=>Math.max(m, f.arr||0), firstDep()+60);
-  S.rnd.anim = { start: Date.now(), dur: settings.flightSecs*1000, from: firstDep()-30, to: last+30 };
+  S.rnd.anim = { start: Date.now(), dur: settings.flightSecs*2500, from: firstDep()-30, to: last+30 };
 }
 
 function pickReview(tag, f){
@@ -2265,7 +2450,7 @@ function applyResults(){
   Object.keys(routes).forEach(id => { routes[id].profit = r2(routes[id].rev - routes[id].cost); });
   ledgerPut(S.day || 0, rev, S.rnd.costs, flown.reduce((t,f) => t+f.sold, 0), flown.reduce((t,f) => t+f.seats, 0));
   S.history.push({ round:S.round, type: S.phase === 'setup' ? 'setup' : 'day', from:S.day || 0, to:S.day || 0, over, revenue:rev, costs:S.rnd.costs, profit:S.rnd.profit, cash:S.cash, rep:S.rep, fuelPaid:avgFuelPrice(), fuelPrice:fuelPrice(), emptyTrips: fl.filter(f => !f.grounded && !f.noFuel && f.sold < f.seats/2).length,
-    pax: flown.reduce((t,f) => t+f.sold, 0), seats: flown.reduce((t,f) => t+f.seats, 0), trips: flown.length, routes });
+    pax: flown.reduce((t,f) => t+f.sold, 0), seats: flown.reduce((t,f) => t+f.seats, 0), trips: flown.length, routes, reviews: S.rnd.reviews });
   checkMilestones();
   addNews([{tag:'£', text:`${S.airline.name}: ${S.rnd.profit>=0?'profit':'loss'} of ${money(Math.round(Math.abs(S.rnd.profit)))} on ${S.phase === 'setup' ? 'launch day' : dateShort()}.`, cls:S.rnd.profit>=0?'good':'warn'}]);
   bankCheck();
@@ -2366,9 +2551,10 @@ function render(){
   updateTopBar();
   const st = step();
   document.body.classList.toggle('focus', !!(S.overlay ? S.overlay.type === 'planeTable' || S.overlay.type === 'newPlane' : FOCUS_STEPS.includes(st.t)));
-  document.body.classList.toggle('hqmode', !S.overlay && st.t === 'hq');
+  document.body.classList.toggle('hqmode', !S.overlay && SHELL_STEPS.includes(st.t));
   if(!(!S.overlay && st.t === 'hq') && hqMap){ hqMap.destroy(); hqMap = null; }
-  if(S.overlay) renderOverlay(); else (R[st.t] || R.missing)(st);
+  if(S.overlay) renderOverlay(); else if(!shellView(st)) (R[st.t] || R.missing)(st);
+  afterRender();
   updateStrip(); publish(); testTick();
   if(wallView) renderDisplay();
 }
@@ -2629,7 +2815,9 @@ function bindWork(){ screen().querySelectorAll('[data-work]').forEach(b => b.onc
 /* ---------- the task frame used by every decision screen (focus mode) ---------- */
 const FRAME_TITLES = { route:'Choose a route', setupFuel:'Starting fuel', setupPrice:'Set the ticket price', choice:"Today's decision", fare:'Ticket price', trips:'Trips', day:'Plan the day', fuel:'Buy fuel', cabin:'Seat layout', quick:"Today's income", plane:'Buy a plane', newRoute:'New route', challenge:"Captain's challenge", challengeCalc:"Captain's challenge" };
 function frameStatus(){ if(awaitingClearance()) return 'AWAITING CLEARANCE'; return roundLabel().toUpperCase(); }
-function taskFrame(o){
+/* Plan steps sit inside the HQ workspace (plan rail, the task, the money panel); onboarding keeps the full-screen frame. */
+function taskFrame(o){ const f = taskFrameBase(o); return !S.overlay && WS_STEPS.includes(step().t) ? wsWrap(f) : f; }
+function taskFrameBase(o){
   const title = o.title || (S.overlay ? ({planeTable:'Buy a plane', newPlane:'New route'})[S.overlay.type] : FRAME_TITLES[step().t]) || '';
   return `<div class="tf"><div class="phead tf-bar" data-status="${esc(o.status || frameStatus())}">${esc(title)}</div>
     <div class="tf-top">${o.back ? '<button class="btn" id="tBackBtn">&#9664; Back</button>' : ''}${o.stepMark ? `<span class="step-mark">${o.stepMark}</span>` : ''}<h1 class="tq">${o.question}</h1>${o.say ? sayBtn(o.say) : ''}${o.work === false ? '' : workBtn()}</div>
@@ -3308,7 +3496,6 @@ function periodSlideHtml(x){
    Launch day teaches each system by SHOW → TRY → RUN → EXPLAIN; Days 1–3 hand the
    same tools back with less help, and Day 3 is the first real network decision.
    ================================================================== */
-FOCUS_STEPS.push('starter', 'market', 'demand', 'rotation', 'timetable', 'fareTry', 'fuelPlan', 'dayForecast', 'planner');
 Object.assign(FRAME_TITLES, { starter:'Your start-up aircraft', market:'Your first market', demand:'The market', rotation:'One service', timetable:'Build the timetable', fareTry:'Set the fare', fuelPlan:'Fuel', dayForecast:'Forecast', planner:"Today's operation" });
 
 /* 0 = launch day (most help) … 3 = Day 3 (normal play). */
@@ -3541,7 +3728,7 @@ R.dayForecast = () => {
     main: tableHtml(t), side: done ? sum : sideHtml(t),
     foot: `${sc > 0 ? helpChip('forecast') + helpChip('money') : ''}<span class="grow"></span>${done ? '<button class="btn primary huge" id="startOps">Start operations &#9654;</button>' : ''}` });
   bindTable(t); bindFrame(() => { S.si = Math.max(0, S.si - 2); resetEntry(); render(); });
-  on('startOps', () => { S.rnd.myForecast = { profit:dayP, revenue:cols.reduce((s, c) => s + c.values.revenue, 0) }; resetEntry(); next(); });
+  on('startOps', () => { S.rnd.myForecast = { profit:dayP, revenue:cols.reduce((s, c) => s + c.values.revenue, 0), run:cols.reduce((s, c) => s + c.values.run, 0), fuel:cols.reduce((s, c) => s + c.values.fuel, 0), over }; resetEntry(); UI.view = null; next(); });
 };
 
 /* ==================================================================
@@ -3552,7 +3739,8 @@ function startProtoDay(n){
   const f = fleetOne(), w = roundData(n);
   S.rnd = Object.assign(emptyRnd(), { featured:f.uid, focusRoute:schedOf(f)[0] || S.market, headline:w.headline || '', brief:protoBrief(n) });
   S.period = newPeriod('day', S.day);
-  S.steps = [{ t:'hq' }, { t:'planner' }, { t:'fuelPlan' }, { t:'dayForecast' }, { t:'fly' }, { t:'results' }, n >= 3 ? { t:'protoEnd' } : { t:'overnight' }];
+  S.steps = [{ t:'hq' }, { t:'planner' }, { t:'fuelPlan' }, { t:'dayForecast' }, { t:'fly' }, { t:'results' }].concat(n >= 3 ? [{ t:'protoEnd' }] : []);
+  S.rnd.cashStart = S.cash; UI.view = null;
   S.si = 0; S.newRoutes = [];
   refreshPlan();
   addNews((w.news || []).slice(0, 2).map(t => ({ tag:'NEWS', text:t })));
@@ -3566,7 +3754,6 @@ function protoBrief(n){
   if(roundData(n).opportunity){ const o = routeById(otherRoute()); if(o) L.push(`${o.city} is a new market for the airline. See Intelligence.`); }
   return L;
 }
-R.overnight = () => startProtoDay((S.round || 0) + 1);
 /* Situations from yesterday and today's market, never instructions. */
 function protoIntel(){
   if(S.phase !== 'round') return [];
@@ -3637,7 +3824,7 @@ function openingSlideHtml(x){
 R.protoEnd = () => {
   const f = fleetOne(), c = serviceCounts(schedOf(f)), h = lastDay(), total = S.history.reduce((t, x) => t + (x.pax || 0), 0);
   S.finished = true;
-  screen().innerHTML = `<div class="card stack proto-end">${header('Opening prototype complete', null, 'PROTOTYPE')}
+  screen().innerHTML = shell(`<div class="hp proto-end">${hqHead('Opening Prototype Complete', 'PROTOTYPE')}
     <h1>Regular operations established</h1>${strategyBadge()}
     <div class="pe-grid"><div><span class="label">Daily timetable</span>${Object.keys(c).map(id => `<b>${flagSvg(routeById(id).flag, 24)} ${esc(routeById(id).city)} ×${c[id]}</b>`).join('')}</div>
       <div><span class="label">Aircraft</span><b>1 ${esc(ourPlane().name.replace(/^DHC-6 /, ''))}</b></div>
@@ -3646,9 +3833,203 @@ R.protoEnd = () => {
       <div><span class="label">Reputation</span><span class="stars">${starsHtml(S.rep)}</span></div></div>
     <p class="lede">Your regular airline operation is now established.</p>
     <p class="muted">In the full game, routine flights will begin operating automatically and you will start managing the airline week by week.</p>
-    <div class="row" style="justify-content:center"><button class="btn primary big" id="again">Play the opening again</button><button class="btn big" id="peHome">Home</button></div></div>`;
+    <div class="row" style="justify-content:center"><button class="btn primary big" id="again">Play the opening again</button><button class="btn big" id="peHome">Home</button></div></div>`);
   on('again', () => { S = newState(); S.si = 1; render(); }); on('peHome', openMenu);
 };
+
+/* ==================================================================
+   THE HQ SHELL (ALTAIR-style): everything after the onboarding happens inside the HQ.
+   Left nav · KPI row · the Overview (map, today's plan or results, routes, live operations, feedback)
+   Plan steps open in the workspace: the plan rail (every decision so far), the task, the money panel.
+   ================================================================== */
+const WS_STEPS = ['starter', 'market', 'demand', 'rotation', 'timetable', 'fareTry', 'fuelPlan', 'dayForecast', 'planner'];
+const SHELL_STEPS = WS_STEPS.concat(['hq', 'fly', 'results', 'protoEnd']);
+['results'].forEach(t => { const i = FOCUS_STEPS.indexOf(t); if(i >= 0) FOCUS_STEPS.splice(i, 1); });
+const ICON = {
+  overview:'<svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
+  plan:'<svg viewBox="0 0 24 24"><path d="M8 3h8v3H8zM6 5H4v16h16V5h-2v3H6zm2 7h8v2H8zm0 4h6v2H8z"/></svg>',
+  network:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 9h-3a15 15 0 0 0-1.3-6A8 8 0 0 1 18.9 11zM12 4c.9 1.2 1.8 3.6 2 7h-4c.2-3.4 1.1-5.8 2-7zM9.4 5a15 15 0 0 0-1.3 6h-3A8 8 0 0 1 9.4 5zM5.1 13h3a15 15 0 0 0 1.3 6A8 8 0 0 1 5.1 13zM12 20c-.9-1.2-1.8-3.6-2-7h4c-.2 3.4-1.1 5.8-2 7zm2.6-1a15 15 0 0 0 1.3-6h3a8 8 0 0 1-4.3 6z"/></svg>',
+  fleet:'<svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>',
+  finance:'<svg viewBox="0 0 24 24"><path d="M4 20h16v2H4zM5 10h3v8H5zm5.5-5h3v13h-3zM16 13h3v5h-3z"/></svg>',
+  cash:'<svg viewBox="0 0 24 24"><path d="M3 6h18v12H3zm2 2v8h14V8zm7 1.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg>',
+  profit:'<svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 7-7v5h2V4h-9v2h5l-5 5-4-4-8 8z"/></svg>',
+  pax:'<svg viewBox="0 0 24 24"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm7 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM9 13c-4 0-7 2-7 4.5V20h14v-2.5C16 15 13 13 9 13zm7 0c-.5 0-1 0-1.4.1 1.5 1 2.4 2.4 2.4 4.4V20h5v-2.5c0-2.5-3-4.5-6-4.5z"/></svg>',
+  star:'<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>',
+  fuel:'<svg viewBox="0 0 24 24"><path d="M12 2.5S5 10 5 14.5a7 7 0 0 0 14 0C19 10 12 2.5 12 2.5z"/></svg>' };
+const NAV = [['overview', 'Overview'], ['plan', "Today's Plan"], ['network', 'Network'], ['fleet', 'Fleet'], ['finance', 'Finance']];
+function planReachable(){ const t = step().t; return WS_STEPS.includes(t) || t === 'hq'; }
+function navActive(){ return UI.view || (WS_STEPS.includes(step().t) ? 'plan' : 'overview'); }
+function shell(inner){
+  const act = navActive();
+  return `<div class="shell"><nav class="lnav" aria-label="HQ">${NAV.map(([id, l]) => `<button class="nv ${act === id ? 'on' : ''}" data-nav="${id}" title="${l}" ${id === 'plan' && !planReachable() ? 'disabled' : ''}>${ICON[id]}<span>${l}</span></button>`).join('')}</nav><div class="shell-main">${inner}</div></div>`;
+}
+/* Overview, Network, Fleet or Finance while a step is open: the step waits underneath. */
+function shellView(st){
+  if(!SHELL_STEPS.includes(st.t)){ UI.view = null; return false; }
+  const v = UI.view; if(!v || v === 'plan') return false;
+  if(v === 'overview'){ if(!WS_STEPS.includes(st.t)){ UI.view = null; return false; } renderOverview('planning'); return true; }
+  renderView(v); return true;
+}
+let fbTimer = null;
+function afterRender(){
+  screen().querySelectorAll('[data-nav]').forEach(b => b.onclick = () => {
+    const v = b.getAttribute('data-nav');
+    if(v === 'plan'){ UI.view = null; if(step().t === 'hq'){ next(); return; } render(); return; }
+    UI.view = v === 'overview' && !WS_STEPS.includes(step().t) ? null : v; render(); });
+  screen().querySelectorAll('[data-ri]').forEach(b => b.onclick = () => { const i = +b.getAttribute('data-ri'); if(i < S.si){ S.si = i; resetEntry(); UI.view = null; render(); } });
+  clearInterval(fbTimer);
+  const fb = screen().querySelector('.fb'); if(fb){ const n = +fb.getAttribute('data-n'); if(n > 1) fbTimer = setInterval(() => fbShow(1), 6000); }
+  screen().querySelectorAll('[data-fb]').forEach(b => b.onclick = () => { fbShow(+b.getAttribute('data-fb')); clearInterval(fbTimer); });
+}
+
+/* ---------- workspace: plan rail · task · money ---------- */
+function railValue(t, i){
+  const f = fleetOne(), p = ourPlane(), sched = f ? schedOf(f) : [], passed = i < S.si;
+  if(t === 'starter') return f ? `${p.name.replace(/^DHC-6 /, '')} · ${p.seats} seats` : '';
+  if(t === 'market') return S.market ? `${routeById(S.market).city} · ${paxFor(routeById(S.market), routeById(S.market).basePrice)} a day` : '';
+  if(t === 'demand'){ const r = S.market && routeById(S.market); return passed && r ? `${paxFor(r, r.basePrice)} want to fly at ${money(r.basePrice)} · ${p.seats} seats` : ''; }
+  if(t === 'rotation'){ if(!passed || !S.market) return ''; const D = TIME.day(p, [S.market, S.market]); return `ready again ${fmtTime(D.trips[1].dep)}`; }
+  if(t === 'timetable' || t === 'planner'){ if(!sched.length) return ''; const s = `${svcLabel(sched)} · until ${fmtTime(TIME.day(p, sched).end)}`; return t === 'planner' ? s + ' · ' + Object.keys(serviceCounts(sched)).map(id => money(fareOf(id))).join(' / ') : s; }
+  if(t === 'fareTry') return passed && S.market ? `${money(fareOf(S.market))} · ${wantOf(S.market)} people` : '';
+  if(t === 'fuelPlan'){ const b = S.rnd.fuelBought; if(b) return `${num(b.litres)} L bought · ${money(b.total)}`; return passed ? `tank covers it (${num(S.fuel)} L)` : ''; }
+  if(t === 'dayForecast') return S.rnd.myForecast ? `profit ${money(S.rnd.myForecast.profit)}` : '';
+  return '';
+}
+const RAIL_LABEL = { starter:'Aircraft', market:'First market', demand:'The market', rotation:'One service', timetable:'Timetable', fareTry:'Fare', fuelPlan:'Fuel', dayForecast:'Forecast', planner:'Timetable & fares' };
+function planRail(){
+  const items = S.steps.map((s, i) => ({ t:s.t, i })).filter(x => WS_STEPS.includes(x.t));
+  return `<aside class="ws-rail"><div class="ws-h">${S.phase === 'setup' ? 'Launch day plan' : `Day ${S.round} plan`}</div><ol class="rail">${items.map((x, k) => {
+    const cur = x.i === S.si, done = x.i < S.si, v = railValue(x.t, x.i);
+    return `<li><button class="ri ${cur ? 'on' : ''} ${done ? 'done' : ''}" data-ri="${x.i}" ${done ? '' : 'disabled'}><span class="ri-k">${done ? '✓' : k + 1}</span><span class="ri-t"><b>${RAIL_LABEL[x.t]}</b>${v ? `<small>${esc(v)}</small>` : ''}</span></button></li>`; }).join('')}
+    <li><div class="ri last"><span class="ri-k">▶</span><span class="ri-t"><b>Start operations</b></span></div></li></ol></aside>`;
+}
+function moneyPanel(){
+  const lines = [], fb = S.rnd.fuelBought;
+  if(S.phase === 'setup'){ lines.push(['Start-up money', settings.startingCash]); if(S.fleet.length){ const p = ourPlane(); lines.push([p.name.replace(/^DHC-6 /, ''), -p.price]); } }
+  else if(S.rnd.cashStart !== undefined) lines.push(['Cash at the start of today', S.rnd.cashStart]);
+  if(fb) lines.push([`Fuel · ${num(fb.litres)} L at ${priceL(fb.price)}`, -fb.total]);
+  const fc = S.rnd.myForecast, end = fc ? Math.round(S.cash + fc.revenue - fc.run - fc.over) : null;
+  return `<aside class="ws-money"><div class="ws-h">Money</div>
+    <div class="mp-cash"><span>Cash now</span><b>${money(S.cash)}</b></div>
+    <div class="mp-lines">${lines.map(([l, v]) => `<div><span>${esc(l)}</span><b class="${v < 0 ? 'neg' : ''}">${v < 0 ? '−' : ''}${money(Math.abs(v))}</b></div>`).join('')}</div>
+    <div class="ws-h sub">Expected today</div>
+    ${fc ? `<div class="mp-lines"><div><span>Ticket revenue</span><b class="pos">+${money(fc.revenue)}</b></div><div><span>Flight running costs</span><b class="neg">−${money(fc.run)}</b></div><div><span>Fuel used <small>(already paid)</small></span><b class="muted">${money(fc.fuel)}</b></div><div><span>Aircraft's day</span><b class="neg">−${money(fc.over)}</b></div></div>
+      <div class="mp-cash small"><span>Expected profit</span><b class="${fc.profit >= 0 ? 'pos' : 'neg'}">${money(fc.profit)}</b></div><div class="mp-cash small"><span>Cash at the end of today</span><b>≈ ${money(end)}</b></div>`
+      : '<p class="muted mp-note">Complete the forecast to see what today should earn.</p>'}</aside>`;
+}
+function wsWrap(frame){ return shell(`<div class="ws">${planRail()}<div class="ws-main">${frame}</div>${moneyPanel()}</div>`); }
+
+/* ---------- the Overview ---------- */
+function kpiRow(mode){
+  const H = S.history, h = H[H.length - 1], p = H[H.length - 2], need = fuelNeeded();
+  const card = (cls, ic, label, value, sub, sp) => `<section class="hp kpi2 ${cls}"><span class="ki">${ICON[ic]}</span><div class="kt"><span class="kl">${label}</span><b class="kv2">${value}</b><span class="ks2">${sub}</span></div>${sp || ''}</section>`;
+  const dCash = mode === 'results' ? S.rnd.profit : null;
+  return `<div class="kpis">${card('k-cash', 'cash', 'Cash balance', `<span class="amber">${money(S.cash)}</span>`, dCash !== null ? `<span class="${dCash >= 0 ? 'green' : 'red'}">${dCash >= 0 ? '▲' : '▼'} ${money(Math.abs(Math.round(dCash)))} today</span>` : 'Available to spend', spark(H.map(x => x.cash)))}
+    ${card('k-profit', 'profit', profitLabel(h), h ? `<span class="${h.profit >= 0 ? 'green' : 'red'}">${money(Math.round(h.profit))}</span>` : '—', h && p ? `${trendMark(h.profit, p.profit)} from ${money(Math.round(p.profit))}` : h ? 'First results' : 'After the first flights', spark(H.map(x => x.profit), 'pr'))}
+    ${card('k-pax', 'pax', h && h.type === 'setup' ? 'Passengers on launch day' : mode === 'results' ? 'Passengers today' : 'Passengers yesterday', h ? `${h.pax}` : '—', h && h.seats ? `${Math.round(100 * h.pax / h.seats)}% of seats filled` : 'After the first flights')}
+    ${card('k-rep', 'star', 'Reputation', `<span class="stars">${starsHtml(S.rep)}</span>`, `${S.rep} out of 5`)}
+    ${card('k-fuel', 'fuel', 'Fuel in the tank', `${num(S.fuel)} L`, need ? (S.fuel >= need ? '<span class="green">Covers today\'s plan</span>' : `<span class="orange">Plan needs ${num(need)} L</span>`) : 'No services planned')}</div>`;
+}
+function liveOpsHtml(mode){
+  const fl = boardFlights().filter(f => !f.grounded);
+  if(!fl.length) return '<div class="pb"><p class="muted">No services planned yet.</p></div>';
+  return `<div class="pb"><table class="hq-t lo"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th class="num">Seats</th><th>Status</th></tr></thead><tbody>${fl.map(f => {
+    const r = routeById(f.route), s = mode === 'live' ? displayStatus(f) : (S.rnd.status[f.key] || 'SCHEDULED');
+    return `<tr><td class="num">${fmtTime(f.dep)}</td><td>${esc(f.code)}</td><td>${flagSvg(r.flag, 16)} ${esc(r.city)}</td><td class="num">${S.rnd.applied ? `${f.sold}/${f.seats}` : f.seats}</td><td><span class="st-dot ${statusClass(s)}"></span><span class="lo-st ${statusClass(s)}" data-lo="${f.key}">${esc(cap(s))}</span></td></tr>`; }).join('')}</tbody></table></div>`;
+}
+function cap(s){ s = String(s || '').toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); }
+function dayReviews(){ return (S.rnd.applied ? S.rnd.reviews : (lastDay() && lastDay().reviews)) || []; }
+function feedbackHtml(){
+  const rv = dayReviews(); UI.fbI = clamp(UI.fbI || 0, 0, Math.max(0, rv.length - 1));
+  if(!rv.length) return '<div class="pb"><p class="muted">Passenger reviews appear here after your flights.</p></div>';
+  return `<div class="pb fb" data-n="${rv.length}">${rv.map((v, i) => `<div class="fb-card ${i === UI.fbI ? 'on' : ''}"><span class="fb-face">${v.face}</span><div><span class="stars">${starsHtml(v.stars)}</span><p>“${esc(v.text)}”</p></div></div>`).join('')}
+    <div class="fb-nav"><button class="btn small" data-fb="-1" aria-label="Previous review">‹</button><span class="fb-n">${UI.fbI + 1} / ${rv.length}</span><button class="btn small" data-fb="1" aria-label="Next review">›</button></div></div>`;
+}
+function fbShow(d){
+  const box = screen().querySelector('.fb'); if(!box) return; const cards = box.querySelectorAll('.fb-card'), n = cards.length; if(!n) return;
+  UI.fbI = ((UI.fbI || 0) + d + n) % n; cards.forEach((c, i) => c.classList.toggle('on', i === UI.fbI)); const t = box.querySelector('.fb-n'); if(t) t.textContent = `${UI.fbI + 1} / ${n}`;
+}
+function todayCard(mode){
+  const f = fleetOne(), p = ourPlane(), sched = f ? schedOf(f) : [], need = fuelNeeded();
+  if(mode === 'live'){ const a = S.rnd.anim;
+    return `${hqHead('Operations', 'LIVE')}<div class="pb td2"><div class="live-clock"><span class="kl">Airport time</span><b id="ovClock">${fmtTime(a ? a.from : firstDep())}</b></div><div class="live-bar"><i id="ovProg"></i></div>
+      <p class="muted">${esc(svcLabel(sched))} · ${plural(boardFlights().filter(x => !x.grounded).length, 'flight')} today. Watch the map and Live Operations.</p>
+      <div class="td-act"><button class="btn" id="skipDay">Skip to the end of the day ▶</button></div></div>`; }
+  if(mode === 'results'){
+    const pr = S.rnd.profit, rev = S.rnd.revenue, costs = S.rnd.costs, first = S.phase === 'setup', fc = S.rnd.myForecast, h = lastDay();
+    const diff = fc ? Math.round(pr) - Math.round(fc.profit) : 0;
+    return `${hqHead(first ? 'Launch Day Results' : `Day ${S.round} Results`, 'ALL LANDED')}<div class="pb td2 dr">
+      <div class="dr-rcp"><div class="rev"><span class="kl">Revenue</span><b data-count="${rev}">${money(rev)}</b>${first ? '<small>Money received from ticket sales</small>' : ''}</div><i>−</i>
+        <div class="cost"><span class="kl">Costs</span><b>${money(Math.round(costs))}</b>${first ? '<small>Money spent operating the airline</small>' : ''}</div><i>=</i>
+        <div class="prof ${pr < 0 ? 'neg' : ''}"><span class="kl">${pr >= 0 ? 'Profit' : 'Loss'}</span><b>${money(Math.round(Math.abs(pr)))}</b>${first ? '<small>Money remaining after costs</small>' : ''}</div></div>
+      ${fc ? `<p class="dr-fc">Your forecast: ${money(Math.round(fc.profit))} · actual: ${money(Math.round(pr))} ${Math.abs(diff) < 2 ? '<span class="green">✓ as forecast</span>' : `<span class="orange">${diff > 0 ? '+' : '−'}${money(Math.abs(diff))}</span> ${esc((S.rnd.vs && S.rnd.vs.why) || 'Fuel was charged at the tank\'s average price.')}`}</p>` : ''}
+      <div class="dr-routes">${h && h.routes ? Object.keys(h.routes).map(id => { const x = h.routes[id], miss = Math.max(0, (x.want || x.pax) - x.pax); return `<span>${flagSvg(routeById(id).flag, 16)} <b>${esc(routeById(id).city)}</b> ${x.want} wanted · ${x.pax} flew · <span class="${miss ? 'orange' : ''}">${miss} no seat</span></span>`; }).join('') : ''}</div>
+      <div class="td-act">${first ? '' : helpChip('money')}<span class="grow"></span><button class="btn primary act" id="nx">${S.round >= 3 ? 'Finish the opening' : 'Close the day'} ▶</button></div></div>`; }
+  if(mode === 'planning'){
+    return `${hqHead(S.phase === 'setup' ? 'Launch Day Plan' : `Day ${S.round} Plan`, 'IN PROGRESS')}<div class="pb td2"><p class="muted">You are part-way through today's plan.</p>
+      <div class="td-list">${S.steps.map((s, i) => ({ t:s.t, i })).filter(x => WS_STEPS.includes(x.t)).map(x => `<div class="${x.i < S.si ? 'done' : x.i === S.si ? 'cur' : ''}"><span>${x.i < S.si ? '✓' : x.i === S.si ? '▶' : '·'} ${RAIL_LABEL[x.t]}</span><b>${esc(railValue(x.t, x.i))}</b></div>`).join('')}</div>
+      <div class="td-act"><button class="btn primary act" id="contPlan">Continue planning ▶</button></div></div>`; }
+  // the morning: today's headline, the standing plan and one action
+  const fares = Object.keys(serviceCounts(sched)).map(id => `${routeById(id).city} ${money(fareOf(id))}`).join(' · ');
+  return `${hqHead("Today's Plan", periodTag().toUpperCase())}<div class="pb td2"><h3 class="td-news2">${esc(S.rnd.headline || "Today's operation")}</h3>${(S.rnd.brief || []).map(l => `<p class="td-brief">${esc(l)}</p>`).join('')}
+    <div class="td-list"><div><span>Timetable</span><b>${sched.length ? esc(svcLabel(sched)) + ` · until ${fmtTime(TIME.day(p, sched).end)}` : '—'}</b></div><div><span>Fares</span><b>${esc(fares || '—')}</b></div>
+      <div><span>Fuel</span><b class="${need > S.fuel ? 'orange' : ''}">${num(S.fuel)} L · plan needs ${num(need)} L</b></div></div>
+    <div class="td-act"><button class="btn primary act" id="startDay">Plan today's operation ▶</button></div></div>`;
+}
+function renderOverview(mode){
+  const wide = innerWidth >= 1600 && innerHeight >= 880, h = lastDay(), warn = intelSituations().length + protoIntel().filter(x => x.warn).length;
+  const mapP = `<section class="hp p-map">${hqHead('Network', '', `<span class="layers">${MAP_LAYERS.map(l => `<button class="ptab" data-layer="${l[0]}" aria-pressed="${UI.mapLayer === l[0]}">${l[1]}</button>`).join('')}</span>`)}<div class="hq-map" id="hqMap"></div></section>`;
+  const fbT = ['fb', 'Passenger Feedback', feedbackHtml], alT = ['al', 'Alerts & Messages', intelHtml, warn || ''];
+  const fbP = mode === 'results' || mode === 'live' ? tabbedPanel('p-fb', 'fbr', [fbT, alT]) : tabbedPanel('p-fb', 'fbm', [alT, fbT]);
+  UI.mapLayer = UI.mapLayer || 'routes';
+  screen().innerHTML = shell(`<div class="ov ${wide ? 'wide' : 'compact'}">${kpiRow(mode)}${mapP}<section class="hp p-td">${todayCard(mode)}</section>
+    <section class="hp p-rp">${hqHead('Route Performance', h ? (h.type === 'setup' ? 'LAUNCH DAY' : periodShort(h).toUpperCase()) : '')}${evidenceHtml(h, ownedRoutes())}</section>
+    ${wide ? `<section class="hp p-fi">${hqHead('Financial Overview', 'BY DAY')}${financeHtml()}</section>` : ''}
+    <section class="hp p-lo">${hqHead('Live Operations', mode === 'live' ? 'LIVE' : S.rnd.applied ? 'ALL LANDED' : 'TODAY')}${liveOpsHtml(mode)}</section>${fbP}</div>`);
+  on('startDay', () => { UI.view = null; next(); }); on('contPlan', () => { UI.view = null; render(); });
+  on('nx', closeDay); on('skipDay', () => { if(S.rnd.anim) S.rnd.anim.start = Date.now() - S.rnd.anim.dur; });
+  screen().querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { const [k, v] = b.getAttribute('data-tab').split('|'); UI.hqTabs[k] = v; render(); });
+  screen().querySelectorAll('[data-layer]').forEach(b => b.onclick = () => { UI.mapLayer = b.getAttribute('data-layer'); render(); });
+  if(hqMap) hqMap.destroy(); hqMap = makeMap($('hqMap'), { scale:1, pad:0.65, planes:true }); hqMap.layer = UI.mapLayer;
+  hqFit(); requestAnimationFrame(() => { if(!hqMap) return; hqMap.autoFit(true); hqMap.render(); });
+}
+function closeDay(){ UI.view = null; UI.fbI = 0; if(S.phase === 'setup') startProtoDay(1); else if(S.round >= 3) next(); else startProtoDay(S.round + 1); }
+R.hq = () => renderOverview('plan');
+/* Operations run on the HQ: the clock, the map and Live Operations move together, then the results land here. */
+let liveLoop = null;
+R.fly = st => {
+  renderOverview('live');
+  const a = S.rnd.anim;
+  if(!a || !S.rnd.flights.some(f => !f.grounded && !f.noFuel)){ setTimeout(() => { if(step() === st) next(); }, 800); return; }
+  if(liveLoop === st) return; liveLoop = st;
+  const tick = () => {
+    if(step() !== st){ liveLoop = null; return; }
+    const t = clamp((Date.now() - a.start) / a.dur, 0, 1), now = a.from + (a.to - a.from) * t;
+    const c = $('ovClock'); if(c) c.textContent = fmtTime(now); const pr = $('ovProg'); if(pr) pr.style.width = (t * 100).toFixed(1) + '%';
+    screen().querySelectorAll('[data-lo]').forEach(e => { const f = S.rnd.flights.find(x => x.key === e.getAttribute('data-lo')); if(!f) return; const s = displayStatus(f), txt = cap(s); if(e.textContent !== txt){ e.textContent = txt; e.className = 'lo-st ' + statusClass(s); const d = e.previousElementSibling; if(d) d.className = 'st-dot ' + statusClass(s); } });
+    if(hqMap && !S.overlay && !UI.view) hqMap.render();
+    if(t < 1) requestAnimationFrame(tick); else { liveLoop = null; setTimeout(() => { if(step() === st) next(); }, 700); }
+  };
+  requestAnimationFrame(tick);
+};
+R.results = st => {
+  applyResults();
+  if(!S.rnd.whyLogged){ S.rnd.whyLogged = true; addNews(S.rnd.why.filter(w => !['🗓️', '🎟️', '🧾', '⛽'].includes(w.ic) || /not enough fuel/.test(w.text)).map(w => ({ tag:'REPORT', text:w.text }))); }
+  renderOverview('results');
+};
+/* Network, Fleet and Finance: bigger views of the same data. */
+function renderView(v){
+  const h = lastDay(), p = ourPlane();
+  let inner = '';
+  if(v === 'network') inner = `<div class="vw net"><section class="hp p-map">${hqHead('Network', `${ownedRoutes().length} ROUTES`)}<div class="hq-map" id="hqMap"></div></section><section class="hp">${hqHead('Route Performance', '')}${evidenceHtml(h, ownedRoutes())}</section></div>`;
+  if(v === 'fleet') inner = `<div class="vw"><section class="hp">${hqHead('Fleet', plural(S.fleet.length, 'aircraft').toUpperCase().replace('AIRCRAFTS', 'AIRCRAFT'))}${S.fleet.length ? fleetHtml() : '<div class="pb"><p class="muted">No aircraft yet.</p></div>'}</section>
+    <section class="hp">${hqHead(p.name, 'START-UP AIRCRAFT')}<div class="pb fl-specs"><div><span class="kl">Seats</span><b>${p.seats}</b></div><div><span class="kl">Speed</span><b>${num(p.speed)} km/h</b></div><div><span class="kl">Range</span><b>${num(p.range)} km</b></div><div><span class="kl">Running cost</span><b>${money(p.hourCost)} an hour</b><small>+ ${money(homeData().fee)} landing fee</small></div><div><span class="kl">Daily cost</span><b>${money(p.dayCost)}</b></div><div><span class="kl">Fuel</span><b>${p.fuelUse} L</b><small>per 100 km</small></div></div></section></div>`;
+  if(v === 'finance') inner = `<div class="vw"><section class="hp">${hqHead('Financial Overview', 'BY DAY')}<div class="pb fin-pb"></div></section>
+    <section class="hp">${hqHead('Day by Day', '')}<div class="pb"><table class="hq-t"><thead><tr><th>Day</th><th class="num">Passengers</th><th class="num">Revenue</th><th class="num">Costs</th><th class="num">Profit</th><th class="num">Cash after</th></tr></thead><tbody>${S.history.map(x => `<tr><td>${esc(x.type === 'setup' ? 'Launch day' : dateShort(x.from))}</td><td class="num">${x.pax}</td><td class="num">${money(x.revenue)}</td><td class="num">${money(Math.round(x.costs))}</td><td class="num ${x.profit >= 0 ? 'green' : 'red'}">${money(Math.round(x.profit))}</td><td class="num amber">${money(Math.round(x.cash))}</td></tr>`).join('') || '<tr><td colspan="6" class="muted">No days flown yet.</td></tr>'}</tbody></table></div></section></div>`;
+  screen().innerHTML = shell(inner);
+  if(v === 'network'){ if(hqMap) hqMap.destroy(); hqMap = makeMap($('hqMap'), { scale:1, pad:0.65, planes:true }); hqMap.layer = 'routes'; requestAnimationFrame(() => { if(!hqMap) return; hqMap.autoFit(true); hqMap.render(); }); }
+  if(v === 'finance'){ const fb = screen().querySelector('.fin-pb'); requestAnimationFrame(() => { if(fb && S.history.length) fb.innerHTML = finChart({ n:14, w:fb.clientWidth - 28, h:Math.max(140, fb.clientHeight - 40) }); else if(fb) fb.innerHTML = '<p class="muted">The chart starts after the first flights.</p>'; }); }
+}
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).

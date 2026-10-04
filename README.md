@@ -17,6 +17,23 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
+**Run from the HQ (ALTAIR-style).** After the short onboarding (name, strategy, paint your planes, home airport) everything happens inside one HQ:
+- **Top bar:** the **Cash balance** is always shown.
+- **Left nav:** Overview · Today's Plan · Network · Fleet · Finance.
+- **KPI row:** cash, last profit, passengers, reputation, fuel.
+- **Plan steps** open in the **Today's Plan workspace**:
+  - a plan rail listing every decision so far with its value (click a ✓ step to revisit it);
+  - the task in the middle, with a short *Briefing* on Launch Day;
+  - a **Money** panel: cash now, what has been spent today, and once the forecast is done the expected revenue, costs, profit and cash at the end of the day.
+- **Start operations** returns to the Overview in live mode: the clock, the planes on the map and Live Operations move together.
+- **The results land on the HQ:**
+  - a *Day Results* panel shows revenue − costs = profit, forecast against actual, and who flew;
+  - **Passenger Feedback** cycles through the reviews;
+  - the "why" notes go to Alerts & Messages.
+  - There are no end-of-level slides.
+- ***Close the day*** moves to the next morning.
+- **The look:** near-black navy, quiet title-case headings, sans figures, smaller text and 8px corners. Courier remains only on the wall's departure boards.
+
 **Flow:** name → strategy → paint your planes → home airport → **your start-up aircraft** (the Twin Otter's seats, speed, range and running cost, each explained; no shop) → **first market** (Paris or Dublin) → Launch Day → Day 1 → Day 2 → Day 3 → *Regular operations established*.
 
 **Launch Day (high scaffold: SHOW → TRY → RUN → EXPLAIN):**
