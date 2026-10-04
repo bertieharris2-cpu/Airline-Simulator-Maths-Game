@@ -8,7 +8,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 | File | What it is |
 | --- | --- |
 | `airline-opening-prototype.html` | **The active development version.** The opening 20–30 minutes only: setup, Launch Day, Day 1, Day 2, Day 3, then a temporary *Opening prototype complete* screen. See *Opening prototype* below. |
-| `airline-simulator-full-reference.html` | **Frozen.** A snapshot of the complete simulator (weeks, months, later aircraft, international routes, storyline, awards, challenges). Critical fixes only until the opening is approved. |
+| `airline-simulator-full-reference.html` | **Frozen.** A snapshot of the complete simulator (weeks, months, later aircraft, international routes, storyline, awards, challenges). Critical fixes only until the opening is approved (so far: the full-screen button, which the teacher's triple-tap corner used to cover). |
 | `airline-simulator.html` | The complete game, identical to the full reference for now: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
 | `prototypes/hq/` | The HQ look-and-feel explorations that led to the current design. Standalone; not used by the game. |
 | `paper-backup-pack.html` | Printable A4 pack: decision cards, calculation sheets, review cards and a teacher answer sheet for one round. Open and press Ctrl+P. |
@@ -27,16 +27,16 @@ The opening is being made excellent before the later campaign continues. `airlin
   - Each one lights up with a short system notice (*Finance online*). Older saves unlock whatever their history implies.
 - **The workspace: plan rail · task · dock,** with an action bar across the bottom (a one-line hint and the main button).
   - **The plan rail is the day in stages.**
-    - Launch Day: *Airline ready* (aircraft, first market) → *Build the service* (demand, one service, timetable, fare) → *Prepare to fly* (costs and forecast, fuel) → *Launch* (Start operations).
+    - Launch Day: *Airline ready* (aircraft, first market) → *Build the service* (demand, one service, timetable) → *Prepare to fly* (fares and forecast, fuel) → *Launch* (Start operations).
     - Days 1–3: *Plan the day* → *Prepare to fly* → *Launch*.
-    - A finished stage folds into one resolved line with a green edge and a summary (*✓ Service built · Paris ×2 · £80 fare*). Click it to open its steps; any step can be reopened with **Edit**.
+    - A finished stage folds into one resolved line with a green edge and a summary (*✓ Service built · Paris ×3 · 57 seats*). Click it to open its steps; any step can be reopened with **Edit**.
   - **The dock (right):** the context for the current activity:
     - *Home base*, *Market comparison*, *Aircraft and market*, *Flight timing*;
     - *Aircraft status* with a small departures board that gains a row as services are added;
     - *Aircraft & Market Context*, *Today's forecast*, *Fuel status*.
     - **Help and guidance** rows sit underneath. Help, the working space and calculations dock here for a moment, and closing them (✕) brings the context back. The step underneath never changes. The dock can be folded away (›).
 - **Never ask twice.** A setting stays set until it is edited.
-  - The fare screen shows the timetable as the *current plan summary* with **Edit timetable** (no second service selector).
+  - **No fare is decided before it is costed.** The timetable and extras are set first; fares are chosen only on the costing screen (see *Fares are decided by modelling* below).
   - Editing anything from later in the day shows **Back to …** and returns straight to where you were.
   - The morning *Today's Plan* card lists the standing timetable, fares, on-board offer, departure time and fuel, each with Edit.
 - **Launch:** a final *Ready for launch* step lists the operating plan (timetable, fare, extras, fuel, forecast). Each item has Edit, and a warning if it needs updating, for example if the plan changed after the forecast. Then the big **START OPERATIONS**. Fuel orders are paid at this point.
@@ -51,7 +51,7 @@ The opening is being made excellent before the later campaign continues. `airlin
   - a stage indicator *Outbound · Turnaround · Return · Ready again*;
   - blue flights and steel-grey hatched turnarounds;
   - a large **READY AGAIN 12:40**, then *Build the day*.
-- **The timetable and the fare** draw the operating day as one row per service (LHR → CDG, turnaround, CDG → LHR, *Ready again*) and the passengers as a card per service: cyan for passengers, outline for empty seats, orange for no seat.
+- **The timetable** draws the operating day as one row per service (LHR → CDG, turnaround, CDG → LHR, *Ready again*) and the passengers as a card per service: cyan for passengers, outline for empty seats, orange for no seat.
 - **The home airport** has the four airport cards on the left and a locator map on the right: the real coastline cropped to Britain, Ireland and northern France, with all four airports, the chosen hub highlighted, and route lines to Paris and Dublin labelled with the flight times.
 - **The visual language:**
   - one navy palette lit from the upper left: page #061426 → shell → panels → the active workspace → the dock (slightly brighter, with a cyan edge);
@@ -62,6 +62,13 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Strategy cards** label their meters: *Fare level · Higher*, *Service level · High*, *Passenger volume · Lower*.
 - **The Overview KPI row** shows how the airline is operating: last profit, revenue, passengers, seats filled, fuel stock. Cash and reputation stay in the top bar.
 - **Start operations** returns to the Overview in live mode: the clock, the planes on the map and Live Operations move together. The results land on the HQ (revenue − costs = profit, forecast against actual, who flew; Passenger Feedback cycles through the reviews). ***Close the day*** moves to the next morning.
+
+**Fares are decided by modelling.** There is no separate fare step any more; the fare list is a *menu*, and the decision is made by costing.
+- **The plans:** the costing screen opens with **Plan A at today's fare, Plan B one fare lower and Plan C one fare higher**, all on the chosen timetable (every route, every day).
+- **The fare menu** in the dock shows each fare, the people who want to fly at it, and which plans are trying it.
+- **Choosing:** *Use Plan X* sets the airline's fares. The Launch step's Fare line edits the costing, not a separate screen.
+- **The Day 1–3 planner** sets services, on-board sales and the first departure only. Each route card says how many want to fly at today's fare, and that the fare is chosen when you cost your options.
+- **If the timetable or extras change after costing,** Plans B and C are rebuilt from the new Plan A.
 
 **Cost your options (three plans side by side).**
 - **The flow:** the planner builds the day's plan, then **Cost your options** shows Plan A (the planner's plan) next to Plans B and C (copies to change).
@@ -115,13 +122,12 @@ The opening is being made excellent before the later campaign continues. `airlin
 1. **The market:** "45 people want to fly to Paris today", drawn in aircraft-sized groups (19 | 19 | 7) next to "Your aircraft: 19 seats".
 2. **One service, start to finish:** a timeline built step by step from the scheduling engine (depart 09:00, Paris 10:30, turnaround, leave 11:15, Cardiff 12:45, turnaround, ready again 13:30), with one time question. Flight time is not the time the aircraft is busy.
 3. **What timetable do you want to run?** Paris ×1 / ×2 / ×3 fill the 06:00–22:00 bar; the passenger groups show who gets a seat and who doesn't. ×4 won't fit and says so. No single right answer.
-4. **Fare:** five fares around the normal fare; passengers change at once, and the current plan summary shows services, seats, passengers expected and empty seats (or people without a seat). The timetable is edited with **Edit timetable**, not chosen again.
-5. **Cost your options:** three plans side by side; the ticket revenue and profit are completed in the calculation dock.
-6. **Fuel:** the tank, today's burn and price; order enough for the plan, or extra while it's cheap, and complete the order cost in the dock.
-7. **Launch:** the operating plan with Edit on every line, then **START OPERATIONS** and the Operations Wall comes alive.
-8. **Results:** revenue − costs = profit (with one-line meanings, only on launch day), the flights, who flew (wanted, seats, travelled, no seat), forecast against actual.
+4. **Fares and forecast:** three plans side by side at three fares (normal, £10 lower, £10 higher), with the fare menu in the dock; the ticket revenue and profit of each are completed in the calculation dock, then one plan is chosen.
+5. **Fuel:** the tank, today's burn and price; order enough for the plan, or extra while it's cheap, and complete the order cost in the dock.
+6. **Launch:** the operating plan with Edit on every line, then **START OPERATIONS** and the Operations Wall comes alive.
+7. **Results:** revenue − costs = profit (with one-line meanings, only on launch day), the flights, who flew (wanted, seats, travelled, no seat), forecast against actual.
 
-**Days 1–3 (the help fades):** the HQ shows yesterday's evidence per route (wanted, seats, travelled, no seat) and Intelligence lists situations, never instructions (*Capacity pressure — Paris*, fuel up to £1.30, *Network opportunity — Dublin*). **Plan today's operation** opens one planner: the day bar, each route's fare and services, and who gets a seat. Day 2's fuel screen has fuller help (and a typed bill); Day 3 adds the other market, so the pupil chooses a mix (Paris ×3, Paris ×2 + Dublin ×1, Paris ×1 + Dublin ×2, Dublin ×3, …), with the day's expected profit shown. Typed sums fade: Day 1 profit, Day 2 fuel bill and profit, Day 3 the revenue sums. Optional help (*How scheduling works*, *Demand*, *Fuel*, *Revenue and profit*, *Forecast*) opens in the dock beside the task; nothing is retaught automatically.
+**Days 1–3 (the help fades):** the HQ shows yesterday's evidence per route (wanted, seats, travelled, no seat) and Intelligence lists situations, never instructions (*Capacity pressure — Paris*, fuel up to £1.30, *Network opportunity — Dublin*). **Plan today's operation** opens one planner: the day bar, each route's services, and who gets a seat at today's fare (fares are chosen on the costing screen). Day 2's fuel screen has fuller help (and a typed bill); Day 3 adds the other market, so the pupil chooses a mix (Paris ×3, Paris ×2 + Dublin ×1, Paris ×1 + Dublin ×2, Dublin ×3, …), with the day's expected profit shown. Typed sums fade: Day 1 profit, Day 2 fuel bill and profit, Day 3 the revenue sums. Optional help (*How scheduling works*, *Demand*, *Fuel*, *Revenue and profit*, *Forecast*) opens in the dock beside the task; nothing is retaught automatically.
 
 **Market numbers (prototype only):** demand describes the market and is never changed to suit a lesson (no growth, no extra passengers on a "lesson day"); only reputation's small effect remains.
 

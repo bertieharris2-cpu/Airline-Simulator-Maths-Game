@@ -1951,6 +1951,19 @@ body.hq-enter #screen{animation:hqIn .6s ease-out}
 
 .dock .help-fares > div{display:flex;flex-direction:column;gap:2px}.dock .help-fares > div > b{font-size:15px;display:flex;align-items:center;gap:6px}.dock .help-fares span,.dock .help-fares span b{font-size:14px;line-height:1.4;display:inline}
 
+/* the fare menu in the costing dock; the planner's fare line */
+.fmenu{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}
+.fm{display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 2px;border:1px solid var(--hair);background:rgba(4,16,31,.35)}
+.fm b{font-size:13.5px;font-weight:600;color:#fff}.fm span{font-size:12.5px;color:var(--muted)}.fm i{font-style:normal;font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--cy);min-height:1.2em}
+.fm.on{border-color:rgba(99,216,255,.6);background:rgba(99,216,255,.10)}
+.fm-k{margin:4px 0 0;font-size:11.5px;color:var(--muted)}
+.fmenu-s{padding:8px 10px}
+.pr-fare{margin:0;font-size:15px}.pr-fare b{color:#fff}
+.td-sub{display:block;font-size:11.5px;font-weight:400;color:var(--muted)}
+
+.fmenu{gap:2px}.fm{padding:3px 0;min-width:0;overflow:hidden}.fm b{font-size:12.5px;letter-spacing:-.01em}.fm span{font-size:12px}
+@media (min-width:1600px){ .fm b{font-size:14px} }
+
 @media print{ body{background:#fff;color:#000} }
 </style>
 </head>
@@ -2353,7 +2366,7 @@ function newState(){
     airline:{ name:'', code:'', c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'strategy'},{t:'fin'},{t:'home'},{t:'boot'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'options'},{t:'fuelPlan'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'strategy'},{t:'fin'},{t:'home'},{t:'boot'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'options'},{t:'fuelPlan'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };
@@ -4355,7 +4368,7 @@ R.timetable = () => {
       <section class="pnl"><div class="pnl-h"><h3>Services to ${esc(r.city)}</h3><span class="muted">${capLine(want, n * p.seats)}</span></div>${serviceButtons(r.id, sched)}</section>
       <section class="pnl"><div class="pnl-h"><h3>Expected passengers per service</h3>${paxKey()}</div>${paxGroups(want, p.seats, n, { times:TIME.day(p, sched).trips.map(x => x.dep) })}</section></div>`,
     foot:`<button class="btn primary big" id="nx" ${n ? '' : 'disabled'}>${n ? goLabel(`Run ${esc(svcLabel(sched))}`) : 'Choose a timetable'} &#9654;</button>` });
-  bindServices(); on('nx', advance);
+  bindServices(); on('nx', () => { costingCheck(); advance(); });
 };
 /* The fare: the timetable is already decided, so it appears here as the current plan (with Edit), never as a second selector. */
 R.fareTry = () => {
@@ -4452,7 +4465,7 @@ R.planner = () => {
   const sc = scaffold(), p = ourPlane(), f = fleetOne(), sched = schedOf(f), ids = plannerRoutes(), counts = serviceCounts(sched), now = planOutcome(currentPlan());
   const card = id => { const r = routeById(id), n = counts[id] || 0, want = wantOf(id), isNew = !(lastDay() && lastDay().routes && lastDay().routes[id]) && id !== S.market, eb = earlyBonus(r);
     return `<div class="plan-route ${n ? 'flying' : ''}"><div class="pr-head">${flagSvg(r.flag, 28)}<b>${esc(r.city)}</b>${isNew ? '<span class="chip new">New market</span>' : ''}<span class="muted">${fmtDur(TIME.leg(p, r))} each way · ${fmtDur(TIME.roundTrip(p, r))} a service</span></div>
-      <div class="pr-fares"><span class="label">Fare</span>${(r.fares || [r.basePrice]).map(x => `<button class="fare sm ${x === fareOf(id) ? 'on' : ''}" data-pf="${id}|${x}" aria-pressed="${x === fareOf(id)}"><b class="mono">${money(x)}</b><span>${paxFor(r, x) + eb}</span></button>`).join('')}</div>
+      <p class="pr-fare muted">At today's fare (<b class="mono">${money(fareOf(id))}</b>) <b class="mono">${want}</b> want to fly. The fare is chosen when you cost your options.</p>
       <div class="pr-svc"><span class="label">Services</span>${[0, 1, 2, 3].map(k => { const s = schedFrom(Object.assign({}, counts, { [id]:k })), ok = k === 0 || schedFits(s); return `<button class="svc sm ${n === k ? 'on' : ''}" data-svc="${id}|${k}" aria-pressed="${n === k}" ${ok ? '' : 'disabled'}><b>×${k}</b></button>`; }).join('')}</div>
       <p class="cap-line">${capLine(want, n * p.seats)}${eb ? ` <span class="chip biz">+${eb} early business travellers</span>` : ''}</p>${paxGroups(want, p.seats, n, { small:true })}</div>`; };
   const end = sched.length ? TIME.day(p, sched).end : null, D = sched.length ? TIME.day(p, sched) : null, crews = crewNeeded();
@@ -4469,11 +4482,10 @@ R.planner = () => {
       <div class="plan-sum"><span>${esc(svcLabel(sched))}</span><span>Aircraft busy until <b class="mono">${end ? fmtTime(end) : '—'}</b></span>${crewTxt}<span>Fuel needed <b class="mono">${num(fuelNeeded())} L</b> · in the tank <b class="mono">${num(S.fuel)} L</b></span></div></div>`,
     foot:`<span class="grow"></span><button class="btn primary big" id="nx" ${sched.length ? '' : 'disabled'}>${sched.length ? goLabel('Use this plan') : 'Choose some services'} &#9654;</button>` });
   bindServices();
-  screen().querySelectorAll('[data-pf]').forEach(b => b.onclick = () => { const [id, x] = b.getAttribute('data-pf').split('|'); S.prices[id] = +x; refreshPlan(); render(); });
   screen().querySelectorAll('[data-ob]').forEach(b => b.onclick = () => { S.onboard = b.getAttribute('data-ob'); render(); });
   const moveDep = d => { const v = clamp(firstDep() + d, DEP_MIN, DEP_MAX), s = schedOf(f); S.firstDep = v; if(!schedFits(s)){ S.firstDep = v - d; toast("The timetable wouldn't fit."); } refreshPlan(); render(); };
   on('depDown', () => moveDep(-15)); on('depUp', () => moveDep(15));
-  on('nx', () => { S.rnd.focusRoute = schedOf(f)[0]; advance(); });
+  on('nx', () => { S.rnd.focusRoute = schedOf(f)[0]; costingCheck(); advance(); });
 };
 
 /* ==================================================================
@@ -4686,34 +4698,35 @@ function railValue(t, i){
   if(t === 'market') return S.market ? `${routeById(S.market).city} · ${paxFor(routeById(S.market), routeById(S.market).basePrice)} a day` : '';
   if(t === 'demand'){ const r = S.market && routeById(S.market); return passed && r ? `${paxFor(r, r.basePrice)} want to fly · ${p.seats} seats` : ''; }
   if(t === 'rotation'){ if(!passed || !S.market) return ''; const D = TIME.day(p, [S.market, S.market]); return `ready again ${fmtTime(D.trips[1].dep)}`; }
-  if(t === 'timetable' || t === 'planner'){ if(!sched.length) return ''; const s = `${svcLabel(sched)} · until ${fmtTime(TIME.day(p, sched).end)}`; return t === 'planner' ? s + ' · ' + Object.keys(serviceCounts(sched)).map(id => money(fareOf(id))).join(' / ') + (S.round >= 2 ? ` · from ${fmtTime(firstDep())}` : '') + (S.onboard && S.onboard !== 'none' ? ' · ' + ONBOARD[S.onboard].label.toLowerCase() : '') : s; }
+  if(t === 'timetable' || t === 'planner'){ if(!sched.length) return ''; const s = `${svcLabel(sched)} · until ${fmtTime(TIME.day(p, sched).end)}`; return t === 'planner' ? s + (S.round >= 2 ? ` · from ${fmtTime(firstDep())}` : '') + (S.onboard && S.onboard !== 'none' ? ' · ' + ONBOARD[S.onboard].label.toLowerCase() : '') : s; }
   if(t === 'fareTry') return passed && S.market ? `${money(fareOf(S.market))} · ${wantOf(S.market)} people` : '';
   if(t === 'fuelPlan'){ const o = S.rnd.fuelOrder; if(o) return `${num(o.litres)} L ordered · ${money(o.total)}`; return passed ? `tank covers it (${num(S.fuel)} L)` : ''; }
-  if(t === 'options') return S.rnd.myForecast ? `${S.rnd.myForecast.plan || 'Plan A'} · profit ${money(S.rnd.myForecast.profit)}` : '';
+  if(t === 'options') return S.rnd.myForecast ? `${S.rnd.myForecast.plan || 'Plan A'} · ${Object.keys(serviceCounts(sched)).map(id => money(fareOf(id))).join(' / ')} · profit ${money(S.rnd.myForecast.profit)}` : '';
   return '';
 }
-const RAIL_LABEL = { starter:'Aircraft', market:'First market', demand:'Market demand', rotation:'One service', timetable:'Timetable', fareTry:'Fare', options:'Costs and forecast', fuelPlan:'Fuel', dayForecast:'Forecast', planner:'Timetable and fares', ready:'Launch' };
+const RAIL_LABEL = { starter:'Aircraft', market:'First market', demand:'Market demand', rotation:'One service', timetable:'Timetable', fareTry:'Fare', options:'Fares and forecast', fuelPlan:'Fuel', dayForecast:'Forecast', planner:'Timetable and extras', ready:'Launch' };
 const STAGES = {
   launch:[ { id:'air', name:'Airline ready', done:'Airline ready', sub:'Aircraft and first market', steps:['starter', 'market'] },
            { id:'svc', name:'Build the service', done:'Service built', sub:'Plan your first route', steps:['demand', 'rotation', 'timetable', 'fareTry'] },
-           { id:'prep', name:'Prepare to fly', done:'Ready to operate', sub:'Costs, forecast and fuel', steps:['options', 'fuelPlan'] },
+           { id:'prep', name:'Prepare to fly', done:'Ready to operate', sub:'Fares, forecast and fuel', steps:['options', 'fuelPlan'] },
            { id:'go', name:'Launch', sub:'Start operations', steps:['ready'] } ],
-  day:[ { id:'plan', name:'Plan the day', done:'Day planned', sub:'Timetable and fares', steps:['planner'] },
-        { id:'prep', name:'Prepare to fly', done:'Ready to operate', sub:'Costs, forecast and fuel', steps:['options', 'fuelPlan'] },
+  day:[ { id:'plan', name:'Plan the day', done:'Day planned', sub:'Timetable and extras', steps:['planner'] },
+        { id:'prep', name:'Prepare to fly', done:'Ready to operate', sub:'Fares, forecast and fuel', steps:['options', 'fuelPlan'] },
         { id:'go', name:'Launch', sub:'Start operations', steps:['ready'] } ] };
-const SUB_DESC = { starter:'Take delivery', market:'Choose where to fly', demand:'Check demand', rotation:'Time one service', timetable:'Plan the services', fareTry:'Set the ticket price', options:'Cost each plan', fuelPlan:'Order fuel', planner:'Services, fares and extras', ready:'Start operations' };
+const SUB_DESC = { starter:'Take delivery', market:'Choose where to fly', demand:'Check demand', rotation:'Time one service', timetable:'Plan the services', fareTry:'Set the ticket price', options:'Price and cost each plan', fuelPlan:'Order fuel', planner:'Services and extras', ready:'Start operations' };
 function stageOf(t){ return (S.phase === 'setup' ? STAGES.launch : STAGES.day).find(g => g.steps.includes(t)); }
 function wsCrumb(){ const g = stageOf(step().t); return `${S.airline.name || 'Airline'} HQ${g ? ' · ' + g.name : ''}`; }
 function wsStatus(){ return S.phase === 'setup' ? 'LAUNCH DAY' : `DAY ${S.round}`; }
 const STEP_HINT = { starter:'Your start-up aircraft is waiting for delivery at your home airport.', market:'Compare the two markets, then open one.', demand:'Compare the people who want to fly with the seats on one service.',
   rotation:'Follow one service from departure until the aircraft is ready again.', timetable:'Add services until the timetable suits the market. Each one must fit in the operating day.',
-  fareTry:"You're building your first route. Set a fare and check the timetable, then continue.", options:"Complete each plan's figures, then choose the plan your airline will fly.",
-  fuelPlan:"Make sure the tank covers today's flights. Fuel is paid for when operations start.", ready:'Check the operating plan. Anything can still be edited before operations start.', planner:"Set today's timetable and fares, then cost your options." };
+  fareTry:"You're building your first route. Set a fare and check the timetable, then continue.", options:"Each plan charges a different fare. Work out each profit, then choose the plan your airline will fly.",
+  fuelPlan:"Make sure the tank covers today's flights. Fuel is paid for when operations start.", ready:'Check the operating plan. Anything can still be edited before operations start.', planner:"Set today's timetable and extras. Fares are chosen when you cost your options." };
 function stageSummary(id){
   const f = fleetOne(), p = ourPlane(), sched = f ? schedOf(f) : [];
   if(id === 'air') return [S.fleet.length ? p.name.replace(/^DHC-6 /, '') : '', S.market ? routeById(S.market).city : ''].filter(Boolean).join(' · ');
-  if(id === 'svc' || id === 'plan') return sched.length ? `${svcLabel(sched)} · ${Object.keys(serviceCounts(sched)).map(x => money(fareOf(x))).join(' / ')} fare` : '';
-  if(id === 'prep') return 'Fuel checked · Forecast complete';
+  if(id === 'svc') return sched.length ? `${svcLabel(sched)} · ${sched.length * p.seats} seats` : '';
+  if(id === 'plan') return sched.length ? svcLabel(sched) : '';
+  if(id === 'prep'){ const fc = S.rnd.myForecast; return fc ? `${Object.keys(serviceCounts(sched)).map(x => money(fareOf(x))).join(' / ')} fare · profit ${money(fc.profit)}` : 'Fuel checked · Forecast complete'; }
   return '';
 }
 function planRail(){
@@ -4934,7 +4947,7 @@ function todayCard(mode){
   // the morning: today's headline, the standing plan and one action
   const fares = Object.keys(serviceCounts(sched)).map(id => `${routeById(id).city} ${money(fareOf(id))}`).join(' · ');
   return `${hqHead("Today's Plan", periodTag().toUpperCase())}<div class="pb td2"><h3 class="td-news2">${esc(S.rnd.headline || "Today's operation")}</h3>${(S.rnd.brief || []).map(l => `<p class="td-brief">${esc(l)}</p>`).join('')}
-    <div class="td-list edits"><div><span>Timetable</span><b>${sched.length ? esc(svcLabel(sched)) + ` · until <span class="mono">${fmtTime(TIME.day(p, sched).end)}</span>` : '—'}</b><button class="link" data-plan>Edit</button></div><div><span>Fares</span><b>${esc(fares || '—')}</b><button class="link" data-plan>Edit</button></div>${S.round >= 1 ? `<div><span>On board</span><b>${esc(onboardOf().label)}</b><button class="link" data-plan>Edit</button></div>` : ''}${S.round >= 2 ? `<div><span>First departure</span><b class="mono">${fmtTime(firstDep())}</b><button class="link" data-plan>Edit</button></div>` : ''}
+    <div class="td-list edits"><div><span>Timetable</span><b>${sched.length ? esc(svcLabel(sched)) + ` · until <span class="mono">${fmtTime(TIME.day(p, sched).end)}</span>` : '—'}</b><button class="link" data-plan>Edit</button></div><div><span>Last fares</span><b>${esc(fares || '—')}</b><button class="link" data-plan>Edit</button></div>${S.round >= 1 ? `<div><span>On board</span><b>${esc(onboardOf().label)}</b><button class="link" data-plan>Edit</button></div>` : ''}${S.round >= 2 ? `<div><span>First departure</span><b class="mono">${fmtTime(firstDep())}</b><button class="link" data-plan>Edit</button></div>` : ''}
       <div><span>Fuel</span><b class="${need > S.fuel ? 'orange' : ''}"><span class="mono">${num(S.fuel)} L</span> · plan needs <span class="mono">${num(need)} L</span></b><button class="link" data-plan>Edit</button></div></div>
     <div class="td-act"><button class="btn primary act" id="startDay">Plan today's operation ▶</button></div></div>`;
 }
@@ -5005,6 +5018,7 @@ function syncFsBtn(){ const l = document.getElementById('fsLbl'); if(l) l.textCo
    normal fare ≈ £30 + 14p a km, to the nearest £10; the fare buttons run from £10 below to £30 above it. */
 function normalFare(route, hh){ return Math.max(50, Math.round((30 + 0.14 * routeKm(route, hh)) / 10) * 10); }
 function syncRoutesToHome(){
+  if(S && S.steps){ const fi = S.steps.findIndex(x => x.t === 'fareTry'); if(fi >= 0 && S.si !== fi){ S.steps.splice(fi, 1); if(S.si > fi) S.si--; if(S.rnd && S.rnd.returnTo > fi) S.rnd.returnTo--; } }
   if(S && S.steps && !S.steps.some(x => x.t === 'ready')){ const i = S.steps.findIndex(x => x.t === 'fuelPlan'); if(i >= 0 && S.si <= i) S.steps.splice(i + 1, 0, { t:'ready' }); }
   if(!S || !S.home) return;
   if(S.home === syncRoutesToHome.home) return; syncRoutesToHome.home = S.home;
@@ -5020,9 +5034,20 @@ window.__proto = { WORLD, planOutcome, newState, buyPlane, planeById, routeById,
    different plan, then chooses one to fly. Changing a plan clears only that plan's answers.
    ================================================================== */
 const PLAN_NAMES = ['Plan A', 'Plan B', 'Plan C'];
+/* The fare menu, modelled: Plan A at today's fares, Plan B one fare lower, Plan C one fare higher.
+   If the timetable, snacks or first departure change before costing again, B and C follow the new Plan A. */
+function fareShift(pl, d){
+  const next = JSON.parse(JSON.stringify(pl));
+  [...new Set(next.sched)].forEach(id => { const r = routeById(id), F = r.fares || [r.basePrice], cur = next.prices[id] !== undefined ? next.prices[id] : fareOf(id);
+    let k = F.indexOf(cur); if(k < 0) k = Math.max(0, F.indexOf(r.basePrice)); next.prices[id] = F[clamp(k + d, 0, F.length - 1)]; });
+  return next;
+}
+function planBase(pl){ return JSON.stringify([pl.sched, pl.firstDep, pl.onboard]); }
+function costingCheck(){ if(S.rnd.options && S.rnd.optionsBase !== planBase(currentPlan())) S.rnd.options = null; }
 function optionPlans(){
-  if(!S.rnd.options) S.rnd.options = [null, currentPlan(), currentPlan()];
-  return [currentPlan(), S.rnd.options[1], S.rnd.options[2]];
+  const A = currentPlan();
+  if(!S.rnd.options){ S.rnd.options = [null, fareShift(A, -1), fareShift(A, 1)]; S.rnd.optionsBase = planBase(A); }
+  return [A, S.rnd.options[1], S.rnd.options[2]];
 }
 /* Everything a plan would do today, as spreadsheet lines (worked out on a copy of the state). */
 function planLines(pl){
@@ -5069,6 +5094,13 @@ function setPlan(i, pl){
   else S.rnd.options[i] = pl;
   render();
 }
+/* The fare menu: what each fare brings, and which plan is trying it. */
+function fareMenu(plans){
+  const ids = [...new Set([].concat(...plans.map(pl => pl.sched)))];
+  return ids.map(id => { const r = routeById(id);
+    return `<section class="cx fmenu-s"><h4>${flagSvg(r.flag, 16)} ${esc(r.city)} fare menu</h4><div class="fmenu">${(r.fares || [r.basePrice]).map(x => { const who = plans.map((pl, i) => pl.sched.includes(id) && pl.prices[id] === x ? 'ABC'[i] : '').join('');
+      return `<div class="fm ${who ? 'on' : ''}"><b class="mono">${money(x)}</b><span class="mono">${paxWant(r, x)}</span><i>${who || '&nbsp;'}</i></div>`; }).join('')}</div><p class="fm-k">fare · people who want to fly · plans trying it</p></section>`; }).join('');
+}
 R.options = () => {
   const sc = scaffold(), plans = optionPlans(), lines = plans.map(planLines), ctx = ['launch', 'day1', 'day2', 'day3'][sc];
   const twoRoutes = lines.some(L => L.v.pax2 > 0), snacks = lines.some(L => L.v.snack || L.v.stock), crew = lines.some(L => L.v.crew);
@@ -5092,9 +5124,9 @@ R.options = () => {
       ${!pl.sched.length ? '<p class="muted">No flights planned</p>' : !L.fits ? '<p class="red">Doesn\'t fit in the day</p>' : same[i] !== null ? `<p class="muted">Same as ${PLAN_NAMES[same[i]]}</p>` : n ? `<p class="fp-todo">${plural(n, 'figure')} to complete</p>` : `<div class="fp-p"><span>Profit</span><b class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</b></div>`}
       ${done && usable ? `<button class="btn ${i === best ? 'primary' : ''}" data-fly="${i}">${goLabel(`Use ${PLAN_NAMES[i]}`)} &#9654;</button>` : ''}</div>`; }).join('');
   screen().innerHTML = taskFrame({ question:'Cost your options', work:true, calc:t,
-    story: sc === 0 ? ['Change Plan B or Plan C to try something different, then work out each profit: total revenue − total costs.'] : [],
+    story: sc === 0 ? ['Lower fares usually attract more passengers. Higher fares earn more from each ticket.', 'Each plan charges a different fare. Work out each profit (total revenue − total costs), then choose.'] : [],
     say:'Cost your options. Work out the profit of each plan: total revenue minus total costs.',
-    context:{ title:"Today's forecast", html:`<div class="fc-plans">${cards}</div>${done ? '<p class="muted cx-note">The highest profit isn\'t the only thing that matters: think about passengers left without a seat, too.</p>' : '<p class="muted cx-note">Choose <b>Complete figure</b> in the spreadsheet to work out a figure.</p>'}` },
+    context:{ title:"Fares and forecast", html:`${fareMenu(plans)}<div class="fc-plans">${cards}</div>${done ? '<p class="muted cx-note">The highest profit isn\'t the only thing that matters: think about passengers left without a seat, too.</p>' : '<p class="muted cx-note">Choose <b>Complete figure</b> in the spreadsheet to work out a figure.</p>'}` },
     main:`<div class="opts-wrap">${tableHtml(t)}</div>` });
   bindTable(t);
   screen().querySelectorAll('[data-oc]').forEach(b => b.onclick = e => { e.stopPropagation(); const [i, what, id, d] = b.getAttribute('data-oc').split('|'); changePlan(+i, id !== undefined && what !== 'dep' ? what + '|' + id : what, +(d === undefined ? id : d)); });
@@ -5171,7 +5203,7 @@ R.ready = () => {
   const row = (label, value, edit, good, warn) => `<div class="op-row ${good ? 'ok' : 'warn'}"><span class="op-l">${label}</span><span class="op-v">${value}</span><span class="op-s">${good ? '&#10003;' : esc(warn)}</span><button class="btn small" data-edit="${edit}">Edit</button></div>`;
   const rows = [
     row('Timetable', `${esc(svcLabel(sched))}${D ? ` · <span class="mono">${fmtTime(D.start)}–${fmtTime(D.end)}</span>` : ''}`, setup ? 'timetable' : 'planner', sched.length > 0, 'No services'),
-    row(ids.length > 1 ? 'Fares' : 'Fare', ids.map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ') || '—', setup ? 'fareTry' : 'planner', true),
+    row(ids.length > 1 ? 'Fares' : 'Fare', ids.map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ') || '—', 'options', true),
     !setup && S.round >= 1 ? row('On board', esc(onboardOf().label), 'planner', true) : '',
     !setup && S.round >= 2 ? row('First departure', `<span class="mono">${fmtTime(firstDep())}</span>`, 'planner', true) : '',
     row('Fuel', `<span class="mono">${num(S.fuel)} L</span> in the tank${o ? ` + <span class="mono">${num(o.litres)} L</span> on order` : ''} · flights burn <span class="mono">${num(need)} L</span>`, 'fuelPlan', fuelOk, 'Not enough fuel'),
