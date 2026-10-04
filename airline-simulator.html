@@ -878,6 +878,11 @@ table.fx.dense td.c{font-size:calc(26px * var(--tz))}
 .mk{font-style:normal;font:inherit;letter-spacing:inherit;text-transform:none}
 .hqd.wide .td-more{flex-direction:row;flex-wrap:wrap}
 .hqd.wide .td-body:has(.save-box) .td-news{font-size:calc(20px * var(--tz))}
+/* Home: in the top bar, and a small corner button on full-screen task screens */
+.homefab{display:none;position:fixed;left:8px;bottom:8px;z-index:45;min-height:40px!important;min-width:40px;padding:0 12px!important;font-size:14px!important;opacity:.8;background:rgba(8,29,61,.9)}
+.homefab:hover{opacity:1}
+body.focus .homefab{display:inline-flex;align-items:center;justify-content:center}
+body.focus .testbar{left:110px}
 @media print{ body{background:#fff;color:#000} }
 </style>
 </head>
@@ -1091,13 +1096,14 @@ table.fx.dense td.c{font-size:calc(26px * var(--tz))}
     <div class="cops" id="cOps"></div>
     <span class="grow"></span>
     <button class="btn small bell" id="bellBtn" title="Alerts and intelligence" aria-label="Alerts">&#128276;<sup id="cBell" hidden>0</sup></button>
-    <button class="btn small" id="menuBtn">Menu</button>
+    <button class="btn small" id="menuBtn" title="Home: continue, new game, best runs">&#8962; Home</button>
     <button class="btn small" id="shopBtn" title="Plane shop" aria-label="Plane shop">&#128722;</button>
     <button class="btn small" id="fleetBtn" title="Your fleet" aria-label="Your fleet">&#9992;</button>
     <button class="btn small wallbtn" id="wallBtn" title="Operations Wall on this screen (W)">&#9635;<span class="lbl"> Operations Wall</span><span class="lbs"> Wall</span></button>
     <button class="btn small primary" id="presentBtn" title="This screen full screen and the Operations Wall on the whiteboard">&#9974;<span class="lbl"> Present</span></button>
   </header>
   <main id="screen"></main>
+  <button class="btn small homefab" id="homeFab" title="Home" aria-label="Home">&#8962; Home</button>
   <footer id="strip"></footer>
   <div class="corner" id="corner" aria-hidden="true"></div>
 </div>
@@ -1280,15 +1286,18 @@ function migrate(s){
   if(s.v===3 && s.steps){   // before the calendar sped up: keep the airline, start the matching beat again
     s.v = 4; s.ledger = { rev:[], cost:[], pax:[], seats:[] };
     if(s.phase === 'setup'){ s.day = 0; s.period = { type:'setup', from:0, to:0, run:{kind:'one'} }; return s; }
-    s.round = Math.min(s.round, 9); s.day = undefined; s.rnd = emptyRnd(); s.overlay = null; s.needsRestart = true; return s;
+    s.round = Math.min(s.round, 9); s.day = undefined; s.rnd = emptyRnd(); s.overlay = null; s.needsRestart = true; s.migratedFrom = 3; fixOldHistory(s); return s;
   }
   if(s.v===2 && s.phase==='round' && s.fleet && s.fleet.length){
     s.v = 3; s.fleet.forEach(f => { if(!f.schedule) f.schedule = f.route ? [f.route] : []; });
     s.v = 4; s.ledger = { rev:[], cost:[], pax:[], seats:[] }; s.round = Math.min(s.round, 9);
-    s.rnd = emptyRnd(); s.overlay = null; s.needsRestart = true; delete s.lastCalcSig; return s;
+    s.rnd = emptyRnd(); s.overlay = null; s.needsRestart = true; s.migratedFrom = 2; delete s.lastCalcSig; fixOldHistory(s); return s;
   }
   return null;
 }
+/* Old saves kept one history entry per round: give each a date, and rebuild the daily ledger from them. */
+function fixOldHistory(s){ (s.history || []).forEach(h => { if(h.from === undefined){ h.from = h.to = h.round || 0; h.type = h.round ? 'day' : 'setup'; }
+  const L = s.ledger; L.rev[h.from] = h.revenue || 0; L.cost[h.from] = h.costs || 0; L.pax[h.from] = h.pax || 0; L.seats[h.from] = h.seats || 0; }); }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY)||'null'); if(s) return migrate(s); const o = JSON.parse(localStorage.getItem(OLD_KEY)||'null'); return migrate(o); }catch(e){} return null; }
 function saveCode(){ const c = Object.assign({}, S); delete c.roundStart; return 'ASIM4.'+b64e(JSON.stringify(c)); }
@@ -2396,8 +2405,8 @@ function profitLabel(h){ if(!h) return "Yesterday's profit"; if(h.type === 'setu
 function kpiHtml(){
   const H = S.history, h = H[H.length-1], p = H[H.length-2], need = fuelNeeded(), month = periodType() === 'month';
   const card = (cls, label, value, sub, sp) => `<section class="hp kpi ${cls}"><span class="label">${label}</span><b class="kv">${value}</b><span class="ks">${sub}</span>${sp || ''}</section>`;
-  const nd = h ? h.to - h.from + 1 : 1, sub2 = !h ? 'After the first flight' : p && p.type === h.type && (p.to - p.from) === (h.to - h.from) ? `${trendMark(h.profit, p.profit)} from ${money(p.profit)}` : nd > 1 ? `About ${money(about(h.profit / nd))} a day` : (p ? `${trendMark(h.profit, p.profit)} from ${money(p.profit)}` : '');
-  const series = month ? [] : H.slice(-12).map(x => x.profit / Math.max(1, x.to - x.from + 1));
+  const nd = h ? (h.to - h.from + 1) || 1 : 1, sub2 = !h ? 'After the first flight' : p && p.type === h.type && (p.to - p.from) === (h.to - h.from) ? `${trendMark(h.profit, p.profit)} from ${money(p.profit)}` : nd > 1 ? `About ${money(about(h.profit / nd))} a day` : (p ? `${trendMark(h.profit, p.profit)} from ${money(p.profit)}` : '');
+  const series = month ? [] : H.slice(-12).map(x => x.profit / Math.max(1, (x.to - x.from + 1) || 1));
   return card('k-cash', 'Cash', `<span class="amber">${money(S.cash)}</span>`, S.dec.loan && S.dec.loan.round >= S.round - 1 ? 'Includes a bank loan' : month ? `${money(reserveNow())} kept for emergencies` : 'Available to spend', spark(H.map(x => x.cash)))
     + card('k-profit', profitLabel(h), h ? `<span class="${h.profit >= 0 ? 'green' : 'red'}">${money(h.profit)}</span>` : '—', sub2, spark(month ? H.filter(x => x.type === 'month').map(x => x.profit / Math.max(1, x.to - x.from + 1)) : series, 'pr'))
     + card('k-rep', 'Reputation', `<span class="stars">${starsHtml(S.rep)}</span>`, `${S.rep} out of 5` + (h && p && h.rep !== p.rep ? ` ${trendMark(h.rep, p.rep)}` : ''))
@@ -2760,10 +2769,11 @@ function renderOverlay(){
   const o = S.overlay;
   if(o.type==='menu'){
     const runs = loadRuns();
-    screen().innerHTML = `<div class="hero"><h1 class="biglogo"><span class="a">AIRLINE</span><span class="b">SIM</span></h1></div><div class="card stack" style="align-items:center;text-align:center;padding:36px">${header('Main menu', null, 'MENU')}
-      <div class="row" style="justify-content:center"><button class="btn primary big" id="cont">Continue: ${esc(S.airline.name||'current run')}</button><button class="btn big" id="newg">New game</button>${runs.length?'<button class="btn big" id="best">Best runs</button>':''}<button class="btn big" id="code">Save code</button><button class="btn big" id="iwb2">Open the wall in a window</button></div>
-      <p class="small muted">${esc(S.airline.name||'')} · ${roundLabel()} · ${money(S.cash)}</p></div>`;
-    on('cont', closeOverlay); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); return;
+    screen().innerHTML = `<div class="hero"><h1 class="biglogo"><span class="a">AIRLINE</span><span class="b">SIM</span></h1></div><div class="card stack" style="align-items:center;text-align:center;padding:36px">${header('Home', null, 'HOME')}
+      ${S.airline.name ? `<p class="lede">Saved game: <b>${esc(S.airline.name)}</b> · ${esc(S.phase === 'setup' ? 'Launch day' : periodLabel())} · <b class="amber mono">${money(S.cash)}</b></p>` : ''}
+      ${S.migratedFrom ? '<p class="small muted">Saved before the calendar update: it carries on from the nearest point in the story.</p>' : ''}
+      <div class="row" style="justify-content:center"><button class="btn primary big" id="cont">${S.airline.name ? 'Continue: ' + esc(S.airline.name) : 'Continue'}</button><button class="btn primary big" id="newg">New game</button>${runs.length?'<button class="btn big" id="best">Best runs</button>':''}<button class="btn big" id="code">Save code</button><button class="btn big" id="iwb2">Open the wall in a window</button></div></div>`;
+    on('cont', () => { delete S.migratedFrom; closeOverlay(); }); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); return;
   }
   if(o.type==='alerts'){
     const it = intelItems();
@@ -3453,6 +3463,10 @@ function boot(){
   // if the page was refreshed mid-flight, finish the flight
   if(step().t==='fly' && S.rnd.anim && Date.now()-S.rnd.anim.start > S.rnd.anim.dur) next();
   setInterval(() => { send({type:'ping'}); updateStrip(); }, 4000);
+  // opening the game always starts on the home screen: carry on, or start again
+  const started = S.airline && S.airline.name && !['welcome','name'].includes(step().t);
+  if(started && !S.overlay) S.overlay = { type:'menu' };
+  $('homeFab').onclick = openMenu;
   render();
 }
 window.__sim = { S:()=>S, step, next, startRound, advance, paxFor, periodLabel, simulateRun, monthlyProfit, investable, settings:()=>settings, render, planFlights, questionBank, schedOf, TIME, timeSelfTest, tableComplete, nextOpenCell, cellState, currentTable, routeById, planeById, fillTable };

@@ -13,7 +13,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 ## Running it
 
-1. Open `airline-simulator.html` on the laptop. This is the **HQ**, where the pupil thinks and acts.
+1. Open `airline-simulator.html` on the laptop. A saved game opens on the **Home** screen first (*Continue*, *New game*, Best runs, Save code), never straight into the run. **⌂ Home** is in the top bar, and in the bottom-left corner of full-screen task screens. The **HQ** is where the pupil thinks and acts.
 2. Click **⛶ Present**. The **Operations Wall** opens; drag it to the board and tap it once for full screen (browsers only allow one full-screen request per click, so the laptop goes full screen on your next tap anywhere at HQ). Where the browser allows it (Chrome and Edge with the window-management permission, usually only offered on http pages) the wall window moves itself to the second display. The laptop must be set to *extend*, not mirror (an operating-system setting the page cannot change).
 3. **One screen only?** Press **▣ Operations Wall** in the top bar, or the **W** key, to see the wall on the same screen. **Return to HQ** (or W, or Esc) goes back. It is the same game either way, and the game never needs the whiteboard. *Menu → Open the wall in a window* opens it without full screen.
 4. **The HQ dashboard** (the start of every day):
@@ -43,7 +43,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
    - **Milestones** shown once: first flight, first profitable day, 100 / 500 / 1,000… passengers, new destinations.
    
    **✏ Working space** (the pen area) is on the wall's header.
-5. **Menu** (top bar, or from the teacher panel): Continue run, New game, Best runs, Save code. New game asks for confirmation and records the current run to Best runs first.
+5. **⌂ Home** (top bar or corner, or from the teacher panel): Continue, New game, Best runs, Save code, Open the wall in a window. New game asks for confirmation and records the current run to Best runs first.
 
 Progress autosaves on every decision (browser storage on that machine). The teacher panel and the end-of-day screen also show a **save code** you can copy out and paste back in as a backup.
 
