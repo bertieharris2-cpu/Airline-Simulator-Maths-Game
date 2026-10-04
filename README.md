@@ -7,9 +7,40 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 | File | What it is |
 | --- | --- |
-| `airline-simulator.html` | The whole game: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
+| `airline-opening-prototype.html` | **The active development version.** The opening 20–30 minutes only: setup, Launch Day, Day 1, Day 2, Day 3, then a temporary *Opening prototype complete* screen. See *Opening prototype* below. |
+| `airline-simulator-full-reference.html` | **Frozen.** A snapshot of the complete simulator (weeks, months, later aircraft, international routes, storyline, awards, challenges). Critical fixes only until the opening is approved. |
+| `airline-simulator.html` | The complete game, identical to the full reference for now: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
 | `prototypes/hq/` | The HQ look-and-feel explorations that led to the current design. Standalone; not used by the game. |
 | `paper-backup-pack.html` | Printable A4 pack: decision cards, calculation sheets, review cards and a teacher answer sheet for one round. Open and press Ctrl+P. |
+
+## Opening prototype
+
+The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
+
+**Flow:** name → strategy → paint your planes → home airport → **your start-up aircraft** (the Twin Otter's seats, speed, range and running cost, each explained; no shop) → **first market** (Paris or Dublin) → Launch Day → Day 1 → Day 2 → Day 3 → *Regular operations established*.
+
+**Launch Day (high scaffold: SHOW → TRY → RUN → EXPLAIN):**
+1. **The market:** "45 people want to fly to Paris today", drawn in aircraft-sized groups (19 | 19 | 7) next to "Your aircraft: 19 seats".
+2. **One service, start to finish:** a timeline built step by step from the scheduling engine (depart 09:00, Paris 10:30, turnaround, leave 11:15, Cardiff 12:45, turnaround, ready again 13:30), with one time question. Flight time is not the time the aircraft is busy.
+3. **What timetable do you want to run?** Paris ×1 / ×2 / ×3 fill the 06:00–22:00 bar; the passenger groups show who gets a seat and who doesn't. ×4 won't fit and says so. No single right answer.
+4. **Fare:** £80–£120; passengers change at once (48 / 45 / 42 / 39 / 36) and the ladder shows expected passengers against 1, 2 or 3 services.
+5. **Fuel:** schedule, fuel required, tank and price; buy enough for the plan or extra while it's cheap, then type the bill.
+6. **Forecast:** passengers, revenue, running costs, fuel, route profit; on launch day only revenue and profit are typed. Then **Start operations** and the Operations Wall comes alive.
+7. **Results:** revenue − costs = profit (with one-line meanings, only on launch day), the flights, who flew (wanted, seats, travelled, no seat), forecast against actual.
+
+**Days 1–3 (the help fades):** the HQ shows yesterday's evidence per route (wanted, seats, travelled, no seat) and Intelligence lists situations, never instructions (*Capacity pressure — Paris*, fuel up to £1.30, *Network opportunity — Dublin*). **Plan today's operation** opens one planner: the day bar, each route's fare and services, and who gets a seat. Day 2's fuel screen has fuller help (and a typed bill); Day 3 adds the other market, so the pupil chooses a mix (Paris ×3, Paris ×2 + Dublin ×1, Paris ×1 + Dublin ×2, Dublin ×3, …), with the day's expected profit shown. Typed sums fade: Day 1 profit, Day 2 fuel bill and profit, Day 3 the revenue sums. Optional help chips (*? How scheduling works*, *? Demand*, *? Fuel*, *? Revenue and profit*, *? Forecast*) open a short explanation; nothing is retaught automatically.
+
+**Market numbers (prototype only):** demand describes the market and is never changed to suit a lesson (no growth, no extra passengers on a "lesson day"); only reputation's small effect remains.
+
+| | Paris | Dublin |
+| --- | --- | --- |
+| Passengers a day at the normal fare | 45 at £90 (each £10 more: 3 fewer) | 60 at £60 (each £10 more: 5 fewer) |
+| Flight | 450 km, 1 h 30 each way | 300 km, 1 h each way |
+| Running cost a service | £626 (£192 an hour in the air + £50 landing fee) | £434 |
+
+The Twin Otter also costs £900 a day. Examples (rep 3): Paris ×2 at £90 ≈ £836 a day, Paris ×2 at £100 ≈ £1,216; Dublin ×3 at £60 ≈ £786, at £70 ≈ £1,216; a third Paris service carrying 7 people loses money. Fuel: £1.20, £1.20, £1.30, £1.40.
+
+**Source:** built from its own copy of the parts (`parts_open/`, plus `p4d_opening.js` for the new screens) so the full game's source is untouched.
 
 ## Running it
 
