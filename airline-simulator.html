@@ -651,6 +651,21 @@ table.fx th,table.fx td{height:clamp(calc(50px * var(--tz)),7vh,84px)}
 .sl-reviews .review .txt{font-size:var(--fs)}
 @media (prefers-reduced-motion: reduce){ .slide,.stagger > *,.sl-why,.sl-stars span,.sl-verdict,.sl-callout{animation:none!important;opacity:1!important} .sl-seats i,.sl-bar i{transition:none} }
 @media (max-height:820px){ .say-it{font-size:22px} .side2 .pad button{min-height:48px} .side2{gap:8px} }
+/* test mode bar */
+.testbar{position:fixed;left:12px;bottom:12px;z-index:60;display:flex;gap:8px;align-items:center;padding:8px 10px;background:rgba(40,8,8,.92);border:1px solid #ff7a7a;box-shadow:0 0 18px rgba(255,90,90,.35)}
+.testbar b{color:#ff9a9a;letter-spacing:.2em;font-size:13px;padding:0 4px}
+.testbar .btn.small{min-height:38px;font-size:12px}
+/* split view shell */
+body.split{margin:0;height:100vh;overflow:hidden;background:#02070b;display:flex;flex-direction:column}
+.sp-bar{display:flex;align-items:center;gap:14px;padding:8px 16px;border-bottom:1px solid var(--line);background:rgba(6,18,24,.9);font-size:15px;flex:none}
+.sp-bar b{color:var(--cy);letter-spacing:.18em;text-transform:uppercase}
+.sp-bar select{background:#000;color:var(--white);border:1px solid var(--line);padding:4px 8px;font:inherit}
+.sp-panes{flex:1;min-height:0;display:flex;gap:18px;padding:14px 18px}
+.sp-panes.swap{flex-direction:row-reverse}
+.sp-pane{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.sp-cap{color:var(--muted);font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+.sp-box{position:relative;overflow:hidden;border:1px solid var(--line);box-shadow:0 0 26px rgba(var(--cyrgb),.15);background:#000;flex:none}
+.sp-box iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;background:#061218}
 /* IWB: a little larger, still fitted to the board */
 .q .qhead,.btop .air small,.clockbox small{font-size:clamp(14px,1.05vw,20px)}
 .bwrap thead th{font-size:clamp(13px,1vw,18px)}
@@ -1282,7 +1297,7 @@ table.fx th,table.fx td{height:clamp(calc(50px * var(--tz)),7vh,84px)}
   {"fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."]},
   {"act": "Act 1 — Start-up", "title": "First day as a real airline", "fuel": 1.2, "jobs": ["schedule", "pricing"], "calc": "schedule", "brief": "Day 1 as a real airline. Your plane can fly more than once a day — plan its day, then watch the money come in.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."], "choice": {"trigger": "trips", "news": "Word has spread! More people want to fly to {city} today.", "options": [{"label": "Carry on as usual", "do": "carryOn", "sub": "One trip, the same as yesterday"}, {"label": "Look at adding a trip", "sub": "How many trips do you need?", "do": "trips"}]}, "demandMod": {"focus": 11}},
   {"act": "Act 1 — Start-up", "title": "The tank runs low", "fuel": 1.3, "jobs": ["fuel", "pricing"], "calc": "fuel", "challenge": true, "brief": "Your fuel tank is running low. Time to buy some — and fuel is getting dearer.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."], "choice": {"trigger": "fuel", "news": "Fuel is expected to rise next week.", "options": [{"label": "Carry on as usual", "do": "carryOn", "sub": "Use the fuel in your tank"}, {"label": "Top up", "sub": "Buy 500 litres", "do": "fuel", "litres": 500}, {"label": "Stock up", "sub": "Buy 2,000 litres", "do": "fuel", "litres": 2000}]}},
-  {"act": "Act 1 — Start-up", "title": "A second plane?", "fuel": 1.4, "jobs": ["fleet"], "calc": "fleet", "brief": "Dublin is busy, and no airline flies there from Cardiff.", "news": ["Lots of people want to fly Cardiff to Dublin, and no airline flies there.", "Fuel now £1.40 a litre."], "choice": {"trigger": "fleet", "news": "Dublin has {dubDemand} people a day and no airline flies there from Cardiff. A second plane could carry them.", "options": [{"label": "Carry on as usual", "do": "carryOn", "sub": "Keep one plane"}, {"label": "Look at a second plane", "sub": "Compare two planes before you buy", "do": "plane", "planes": ["dhc6", "sf34"]}]}},
+  {"act": "Act 1 — Start-up", "title": "A second plane?", "fuel": 1.4, "jobs": ["fleet"], "calc": "fleet", "brief": "Dublin is busy, and no airline flies there from Cardiff.", "news": ["Lots of people want to fly Cardiff to Dublin, and no airline flies there.", "Fuel now £1.40 a litre."], "choice": {"trigger": "fleet", "news": "Dublin has {dubDemand} people a day and no airline flies there from Cardiff. A second plane could carry them.", "options": [{"label": "Carry on as usual", "do": "carryOn", "sub": "Keep one plane"}, {"label": "Look at a second plane", "sub": "Compare three planes before you buy", "do": "plane", "planes": ["dhc6", "sf34", "at72"]}]}},
   {"act": "Act 1 — Start-up", "title": "Red Kite arrives", "fuel": 1.5, "jobs": ["schedule", "pricing"], "calc": "schedule", "challenge": true, "competitor": {"focus": 0.85}, "brief": "Trouble: Red Kite Air has started flying your route, and they're cheap.", "news": ["Red Kite Air starts flying from Cardiff — and undercuts the new airline.", "Fuel £1.50 a litre and rising."], "event": {"id": "storm", "title": "Storm!", "text": "A storm hits as your plane is loading. The captain asks what to do.", "options": [{"label": "Fly anyway", "sub": "2 hour delay, bumpy ride", "effects": {"rep": -0.5, "status": "DELAYED"}, "why": "You flew through the storm. Passengers were late and shaken: −½ star."}, {"label": "Wait it out (£200)", "sub": "Hotel vouchers for passengers", "effects": {"cash": -200, "status": "DELAYED"}, "why": "You waited for the storm to pass. Vouchers cost £200 but passengers were safe and happy."}, {"label": "Cancel the flight", "sub": "Refund everyone", "effects": {"rep": 0.5, "status": "CANCELLED", "refund": true}, "why": "You cancelled and refunded everyone. No money today, but people trust you: +½ star."}]}, "choice": {"trigger": "rival", "news": "Red Kite Air has started flying to {city}. Their tickets are cheaper than yours.", "options": [{"label": "Carry on as usual", "do": "carryOn", "sub": "Keep your ticket price"}, {"label": "Look at matching their price", "sub": "Compare your price, theirs and one in between", "do": "fare", "fares": ["current", "rival", "down"]}, {"label": "Advertise (£300)", "sub": "Posters all over Cardiff. People like you more.", "do": "effect", "effects": {"cash": -300, "rep": 0.5}, "why": "Your posters worked. People like your airline more (+½ star). It cost £300."}]}},
   {"act": "Act 1 — Start-up", "title": "Legroom or profit", "fuel": 1.6, "jobs": ["cabin", "pricing"], "calc": "cabin", "competitor": {"focus": 0.85}, "brief": "Your cabin crew ask: should we fit more seats in, or give people more room?", "news": ["Fuel £1.60 a litre.", "Passengers rate legroom as their top wish."], "choice": {"trigger": "cabin", "news": "Your cabin crew ask: more seats, or more room?", "options": [{"label": "Carry on as usual", "do": "carryOn", "sub": "Keep the seats as they are"}, {"label": "Look at the cabin", "sub": "Compare three seat layouts", "do": "cabin"}]}},
   {"act": "Act 1 — Start-up", "title": "Crew sickness", "fuel": 1.7, "jobs": ["pricing"], "calc": "revenue", "challenge": true, "brief": "A normal day — until the phone rings.", "news": ["Fuel £1.70 a litre.", "Flu going round Cardiff this week."], "event": {"id": "crew", "title": "Crew sickness", "text": "Your captain has flu and can't fly. What do you do?", "options": [{"label": "Hire a stand-in captain (£400)", "sub": "Flight goes ahead as normal", "effects": {"cash": -400}, "why": "A stand-in captain flew the route. It cost £400."}, {"label": "Cancel the flight", "sub": "Refund everyone", "effects": {"rep": -0.5, "status": "CANCELLED", "refund": true}, "why": "Cancelled. Passengers got refunds but were annoyed: −½ star."}, {"label": "Let the co-pilot captain", "sub": "Free, but a bumpy landing", "effects": {"rep": -0.5}, "why": "The co-pilot did their best, but it was a bumpy landing: −½ star."}]}, "choice": {"trigger": "demand", "news": "A passenger has cancelled their {city} booking.", "options": [{"label": "Carry on as usual", "do": "carryOn", "sub": "Keep your ticket price"}, {"label": "Drop the price to fill the seat", "sub": "Compare the two prices first", "do": "fare", "fares": ["current", "down"]}]}, "demandMod": {"focus": -1}},
@@ -1506,6 +1521,12 @@ table.fx th,table.fx td{height:clamp(calc(50px * var(--tz)),7vh,84px)}
         <div class="row"><button class="btn small" id="tFinish">Finish this run &amp; record it</button><button class="btn small danger" id="tNew">New run from scratch</button></div>
         <div class="row"><button class="btn small" id="tOpenIwb">Open IWB window</button><button class="btn small" id="tSpeak">Test read-aloud</button></div>
       </div>
+      <div class="tsec"><h3>Testing</h3>
+        <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tTest" style="width:24px;height:24px"> Test mode (shows a TEST bar: answer, fill, skip)</label></div>
+        <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tAutoAns" style="width:24px;height:24px"> Auto-answer sums (decisions stay yours)</label></div>
+        <div class="row"><button class="btn small" id="tSplit">Split view (game + board)</button></div>
+        <p class="small muted">Answers filled in by test mode don't count towards his typed total.</p>
+      </div>
       <div class="tsec" style="grid-column:1/-1"><h3>Save code (backup)</h3>
         <textarea class="code" id="tCode" spellcheck="false"></textarea>
         <div class="row"><button class="btn small" id="tCodeCopy">Copy code</button><button class="btn small" id="tCodeLoad">Load code from box</button><span class="small muted" id="tCodeMsg"></span></div>
@@ -1528,6 +1549,9 @@ const PLANES = J('data-planes'), JOBS = J('data-jobs'), TABLES = J('data-tables'
 const FLAG_ASPECT = {uk:2,ie:2,fr:1.5,es:1.5,us:1.9,ca:2,br:1.43,za:1.5,eg:1.5,ae:2,in:1.5,cn:1.5,jp:1.5,au:2,ke:1.5,ng:2,co:1.5,th:1.5,sg:1.5,kr:1.5,ma:1.5,ar:1.6};
 const KEY='airlineSim.v3.state', OLD_KEY='airlineSim.v2.state', RUNS_KEY='airlineSim.v1.runs', SET_KEY='airlineSim.v1.settings', CH='airline-sim-v1';
 const IS_DISPLAY = /[?&]display/.test(location.search);
+const IS_SPLIT = /[?&]split/.test(location.search);            // the testing shell: game and board side by side
+const IN_FRAME = (() => { try{ return window.parent !== window; }catch(e){ return true; } })();
+const TEST_URL = /[?&]test/.test(location.search);
 const SWATCHES = ['#ffc83d','#ff5a5a','#ff9a3d','#4cd97b','#6cc4ff','#c77dff','#ff7ab6','#f4f7fb','#2bd9c8','#1f7aff','#8bc34a','#ffd166'];
 const planeById = id => PLANES.find(p => p.id === id);
 const routeById = id => WORLD.routes.find(r => r.id === id);
@@ -1617,10 +1641,11 @@ function send(msg){
   try{ if(bc) bc.postMessage(msg); }catch(e){}
   try{ if(displayWin && !displayWin.closed) displayWin.postMessage(msg, '*'); }catch(e){}
   try{ if(IS_DISPLAY && window.opener) window.opener.postMessage(msg, '*'); }catch(e){}
+  try{ if(IN_FRAME) window.parent.postMessage({ relay: msg }, '*'); }catch(e){}      // split view: the shell passes it to the other pane
 }
 function publish(){ save(); send({type:'state', state:S}); }
 function onMessage(msg){
-  if(!msg || !msg.type) return;
+  if(IS_SPLIT || !msg || !msg.type) return;
   if(IS_DISPLAY){
     if(msg.type==='state'){ S = msg.state; renderDisplay(); }
     if(msg.type==='ping') send({type:'pong'});
@@ -1896,7 +1921,7 @@ function buildChoice(w){
   return c;
 }
 /* The next planes up from his first one, for the fleet choice. */
-function planeOption(){ const own = S.fleet.map(f => f.planeId), i = Math.max(0, ...own.map(id => PLANES.findIndex(p => p.id === id))); const ids = [PLANES[i] && PLANES[i].id, PLANES[i+1] && PLANES[i+1].id].filter(Boolean); return { label:'Look at a new plane', sub:'Compare two planes before you buy', do:'plane', planes: ids }; }
+function planeOption(){ const own = S.fleet.map(f => f.planeId), i = Math.max(0, ...own.map(id => PLANES.findIndex(p => p.id === id))); const ids = PLANES.slice(i, i+3).map(p => p.id); return { label:'Look at a new plane', sub:'Compare '+ids.length+' planes before you buy', do:'plane', planes: ids }; }
 function startRound(n){
   S.round = n; S.phase = 'round'; delete S.needsRestart;
   let backTo = null;
@@ -2117,7 +2142,7 @@ function render(){
   const st = step();
   document.body.classList.toggle('focus', !!(S.overlay ? S.overlay.type === 'planeTable' || S.overlay.type === 'newPlane' : FOCUS_STEPS.includes(st.t)));
   if(S.overlay) renderOverlay(); else (R[st.t] || R.missing)(st);
-  updateStrip(); publish();
+  updateStrip(); publish(); testTick();
 }
 
 const R = {};
@@ -2319,14 +2344,28 @@ function bindTable(t, o){
   setTimeout(() => { try{ ans.focus(); }catch(e){} }, 30);
 }
 function currentTable(){ const t = S.rnd && S.rnd.tables && S.rnd.tables[S.rnd.activeTable]; return t || null; }
-function releaseGate(){
+function releaseGate(quiet){
   const st = step();
-  if(st.t === 'challengeCalc'){ toast('Released by teacher'); applyReward(S.rnd.challenge); next(); return; }
-  const t = currentTable(); if(!t || !t.live){ toast('No open sum on this screen'); return; }
+  if(st.t === 'challengeCalc'){ if(!quiet) toast('Released by teacher'); applyReward(S.rnd.challenge); next(); return; }
+  const t = currentTable(); if(!t || !t.live || !screen().querySelector('table.fx')){ if(!quiet) toast('No open sum on this screen'); return; }
   if(!t.active) t.active = nextOpenCell(t);
-  if(!t.active){ toast('This table is already complete'); return; }
+  if(!t.active){ if(!quiet) toast('This table is already complete'); return; }
   t.chosen[cellId(t.active.col, t.active.row)] = true;
-  toast('Released by teacher'); cellCorrect(t, true); render();
+  if(!quiet) toast('Released by teacher'); cellCorrect(t, true); render();
+}
+/* ---------- test mode (device setting or ?test): a TEST bar, and sums that answer themselves ---------- */
+const testOn = () => !!(settings.testMode || TEST_URL);
+let autoTimer = null;
+function openSum(){
+  if(S.overlay && S.overlay.type !== 'planeTable') return false;
+  if(!S.overlay && step().t === 'challengeCalc') return true;
+  if(!S.overlay && !['setupPrice','fare','trips','fuel','cabin','quick','plane'].includes(step().t)) return false;
+  const t = currentTable(); return !!(t && t.live && screen().querySelector('table.fx') && (t.active || nextOpenCell(t)));
+}
+function testTick(){
+  const bar = $('testBar'); if(bar){ bar.hidden = !testOn(); const a = $('tbAuto'); if(a){ a.textContent = 'Auto-answer: ' + (settings.autoAnswer ? 'on' : 'off'); a.setAttribute('aria-pressed', String(!!settings.autoAnswer)); } }
+  clearTimeout(autoTimer);
+  if(testOn() && settings.autoAnswer && openSum()) autoTimer = setTimeout(() => { if(openSum()) releaseGate(true); }, 700);
 }
 function fillTable(){ const t = currentTable(); if(!t){ toast('No table open'); return; } t.cols.forEach(c => tRows(t).forEach(r => { t.done[cellId(c.id, r.id)] = true; t.chosen[cellId(c.id, r.id)] = true; })); t.active = null; resetEntry(); toast('Table filled by teacher'); render(); }
 function workBtn(){ return `<button class="btn" data-work>✏ Working space</button>`; }
@@ -2654,9 +2693,9 @@ function renderOverlay(){
   if(o.type==='menu'){
     const runs = loadRuns();
     screen().innerHTML = `<div class="hero"><h1 class="biglogo"><span class="a">AIRLINE</span><span class="b">SIM</span></h1></div><div class="card stack" style="align-items:center;text-align:center;padding:36px">${header('Main menu', null, 'MENU')}
-      <div class="row" style="justify-content:center"><button class="btn primary big" id="cont">Continue: ${esc(S.airline.name||'current run')}</button><button class="btn big" id="newg">New game</button>${runs.length?'<button class="btn big" id="best">Best runs</button>':''}<button class="btn big" id="code">Save code</button><button class="btn big" id="iwb2">Open IWB (no full screen)</button></div>
+      <div class="row" style="justify-content:center"><button class="btn primary big" id="cont">Continue: ${esc(S.airline.name||'current run')}</button><button class="btn big" id="newg">New game</button>${runs.length?'<button class="btn big" id="best">Best runs</button>':''}<button class="btn big" id="code">Save code</button>${IN_FRAME ? '' : '<button class="btn big" id="iwb2">Open IWB (no full screen)</button>'}<button class="btn big" id="split2">${IN_FRAME ? 'Leave split view' : 'Split view (game + board)'}</button></div>
       <p class="small muted">${esc(S.airline.name||'')} · ${roundLabel()} · ${money(S.cash)}</p></div>`;
-    on('cont', closeOverlay); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); return;
+    on('cont', closeOverlay); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); on('split2', toggleSplit); return;
   }
   if(o.type==='shop'){
     o.pick = o.pick || [];
@@ -2980,14 +3019,59 @@ function teacherOpen(){
   const tz = S.textSize || 0;
   $('tText').innerHTML = ['Standard','Large','Extra large'].map((l, i) => `<button class="btn small" data-tz="${i}" aria-pressed="${tz===i}">${l}</button>`).join('');
   $('tText').querySelectorAll('[data-tz]').forEach(b => b.onclick = () => { S.textSize = parseInt(b.getAttribute('data-tz'),10); applyTextSize(); publish(); teacherOpen(); });
+  $('tTest').checked = !!settings.testMode; $('tAutoAns').checked = !!settings.autoAnswer;
   $('tMode').value = settings.tableMode; $('tLive').value = settings.liveTables; $('tTime').innerHTML = '';
   $('tCode').value = saveCode(); $('tCodeMsg').textContent = '';
 }
 function teacherClose(){ $('teacher').hidden = true; render(); }
+function skipScreen(){ if(!$('teacher').hidden) teacherClose(); if(S.overlay){ closeOverlay(); return; } const st = step(); if(st.t==='summary') startRound(S.round+1); else if(st.t==='setupDone') startRound(1); else next(); }
+function toggleSplit(){ const base = location.pathname; if(IN_FRAME) window.top.location.href = base + (TEST_URL ? '?test' : ''); else location.href = base + '?split' + (TEST_URL ? '&test' : ''); }
+function initTestBar(){
+  const bar = document.createElement('div'); bar.id = 'testBar'; bar.className = 'testbar'; bar.hidden = true;
+  bar.innerHTML = '<b>TEST</b><button class="btn small" id="tbAnswer">Answer this one</button><button class="btn small" id="tbFill">Fill table</button><button class="btn small" id="tbSkip">Skip screen</button><button class="btn small" id="tbAuto" aria-pressed="false">Auto-answer: off</button>';
+  document.body.appendChild(bar);
+  $('tbAnswer').onclick = () => releaseGate(true); $('tbFill').onclick = fillTable; $('tbSkip').onclick = skipScreen;
+  $('tbAuto').onclick = () => { settings.autoAnswer = !settings.autoAnswer; saveSettings(); testTick(); };
+}
+/* ---------- split view: the game and the board side by side, each kept at a real screen size and scaled down ---------- */
+function bootSplit(){
+  const test = TEST_URL ? '?test' : '', base = location.pathname;
+  document.title = 'Airline Simulator — split view';
+  document.body.className = 'split';
+  document.body.innerHTML = `<div class="sp-bar"><b>Split view</b><span class="muted">Game and whiteboard, each at its real shape</span><span class="grow"></span>
+      <label>Laptop <select id="spSize"><option value="1920x1080">1920 × 1080</option><option value="1366x768">1366 × 768</option></select></label>
+      <button class="btn small" id="spSwap">Swap sides</button><button class="btn small" id="spFs">Full screen</button><button class="btn small" id="spLeave">Leave split view</button></div>
+    <div class="sp-panes" id="spPanes">
+      <div class="sp-pane"><div class="sp-cap" id="spCapG">Laptop</div><div class="sp-box" id="spBoxG"><iframe id="spGame" title="Game" src="${base}${test}"></iframe></div></div>
+      <div class="sp-pane"><div class="sp-cap" id="spCapB">Whiteboard · 1920 × 1080</div><div class="sp-box" id="spBoxB"><iframe id="spBoard" title="Whiteboard" src="${base}?display"></iframe></div></div>
+    </div>`;
+  const game = $('spGame'), board = $('spBoard');
+  let size = (() => { try{ return localStorage.getItem('airlineSim.split.size') || '1920x1080'; }catch(e){ return '1920x1080'; } })();
+  $('spSize').value = size;
+  function fit(){
+    const [gw, gh] = size.split('x').map(Number);
+    [[game, $('spBoxG'), gw, gh], [board, $('spBoxB'), 1920, 1080]].forEach(([f, box, w, h]) => {
+      const pane = box.parentElement, cap = pane.querySelector('.sp-cap'), aw = pane.clientWidth, ah = pane.clientHeight - cap.offsetHeight - 8, s = Math.min(aw / w, ah / h);
+      f.style.width = w + 'px'; f.style.height = h + 'px'; f.style.transform = `scale(${s})`;
+      box.style.width = Math.floor(w * s) + 'px'; box.style.height = Math.floor(h * s) + 'px';
+    });
+    $('spCapG').textContent = `Laptop · ${size.replace('x', ' × ')}`;
+  }
+  window.addEventListener('resize', fit); setTimeout(fit, 0); fit();
+  $('spSize').onchange = e => { size = e.target.value; try{ localStorage.setItem('airlineSim.split.size', size); }catch(err){} fit(); };
+  $('spSwap').onclick = () => { $('spPanes').classList.toggle('swap'); };
+  $('spFs').onclick = () => { const r = document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen; if(r) try{ r.call(document.documentElement); }catch(e){} };
+  $('spLeave').onclick = () => { location.href = base + test; };
+  // pass each message to the other pane
+  window.addEventListener('message', e => { const m = e.data && e.data.relay; if(!m) return; const to = e.source === game.contentWindow ? board : game; try{ to.contentWindow.postMessage(m, '*'); }catch(err){} });
+}
 function initTeacher(){
   $('tClose').onclick = teacherClose;
   $('tRelease').onclick = () => { teacherClose(); releaseGate(); };
-  $('tSkipStep').onclick = () => { teacherClose(); if(S.overlay){ closeOverlay(); return; } const st = step(); if(st.t==='summary') startRound(S.round+1); else if(st.t==='setupDone') startRound(1); else next(); };
+  $('tSkipStep').onclick = skipScreen;
+  $('tTest').onchange = e => { settings.testMode = e.target.checked; saveSettings(); testTick(); };
+  $('tAutoAns').onchange = e => { settings.autoAnswer = e.target.checked; saveSettings(); testTick(); };
+  $('tSplit').onclick = toggleSplit;
   $('tBack').onclick = () => { teacherClose(); back(); };
   $('tNudge').onchange = e => { settings.nudge = e.target.checked; saveSettings(); };
   $('tAuto').onchange = e => { settings.auto = e.target.checked; saveSettings(); };
@@ -3026,6 +3110,7 @@ function initTeacher(){
    BOOT
    ================================================================== */
 function boot(){
+  if(IS_SPLIT){ bootSplit(); return; }
   initSpeech();
   if(IS_DISPLAY){
     document.body.classList.add('display');
@@ -3051,6 +3136,8 @@ function boot(){
   $('fleetBtn').onclick = () => { if(!S.fleet.length){ toast('No planes yet'); return; } S.overlay = (S.overlay && S.overlay.type==='fleet') ? null : {type:'fleet'}; render(); };
     $('presentBtn').onclick = presentBoth;
   $('menuBtn').onclick = openMenu;
+  initTestBar();
+  if(IN_FRAME){ $('presentBtn').hidden = true; $('tOpenIwb').hidden = true; $('tSplit').textContent = 'Leave split view'; }
   if(S.needsRestart) startRound(S.round);
   // if the page was refreshed mid-flight, finish the flight
   if(step().t==='fly' && S.rnd.anim && Date.now()-S.rnd.anim.start > S.rnd.anim.dur) next();
