@@ -34,6 +34,28 @@ The opening is being made excellent before the later campaign continues. `airlin
 - ***Close the day*** moves to the next morning.
 - **The look:** near-black navy, quiet title-case headings, sans figures, smaller text and 8px corners. Courier remains only on the wall's departure boards.
 
+**Cost your options (three plans side by side).**
+- **The flow:** the planner builds the day's plan, then **Cost your options** shows Plan A (the planner's plan) next to Plans B and C (copies to change).
+- **Controls:** each plan has its own controls in its column: flights per route (CDG/DUB − / +), fare, snacks, and the first departure from Day 2. There is also a mini day bar and a line showing who flies, who has no seat, when the aircraft is free, and how many crews are needed.
+- **Each column is a proper spreadsheet:**
+  - **Revenue:** tickets per route, snack sales, total revenue.
+  - **Costs:** flights, fuel used, terminal charges, snack stock, second crew, aircraft's day, total costs.
+  - **Profit.**
+- **The maths:**
+  - **Every different plan's profit** (total revenue − total costs) is worked out on the keypad, one plan at a time; on Launch Day, the ticket revenue too.
+  - **Changing a plan** clears only that plan's answers, and a plan that is the same as another needs no working out.
+  - Then ***Fly Plan X***. The chosen plan's profit is the forecast the results compare against.
+- **Fuel you can see:**
+  - **The tank** keeps each batch bought (litres and price), and flights burn the **oldest fuel first**. So the fuel cost is exact and explainable ("420 L × £1.20 = £504"), and the forecast matches the result to the pound.
+  - **The fuel screen** shows Cash → Fuel in the tank (litres and what it's worth) → Today's flights burn, plus a tank graphic with a layer for each batch, today's burn hatched and the order as a ghost.
+  - **Ordering:** any amount in 500 L lots, up to the space in the tank and the cash available, with "enough for about N days". Buttons: *No order*, *Just enough for today*, *As much as I can*.
+  - **Buying fuel is not a cost:** it moves cash into the tank. The results say so: "Profit £923 · bought today (not costs): fuel stock 2,000 L £2,600 · cash down £1,173".
+  - **Elsewhere:** the fuel KPI shows the tank's value, and Finance has a fuel stock column.
+- **Type:** the *Dark Premium* weights (the same Segoe UI system font). Big figures at 500, headings at 600, small spaced capitals for labels.
+- **Fixes:**
+  - "Not quite" now clears as soon as a new answer is typed.
+  - The rotation step names the home terminal's turnaround: from Heathrow T5 it is 35 min, so the aircraft is ready at 13:20.
+
 **Real airports, comparable plans, more to run.**
 - **Home airport and terminal:**
   - London Heathrow (T5 or T4), London Gatwick (North or South), London Luton, Manchester (T1 or T3).
@@ -45,7 +67,7 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Nothing is final until *Start operations*:**
   - fuel is an **order** that can be changed or cancelled, and is paid at the start;
   - every plan step stays editable from the plan rail.
-- **Compare plans:** on the timetable, fare and planner steps, the right-hand panel shows *This plan* with **Pin this plan**, plus up to three pinned plans.
+- **Compare plans:** now done on the *Cost your options* screen (above).
   - Each card shows passengers flown, people with no seat, when the aircraft is free, crews needed, revenue and costs, and profit "about" (nearest £50).
   - **Use this plan** loads a pinned plan back. The forecast still asks for the exact sums.
 - **Day 1, on-board sales:** nothing, snacks at £3 (half of passengers buy), snacks at £5 (3 in 10 buy), or free snacks (£2 a passenger, +½ star). Stock costs £1 an item.
