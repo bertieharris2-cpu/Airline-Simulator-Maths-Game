@@ -28,6 +28,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BOOK = ROOT / 'data' / 'Airline-World-Workbook.xlsx'
 DATA = ROOT / 'src' / 'opening' / 'parts' / 'p2_data.html'
 REPORT = ROOT / 'data' / 'Import-Report.md'
+PASS1 = ROOT / 'data' / 'fable-routes-pass1.json'     # the engine rules (Fable Pass 1, section 0): bands, duty padding
 BLOCK_ID = 'data-workbook'
 
 # The game already uses these ids for the same aircraft.
@@ -204,7 +205,26 @@ challenges = [{'n': c['n'], 'day': c['day'], 'title': c['title'], 'story': c['st
 mechanics = [{'fromDay': m['fromDay'], 'mechanic': m['mechanic'], 'notes': m['notes'], 'status': m['status']}
              for m in live('Mechanics', sheet(wb, 'Mechanics'))]
 
-world = {'source': BOOK.name, 'imported': dt.date.today().isoformat(), 'loaded': sorted(LOAD),
+# The engine rules the workbook assumes. Band times and duty padding are not on a sheet yet, so they come from Pass 1.
+engine = {}
+if PASS1.exists():
+    p1 = json.loads(PASS1.read_text())
+    a = p1.get('assumptions', {})
+    engine = {k: a[k] for k in ('serviceIsRoundTrip', 'revenuePerService', 'bands', 'allocation', 'dutyPaddingMinutes', 'airportOpen') if k in a}
+    engine['source'] = PASS1.name
+    for k, sk in (('secondCrewCost', 'secondCrewCost'), ('maxDutyHours', 'maxDutyHours')):
+        if k in a and sk in settings and a[k] != settings[sk]:
+            issue('check', 'Settings', f'{sk} is {settings[sk]}, but Pass 1 has {a[k]}. The workbook wins.')
+    p1a = {x['id']: x for x in p1.get('aircraft', [])}
+    for x in all_aircraft:
+        y = p1a.get(x['id'])
+        if not y or x['status'] != 'live': continue
+        diff = [f'{k} {y[k]} → {x[k]}' for k in ('seats', 'speedKmh', 'fuelPer100Km', 'hourlyCost', 'dayCost', 'listPrice') if k in y and y[k] != x[k]]
+        if diff: issue('note', 'Aircraft', f'{x["id"]} differs from Pass 1 (Pass 1 → workbook): {", ".join(diff)}. The workbook wins.')
+else:
+    issue('error', 'Settings', f'{PASS1.name} is missing, so the day bands and duty padding are unknown.')
+
+world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isoformat(), 'loaded': sorted(LOAD),
          'settings': settings, 'archetypes': archetypes, 'routes': routes, 'routeCatalogue': catalogue,
          'aircraft': aircraft, 'finance': finance, 'airports': airports, 'calendar': calendar, 'market': market,
          'events': events, 'challenges': challenges, 'mechanics': mechanics}
@@ -367,8 +387,8 @@ out += ['', '## What changes when the workbook is wired in', '',
 out += ['', '## Engine rules the workbook assumes', '',
         'From the README sheet (Fable Pass 1, section 0). To confirm before the engine uses the data:', '',
         '- A service is a round trip that earns one plane-load at the fare (return tickets).',
-        '- Five day bands (early, mid-morning, midday, afternoon, evening). The prototype has three. The band boundaries are not in the workbook.',
-        '- Time-locked passengers fly only in their band; the flexible share (1 − timeSensitiveShare) fills any service that day.',
+        '- Five day bands: ' + (', '.join(f'{b} {v[0]:02d}:00–{v[1]:02d}:00' for b, v in engine.get('bands', {}).items()) or 'boundaries unknown') + ' (from Pass 1; the prototype has three). A service belongs to the band it leaves home in.',
+        '- Time-locked passengers fly only in their band. In each band: demand × timeSensitiveShare × the band\'s share, rounded (halves to even). The rest are flexible and fill any seats left that day.',
         '- People at a fare come from the route\'s demand table, not a formula.',
         '- Costs per service: flying hours × hourly cost + landing fees at both ends + fuel + a charge for each passenger at home. Per day: the day cost, plus a second crew when duty is over 12 h (30 minutes before the first departure to 30 minutes after the last arrival).',
         '- Fuel: the Calendar has a price for each day; the Market sheet has one for each week, used for time skips.', '']

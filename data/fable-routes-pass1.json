@@ -1,0 +1,352 @@
+{
+  "schemaVersion": "fable-pass-1",
+  "assumptions": {
+    "serviceIsRoundTrip": true,
+    "revenuePerService": "one plane-load at the chosen fare",
+    "bands": {
+      "early": [
+        6,
+        9
+      ],
+      "midmorning": [
+        9,
+        12
+      ],
+      "midday": [
+        12,
+        15
+      ],
+      "afternoon": [
+        15,
+        18
+      ],
+      "evening": [
+        18,
+        22
+      ]
+    },
+    "allocation": "time-locked passengers only board in their band; flexible passengers spread across the day's services while seats remain",
+    "secondCrewCost": 250,
+    "maxDutyHours": 12,
+    "dutyPaddingMinutes": 30,
+    "airportOpen": [
+      6,
+      22
+    ]
+  },
+  "routeArchetypes": [
+    {
+      "id": "business_shuttle",
+      "name": "Business shuttle",
+      "timeDemand": {
+        "early": 0.3,
+        "midmorning": 0.15,
+        "midday": 0.1,
+        "afternoon": 0.15,
+        "evening": 0.3
+      },
+      "timeSensitiveShare": 0.5,
+      "fareSensitivity": "medium",
+      "businessShare": 0.55,
+      "growth": {
+        "perWeek": 2,
+        "ceiling": 1.3
+      },
+      "seasonality": {
+        "spring": 1,
+        "summer": 1,
+        "autumn": 1,
+        "winter": 1
+      },
+      "story": "Busy all year, with people who must travel at the start and end of the day."
+    },
+    {
+      "id": "city_break_mixed",
+      "name": "City break, mixed",
+      "timeDemand": {
+        "early": 0.35,
+        "midmorning": 0.15,
+        "midday": 0.05,
+        "afternoon": 0.15,
+        "evening": 0.3
+      },
+      "timeSensitiveShare": 0.7,
+      "fareSensitivity": "medium",
+      "businessShare": 0.3,
+      "growth": {
+        "perWeek": 2,
+        "ceiling": 1.4
+      },
+      "seasonality": {
+        "spring": 1,
+        "summer": 1,
+        "autumn": 1,
+        "winter": 1
+      },
+      "story": "Fewer people who pay more, and nobody wants to fly at lunchtime."
+    },
+    {
+      "id": "leisure_short",
+      "name": "Leisure short-haul",
+      "timeDemand": {
+        "early": 0.25,
+        "midmorning": 0.25,
+        "midday": 0.15,
+        "afternoon": 0.15,
+        "evening": 0.2
+      },
+      "timeSensitiveShare": 0.4,
+      "fareSensitivity": "high",
+      "businessShare": 0.15,
+      "growth": {
+        "perWeek": 4,
+        "ceiling": 1.6
+      },
+      "seasonality": {
+        "spring": 1.0,
+        "summer": 1.2,
+        "autumn": 1.0,
+        "winter": 0.8
+      },
+      "story": "Holidaymakers who fly whenever it is cheap."
+    },
+    {
+      "id": "sun_holiday",
+      "name": "Sun and holiday",
+      "timeDemand": {
+        "early": 0.25,
+        "midmorning": 0.25,
+        "midday": 0.2,
+        "afternoon": 0.15,
+        "evening": 0.15
+      },
+      "timeSensitiveShare": 0.3,
+      "fareSensitivity": "high",
+      "businessShare": 0.05,
+      "growth": {
+        "perWeek": 3,
+        "ceiling": 1.5
+      },
+      "seasonality": {
+        "spring": 1.0,
+        "summer": 0.9,
+        "autumn": 1.1,
+        "winter": 1.3
+      },
+      "story": "Timing barely matters. The season matters a lot."
+    },
+    {
+      "id": "long_haul_mixed",
+      "name": "Long-haul mixed",
+      "timeDemand": {
+        "early": 0.2,
+        "midmorning": 0.2,
+        "midday": 0.2,
+        "afternoon": 0.2,
+        "evening": 0.2
+      },
+      "timeSensitiveShare": 0.4,
+      "fareSensitivity": "low",
+      "businessShare": 0.4,
+      "growth": {
+        "perWeek": 5,
+        "ceiling": 1.5
+      },
+      "seasonality": {
+        "spring": 1,
+        "summer": 1.1,
+        "autumn": 1,
+        "winter": 0.9
+      },
+      "story": "Big crowds, big fares, one or two flights a day."
+    },
+    {
+      "id": "event_charter",
+      "name": "Event or charter",
+      "timeDemand": {
+        "early": 0.5,
+        "midmorning": 0.3,
+        "midday": 0.2,
+        "afternoon": 0.0,
+        "evening": 0.0
+      },
+      "timeSensitiveShare": 0.9,
+      "fareSensitivity": "low",
+      "businessShare": 0.0,
+      "growth": {
+        "perWeek": 0,
+        "ceiling": 1.0
+      },
+      "seasonality": {
+        "spring": 1,
+        "summer": 1,
+        "autumn": 1,
+        "winter": 1
+      },
+      "story": "Everyone wants to go on the same day."
+    }
+  ],
+  "routes": [
+    {
+      "id": "dub",
+      "city": "Dublin",
+      "country": "Ireland",
+      "airportCode": "DUB",
+      "lat": 53.43,
+      "lon": -6.25,
+      "utc": 0,
+      "archetype": "business_shuttle",
+      "distanceKm": 450,
+      "turnaroundAwayMin": 45,
+      "landingFeeAway": 80,
+      "market": {
+        "baseFare": 80,
+        "fareOptions": [
+          70,
+          80,
+          90,
+          100,
+          110
+        ],
+        "demandAtFare": {
+          "70": 80,
+          "80": 72,
+          "90": 62,
+          "100": 44,
+          "110": 30,
+          "120": 18
+        },
+        "ruleText": "At \u00a380, 72 people want to fly. Each \u00a310 more, fewer people want to fly \u2014 and above \u00a390 the holidaymakers stop coming."
+      },
+      "competitionSensitivity": 0.2,
+      "story": {
+        "shortDescription": "Short and busy. Lots of people, early and late."
+      }
+    },
+    {
+      "id": "par",
+      "city": "Paris",
+      "country": "France",
+      "airportCode": "CDG",
+      "lat": 49.01,
+      "lon": 2.55,
+      "utc": 1,
+      "archetype": "city_break_mixed",
+      "distanceKm": 300,
+      "turnaroundAwayMin": 45,
+      "landingFeeAway": 100,
+      "market": {
+        "baseFare": 90,
+        "fareOptions": [
+          70,
+          80,
+          90,
+          100,
+          110
+        ],
+        "demandAtFare": {
+          "70": 60,
+          "80": 55,
+          "90": 50,
+          "100": 44,
+          "110": 30,
+          "120": 20
+        },
+        "ruleText": "At \u00a390, 50 people want to fly. Each \u00a310 more, fewer people want to fly."
+      },
+      "competitionSensitivity": 0.2,
+      "story": {
+        "shortDescription": "Longer and quieter. Fewer people, but they pay more, and nobody flies at lunchtime."
+      }
+    }
+  ],
+  "homeAirportsTested": [
+    {
+      "code": "LHR",
+      "terminal": "T5",
+      "landingFee": 120,
+      "turnaroundMin": 35,
+      "passengerCharge": 5,
+      "open": [
+        6,
+        22
+      ]
+    }
+  ],
+  "aircraft": [
+    {
+      "id": "dhc6",
+      "name": "DHC-6 Twin Otter",
+      "tier": "starter",
+      "seats": 19,
+      "speedKmh": 300,
+      "rangeKm": 1400,
+      "fuelPer100Km": 20,
+      "hourlyCost": 150,
+      "dayCost": 600,
+      "listPrice": 5000,
+      "launchDealPrice": 2500,
+      "identity": "Small, flexible, cheap, frequent."
+    },
+    {
+      "id": "saab340",
+      "name": "Saab 340",
+      "tier": "regional",
+      "seats": 34,
+      "speedKmh": 450,
+      "rangeKm": 1700,
+      "fuelPer100Km": 30,
+      "hourlyCost": 240,
+      "dayCost": 900,
+      "listPrice": 9000,
+      "placeholder": true,
+      "identity": "More seats, still regional, higher commitment."
+    },
+    {
+      "id": "atr72",
+      "name": "ATR 72",
+      "tier": "regional",
+      "seats": 70,
+      "speedKmh": 450,
+      "rangeKm": 1500,
+      "fuelPer100Km": 45,
+      "hourlyCost": 400,
+      "dayCost": 1400,
+      "listPrice": 15000,
+      "placeholder": true,
+      "identity": "Large regional capacity, efficient on busy routes."
+    },
+    {
+      "id": "e190",
+      "name": "Embraer E190",
+      "tier": "regional_jet",
+      "seats": 100,
+      "speedKmh": 800,
+      "rangeKm": 4500,
+      "fuelPer100Km": 70,
+      "hourlyCost": 900,
+      "dayCost": 2500,
+      "listPrice": 30000,
+      "placeholder": true,
+      "identity": "First jet: speed and range step-change."
+    }
+  ],
+  "finance": [
+    {
+      "aircraftId": "dhc6",
+      "cashPrice": 5000,
+      "finance": {
+        "deposit": 2000,
+        "dailyPayment": 300,
+        "days": 12,
+        "totalPaid": 5600
+      },
+      "lease": {
+        "upfront": 0,
+        "daily": 250,
+        "returnAnyTime": true
+      },
+      "notes": "First aircraft at launch deal 2500. Lease pays if the plan nets more than 250 a day; finance pays if the plan nets more than 300 a day for 12 days."
+    }
+  ]
+}
