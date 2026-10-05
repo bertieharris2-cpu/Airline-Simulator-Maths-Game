@@ -2124,6 +2124,105 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
 @media (max-height:900px){ .p-td .pb.td2{padding-top:6px;padding-bottom:4px;gap:4px} .p-td .td-list > div{padding-top:2px;padding-bottom:2px} .p-td .td-brief{margin:2px 0} }
 .norep .s-rep,.norep #tRepDown,.norep #tRepUp{display:none!important}
 @media print{ body{background:#fff;color:#000} }
+
+/* ---------- live operations on the Operations Wall (the IWB immersion brief) ---------- */
+.w-ops{grid-area:mp;position:relative;z-index:5;pointer-events:none;min-height:0}
+.w-ops .btn,.w-ops button{pointer-events:auto}
+.lo-ann{position:absolute;top:12px;left:12px;right:424px;display:flex;align-items:center;gap:14px;padding:10px 18px;background:rgba(4,18,43,.93);border:1px solid var(--line);border-left:6px solid var(--amber);font-size:25px;color:#fff;animation:loIn .35s ease-out both}
+.lo-ann .bell{font-size:26px}
+.lo-ann.a-arrive{border-left-color:var(--green)}.lo-ann.a-closed{border-left-color:var(--cy)}
+.lo-cards{position:absolute;top:12px;right:12px;width:400px;display:flex;flex-direction:column;gap:10px}
+.lo-ac{background:rgba(4,18,43,.93);border:1px solid var(--line);border-top:3px solid var(--c1);padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.ac-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.ac-h b{font-family:var(--mono);font-size:26px;color:#fff;letter-spacing:1px}.ac-h span{font-size:16px;color:var(--muted)}
+.ac-st{font-family:var(--mono);font-weight:800;font-size:24px;letter-spacing:.12em}
+.lo-ac dl{margin:0;display:flex;flex-direction:column;gap:3px}.lo-ac dl div{display:flex;justify-content:space-between;gap:12px;font-size:19px;border-top:1px solid rgba(127,200,255,.12);padding-top:3px}
+.lo-ac dt{color:var(--faint)}.lo-ac dd{margin:0;color:#fff;font-family:var(--mono);font-weight:700;text-align:right}.lo-ac dd small{color:var(--muted);font-weight:400}
+.lo-feat,.lo-sim,.lo-focus{position:absolute;left:12px;right:12px;bottom:12px;height:278px;background:linear-gradient(180deg,rgba(8,30,64,.97),rgba(4,18,43,.98));border:1px solid var(--line);border-top:4px solid var(--c1);padding:14px 24px 12px;display:flex;flex-direction:column;gap:10px;box-shadow:0 -10px 40px rgba(0,0,0,.35)}
+.lf-h{display:flex;align-items:baseline;gap:22px;min-width:0}
+.lf-code{font-family:var(--mono);font-size:36px;color:var(--c1);letter-spacing:1px}
+.lf-rt{font-size:28px;color:#fff;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lf-gate{font-size:20px;color:var(--amber);letter-spacing:.16em;font-weight:800;white-space:nowrap}
+.lf-st{margin-left:auto;font-family:var(--mono);font-size:26px;font-weight:800;letter-spacing:.12em;padding:4px 16px;border:2px solid currentColor;white-space:nowrap}
+.lf-b{flex:1;display:flex;align-items:center;gap:30px;min-height:0}
+.lf-big{display:flex;flex-direction:column;font-family:var(--mono);font-size:64px;font-weight:800;color:#fff;line-height:1;min-width:290px;white-space:nowrap}
+.lf-big small{font-family:var(--sans);font-size:20px;letter-spacing:.16em;color:var(--cy);margin-top:8px;font-weight:700}
+.lf-big.full{color:var(--green)}.lf-big.full small{color:var(--green)}
+.lf-big.air{font-size:40px;min-width:360px;white-space:normal}
+.lf-txt{font-size:22px;color:var(--muted);max-width:620px}.lf-txt b{color:#fff}
+.lf-seatrow{display:flex;align-items:center;gap:20px}
+.lf-seats{display:grid;grid-template-columns:repeat(10,26px);gap:9px}
+.lf-seats.l{grid-template-columns:repeat(17,19px);gap:6px}.lf-seats.xl{grid-template-columns:repeat(35,11px);gap:4px}
+.lf-seats i{display:block;aspect-ratio:1;border-radius:50%;border:2px dashed rgba(127,200,255,.5);transition:background .25s,border-color .25s}
+.lf-seats i.bk{border:2px solid rgba(242,248,255,.55);background:rgba(242,248,255,.08)}
+.lf-seats i.on{border:2px solid var(--c1);background:var(--c1);box-shadow:0 0 8px var(--c1)}
+.lf-wait{display:flex;flex-wrap:wrap;align-items:center;gap:5px;max-width:230px}.lf-wait i{width:15px;height:15px;border-radius:50%;background:var(--amber);opacity:.85}.lf-wait b{width:100%;color:var(--amber);font-size:22px}
+.lf-route{display:flex;align-items:center;gap:16px;flex:1;min-width:280px}.lf-route b{font-family:var(--mono);font-size:30px;color:#fff}
+.lf-track{position:relative;flex:1;height:10px;background:rgba(127,200,255,.2);border-radius:5px}.lf-track i{position:absolute;left:0;top:0;bottom:0;background:var(--c1);border-radius:5px;box-shadow:0 0 10px var(--c1)}
+.lf-track span{position:absolute;top:-25px;transform:translateX(-50%);font-size:34px;color:#fff;line-height:1}
+.lf-cab{display:flex;flex-direction:column;gap:2px;padding:10px 16px;border:2px solid var(--green);background:rgba(110,240,180,.1);animation:loIn .4s ease-out both}.lf-cab b{color:var(--green);font-size:18px;letter-spacing:.16em}.lf-cab span{font-size:24px;color:#fff}.lf-cab em{font-style:normal;color:var(--green);font-weight:800;white-space:nowrap}
+.lf-check{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 22px;align-content:center}
+.lf-ct{grid-column:1/-1;font-size:21px;letter-spacing:.16em;color:var(--cy)}
+.lf-check span{font-size:23px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lf-check span.on{color:#fff}.lf-check span.done{color:var(--green)}
+.lf-check i{font-style:normal;font-family:var(--mono);font-weight:800;margin-right:10px}
+.lf-cf{grid-column:1/-1;font-size:26px!important;font-weight:800;letter-spacing:.12em;color:var(--green)!important}
+.lf-steps{display:flex;gap:6px}.lf-steps span{flex:1;text-align:center;font-size:13px;letter-spacing:.12em;font-weight:700;padding:6px 2px 0;border-top:5px solid rgba(127,200,255,.2);color:var(--faint);white-space:nowrap}
+.lf-steps span.done{border-top-color:rgba(127,200,255,.6);color:var(--muted)}.lf-steps span.on{border-top-color:var(--c1);color:#fff}
+.lf-rib{position:absolute;left:0;right:0;top:-62px;display:flex;align-items:baseline;gap:16px;padding:9px 18px;background:rgba(40,30,4,.95);border:2px solid var(--amber);animation:loIn .4s ease-out both}
+.lf-rib b{color:var(--amber);font-size:23px;letter-spacing:.14em;white-space:nowrap}.lf-rib span{color:#fff;font-size:21px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lf-rib.k-capacity{border-color:var(--cy);background:rgba(4,30,52,.95)}.lf-rib.k-capacity b{color:var(--cy)}
+.lf-rib.k-quiet{border-color:#9db8e8;background:rgba(10,24,48,.95)}.lf-rib.k-quiet b{color:#c5d6f5}
+.lf-rib.k-turnaround{border-color:var(--orange);background:rgba(44,24,6,.95)}.lf-rib.k-turnaround b{color:var(--orange)}
+.lo-sim{border-top-color:var(--green)}
+.ls-h{font-size:26px;font-weight:800;letter-spacing:.16em;color:var(--green)}
+.ls-days{display:flex;gap:8px;flex-wrap:wrap}.ls-days span{font-size:19px;padding:6px 12px;border:1px solid var(--hair);color:var(--faint)}.ls-days span.done{color:var(--green);border-color:rgba(110,240,180,.45)}.ls-days span.on{color:#fff;border-color:var(--cy);background:rgba(127,214,255,.12)}
+.ls-tot{flex:1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;align-items:center}.ls-tot div{display:flex;flex-direction:column;gap:4px}
+.ls-tot span{font-size:14px;letter-spacing:.14em;color:var(--faint);font-weight:700}.ls-tot b{font-family:var(--mono);font-size:40px;color:#fff;white-space:nowrap}
+.lo-focus{text-align:left;justify-content:center;gap:8px;border-top-width:6px;border-top-color:var(--amber);animation:loIn .4s ease-out both}
+.lo-focus small{font-size:19px;letter-spacing:.2em;color:var(--amber);font-weight:800}.lo-focus h2{font-size:48px;color:#fff;letter-spacing:.04em;margin:0}.lo-focus p{font-size:26px;color:var(--muted);margin:0;max-width:1200px}.lo-obs{font-size:18px;color:var(--faint);letter-spacing:.08em}
+.lfo-t{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
+.lo-focus.has-seats{flex-direction:row;align-items:center;gap:30px}.lo-focus.has-seats h2{font-size:40px}.lo-focus.has-seats p{font-size:24px}
+.lfo-s{flex:none}
+.lo-focus.k-capacity{border-top-color:var(--cy)}.lo-focus.k-capacity small{color:var(--cy)}
+.lo-focus.k-quiet{border-top-color:#9db8e8}.lo-focus.k-quiet small{color:#c5d6f5}
+.lo-focus.k-turnaround{border-top-color:var(--orange)}.lo-focus.k-turnaround small{color:var(--orange)}
+.lo-focus.k-weather{border-top-color:#b9a2ff}.lo-focus.k-weather small{color:#cdbdff}
+.lo-banner{position:absolute;top:12px;left:12px;font-size:22px;font-weight:800;letter-spacing:.18em;padding:8px 22px;background:rgba(40,30,4,.95);border:2px solid var(--amber);color:#fff;white-space:nowrap;z-index:2}
+.lo-banner.paused{top:auto;bottom:304px;left:50%;transform:translateX(-50%)}
+.lo-intro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(800px 500px at 50% 40%, rgba(31,122,255,.25), transparent 70%), rgba(5,22,52,.96);text-align:center}
+.lo-intro small{font-size:22px;letter-spacing:.3em;color:var(--green);font-weight:800}.lo-intro h1{font-size:68px;color:#fff;letter-spacing:.1em;margin:0}.li-when{font-size:28px;color:var(--muted);margin:0}
+.li-list{display:flex;flex-direction:column;gap:10px;min-width:820px;text-align:left}.li-list div{display:grid;grid-template-columns:44px 300px 1fr;align-items:baseline;font-size:28px;color:var(--faint);opacity:.4;transition:opacity .4s}
+.li-list div.on{opacity:1}.li-list i{font-style:normal;font-family:var(--mono);color:var(--green);font-weight:800}.li-list b{color:#fff}.li-list span{color:var(--muted)}
+.li-go{font-size:34px;font-weight:800;letter-spacing:.2em;color:var(--green);opacity:0;transition:opacity .5s}.li-go.on{opacity:1}
+.w-status.ops{display:block;padding:0}
+.mode-ops .zoomBtns{display:none}
+.lo-strip > div:not(.lo-ctl){flex:none}
+.lf-txt.side{max-width:380px}
+.lf-tight{margin-top:8px;padding:6px 12px;border-left:4px solid var(--orange);color:#ffd2a8;font-size:20px}
+.lo-strip{display:flex;align-items:stretch;height:100%}
+.lo-strip > div:not(.lo-ctl){display:flex;flex-direction:column;justify-content:center;padding:6px 14px;border-right:1px solid var(--hair);min-width:0}
+.lo-strip span{font-size:13px;letter-spacing:.1em;color:var(--faint);font-weight:700;white-space:nowrap}.lo-strip b{font-family:var(--mono);font-size:27px;color:#fff;white-space:nowrap}
+.ls-mode.m-live b,.ls-mode.m-done b{color:var(--green)}.ls-mode.m-sim b{color:var(--cy)}.ls-mode.m-focus b,.ls-mode.m-paused b{color:var(--amber)}
+.lo-ctl{margin-left:auto;display:flex;align-items:center;gap:6px;padding:0 8px}
+.lo-ctl .btn{min-height:66px;font-size:16px;padding:6px 10px;white-space:nowrap}
+.lo-ctl .btn[aria-pressed="true"],.lo-pace .btn[aria-pressed="true"]{border-color:var(--cy);box-shadow:inset 0 0 0 2px var(--cy);color:#fff}
+.w-live.focus{color:var(--amber);border-color:rgba(255,200,61,.6)}
+.mode-ops .w-board td .status{font-size:16px}
+.mode-ops .s-boarding,.lo-ac .s-boarding{animation:loPulse 2s ease-in-out infinite}
+.s-checkin{color:var(--cy)} .s-final{color:var(--amber)} .s-closed{color:#ffd98a} .s-taxi{color:#9fd8ff} .s-turn{color:var(--amber)}
+.lo-trail{stroke:var(--c1);stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px var(--c1))}
+.lo-plane{fill:var(--c1);stroke:#06142d;stroke-width:1.5}
+.lo-plane .lo-halo{fill:rgba(255,255,255,.07);stroke:var(--c1);stroke-width:2;stroke-opacity:.65}
+.lo-plane.hot .lo-halo{stroke:var(--amber);stroke-width:3;stroke-opacity:1;fill:rgba(255,200,61,.12)}
+.lo-tag{fill:#fff;stroke:#06142d;stroke-width:4px;paint-order:stroke;font-family:var(--mono);font-weight:800}
+.lo-stormc{fill:rgba(36,30,72,.62);stroke:rgba(205,189,255,.55);stroke-width:2}
+.lo-storm text{fill:#fff}
+.lo-hq .lo-line{font-size:var(--fs);margin:2px 0}.lo-pace{display:flex;flex-wrap:wrap;gap:6px}.lo-pace .btn{min-height:40px;font-size:14px;padding:4px 10px}
+.wo-head{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:20px}.wo-head small{grid-column:1}.wo-head h1{grid-column:1;margin:0}.wo-go{grid-column:2;grid-row:1 / 3;min-height:70px;font-size:24px}
+.wo-tiles.t7{grid-template-columns:repeat(7,minmax(0,1fr))}
+.wo-ms.rec{border-color:var(--amber);background:rgba(255,200,61,.16)}
+@keyframes loIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes loPulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion: reduce){ .lo-ann,.lf-cab,.lf-rib,.lo-focus,.mode-ops .s-boarding,.lo-ac .s-boarding{animation:none!important} .lf-seats i{transition:none} }
 </style>
 </head>
 <body>
@@ -2259,7 +2358,7 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
        news: lines for the ticker. challenge: true = Captain's challenge this round (every 2 rounds).
        checkpoint: snapshot the run to Best Runs and carry on (round 12). finale: record the run (round 30); play can continue after it.
        30 rounds in five acts, from the Clear Skies 30-round workbook. -->
-<script type="application/json" id="data-world">{"id": "clear-skies", "name": "Opening prototype", "lesson": "Fuel climbs through the first year (with a shock in July), crashes in January after the oil find, then climbs to £3.20 by the final May — stock up when it is cheap.", "startingCash": 5000, "startingReputation": 3, "fuelLot": 500, "rival": "Red Kite Air", "dayStart": "06:00", "dayEnd": "22:00", "firstDeparture": "09:00", "turnaroundMin": 45, "maxTrips": 4, "tankBase": 5000, "suppliers": [{"name": "Dragon Fuels", "priceDelta": 0, "lot": 500, "note": "Sells in 500 L lots", "fromPhase": 1}, {"name": "Celtic Oil", "priceDelta": -0.1, "lot": 2000, "note": "10p cheaper, but only sells 2,000 L lots", "fromPhase": 3}], "icons": {"perIcon": 1, "bigAt": 150, "bigPerIcon": 10}, "homes": [{"id": "lhr", "code": "LHR", "city": "Heathrow", "name": "London Heathrow", "country": "England", "flag": "uk", "lat": 51.47, "lon": -0.454, "utc": 0, "fee": 120, "demandPct": 15, "biz": 1.5, "blurb": "The UK's busiest airport. Expensive to land, but lots of passengers, including business travellers.", "terminals": [{"id": "t5", "name": "Terminal 5", "turn": 35, "charge": 5, "biz": 1.2, "note": "Modern gates right by the runway: quick turnarounds. Business travellers like it."}, {"id": "t4", "name": "Terminal 4", "turn": 55, "charge": 3, "note": "Cheaper, but remote stands and buses make turnarounds slow."}]}, {"id": "lgw", "code": "LGW", "city": "Gatwick", "name": "London Gatwick", "country": "England", "flag": "uk", "lat": 51.153, "lon": -0.182, "utc": 0, "fee": 80, "demandPct": 5, "biz": 1.0, "blurb": "London's second airport. A fair landing fee and plenty of holiday passengers.", "terminals": [{"id": "north", "name": "North Terminal", "turn": 40, "charge": 4, "note": "Busy but well organised."}, {"id": "south", "name": "South Terminal", "turn": 45, "charge": 3, "note": "A little cheaper, a little slower."}]}, {"id": "ltn", "code": "LTN", "city": "Luton", "name": "London Luton", "country": "England", "flag": "uk", "lat": 51.875, "lon": -0.368, "utc": 0, "fee": 40, "demandPct": -5, "biz": 0.6, "blurb": "A low-cost airport north of London. Cheap to land, mostly leisure passengers.", "terminals": [{"id": "main", "name": "Main Terminal", "turn": 30, "charge": 2, "note": "Built for quick, cheap turnarounds. One terminal for everyone."}]}, {"id": "man", "code": "MAN", "city": "Manchester", "name": "Manchester", "country": "England", "flag": "uk", "lat": 53.354, "lon": -2.275, "utc": 0, "fee": 60, "demandPct": 0, "biz": 1.0, "blurb": "The North's biggest airport. Dublin is a short hop; Paris is a long way for a small plane.", "terminals": [{"id": "t1", "name": "Terminal 1", "turn": 40, "charge": 4, "note": "The main international terminal."}, {"id": "t3", "name": "Terminal 3", "turn": 45, "charge": 3, "note": "Smaller and cheaper, a little slower."}]}], "setupRoutes": ["dub", "par"], "routes": [{"id": "dub", "city": "Dublin", "country": "Ireland", "flag": "ie", "lat": 53.35, "lon": -6.26, "km": 300, "band": "short", "basePrice": 60, "baseDemand": 60, "step": 10, "drop": 5, "prices": [50, 60, 70, 80], "gate": "1", "dep": "09:00", "utc": 0, "blurb": "Busier and cheaper. A short hop across the Irish Sea.", "unlockPhase": 1, "setupPrices": [50, 60, 70, 80], "growth": 0, "cap": 30, "fares": [50, 60, 70, 80], "alat": 53.42, "alon": -6.27, "biz": 6, "profile": {"morning": 0.5, "midday": 0.15, "evening": 0.35, "flex": 0.25, "type": "Business shuttle"}}, {"id": "par", "city": "Paris", "country": "France", "flag": "fr", "lat": 48.86, "lon": 2.35, "km": 450, "band": "short", "basePrice": 90, "baseDemand": 45, "step": 10, "drop": 3, "prices": [80, 90, 100, 110, 120], "gate": "2", "dep": "10:00", "utc": 1, "blurb": "Quieter, but passengers pay more. A longer flight.", "unlockPhase": 1, "setupPrices": [80, 90, 100, 110, 120], "growth": 0, "cap": 40, "fares": [80, 90, 100, 110, 120], "alat": 49.01, "alon": 2.55, "biz": 10, "profile": {"morning": 0.4, "midday": 0.2, "evening": 0.4, "flex": 0.3, "type": "City break / mixed"}}, {"id": "mad", "city": "Madrid", "country": "Spain", "flag": "es", "lat": 40.42, "lon": -3.7, "km": 1200, "band": "short", "basePrice": 100, "baseDemand": 60, "step": 10, "drop": 5, "prices": [80, 90, 100, 120], "gate": "3", "dep": "11:00", "utc": 1, "blurb": "Sunny city break. Steady demand.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "rak", "city": "Marrakech", "country": "Morocco", "flag": "ma", "lat": 31.63, "lon": -8.01, "km": 2400, "band": "medium", "basePrice": 120, "baseDemand": 90, "step": 20, "drop": 10, "prices": [100, 120, 140, 160], "gate": "4", "dep": "09:30", "utc": 1, "blurb": "Holiday route. Popular in winter.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "cai", "city": "Cairo", "country": "Egypt", "flag": "eg", "lat": 30.04, "lon": 31.24, "km": 3600, "band": "medium", "basePrice": 150, "baseDemand": 110, "step": 25, "drop": 10, "prices": [125, 150, 175, 200], "gate": "5", "dep": "08:30", "utc": 2, "blurb": "Pyramids! Good demand all year.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "los", "city": "Lagos", "country": "Nigeria", "flag": "ng", "lat": 6.52, "lon": 3.38, "km": 4800, "band": "medium", "basePrice": 200, "baseDemand": 100, "step": 25, "drop": 10, "prices": [150, 175, 200, 250], "gate": "6", "dep": "12:00", "utc": 1, "blurb": "Big city, business travellers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "nyc", "city": "New York", "country": "USA", "flag": "us", "lat": 40.71, "lon": -74.01, "km": 5600, "band": "medium", "basePrice": 200, "baseDemand": 140, "step": 50, "drop": 20, "prices": [150, 200, 250, 300], "gate": "7", "dep": "13:00", "utc": -5, "blurb": "The big one. Huge demand.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "dxb", "city": "Dubai", "country": "UAE", "flag": "ae", "lat": 25.2, "lon": 55.27, "km": 5600, "band": "medium", "basePrice": 250, "baseDemand": 150, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "8", "dep": "14:00", "utc": 4, "blurb": "Shopping and sunshine. Rich passengers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "del", "city": "Delhi", "country": "India", "flag": "in", "lat": 28.61, "lon": 77.21, "km": 7200, "band": "long", "basePrice": 250, "baseDemand": 200, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "9", "dep": "20:00", "utc": 5.5, "blurb": "Very busy. Overnight flight.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "cpt", "city": "Cape Town", "country": "South Africa", "flag": "za", "lat": -33.92, "lon": 18.42, "km": 9600, "band": "long", "basePrice": 350, "baseDemand": 180, "step": 50, "drop": 20, "prices": [300, 350, 400, 450], "gate": "10", "dep": "19:00", "utc": 2, "blurb": "Table Mountain. Long, popular route.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "tyo", "city": "Tokyo", "country": "Japan", "flag": "jp", "lat": 35.68, "lon": 139.69, "km": 9600, "band": "long", "basePrice": 400, "baseDemand": 250, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "11", "dep": "18:00", "utc": 9, "blurb": "Neon lights and bullet trains. Big demand.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "sin", "city": "Singapore", "country": "Singapore", "flag": "sg", "lat": 1.35, "lon": 103.82, "km": 10800, "band": "long", "basePrice": 400, "baseDemand": 220, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "12", "dep": "21:00", "utc": 8, "blurb": "Gateway to Asia. Famous airport.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "syd", "city": "Sydney", "country": "Australia", "flag": "au", "lat": -33.87, "lon": 151.21, "km": 17600, "band": "long", "basePrice": 600, "baseDemand": 300, "step": 100, "drop": 30, "prices": [500, 600, 700, 800], "gate": "13", "dep": "22:00", "utc": 10, "blurb": "The longest flight in the world. Only one plane can do it.", "unlockPhase": 4, "growth": 3, "cap": 60}], "rounds": [{"date": "2030-05-12", "period": "setup", "fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."], "prog": 2}, {"date": "2030-05-13", "period": "day", "fuel": 1.2, "title": "Day 1", "headline": "A catering company has an offer: snacks on board.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."], "onboard": true, "prog": 3.1}, {"date": "2030-05-14", "period": "day", "fuel": 1.3, "title": "Day 2", "headline": "The launch deal is over: from today the airline buys its own fuel.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."], "prog": 3.2, "fuelDay": true}, {"date": "2030-05-15", "period": "day", "fuel": 1.4, "title": "Day 3", "headline": "Some flights were full. Others had empty seats.", "news": ["Fuel now £1.40 a litre."], "prog": 3.3}, {"date": "2030-05-16", "period": "day", "fuel": 1.4, "title": "Day 4", "headline": "A second market is opening up.", "opportunity": true, "prog": 3.4}, {"date": "2030-05-17", "period": "gap", "prog": 4, "stage": "routine", "title": "The weekend", "headline": "Your regular operating plan runs by itself.", "news": ["Dragon routes settle into a daily rhythm."], "fuel": 1.4}, {"date": "2030-05-20", "period": "week", "prog": 4, "title": "Week 1", "headline": "Your first week of regular operations.", "news": ["Passengers say the new airline is reliable."], "fuel": 1.4, "noReview": true}, {"date": "2030-05-27", "period": "week", "prog": 4.1, "title": "Week 2", "headline": "Another week: is the timetable still right?", "news": ["Half-term week: families are travelling."], "fuel": 1.45}, {"date": "2030-06-03", "period": "week", "prog": 4.2, "title": "Week 3", "headline": "A month of flying is almost done.", "news": ["Fuel prices are creeping up."], "fuel": 1.45}, {"date": "2030-06-10", "period": "month", "prog": 5, "stage": "stable", "title": "A stable airline", "headline": "The airline runs month by month now.", "news": ["Analysts: the new airline is here to stay."], "fuel": 1.5}, {"date": "2030-07-01", "period": "month", "prog": 5.1, "title": "July", "headline": "Summer holidays begin.", "news": ["Airports busy as the holidays start."], "fuel": 1.55}, {"date": "2030-08-01", "period": "month", "prog": 5.2, "title": "August", "headline": "The busiest month of the summer.", "news": ["Fuel steadies for August."], "fuel": 1.5}, {"date": "2030-09-01", "period": "month", "prog": 6, "stage": "year", "until": "2031-04-30", "title": "The first year", "headline": "Where will the airline be in a year?", "news": ["Aircraft makers report strong orders."], "fuel": 1.6}, {"date": "2030-10-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Autumn timetables published."], "fuel": 1.65}, {"date": "2030-11-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Winter fuel prices rise."], "fuel": 1.7}, {"date": "2030-12-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Christmas getaway: airports busy."], "fuel": 1.75}, {"date": "2031-01-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["New year, new routes for rivals."], "fuel": 1.6}, {"date": "2031-02-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Half-term in February: families fly."], "fuel": 1.65}, {"date": "2031-03-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Spring is coming: bookings pick up."], "fuel": 1.7}, {"date": "2031-04-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Easter holidays boost travel."], "fuel": 1.75}, {"date": "2031-05-01", "period": "day", "prog": 7, "stage": "review", "title": "Year 1 review", "headline": "One year of flying. Time to grow?", "news": ["A year since the airline's first flight."], "fuel": 1.8}], "fuelTopUp": 0.1, "reserveDefault": 20000, "crewDutyMin": 540, "crewCost": 300}</script>
+<script type="application/json" id="data-world">{"id": "clear-skies", "name": "Opening prototype", "lesson": "Fuel climbs through the first year (with a shock in July), crashes in January after the oil find, then climbs to £3.20 by the final May — stock up when it is cheap.", "startingCash": 5000, "startingReputation": 3, "fuelLot": 500, "rival": "Red Kite Air", "dayStart": "06:00", "dayEnd": "22:00", "firstDeparture": "09:00", "turnaroundMin": 45, "maxTrips": 4, "tankBase": 5000, "suppliers": [{"name": "Dragon Fuels", "priceDelta": 0, "lot": 500, "note": "Sells in 500 L lots", "fromPhase": 1}, {"name": "Celtic Oil", "priceDelta": -0.1, "lot": 2000, "note": "10p cheaper, but only sells 2,000 L lots", "fromPhase": 3}], "icons": {"perIcon": 1, "bigAt": 150, "bigPerIcon": 10}, "homes": [{"id": "lhr", "code": "LHR", "city": "Heathrow", "name": "London Heathrow", "country": "England", "flag": "uk", "lat": 51.47, "lon": -0.454, "utc": 0, "fee": 120, "demandPct": 15, "biz": 1.5, "blurb": "The UK's busiest airport. Expensive to land, but lots of passengers, including business travellers.", "terminals": [{"id": "t5", "name": "Terminal 5", "turn": 35, "charge": 5, "biz": 1.2, "note": "Modern gates right by the runway: quick turnarounds. Business travellers like it."}, {"id": "t4", "name": "Terminal 4", "turn": 55, "charge": 3, "note": "Cheaper, but remote stands and buses make turnarounds slow."}]}, {"id": "lgw", "code": "LGW", "city": "Gatwick", "name": "London Gatwick", "country": "England", "flag": "uk", "lat": 51.153, "lon": -0.182, "utc": 0, "fee": 80, "demandPct": 5, "biz": 1.0, "blurb": "London's second airport. A fair landing fee and plenty of holiday passengers.", "terminals": [{"id": "north", "name": "North Terminal", "turn": 40, "charge": 4, "note": "Busy but well organised."}, {"id": "south", "name": "South Terminal", "turn": 45, "charge": 3, "note": "A little cheaper, a little slower."}]}, {"id": "ltn", "code": "LTN", "city": "Luton", "name": "London Luton", "country": "England", "flag": "uk", "lat": 51.875, "lon": -0.368, "utc": 0, "fee": 40, "demandPct": -5, "biz": 0.6, "blurb": "A low-cost airport north of London. Cheap to land, mostly leisure passengers.", "terminals": [{"id": "main", "name": "Main Terminal", "turn": 30, "charge": 2, "note": "Built for quick, cheap turnarounds. One terminal for everyone."}]}, {"id": "man", "code": "MAN", "city": "Manchester", "name": "Manchester", "country": "England", "flag": "uk", "lat": 53.354, "lon": -2.275, "utc": 0, "fee": 60, "demandPct": 0, "biz": 1.0, "blurb": "The North's biggest airport. Dublin is a short hop; Paris is a long way for a small plane.", "terminals": [{"id": "t1", "name": "Terminal 1", "turn": 40, "charge": 4, "note": "The main international terminal."}, {"id": "t3", "name": "Terminal 3", "turn": 45, "charge": 3, "note": "Smaller and cheaper, a little slower."}]}], "setupRoutes": ["dub", "par"], "routes": [{"id": "dub", "city": "Dublin", "country": "Ireland", "flag": "ie", "lat": 53.35, "lon": -6.26, "km": 300, "band": "short", "basePrice": 60, "baseDemand": 60, "step": 10, "drop": 5, "prices": [50, 60, 70, 80], "gate": "1", "dep": "09:00", "utc": 0, "blurb": "Busier and cheaper. A short hop across the Irish Sea.", "unlockPhase": 1, "setupPrices": [50, 60, 70, 80], "growth": 0, "cap": 30, "fares": [50, 60, 70, 80], "alat": 53.42, "alon": -6.27, "biz": 6, "profile": {"morning": 0.5, "midday": 0.15, "evening": 0.35, "flex": 0.25, "type": "Business shuttle"}}, {"id": "par", "city": "Paris", "country": "France", "flag": "fr", "lat": 48.86, "lon": 2.35, "km": 450, "band": "short", "basePrice": 90, "baseDemand": 45, "step": 10, "drop": 3, "prices": [80, 90, 100, 110, 120], "gate": "2", "dep": "10:00", "utc": 1, "blurb": "Quieter, but passengers pay more. A longer flight.", "unlockPhase": 1, "setupPrices": [80, 90, 100, 110, 120], "growth": 0, "cap": 40, "fares": [80, 90, 100, 110, 120], "alat": 49.01, "alon": 2.55, "biz": 10, "profile": {"morning": 0.4, "midday": 0.2, "evening": 0.4, "flex": 0.3, "type": "City break / mixed"}}, {"id": "mad", "city": "Madrid", "country": "Spain", "flag": "es", "lat": 40.42, "lon": -3.7, "km": 1200, "band": "short", "basePrice": 100, "baseDemand": 60, "step": 10, "drop": 5, "prices": [80, 90, 100, 120], "gate": "3", "dep": "11:00", "utc": 1, "blurb": "Sunny city break. Steady demand.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "rak", "city": "Marrakech", "country": "Morocco", "flag": "ma", "lat": 31.63, "lon": -8.01, "km": 2400, "band": "medium", "basePrice": 120, "baseDemand": 90, "step": 20, "drop": 10, "prices": [100, 120, 140, 160], "gate": "4", "dep": "09:30", "utc": 1, "blurb": "Holiday route. Popular in winter.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "cai", "city": "Cairo", "country": "Egypt", "flag": "eg", "lat": 30.04, "lon": 31.24, "km": 3600, "band": "medium", "basePrice": 150, "baseDemand": 110, "step": 25, "drop": 10, "prices": [125, 150, 175, 200], "gate": "5", "dep": "08:30", "utc": 2, "blurb": "Pyramids! Good demand all year.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "los", "city": "Lagos", "country": "Nigeria", "flag": "ng", "lat": 6.52, "lon": 3.38, "km": 4800, "band": "medium", "basePrice": 200, "baseDemand": 100, "step": 25, "drop": 10, "prices": [150, 175, 200, 250], "gate": "6", "dep": "12:00", "utc": 1, "blurb": "Big city, business travellers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "nyc", "city": "New York", "country": "USA", "flag": "us", "lat": 40.71, "lon": -74.01, "km": 5600, "band": "medium", "basePrice": 200, "baseDemand": 140, "step": 50, "drop": 20, "prices": [150, 200, 250, 300], "gate": "7", "dep": "13:00", "utc": -5, "blurb": "The big one. Huge demand.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "dxb", "city": "Dubai", "country": "UAE", "flag": "ae", "lat": 25.2, "lon": 55.27, "km": 5600, "band": "medium", "basePrice": 250, "baseDemand": 150, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "8", "dep": "14:00", "utc": 4, "blurb": "Shopping and sunshine. Rich passengers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "del", "city": "Delhi", "country": "India", "flag": "in", "lat": 28.61, "lon": 77.21, "km": 7200, "band": "long", "basePrice": 250, "baseDemand": 200, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "9", "dep": "20:00", "utc": 5.5, "blurb": "Very busy. Overnight flight.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "cpt", "city": "Cape Town", "country": "South Africa", "flag": "za", "lat": -33.92, "lon": 18.42, "km": 9600, "band": "long", "basePrice": 350, "baseDemand": 180, "step": 50, "drop": 20, "prices": [300, 350, 400, 450], "gate": "10", "dep": "19:00", "utc": 2, "blurb": "Table Mountain. Long, popular route.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "tyo", "city": "Tokyo", "country": "Japan", "flag": "jp", "lat": 35.68, "lon": 139.69, "km": 9600, "band": "long", "basePrice": 400, "baseDemand": 250, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "11", "dep": "18:00", "utc": 9, "blurb": "Neon lights and bullet trains. Big demand.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "sin", "city": "Singapore", "country": "Singapore", "flag": "sg", "lat": 1.35, "lon": 103.82, "km": 10800, "band": "long", "basePrice": 400, "baseDemand": 220, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "12", "dep": "21:00", "utc": 8, "blurb": "Gateway to Asia. Famous airport.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "syd", "city": "Sydney", "country": "Australia", "flag": "au", "lat": -33.87, "lon": 151.21, "km": 17600, "band": "long", "basePrice": 600, "baseDemand": 300, "step": 100, "drop": 30, "prices": [500, 600, 700, 800], "gate": "13", "dep": "22:00", "utc": 10, "blurb": "The longest flight in the world. Only one plane can do it.", "unlockPhase": 4, "growth": 3, "cap": 60}], "rounds": [{"date": "2030-05-12", "period": "setup", "fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."], "prog": 2}, {"date": "2030-05-13", "period": "day", "fuel": 1.2, "title": "Day 1", "headline": "A catering company has an offer: snacks on board.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."], "onboard": true, "prog": 3.1}, {"date": "2030-05-14", "period": "day", "fuel": 1.3, "title": "Day 2", "headline": "The launch deal is over: from today the airline buys its own fuel.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."], "prog": 3.2, "fuelDay": true}, {"date": "2030-05-15", "period": "day", "fuel": 1.4, "title": "Day 3", "headline": "Some flights were full. Others had empty seats.", "news": ["Fuel now £1.40 a litre."], "prog": 3.3}, {"date": "2030-05-16", "period": "day", "fuel": 1.4, "title": "Day 4", "headline": "A second market is opening up.", "opportunity": true, "prog": 3.4}, {"date": "2030-05-17", "period": "gap", "prog": 4, "stage": "routine", "title": "The weekend", "headline": "Your regular operating plan runs by itself.", "news": ["Dragon routes settle into a daily rhythm."], "fuel": 1.4}, {"date": "2030-05-20", "period": "week", "prog": 4, "title": "Week 1", "headline": "Your first week of regular operations.", "news": ["Passengers say the new airline is reliable."], "fuel": 1.4, "noReview": true}, {"date": "2030-05-27", "period": "week", "prog": 4.1, "title": "Week 2", "headline": "Another week: is the timetable still right?", "news": ["Half-term week: families are travelling."], "fuel": 1.45}, {"date": "2030-06-03", "period": "week", "prog": 4.2, "title": "Week 3", "headline": "A month of flying is almost done.", "live": {"weather": {"day": 2, "delay": 40}}, "news": ["Fuel prices are creeping up."], "fuel": 1.45}, {"date": "2030-06-10", "period": "month", "prog": 5, "stage": "stable", "title": "A stable airline", "headline": "The airline runs month by month now.", "news": ["Analysts: the new airline is here to stay."], "fuel": 1.5}, {"date": "2030-07-01", "period": "month", "prog": 5.1, "title": "July", "headline": "Summer holidays begin.", "news": ["Airports busy as the holidays start."], "fuel": 1.55}, {"date": "2030-08-01", "period": "month", "prog": 5.2, "title": "August", "headline": "The busiest month of the summer.", "news": ["Fuel steadies for August."], "fuel": 1.5}, {"date": "2030-09-01", "period": "month", "prog": 6, "stage": "year", "until": "2031-04-30", "title": "The first year", "headline": "Where will the airline be in a year?", "news": ["Aircraft makers report strong orders."], "fuel": 1.6}, {"date": "2030-10-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Autumn timetables published."], "fuel": 1.65}, {"date": "2030-11-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Winter fuel prices rise."], "fuel": 1.7}, {"date": "2030-12-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Christmas getaway: airports busy."], "fuel": 1.75}, {"date": "2031-01-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["New year, new routes for rivals."], "fuel": 1.6}, {"date": "2031-02-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Half-term in February: families fly."], "fuel": 1.65}, {"date": "2031-03-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Spring is coming: bookings pick up."], "fuel": 1.7}, {"date": "2031-04-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Easter holidays boost travel."], "fuel": 1.75}, {"date": "2031-05-01", "period": "day", "prog": 7, "stage": "review", "title": "Year 1 review", "headline": "One year of flying. Time to grow?", "news": ["A year since the airline's first flight."], "fuel": 1.8}], "fuelTopUp": 0.1, "reserveDefault": 20000, "crewDutyMin": 540, "crewCost": 300}</script>
 
 <!-- TAIL-FIN MOTIFS the pupil can pick in setup (drawn in the livery colours; SVG symbols are below). -->
 <script type="application/json" id="data-fins">
@@ -2371,6 +2470,7 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
     <footer class="w-ticker"><b>NEWS &rsaquo;</b><div class="tk"><span id="dTicker"></span></div></footer>
     <div class="w-alert" id="wAlert" hidden></div>
     <div class="w-sim" id="wSim" hidden></div>
+    <div class="w-ops" id="wOps" hidden></div>
     <div class="w-over" id="wOver" hidden></div>
   </div>
   <div id="work" hidden>
@@ -2417,7 +2517,9 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
         <div class="row"><span>Adjust cash now</span><input type="number" id="tCashDelta" step="100" placeholder="+/- £"><button class="btn small" id="tCashApply">Apply</button></div>
         <div class="row"><span>Reputation</span><button class="btn small" id="tRepDown">−½ ★</button><button class="btn small" id="tRepUp">+½ ★</button></div>
         <div class="row"><span>Jump</span><button class="btn small" id="tRoundNext">Skip to the next story beat</button><button class="btn small" id="tRepeat">Repeat this period</button></div>
-        <div class="row"><span>Flight animation</span><select id="tFlightSecs"><option value="4">4 s</option><option value="7">7 s</option><option value="12">12 s</option></select></div>
+        <div class="row"><span>Live operations pace</span><select id="tFlightSecs"><option value="4">Brisk</option><option value="7">Standard</option><option value="12">Slow</option></select></div>
+        <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tOpsSound" style="width:24px;height:24px"> Airport chimes and announcements during live operations</label></div>
+        <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tAutoWall" style="width:24px;height:24px"> With no IWB window open, show live operations full screen on this screen</label></div>
       </div>
       <div class="tsec"><h3>Session</h3>
         <div class="row"><button class="btn small primary" id="tEnd">End session (save &amp; show code)</button><button class="btn small" id="tMenu">Main menu</button><button class="btn small" id="tRuns">Best runs</button></div>
@@ -2582,6 +2684,7 @@ function onMessage(msg){
     if(msg.type==='work'){ setWorkMode(msg.open); }
   } else {
     if(msg.type==='pong' || msg.type==='hello'){ lastPong = Date.now(); updateStrip(); if(msg.type==='hello') publish(); }
+    if(msg.type==='ops') opsCmd(msg.cmd);
   }
 }
 if(bc) bc.onmessage = e => onMessage(e.data);
@@ -3205,7 +3308,7 @@ function back(){ if(S.si > 0){ S.si--; render(); } }
 function enterStep(){
   const st = step();
   if(st.t==='fly'){ S.rnd.forecast = forecastNow(); startFlight(); }
-  if(st.t==='sim' && !S.rnd.sim){ const fc0 = S.period.forecast; S.rnd.sim = simulateRun(); S.rnd.simAnim = { start: Date.now(), dur: Math.min(14000, 1000 * Math.max(4, settings.flightSecs) * Math.max(1, Math.min(3, S.rnd.sim.parts.length))) }; S.period.forecast = fc0; }
+  if(st.t==='sim' && !S.rnd.sim){ const fc0 = S.period.forecast; S.rnd.sim = simulateRun(); S.rnd.simAnim = { start: Date.now(), dur: Math.min(14000, 1000 * Math.max(4, settings.flightSecs) * Math.max(1, Math.min(3, S.rnd.sim.parts.length))) }; S.period.forecast = fc0; livePeriodShow(); }
   if(st.t==='results') (S.rnd.sim ? applyPeriodResults : applyResults)();
   if(st.t==='summary' && roundData(S.round).finale && !S.finished) recordRun();
   if(st.t==='summary' && roundData(S.round).checkpoint && !S.rnd.checkpointed){ S.rnd.checkpointed = true; recordRun(true); }
@@ -3494,7 +3597,7 @@ const roundSchool = x => WE.roundSchool(x);
   WB.routes.forEach(w => {
     const r = WORLD.routes.find(x => x.id === w.id); if(!r) return;   // the game's own routes only (Dublin and Paris for now)
     const arch = WB.archetypes.find(a => a.id === w.archetype), F = w.fareOptions.slice();
-    Object.assign(r, { wb:true, km:w.km, alat:w.lat, alon:w.lon, utc:w.utc, basePrice:w.baseFare, fares:F, prices:F.slice(), setupPrices:F.slice(),
+    Object.assign(r, { wb:true, km:w.km, code:w.airport, alat:w.lat, alon:w.lon, utc:w.utc, basePrice:w.baseFare, fares:F, prices:F.slice(), setupPrices:F.slice(),
       turnaroundMin:w.turnaroundAwayMin, landingFeeAway:w.landingFeeAway, demandAtFare:w.demandAtFare, arch, competition:w.competitionSensitivity,
       blurb:w.story || r.blurb, step:10, growth:0 });
     delete r.profile;
@@ -4352,7 +4455,7 @@ function updateStrip(){
   const gated = awaitingClearance(); const fl = (S.rnd.flights.length ? S.rnd.flights : planFlights()).map(f => { const r = routeById(f.route), s = gated && !f.grounded ? 'AWAITING CLEARANCE' : (S.rnd.status[f.key]||'SCHEDULED'); return `<span class="fl">${fmtTime(f.dep)} ${flagSvg(r.flag,14)} ${esc(r.city)} <span class="st ${statusClass(s)}">${s}</span></span>`; }).join('');
   $('strip').innerHTML = `<span class="label">Board</span>${fl || '<span class="muted">No flights yet</span>'}<span class="label" style="margin-left:14px">Tank</span><span class="amber">${num(S.fuel)} L</span><span class="label" style="margin-left:14px">Fuel today</span><span class="amber">${priceL(fuelPrice())}/L</span><span class="iwb ${live?'on':''}">${live ? '● IWB connected' : '○ IWB not open'}</span>`;
 }
-function statusClass(s){ return {'ON TIME':'s-ontime','SCHEDULED':'s-scheduled','AWAITING CLEARANCE':'s-clearance','BOARDING':'s-boarding','DEPARTED':'s-departed','IN FLIGHT':'s-inflight','LANDED':'s-landed','FULL FLIGHT':'s-full','DELAYED':'s-delayed','DIVERTED':'s-delayed','CANCELLED':'s-cancelled','GROUNDED':'s-grounded','NO FUEL':'s-grounded'}[s] || 's-scheduled'; }
+function statusClass(s){ return {'CHECK-IN':'s-checkin','PREPARING':'s-checkin','FINAL CALL':'s-final','GATE CLOSED':'s-closed','PUSHBACK':'s-taxi','TAXIING':'s-taxi','TAKE-OFF':'s-inflight','AIRBORNE':'s-inflight','DESCENDING':'s-inflight','EXPECTED':'s-scheduled','TURNAROUND':'s-turn','READY':'s-landed','AT GATE':'s-scheduled','ON TIME':'s-ontime','SCHEDULED':'s-scheduled','AWAITING CLEARANCE':'s-clearance','BOARDING':'s-boarding','DEPARTED':'s-departed','IN FLIGHT':'s-inflight','LANDED':'s-landed','FULL FLIGHT':'s-full','DELAYED':'s-delayed','DIVERTED':'s-delayed','CANCELLED':'s-cancelled','GROUNDED':'s-grounded','NO FUEL':'s-grounded'}[s] || 's-scheduled'; }
 
 /* While the pupil works a live sum, the planes wait at the gate (brief, principle 3). */
 const TASK_STEPS = ['setupPrice','fare','trips','fuel','cabin','quick','day','plane'];
@@ -5264,6 +5367,7 @@ function todayCard(mode){
   if(mode === 'sim') return simCard();
   if(mode === 'results' && S.rnd.sim) return periodResultsCard();
   const f = fleetOne(), p = ourPlane(), sched = f ? schedOf(f) : [], need = fuelNeeded();
+  if(mode === 'live' && S.rnd.live) return liveCard();
   if(mode === 'live'){ const a = S.rnd.anim;
     return `${hqHead('Operations', 'LIVE')}<div class="pb td2"><div class="live-clock"><span class="kl">Airport time</span><b id="ovClock">${fmtTime(a ? a.from : firstDep())}</b></div><div class="live-bar"><i id="ovProg"></i></div>
       <p class="muted">${esc(svcLabel(sched))} · ${plural(boardFlights().filter(x => !x.grounded).length, 'flight')} today. Watch the map and Live Operations.</p>
@@ -5782,7 +5886,7 @@ function editStep(what){
   if(k === 'month' || k === 'year') return what === 'forecast' && k === 'year' ? 'yearPlan' : 'plans';
   const setup = S.phase === 'setup'; return what === 'timetable' ? (setup ? 'timetable' : 'planner') : what === 'extras' ? 'planner' : 'options';
 }
-function goWord(){ const k = railKind(); return k === 'week' ? 'RUN THE WEEK' : k === 'month' ? `RUN ${monthName(S.period.from).toUpperCase()}` : k === 'year' ? 'RUN THE YEAR' : 'START OPERATIONS'; }
+function goWord(){ const k = railKind(); return k === 'week' ? 'SEND THE WEEK TO OPERATIONS' : k === 'month' ? `RUN ${monthName(S.period.from).toUpperCase()}` : k === 'year' ? 'RUN THE YEAR' : 'SEND TO OPERATIONS WALL'; }
 function closeWord(){ const k = railKind(), P = S.period; if(S.rnd.saving) return 'Back to the aircraft'; return P && P.type === 'gap' ? 'Plan Week 1' : k === 'week' ? 'Close the week' : k === 'month' ? 'Close the month' : k === 'year' ? 'Go to the Year 1 review' : 'Close the day'; }
 function planWord(){ const k = railKind(); return k === 'week' ? 'Plan the week' : k === 'month' ? `Plan ${monthName(S.period.from)}` : k === 'year' ? 'Plan the year' : "Plan today's operation"; }
 function readyTitle(){ const k = railKind(), P = S.period; return k === 'week' ? `Ready for Week ${weekNo(P.from)}` : k === 'month' ? `Ready for ${monthName(P.from)}` : k === 'year' ? 'Ready to run the year' : S.phase === 'setup' ? 'Ready for launch' : `Ready for Day ${S.round}`; }
@@ -6013,6 +6117,7 @@ R.review = () => {
 /* ---------- the run: the HQ while routine days go by ---------- */
 let simLoop = null;
 function simCard(){
+  if(S.rnd.live) return liveCard();
   const T = S.rnd.sim, f = fleetOne(), sched = f ? schedOf(f) : [];
   return `${hqHead('Operations', 'RUNNING')}<div class="pb td2"><div class="live-clock"><span class="kl">Date</span><b id="simDate">${T ? dateShort(T.from) : ''}</b></div><div class="live-bar"><i id="simProg"></i></div>
     ${T && T.parts.length > 1 ? `<div class="sim-chips">${T.parts.map((p, i) => `<span data-sc="${i}">${esc(p.label)}</span>`).join('')}</div>` : ''}
@@ -6700,7 +6805,7 @@ R.ready = () => {
     fuelContract() ? row('Fuel', `Bought as it is used at <span class="mono">${priceL(fuelPrice())}</span> a litre ${PW().now}`, '', true) : row('Fuel', paid ? `<span class="mono">${num(S.fuel)} L</span> in the tank${o ? ` + <span class="mono">${num(o.litres)} L</span> on order` : ''} · flights burn <span class="mono">${num(need)} L</span>${per && after < need ? ` · <span class="orange">${num(need - after)} L delivered</span>` : ''}` : 'Supplied free by the launch deal', paid ? 'fuelPlan' : '', fuelOk, 'Not enough fuel'),
     row(fc && fc.projected ? 'Projected profit' : 'Profit (model)', fc ? `${esc(fc.plan || 'Your plan')} · <span class="mono ${fc.profit >= 0 ? 'green' : 'red'}">${money(fc.profit)}</span>` : '—', editStep('forecast'), fcOk, fc ? 'The plan has changed: test it again' : 'Not costed yet'), readyExtra(row)].join('');
   screen().innerHTML = taskFrame({ question: readyTitle(), work:false,
-    say: ok ? 'Everything is ready. Start operations when you are ready.' : 'Some items need updating before operations can start.',
+    say: ok ? 'The operating plan is ready. Send it to the Operations Wall when you are ready to watch it fly.' : 'Some items need updating before operations can start.',
     context: ctxForecast(),
     main:`<div class="opplan"><div class="op-head"><span class="label">Operating plan</span><b>${setup ? 'Launch Day' : railTitle()[0].replace(/ Plan$/, '')} · ${esc(homeData().code)} ${esc(terminalData().name || '')}</b></div>${rows}</div>
       <div class="launch"><button class="btn primary huge go" id="startOps" ${ok ? '' : 'disabled'}>${goWord()}</button><p class="muted">${ok ? (o ? `Your fuel order (<span class="mono">${money(o.total)}</span>) is paid when operations start.` : paid ? 'The aircraft is fuelled and the plan is costed.' : 'The plan is costed. The launch deal supplies the fuel.') : 'Update the items marked above first.'}</p></div>` });
@@ -6952,6 +7057,622 @@ function growthReason(T, fromDay){
   if(!xs.length) return null;
   return `More people wanted to fly as word spread: ${xs.map(x => `${x.r.city} ${x.up}% more`).join(', ')} by ${monthName(T.to)} than in ${monthName(d0)}.`;
 }
+
+/* ==================================================================
+   LIVE OPERATIONS ON THE OPERATIONS WALL
+   (Airline Simulator Live Operations / IWB Immersion Brief; first pass: Launch Day to Week 3.)
+   "Routine time compresses. Meaningful moments become visible."
+   - The show is built when operations start, from the model's own flights. It never changes a passenger or
+     a pound: no random no-shows, no extra demand. (A storm in Week 3 delays one flight on the wall only.)
+   - A service in full: preparing, boarding (the seats fill one by one), final call, gate closed, pushback,
+     taxi, take-off, the flight, landing, the turnaround checklist, the return, ready again.
+     Launch Day shows every service in full; later days the first service in full and the others briskly.
+   - The weekend and the weeks: the first day in detail (or one featured flight when the plan has not
+     changed), then the rest compressed, slowing down for focus moments taken from the model's data.
+   - One clock (S.rnd.live.clock): the HQ owns it and publishes it, the IWB window runs the same clock.
+     Pace buttons on either screen go to the HQ.
+   ================================================================== */
+const LO = { checkin:90, prep:35, board:25, final:10, close:4 };
+/* Real seconds, at standard pace, for each part of a service. */
+const LO_PACE = {
+  full:  { prep:4,   board:12, final:5, closed:4,   push:6, up:2,  cruise:12, desc:4,   land:4,   away:14, home:8 },
+  brisk: { prep:1.2, board:5,  final:2, closed:1.5, push:2, up:.7, cruise:4,  desc:1.4, land:1.4, away:4,  home:3 } };
+const LO_IDLE = 60, LO_DAY = 300, LO_NIGHT = 1600;    // game minutes a second: an aircraft waiting, a compressed day, the night
+const LO_FOCUS = { slow:20, hold:1, resume:10 };       // game minutes: slowing down, the moment itself, speeding up again
+const LO_KIND = { milestone:'MILESTONE', capacity:'FULL FLIGHT', quiet:'QUIET SERVICE', turnaround:'OPERATIONS', weather:'WEATHER', record:'RECORD' };
+
+function liveScale(){ const s = +settings.flightSecs; return clamp(isFinite(s) && s > 0 ? s / 7 : 1, 0.02, 3); }
+function opsSoundOn(){ return settings.opsSound !== false; }
+function iwbConnected(){ return !IS_DISPLAY && (Date.now() - lastPong) < 9000; }
+/* This window shows the wall, so it makes the sounds (never both windows). */
+function liveHere(){ return IS_DISPLAY || (wallView && !iwbConnected()); }
+function liveOn(){ return !!(S && S.rnd && S.rnd.live && S.steps && S.steps.length && ['fly', 'sim'].includes(step().t)); }
+function legShape(L){ return { push:Math.min(3, L * .06), taxi:Math.min(7, L * .12), up:Math.min(8, L * .14), desc:Math.min(9, L * .16), land:Math.min(5, L * .09) }; }
+const smooth = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
+function ordinalTh(n){ return num(n) + 'TH'; }      // 100TH, 500TH, 1,000TH: every milestone ends in 0
+function regOf(uid){ const i = Math.max(0, S.fleet.findIndex(x => x.uid === uid)); return 'G-' + String(S.airline.code || 'DA').slice(0, 2).toUpperCase() + 'A' + String.fromCharCode(65 + i % 26); }
+function aptCode(r){ return r ? (r.code || String(r.id).toUpperCase()) : homeData().code; }
+const loPut = (el, html) => { if(el && el._h !== html){ el._h = html; el.innerHTML = html; } };
+
+/* ---------- the show ---------- */
+function liveFlight(f, k, d){
+  const r = routeById(f.route), p = planeById(f.planeId), L = TIME.leg(p, r), A = TIME.away(p, r), dep = f.dep + k * 1440, arr = dep + 2 * L + A, off = !!(f.noFuel || f.grounded);
+  return { key:f.key + '@' + k, fk:f.key, uid:f.uid, code:f.code, rcode:returnCode(f.code), route:f.route, city:r.city, gate:String(r.gate || 1), k, d,
+    dep, sched:dep, arrAway:dep + L, depAway:dep + L + A, arr, ready:arr + TIME.home(p), L, A, seats:f.seats, sold:off ? 0 : f.sold, price:f.price, off,
+    why:f.noFuel ? 'NO FUEL' : f.grounded ? 'GROUNDED' : '', band:f.band || bandOf(f.dep), fuelL:f.fuelL || 0, style:'fast', ob:null, delay:0, waiting:0, want:0 };
+}
+function liveShift(F, m){ F.delay += m; ['dep', 'arrAway', 'depAway', 'arr', 'ready'].forEach(k => { F[k] += m; }); }
+/* Cabin sales, as the model counts them: a share of each route's passengers buy; shared out between its services. */
+function liveCabin(list){
+  const ob = onboardOf(); if(!snacksOn() || !ob || (!ob.share && !ob.free)) return;
+  const by = {}; list.forEach(F => { if(!F.off) (by[F.route] = by[F.route] || []).push(F); });
+  Object.keys(by).forEach(id => {
+    const xs = by[id], pax = xs.reduce((t, F) => t + F.sold, 0);
+    if(ob.free){ xs.forEach(F => { F.ob = { free:true, n:F.sold }; }); return; }
+    const total = Math.floor(pax * ob.share), raw = xs.map(F => pax ? total * F.sold / pax : 0), n = raw.map(Math.floor);
+    let left = total - n.reduce((a, b) => a + b, 0);
+    raw.map((v, i) => [v - n[i], i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if(left > 0){ n[i]++; left--; } });
+    xs.forEach((F, i) => { F.ob = { n:n[i], price:ob.price, rev:n[i] * ob.price }; });
+  });
+}
+/* People left without a seat: those who wanted a full service's time of day, and (on the last full service) the flexible ones. */
+function liveWaiting(list){
+  const by = {}; list.forEach(F => { if(!F.off) (by[F.route] = by[F.route] || []).push(F); });
+  Object.keys(by).forEach(id => {
+    const xs = by[id], P = demandPools(routeById(id), fareOf(id)), left = {};
+    Object.keys(P).forEach(b => { if(b !== 'W') left[b] = P[b]; });
+    xs.forEach(F => { const f = F._f || {}; if(left[F.band] !== undefined) left[F.band] -= (f.locked || 0); left.flex -= (f.flexible || 0); F.want = P.W; });
+    const full = xs.filter(F => F.sold >= F.seats);
+    full.forEach(F => { F.waiting = Math.max(0, left[F.band] || 0); });
+    if(full.length && left.flex > 0) full[full.length - 1].waiting += left.flex;
+  });
+}
+/* days: [{ d, beat, style:'all'|'first'|'featured'|'compressed', flights }]; cfg: the beat's "live" data (weather). */
+function buildShow(kind, days, cfg){
+  cfg = cfg || {};
+  const L = { id:Date.now().toString(36) + Math.round(Math.random() * 1e4), kind, days:[], flights:[], cues:[], moments:[], zones:[], scale:liveScale(), notes:[] };
+  days.forEach((D, k) => {
+    const list = D.flights.slice().sort((a, b) => a.dep - b.dep).map(f => { const F = liveFlight(f, k, D.d); F._f = f; return F; });
+    withBeat(D.beat, () => { liveCabin(list); liveWaiting(list); });
+    const on = list.filter(F => !F.off);
+    on.forEach((F, i) => { F.style = D.style === 'all' ? 'full' : D.style === 'first' ? (i === 0 ? 'full' : 'brisk') : D.style === 'featured' ? (i === 0 ? 'full' : 'fast') : 'fast'; });
+    const off = k * 1440, first = on.length ? Math.min(...on.map(F => F.dep)) : off + 420, last = on.length ? Math.max(...on.map(F => F.ready)) : off + 1260;
+    const det = D.style === 'all' || D.style === 'first';
+    L.days.push({ k, d:D.d, beat:D.beat, style:D.style, start: det ? first - LO.prep - 6 : Math.min(off + 360, first - LO.prep - 6), end: det ? last + 10 : Math.max(off + 1320, last + 10) });
+    L.flights.push(...list);
+  });
+  // the first service on a route the airline has never flown is always shown in full
+  const flown = new Set(); S.history.forEach(h => Object.keys(h.routes || {}).forEach(id => flown.add(id)));
+  const ord = () => L.flights.filter(F => !F.off).sort((a, b) => a.dep - b.dep);
+  if(S.phase !== 'setup'){ const seen = new Set(flown); ord().forEach(F => { if(!seen.has(F.route)){ seen.add(F.route); F.firstRoute = true; if(F.style === 'brisk') F.style = 'full'; } }); }
+  liveMoments(L, cfg, ord);
+  liveCues(L);
+  liveZones(L);
+  L.flights.forEach(F => { delete F._f; });
+  L.start = L.days[0].start; L.end = L.days[L.days.length - 1].end;
+  const intro = Math.round(5600 * Math.min(1, L.scale));
+  L.intro = intro; L.clock = { t0:Date.now() + intro, g0:L.start, rate:1, last:1 };
+  return L;
+}
+function liveMoments(L, cfg, ord){
+  const M = [], t = m => fmtTime(m), name = S.airline.name || 'Your airline', onDay = k => ord().filter(F => F.k === k);
+  // weather first: it moves a flight, and everything else is worked out on the moved times
+  if(cfg.weather){
+    const k = Math.min(cfg.weather.day || 0, L.days.length - 1);
+    for(const F of onDay(k).slice().sort((a, b) => b.dep - a.dep)){
+      const N = onDay(k).find(x => x.uid === F.uid && x.dep > F.dep), room = N ? N.dep - F.ready : (k * 1440 + 1320) - F.arr;
+      const dl = Math.floor(Math.min(cfg.weather.delay || 30, room) / 5) * 5;
+      if(dl < 15) continue;
+      const g = F.dep - 30; liveShift(F, dl);
+      M.push({ kind:'weather', g, key:F.key, route:F.route, until:F.dep, delay:dl, title:`WEATHER ALERT — ${F.city.toUpperCase()}`, sub:`A storm is passing over ${F.city}. ${F.code} will leave ${dl} minutes late, at ${t(F.dep)}. Nobody can change the weather: the airline waits for it to pass.` });
+      L.notes.push({ ic:'🌩️', text:`A storm over ${F.city} on ${WDAY[calDate(F.d).getUTCDay()]} delayed ${F.code} by ${dl} minutes. Everyone still flew, and the airline did not cause the storm.` });
+      break;
+    }
+  }
+  const o = ord();
+  if(S.phase === 'setup' && o[0]){ const F = o[0]; M.push({ kind:'milestone', g:F.dep + legShape(F.L).up, key:F.key, route:F.route, title:'FIRST DEPARTURE', sub:`${F.code} to ${F.city} is ${name}'s very first flight.` }); }
+  o.filter(F => F.firstRoute).forEach(F => M.push({ kind:'milestone', g:F.dep + legShape(F.L).up, key:F.key, route:F.route, title:`FIRST ${F.city.toUpperCase()} SERVICE`, sub:`${F.code} opens ${name}'s route to ${F.city}.` }));
+  const ms = S.milestones || (S.milestones = {});
+  if(!ms.fullFlight){ const F = o.find(x => x.sold >= x.seats); if(F){ ms.fullFlight = true; M.push({ kind:'milestone', g:F.dep - LO.close + .3, key:F.key, route:F.route, title:'FIRST FULL FLIGHT', sub:`${F.code} to ${F.city} leaves with every seat taken: ${F.seats} / ${F.seats}.` }); } }
+  let cum = S.history.reduce((a, h) => a + (h.pax || 0), 0);
+  o.forEach(F => { const b = cum; cum += F.sold; PAX_MILESTONES.forEach(n => { if(b < n && cum >= n) M.push({ kind:'milestone', g:F.dep - LO.close + .6, key:F.key, route:F.route, title:`${ordinalTh(n)} PASSENGER`, sub:`Passenger number ${num(n)} boards ${F.code} to ${F.city}.` }); }); });
+  // the everyday ones, once a show: in compressed time if there is any, so the simulation slows down for them
+  const fast = L.days.filter(D => D.style === 'compressed').map(D => D.k), pick = f => fast.length ? fast[Math.min(fast.length - 1, Math.floor(fast.length * f))] : 0;
+  { const F = onDay(pick(.4)).filter(x => x.sold >= x.seats && x.waiting > 0).sort((a, b) => b.waiting - a.waiting)[0];
+    if(F) M.push({ kind:'capacity', g:F.dep - LO.close, key:F.key, route:F.route, title:`${F.city.toUpperCase()} ${BAND_SHORT[F.band].toUpperCase()} SERVICE — FULL`, sub:`${F.seats} / ${F.seats} boarded. ${F.waiting} more ${F.waiting === 1 ? 'person' : 'people'} could not get a seat on this departure.` }); }
+  { const F = onDay(pick(.75)).filter(x => x.sold <= x.seats / 2).sort((a, b) => a.sold / a.seats - b.sold / b.seats)[0];
+    if(F) M.push({ kind:'quiet', g:F.dep - LO.close, key:F.key, route:F.route, title:`QUIET ${BAND_SHORT[F.band].toUpperCase()} SERVICE`, sub:`${F.code} to ${F.city} leaves with ${F.sold} / ${F.seats} passengers: ${F.seats - F.sold} empty seats.` }); }
+  { let best = null; const by = {}; onDay(pick(.15)).forEach(F => (by[F.uid] = by[F.uid] || []).push(F));
+    Object.values(by).forEach(xs => xs.forEach((F, i) => { const N = xs[i + 1]; if(!N) return; const slack = N.dep - F.ready; if(slack <= 5 && (!best || slack < best.slack)) best = { F, N, slack }; }));
+    if(best){ const { F, N, slack } = best; M.push({ kind:'turnaround', g:N.dep - LO.board + .4, key:N.key, route:N.route, title:'TIGHT TURNAROUND', sub:`${F.rcode} landed at ${t(F.arr)}. The aircraft is ready again at ${t(F.ready)}, and ${N.code} leaves at ${t(N.dep)}: ${slack > 0 ? plural(slack, 'minute') : 'no time'} to spare.` }); } }
+  // keep it calm: a flight in full or briskly gets a ribbon; in compressed time the simulation slows down for it,
+  // and an everyday moment (full, quiet, tight) only once for each plan
+  const order = ['weather', 'milestone', 'capacity', 'turnaround', 'quiet'], kept = [], count = { focus:0, ribbon:0 }, seen = S.liveSeen || (S.liveSeen = {}), plan = S.liveKey || '';
+  M.forEach(m => { const F = L.flights.find(x => x.key === m.key); m.focus = !F || F.style === 'fast'; });
+  for(let i = M.length - 1; i >= 0; i--){ const m = M[i]; if(m.focus && ['capacity', 'turnaround', 'quiet'].includes(m.kind)){ const id = m.kind + '|' + plan; if(seen[id]) M.splice(i, 1); else m.seenId = id; } }
+  M.sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind) || a.g - b.g).forEach(m => {
+    const type = m.focus ? 'focus' : 'ribbon'; if(count[type] >= 4) return;
+    if(kept.some(x => Math.abs(x.g - m.g) < (m.focus || x.focus ? 30 : 3))) return;
+    count[type]++; kept.push(m);
+  });
+  kept.sort((a, b) => a.g - b.g).forEach((m, i) => { m.id = m.kind + i; if(m.seenId){ seen[m.seenId] = true; delete m.seenId; } });
+  L.moments = kept;
+}
+function liveCues(L){
+  const name = S.airline.name || 'Your airline', Q = [];
+  L.flights.forEach(F => {
+    if(F.off || F.style === 'fast') return; const s = legShape(F.L), say = F.style === 'full';
+    Q.push({ g:F.dep - LO.board, kind:'board', key:F.key, chime:'ding', say, text:`${name} flight ${F.code} to ${F.city} is now boarding at Gate ${F.gate}.` });
+    Q.push({ g:F.dep - LO.final, kind:'final', key:F.key, chime:'ding', say, text:`Final call for passengers travelling on ${name} flight ${F.code} to ${F.city}.` });
+    Q.push({ g:F.dep - LO.close, kind:'closed', key:F.key, say, text:`Gate ${F.gate} is now closed.` });
+    Q.push({ g:F.arr - s.land, kind:'arrive', key:F.key, chime:'ding', say, text:`${name} flight ${F.rcode} from ${F.city} has arrived.` });
+  });
+  L.moments.forEach(m => Q.push({ g:m.g, kind:'moment', key:m.key, chime:m.kind === 'weather' || m.kind === 'quiet' || m.kind === 'turnaround' ? 'alert' : 'good', text:m.title, moment:m.id }));
+  Q.sort((a, b) => a.g - b.g).forEach((q, i) => { q.id = q.kind + i; });
+  L.cues = Q;
+}
+/* The speed of time: each part of each shown service has its own pace; everything else waits, or races through the day. */
+function liveZones(L){
+  const iv = [], add = (a, b, secs) => { if(b > a + 1e-6 && secs > 0) iv.push([a, b, (b - a) / secs]); };
+  L.flights.forEach(F => {
+    if(F.off || F.style === 'fast') return; const P = LO_PACE[F.style], s = legShape(F.L), D = F.dep;
+    const leg = t0 => { add(t0, t0 + s.taxi, P.push); add(t0 + s.taxi, t0 + s.up, P.up); add(t0 + s.up, t0 + F.L - s.desc, P.cruise); add(t0 + F.L - s.desc, t0 + F.L - s.land, P.desc); add(t0 + F.L - s.land, t0 + F.L, P.land); };
+    add(D - LO.prep, D - LO.board, P.prep); add(D - LO.board, D - LO.final, P.board); add(D - LO.final, D - LO.close, P.final); add(D - LO.close, D, P.closed);
+    leg(D); add(F.arrAway, F.depAway, P.away); leg(F.depAway); add(F.arr, F.ready, P.home);
+  });
+  L.moments.forEach(m => {
+    if(m.focus){ add(m.g - LO_FOCUS.slow, m.g, 5); add(m.g, m.g + LO_FOCUS.hold, 7); add(m.g + LO_FOCUS.hold, m.g + LO_FOCUS.hold + LO_FOCUS.resume, 3); }
+    else add(m.g, m.g + .5, 3.2);
+  });
+  const start = L.days[0].start, end = L.days[L.days.length - 1].end, pts = new Set([start, end]);
+  iv.forEach(([a, b]) => { pts.add(a); pts.add(b); });
+  L.days.forEach(D => { pts.add(D.start); pts.add(D.end); pts.add(D.k * 1440 + 360); pts.add(D.k * 1440 + 1320); });
+  const P = [...pts].filter(x => x >= start && x <= end).sort((a, b) => a - b), Z = [];
+  const base = x => { const D = L.days[Math.floor(x / 1440)]; if(!D || x < D.start || x >= D.end) return LO_NIGHT; if(D.style === 'all' || D.style === 'first') return LO_IDLE; const m = x - D.k * 1440; return m >= 360 && m < 1320 ? LO_DAY : LO_NIGHT; };
+  for(let i = 0; i < P.length - 1; i++){
+    const a = P[i], b = P[i + 1]; if(b - a < 1e-9) continue; const mid = (a + b) / 2;
+    let sp = base(mid); iv.forEach(([x, y, s]) => { if(x <= mid && y >= mid && s < sp) sp = s; });
+    const z = Z[Z.length - 1]; if(z && Math.abs(z[2] - sp) < 1e-9 && Math.abs(z[1] - a) < 1e-9) z[1] = b; else Z.push([a, b, sp]);
+  }
+  let cum = 0; Z.forEach(z => { z[3] = cum; cum += (z[1] - z[0]) / z[2]; });
+  L.zones = Z.map(z => z.map(v => Math.round(v * 1e4) / 1e4)); L.total = Math.round(cum * 100) / 100;
+}
+
+/* ---------- the clock ---------- */
+function liveZoneAt(Z, g){ let lo = 0, hi = Z.length - 1; while(lo < hi){ const m = (lo + hi + 1) >> 1; if(Z[m][0] <= g) lo = m; else hi = m - 1; } return lo; }
+function liveAdvance(L, g, secs){
+  const Z = L.zones; let i = liveZoneAt(Z, g);
+  while(secs > 1e-9 && g < L.end - 1e-9){ const z = Z[i]; if(!z){ g = L.end; break; } const room = (z[1] - g) / z[2]; if(room >= secs){ g += secs * z[2]; secs = 0; } else { secs -= room; g = z[1]; i++; } }
+  return Math.min(g, L.end);
+}
+function liveNow(L){ L = L || (S && S.rnd && S.rnd.live); if(!L || !L.clock) return null; const c = L.clock, t = Date.now(); if(t <= c.t0 || !c.rate) return c.g0; return liveAdvance(L, c.g0, (t - c.t0) / 1000 * c.rate / L.scale); }
+function liveDay(L, g){ return clamp(Math.floor(g / 1440), 0, L.days.length - 1); }
+/* Real seconds (standard pace) from the start to g: the progress bar and "time left". */
+function liveRealAt(L, g){ const Z = L.zones, i = liveZoneAt(Z, g), z = Z[i]; return z ? z[3] + Math.max(0, Math.min(g, z[1]) - z[0]) / z[2] : 0; }
+function liveProgress(L, g){ return L.total ? clamp(liveRealAt(L, g) / L.total, 0, 1) : 1; }
+function liveFocus(L, g){ const m = L.moments.find(x => x.focus && g >= x.g - LO_FOCUS.slow && g < x.g + LO_FOCUS.hold + LO_FOCUS.resume); if(!m) return null; return { m, at: g < m.g - 6 ? 'slowing' : g < m.g + LO_FOCUS.hold ? 'event' : 'resuming' }; }
+function liveRibbon(L, g){ return L.moments.find(x => !x.focus && g >= x.g && g < x.g + 9) || null; }
+function liveMode(L, g){
+  if(Date.now() < L.clock.t0 && g <= L.start + 1e-6) return 'intro';
+  if(g >= L.end - 1e-6) return 'done';
+  if(!L.clock.rate) return 'paused';
+  if(liveFocus(L, g)) return 'focus';
+  const D = L.days[liveDay(L, g)];
+  if(D.style === 'compressed') return 'sim';
+  if(D.style === 'featured'){ const F = L.flights.find(x => x.k === D.k && x.style === 'full'); if(!F || g < F.dep - LO.prep || g >= F.ready) return 'sim'; }
+  return 'live';
+}
+function liveNextStop(L, g){
+  const c = [];
+  L.flights.forEach(F => { if(!F.off && F.style !== 'fast') c.push(F.dep - LO.prep); });
+  L.moments.forEach(m => c.push(m.g - (m.focus ? LO_FOCUS.slow : .5)));
+  L.days.forEach(D => c.push(D.start));
+  const t = c.filter(x => x > g + .5).sort((a, b) => a - b)[0];
+  return t === undefined ? L.end : t;
+}
+
+/* ---------- where each flight is, minute by minute ---------- */
+function livePhase(F, g){
+  if(F.off) return { st:'off', label:'CANCELLED', at:'home', boarded:0 };
+  const D = F.dep, s = legShape(F.L);
+  if(g < D - LO.checkin) return { st:'sched', label:'SCHEDULED', at:'home', boarded:0 };
+  if(g < D - LO.prep) return { st:'checkin', label:'CHECK-IN', at:'home', boarded:0 };
+  if(g < D - LO.board) return { st:'prep', label:'PREPARING', at:'home', boarded:0 };
+  if(g < D - LO.final) return { st:'board', label:'BOARDING', at:'home', boarded:Math.min(F.sold, Math.floor(F.sold * (g - (D - LO.board)) / (LO.board - LO.final - 1) + 1e-6)) };
+  if(g < D - LO.close) return { st:'final', label:'FINAL CALL', at:'home', boarded:F.sold };
+  if(g < D) return { st:'closed', label:'GATE CLOSED', at:'home', boarded:F.sold };
+  if(g < F.arrAway) return liveLeg(F, g - D, s, 'out');
+  if(g < F.depAway){ const u = (g - F.arrAway) / F.A; return { st:'turnA', label:'TURNAROUND', at:'away', u, boarded: u < .7 ? 0 : Math.min(F.sold, Math.floor(F.sold * (u - .7) / .28 + 1e-6)) }; }
+  if(g < F.arr) return liveLeg(F, g - F.depAway, s, 'back');
+  if(g < F.ready) return { st:'turnH', label:'TURNAROUND', at:'home', u:(g - F.arr) / Math.max(1, F.ready - F.arr), boarded:0 };
+  return { st:'done', label:'READY', at:'home', boarded:0 };
+}
+function liveLeg(F, t, s, leg){
+  const L = F.L, back = leg === 'back';
+  const st = t < s.push ? 'push' : t < s.taxi ? 'taxi' : t < s.up ? 'takeoff' : t < L - s.desc ? 'cruise' : t < L - s.land ? 'desc' : 'taxiin';
+  const u = t < s.taxi ? 0 : t >= L - s.land ? 1 : smooth((t - s.taxi) / (L - s.land - s.taxi));
+  const lbl = { push:'PUSHBACK', taxi:'TAXIING', takeoff:'TAKE-OFF', cruise:'AIRBORNE', desc:'DESCENDING', taxiin:'LANDED' }[st];
+  const ground = st === 'push' || st === 'taxi' ? t / Math.max(.1, s.taxi) : st === 'taxiin' ? (t - (L - s.land)) / Math.max(.1, s.land) : 0;
+  return { st, leg, back, u, ground, label:lbl, boarded:F.sold, at: st === 'push' || st === 'taxi' ? (back ? 'away' : 'home') : st === 'taxiin' ? (back ? 'home' : 'away') : 'air',
+    eta:(back ? F.arr : F.arrAway) - s.land, cruiseU: st === 'cruise' ? (t - s.up) / Math.max(1, L - s.desc - s.up) : -1 };
+}
+/* The departures board (the outbound service) and the arrivals board (its return). */
+function liveWeatherAt(L, F, g){ const m = L.moments.find(x => x.kind === 'weather' && x.key === F.key); return m && g >= m.g && g < F.dep - LO.board ? m : null; }
+function liveDepStatus(L, F, g){
+  if(F.off) return F.why || 'CANCELLED'; if(liveWeatherAt(L, F, g)) return 'DELAYED';
+  const p = livePhase(F, g);
+  if(p.st === 'sched') return 'SCHEDULED'; if(p.st === 'checkin' || p.st === 'prep') return 'CHECK-IN';
+  if(p.st === 'board') return 'BOARDING'; if(p.st === 'final') return 'FINAL CALL'; if(p.st === 'closed') return 'GATE CLOSED';
+  if(p.leg === 'out') return p.st === 'push' || p.st === 'taxi' ? 'TAXIING' : p.st === 'taxiin' ? 'LANDED' : 'AIRBORNE';
+  return 'LANDED';
+}
+function liveArrStatus(L, F, g){
+  if(F.off) return F.why || 'CANCELLED'; if(liveWeatherAt(L, F, g)) return 'DELAYED';
+  const p = livePhase(F, g);
+  if(p.leg === 'back') return p.st === 'push' || p.st === 'taxi' ? 'TAXIING' : p.st === 'taxiin' ? 'LANDED' : 'AIRBORNE';
+  if(p.st === 'turnA') return p.u >= .7 ? 'BOARDING' : 'EXPECTED';
+  if(p.st === 'turnH' || p.st === 'done') return 'LANDED';
+  return 'EXPECTED';
+}
+/* One aircraft at g: its current service, the next, the last one done. */
+function liveAircraft(L, uid, g, k){
+  const fl = L.flights.filter(F => F.uid === uid && F.k === k && !F.off).sort((a, b) => a.dep - b.dep);
+  const cur = fl.find(F => g >= F.dep - LO.prep && g < F.ready) || null;
+  const next = fl.find(F => F !== cur && (cur ? F.dep > cur.dep : F.dep - LO.prep > g)) || null;
+  const prev = fl.filter(F => F.ready <= g && F !== cur).pop() || null;
+  return { uid, fl, F:cur, p:cur ? livePhase(cur, g) : null, next, prev, overlap: !!(cur && next && g >= next.dep - LO.prep) };
+}
+/* Running totals for the strip and the compressed panel. */
+function liveTotals(L, g, k){
+  const o = { pax:0, rev:0, done:0, legs:0, legsDone:0, dep:0, onTime:0, today:0, todayPax:0, services:0 };
+  L.flights.forEach(F => {
+    if(F.off) return; const s = legShape(F.L);
+    o.services++; if(F.k === k){ o.legs += 2; if(g >= F.arrAway - s.land) o.legsDone++; if(g >= F.arr - s.land) o.legsDone++; }
+    if(g >= F.dep - LO.close){ o.pax += F.sold; o.rev += F.sold * F.price + (F.ob && F.ob.rev ? F.ob.rev : 0); if(F.k === k) o.todayPax += F.sold; }
+    if(g >= F.dep){ o.dep++; if(F.delay < 15) o.onTime++; }
+    if(g >= F.arr - s.land) o.done++;
+  });
+  if(L.profits) o.profit = L.days.reduce((t, D, i) => t + (g >= D.end ? (L.profits[i] || 0) : 0), 0);
+  return o;
+}
+
+/* ---------- starting the show ---------- */
+/* Launch Day and Days 1–4 (the fly step): the flights, the launch-deal fuel, the tank, then the show. */
+function startFlight(){
+  S.rnd.flights = planFlights(); const paid = fuelPaid();
+  S.rnd.flights.slice().sort((a, b) => a.dep - b.dep).forEach(f => {
+    if(f.grounded) return;
+    if(!paid){ f.fuelCost = 0; S.rnd.status[f.key] = 'BOARDING'; return; }
+    if(S.fuel + 1e-9 >= f.fuelL){ f.fuelCost = consumeFuel(f.fuelL); S.rnd.status[f.key] = 'BOARDING'; }
+    else { f.noFuel = true; f.sold = 0; f.revenue = 0; f.runCost = 0; f.fuelCost = 0; S.rnd.status[f.key] = 'NO FUEL'; f.reasons = ['Not enough fuel — trip grounded.']; }
+  });
+  const fl = S.rnd.flights.filter(f => !f.grounded), first = fl.length ? Math.min(...fl.map(f => f.dep)) : firstDep(), last = S.rnd.flights.reduce((m, f) => Math.max(m, f.arr || 0), first + 60);
+  S.rnd.anim = { start: Date.now(), dur: settings.flightSecs * 2500, from: first - 30, to: last + 30 };
+  liveStartDay();
+}
+function liveStartDay(){
+  const fl = S.rnd.flights || []; S.rnd.live = null;
+  if(!fl.some(f => !f.grounded && !f.noFuel)) return;
+  S.liveKey = planKey(currentPlan());
+  S.rnd.live = buildShow('day', [{ d:S.phase === 'setup' ? 0 : S.day, beat:S.round, style:S.phase === 'setup' ? 'all' : 'first', flights:fl }], roundData(S.round).live);
+}
+/* The weekend and the weeks (the sim step, after the model has run the period). Months keep the plain run for now. */
+function livePeriodShow(){
+  const P = S.period, T = S.rnd.sim; S.rnd.live = null;
+  if(!P || !T || !['gap', 'week'].includes(P.type) || T.parts.length !== 1) return;
+  const key = planKey(currentPlan()), changed = P.type === 'gap' || S.liveKey !== key; S.liveKey = key;
+  const days = [];
+  for(let d = T.from; d <= T.to; d++){ const beat = beatAt(d); days.push({ d, beat, style: d === T.from ? (changed ? 'first' : 'featured') : 'compressed', flights: withBeat(beat, () => planFlights()) }); }
+  if(!days.some(D => D.flights.some(f => !f.grounded && !f.noFuel))) return;
+  const L = buildShow('period', days, roundData(S.round).live);
+  L.profits = (T.days || []).map(v => Math.round(v * 100) / 100);
+  L.notes.forEach(n => S.rnd.why.push(n));
+  S.rnd.live = L;
+}
+
+/* ---------- the HQ while the wall plays ---------- */
+let loLoop = null, loEnded = null, loLastWall = 0, loLastMap = 0;
+function liveEnter(st){
+  const L = S.rnd.live; if(!L || L.opened) return;
+  L.opened = true;
+  if(!iwbConnected() && settings.autoWall !== false && !IS_DISPLAY) setWallView(true);
+}
+R.fly = st => {
+  if(!S.rnd.live && (S.rnd.flights || []).some(f => !f.grounded && !f.noFuel)) liveStartDay();
+  if(!S.rnd.live){ renderOverview('live'); setTimeout(() => { if(step() === st) next(); }, 800); return; }
+  liveEnter(st); renderOverview('live'); liveHqLoop(st);
+};
+const R_sim_plain = R.sim;
+R.sim = st => { if(!S.rnd.live) return R_sim_plain(st); liveEnter(st); renderOverview('sim'); liveHqLoop(st); };
+function liveHqLoop(st){
+  if(loLoop === st) return; loLoop = st;
+  const tick = () => {
+    if(!S || !S.steps || step() !== st || !S.rnd.live){ loLoop = null; return; }
+    const L = S.rnd.live, g = liveNow(L), now = Date.now();
+    liveHqFrame(L, g, now);
+    if(wallView && now - loLastWall > 33){ loLastWall = now; renderLiveWall(); }
+    if(liveHere()) liveSounds(L, g);
+    if(g >= L.end - 1e-6 && now >= L.clock.t0 && loEnded !== L.id){ loEnded = L.id; setTimeout(() => { if(S && step() === st) next(); }, Math.max(200, Math.round(2200 * Math.min(1, L.scale)))); }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+function liveHqFrame(L, g, now){
+  const k = liveDay(L, g), c = $('ovClock'); if(c) c.textContent = fmtTime(g - k * 1440);
+  const dd = $('loDay'); if(dd) dd.textContent = dateShort(L.days[k].d);
+  const pr = $('ovProg'); if(pr) pr.style.width = (100 * liveProgress(L, g)).toFixed(1) + '%';
+  const ph = $('loPhase'); if(ph) loPut(ph, liveHqLine(L, g, k));
+  const pc = $('loPace'); if(pc) loPut(pc, livePaceButtons(L, 'hq'));
+  screen().querySelectorAll('[data-lo]').forEach(e => { const F = L.flights.find(x => x.fk === e.getAttribute('data-lo') && x.k === k); if(!F) return; const s = liveDepStatus(L, F, g), txt = cap(s);
+    if(e.textContent !== txt){ e.textContent = txt; e.className = 'lo-st ' + statusClass(s); const d = e.previousElementSibling; if(d) d.className = 'st-dot ' + statusClass(s); } });
+  if(hqMap && !S.overlay && !UI.view && !wallView && now - loLastMap > 45){ loLastMap = now; hqMap.render(); }
+}
+function liveHqLine(L, g, k){
+  const mode = liveMode(L, g);
+  if(mode === 'intro') return 'Operations starting…';
+  if(mode === 'done') return 'All services complete.';
+  const fm = liveFocus(L, g); if(fm) return `<b>${esc(fm.m.title)}</b>`;
+  if(mode === 'sim') return `Simulating ${esc(dateShort(L.days[k].d))}…`;
+  const A = liveAircraft(L, (S.fleet[0] || {}).uid, g, k);
+  if(!A.F) return A.next ? `Ready · next <b>${esc(A.next.code)}</b> to ${esc(A.next.city)} at ${fmtTime(A.next.dep)}` : 'All services complete.';
+  const back = A.p.back || A.p.st === 'turnH', code = back ? A.F.rcode : A.F.code;
+  return `<b>${esc(code)}</b> ${back ? 'from' : 'to'} ${esc(A.F.city)} · <span class="${statusClass(A.p.label)}">${esc(cap(A.p.label))}</span>${['board', 'final', 'closed'].includes(A.p.st) ? ` · ${A.p.boarded} / ${A.F.seats}` : ''}`;
+}
+function liveCard(){
+  const L = S.rnd.live; if(!L) return `${hqHead('Operations', 'LIVE')}<div class="pb"><p class="muted">Starting…</p></div>`;
+  const g = liveNow(L), k = liveDay(L, g), iwb = iwbConnected();
+  return `${hqHead('Operations', L.kind === 'day' ? 'LIVE' : 'RUNNING')}<div class="pb td2 lo-hq"><div class="live-clock"><span class="kl" id="loDay">${esc(dateShort(L.days[k].d))}</span><b id="ovClock">${fmtTime(g - k * 1440)}</b></div><div class="live-bar"><i id="ovProg"></i></div>
+    <p class="lo-line" id="loPhase">${liveHqLine(L, g, k)}</p><div class="lo-pace" id="loPace">${livePaceButtons(L, 'hq')}</div>
+    <div class="td-act">${iwb ? '<span class="muted">Live on the Operations Wall</span>' : '<button class="btn primary" data-ops="wall">▣ Watch on the Operations Wall</button>'}</div></div>`;
+}
+function livePaceButtons(L, where){
+  const c = L.clock, r = c.rate, g0 = liveNow(L), m0 = liveMode(L, g0), comp = m0 === 'sim' || m0 === 'focus' || L.days[liveDay(L, g0)].style === 'compressed', b = (cmd, label, on, cls) => `<button class="btn ${cls || ''}" data-ops="${cmd}" aria-pressed="${!!on}">${label}</button>`;
+  return [b('x1', '1× Live', r === 1), b('x2', '2×', r === 2), b('next', comp ? '⏭ Next event' : '⏭ Next flight'), r ? b('pause', '⏸ Pause') : b('play', '▶ Resume', false, 'primary'), b('summary', '⏩ Skip to summary')]
+    .concat(where === 'wall' ? [b('sound', opsSoundOn() ? '🔊 Sound' : '🔇 Sound', opsSoundOn())].concat(!IS_DISPLAY ? [b('hq', '◀ HQ')] : []) : []).join('');
+}
+/* Pace commands: the HQ changes the clock and publishes it; the IWB window sends its buttons here. */
+function opsCmd(cmd){
+  const L = S && S.rnd && S.rnd.live; if(!L || !liveOn()) return;
+  const now = Date.now(), c = L.clock, g = liveNow(L), intro = now < c.t0;
+  const set = (g0, rate, keepIntro) => { L.clock = { t0: keepIntro && intro ? c.t0 : now, g0, rate, last: rate || c.last || 1 }; };
+  if(cmd === 'x1' || cmd === 'x2' || cmd === 'x4') set(g, +cmd.slice(1), true);
+  else if(cmd === 'pause') set(g, 0, false);
+  else if(cmd === 'play') set(g, c.last || 1, false);
+  else if(cmd === 'next') set(liveNextStop(L, g), c.rate || c.last || 1, false);
+  else if(cmd === 'summary') set(L.end, c.rate || c.last || 1, false);
+  else return;
+  publish(); if(wallView) renderLiveWall();
+}
+function liveButton(cmd){
+  if(cmd === 'wall'){ if(!IS_DISPLAY) setWallView(true); return; }
+  if(cmd === 'hq'){ if(!IS_DISPLAY) setWallView(false); return; }
+  if(cmd === 'sound'){ settings.opsSound = !opsSoundOn(); saveSettings(); if(opsSoundOn()){ liveAudioUnlock(); liveChime('ding'); } if(IS_DISPLAY || wallView) renderLiveWall(); return; }
+  if(IS_DISPLAY){ send({ type:'ops', cmd }); return; }
+  opsCmd(cmd);
+}
+document.addEventListener('click', e => { const b = e.target && e.target.closest ? e.target.closest('[data-ops]') : null; if(!b) return; e.preventDefault(); e.stopPropagation(); liveButton(b.getAttribute('data-ops')); }, true);
+
+/* ---------- sound: a soft airport chime and short announcements, always shown as text too ---------- */
+let loAC = null;
+function liveAudioUnlock(){ try{ if(!loAC){ const C = window.AudioContext || window.webkitAudioContext; if(C) loAC = new C(); } if(loAC && loAC.state === 'suspended') loAC.resume(); }catch(e){} }
+document.addEventListener('pointerdown', liveAudioUnlock, true);
+function liveChime(kind){
+  if(!loAC || !opsSoundOn()) return;
+  const notes = kind === 'alert' ? [523, 415] : kind === 'good' ? [659, 784, 988] : [784, 659];
+  try{ notes.forEach((f, i) => { const o = loAC.createOscillator(), gn = loAC.createGain(), t = loAC.currentTime + i * .32; o.type = 'sine'; o.frequency.value = f;
+    gn.gain.setValueAtTime(0, t); gn.gain.linearRampToValueAtTime(.1, t + .03); gn.gain.exponentialRampToValueAtTime(.0008, t + 1.1); o.connect(gn); gn.connect(loAC.destination); o.start(t); o.stop(t + 1.2); }); }catch(e){}
+}
+const loHeard = { id:null, g:0, done:{} };
+function liveSounds(L, g){
+  if(loHeard.id !== L.id){ loHeard.id = L.id; loHeard.g = g; loHeard.done = {}; return; }
+  const from = loHeard.g; loHeard.g = g; if(g <= from) return;
+  const due = L.cues.filter(q => q.g > from && q.g <= g && !loHeard.done[q.id]); due.forEach(q => { loHeard.done[q.id] = true; });
+  const q = due[due.length - 1]; if(!q || g - q.g > 6 || !opsSoundOn()) return;     // jumped past it: stay quiet
+  if(q.chime) liveChime(q.chime);
+  if(q.say && document.body.classList.contains('tts')) setTimeout(() => speak(q.text), q.chime ? 700 : 0);
+}
+
+/* ---------- the Operations Wall ---------- */
+let loWallLoop = false;
+function liveWallLoop(){
+  if(loWallLoop) return; loWallLoop = true;
+  const tick = () => {
+    if(!S || !liveOn() || !IS_DISPLAY){ loWallLoop = false; return; }
+    renderLiveWall(); liveSounds(S.rnd.live, liveNow());
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+function liveMapMode(on){
+  if(!wallMap) return; const o = wallMap.o;
+  if(on && !o.live){ o.live = true; o.keepPad = o.pad; o.pad = .12; o.maxZoom = 40; o.inset = { t:84, b:306, l:16, r:430 }; wallMap.key = ''; wallMap.manual = false; }
+  if(!on && o.live){ o.live = false; o.pad = o.keepPad; o.maxZoom = 14; o.inset = null; wallMap.key = ''; wallMap.manual = false; }
+}
+function renderLiveWall(){
+  if(!S || !S.rnd || !S.rnd.live || !wallMap) return;
+  const L = S.rnd.live, g = liveNow(L), k = liveDay(L, g), D = L.days[k], mode = liveMode(L, g);
+  $('wall').className = 'wall mode-ops lm-' + mode;
+  $('clock').textContent = fmtTime(g - k * 1440);
+  $('wPeriod').textContent = L.kind === 'day' ? (S.phase === 'setup' ? 'LAUNCH DAY' : "TODAY'S OPERATIONS") : S.period.type === 'gap' ? 'THE WEEKEND' : `WEEK ${weekNo(S.period.from)} OPERATIONS`;
+  $('wDate').textContent = dateLong(D.d);
+  const LM = { intro:['ready', '● STARTING'], live:['run', '● LIVE'], sim:['run', '▶▶ SIMULATING'], focus:['focus', '◉ SLOWED DOWN'], paused:['hold', '■ PAUSED'], done:['done', '✓ COMPLETE'] }[mode], lv = $('wLive');
+  lv.className = 'w-live ' + LM[0]; lv.textContent = LM[1];
+  liveBoards(L, g, k);
+  const O = $('wOps'); O.hidden = false; loPut(O, liveOverlayHtml(L, g, k, mode));
+  const st = $('wStatus'); st.className = 'w-status ops'; loPut(st, liveStripHtml(L, g, k, mode));
+  $('wAlert').hidden = true; $('wSim').hidden = true; $('wOver').hidden = true;
+  liveMapMode(true); wallMap.focus = null; wallMap.autoFit(); wallMap.render();
+}
+function liveBoards(L, g, k){
+  const fl = L.flights.filter(F => F.k === k).sort((a, b) => a.sched - b.sched), gateOn = s => ['CHECK-IN', 'BOARDING', 'FINAL CALL'].includes(s);
+  const time = (F, t) => F.delay && g >= (L.moments.find(m => m.kind === 'weather' && m.key === F.key) || { g:Infinity }).g ? `<span class="orange">${fmtTime(t)}</span>` : fmtTime(t);
+  const dep = fl.map(F => { const s = liveDepStatus(L, F, g), gone = s === 'LANDED' || (s === 'AIRBORNE' && g > F.dep + 20);
+    return `<tr class="${gone ? 'gone' : ''}"><td class="t">${time(F, F.dep - k * 1440)}</td><td class="f">${esc(F.code)}</td><td>${esc(F.city)}</td><td><span class="status ${statusClass(s)}">${s}${gateOn(s) ? ` G${esc(F.gate)}` : ''}</span></td></tr>`; }).join('');
+  const arr = fl.slice().sort((a, b) => a.arr - b.arr).map(F => { const s = liveArrStatus(L, F, g), gone = s === 'LANDED' && g > F.arr + 15;
+    return `<tr class="${gone ? 'gone' : ''}"><td class="t">${time(F, F.arr - k * 1440)}</td><td class="f">${esc(F.rcode)}</td><td>${esc(F.city)}</td><td><span class="status ${statusClass(s)}">${s}</span></td></tr>`; }).join('');
+  $('dEmpty').hidden = fl.length > 0; $('aEmpty').hidden = fl.length > 0;
+  loPut($('dRows'), dep); loPut($('aRows'), arr); $('dPage').textContent = ''; $('aPage').textContent = '';
+}
+function liveOverlayHtml(L, g, k, mode){
+  if(mode === 'intro') return liveIntroHtml(L);
+  const fm = liveFocus(L, g), parts = [fm ? '' : liveAnnHtml(L, g), liveCardsHtml(L, g, k)];
+  if(fm) parts.push(liveFocusHtml(L, g, fm));
+  if(!fm || fm.at === 'resuming') parts.push(mode === 'sim' || fm ? liveSimHtml(L, g, k) : liveFeatHtml(L, g, k));
+  if(mode === 'paused') parts.push('<div class="lo-banner paused">■ PAUSED · press ▶ Resume to carry on</div>');
+  return parts.join('');
+}
+function liveIntroHtml(L){
+  const t = Date.now(), f = clamp(1 - (L.clock.t0 - t) / Math.max(1, L.intro), 0, 1), name = (S.airline.name || 'Your airline').toUpperCase(), on = L.flights.filter(F => !F.off), d0 = L.days[0];
+  const routes = [...new Set(on.filter(F => F.k === 0).map(F => F.city))].join(' and '), p = planeById((S.fleet[0] || {}).planeId) || {};
+  const sched = L.kind === 'day' ? `${plural(on.length, 'service')} to ${esc(routes)}` : `${plural(on.length, 'service')} over ${plural(L.days.length, 'day')}`;
+  const items = [['Schedule received', sched], ['Aircraft ready', `${esc(p.name || '')} ${esc(regOf((S.fleet[0] || {}).uid))}`], ['Gates opening', [...new Set(on.filter(F => F.k === 0).map(F => 'Gate ' + F.gate))].join(' · ')]];
+  return `<div class="lo-intro"><small>OPERATING PLAN APPROVED</small><h1>${esc(name)} OPERATIONS</h1><p class="li-when">${esc(L.kind === 'day' ? dateLong(d0.d) : fmtRange(d0.d, L.days[L.days.length - 1].d))}</p>
+    <div class="li-list">${items.map(([a, b], i) => `<div class="${f > (i + 1) * .2 ? 'on' : ''}"><i>${f > (i + 1) * .2 ? '✓' : '…'}</i><b>${a}</b><span>${b}</span></div>`).join('')}</div>
+    <div class="li-go ${f > .8 ? 'on' : ''}">● LIVE OPERATIONS STARTING</div></div>`;
+}
+function liveAnnHtml(L, g){
+  const q = L.cues.filter(x => x.kind !== 'moment' && x.g <= g && g - x.g < 14).pop();
+  return q ? `<div class="lo-ann a-${q.kind}"><span class="bell">🔔</span><span>${esc(q.text)}</span></div>` : '';
+}
+function liveCardsHtml(L, g, k){
+  return `<div class="lo-cards">${S.fleet.map(fl => {
+    const A = liveAircraft(L, fl.uid, g, k), p = planeById(fl.planeId), h = homeData();
+    if(!A.fl.length) return '';
+    let st = 'AT GATE', code = '—', rt = '—', pax = '—', eta = ['Next', '—'], cls = 's-scheduled';
+    if(A.F){ const F = A.F, P = A.p, back = P.back || P.st === 'turnH' || P.st === 'done', r = routeById(F.route);
+      st = P.st === 'turnA' || P.st === 'turnH' ? 'TURNAROUND' : P.st === 'checkin' || P.st === 'prep' ? 'PREPARING' : P.st === 'cruise' ? 'AIRBORNE' : P.label; cls = statusClass(st);
+      code = back ? F.rcode : F.code; rt = back ? `${aptCode(r)} → ${h.code}` : `${h.code} → ${aptCode(r)}`;
+      pax = `${P.st === 'board' ? P.boarded : P.st === 'turnH' || P.st === 'prep' ? 0 : F.sold} / ${F.seats}`;
+      eta = P.at === 'air' || P.st === 'push' || P.st === 'taxi' ? ['ETA', fmtTime(P.eta)] : P.st === 'turnA' ? ['Leaves again', fmtTime(F.depAway)] : P.st === 'turnH' ? ['Ready again', fmtTime(F.ready)] : ['Departs', fmtTime(F.dep)]; }
+    else if(A.prev){ st = 'READY'; cls = 's-landed'; eta = ['Ready since', fmtTime(A.prev.ready)]; }
+    const nx = A.next ? `${esc(A.next.code)} · ${esc(A.next.city)} · ${fmtTime(A.next.dep)}` : 'No more services today';
+    const fuel = !fuelPaid() ? 'Launch deal' : fuelContract() ? `${num(A.F ? A.F.fuelL : 0)} L at ${priceL(fuelPrice())}` : `${num(A.F ? A.F.fuelL : 0)} L from the tank`;
+    return `<div class="lo-ac"><div class="ac-h"><b>${esc(regOf(fl.uid))}</b><span>${esc(p.name)}</span></div><div class="ac-st ${cls}">${esc(st)}</div>
+      <dl><div><dt>Flight</dt><dd>${esc(code)} <small>${esc(rt)}</small></dd></div><div><dt>Passengers</dt><dd>${pax}</dd></div>${A.F ? `<div><dt>Fuel</dt><dd>${fuel}</dd></div>` : ''}<div><dt>${eta[0]}</dt><dd>${eta[1]}</dd></div><div><dt>Next</dt><dd>${nx}</dd></div></dl></div>`; }).join('')}</div>`;
+}
+const LF_STEPS = ['BOARDING', 'GATE CLOSED', 'TAXI', 'AIRBORNE', 'LANDED', 'TURNAROUND', 'RETURN', 'READY'];
+function liveStepIndex(P){
+  if(!P) return 7; if(['sched', 'checkin', 'prep', 'board', 'final'].includes(P.st)) return 0; if(P.st === 'closed') return 1;
+  if(P.leg === 'out') return P.st === 'push' || P.st === 'taxi' ? 2 : P.st === 'taxiin' ? 4 : 3;
+  if(P.st === 'turnA') return 5; if(P.leg === 'back') return 6; return 7;
+}
+function seatDots(seats, boarded, booked, waiting){
+  let h = ''; for(let i = 0; i < seats; i++) h += `<i class="${i < boarded ? 'on' : i < booked ? 'bk' : 'em'}"></i>`;
+  const w = waiting > 0 ? `<span class="lf-wait">${'<i></i>'.repeat(Math.min(waiting, 16))}<b>+${waiting} waiting</b></span>` : '';
+  return `<div class="lf-seatrow"><div class="lf-seats ${seats > 40 ? 'xl' : seats > 24 ? 'l' : ''}">${h}</div>${w}</div>`;
+}
+function liveChecklist(title, items, u, foot){
+  const n = items.length;
+  return `<div class="lf-check"><b class="lf-ct">${esc(title)}</b>${items.map(([label, a, b], i) => { const done = u >= b, on = u >= a && u < b; return `<span class="${done ? 'done' : on ? 'on' : ''}"><i>${done ? '✓' : on ? '…' : '·'}</i>${label}</span>`; }).join('')}${foot ? `<span class="lf-cf">${foot}</span>` : ''}</div>`;
+}
+function liveFeatHtml(L, g, k){
+  const uid = (S.fleet[0] || {}).uid, A = liveAircraft(L, uid, g, k), h = homeData(), rib = liveRibbon(L, g);
+  const ribbon = rib ? `<div class="lf-rib k-${rib.kind}"><b>★ ${esc(rib.title)}</b><span>${esc(rib.sub)}</span></div>` : '';
+  if(!A.F){
+    const n = A.fl.length, pax = A.fl.reduce((t, F) => t + F.sold, 0);
+    if(A.next){ const N = A.next, wx = liveWeatherAt(L, N, g);
+      return `<div class="lo-feat st-ready">${ribbon}<div class="lf-h"><b class="lf-code">${esc(regOf(uid))}</b><span class="lf-rt">${esc(h.city)}</span><span class="lf-st s-landed">${A.prev ? 'READY AGAIN' : 'AT THE GATE'}</span></div>
+        <div class="lf-b"><div class="lf-big">${A.prev ? fmtTime(A.prev.ready) : fmtTime(g - k * 1440)}<small>${A.prev ? 'ready again' : 'airport time'}</small></div><div class="lf-txt">Next: <b>${esc(N.code)}</b> to ${esc(N.city)}${wx ? ` · <span class="orange">delayed by the weather, now ${fmtTime(N.dep)}</span>` : ` at ${fmtTime(N.dep)}`}. Boarding opens at ${fmtTime(N.dep - LO.board)} at Gate ${esc(N.gate)}. <b>${N.sold}</b> passengers booked.</div></div>${liveSteps(null, true)}</div>`; }
+    return `<div class="lo-feat st-done">${ribbon}<div class="lf-h"><b class="lf-code">${esc(regOf(uid))}</b><span class="lf-rt">${esc(h.city)}</span><span class="lf-st s-landed">ALL SERVICES COMPLETE</span></div>
+      <div class="lf-b"><div class="lf-big">${plural(n, 'service')}<small>today</small></div><div class="lf-txt"><b>${num(pax)}</b> passengers carried. The aircraft is back at ${esc(h.code)} for the night.</div></div></div>`;
+  }
+  let F = A.F, P = A.p, tight = null;
+  if(A.overlap && P.st === 'turnH'){ const NP = livePhase(A.next, g); if(['board', 'final', 'closed'].includes(NP.st)){ tight = F; F = A.next; P = NP; } }
+  const r = routeById(F.route), reb = P.st === 'turnA' && P.u >= .7, back = P.back || P.st === 'turnH' || reb, code = back ? F.rcode : F.code, from = back ? aptCode(r) : h.code, to = back ? h.code : aptCode(r);
+  const stl = reb ? 'BOARDING' : P.st === 'checkin' || P.st === 'prep' ? 'PREPARING' : P.label;
+  const head = `<div class="lf-h"><b class="lf-code">${esc(code)}</b><span class="lf-rt">${esc(back ? r.city : h.city)} → ${esc(back ? h.city : r.city)}</span><span class="lf-gate">${back ? '' : 'GATE ' + esc(F.gate)}</span><span class="lf-st ${statusClass(P.st === 'turnH' || (P.st === 'turnA' && !reb) ? 'TURNAROUND' : stl)}">${esc(stl)}</span></div>`;
+  const tightNote = tight ? `<div class="lf-tight">The aircraft is still being turned round: ready at <b>${fmtTime(tight.ready)}</b>, ${tight.ready >= F.dep ? 'no time to spare' : plural(F.dep - tight.ready, 'minute') + ' to spare'}.</div>` : '';
+  let body = '';
+  const empty = F.seats - F.sold, full = F.sold >= F.seats;
+  if(['checkin', 'prep', 'sched'].includes(P.st)) body = `<div class="lf-big">${F.sold}<small>checked in</small></div>${seatDots(F.seats, 0, F.sold, 0)}<div class="lf-txt">Bags loading · fuel checked · cabin ready. Boarding at <b>${fmtTime(F.dep - LO.board)}</b>.</div>`;
+  else if(P.st === 'board') body = `<div class="lf-big">${P.boarded} / ${F.seats}<small>boarded</small></div>${seatDots(F.seats, P.boarded, F.sold, 0)}<div class="lf-txt">${F.sold - P.boarded ? `${F.sold - P.boarded} still to board` : 'Everyone is on board'}${tightNote}</div>`;
+  else if(P.st === 'final') body = `<div class="lf-big">${F.sold} / ${F.seats}<small>on board</small></div>${seatDots(F.seats, F.sold, F.sold, 0)}<div class="lf-txt">Final call for ${esc(F.code)}.${tightNote}</div>`;
+  else if(P.st === 'closed') body = `<div class="lf-big ${full ? 'full' : ''}">${F.sold} / ${F.seats}<small>${full ? 'FULL LOAD' : plural(empty, 'empty seat')}</small></div>${seatDots(F.seats, F.sold, F.sold, full ? F.waiting : 0)}<div class="lf-txt">${full ? (F.waiting ? `Every seat taken. ${F.waiting} more ${F.waiting === 1 ? 'person' : 'people'} could not get a seat.` : 'Every seat taken.') : `${F.sold} passengers · ${plural(empty, 'empty seat')}`}${tightNote}</div>`;
+  else if(P.st === 'turnA'){ const A0 = F.A, items = [['Passengers off', 0, .22], ['Bags unloaded', .22, .4], ['Fuel checked', .4, .55], ['Cabin cleaned', .55, .7], [`Boarding: ${P.boarded} / ${F.sold}`, .7, .995]];
+    body = liveChecklist(`${r.city.toUpperCase()} TURNAROUND · ${A0} MIN`, items, P.u, P.u >= .98 ? `READY FOR ${esc(F.rcode)}` : '') + `<div class="lf-txt side">Landed at ${fmtTime(F.arrAway - legShape(F.L).land)} · leaves again at <b>${fmtTime(F.depAway)}</b></div>`; }
+  else if(P.st === 'turnH'){ const items = [['Passengers off', 0, .3], ['Bags unloaded', .3, .55], ['Fuel and checks', .55, .8], ['Cabin cleaned', .8, .995]], N = A.next, nb = N && A.overlap ? livePhase(N, g) : null;
+    body = liveChecklist(`${h.city.toUpperCase()} TURNAROUND · ${F.ready - F.arr} MIN`, items, P.u, P.u >= .98 ? `READY AGAIN · ${fmtTime(F.ready)}` : '') +
+      `<div class="lf-txt side">${N ? (nb && (nb.st === 'board' || nb.st === 'final') ? `<span class="orange">${esc(N.code)} is already boarding at Gate ${esc(N.gate)}: ${nb.boarded} / ${N.sold}. It leaves at ${fmtTime(N.dep)}.</span>` : `Ready again at <b>${fmtTime(F.ready)}</b> · next: ${esc(N.code)} to ${esc(N.city)} at ${fmtTime(N.dep)}`) : `Ready again at <b>${fmtTime(F.ready)}</b> · no more services today`}</div>`; }
+  else {   // on a leg
+    const s = legShape(F.L), km = routeKm(r), left = Math.round(km * (1 - P.u)), cab = !back && F.ob && P.cruiseU >= .25 && P.cruiseU < .8;
+    const big = { push:'PUSHBACK', taxi:'TAXI TO RUNWAY', takeoff:'TAKE-OFF', cruise:'AIRBORNE', desc:`DESCENDING INTO ${(back ? h.city : r.city).toUpperCase()}`, taxiin:`LANDED ${fmtTime((back ? F.arr : F.arrAway) - s.land)}` }[P.st];
+    body = `<div class="lf-big air">${esc(big)}<small>${F.sold} passengers · ${P.st === 'taxiin' ? 'taxiing to the gate' : `ETA ${fmtTime(P.eta)}`}</small></div>
+      <div class="lf-route"><b>${esc(from)}</b><div class="lf-track"><i style="width:${(100 * P.u).toFixed(1)}%"></i><span style="left:${(100 * P.u).toFixed(1)}%">✈</span></div><b>${esc(to)}</b></div>
+      ${cab ? '' : `<div class="lf-txt">${P.at === 'air' ? `${num(left)} km to go` : P.st === 'taxiin' ? 'Taxiing to the gate' : 'On the ground'}</div>`}
+      ${cab ? `<div class="lf-cab">${F.ob.free ? `<b>COMPLIMENTARY SERVICE</b><span>${F.ob.n} passengers enjoyed free snacks</span>` : `<b>CABIN SERVICE</b><span>${F.ob.n} passengers bought snacks · <em>+${money(F.ob.rev)}</em></span>`}</div>` : ''}`;
+  }
+  return `<div class="lo-feat st-${P.st}">${ribbon}${head}<div class="lf-b">${body}</div>${liveSteps(P)}</div>`;
+}
+function liveSteps(P, allDone){ const i = allDone ? 8 : liveStepIndex(P); return `<div class="lf-steps">${LF_STEPS.map((s, j) => `<span class="${j < i ? 'done' : j === i ? 'on' : ''}">${s}</span>`).join('')}</div>`; }
+function liveFocusHtml(L, g, fm){
+  const m = fm.m, F = L.flights.find(x => x.key === m.key), when = F ? `${WDAY[calDate(F.d).getUTCDay()].toUpperCase()} ${fmtTime(m.g - F.k * 1440)}` : '';
+  const banner = fm.at === 'resuming' ? '<div class="lo-banner">▶▶ SIMULATION RESUMING</div>' : '<div class="lo-banner">◉ SIGNIFICANT EVENT · SIMULATION SLOWED</div>';
+  if(fm.at !== 'event' && fm.at !== 'slowing') return banner;
+  const seats = F && (m.kind === 'capacity' || m.kind === 'quiet') ? `<div class="lfo-s">${seatDots(F.seats, F.sold, F.sold, m.kind === 'capacity' ? F.waiting : 0)}</div>` : '';
+  return `${banner}<div class="lo-focus k-${m.kind} ${fm.at} ${seats ? 'has-seats' : ''}"><div class="lfo-t"><small>${LO_KIND[m.kind] || 'EVENT'} · ${esc(when)}</small><h2>${esc(m.title)}</h2><p>${esc(m.sub)}</p><span class="lo-obs">👁 Watch · no decision needed</span></div>${seats}</div>`;
+}
+function liveSimHtml(L, g, k){
+  const T = liveTotals(L, g, k), done = D => g >= D.end;
+  const label = L.kind === 'day' ? 'THE DAY' : S.period.type === 'gap' ? 'THE WEEKEND' : `WEEK ${weekNo(S.period.from)}`;
+  return `<div class="lo-sim"><div class="ls-h">▶▶ SIMULATING ${esc(label)}</div>
+    <div class="ls-days">${L.days.map(D => `<span class="${done(D) ? 'done' : D.k === k ? 'on' : ''}">${esc(dateShort(D.d))}${done(D) ? ' ✓' : ''}</span>`).join('')}</div>
+    <div class="ls-tot"><div><span>FLIGHTS COMPLETED</span><b>${T.done}</b></div><div><span>PASSENGERS</span><b>${num(T.pax)}</b></div><div><span>TICKETS AND SALES</span><b>${money(Math.round(T.rev))}</b></div>
+      ${T.profit !== undefined ? `<div><span>PROFIT SO FAR</span><b class="${T.profit >= 0 ? 'green' : 'red'}">${money(Math.round(T.profit))}</b></div>` : ''}<div><span>ON TIME</span><b>${T.dep ? Math.round(100 * T.onTime / T.dep) : 100}%</b></div></div></div>`;
+}
+function liveStripHtml(L, g, k, mode){
+  const T = liveTotals(L, g, k), M = { intro:'STARTING', live:'LIVE', sim:'SIMULATING', focus:'SLOWED', paused:'PAUSED', done:'COMPLETE' }[mode];
+  return `<div class="lo-strip"><div class="ls-mode m-${mode}"><span>MODE</span><b>${M}</b></div>
+    <div><span>SECTORS TODAY</span><b>${T.legsDone} / ${T.legs}</b></div><div><span>PASSENGERS</span><b>${num(L.kind === 'day' ? T.todayPax : T.pax)}</b></div>
+    <div class="lo-ctl">${livePaceButtons(L, 'wall')}</div></div>`;
+}
+
+/* ---------- the map: aircraft at the gate, taxiing, flying with a lit trail, parked away; the storm ---------- */
+function liveTrail(P, u, back){
+  const target = P.total * clamp(u, 0, 1); let i = 1; while(i < P.pts.length - 1 && P.len[i] < target) i++;
+  const a = P.pts[i - 1], b = P.pts[i], f = clamp((target - P.len[i - 1]) / ((P.len[i] - P.len[i - 1]) || 1), 0, 1), cur = [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+  return back ? [cur].concat(P.pts.slice(i)) : P.pts.slice(0, i).concat([cur]);
+}
+function liveMapDraw(M, toS, planesG){
+  const L = S.rnd.live, g = liveNow(L), k = liveDay(L, g), ui = M.ui, h = homeData(), hp = toS([mx(h.lon), my(h.lat)]), fm = liveFocus(L, g), mode = liveMode(L, g);
+  // the storm: it builds over the city, the delayed flight waits for it to pass
+  L.moments.filter(m => m.kind === 'weather').forEach(m => {
+    const F = L.flights.find(x => x.key === m.key); if(!F || g < m.g - 45 || g > F.dep + 15) return;
+    const r = routeById(F.route), q = toS([mx(r.lon), my(r.lat)]), grow = clamp((g - (m.g - 45)) / 45, 0, 1), fade = clamp((F.dep + 15 - g) / 15, 0, 1), R = (24 + 70 * grow) * ui;
+    const w = el('g', { 'class':'lo-storm', opacity:(.35 + .65 * Math.min(grow, fade)).toFixed(2), transform:`translate(${q[0].toFixed(1)} ${q[1].toFixed(1)})` }, planesG);
+    el('circle', { r:R.toFixed(1), 'class':'lo-stormc' }, w); const t = el('text', { 'text-anchor':'middle', y:(12 * ui).toFixed(1), 'font-size':Math.round(38 * ui) }, w); t.textContent = '⛈';
+  });
+  S.fleet.forEach((fl, i) => {
+    const A = liveAircraft(L, fl.uid, g, k); if(!A.fl.length) return;
+    const F = A.F, P = A.p, gate = [hp[0] + 40 * i * ui, hp[1] + 46 * ui];
+    let pos = gate, rot = 0, parked = true, label = '';
+    if(F){
+      const r = routeById(F.route), R = pathFor(r), dp = toS([mx(r.lon), my(r.lat)]), away = [dp[0], dp[1] + 46 * ui], lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+      label = P.back || P.st === 'turnH' ? F.rcode : F.code;
+      if(P.at === 'air'){
+        const u = P.back ? 1 - P.u : P.u, pt = along(R, clamp(u, 0, 1)), q = toS([pt.x, pt.y]);
+        const tr = liveTrail(R, u, P.back).map(p => toS(p)).map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+        el('polyline', { 'class':'lo-trail', points:tr }, planesG);
+        pos = q; rot = pt.deg + (P.back ? 180 : 0); parked = false;
+      } else if(P.st === 'push' || P.st === 'taxi'){ pos = P.back ? lerp(away, dp, P.ground) : lerp(gate, hp, P.ground); parked = false; rot = P.back ? 180 : 0; }
+      else if(P.st === 'taxiin'){ pos = P.back ? lerp(hp, gate, P.ground) : lerp(dp, away, P.ground); parked = false; }
+      else if(P.at === 'away') pos = away;
+    }
+    const featured = mode !== 'sim', hot = fm && F && fm.m.key === F.key, sz = (featured ? 46 : 38) * ui;
+    const gp = el('g', { 'class':'lo-plane' + (parked ? ' parked' : '') + (hot ? ' hot' : ''), transform:`translate(${pos[0].toFixed(1)} ${pos[1].toFixed(1)})` }, planesG);
+    if(featured || hot) el('circle', { 'class':'lo-halo', r:(sz * .62).toFixed(1) }, gp);
+    const pl = el('g', { transform:`rotate(${rot.toFixed(1)})` }, gp); el('use', { href:'#pl-map', x:-sz / 2, y:-sz / 2, width:sz, height:sz }, pl);
+    if(label && featured){ const t = el('text', { 'class':'lo-tag', 'text-anchor':'middle', y:(sz * .62 + 18 * ui).toFixed(1), 'font-size':Math.round(17 * ui) }, gp); t.textContent = label; }
+  });
+}
+/* ---------- the summary on the wall: Day complete, Week complete ---------- */
+function liveSummary(){
+  const L = S.rnd.live; if(!L) return null;
+  const on = L.flights.filter(F => !F.off), seats = on.reduce((t, F) => t + F.seats, 0), pax = on.reduce((t, F) => t + F.sold, 0);
+  return { services:on.length, pax, full:on.filter(F => F.sold >= F.seats).length, empty:seats - pax, onTime:on.filter(F => F.delay < 15).length, waiting:on.reduce((t, F) => t + F.waiting, 0) };
+}
+/* For the tests: jump the clock to a moment and hold it there. */
+window.__live = { seek(g, rate){ const L = S.rnd.live; if(!L) return null; L.clock = { t0:Date.now(), g0:g, rate:rate || 0, last:1 }; publish(); if(wallView) renderLiveWall(); return liveNow(L); },
+  show(){ return S.rnd.live; }, now(){ return liveNow(); }, mode(){ const L = S.rnd.live; return L ? liveMode(L, liveNow(L)) : null; }, phase(key, g){ const F = S.rnd.live.flights.find(x => x.key === key); return F ? livePhase(F, g) : null; } };
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).
@@ -6989,8 +7710,9 @@ function makeMap(root, o){
   function fitWorld(){ const s = size(); M.fitK = Math.min(s.w/MW, s.h/MH) || 0.1; M.cam.k = M.fitK; clampCam(); M.ui = clamp(Math.min(s.w/900, s.h/420), 0.7, 1.3) * o.scale; }
   function fitBounds(pts, tight){ const s = size(); let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity; pts.forEach(p=>{x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1]);});
     const pf = o.pad || 1, padX = Math.max((tight ? 110 : 150)*pf, (x1-x0)*0.25), padY = Math.max((tight ? 90 : 130)*pf, (y1-y0)*0.35); x0-=padX; x1+=padX; y0-=padY; y1+=padY;
-    const k = clamp(Math.min(s.w/(x1-x0), s.h/(y1-y0)), M.fitK, M.fitK*14); M.cam.k = k; M.cam.tx = s.w/2 - (x0+x1)/2*k; M.cam.ty = s.h/2 - (y0+y1)/2*k; clampCam(); }
-  function zoomAt(sx, sy, f){ const c = M.cam, k = clamp(c.k*f, M.fitK, M.fitK*14); c.tx = sx-(sx-c.tx)*(k/c.k); c.ty = sy-(sy-c.ty)*(k/c.k); c.k = k; clampCam(); M.manual = true; M.render(); }
+    const ins = o.inset || { t:0, b:0, l:0, r:0 }, aw = Math.max(50, s.w - ins.l - ins.r), ah = Math.max(50, s.h - ins.t - ins.b);
+    const k = clamp(Math.min(aw/(x1-x0), ah/(y1-y0)), M.fitK, M.fitK*(o.maxZoom || 14)); M.cam.k = k; M.cam.tx = ins.l + aw/2 - (x0+x1)/2*k; M.cam.ty = ins.t + ah/2 - (y0+y1)/2*k; clampCam(); }
+  function zoomAt(sx, sy, f){ const c = M.cam, k = clamp(c.k*f, M.fitK, M.fitK*(o.maxZoom || 14)); c.tx = sx-(sx-c.tx)*(k/c.k); c.ty = sy-(sy-c.ty)*(k/c.k); c.k = k; clampCam(); M.manual = true; M.render(); }
   const toS = p => [M.cam.tx + p[0]*M.cam.k, M.cam.ty + p[1]*M.cam.k];
   function marker(d, cls, label){
     const ui = M.ui, H = Math.round(22*ui), a = FLAG_ASPECT[d.flag]||1.5, W = Math.round(H*a), fs = Math.round(14*ui);
@@ -7033,6 +7755,8 @@ function makeMap(root, o){
       if(F === r.id){ const fh = 22*M.ui, w = el('g',{'class':'warnmark', transform:`translate(${(q[0] + fh*(FLAG_ASPECT[r.flag]||1.5)/2 + 24*M.ui).toFixed(1)} ${(q[1] - fh*1.6).toFixed(1)})`}, marksG); el('circle',{r:16*M.ui}, w); const t = el('text',{'text-anchor':'middle', y:7*M.ui, 'font-size':Math.round(20*M.ui)}, w); t.textContent = '!'; }
     });
     const h = homeData(), hm = marker(h, 'home', S.airline.name ? S.airline.name.toUpperCase() : h.city), hp = toS([mx(h.lon), my(h.lat)]); hm.setAttribute('transform', `translate(${hp[0].toFixed(1)} ${hp[1].toFixed(1)})`); marksG.appendChild(hm);
+    // live operations draw their own aircraft (at the gate, taxiing, flying with a lit trail, parked away)
+    if(o.planes && liveOn()){ liveMapDraw(M, toS, planesG); return; }
     // planes in flight: out and back along the route during each trip's window
     let now = o.planes ? dayNow() : null;
     if(o.planes && step().t === 'sim' && S.rnd.simAnim){ const span = toMin('21:45') - firstDep(); now = firstDep() + ((Date.now() / 6000) % 1) * span; }
@@ -7050,7 +7774,7 @@ function makeMap(root, o){
   svg.addEventListener('pointerdown', e => { try{ svg.setPointerCapture(e.pointerId); }catch(err){} ptrs[e.pointerId] = local(e); const P = list(); if(P.length===1) gesture = {type:'pan', start:P[0], tx:M.cam.tx, ty:M.cam.ty}; else if(P.length===2){ const a=P[0], b=P[1]; gesture = {type:'pinch', dist:Math.hypot(a[0]-b[0],a[1]-b[1])||1, mid:[(a[0]+b[0])/2,(a[1]+b[1])/2], k:M.cam.k, tx:M.cam.tx, ty:M.cam.ty}; } });
   svg.addEventListener('pointermove', e => { if(!ptrs[e.pointerId] || !gesture) return; ptrs[e.pointerId] = local(e); const P = list(), c = M.cam;
     if(gesture.type==='pan' && P.length===1){ c.tx = gesture.tx + P[0][0]-gesture.start[0]; c.ty = gesture.ty + P[0][1]-gesture.start[1]; clampCam(); M.manual = true; M.render(); }
-    else if(gesture.type==='pinch' && P.length>=2){ const a=P[0], b=P[1], dist=Math.hypot(a[0]-b[0],a[1]-b[1]), mid=[(a[0]+b[0])/2,(a[1]+b[1])/2]; const k = clamp(gesture.k*dist/gesture.dist, M.fitK, M.fitK*14); c.tx = mid[0]-(gesture.mid[0]-gesture.tx)*(k/gesture.k); c.ty = mid[1]-(gesture.mid[1]-gesture.ty)*(k/gesture.k); c.k = k; clampCam(); M.manual = true; M.render(); } });
+    else if(gesture.type==='pinch' && P.length>=2){ const a=P[0], b=P[1], dist=Math.hypot(a[0]-b[0],a[1]-b[1]), mid=[(a[0]+b[0])/2,(a[1]+b[1])/2]; const k = clamp(gesture.k*dist/gesture.dist, M.fitK, M.fitK*(o.maxZoom || 14)); c.tx = mid[0]-(gesture.mid[0]-gesture.tx)*(k/gesture.k); c.ty = mid[1]-(gesture.mid[1]-gesture.ty)*(k/gesture.k); c.k = k; clampCam(); M.manual = true; M.render(); } });
   const end = e => { delete ptrs[e.pointerId]; if(!list().length) gesture = null; };
   svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
   let rt; const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { M.key = ''; M.manual = false; M.autoFit(); M.render(); }, 80); };
@@ -7063,6 +7787,7 @@ function makeMap(root, o){
 function boardFlights(){ return S.rnd.flights.length ? S.rnd.flights : (S.phase==='round' || S.phase==='setup' ? planFlights() : []); }
 function dayNow(){ const a = S.rnd.anim; if(a && step().t==='fly'){ const t = clamp((Date.now()-a.start)/a.dur, 0, 1); return a.from + (a.to-a.from)*t; } return null; }
 function displayStatus(f){
+  if(liveOn()){ const L = S.rnd.live, g = liveNow(L), F = L.flights.find(x => x.fk === f.key && x.k === liveDay(L, g)); if(F) return liveDepStatus(L, F, g); }
   if(awaitingClearance() && !f.grounded) return 'AWAITING CLEARANCE';
   const s = S.rnd.status[f.key] || 'SCHEDULED', now = dayNow();
   if(now !== null && !['CANCELLED','GROUNDED','DELAYED','NO FUEL','DIVERTED'].includes(s)){ if(now < f.dep-20) return 'SCHEDULED'; if(now < f.dep) return 'BOARDING'; return 'DEPARTED'; }
@@ -7070,6 +7795,7 @@ function displayStatus(f){
 }
 /* The same trip seen from the arrivals side: the return leg into the home airport. */
 function arrivalStatus(f){
+  if(liveOn()){ const L = S.rnd.live, g = liveNow(L), F = L.flights.find(x => x.fk === f.key && x.k === liveDay(L, g)); if(F) return liveArrStatus(L, F, g); }
   const s = S.rnd.status[f.key] || 'SCHEDULED';
   if(['CANCELLED','GROUNDED','NO FUEL','DIVERTED'].includes(s)) return s;
   const now = dayNow();
@@ -7079,6 +7805,7 @@ function arrivalStatus(f){
 }
 function returnCode(code){ return String(code).replace(/\d+$/, n => String(+n + 1)); }
 function gameClock(){
+  if(liveOn()){ const L = S.rnd.live, g = liveNow(L); return fmtTime(g - liveDay(L, g) * 1440); }
   const now = dayNow(); if(now !== null) return fmtTime(now);
   const fl = boardFlights(); if(!fl.length) return fmtTime(firstDep()-30);
   const st = step().t;
@@ -7148,12 +7875,13 @@ function wallMode(){
   const st = step().t;
   if(st === 'event') return 'alert';
   if(st === 'stage') return 'stage';
+  if(liveOn()) return 'ops';
   if(st === 'sim' && S.rnd.sim) return 'sim';
   if(S.rnd.applied && ['results','eventOutcome','challenge','challengeCalc','summary','setupDone'].includes(st)) return 'review';
   if(launchPlane()) return 'launch';
   return 'live';
 }
-const LIVE_TEXT = { run:'▶ RUNNING', alert:'■ SIMULATION PAUSED', hold:'■ ', ready:'● LIVE', done:'● LIVE', idle:'STANDBY' };
+const LIVE_TEXT = { run:'▶ RUNNING', alert:'■ SIMULATION PAUSED', hold:'■ ', ready:'● LIVE', done:'✓ ALL LANDED', idle:'STANDBY' };
 function wallStatusHtml(){
   const fl = boardFlights(), st = fl.map(displayStatus), today = fuelPrice(), yest = S.round > 1 ? fuelPrice(S.round-1) : today;
   const delayed = st.filter(s => s === 'DELAYED' || s === 'DIVERTED').length, grounded = st.filter(s => ['GROUNDED','NO FUEL','CANCELLED'].includes(s)).length;
@@ -7168,13 +7896,15 @@ function wallStatusHtml(){
     ${row('WEATHER', wx ? '⚠ ' + esc(wx) : 'Clear', wx ? 'amber' : '')}
     ${row('ALERTS', alerts, alerts ? 'amber' : '')}`;
 }
+/* Day complete: the brief's summary first (what the pupil has just watched), then the chart and the landing report. */
 function wallReviewHtml(){
-  const h = lastDay() || {}, ms = S.rnd.milestone, d = S.phase === 'setup' ? 'LAUNCH DAY' : dateLong().replace(/ \d{4}$/, '').toUpperCase();
-  const pct = h.seats ? Math.round(100*h.pax/h.seats) : 0;
+  const h = lastDay() || {}, ms = S.rnd.milestone, d = S.phase === 'setup' ? 'LAUNCH DAY' : dateLong().replace(/ \d{4}$/, '').toUpperCase(), X = liveSummary(), fc = S.rnd.myForecast;
   const tile = (l, v, c, sub) => `<div class="wt ${c||''}"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
-  return `${ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
-    <div class="wo-head"><small>DAILY RESULTS</small><h1>${esc(d)} RESULTS</h1></div>
-    <div class="wo-tiles">${tile('Ticket money', money(h.revenue||0), 'money')}${tile('Costs', money(h.costs||0), 'money')}${tile((h.profit||0) >= 0 ? 'Profit' : 'Loss', money(Math.abs(h.profit||0)), (h.profit||0) >= 0 ? 'good' : 'bad')}${tile('Passengers', num(h.pax||0), '', `on ${plural(h.trips||0,'flight')}`)}${tile('Seats filled', pct+'%', '', `${num(h.pax||0)} of ${num(h.seats||0)}`)}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>
+  const prev = S.history.slice(0, -1).filter(x => x.type === 'day' || x.type === 'setup'), rec = prev.length && (h.profit || 0) > Math.max(...prev.map(x => x.profit || 0));
+  const fl = S.rnd.flights.filter(f => !f.grounded && !f.noFuel), services = X ? X.services : fl.length, full = X ? X.full : fl.filter(f => f.sold >= f.seats).length, empty = X ? X.empty : (h.seats || 0) - (h.pax || 0), onTime = X ? X.onTime : services;
+  return `${rec ? `<div class="wo-ms rec"><b>★ NEW PROFIT RECORD</b><span>${money(Math.round(h.profit))}</span><small>The best day so far</small></div>` : ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
+    <div class="wo-head"><small>${esc(d)}</small><h1>DAY COMPLETE</h1>${!IS_DISPLAY && wallView ? '<button class="btn primary big wo-go" data-ops="hq">Review at HQ ▶</button>' : ''}</div>
+    <div class="wo-tiles t7">${tile('Flights operated', services)}${tile('Passengers carried', num(h.pax||0))}${tile('Full flights', full, full ? 'good' : '')}${tile('Empty seats', num(Math.max(0, empty)))}${tile('On time', `${onTime} / ${services}`)}${fc ? tile('Projected profit', money(Math.round(fc.profit)), 'money') : ''}${tile((h.profit||0) >= 0 ? 'Actual profit' : 'Actual loss', money(Math.round(Math.abs(h.profit||0))), (h.profit||0) >= 0 ? 'good' : 'bad')}</div>
     <div class="wo-body"><div class="wo-chart"><div class="wo-sub">PROFIT BY DAY</div>${finChart({n:14, w:1000, h:430, big:true})}</div>
       <div class="wo-report"><div class="wo-sub">LANDING REPORT</div>${S.rnd.flights.map(f => `<div><span class="status ${statusClass(S.rnd.status[f.key])}">${S.rnd.status[f.key]}</span><span>${esc(outcomeLine(f))}</span></div>`).join('')}${S.rnd.eventWhy ? `<div><span>⚠</span><span>${esc(S.rnd.eventWhy)}</span></div>` : ''}
         <div class="reviews">${(S.rnd.reviews||[]).map(v => `<div class="review"><span class="face">${v.face}</span><span class="txt">${esc(v.text)}</span><span class="stars">${starsHtml(v.stars)}</span></div>`).join('')}</div></div></div>`;
@@ -7199,9 +7929,13 @@ function renderDisplay(){
   $('wall').className = 'wall mode-' + mode;
   $('dName').textContent = S.airline.name ? S.airline.name.toUpperCase() : 'YOUR AIRLINE';
   const sx = strategyOf(); document.querySelector('.w-brand small').textContent = sx ? sx.badge : 'Network operations';
+  const w = roundData(S.round), news = S.log.slice(-4);
+  $('dTicker').textContent = ((w.news||[]).map(fillText).concat(news.map(n => n.text)).join('   ✈   ') || 'Welcome to the skies').toUpperCase();
+  if(mode === 'ops'){ renderLiveWall(); if(IS_DISPLAY) liveWallLoop(); return; }
+  $('wOps').hidden = true; $('wOps')._h = ''; $('wStatus').className = 'w-status'; $('wStatus')._h = ''; $('dRows')._h = ''; $('aRows')._h = ''; liveMapMode(false);
   const PT = periodType();
   $('wPeriod').textContent = S.phase === 'setup' ? 'LAUNCH DAY' : PT === 'day' ? "TODAY'S OPERATIONS" : PT === 'week' ? 'THIS WEEK' : PT === 'gap' ? 'THE WEEKEND' : `${monthName(S.period.from).toUpperCase()} OPERATIONS`;
-  $('wDate').textContent = S.phase === 'setup' ? dateLong() : periodLabel() + ' · ' + periodTag();
+  const pLab = periodLabel(), pTag = periodTag(); $('wDate').textContent = S.phase === 'setup' ? dateLong() : pLab.includes(pTag) ? pLab : pLab + ' · ' + pTag;
   const lv = $('wLive'); lv.className = 'w-live ' + ops.k; lv.textContent = ops.k === 'hold' ? '■ ' + ops.t : LIVE_TEXT[ops.k];
   $('clock').textContent = gameClock();
   // boards: departures out of the hub, arrivals back into it
@@ -7211,8 +7945,6 @@ function renderDisplay(){
   const ar = fl.slice().sort((a,b) => a.arr - b.arr);
   $('aRows').innerHTML = boardPage(ar, 'aPage').map(f => { const r = routeById(f.route), s = arrivalStatus(f); return `<tr class="${s==='LANDED'?'gone':''}${hit(f)}"><td class="t">${fmtTime(f.arr)}</td><td class="f">${returnCode(f.code)}</td><td>${esc(r.city)}</td><td><span class="status ${statusClass(s)}">${s}</span></td></tr>`; }).join('');
   $('wStatus').innerHTML = wallStatusHtml();
-  const w = roundData(S.round), news = S.log.slice(-4);
-  $('dTicker').textContent = ((w.news||[]).map(fillText).concat(news.map(n => n.text)).join('   ✈   ') || 'Welcome to the skies').toUpperCase();
   // modes: alert card over the map; review / launch take the whole wall
   // only replace these when they change, so their entrance animation plays once (state arrives many times a minute)
   const put = (box, html) => { if(box._html !== html){ box._html = html; box.innerHTML = html; } };
@@ -7240,9 +7972,12 @@ function wallPeriodReviewHtml(){
   const T = S.rnd.sim, h = lastDay() || {}, ms = S.rnd.milestone, name = periodShort(h).toUpperCase(), pct = T.seats ? Math.round(100*T.pax/T.seats) : 0;
   const tile = (l, v, c, sub) => `<div class="wt ${c||''}"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
   const b = T.parts.length > 1 ? T.parts.map(p => ({ label:p.label, tip:p.label, revenue:p.rev, costs:p.costs, profit:p.profit })) : T.days.map((p, i) => { const d = T.from + i, x = ledgerSum(d, d); return { label: dayAxis(d), tip: dateShort(d), revenue:x.rev, costs:x.cost, profit:x.profit }; });
-  return `${ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
-    <div class="wo-head"><small>${S.period.type === 'week' ? 'WEEKLY' : S.period.type === 'gap' ? 'WEEKEND' : 'MONTHLY'} RESULTS</small><h1>${esc(name)} RESULTS</h1></div>
-    <div class="wo-tiles">${tile('Ticket money', moneyK(T.rev), 'money')}${tile('Costs', moneyK(T.costs), 'money')}${tile(T.profit >= 0 ? 'Profit' : 'Loss', moneyK(Math.abs(T.profit)), T.profit >= 0 ? 'good' : 'bad')}${tile('Passengers', num(T.pax), '', `on ${plural(T.trips,'flight')}`)}${tile('Seats filled', pct+'%')}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>
+  const X = liveSummary(), vs = S.rnd.vs, kind = S.period.type, prevW = S.history.slice(0, -1).filter(x => x.type === kind), rec = kind === 'week' && prevW.length && T.profit > Math.max(...prevW.map(x => x.profit || 0));
+  const done = kind === 'week' ? 'WEEK COMPLETE' : kind === 'gap' ? 'WEEKEND COMPLETE' : `${name} COMPLETE`;
+  return `${rec ? `<div class="wo-ms rec"><b>★ NEW WEEKLY RECORD</b><span>${money(Math.round(T.profit))}</span><small>The best week so far</small></div>` : ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
+    <div class="wo-head"><small>${esc(periodLabel({ type:kind, from:T.from, to:T.to }).toUpperCase())}</small><h1>${esc(done)}</h1>${!IS_DISPLAY && wallView ? '<button class="btn primary big wo-go" data-ops="hq">Review at HQ ▶</button>' : ''}</div>
+    ${X ? `<div class="wo-tiles t7">${tile('Flights operated', num(X.services))}${tile('Passengers carried', num(T.pax))}${tile('Full flights', num(X.full), X.full ? 'good' : '')}${tile('Empty seats', num(X.empty))}${tile('On time', `${num(X.onTime)} / ${num(X.services)}`)}${vs && vs.kind === 'period' ? tile('Projected profit', moneyK(vs.expProfit), 'money') : ''}${tile(T.profit >= 0 ? 'Actual profit' : 'Actual loss', moneyK(Math.abs(T.profit)), T.profit >= 0 ? 'good' : 'bad')}</div>`
+      : `<div class="wo-tiles">${tile('Ticket money', moneyK(T.rev), 'money')}${tile('Costs', moneyK(T.costs), 'money')}${tile(T.profit >= 0 ? 'Profit' : 'Loss', moneyK(Math.abs(T.profit)), T.profit >= 0 ? 'good' : 'bad')}${tile('Passengers', num(T.pax), '', `on ${plural(T.trips,'flight')}`)}${tile('Seats filled', pct+'%')}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>`}
     <div class="wo-body"><div class="wo-chart"><div class="wo-sub">${T.parts.length > 1 ? 'PROFIT BY MONTH' : 'PROFIT BY DAY'}</div>${finChart({ buckets:b, w:1000, h:430, big:true })}</div>
       <div class="wo-report"><div class="wo-sub">WHAT HAPPENED</div>${S.rnd.why.slice(0, 5).map(w => `<div><span>${w.ic}</span><span>${esc(w.text)}</span></div>`).join('')}${T.paused ? `<div class="wo-paused">⚠ SIMULATION PAUSED · ${esc(T.paused.title)}</div>` : ''}
         <div class="reviews">${(S.rnd.reviews||[]).map(v => `<div class="review"><span class="face">${v.face}</span><span class="txt">${esc(v.text)}</span><span class="stars">${starsHtml(v.stars)}</span></div>`).join('')}</div></div></div>`;
@@ -7311,6 +8046,7 @@ function syncTools(){ document.querySelectorAll('[data-wcol]').forEach(b => b.se
 function teacherOpen(){
   const T = $('teacher'); T.hidden = false;
   $('tNudge').checked = settings.nudge; $('tAuto').checked = settings.auto; $('tStartCash').value = settings.startingCash; $('tFlightSecs').value = String(settings.flightSecs);
+  $('tOpsSound').checked = settings.opsSound !== false; $('tAutoWall').checked = settings.autoWall !== false;
   const evs = []; WORLD.rounds.forEach((r,i)=>{ if(r.event) evs.push([i, r.event]); });
   $('tEventPick').innerHTML = evs.map(([i,e]) => `<option value="${i}">${esc(e.title)} (${esc(WORLD.rounds[i].date ? dateShort(beatDay(i)) + ' ' + calDate(beatDay(i)).getUTCFullYear() : 'day ' + i)})</option>`).join('');
   const nl = S.teacherQueue.choice || '';
@@ -7342,6 +8078,8 @@ function initTeacher(){
   $('tNudge').onchange = e => { settings.nudge = e.target.checked; saveSettings(); };
   $('tAuto').onchange = e => { settings.auto = e.target.checked; saveSettings(); };
   $('tFlightSecs').onchange = e => { settings.flightSecs = parseInt(e.target.value,10); saveSettings(); };
+  $('tOpsSound').onchange = e => { settings.opsSound = e.target.checked; saveSettings(); };
+  $('tAutoWall').onchange = e => { settings.autoWall = e.target.checked; saveSettings(); };
   $('tEventNow').onclick = () => { const i = parseInt($('tEventPick').value,10); S.rnd.event = WORLD.rounds[i].event; S.rnd.eventChoice = null; const at = Math.max(S.si+1, S.steps.findIndex(s=>s.t==='summary')); S.steps.splice(S.steps.findIndex(s=>s.t==='summary'), 0, {t:'event'}, {t:'eventOutcome'}); teacherClose(); toast('Event queued for after this screen'); };
   $('tEventDelay').onclick = () => { if(!S.rnd.event){ toast('No event today'); return; } S.nextMods.event = S.rnd.event; S.rnd.event = null; S.steps = S.steps.filter(s => s.t!=='event' && s.t!=='eventOutcome'); teacherClose(); toast('Event moved to tomorrow'); };
   $('tEventSkip').onclick = () => { S.rnd.event = null; S.steps = S.steps.filter(s => s.t!=='event' && s.t!=='eventOutcome'); teacherClose(); toast('Event skipped'); };
@@ -7412,7 +8150,7 @@ function boot(){
   setInterval(() => { if(wallView) renderDisplay(); }, 8000);
   if(S.needsRestart) startRound(S.round);
   // if the page was refreshed mid-flight, finish the flight
-  if(step().t==='fly' && S.rnd.anim && Date.now()-S.rnd.anim.start > S.rnd.anim.dur) next();
+  if(step().t==='fly' && !S.rnd.live && S.rnd.anim && Date.now()-S.rnd.anim.start > S.rnd.anim.dur) next();
   setInterval(() => { send({type:'ping'}); updateStrip(); }, 4000);
   // opening the game always starts on the home screen: carry on, or start again
   const started = S.airline && S.airline.name && !['welcome','name'].includes(step().t);

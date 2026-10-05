@@ -782,6 +782,7 @@ function todayCard(mode){
   if(mode === 'sim') return simCard();
   if(mode === 'results' && S.rnd.sim) return periodResultsCard();
   const f = fleetOne(), p = ourPlane(), sched = f ? schedOf(f) : [], need = fuelNeeded();
+  if(mode === 'live' && S.rnd.live) return liveCard();
   if(mode === 'live'){ const a = S.rnd.anim;
     return `${hqHead('Operations', 'LIVE')}<div class="pb td2"><div class="live-clock"><span class="kl">Airport time</span><b id="ovClock">${fmtTime(a ? a.from : firstDep())}</b></div><div class="live-bar"><i id="ovProg"></i></div>
       <p class="muted">${esc(svcLabel(sched))} · ${plural(boardFlights().filter(x => !x.grounded).length, 'flight')} today. Watch the map and Live Operations.</p>

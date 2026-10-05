@@ -13,7 +13,7 @@ const roundSchool = x => WE.roundSchool(x);
   WB.routes.forEach(w => {
     const r = WORLD.routes.find(x => x.id === w.id); if(!r) return;   // the game's own routes only (Dublin and Paris for now)
     const arch = WB.archetypes.find(a => a.id === w.archetype), F = w.fareOptions.slice();
-    Object.assign(r, { wb:true, km:w.km, alat:w.lat, alon:w.lon, utc:w.utc, basePrice:w.baseFare, fares:F, prices:F.slice(), setupPrices:F.slice(),
+    Object.assign(r, { wb:true, km:w.km, code:w.airport, alat:w.lat, alon:w.lon, utc:w.utc, basePrice:w.baseFare, fares:F, prices:F.slice(), setupPrices:F.slice(),
       turnaroundMin:w.turnaroundAwayMin, landingFeeAway:w.landingFeeAway, demandAtFare:w.demandAtFare, arch, competition:w.competitionSensitivity,
       blurb:w.story || r.blurb, step:10, growth:0 });
     delete r.profile;

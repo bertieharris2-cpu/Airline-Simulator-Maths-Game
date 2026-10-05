@@ -35,8 +35,9 @@ function makeMap(root, o){
   function fitWorld(){ const s = size(); M.fitK = Math.min(s.w/MW, s.h/MH) || 0.1; M.cam.k = M.fitK; clampCam(); M.ui = clamp(Math.min(s.w/900, s.h/420), 0.7, 1.3) * o.scale; }
   function fitBounds(pts, tight){ const s = size(); let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity; pts.forEach(p=>{x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1]);});
     const pf = o.pad || 1, padX = Math.max((tight ? 110 : 150)*pf, (x1-x0)*0.25), padY = Math.max((tight ? 90 : 130)*pf, (y1-y0)*0.35); x0-=padX; x1+=padX; y0-=padY; y1+=padY;
-    const k = clamp(Math.min(s.w/(x1-x0), s.h/(y1-y0)), M.fitK, M.fitK*14); M.cam.k = k; M.cam.tx = s.w/2 - (x0+x1)/2*k; M.cam.ty = s.h/2 - (y0+y1)/2*k; clampCam(); }
-  function zoomAt(sx, sy, f){ const c = M.cam, k = clamp(c.k*f, M.fitK, M.fitK*14); c.tx = sx-(sx-c.tx)*(k/c.k); c.ty = sy-(sy-c.ty)*(k/c.k); c.k = k; clampCam(); M.manual = true; M.render(); }
+    const ins = o.inset || { t:0, b:0, l:0, r:0 }, aw = Math.max(50, s.w - ins.l - ins.r), ah = Math.max(50, s.h - ins.t - ins.b);
+    const k = clamp(Math.min(aw/(x1-x0), ah/(y1-y0)), M.fitK, M.fitK*(o.maxZoom || 14)); M.cam.k = k; M.cam.tx = ins.l + aw/2 - (x0+x1)/2*k; M.cam.ty = ins.t + ah/2 - (y0+y1)/2*k; clampCam(); }
+  function zoomAt(sx, sy, f){ const c = M.cam, k = clamp(c.k*f, M.fitK, M.fitK*(o.maxZoom || 14)); c.tx = sx-(sx-c.tx)*(k/c.k); c.ty = sy-(sy-c.ty)*(k/c.k); c.k = k; clampCam(); M.manual = true; M.render(); }
   const toS = p => [M.cam.tx + p[0]*M.cam.k, M.cam.ty + p[1]*M.cam.k];
   function marker(d, cls, label){
     const ui = M.ui, H = Math.round(22*ui), a = FLAG_ASPECT[d.flag]||1.5, W = Math.round(H*a), fs = Math.round(14*ui);
@@ -79,6 +80,8 @@ function makeMap(root, o){
       if(F === r.id){ const fh = 22*M.ui, w = el('g',{'class':'warnmark', transform:`translate(${(q[0] + fh*(FLAG_ASPECT[r.flag]||1.5)/2 + 24*M.ui).toFixed(1)} ${(q[1] - fh*1.6).toFixed(1)})`}, marksG); el('circle',{r:16*M.ui}, w); const t = el('text',{'text-anchor':'middle', y:7*M.ui, 'font-size':Math.round(20*M.ui)}, w); t.textContent = '!'; }
     });
     const h = homeData(), hm = marker(h, 'home', S.airline.name ? S.airline.name.toUpperCase() : h.city), hp = toS([mx(h.lon), my(h.lat)]); hm.setAttribute('transform', `translate(${hp[0].toFixed(1)} ${hp[1].toFixed(1)})`); marksG.appendChild(hm);
+    // live operations draw their own aircraft (at the gate, taxiing, flying with a lit trail, parked away)
+    if(o.planes && liveOn()){ liveMapDraw(M, toS, planesG); return; }
     // planes in flight: out and back along the route during each trip's window
     let now = o.planes ? dayNow() : null;
     if(o.planes && step().t === 'sim' && S.rnd.simAnim){ const span = toMin('21:45') - firstDep(); now = firstDep() + ((Date.now() / 6000) % 1) * span; }
@@ -96,7 +99,7 @@ function makeMap(root, o){
   svg.addEventListener('pointerdown', e => { try{ svg.setPointerCapture(e.pointerId); }catch(err){} ptrs[e.pointerId] = local(e); const P = list(); if(P.length===1) gesture = {type:'pan', start:P[0], tx:M.cam.tx, ty:M.cam.ty}; else if(P.length===2){ const a=P[0], b=P[1]; gesture = {type:'pinch', dist:Math.hypot(a[0]-b[0],a[1]-b[1])||1, mid:[(a[0]+b[0])/2,(a[1]+b[1])/2], k:M.cam.k, tx:M.cam.tx, ty:M.cam.ty}; } });
   svg.addEventListener('pointermove', e => { if(!ptrs[e.pointerId] || !gesture) return; ptrs[e.pointerId] = local(e); const P = list(), c = M.cam;
     if(gesture.type==='pan' && P.length===1){ c.tx = gesture.tx + P[0][0]-gesture.start[0]; c.ty = gesture.ty + P[0][1]-gesture.start[1]; clampCam(); M.manual = true; M.render(); }
-    else if(gesture.type==='pinch' && P.length>=2){ const a=P[0], b=P[1], dist=Math.hypot(a[0]-b[0],a[1]-b[1]), mid=[(a[0]+b[0])/2,(a[1]+b[1])/2]; const k = clamp(gesture.k*dist/gesture.dist, M.fitK, M.fitK*14); c.tx = mid[0]-(gesture.mid[0]-gesture.tx)*(k/gesture.k); c.ty = mid[1]-(gesture.mid[1]-gesture.ty)*(k/gesture.k); c.k = k; clampCam(); M.manual = true; M.render(); } });
+    else if(gesture.type==='pinch' && P.length>=2){ const a=P[0], b=P[1], dist=Math.hypot(a[0]-b[0],a[1]-b[1]), mid=[(a[0]+b[0])/2,(a[1]+b[1])/2]; const k = clamp(gesture.k*dist/gesture.dist, M.fitK, M.fitK*(o.maxZoom || 14)); c.tx = mid[0]-(gesture.mid[0]-gesture.tx)*(k/gesture.k); c.ty = mid[1]-(gesture.mid[1]-gesture.ty)*(k/gesture.k); c.k = k; clampCam(); M.manual = true; M.render(); } });
   const end = e => { delete ptrs[e.pointerId]; if(!list().length) gesture = null; };
   svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
   let rt; const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { M.key = ''; M.manual = false; M.autoFit(); M.render(); }, 80); };
@@ -109,6 +112,7 @@ function makeMap(root, o){
 function boardFlights(){ return S.rnd.flights.length ? S.rnd.flights : (S.phase==='round' || S.phase==='setup' ? planFlights() : []); }
 function dayNow(){ const a = S.rnd.anim; if(a && step().t==='fly'){ const t = clamp((Date.now()-a.start)/a.dur, 0, 1); return a.from + (a.to-a.from)*t; } return null; }
 function displayStatus(f){
+  if(liveOn()){ const L = S.rnd.live, g = liveNow(L), F = L.flights.find(x => x.fk === f.key && x.k === liveDay(L, g)); if(F) return liveDepStatus(L, F, g); }
   if(awaitingClearance() && !f.grounded) return 'AWAITING CLEARANCE';
   const s = S.rnd.status[f.key] || 'SCHEDULED', now = dayNow();
   if(now !== null && !['CANCELLED','GROUNDED','DELAYED','NO FUEL','DIVERTED'].includes(s)){ if(now < f.dep-20) return 'SCHEDULED'; if(now < f.dep) return 'BOARDING'; return 'DEPARTED'; }
@@ -116,6 +120,7 @@ function displayStatus(f){
 }
 /* The same trip seen from the arrivals side: the return leg into the home airport. */
 function arrivalStatus(f){
+  if(liveOn()){ const L = S.rnd.live, g = liveNow(L), F = L.flights.find(x => x.fk === f.key && x.k === liveDay(L, g)); if(F) return liveArrStatus(L, F, g); }
   const s = S.rnd.status[f.key] || 'SCHEDULED';
   if(['CANCELLED','GROUNDED','NO FUEL','DIVERTED'].includes(s)) return s;
   const now = dayNow();
@@ -125,6 +130,7 @@ function arrivalStatus(f){
 }
 function returnCode(code){ return String(code).replace(/\d+$/, n => String(+n + 1)); }
 function gameClock(){
+  if(liveOn()){ const L = S.rnd.live, g = liveNow(L); return fmtTime(g - liveDay(L, g) * 1440); }
   const now = dayNow(); if(now !== null) return fmtTime(now);
   const fl = boardFlights(); if(!fl.length) return fmtTime(firstDep()-30);
   const st = step().t;
@@ -194,12 +200,13 @@ function wallMode(){
   const st = step().t;
   if(st === 'event') return 'alert';
   if(st === 'stage') return 'stage';
+  if(liveOn()) return 'ops';
   if(st === 'sim' && S.rnd.sim) return 'sim';
   if(S.rnd.applied && ['results','eventOutcome','challenge','challengeCalc','summary','setupDone'].includes(st)) return 'review';
   if(launchPlane()) return 'launch';
   return 'live';
 }
-const LIVE_TEXT = { run:'▶ RUNNING', alert:'■ SIMULATION PAUSED', hold:'■ ', ready:'● LIVE', done:'● LIVE', idle:'STANDBY' };
+const LIVE_TEXT = { run:'▶ RUNNING', alert:'■ SIMULATION PAUSED', hold:'■ ', ready:'● LIVE', done:'✓ ALL LANDED', idle:'STANDBY' };
 function wallStatusHtml(){
   const fl = boardFlights(), st = fl.map(displayStatus), today = fuelPrice(), yest = S.round > 1 ? fuelPrice(S.round-1) : today;
   const delayed = st.filter(s => s === 'DELAYED' || s === 'DIVERTED').length, grounded = st.filter(s => ['GROUNDED','NO FUEL','CANCELLED'].includes(s)).length;
@@ -214,13 +221,15 @@ function wallStatusHtml(){
     ${row('WEATHER', wx ? '⚠ ' + esc(wx) : 'Clear', wx ? 'amber' : '')}
     ${row('ALERTS', alerts, alerts ? 'amber' : '')}`;
 }
+/* Day complete: the brief's summary first (what the pupil has just watched), then the chart and the landing report. */
 function wallReviewHtml(){
-  const h = lastDay() || {}, ms = S.rnd.milestone, d = S.phase === 'setup' ? 'LAUNCH DAY' : dateLong().replace(/ \d{4}$/, '').toUpperCase();
-  const pct = h.seats ? Math.round(100*h.pax/h.seats) : 0;
+  const h = lastDay() || {}, ms = S.rnd.milestone, d = S.phase === 'setup' ? 'LAUNCH DAY' : dateLong().replace(/ \d{4}$/, '').toUpperCase(), X = liveSummary(), fc = S.rnd.myForecast;
   const tile = (l, v, c, sub) => `<div class="wt ${c||''}"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
-  return `${ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
-    <div class="wo-head"><small>DAILY RESULTS</small><h1>${esc(d)} RESULTS</h1></div>
-    <div class="wo-tiles">${tile('Ticket money', money(h.revenue||0), 'money')}${tile('Costs', money(h.costs||0), 'money')}${tile((h.profit||0) >= 0 ? 'Profit' : 'Loss', money(Math.abs(h.profit||0)), (h.profit||0) >= 0 ? 'good' : 'bad')}${tile('Passengers', num(h.pax||0), '', `on ${plural(h.trips||0,'flight')}`)}${tile('Seats filled', pct+'%', '', `${num(h.pax||0)} of ${num(h.seats||0)}`)}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>
+  const prev = S.history.slice(0, -1).filter(x => x.type === 'day' || x.type === 'setup'), rec = prev.length && (h.profit || 0) > Math.max(...prev.map(x => x.profit || 0));
+  const fl = S.rnd.flights.filter(f => !f.grounded && !f.noFuel), services = X ? X.services : fl.length, full = X ? X.full : fl.filter(f => f.sold >= f.seats).length, empty = X ? X.empty : (h.seats || 0) - (h.pax || 0), onTime = X ? X.onTime : services;
+  return `${rec ? `<div class="wo-ms rec"><b>★ NEW PROFIT RECORD</b><span>${money(Math.round(h.profit))}</span><small>The best day so far</small></div>` : ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
+    <div class="wo-head"><small>${esc(d)}</small><h1>DAY COMPLETE</h1>${!IS_DISPLAY && wallView ? '<button class="btn primary big wo-go" data-ops="hq">Review at HQ ▶</button>' : ''}</div>
+    <div class="wo-tiles t7">${tile('Flights operated', services)}${tile('Passengers carried', num(h.pax||0))}${tile('Full flights', full, full ? 'good' : '')}${tile('Empty seats', num(Math.max(0, empty)))}${tile('On time', `${onTime} / ${services}`)}${fc ? tile('Projected profit', money(Math.round(fc.profit)), 'money') : ''}${tile((h.profit||0) >= 0 ? 'Actual profit' : 'Actual loss', money(Math.round(Math.abs(h.profit||0))), (h.profit||0) >= 0 ? 'good' : 'bad')}</div>
     <div class="wo-body"><div class="wo-chart"><div class="wo-sub">PROFIT BY DAY</div>${finChart({n:14, w:1000, h:430, big:true})}</div>
       <div class="wo-report"><div class="wo-sub">LANDING REPORT</div>${S.rnd.flights.map(f => `<div><span class="status ${statusClass(S.rnd.status[f.key])}">${S.rnd.status[f.key]}</span><span>${esc(outcomeLine(f))}</span></div>`).join('')}${S.rnd.eventWhy ? `<div><span>⚠</span><span>${esc(S.rnd.eventWhy)}</span></div>` : ''}
         <div class="reviews">${(S.rnd.reviews||[]).map(v => `<div class="review"><span class="face">${v.face}</span><span class="txt">${esc(v.text)}</span><span class="stars">${starsHtml(v.stars)}</span></div>`).join('')}</div></div></div>`;
@@ -245,9 +254,13 @@ function renderDisplay(){
   $('wall').className = 'wall mode-' + mode;
   $('dName').textContent = S.airline.name ? S.airline.name.toUpperCase() : 'YOUR AIRLINE';
   const sx = strategyOf(); document.querySelector('.w-brand small').textContent = sx ? sx.badge : 'Network operations';
+  const w = roundData(S.round), news = S.log.slice(-4);
+  $('dTicker').textContent = ((w.news||[]).map(fillText).concat(news.map(n => n.text)).join('   ✈   ') || 'Welcome to the skies').toUpperCase();
+  if(mode === 'ops'){ renderLiveWall(); if(IS_DISPLAY) liveWallLoop(); return; }
+  $('wOps').hidden = true; $('wOps')._h = ''; $('wStatus').className = 'w-status'; $('wStatus')._h = ''; $('dRows')._h = ''; $('aRows')._h = ''; liveMapMode(false);
   const PT = periodType();
   $('wPeriod').textContent = S.phase === 'setup' ? 'LAUNCH DAY' : PT === 'day' ? "TODAY'S OPERATIONS" : PT === 'week' ? 'THIS WEEK' : PT === 'gap' ? 'THE WEEKEND' : `${monthName(S.period.from).toUpperCase()} OPERATIONS`;
-  $('wDate').textContent = S.phase === 'setup' ? dateLong() : periodLabel() + ' · ' + periodTag();
+  const pLab = periodLabel(), pTag = periodTag(); $('wDate').textContent = S.phase === 'setup' ? dateLong() : pLab.includes(pTag) ? pLab : pLab + ' · ' + pTag;
   const lv = $('wLive'); lv.className = 'w-live ' + ops.k; lv.textContent = ops.k === 'hold' ? '■ ' + ops.t : LIVE_TEXT[ops.k];
   $('clock').textContent = gameClock();
   // boards: departures out of the hub, arrivals back into it
@@ -257,8 +270,6 @@ function renderDisplay(){
   const ar = fl.slice().sort((a,b) => a.arr - b.arr);
   $('aRows').innerHTML = boardPage(ar, 'aPage').map(f => { const r = routeById(f.route), s = arrivalStatus(f); return `<tr class="${s==='LANDED'?'gone':''}${hit(f)}"><td class="t">${fmtTime(f.arr)}</td><td class="f">${returnCode(f.code)}</td><td>${esc(r.city)}</td><td><span class="status ${statusClass(s)}">${s}</span></td></tr>`; }).join('');
   $('wStatus').innerHTML = wallStatusHtml();
-  const w = roundData(S.round), news = S.log.slice(-4);
-  $('dTicker').textContent = ((w.news||[]).map(fillText).concat(news.map(n => n.text)).join('   ✈   ') || 'Welcome to the skies').toUpperCase();
   // modes: alert card over the map; review / launch take the whole wall
   // only replace these when they change, so their entrance animation plays once (state arrives many times a minute)
   const put = (box, html) => { if(box._html !== html){ box._html = html; box.innerHTML = html; } };
@@ -286,9 +297,12 @@ function wallPeriodReviewHtml(){
   const T = S.rnd.sim, h = lastDay() || {}, ms = S.rnd.milestone, name = periodShort(h).toUpperCase(), pct = T.seats ? Math.round(100*T.pax/T.seats) : 0;
   const tile = (l, v, c, sub) => `<div class="wt ${c||''}"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
   const b = T.parts.length > 1 ? T.parts.map(p => ({ label:p.label, tip:p.label, revenue:p.rev, costs:p.costs, profit:p.profit })) : T.days.map((p, i) => { const d = T.from + i, x = ledgerSum(d, d); return { label: dayAxis(d), tip: dateShort(d), revenue:x.rev, costs:x.cost, profit:x.profit }; });
-  return `${ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
-    <div class="wo-head"><small>${S.period.type === 'week' ? 'WEEKLY' : S.period.type === 'gap' ? 'WEEKEND' : 'MONTHLY'} RESULTS</small><h1>${esc(name)} RESULTS</h1></div>
-    <div class="wo-tiles">${tile('Ticket money', moneyK(T.rev), 'money')}${tile('Costs', moneyK(T.costs), 'money')}${tile(T.profit >= 0 ? 'Profit' : 'Loss', moneyK(Math.abs(T.profit)), T.profit >= 0 ? 'good' : 'bad')}${tile('Passengers', num(T.pax), '', `on ${plural(T.trips,'flight')}`)}${tile('Seats filled', pct+'%')}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>
+  const X = liveSummary(), vs = S.rnd.vs, kind = S.period.type, prevW = S.history.slice(0, -1).filter(x => x.type === kind), rec = kind === 'week' && prevW.length && T.profit > Math.max(...prevW.map(x => x.profit || 0));
+  const done = kind === 'week' ? 'WEEK COMPLETE' : kind === 'gap' ? 'WEEKEND COMPLETE' : `${name} COMPLETE`;
+  return `${rec ? `<div class="wo-ms rec"><b>★ NEW WEEKLY RECORD</b><span>${money(Math.round(T.profit))}</span><small>The best week so far</small></div>` : ms ? `<div class="wo-ms"><b>★ MILESTONE</b><span>${esc(ms.title)}</span><small>${esc(ms.sub)}</small></div>` : ''}
+    <div class="wo-head"><small>${esc(periodLabel({ type:kind, from:T.from, to:T.to }).toUpperCase())}</small><h1>${esc(done)}</h1>${!IS_DISPLAY && wallView ? '<button class="btn primary big wo-go" data-ops="hq">Review at HQ ▶</button>' : ''}</div>
+    ${X ? `<div class="wo-tiles t7">${tile('Flights operated', num(X.services))}${tile('Passengers carried', num(T.pax))}${tile('Full flights', num(X.full), X.full ? 'good' : '')}${tile('Empty seats', num(X.empty))}${tile('On time', `${num(X.onTime)} / ${num(X.services)}`)}${vs && vs.kind === 'period' ? tile('Projected profit', moneyK(vs.expProfit), 'money') : ''}${tile(T.profit >= 0 ? 'Actual profit' : 'Actual loss', moneyK(Math.abs(T.profit)), T.profit >= 0 ? 'good' : 'bad')}</div>`
+      : `<div class="wo-tiles">${tile('Ticket money', moneyK(T.rev), 'money')}${tile('Costs', moneyK(T.costs), 'money')}${tile(T.profit >= 0 ? 'Profit' : 'Loss', moneyK(Math.abs(T.profit)), T.profit >= 0 ? 'good' : 'bad')}${tile('Passengers', num(T.pax), '', `on ${plural(T.trips,'flight')}`)}${tile('Seats filled', pct+'%')}${tile('Reputation', starsHtml(S.rep), 'stars')}</div>`}
     <div class="wo-body"><div class="wo-chart"><div class="wo-sub">${T.parts.length > 1 ? 'PROFIT BY MONTH' : 'PROFIT BY DAY'}</div>${finChart({ buckets:b, w:1000, h:430, big:true })}</div>
       <div class="wo-report"><div class="wo-sub">WHAT HAPPENED</div>${S.rnd.why.slice(0, 5).map(w => `<div><span>${w.ic}</span><span>${esc(w.text)}</span></div>`).join('')}${T.paused ? `<div class="wo-paused">⚠ SIMULATION PAUSED · ${esc(T.paused.title)}</div>` : ''}
         <div class="reviews">${(S.rnd.reviews||[]).map(v => `<div class="review"><span class="face">${v.face}</span><span class="txt">${esc(v.text)}</span><span class="stars">${starsHtml(v.stars)}</span></div>`).join('')}</div></div></div>`;
@@ -357,6 +371,7 @@ function syncTools(){ document.querySelectorAll('[data-wcol]').forEach(b => b.se
 function teacherOpen(){
   const T = $('teacher'); T.hidden = false;
   $('tNudge').checked = settings.nudge; $('tAuto').checked = settings.auto; $('tStartCash').value = settings.startingCash; $('tFlightSecs').value = String(settings.flightSecs);
+  $('tOpsSound').checked = settings.opsSound !== false; $('tAutoWall').checked = settings.autoWall !== false;
   const evs = []; WORLD.rounds.forEach((r,i)=>{ if(r.event) evs.push([i, r.event]); });
   $('tEventPick').innerHTML = evs.map(([i,e]) => `<option value="${i}">${esc(e.title)} (${esc(WORLD.rounds[i].date ? dateShort(beatDay(i)) + ' ' + calDate(beatDay(i)).getUTCFullYear() : 'day ' + i)})</option>`).join('');
   const nl = S.teacherQueue.choice || '';
@@ -388,6 +403,8 @@ function initTeacher(){
   $('tNudge').onchange = e => { settings.nudge = e.target.checked; saveSettings(); };
   $('tAuto').onchange = e => { settings.auto = e.target.checked; saveSettings(); };
   $('tFlightSecs').onchange = e => { settings.flightSecs = parseInt(e.target.value,10); saveSettings(); };
+  $('tOpsSound').onchange = e => { settings.opsSound = e.target.checked; saveSettings(); };
+  $('tAutoWall').onchange = e => { settings.autoWall = e.target.checked; saveSettings(); };
   $('tEventNow').onclick = () => { const i = parseInt($('tEventPick').value,10); S.rnd.event = WORLD.rounds[i].event; S.rnd.eventChoice = null; const at = Math.max(S.si+1, S.steps.findIndex(s=>s.t==='summary')); S.steps.splice(S.steps.findIndex(s=>s.t==='summary'), 0, {t:'event'}, {t:'eventOutcome'}); teacherClose(); toast('Event queued for after this screen'); };
   $('tEventDelay').onclick = () => { if(!S.rnd.event){ toast('No event today'); return; } S.nextMods.event = S.rnd.event; S.rnd.event = null; S.steps = S.steps.filter(s => s.t!=='event' && s.t!=='eventOutcome'); teacherClose(); toast('Event moved to tomorrow'); };
   $('tEventSkip').onclick = () => { S.rnd.event = null; S.steps = S.steps.filter(s => s.t!=='event' && s.t!=='eventOutcome'); teacherClose(); toast('Event skipped'); };
@@ -458,7 +475,7 @@ function boot(){
   setInterval(() => { if(wallView) renderDisplay(); }, 8000);
   if(S.needsRestart) startRound(S.round);
   // if the page was refreshed mid-flight, finish the flight
-  if(step().t==='fly' && S.rnd.anim && Date.now()-S.rnd.anim.start > S.rnd.anim.dur) next();
+  if(step().t==='fly' && !S.rnd.live && S.rnd.anim && Date.now()-S.rnd.anim.start > S.rnd.anim.dur) next();
   setInterval(() => { send({type:'ping'}); updateStrip(); }, 4000);
   // opening the game always starts on the home screen: carry on, or start again
   const started = S.airline && S.airline.name && !['welcome','name'].includes(step().t);

@@ -1,6 +1,7 @@
 PW: p4d_opening.js -> p4f_campaign.js
 advance: p4a_core.js -> p4d_opening.js
 applyPeriodResults: p4a_core.js -> p4f_campaign.js
+aptCode: p4d_opening.js -> p4i_liveops.js
 bandOf: p4g_opening2.js -> p4h_world.js
 beatLabel: p4d_opening.js -> p4f_campaign.js
 campaignSummary: p4d_opening.js -> p4f_campaign.js
@@ -50,7 +51,7 @@ setPlan: p4d_opening.js -> p4g_opening2.js
 simulateDays: p4a_core.js -> p4f_campaign.js
 simulateRun: p4a_core.js -> p4f_campaign.js
 stageSummary: p4d_opening.js -> p4g_opening2.js
-startFlight: p4a_core.js -> p4g_opening2.js
+startFlight: p4a_core.js -> p4g_opening2.js -> p4i_liveops.js
 startProtoDay: p4d_opening.js -> p4g_opening2.js
 syncRoutesToHome: p4d_opening.js -> p4h_world.js
 testPlan: p4f_campaign.js -> p4g_opening2.js

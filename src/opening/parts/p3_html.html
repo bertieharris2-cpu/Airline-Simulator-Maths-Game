@@ -65,6 +65,7 @@
     <footer class="w-ticker"><b>NEWS &rsaquo;</b><div class="tk"><span id="dTicker"></span></div></footer>
     <div class="w-alert" id="wAlert" hidden></div>
     <div class="w-sim" id="wSim" hidden></div>
+    <div class="w-ops" id="wOps" hidden></div>
     <div class="w-over" id="wOver" hidden></div>
   </div>
   <div id="work" hidden>
@@ -111,7 +112,9 @@
         <div class="row"><span>Adjust cash now</span><input type="number" id="tCashDelta" step="100" placeholder="+/- £"><button class="btn small" id="tCashApply">Apply</button></div>
         <div class="row"><span>Reputation</span><button class="btn small" id="tRepDown">−½ ★</button><button class="btn small" id="tRepUp">+½ ★</button></div>
         <div class="row"><span>Jump</span><button class="btn small" id="tRoundNext">Skip to the next story beat</button><button class="btn small" id="tRepeat">Repeat this period</button></div>
-        <div class="row"><span>Flight animation</span><select id="tFlightSecs"><option value="4">4 s</option><option value="7">7 s</option><option value="12">12 s</option></select></div>
+        <div class="row"><span>Live operations pace</span><select id="tFlightSecs"><option value="4">Brisk</option><option value="7">Standard</option><option value="12">Slow</option></select></div>
+        <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tOpsSound" style="width:24px;height:24px"> Airport chimes and announcements during live operations</label></div>
+        <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tAutoWall" style="width:24px;height:24px"> With no IWB window open, show live operations full screen on this screen</label></div>
       </div>
       <div class="tsec"><h3>Session</h3>
         <div class="row"><button class="btn small primary" id="tEnd">End session (save &amp; show code)</button><button class="btn small" id="tMenu">Main menu</button><button class="btn small" id="tRuns">Best runs</button></div>

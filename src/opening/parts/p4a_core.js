@@ -140,6 +140,7 @@ function onMessage(msg){
     if(msg.type==='work'){ setWorkMode(msg.open); }
   } else {
     if(msg.type==='pong' || msg.type==='hello'){ lastPong = Date.now(); updateStrip(); if(msg.type==='hello') publish(); }
+    if(msg.type==='ops') opsCmd(msg.cmd);
   }
 }
 if(bc) bc.onmessage = e => onMessage(e.data);
@@ -763,7 +764,7 @@ function back(){ if(S.si > 0){ S.si--; render(); } }
 function enterStep(){
   const st = step();
   if(st.t==='fly'){ S.rnd.forecast = forecastNow(); startFlight(); }
-  if(st.t==='sim' && !S.rnd.sim){ const fc0 = S.period.forecast; S.rnd.sim = simulateRun(); S.rnd.simAnim = { start: Date.now(), dur: Math.min(14000, 1000 * Math.max(4, settings.flightSecs) * Math.max(1, Math.min(3, S.rnd.sim.parts.length))) }; S.period.forecast = fc0; }
+  if(st.t==='sim' && !S.rnd.sim){ const fc0 = S.period.forecast; S.rnd.sim = simulateRun(); S.rnd.simAnim = { start: Date.now(), dur: Math.min(14000, 1000 * Math.max(4, settings.flightSecs) * Math.max(1, Math.min(3, S.rnd.sim.parts.length))) }; S.period.forecast = fc0; livePeriodShow(); }
   if(st.t==='results') (S.rnd.sim ? applyPeriodResults : applyResults)();
   if(st.t==='summary' && roundData(S.round).finale && !S.finished) recordRun();
   if(st.t==='summary' && roundData(S.round).checkpoint && !S.rnd.checkpointed){ S.rnd.checkpointed = true; recordRun(true); }

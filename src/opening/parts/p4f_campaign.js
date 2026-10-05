@@ -73,7 +73,7 @@ function editStep(what){
   if(k === 'month' || k === 'year') return what === 'forecast' && k === 'year' ? 'yearPlan' : 'plans';
   const setup = S.phase === 'setup'; return what === 'timetable' ? (setup ? 'timetable' : 'planner') : what === 'extras' ? 'planner' : 'options';
 }
-function goWord(){ const k = railKind(); return k === 'week' ? 'RUN THE WEEK' : k === 'month' ? `RUN ${monthName(S.period.from).toUpperCase()}` : k === 'year' ? 'RUN THE YEAR' : 'START OPERATIONS'; }
+function goWord(){ const k = railKind(); return k === 'week' ? 'SEND THE WEEK TO OPERATIONS' : k === 'month' ? `RUN ${monthName(S.period.from).toUpperCase()}` : k === 'year' ? 'RUN THE YEAR' : 'SEND TO OPERATIONS WALL'; }
 function closeWord(){ const k = railKind(), P = S.period; if(S.rnd.saving) return 'Back to the aircraft'; return P && P.type === 'gap' ? 'Plan Week 1' : k === 'week' ? 'Close the week' : k === 'month' ? 'Close the month' : k === 'year' ? 'Go to the Year 1 review' : 'Close the day'; }
 function planWord(){ const k = railKind(); return k === 'week' ? 'Plan the week' : k === 'month' ? `Plan ${monthName(S.period.from)}` : k === 'year' ? 'Plan the year' : "Plan today's operation"; }
 function readyTitle(){ const k = railKind(), P = S.period; return k === 'week' ? `Ready for Week ${weekNo(P.from)}` : k === 'month' ? `Ready for ${monthName(P.from)}` : k === 'year' ? 'Ready to run the year' : S.phase === 'setup' ? 'Ready for launch' : `Ready for Day ${S.round}`; }
@@ -304,6 +304,7 @@ R.review = () => {
 /* ---------- the run: the HQ while routine days go by ---------- */
 let simLoop = null;
 function simCard(){
+  if(S.rnd.live) return liveCard();
   const T = S.rnd.sim, f = fleetOne(), sched = f ? schedOf(f) : [];
   return `${hqHead('Operations', 'RUNNING')}<div class="pb td2"><div class="live-clock"><span class="kl">Date</span><b id="simDate">${T ? dateShort(T.from) : ''}</b></div><div class="live-bar"><i id="simProg"></i></div>
     ${T && T.parts.length > 1 ? `<div class="sim-chips">${T.parts.map((p, i) => `<span data-sc="${i}">${esc(p.label)}</span>`).join('')}</div>` : ''}

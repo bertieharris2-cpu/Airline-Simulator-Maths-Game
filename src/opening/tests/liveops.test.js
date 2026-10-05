@@ -1,15 +1,17 @@
-// Run: NODE_PATH=<playwright node_modules> node opening.test.js   (env: W, H, HOME_APT, MKT, POL, UPTO, SHOTS=0, OUT)
-// The opening, one new idea a day: Launch Day → Day 4 → Regular Operating Plan → Week 1 (and on, with UPTO).
+// Run: NODE_PATH=<playwright node_modules> node liveops.test.js   (env: W, H, HOME_APT, MKT, POL, UPTO, SHOTS=0, OUT)
+// Live operations on the Operations Wall, Launch Day to Week 3: the clock is held at chosen moments for screenshots,
+// then skipped to the summary. Checks the wall opens by itself on one screen, the phases, the moments and that the
+// model is untouched (projected = actual).
 const { chromium } = require('playwright');
 const path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../../airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-shots') + '/'; require('fs').mkdirSync(OUT, { recursive:true });
-const W = +(process.env.W || 1366), H = +(process.env.H || 768), HOME = process.env.HOME_APT || 'lhr', MK = process.env.MKT || 'par', OTHER = MK === 'par' ? 'dub' : 'par', SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 8), POL = process.env.POL || 'typical';
+const W = +(process.env.W || 1366), H = +(process.env.H || 768), HOME = process.env.HOME_APT || 'lhr', MK = process.env.MKT || 'par', OTHER = MK === 'par' ? 'dub' : 'par', SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 9), POL = process.env.POL || 'typical';
 const TAG = `${HOME}-${MK}-${W}`;
 (async () => {
-  const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
+  const b = await chromium.launch(), ctx = await b.newContext({ viewport:{ width:W, height:H } }), p = await ctx.newPage(), IWB = process.env.IWB === '1'; let d = null;
   const errors = [], overflow = [], checks = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
-  await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });   // live operations at speed, on the HQ (liveops.test.js watches the wall)
+  await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 7; st.autoWall = true; st.opsSound = false; });
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S());
   const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(200); await p.screenshot({ path:OUT + n + '-' + TAG + '.png' }); };
@@ -23,6 +25,47 @@ const TAG = `${HOME}-${MK}-${W}`;
       await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); }
     typedLog[tag] = seen; return seen; };
   const vis = sel => p.evaluate(s => !!document.querySelector(s), sel);
+  const seek = (g, rate) => p.evaluate(([g, r]) => window.__live.seek(g, r), [g, rate || 0.0005]);
+  const wallFits = async tag => { const r = await p.evaluate(() => { const bad = []; document.querySelectorAll('.lo-feat,.lo-sim,.lo-focus,.lo-ac,.lo-ann,.lf-b,.lo-strip').forEach(e => { if(e.scrollHeight > e.clientHeight + 2 || e.scrollWidth > e.clientWidth + 2) bad.push((e.className || e.tagName) + ' ' + e.scrollWidth + 'x' + e.scrollHeight + '>' + e.clientWidth + 'x' + e.clientHeight); }); return bad; }); if(r.length) overflow.push(tag + ': ' + r.join(' | ')); };
+  const lshot = async (n, g) => { if(g !== undefined) await seek(g); await p.waitForTimeout(260); await wallFits(n); await shot(n); };
+  async function liveShots(R, day, s){
+    await p.waitForTimeout(120);
+    const L = await p.evaluate(() => window.__live.show()); if(!L){ checks.push(`info no live show at ${R}`); return; }
+    if(IWB){
+      ok(`live ${day}: with an IWB window the HQ stays on the HQ`, !(await p.evaluate(() => document.body.classList.contains('wallview'))));
+      await d.waitForTimeout(800); ok(`live ${day}: the IWB window plays the show`, await d.evaluate(() => !document.getElementById('wOps').hidden && document.getElementById('wall').className.includes('mode-ops')));
+      await d.screenshot({ path:OUT + `iwb-${day}-wall.png` }); await shot(`iwb-${day}-hq`);
+      await d.evaluate(() => document.querySelector('.lo-ctl [data-ops="x2"]').click()); await p.waitForTimeout(600);
+      ok(`live ${day}: the wall's 2× button reaches the HQ clock`, await p.evaluate(() => window.__live.show().clock.rate === 2));
+      await d.evaluate(() => document.querySelector('.lo-ctl [data-ops="summary"]').click());
+      for(let i = 0; i < 40 && ['fly', 'sim'].includes(await T()); i++) await p.waitForTimeout(200);
+      await d.waitForTimeout(1500); ok(`live ${day}: the wall shows Day complete`, await d.evaluate(() => /COMPLETE/.test((document.querySelector('#wOver .wo-head h1') || {}).textContent || ''))); await d.screenshot({ path:OUT + `iwb-${day}-complete.png` });
+      return; }
+    ok(`live ${day}: the wall opens by itself on one screen`, await p.evaluate(() => document.body.classList.contains('wallview')));
+    const mode0 = await p.evaluate(() => window.__live.mode()); ok(`live ${day}: starts with the handoff`, mode0 === 'intro', mode0);
+    const on = L.flights.filter(F => !F.off), F0 = on.find(F => F.style === 'full') || on[0], tag = `live-${s.period.type}${day}`;
+    checks.push(`info live ${day} ${L.kind} days ${L.days.map(D => D.style).join(',')} flights ${on.map(F => F.code + ':' + F.style + ':' + F.sold + '/' + F.seats + (F.waiting ? '+' + F.waiting : '')).join(' ')} moments ${L.moments.map(m => m.kind + (m.focus ? '*' : '') + ':' + m.title).join(' | ')} real ${Math.round(L.total)}s`);
+    if(R === 0 || (s.period.type === 'gap')) await lshot(`${tag}-0intro`);
+    const shape = Lg => ({ up:Math.min(8, Lg * .14) });
+    if(R === 0){
+      await lshot(`${tag}-1checkin`, F0.dep - 30); await lshot(`${tag}-2boarding`, F0.dep - 16); await lshot(`${tag}-3closed`, F0.dep - 2);
+      const ph = await p.evaluate(([k, g]) => window.__live.phase(k, g).st, [F0.key, F0.dep - 16]); ok('launch: boarding at dep − 16', ph === 'board', ph);
+      await lshot(`${tag}-4taxi`, F0.dep + 4); await lshot(`${tag}-5takeoff`, F0.dep + shape(F0.L).up + .2); await lshot(`${tag}-6cruise`, F0.dep + F0.L * .5);
+      await lshot(`${tag}-7landed`, F0.arrAway - 2); await lshot(`${tag}-8turn`, F0.arrAway + F0.A * .45); await lshot(`${tag}-9reboard`, F0.arrAway + F0.A * .85);
+      await lshot(`${tag}-10back`, F0.depAway + F0.L * .5); await lshot(`${tag}-11hometurn`, F0.arr + 12);
+      const N = on[1]; if(N) await lshot(`${tag}-12ready`, Math.min(N.dep - 30, F0.ready + 3));
+      await p.click('[data-ops="hq"]'); await p.waitForTimeout(250); await shot(`${tag}-13hq`); ok('launch: the HQ shows the live card', await vis('#loPace .btn')); await p.click('[data-ops="wall"]'); await p.waitForTimeout(250);
+      const pace = await p.evaluate(() => { document.querySelector('.lo-ctl [data-ops="x2"]').click(); return window.__live.show().clock.rate; }); ok('pace: 2× from the wall', pace === 2, pace);
+    }
+    if(R === 1 && F0.ob) await lshot(`${tag}-cabin`, F0.dep + F0.L * .5);
+    if(R >= 1 && R <= 4) await lshot(`${tag}-boarding`, F0.dep - 14);
+    for(const m of L.moments){ await lshot(`${tag}-m-${m.kind}${m.focus ? '-focus' : ''}`, m.g + (m.focus ? .5 : 1)); if(m.focus) await lshot(`${tag}-m-${m.kind}-slowing`, m.g - 12); }
+    if(L.kind === 'period'){ const D = L.days.find(x => x.style === 'compressed'); if(D) await lshot(`${tag}-sim`, D.k * 1440 + 13 * 60); }
+    if(R === 4 && on.length > 2) await lshot(`${tag}-dublin`, (on.find(F => F.route !== on[0].route) || on[2]).dep + 30);
+    // the rest goes by: skip to the summary from the wall
+    await p.evaluate(() => { const b = document.querySelector('.lo-ctl [data-ops="summary"]'); if(b) b.click(); });
+    for(let i = 0; i < 40 && ['fly', 'sim'].includes(await T()); i++) await p.waitForTimeout(150);
+  }
   // ---- setup ----
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx');
   ok('no airline-type choice at the start', await T() !== 'strategy', await T());
@@ -67,8 +110,13 @@ const TAG = `${HOME}-${MK}-${W}`;
       if(POL === 'typical' && better && await vis('[data-ftest]:not([disabled])')) await p.click('[data-ftest]'); else await p.click('[data-fmine]');
       const fc = (await S()).rnd.myForecast; checks.push(`info test ${day} flew ${fc && fc.plan} projected ${fc && fc.profit}`); continue; }
     if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); await fits('fuel ' + R); if(R === 2) await shot('d2-fuel'); await p.click('#nx'); continue; }
+    if(t === 'ready' && IWB && !d){
+      const pop = ctx.waitForEvent('page'); await p.evaluate(() => document.getElementById('tOpenIwb').click()); d = await pop;
+      d.on('pageerror', e => errors.push('wall: ' + e.message)); await d.waitForLoadState(); await p.waitForTimeout(5000);
+      ok('IWB: the HQ sees the wall window', await p.evaluate(() => document.querySelector('.iwb.on') !== null)); }
     if(t === 'ready'){ await fits('ready ' + R); if(R <= 2) await shot(`d${day}-ready`); const en = await p.$eval('#startOps', e => !e.disabled); ok('ready enabled ' + day, en, await p.textContent('.opplan')); if(!en) break; await p.click('#startOps'); continue; }
-    if(t === 'fly' || t === 'sim'){ for(let i = 0; i < 80 && ['fly', 'sim'].includes(await T()); i++) await p.waitForTimeout(250); continue; }
+    if(t === 'fly' || t === 'sim'){ await liveShots(R, day, s); for(let i = 0; i < 80 && ['fly', 'sim'].includes(await T()); i++) await p.waitForTimeout(250); continue; }
+    if(t === 'results' && await p.evaluate(() => document.body.classList.contains('wallview'))){ await p.waitForTimeout(500); await shot(`r${day}-wall-complete`); ok(`results ${R}: the wall shows the summary`, await vis('#wOver:not([hidden]) .wo-head h1')); await p.click('#wOver [data-ops="hq"]'); await p.waitForTimeout(200); ok(`results ${R}: Review at HQ returns to the HQ`, !(await p.evaluate(() => document.body.classList.contains('wallview')))); }
     if(t === 'results'){ const r = await S(), fc = r.rnd.myForecast;
       if(!r.rnd.sim && fc) ok(`day ${day}: projected = actual`, Math.abs(fc.profit - r.rnd.profit) < 1, [fc.profit, r.rnd.profit]);
       if(r.rnd.sim && r.rnd.vs) checks.push(`info period ${R} projected ${r.rnd.vs.expProfit} actual ${r.rnd.vs.gotProfit}`);
