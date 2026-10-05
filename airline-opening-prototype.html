@@ -5605,7 +5605,7 @@ function simulateRun(){
     const part = simulateDays(d, end); part.label = P.type === 'month' ? monthName(d, true) : null; parts.push(part);
     S.disrupt = null; d = end + 1;
     if(P.type !== 'month') break;
-    const more = run.kind === 'until' ? d <= run.to : run.kind === 'afford' ? parts.length < 12 && investable() < planeById(run.target).price : run.kind === 'n' ? parts.length < run.n : false;
+    const more = run.kind === 'until' ? d <= run.to : run.kind === 'afford' ? parts.length < 36 && investable() < planeById(run.target).price : run.kind === 'n' ? parts.length < run.n : false;
     if(!more) break;
     const bi = beatStartingOn(d); if(bi !== null && !QUIET) addNews((WORLD.rounds[bi].news || []).slice(0, 1).map(t => ({ tag:'NEWS', text:t, round:bi })));
   }
@@ -5759,7 +5759,7 @@ function periodResultsCard(){
   return `${hqHead(yr ? 'The Year So Far' : `${cap(periodShort(h))} Results`, 'ALL LANDED')}<div class="pb td2 dr">
     <div class="dr-rcp"><div class="rev"><span class="kl">Revenue</span><b>${money(T.rev)}</b></div><i>−</i><div class="cost"><span class="kl">Costs</span><b>${money(T.costs)}</b></div><i>=</i>
       <div class="prof ${pr < 0 ? 'neg' : ''}"><span class="kl">${pr >= 0 ? 'Profit' : 'Loss'}</span><b>${money(Math.abs(pr))}</b></div></div>
-    ${fcLine}${yr ? yearResultLines() : ''}${chips}
+    ${fcLine}${yr ? yearResultLines() : ''}${savedLine()}${chips}
     ${yr ? `<p class="dr-cash">Cash now <b>${money(Math.round(S.cash))}</b></p>` : ''}<p class="dr-cash" ${yr ? 'hidden' : ''}>Profit <b>${money(pr)}</b>${Math.abs(bought) >= 1 ? ` · fuel stock bought or used up: ${bought < 0 ? '−' : '+'}${money(Math.abs(Math.round(bought)))}` : ''} · cash now <b>${money(Math.round(S.cash))}</b></p>
     ${yr ? '' : `<div class="dr-routes">${Object.keys(T.routes).map(id => { const x = T.routes[id], miss = Math.max(0, (x.want || x.pax) - x.pax); return `<span>${flagSvg(routeById(id).flag, 16)} <b>${esc(routeById(id).city)}</b> ${num(x.want)} wanted · ${num(x.pax)} flew · <span class="${miss ? 'orange' : ''}">${num(miss)} no seat</span></span>`; }).join('')}</div>`}
     <div class="td-act"><span class="grow"></span><button class="btn primary act" id="nx">${closeWord()} ▶</button></div></div>`;
@@ -5915,20 +5915,27 @@ R.invest = () => {
     .concat([{ id:'keep', label:'Keep saving', sub:'Buy nothing yet', values:{ price:0, cash, after:cash, reserve:res, safe:1, seats:0, extraDay:0, days:30, extraMonth:0, payback:0 }, auto:{ after:true, safe:true, extraMonth:true, payback:true } }]);
   const tid = 'invest:' + S.day, prev = S.rnd.tables[tid], t = ensureTable(tid, 'invest', cols); if(t !== prev) t.active = null;
   const done = tableComplete(t);
+  const cheap = cols.slice(0, NEXT_AIRCRAFT.length).sort((a, b) => a.values.price - b.values.price)[0], none = !cols.slice(0, NEXT_AIRCRAFT.length).some(c => c.values.safe);
   const btns = cols.slice(0, NEXT_AIRCRAFT.length).map(c => `<button class="btn ${c.values.safe ? 'primary' : ''}" data-buy="${c.id}" ${done && c.values.safe ? '' : 'disabled'}>${c.values.safe ? `Buy the ${esc(c.label)}` : `${esc(c.label)}: below the emergency money`}</button>`).join('');
   screen().innerHTML = taskFrame({ question:'Which aircraft is the better investment?', work:true, calc:t,
     say:'Work out the cash left after buying, and how many months each aircraft takes to pay for itself.',
-    context:{ title:'Decision', html: `<div class="pl-choose">${btns}<button class="btn" data-save>Keep saving: run another month &#9654;</button></div><p class="muted cx-note">${done ? 'Think about the emergency money, the months to pay back, and the people who have no seat today.' : 'Complete the figures before deciding.'}</p><p class="muted cx-note">The Investment model works out the extra profit a day, using the timetable shown under each aircraft.</p>` },
+    context:{ title:'Decision', html: `<div class="pl-choose">${btns}<button class="btn" data-save>Keep saving: run another month &#9654;</button>${none ? `<button class="btn" data-saveto="${cheap.id}">Save until the ${esc(cheap.label)} is affordable &#9654;</button>` : ''}</div><p class="muted cx-note">${done ? 'Think about the emergency money, the months to pay back, and the people who have no seat today.' : 'Complete the figures before deciding.'}</p><p class="muted cx-note">The Investment model works out the extra profit a day, using the timetable shown under each aircraft.</p>` },
     main:`<div class="opts-wrap inv">${tableHtml(t)}</div>` });
   bindTable(t);
   screen().querySelectorAll('[data-buy]').forEach(b => b.onclick = () => { S.rnd.buyId = b.getAttribute('data-buy'); resetEntry(); UI.justDone = null; advance(); });
-  screen().querySelectorAll('[data-save]').forEach(b => b.onclick = keepSaving);
+  screen().querySelectorAll('[data-save]').forEach(b => b.onclick = () => keepSaving());
+  screen().querySelectorAll('[data-saveto]').forEach(b => b.onclick = () => keepSaving(b.getAttribute('data-saveto')));
 };
 /* Keep saving: one more month of routine flying, then back to the aircraft. */
-function keepSaving(){
+function keepSaving(target){
   S.rnd.saving = true; S.rnd.sim = null; S.rnd.applied = false; S.rnd.myForecast = null;
-  S.period = newPeriod('month', S.day); S.period.run = { kind:'one' };
+  S.period = newPeriod('month', S.day); S.period.run = target ? { kind:'afford', target } : { kind:'one' };
   S.steps.splice(S.si + 1, 0, { t:'sim', saving:true }, { t:'results', saving:true }); next();
+}
+function savedLine(){
+  const run = S.period && S.period.run; if(!S.rnd.saving || !run || run.kind !== 'afford') return '';
+  const pl = planeById(run.target), n = S.rnd.sim.parts.length, ok = investable() >= pl.price;
+  return `<p class="dr-fc">Saved for ${n} month${n > 1 ? 's' : ''}: the ${esc(pl.name)} is ${ok ? '<span class="green">now affordable</span>' : '<span class="orange">still not affordable</span>'}, keeping ${money(reserveNow())} back.</p>`;
 }
 function keepSavingDone(){
   S.rnd.saving = false; S.day = S.period.to + 1; S.period = newPeriod('day', S.day);
