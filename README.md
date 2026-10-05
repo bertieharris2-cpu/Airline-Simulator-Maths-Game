@@ -7,7 +7,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 | File | What it is |
 | --- | --- |
-| `airline-opening-prototype.html` | **The active development version.** Setup, Launch Day and Days 1–3, then the campaign through Phase 7: weeks, months, the first year and the first aircraft purchase, ending at *Year 1 complete*. See *Opening prototype* below. |
+| `airline-opening-prototype.html` | **The active development version.** Setup, Launch Day and Days 1–4, then the campaign through Phase 7: weeks, months, the first year and the first aircraft purchase, ending at *Year 1 complete*. See *Opening prototype* below. |
 | `airline-simulator-full-reference.html` | **Frozen.** A snapshot of the complete simulator (weeks, months, later aircraft, international routes, storyline, awards, challenges). Critical fixes only until the opening is approved (so far: the full-screen button, which the teacher's triple-tap corner used to cover). |
 | `airline-simulator.html` | The complete game, identical to the full reference for now: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
 | `prototypes/hq/` | The HQ look-and-feel explorations that led to the current design. Standalone; not used by the game. |
@@ -129,18 +129,18 @@ After the review:
 
 **Forecast = actual.** Every week and month forecast uses the real engine, dry-run on a copy of the airline (fuel batches, automatic deliveries, terminal charges, on-board sales, crew). A plan that is not changed lands exactly as forecast, fuel included. The test checks this for every week and month.
 
-**Balance (prototype data only; demand never changed).** The Saab 340 costs £320,000 and the ATR 72 £520,000 (emergency money £20,000).
+**Balance (prototype data only; demand never changed).** The Saab 340 costs £180,000 and the ATR 72 £280,000 (emergency money £20,000). Tuned by playing the whole campaign with scripted players:
 
-| Test player | Cash on 1 Sep | Average month | Saab 340 affordable | ATR 72 affordable |
+| Test player | Cash on 1 Sep | Saab 340 affordable | ATR 72 affordable | At the Year 1 review |
 | --- | --- | --- | --- | --- |
-| Best plan every time, Heathrow → Paris | £215,677 | £59,530 | end of November (estimate in September: 3 months) | end of February (estimate: 6 months) |
-| Best plan every time, Manchester → Dublin | £279,134 | £77,324 | end of September | end of December |
-| Normal fares, both routes, snacks | £86,844 | £22,981 | about 5 months after the Year 1 review | later |
-| Normal fares, Paris only, nothing on board | £44,318 | £11,121 | about 2 years after the Year 1 review | later |
+| Tries ideas and flies the better one, Heathrow → Paris | £110,223 | end of December (estimate in September: 3 months) | end of March (estimate: 7 months) | both affordable; buys the ATR |
+| The same, Manchester → Dublin | £91,969 | end of January | not within Year 1 | buys the Saab |
+| Keeps its own plan, both routes, snacks | £77,914 | end of March | not within Year 1 | buys the Saab |
+| Keeps its own plan, Paris only, nothing on board | £36,193 | after Year 1 | — | *Save until the Saab 340 is affordable*, then buys it |
 
-- **Why the gap is so big:** fares make the biggest difference. A pupil who always chooses the most profitable plan moves the fares to the top of the fare menu within a few weeks, and the 19 seats still fill.
 - **Keep saving:** a pupil who can't afford either aircraft at the review can *Keep saving* one month at a time, or *Save until the … is affordable* (one run, month by month, up to three years). The Overview says how many months it took.
-- **Tuning:** the prices are in `data-planes` (`price`); the emergency money is `reserveDefault` in `data-world`.
+- **Reputation:** high fares cost half a star a day on the opening days; a pupil who always takes the most profitable fare sees reviews fall.
+- **Tuning:** prices are in `data-planes` (`price`), the emergency money is `reserveDefault` and the time-of-day profiles are `profile` on each route in `data-world`.
 
 **Market numbers (prototype only):** demand describes the market and is never changed to suit a lesson (no growth, no extra passengers on a "lesson day"); only reputation's small effect remains.
 
