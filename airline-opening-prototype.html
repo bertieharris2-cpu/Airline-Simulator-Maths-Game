@@ -5600,7 +5600,7 @@ function simulateDays(a, b, o){
 function simulateRun(){
   const P = S.period, run = P.run || { kind:'one' }, parts = [];
   let d = P.from;
-  for(let k = 0; k < 24; k++){
+  for(let k = 0; k < 36; k++){
     const nb = nextBeat(d), end = P.type === 'month' ? Math.min(monthEnd(d), nb === null ? Infinity : beatDay(nb) - 1) : P.to;
     const part = simulateDays(d, end); part.label = P.type === 'month' ? monthName(d, true) : null; parts.push(part);
     S.disrupt = null; d = end + 1;
@@ -5754,7 +5754,7 @@ R.sim = st => {
 function periodResultsCard(){
   const T = S.rnd.sim, vs = S.rnd.vs, pr = T.profit, yr = isYearRun(), h = lastHist();
   const fcLine = vs && vs.kind === 'period' ? `<p class="dr-fc">Your forecast: ${money(vs.expProfit)} · actual: ${money(vs.gotProfit)} ${Math.abs(vs.expProfit - vs.gotProfit) < 1 ? '<span class="green">✓ as forecast</span>' : `<span class="orange">${vs.gotProfit > vs.expProfit ? '+' : '−'}${money(Math.abs(vs.gotProfit - vs.expProfit))}</span>`}</p>` : '';
-  const chips = T.parts.length > 1 ? `<div class="sim-chips res ${T.parts.length > 6 ? 'y8' : ''}">${T.parts.map(p => `<span class="on"><b>${esc(p.label)}</b><i class="mono ${p.profit >= 0 ? 'green' : 'red'}">${money(p.profit)}</i></span>`).join('')}</div>` : '';
+  const chips = T.parts.length > 1 && T.parts.length <= 8 ? `<div class="sim-chips res ${T.parts.length > 6 ? 'y8' : ''}">${T.parts.map(p => `<span class="on"><b>${esc(p.label)}</b><i class="mono ${p.profit >= 0 ? 'green' : 'red'}">${money(p.profit)}</i></span>`).join('')}</div>` : '';
   const bought = r2(S.cash - S.rnd.cashStart - pr);
   return `${hqHead(yr ? 'The Year So Far' : `${cap(periodShort(h))} Results`, 'ALL LANDED')}<div class="pb td2 dr">
     <div class="dr-rcp"><div class="rev"><span class="kl">Revenue</span><b>${money(T.rev)}</b></div><i>−</i><div class="cost"><span class="kl">Costs</span><b>${money(T.costs)}</b></div><i>=</i>
@@ -5919,7 +5919,7 @@ R.invest = () => {
   const btns = cols.slice(0, NEXT_AIRCRAFT.length).map(c => `<button class="btn ${c.values.safe ? 'primary' : ''}" data-buy="${c.id}" ${done && c.values.safe ? '' : 'disabled'}>${c.values.safe ? `Buy the ${esc(c.label)}` : `${esc(c.label)}: below the emergency money`}</button>`).join('');
   screen().innerHTML = taskFrame({ question:'Which aircraft is the better investment?', work:true, calc:t,
     say:'Work out the cash left after buying, and how many months each aircraft takes to pay for itself.',
-    context:{ title:'Decision', html: `<div class="pl-choose">${btns}<button class="btn" data-save>Keep saving: run another month &#9654;</button>${none ? `<button class="btn" data-saveto="${cheap.id}">Save until the ${esc(cheap.label)} is affordable &#9654;</button>` : ''}</div><p class="muted cx-note">${done ? 'Think about the emergency money, the months to pay back, and the people who have no seat today.' : 'Complete the figures before deciding.'}</p><p class="muted cx-note">The Investment model works out the extra profit a day, using the timetable shown under each aircraft.</p>` },
+    context:{ title:'Decision', html: `<div class="pl-choose">${btns}<button class="btn" data-save>Keep saving: run another month &#9654;</button>${none ? `<button class="btn" data-saveto="${cheap.id}">Save until the ${esc(cheap.label)} is affordable &#9654;</button>` : ''}</div><p class="muted cx-note">${done ? 'Think about the emergency money, the months to pay back, and the people who have no seat today.' : 'Complete the figures before deciding.'}</p>${none ? '' : '<p class="muted cx-note">The Investment model works out the extra profit a day, using the timetable shown under each aircraft.</p>'}` },
     main:`<div class="opts-wrap inv">${tableHtml(t)}</div>` });
   bindTable(t);
   screen().querySelectorAll('[data-buy]').forEach(b => b.onclick = () => { S.rnd.buyId = b.getAttribute('data-buy'); resetEntry(); UI.justDone = null; advance(); });

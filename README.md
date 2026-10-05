@@ -7,7 +7,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 | File | What it is |
 | --- | --- |
-| `airline-opening-prototype.html` | **The active development version.** The opening 20–30 minutes only: setup, Launch Day, Day 1, Day 2, Day 3, then a temporary *Opening prototype complete* screen. See *Opening prototype* below. |
+| `airline-opening-prototype.html` | **The active development version.** Setup, Launch Day and Days 1–3, then the campaign through Phase 7: weeks, months, the first year and the first aircraft purchase, ending at *Year 1 complete*. See *Opening prototype* below. |
 | `airline-simulator-full-reference.html` | **Frozen.** A snapshot of the complete simulator (weeks, months, later aircraft, international routes, storyline, awards, challenges). Critical fixes only until the opening is approved (so far: the full-screen button, which the teacher's triple-tap corner used to cover). |
 | `airline-simulator.html` | The complete game, identical to the full reference for now: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
 | `prototypes/hq/` | The HQ look-and-feel explorations that led to the current design. Standalone; not used by the game. |
@@ -128,6 +128,57 @@ The opening is being made excellent before the later campaign continues. `airlin
 7. **Results:** revenue − costs = profit (with one-line meanings, only on launch day), the flights, who flew (wanted, seats, travelled, no seat), forecast against actual.
 
 **Days 1–3 (the help fades):** the HQ shows yesterday's evidence per route (wanted, seats, travelled, no seat) and Intelligence lists situations, never instructions (*Capacity pressure — Paris*, fuel up to £1.30, *Network opportunity — Dublin*). **Plan today's operation** opens one planner: the day bar, each route's services, and who gets a seat at today's fare (fares are chosen on the costing screen). Day 2's fuel screen has fuller help (and a typed bill); Day 3 adds the other market, so the pupil chooses a mix (Paris ×3, Paris ×2 + Dublin ×1, Paris ×1 + Dublin ×2, Dublin ×3, …), with the day's expected profit shown. Typed sums fade: Day 1 profit, Day 2 fuel bill and profit, Day 3 the revenue sums. Optional help (*How scheduling works*, *Demand*, *Fuel*, *Revenue and profit*, *Forecast*) opens in the dock beside the task; nothing is retaught automatically.
+
+**The maths toolkit (the teacher decides).** Each maths tool is at one of three levels, set in the teacher panel's **Maths tools** section (Ctrl+Shift+T):
+- **Calculate:** the pupil works the figure out with *Complete figure* and the calculation dock.
+- **Build:** the pupil first chooses the two figures and the sign (+ − × ÷) from labelled chips, then works it out. The order matters for − and ÷. *That's my sum* checks the pair; a wrong pair says "Those figures don't make the …".
+- **Model:** the airline's software fills the figure in, and the cell carries a small *model* badge.
+
+More about the levels:
+- **The tools:** Ticket revenue, Fuel cost, Total costs, Profit, Week/month totals, Difference, Average, Annual projection and Time to afford. Capacity, Fuel required, Timetable and Investment are always models.
+- **Defaults by stage**, with no competence tracking. Each tool reaches Model with a short notice (*Ticket revenue model online*):
+  - ticket revenue becomes a model on Day 1, fuel cost on Day 3, profit and totals from the first week;
+  - Difference, Average, Annual projection and Time to afford are the pupil's own figures when they first appear.
+- **Teacher controls:** each tool has Calculate / Build / Model buttons and *Use the default*. There are also three buttons for all tools at once: *Phase defaults for all*, *Pupil calculates all* and *Model does all*.
+  - A change applies straight away; a figure that stops being typed closes.
+  - The settings travel in the save code.
+- **The pupil's view:** Finance → **Models** lists every tool met so far as *You work it out*, *You build it* or *Model online*.
+
+**Phases 4–7: from the first week to the first aircraft.** Time speeds up after Day 3, and each new stage opens with a short stage card.
+
+| Phase | When | What the pupil does |
+| --- | --- | --- |
+| 4 Establish the timetable | Thu 16 May (the timetable runs by itself), then Weeks 2–4 | Review last week; from Week 3 work out the **difference** (the rise or fall in profit). Keep or change the timetable. Fuel for the week, with automatic deliveries at the market price + 10p. **Forecast this week:** Plans A/B/C on a week sheet (revenue a day × 7, running costs a day × 7, fuel used this week, total costs, profit). |
+| 5 First stable period | 10–30 June, July, August | Review with an **average** (a week over Weeks 2–4, then a day over the month). **Current plan or test plan:** the current plan keeps flying, and the test plan is a copy to change. When they differ, the pupil works out the difference, then keeps the current plan or switches. |
+| 6 The first year | 1 September → **Run the year** to 30 April | Average month (July and August) → **annual projection**: average × 8 months + cash now = projected cash in May. **Time to afford** the Saab 340 and ATR 72: cash − emergency money (£20,000) = cash you can spend; price − that = still needed; ÷ average month = months, rounded up. Launch shows the projection; the year runs month by month on the HQ. |
+| 7 First aircraft purchase | 1 May 2031, the Year 1 review | **Year 1 in figures** (passengers, profit, best and hardest month, reputation). Projection against actual, with the difference typed and the reasons: month lengths, the fuel price through the year, profit a day against July and August, automatic fuel deliveries, and cash against profit. Each aircraft's estimated month against the month it really became affordable. |
+
+After the review:
+- **The shop:** the Twin Otter (owned), Saab 340, ATR 72, and the E190 (shown as too big for these routes).
+- **The investment sheet:** Saab 340 | ATR 72 | Keep saving. The rows are:
+  - price, cash after buying, emergency money, still above it?;
+  - seats, extra profit a day (from the **Investment model**, which adds the aircraft with the best timetable for the people who have no seat), days, extra profit a month;
+  - **months to pay for itself**.
+- **Deciding:**
+  - *Buy the …* appears for an aircraft that keeps the emergency money.
+  - *Keep saving* flies another month and comes back to the aircraft.
+- **The order:** the purchase order deducts exactly the price and puts the aircraft **on order**; the Fleet view shows it with its delivery date.
+- **The end of this pass:** a short *what happens next* screen (commissioning is Phase 8), then **Year 1 complete**.
+
+**Forecast = actual.** Every week and month forecast uses the real engine, dry-run on a copy of the airline (fuel batches, automatic deliveries, terminal charges, on-board sales, crew). A plan that is not changed lands exactly as forecast, fuel included. The test checks this for every week and month.
+
+**Balance (prototype data only; demand never changed).** The Saab 340 costs £320,000 and the ATR 72 £520,000 (emergency money £20,000).
+
+| Test player | Cash on 1 Sep | Average month | Saab 340 affordable | ATR 72 affordable |
+| --- | --- | --- | --- | --- |
+| Best plan every time, Heathrow → Paris | £215,677 | £59,530 | end of November (estimate in September: 3 months) | end of February (estimate: 6 months) |
+| Best plan every time, Manchester → Dublin | £279,134 | £77,324 | end of September | end of December |
+| Normal fares, both routes, snacks | £86,844 | £22,981 | about 5 months after the Year 1 review | later |
+| Normal fares, Paris only, nothing on board | £44,318 | £11,121 | about 2 years after the Year 1 review | later |
+
+- **Why the gap is so big:** fares make the biggest difference. A pupil who always chooses the most profitable plan moves the fares to the top of the fare menu within a few weeks, and the 19 seats still fill.
+- **Keep saving:** a pupil who can't afford either aircraft at the review can *Keep saving* one month at a time, or *Save until the … is affordable* (one run, month by month, up to three years). The Overview says how many months it took.
+- **Tuning:** the prices are in `data-planes` (`price`); the emergency money is `reserveDefault` in `data-world`.
 
 **Market numbers (prototype only):** demand describes the market and is never changed to suit a lesson (no growth, no extra passengers on a "lesson day"); only reputation's small effect remains.
 
