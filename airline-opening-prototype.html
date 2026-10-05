@@ -5105,7 +5105,7 @@ function kpiRow(mode){
     ${card('k-rev', 'cash', 'Revenue', h ? money(Math.round(h.revenue)) : '—', h ? (h.type === 'setup' ? 'Launch day' : `Tickets and sales`) : 'After the first flights', spark(H.map(x => x.revenue)))}
     ${card('k-pax', 'pax', 'Passengers', h ? `${h.pax}` : '—', h ? `Flew ${when}` : 'After the first flights')}
     ${card('k-load', 'seat', 'Seats filled', h && h.seats ? `${Math.round(100 * h.pax / h.seats)}%` : '—', h && h.seats ? `${h.pax} of ${h.seats} seats` : 'After the first flights')}
-    ${!fuelPaid() && S.round < 2 ? card('k-fuel', 'fuel', 'Fuel', 'Free', 'Supplied by the launch deal') : card('k-fuel', 'fuel', 'Fuel stock', `${num(S.fuel)} L`, need ? (S.fuel >= need ? `<span class="green">Covers today's plan</span>` : `<span class="orange">Plan needs ${num(need)} L</span>`) : S.fuel ? `Worth ${money(S.fuelValue)}` : 'No services planned')}</div>`;
+    ${!fuelPaid() && S.round < 2 ? card('k-fuel', 'fuel', 'Fuel', 'Free', 'Supplied by the launch deal') : fuelContract() ? card('k-fuel', 'fuel', 'Fuel', priceL(fuelPrice()), 'a litre, bought as it is used') : card('k-fuel', 'fuel', 'Fuel stock', `${num(S.fuel)} L`, need ? (S.fuel >= need ? `<span class="green">Covers today's plan</span>` : `<span class="orange">Plan needs ${num(need)} L</span>`) : S.fuel ? `Worth ${money(S.fuelValue)}` : 'No services planned')}</div>`;
 }
 function liveOpsHtml(mode){
   const fl = boardFlights().filter(f => !f.grounded);
@@ -5154,7 +5154,7 @@ function todayCard(mode){
   const fares = Object.keys(serviceCounts(sched)).map(id => `${routeById(id).city} ${money(fareOf(id))}`).join(' · ');
   return `${hqHead("Today's Plan", periodTag().toUpperCase())}<div class="pb td2"><h3 class="td-news2">${esc(S.rnd.headline || "Today's operation")}</h3>${(S.rnd.brief || []).map(l => `<p class="td-brief">${esc(l)}</p>`).join('')}
     <div class="td-list edits"><div><span>Timetable</span><b>${sched.length ? esc(svcLabel(sched)) + ` · until <span class="mono">${fmtTime(TIME.day(p, sched).end)}</span>` : '—'}</b><button class="link" data-plan>Edit</button></div><div><span>Fares</span><b>${esc(fares || '—')}</b><button class="link" data-plan>Edit</button></div>${snacksOn() && S.round >= 2 ? `<div><span>On board</span><b>${esc(onboardOf().label)}</b><button class="link" data-plan>Edit</button></div>` : ''}${depsOn() && S.round >= 4 && sched.length ? `<div><span>Departures</span><b class="mono">${TIME.day(p, sched).trips.map(t => fmtTime(t.dep)).join(', ')}</b><button class="link" data-plan>Edit</button></div>` : ''}
-      ${fuelPaid() ? `<div><span>Fuel</span><b class="${need > S.fuel ? 'orange' : ''}"><span class="mono">${num(S.fuel)} L</span> · plan needs <span class="mono">${num(need)} L</span></b><button class="link" data-plan>Edit</button></div>` : '<div><span>Fuel</span><b>Supplied free by the launch deal</b><span></span></div>'}</div>
+      ${fuelContract() ? `<div><span>Fuel</span><b>Bought as it is used at <span class="mono">${priceL(fuelPrice())}</span> a litre</b><span></span></div>` : fuelPaid() ? `<div><span>Fuel</span><b class="${need > S.fuel ? 'orange' : ''}"><span class="mono">${num(S.fuel)} L</span> · plan needs <span class="mono">${num(need)} L</span></b><button class="link" data-plan>Edit</button></div>` : '<div><span>Fuel</span><b>Supplied free by the launch deal</b><span></span></div>'}</div>
     <div class="td-act"><button class="btn primary act" id="startDay">${planWord()} ▶</button></div></div>`;
 }
 function renderOverview(mode){
@@ -5674,6 +5674,7 @@ function startBeat(b){
   if(w.until) S.period.run = { kind:'until', to: dayOfDate(w.until) };
   const keep = { featured:S.rnd.featured, focusRoute:S.rnd.focusRoute, avgMonth:S.rnd.avgMonth, yearProj:S.rnd.yearProj, affordEst:S.rnd.affordEst, yearVs:S.rnd.vs && S.rnd.vs.kind === 'year' ? S.rnd.vs : S.rnd.yearVs };
   S.fleet.forEach(f => { f.grounded = false; });
+  if((w.period === 'week' || w.period === 'gap') && typeof returnTankFuel === 'function') returnTankFuel();
   S.rnd = Object.assign(emptyRnd(), keep, { headline: w.headline || '', brief: periodBrief() });
   S.rnd.cashStart = S.cash; S.rnd.fuelStart = S.fuel;
   S.steps = stepsFor(b); S.si = 0; S.newRoutes = []; UI.view = null;
@@ -5683,7 +5684,7 @@ function startBeat(b){
 function stepsFor(b){
   const w = roundData(b), st = w.stage ? [{ t:'milestone', stage:w.stage }] : [], L = a => st.concat(a.map(t => ({ t })));
   if(w.period === 'gap') return L(['sim', 'results']);
-  if(w.period === 'week') return L((w.noReview ? ['hq'] : ['hq', 'review']).concat(['planner', 'costPlan', 'testIdeas', 'fuelPlan', 'ready', 'sim', 'results']));
+  if(w.period === 'week') return L((w.noReview ? ['hq'] : ['hq', 'review']).concat(['planner', 'costPlan', 'testIdeas', 'ready', 'sim', 'results']));
   if(w.until) return L(['hq', 'review', 'plans', 'fuelPlan', 'yearPlan', 'afford', 'ready', 'sim', 'results']);
   if(w.period === 'month') return L(['hq', 'review', 'fuelPlan', 'plans', 'ready', 'sim', 'results']);
   return L(['yearReview', 'strategy', 'shop', 'invest', 'purchase', 'delivery', 'protoEnd']);
@@ -5717,6 +5718,14 @@ function simulateDays(a, b, o){
     let rev = 0, run = 0, fuel = 0, pax = 0, seats = 0;
     fl.forEach(f => {
       if(f.grounded) return;
+      if(fuelContract()){   // the weeks: fuel bought as it is used, at that week's price
+        const fc = r2(f.fuelL * withBeat(beat, () => fuelPrice()));
+        S.cash = r2(S.cash - fc);
+        rev += f.revenue; run += f.runCost; fuel += fc; pax += f.sold; seats += f.seats; out.trips++;
+        const x = out.routes[f.route] || (out.routes[f.route] = { pax:0, seats:0, rev:0, cost:0, trips:0, fare:f.price, want:0 });
+        x.pax += f.sold; x.seats += f.seats; x.rev += f.revenue; x.cost = r2(x.cost + f.runCost + fc + (f.termCost || 0)); x.trips++;
+        return;
+      }
       if(S.fuel + 1e-9 < f.fuelL){
         if(!auto){ f.noFuel = true; return; }
         const space = tankSpace(), L = Math.min(Math.max(ceilLot(f.fuelL - S.fuel), f.fuelL - S.fuel), space || f.fuelL), ppl = r2(withBeat(beat, () => fuelPrice()) + (WORLD.fuelTopUp || 0)), bill = r2(L * ppl);
@@ -6153,6 +6162,9 @@ function fuelPaid(){ return opened(3.2); }
 function timeDemandOn(){ return opened(3.3); }
 function depsOn(){ return opened(3.3); }
 function secondRouteOn(){ return opened(3.4); }
+/* The weeks (and the weekend run before them): fuel is bought as it is used, at that week's price. No tank, no top-ups,
+   so "profit a day × 7" is exact. From the months the tank comes back: buying ahead when the price looks low is the decision. */
+function fuelContract(){ return !!(S && S.phase === 'round' && S.period && (S.period.type === 'week' || S.period.type === 'gap')); }
 function plannerRoutes(){ return secondRouteOn() ? [S.market, otherRoute()] : [S.market]; }
 /* The old "business travellers before 08:00" rule is replaced by time-of-day demand. */
 function earlyBonus(){ return 0; }
@@ -6187,7 +6199,7 @@ function planFlights(){
     if(d.cut) reasons.push(`${WORLD.rival} was cheaper (£${num(d.comp)}), so 1 in 5 passengers went to them.`);
     if(timeDemandOn() && sold < base.seats) reasons.push(`${fmtTime(tr.dep)} is in the ${BAND_NAMES[band].toLowerCase()}: fewer people want to fly then.`);
     else if(k > 0 && sold < base.seats) reasons.push(`Earlier trips had already taken most of today's ${route.city} passengers.`);
-    out.push(Object.assign(base, { demand:d.demand, band, sold, revenue: sold * price, termCost: sold * termCharge(), compCut:d.cut, reasons, fuelCost: paid ? fifo.take(base.fuelL) : 0 }));
+    out.push(Object.assign(base, { demand:d.demand, band, sold, revenue: sold * price, termCost: sold * termCharge(), compCut:d.cut, reasons, fuelCost: !paid ? 0 : fuelContract() ? r2(base.fuelL * fuelPrice()) : fifo.take(base.fuelL) }));
   });
   return out;
 }
@@ -6551,7 +6563,7 @@ R.ready = () => {
     row('Timetable', `${esc(svcLabel(sched))}${D ? ` · <span class="mono">${D.trips.map(t => fmtTime(t.dep)).join(', ')}</span>` : ''}`, editStep('timetable'), sched.length > 0, 'No services'),
     row(ids.length > 1 ? 'Fares' : 'Fare', ids.map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ') || '—', editStep('fare'), true),
     snacksOn() ? row('On board', esc(onboardOf().label), editStep('extras'), true) : '',
-    row('Fuel', paid ? `<span class="mono">${num(S.fuel)} L</span> in the tank${o ? ` + <span class="mono">${num(o.litres)} L</span> on order` : ''} · flights burn <span class="mono">${num(need)} L</span>${per && after < need ? ` · <span class="orange">${num(need - after)} L delivered</span>` : ''}` : 'Supplied free by the launch deal', paid ? 'fuelPlan' : '', fuelOk, 'Not enough fuel'),
+    fuelContract() ? row('Fuel', `Bought as it is used at <span class="mono">${priceL(fuelPrice())}</span> a litre ${PW().now}`, '', true) : row('Fuel', paid ? `<span class="mono">${num(S.fuel)} L</span> in the tank${o ? ` + <span class="mono">${num(o.litres)} L</span> on order` : ''} · flights burn <span class="mono">${num(need)} L</span>${per && after < need ? ` · <span class="orange">${num(need - after)} L delivered</span>` : ''}` : 'Supplied free by the launch deal', paid ? 'fuelPlan' : '', fuelOk, 'Not enough fuel'),
     row(fc && fc.projected ? 'Projected profit' : 'Profit (model)', fc ? `${esc(fc.plan || 'Your plan')} · <span class="mono ${fc.profit >= 0 ? 'green' : 'red'}">${money(fc.profit)}</span>` : '—', editStep('forecast'), fcOk, fc ? 'The plan has changed: test it again' : 'Not costed yet'), readyExtra(row)].join('');
   screen().innerHTML = taskFrame({ question: readyTitle(), work:false,
     say: ok ? 'Everything is ready. Start operations when you are ready.' : 'Some items need updating before operations can start.',
@@ -6570,7 +6582,7 @@ function ctxForecast(){
 R.rop = () => {
   const pl = currentPlan(), L = planLines(pl), D = L.D;
   const rows = [['Timetable', esc(svcLabel(pl.sched))], ['Departures', D ? `<span class="mono">${D.trips.map(t => fmtTime(t.dep)).join(', ')}</span>` : '—'], ['Fares', Object.keys(serviceCounts(pl.sched)).map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ')], ['On board', esc(onboardOf().label)],
-    ['Fuel', 'Bought by the airline. If the tank runs low, fuel is delivered automatically at 10p a litre more.'], ['Profit a day (model)', `<span class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</span>`]];
+    ['Fuel', `Bought as it is used, at each week's price, until the monthly plans.${S.fuel > 0 ? ` The ${num(S.fuel)} L left in the tank go back to the supplier for what you paid (${money(Math.round(S.fuelValue))}).` : ''}`], ['Profit a day (model)', `<span class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</span>`]];
   screen().innerHTML = shell(`<div class="hp milestone rop">${hqHead('End of Day 4', 'REGULAR OPERATION')}<div class="ms-in"><span class="label">Regular Operating Plan</span><h1>Approve your regular plan</h1>
     <p>From now on this plan runs every day by itself. You only change it when the figures say you should.</p>
     <div class="rop-t">${rows.map(([l, v]) => `<div><span>${l}</span><b>${v}</b></div>`).join('')}</div>
@@ -6578,9 +6590,14 @@ R.rop = () => {
     <div class="row" style="justify-content:center"><button class="btn big" id="ropEdit">${UI.ropEdit ? 'Done changing' : 'Change the plan first'}</button><button class="btn primary big" id="ropGo">Approve the plan &#9654;</button></div></div></div>`);
   bindPlanEditor();
   on('ropEdit', () => { UI.ropEdit = !UI.ropEdit; render(); });
-  on('ropGo', () => { UI.ropEdit = false; S.rop = Object.assign({ approved:S.day }, currentPlan()); startBeat(5); });
+  on('ropGo', () => { UI.ropEdit = false; S.rop = Object.assign({ approved:S.day }, currentPlan()); returnTankFuel(); startBeat(5); });
 };
 
+function returnTankFuel(){
+  if(!(S.fuel > 0)) return; const v = r2(S.fuelValue), L = S.fuel;
+  S.cash = r2(S.cash + v); S.fuel = 0; S.fuelValue = 0; S.fuelLots = [];
+  addNews([{ tag:'FUEL', text:`${num(L)} L of fuel returned to the supplier: ${money(Math.round(v))} back. From now on fuel is bought as it is used.` }]);
+}
 /* ---------- the Year 1 review: what sort of airline will you become? ---------- */
 R.strategy = () => {
   const cur = S.airline.strategy, pick = STRATEGIES.find(x => x.id === cur);
