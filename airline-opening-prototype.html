@@ -2044,6 +2044,83 @@ td.c .mdl{display:inline-block;margin-left:6px;padding:0 4px;font-style:normal;f
 .yr-t{border-collapse:collapse;font-size:13.5px;margin:2px 0}.yr-t th{font-weight:500;color:var(--muted);text-align:left;padding:0 14px 0 0;font-size:12.5px}.yr-t td{padding:1px 14px 1px 0;color:var(--white)}
 .sim-chips.res.y8{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}.sim-chips.res.y8 span{padding:2px 0;min-width:0}.sim-chips.res.y8 span i{font-size:11.5px;letter-spacing:-.02em}
 .calc .calc-show{display:block;margin:10px auto 0;font-size:16px}
+/* ---- the opening, one new idea a day: PLAN / COST / TEST ---- */
+table.fx tr.tot th{font-weight:800;color:#fff}table.fx tr.tot td.c span{font-weight:800}
+button.mdl{border:0;font:inherit;cursor:pointer;margin-left:6px;padding:1px 5px;font-size:11px;font-weight:700;letter-spacing:.04em;color:#06203f;background:#7fd6ff;border-radius:2px;vertical-align:2px}
+button.mdl:hover,button.mdl:focus-visible{background:#fff;outline:2px solid var(--cy)}
+.planner2,.cost2,.test2{display:flex;flex-direction:column;gap:10px;min-height:0}
+.pe{display:flex;flex-direction:column;gap:10px}
+.pe-routes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.pe-route{border:1px solid var(--line);background:rgba(6,20,38,.4);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.pe-route.on{border-color:rgba(127,214,255,.55)}
+.pe-rh{display:flex;align-items:center;gap:8px}.pe-rh b{font-size:18px;color:#fff}.pe-rh .muted{margin-left:auto;font-size:14px}
+.pe-f{display:grid;grid-template-columns:80px 1fr;align-items:center;gap:8px}.pe-f .label{font-size:12px;color:var(--muted)}
+.pe-step{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pe-b{width:40px;height:40px;border:1px solid var(--line);background:#0e2c55;color:#fff;font-size:22px;font-weight:700;cursor:pointer;border-radius:2px;line-height:1}
+.pe-b:hover:not(:disabled){background:#174a86}.pe-b:disabled{opacity:.35;cursor:default}
+.pe-v{min-width:74px;text-align:center;font-size:20px;color:#fff}
+.pe-step small{font-size:14px;color:var(--muted);margin-left:4px}.pe-step small b{color:#fff}
+.pe-step.sm .pe-b{width:32px;height:32px;font-size:18px}.pe-step.sm .pe-v{min-width:60px;font-size:17px}
+.pe-ob{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.pe-ob .label{font-size:12px;color:var(--muted);margin-right:4px}
+.pe-svcs{display:flex;flex-direction:column;gap:5px}.pe-sh{display:flex;align-items:baseline;gap:10px}.pe-sh .label{font-size:12px;color:var(--muted)}
+.pe-svc{display:grid;grid-template-columns:86px 140px auto 76px 1fr 32px;align-items:center;gap:8px;border:1px solid var(--hair);padding:4px 8px;background:rgba(6,20,38,.35)}
+.pe-svc.morning,.pe-svc.evening{border-left:4px solid #3ddc97}.pe-svc.midday{border-left:4px solid #f5a524}
+.pe-n{font-weight:700;color:#fff;font-size:15px}.pe-city{font-size:15px}.pe-band{font-size:13px;color:var(--muted)}
+.pe-rt{border:1px solid var(--line);background:#0e2c55;color:#fff;font:inherit;font-size:14px;padding:4px 8px;cursor:pointer;border-radius:2px;text-align:left}
+.pe-fill{display:flex;flex-direction:column;line-height:1.1}.pe-fill b{font-size:16px;color:var(--amber)}.pe-fill.full b{color:#3ddc97}.pe-fill small{font-size:12px;color:var(--muted)}
+.pe-x{width:30px;height:30px;border:1px solid var(--hair);background:transparent;color:var(--muted);cursor:pointer;border-radius:2px}.pe-x:hover{color:#fff;border-color:var(--line)}
+.pe-add{display:flex;gap:8px;flex-wrap:wrap}
+.pe-sum{display:flex;gap:16px;flex-wrap:wrap;font-size:15px;color:var(--muted);border-top:1px solid var(--hair);padding-top:8px}.pe-sum b{color:#fff}
+.pe-demand{display:flex;flex-direction:column;gap:4px}
+.dstrip{display:grid;grid-template-columns:240px 1fr;align-items:end;gap:8px}.ds-l{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ds-bar{position:relative;height:30px;border-bottom:1px solid var(--line)}
+.ds-b{position:absolute;bottom:0;height:var(--h);background:linear-gradient(180deg,rgba(61,220,151,.55),rgba(61,220,151,.15));border-right:1px dashed rgba(255,255,255,.15)}
+.ds-b.midday{background:linear-gradient(180deg,rgba(245,165,36,.55),rgba(245,165,36,.15))}
+.ds-b span{position:absolute;left:6px;bottom:2px;font-size:11px;color:#fff;white-space:nowrap}
+.pe-demand .oc-bar{margin-left:248px}.pe-demand .oc-ax{margin-left:248px}
+.c2-new{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid rgba(255,200,61,.5);background:rgba(255,200,61,.08);padding:8px 12px}
+.c2-new .label{font-size:12px;color:var(--amber);letter-spacing:.1em}.c2-new b{font-size:17px;color:#fff}
+.c2-note{margin:0;font-size:16px;color:var(--muted)}
+.c2-g{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}.c2-g.two{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.cost2 .sheet1 table.fx{width:100%}.cost2 .sheet1 table.fx td.c,.cost2 .sheet1 table.fx thead th{min-width:160px}
+.c2-svcl{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.c2-s{display:grid;grid-template-columns:86px 60px 1fr 64px;gap:6px;align-items:center;border:1px solid var(--hair);background:rgba(6,20,38,.35);color:var(--white);font:inherit;font-size:14px;padding:5px 8px;text-align:left;cursor:pointer}
+.c2-s.on{border-color:var(--cy);background:rgba(127,214,255,.12)}.c2-s:disabled{cursor:default}.c2-s:disabled:not(.on){opacity:.6}
+.cx-plan{margin:0;font-size:15px;color:#fff}
+.t2-g{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);gap:10px}
+.t2-lab{margin:0 0 8px;font-size:16px;color:#fff;line-height:1.4}
+.t2-model .pnl-h{flex-wrap:wrap}
+.t2-diff{font-size:15px;color:var(--muted);display:flex;align-items:baseline;gap:8px}.t2-diff b{font-size:26px}
+.t2-diff.up b{color:#3ddc97}.t2-diff.down b{color:#ff7a7a}
+.t2-cmp{width:100%;border-collapse:collapse;font-size:16px}.t2-cmp th,.t2-cmp td{padding:5px 10px;border-bottom:1px solid var(--hair);text-align:right}.t2-cmp th:first-child{text-align:left;font-weight:500;color:var(--muted)}
+.t2-cmp thead th{font-size:13px;color:var(--muted);font-weight:600}.t2-cmp tr.tot th{color:#fff;font-weight:800}.t2-cmp tr.pr td{font-size:19px;font-weight:800}
+.t2-cmp td.up{color:#3ddc97}.t2-cmp td.down{color:#ff7a7a}
+.idea{border:1px solid var(--line);background:rgba(6,20,38,.45);padding:6px 9px;margin-bottom:6px;display:flex;flex-direction:column;gap:3px}
+.id-h{display:flex;justify-content:space-between}.idea small{font-size:13px;color:var(--muted);line-height:1.3}.id-a{display:flex;justify-content:space-between;align-items:center}
+.rop .rop-t{display:grid;grid-template-columns:1fr;gap:4px;margin:12px auto;max-width:720px;text-align:left}.rop-t div{display:grid;grid-template-columns:200px 1fr;gap:10px;border-bottom:1px solid var(--hair);padding:6px 0}.rop-t span{color:var(--muted)}
+.rop-ed{max-width:1100px;margin:0 auto 12px;text-align:left}
+.arch td small{display:block;color:var(--muted)}.arch-c h4{margin:0 0 4px}
+.calc.fx .calc-hint{margin-top:8px}
+.sysnote.two{padding:8px 22px;text-align:center}.sysnote b{display:block}.sysnote small{display:block;margin-top:2px;font-size:13.5px;font-weight:500;letter-spacing:0;text-transform:none;color:#d9fbe9}
+button.link[data-archive]{font-size:15px;margin-top:6px}
+.cost2 table.fx.one th,.cost2 table.fx.one td{padding-top:3px;padding-bottom:3px}.cost2 table.fx.one tbody th{font-size:17px}.cost2 table.fx.one td.c span{font-size:19px}
+.cost2 table.fx.one thead th b{font-size:20px}.cost2 table.fx.one td.enter button{font-size:18px;padding:4px 10px}
+.c2-empty table.fx thead th b{font-size:16px}.c2-empty table.fx thead th small{font-size:13px}
+.pe-sh .muted{font-size:13px}
+.t2-mine{display:flex;align-items:baseline;gap:12px;border:1px solid var(--hair);background:rgba(6,20,38,.35);padding:7px 12px}.t2-mine .label{font-size:12px;color:var(--muted)}.t2-mine b{font-size:15px;color:#fff;flex:1}.t2-mp{font-size:20px;font-weight:800}
+.t2-cmp th,.t2-cmp td{padding:4px 8px}.t2-cmp thead th{text-align:right}.t2-cmp tbody th{text-align:left}.t2-cmp td.pr{font-size:18px;font-weight:800}.t2-cmp th.tot{color:#fff}
+.t2-cmp tr.dif td{border-bottom:0}.t2-cmp .up{color:#3ddc97}.t2-cmp .down{color:#ff7a7a}
+.pe.compact{gap:6px}.pe.compact .pe-routes{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px}.pe.compact .pe-route{padding:6px 9px;gap:4px}
+.pe.compact .pe-f{grid-template-columns:62px 1fr}.pe.compact .pe-b{width:34px;height:34px;font-size:19px}.pe.compact .pe-v{min-width:62px;font-size:18px}
+.pe.compact .pe-svc{grid-template-columns:76px 120px auto 64px 1fr 28px;padding:2px 6px}.pe.compact .pe-sh .muted{display:none}
+.pe.compact .dstrip{grid-template-columns:190px 1fr}.pe.compact .ds-bar{height:22px}.pe.compact .pe-demand .oc-bar,.pe.compact .pe-demand .oc-ax{margin-left:198px}
+.pe.compact .pe-ob .opt-chip{padding:4px 8px}.pe.compact .pe-sum{padding-top:4px;gap:12px;font-size:14px}
+.t2-test .pnl-h{margin-bottom:4px}
+.pe-sh .pe-add{margin-left:auto;display:flex;gap:6px}.pe-sh{flex-wrap:wrap}
+.pe-n{white-space:nowrap;font-size:14px}
+.cost2 table.fx.one th,.cost2 table.fx.one td{padding-top:2px;padding-bottom:2px}.cost2 table.fx.one tbody th{font-size:16px}.cost2 table.fx.one td.c span{font-size:18px}
+.pe.compact .pe-svc{min-height:0}.pe.compact .pe-step.sm .pe-b{width:28px;height:28px;font-size:16px}.pe.compact .pe-step.sm .pe-v{font-size:16px;min-width:54px}
+.t2-cmp th,.t2-cmp td{padding:3px 8px;font-size:15px}.t2-cmp td.pr{font-size:17px}.test2{gap:8px}.t2-model .pnl-h{margin-bottom:2px}.t2-diff b{font-size:22px}
 @media print{ body{background:#fff;color:#000} }
 </style>
 </head>
@@ -2087,8 +2164,8 @@ td.c .mdl{display:inline-block;margin-left:6px;padding:0 4px;font-style:normal;f
      sentence: the sum in words shown above the number pad. {row} = a number from the table (highlighted cyan), {?row} = the answer box.
      op/from: how the row is worked out (used for highlighting and "Choose the sum"). labelN = label when the plan has n trips. explain = "What's in this?" link.
      skill = the skill id the row will report to once the skills engine (CR2 Stage C) is built. -->
-<script type="application/json" id="data-tools">[{"id": "revenue", "name": "Ticket revenue", "what": "passengers × fare", "phase": 2, "def": [[2, "calc"], [3.1, "model"]], "build": true}, {"id": "fuelCost", "name": "Fuel cost", "what": "litres × price a litre", "phase": 2, "def": [[2, "calc"], [3.3, "model"]], "build": true}, {"id": "totals", "name": "Totals", "what": "adding up the revenue lines and the cost lines", "phase": 2, "def": [[2, "model"]]}, {"id": "profit", "name": "Profit", "what": "revenue − costs", "phase": 2, "def": [[2, "calc"], [4, "model"]], "build": true}, {"id": "periodTotal", "name": "Week and month totals", "what": "an amount a day × the number of days", "phase": 4, "def": [[4, "calc"], [4.1, "model"]], "build": true}, {"id": "difference", "name": "Difference", "what": "how far apart two figures are, and which way", "phase": 4, "def": [[4, "calc"]], "build": true}, {"id": "average", "name": "Average", "what": "a total ÷ how many", "phase": 5, "def": [[5, "calc"]], "build": true}, {"id": "annual", "name": "Annual projection", "what": "a month × the number of months", "phase": 6, "def": [[6, "calc"]], "build": true}, {"id": "timeToAfford", "name": "Time to afford", "what": "what is still needed ÷ profit a month", "phase": 6, "def": [[6, "calc"]], "build": true}, {"id": "capacity", "name": "Service capacity", "what": "seats × services", "phase": 2, "def": [[2, "model"]], "fixed": true}, {"id": "fuelReq", "name": "Fuel required", "what": "litres a day × the number of days", "phase": 4, "def": [[4, "model"]], "fixed": true}, {"id": "timetable", "name": "Timetable", "what": "the same services every day, without rebuilding them", "phase": 4, "def": [[4, "model"]], "fixed": true}, {"id": "investment", "name": "Investment", "what": "extra profit a day from another aircraft", "phase": 7, "def": [[7, "model"]], "fixed": true}]</script>
-<script type="application/json" id="data-tables">{"price": {"title": "Ticket price", "question": "How much should a {city} ticket cost?", "pickLabel": "Choose {col}", "typed": {"setup": ["income"], "round": ["sold", "income", "profit"]}, "rows": [{"id": "people", "label": "People who want to fly", "type": "given", "unit": "n"}, {"id": "seats", "label": "Seats on the plane", "labelN": "Seats on {n} trips", "type": "given", "unit": "n"}, {"id": "sold", "label": "Tickets sold", "type": "calc", "unit": "n", "op": "min", "from": ["people", "seats"], "sentence": "The smaller of {people} people and {seats} seats = {?sold} tickets", "skill": "money.sold"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["sold", "fare"], "sentence": "{sold} tickets × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the trip", "labelN": "Cost of {n} trips", "type": "given", "unit": "£", "explain": true}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["income", "cost"], "sentence": "{income} income − {cost} cost = {?profit}", "skill": "money.profit"}]}, "tripsCount": {"title": "How many trips?", "question": "How many trips does {city} need?", "typed": {"round": ["full", "left"]}, "rows": [{"id": "people", "label": "People who want to fly", "type": "given", "unit": "n"}, {"id": "seats", "label": "The plane holds", "type": "given", "unit": "n"}, {"id": "full", "label": "Full planes", "type": "calc", "unit": "n", "op": "÷", "from": ["people", "seats"], "sentence": "{people} people ÷ {seats} seats = {?full} full planes and {?left} people left over", "skill": "money.trips"}, {"id": "left", "label": "People left over", "type": "calc", "unit": "n", "op": "÷", "from": ["people", "seats"], "sentence": "{people} people ÷ {seats} seats = {?full} full planes and {?left} people left over", "skill": "money.trips"}]}, "tripsExtra": {"title": "The extra trip", "question": "Should the extra trip fly?", "typed": {"round": ["income"]}, "rows": [{"id": "left", "label": "People left over", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income from the extra trip", "type": "calc", "unit": "£", "op": "×", "from": ["left", "fare"], "sentence": "{left} people × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the extra trip", "type": "given", "unit": "£", "explain": true}]}, "fuel": {"title": "Buy fuel", "question": "How much will the fuel cost?", "pickLabel": "Buy from {col}", "typed": {"round": ["bill"]}, "rows": [{"id": "litres", "label": "Litres", "type": "given", "unit": "L"}, {"id": "ppl", "label": "Price per litre", "type": "given", "unit": "ppl"}, {"id": "bill", "label": "Bill", "type": "calc", "unit": "£", "op": "×", "from": ["litres", "ppl"], "sentence": "{litres} × {ppl} per litre = {?bill}", "skill": "money.fuelBill", "tool": "fuelCost"}]}, "cabin": {"title": "Seat layout", "question": "How should the seats be laid out?", "pickLabel": "Choose {col}", "typed": {"round": ["each", "rest", "breakEven"]}, "rows": [{"id": "seats", "label": "Seats", "type": "given", "unit": "n"}, {"id": "cost", "label": "Cost of the trip", "type": "given", "unit": "£", "explain": true}, {"id": "each", "label": "Cost per seat", "type": "calc", "unit": "£", "op": "÷", "from": ["cost", "seats"], "sentence": "{cost} cost ÷ {seats} seats = {?each} each and {?rest} left over", "skill": "money.perSeat"}, {"id": "rest", "label": "Left over", "type": "calc", "unit": "£", "op": "÷", "from": ["cost", "seats"], "sentence": "{cost} cost ÷ {seats} seats = {?each} each and {?rest} left over", "skill": "money.perSeat"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "breakEven", "label": "Passengers to cover the cost", "type": "calc", "unit": "n", "op": "÷", "from": ["cost", "fare"], "sentence": "{cost} cost ÷ {fare} ticket price, rounded up = {?breakEven} passengers", "skill": "money.breakEven"}]}, "plane": {"title": "Buy a plane", "question": "Which plane should you buy?", "pickLabel": "Buy the {col}", "typed": {"round": ["after", "payback"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} cash − {price} price = {?after}", "skill": "money.cashAfter"}, {"id": "ppf", "label": "Profit a trip (about)", "type": "given", "unit": "£"}, {"id": "payback", "label": "Trips to pay it back", "type": "calc", "unit": "n", "op": "÷", "from": ["price", "ppf"], "sentence": "{price} price ÷ {ppf} profit a trip, rounded up = {?payback} trips", "skill": "money.payback"}]}, "days": {"title": "Compare two days", "question": "Which day earns more?", "pickLabel": "Fly this day", "typed": {"round": ["income", "profit"]}, "rows": [{"id": "time", "label": "Time for the day", "type": "given", "unit": "dur"}, {"id": "passengers", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["passengers", "fare"], "sentence": "{passengers} passengers × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the day", "type": "given", "unit": "£", "explain": true}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["income", "cost"], "sentence": "{income} income − {cost} cost = {?profit}", "skill": "money.profit"}]}, "quick": {"title": "Today's income", "question": "How much will today's {city} tickets bring in?", "typed": {"round": ["income"]}, "rows": [{"id": "passengers", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["passengers", "fare"], "sentence": "{passengers} passengers × {fare} ticket price = {?income}", "skill": "money.income"}]}, "periodPlan": {"title": "The forecast", "question": "How much could the airline make?", "typed": {"round": ["total", "cashEnd"]}, "rows": [{"id": "day", "label": "Profit a day (about)", "type": "given", "unit": "£"}, {"id": "days", "label": "Days", "type": "given", "unit": "n"}, {"id": "total", "label": "Profit (about)", "type": "calc", "unit": "£", "op": "×", "from": ["day", "days"], "sentence": "{day} a day × {days} days = {?total}", "skill": "money.periodTotal"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Cash at the end (about)", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "total"], "sentence": "{cash} cash + {total} profit = {?cashEnd}", "skill": "money.cashForecast"}]}, "runPlan": {"title": "The forecast", "question": "How much could the airline make?", "typed": {"round": ["total", "cashEnd"]}, "rows": [{"id": "month", "label": "Profit a month (about)", "type": "given", "unit": "£"}, {"id": "months", "label": "Months", "type": "given", "unit": "n"}, {"id": "total", "label": "Profit (about)", "type": "calc", "unit": "£", "op": "×", "from": ["month", "months"], "sentence": "{month} a month × {months} months = {?total}", "skill": "money.periodTotal"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Cash at the end (about)", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "total"], "sentence": "{cash} cash + {total} profit = {?cashEnd}", "skill": "money.cashForecast"}]}, "afford": {"title": "Saving for a plane", "question": "When could you afford the {plane}?", "typed": {"round": ["investable", "needed", "months"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "investable", "label": "Cash you can spend", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "reserve"], "sentence": "{cash} cash − {reserve} kept back = {?investable}", "skill": "money.investable"}, {"id": "price", "label": "Price of the plane", "type": "given", "unit": "£"}, {"id": "needed", "label": "Still needed", "type": "calc", "unit": "£", "op": "−", "from": ["price", "investable"], "sentence": "{price} price − {investable} you can spend = {?needed}", "skill": "money.stillNeeded"}, {"id": "month", "label": "Profit a month (about)", "type": "given", "unit": "£"}, {"id": "months", "label": "Months to save", "type": "calc", "unit": "n", "op": "÷", "from": ["needed", "month"], "sentence": "{needed} needed ÷ {month} a month, rounded up = {?months} months", "skill": "money.monthsToAfford"}]}, "planeM": {"title": "Buy a plane", "question": "Which plane should you buy?", "pickLabel": "Buy the {col}", "typed": {"round": ["after"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} cash − {price} price = {?after}", "skill": "money.cashAfter"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "safe", "label": "Still above the emergency money?", "type": "calc", "unit": "yesno", "op": "−", "from": ["after", "reserve"]}, {"id": "dayCost", "label": "Its running costs a day", "type": "given", "unit": "£"}]}, "dayForecast": {"title": "Today's forecast", "question": "What do you expect to happen today?", "typed": {"launch": ["revenue", "profit"], "day1": ["profit"], "day2": ["profit"], "day3": ["revenue"]}, "rows": [{"id": "pax", "label": "Expected passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "revenue", "label": "Ticket revenue", "type": "calc", "unit": "£", "op": "×", "from": ["pax", "fare"], "sentence": "{pax} passengers × {fare} = {?revenue}", "skill": "money.income", "tool": "revenue"}, {"id": "onboard", "label": "On-board sales", "type": "given", "unit": "£"}, {"id": "run", "label": "Flight costs", "type": "given", "unit": "£"}, {"id": "fuel", "label": "Fuel", "type": "given", "unit": "£"}, {"id": "term", "label": "Terminal charges", "type": "given", "unit": "£"}, {"id": "cost", "label": "Route costs", "type": "calc", "unit": "£", "op": "+", "from": ["run", "fuel"], "sentence": "{run} + {fuel} + {term} + on-board stock = {?cost}", "skill": "money.cost", "tool": "totals"}, {"id": "profit", "label": "Route profit", "type": "calc", "unit": "£", "op": "−", "from": ["revenue", "cost"], "sentence": "{revenue} + {onboard} − {cost} = {?profit}", "skill": "money.profit", "tool": "profit"}]}, "options": {"title": "Cost your options", "question": "Which plan should your airline fly today?", "typed": {"launch": ["tk1", "profit"], "day1": ["profit"], "day2": ["profit"], "day3": ["profit"]}, "rows": [{"id": "tk1", "label": "Tickets", "type": "calc", "unit": "£", "op": "×", "from": ["pax1", "fare1"], "sentence": "{pax1} passengers × {fare1} = {?tk1}", "skill": "money.income", "tool": "revenue"}, {"id": "tk2", "label": "Tickets", "type": "given", "unit": "£"}, {"id": "snack", "label": "Snack sales", "type": "given", "unit": "£"}, {"id": "rev", "label": "Total revenue", "type": "calc", "unit": "£", "op": "+", "from": ["tk1", "tk2"], "sentence": "{tk1} + {tk2} + {snack} = {?rev}", "tool": "totals"}, {"id": "run", "label": "Flights", "type": "given", "unit": "£"}, {"id": "fuel", "label": "Fuel used", "type": "given", "unit": "£"}, {"id": "term", "label": "Terminal charges", "type": "given", "unit": "£"}, {"id": "stock", "label": "Snack stock", "type": "given", "unit": "£"}, {"id": "crew", "label": "Second crew", "type": "given", "unit": "£"}, {"id": "day", "label": "Aircraft's day", "type": "given", "unit": "£"}, {"id": "cost", "label": "Total costs", "type": "calc", "unit": "£", "op": "+", "from": ["run", "fuel"], "sentence": "all the costs added = {?cost}", "tool": "totals"}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["rev", "cost"], "sentence": "{rev} − {cost} = {?profit}", "skill": "money.profit", "tool": "profit"}]}, "periodPlan2": {"title": "Forecast", "rows": [{"id": "revDay", "label": "Revenue a day", "type": "given", "unit": "£"}, {"id": "days", "label": "Days", "type": "given", "unit": "n"}, {"id": "rev", "label": "Revenue", "type": "calc", "unit": "£", "op": "×", "from": ["revDay", "days"], "sentence": "{revDay} a day × {days} days = {?rev}", "tool": "periodTotal"}, {"id": "opsDay", "label": "Running costs a day", "type": "given", "unit": "£", "explain": true}, {"id": "ops", "label": "Running costs", "type": "calc", "unit": "£", "op": "×", "from": ["opsDay", "days"], "sentence": "{opsDay} a day × {days} days = {?ops}", "tool": "periodTotal"}, {"id": "fuel", "label": "Fuel used", "type": "given", "unit": "£", "explain": true}, {"id": "cost", "label": "Total costs", "type": "calc", "unit": "£", "op": "+", "from": ["ops", "fuel"], "sentence": "{ops} + {fuel} = {?cost}", "tool": "totals"}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["rev", "cost"], "sentence": "{rev} − {cost} = {?profit}", "tool": "profit"}, {"id": "base", "label": "Current plan's profit", "type": "given", "unit": "£"}, {"id": "diff", "label": "More profit than the current plan", "type": "calc", "unit": "£", "op": "−", "from": ["profit", "base"], "sentence": "{profit} − {base} = {?diff}", "tool": "difference"}, {"id": "diffL", "label": "Less profit than the current plan", "type": "calc", "unit": "£", "op": "−", "from": ["base", "profit"], "sentence": "{base} − {profit} = {?diffL}", "tool": "difference"}]}, "review2": {"title": "Review", "rows": [{"id": "prev", "label": "Profit the week before", "type": "given", "unit": "£"}, {"id": "last", "label": "Profit last week", "type": "given", "unit": "£"}, {"id": "rise", "label": "Rise in weekly profit", "type": "calc", "unit": "£", "op": "−", "from": ["last", "prev"], "sentence": "{last} − {prev} = {?rise}", "tool": "difference"}, {"id": "fall", "label": "Fall in weekly profit", "type": "calc", "unit": "£", "op": "−", "from": ["prev", "last"], "sentence": "{prev} − {last} = {?fall}", "tool": "difference"}, {"id": "total", "label": "Total profit", "type": "given", "unit": "£", "explain": true}, {"id": "n", "label": "Number", "type": "given", "unit": "n"}, {"id": "avg", "label": "Average", "type": "calc", "unit": "£", "op": "÷", "from": ["total", "n"], "sentence": "{total} ÷ {n}, to the nearest pound = {?avg}", "tool": "average", "tol": 0.5}]}, "yearPlan": {"title": "The year ahead", "rows": [{"id": "avg", "label": "Average profit a month", "type": "given", "unit": "£"}, {"id": "months", "label": "Months left in Year 1", "type": "given", "unit": "n"}, {"id": "proj", "label": "Projected profit", "type": "calc", "unit": "£", "op": "×", "from": ["avg", "months"], "sentence": "{avg} a month × {months} months = {?proj}", "tool": "annual"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Projected cash at the end of Year 1", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "proj"], "sentence": "{cash} + {proj} = {?cashEnd}", "tool": "annual"}]}, "afford2": {"title": "Time to afford", "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "inv", "label": "Cash you can spend", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "reserve"], "sentence": "{cash} − {reserve} = {?inv}", "tool": "difference"}, {"id": "price", "label": "Price of the aircraft", "type": "given", "unit": "£"}, {"id": "needed", "label": "Still needed", "type": "calc", "unit": "£", "op": "−", "from": ["price", "inv"], "sentence": "{price} − {inv} = {?needed}", "tool": "difference"}, {"id": "month", "label": "Average profit a month", "type": "given", "unit": "£"}, {"id": "months", "label": "Months to afford it", "type": "calc", "unit": "n", "op": "÷", "from": ["needed", "month"], "sentence": "{needed} ÷ {month} a month, rounded up = {?months} months", "tool": "timeToAfford"}]}, "yearReview": {"title": "Year 1 review", "rows": [{"id": "proj", "label": "Your projected cash", "type": "given", "unit": "£"}, {"id": "actual", "label": "Actual cash", "type": "given", "unit": "£"}, {"id": "better", "label": "Better than the projection by", "type": "calc", "unit": "£", "op": "−", "from": ["actual", "proj"], "sentence": "{actual} − {proj} = {?better}", "tool": "difference"}, {"id": "worse", "label": "Worse than the projection by", "type": "calc", "unit": "£", "op": "−", "from": ["proj", "actual"], "sentence": "{proj} − {actual} = {?worse}", "tool": "difference"}]}, "invest": {"title": "Investment", "rows": [{"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} − {price} = {?after}", "tool": "difference"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "safe", "label": "Still above the emergency money?", "type": "calc", "unit": "yesno", "op": "−", "from": ["after", "reserve"]}, {"id": "seats", "label": "Seats", "type": "given", "unit": "n"}, {"id": "extraDay", "label": "Extra profit a day", "type": "given", "unit": "£", "explain": true}, {"id": "days", "label": "Days in a month", "type": "given", "unit": "n"}, {"id": "extraMonth", "label": "Extra profit a month", "type": "calc", "unit": "£", "op": "×", "from": ["extraDay", "days"], "sentence": "{extraDay} a day × {days} days = {?extraMonth}", "tool": "periodTotal"}, {"id": "payback", "label": "Months to pay for itself", "type": "calc", "unit": "n", "op": "÷", "from": ["price", "extraMonth"], "sentence": "{price} ÷ {extraMonth} a month, rounded up = {?payback} months", "tool": "timeToAfford"}]}}</script>
+<script type="application/json" id="data-tools">[{"id": "revenue", "name": "Ticket revenue", "what": "passengers × fare", "phase": 2, "def": [[2, "calc"], [3.1, "model"]], "build": true}, {"id": "snacks", "name": "Cabin sales", "what": "number buying × price", "phase": 3.1, "def": [[2, "model"], [3.1, "calc"], [3.2, "model"]], "build": true}, {"id": "fuelCost", "name": "Fuel cost", "what": "litres × price a litre", "phase": 3.2, "def": [[2, "model"], [3.2, "calc"], [3.3, "model"]], "build": true}, {"id": "emptySeats", "name": "Empty seats", "what": "seats − passengers", "phase": 3.3, "def": [[2, "model"], [3.3, "calc"], [3.4, "model"]], "build": true}, {"id": "routeRevenue", "name": "Revenue on a new route", "what": "passengers × fare, on the new route", "phase": 3.4, "def": [[2, "model"], [3.4, "build"], [4, "model"]], "build": true}, {"id": "totals", "name": "Totals", "what": "adding up the revenue lines and the cost lines", "phase": 2, "def": [[2, "model"]]}, {"id": "profit", "name": "Profit", "what": "revenue − costs", "phase": 2, "def": [[2, "calc"], [3.1, "build"], [3.2, "model"]], "build": true}, {"id": "weekly", "name": "Weekly projection", "what": "profit a day × the number of days", "phase": 4, "def": [[2, "model"], [4, "calc"], [4.1, "model"]], "build": true}, {"id": "periodTotal", "name": "Week and month totals", "what": "an amount a day × the number of days", "phase": 4, "def": [[4, "model"]], "build": true}, {"id": "difference", "name": "Difference", "what": "how far apart two figures are, and which way", "phase": 4, "def": [[4, "calc"]], "build": true}, {"id": "average", "name": "Average", "what": "a total ÷ how many", "phase": 5, "def": [[5, "calc"]], "build": true}, {"id": "annual", "name": "Annual projection", "what": "a month × the number of months", "phase": 6, "def": [[6, "calc"]], "build": true}, {"id": "timeToAfford", "name": "Time to afford", "what": "what is still needed ÷ profit a month", "phase": 6, "def": [[6, "calc"]], "build": true}, {"id": "capacity", "name": "Service capacity", "what": "seats × services", "phase": 2, "def": [[2, "model"]], "fixed": true}, {"id": "fuelReq", "name": "Fuel required", "what": "litres a day × the number of days", "phase": 4, "def": [[4, "model"]], "fixed": true}, {"id": "timetable", "name": "Timetable", "what": "the same services every day, without rebuilding them", "phase": 4, "def": [[4, "model"]], "fixed": true}, {"id": "investment", "name": "Investment", "what": "extra profit a day from another aircraft", "phase": 7, "def": [[7, "model"]], "fixed": true}]</script>
+<script type="application/json" id="data-tables">{"price": {"title": "Ticket price", "question": "How much should a {city} ticket cost?", "pickLabel": "Choose {col}", "typed": {"setup": ["income"], "round": ["sold", "income", "profit"]}, "rows": [{"id": "people", "label": "People who want to fly", "type": "given", "unit": "n"}, {"id": "seats", "label": "Seats on the plane", "labelN": "Seats on {n} trips", "type": "given", "unit": "n"}, {"id": "sold", "label": "Tickets sold", "type": "calc", "unit": "n", "op": "min", "from": ["people", "seats"], "sentence": "The smaller of {people} people and {seats} seats = {?sold} tickets", "skill": "money.sold"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["sold", "fare"], "sentence": "{sold} tickets × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the trip", "labelN": "Cost of {n} trips", "type": "given", "unit": "£", "explain": true}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["income", "cost"], "sentence": "{income} income − {cost} cost = {?profit}", "skill": "money.profit"}]}, "tripsCount": {"title": "How many trips?", "question": "How many trips does {city} need?", "typed": {"round": ["full", "left"]}, "rows": [{"id": "people", "label": "People who want to fly", "type": "given", "unit": "n"}, {"id": "seats", "label": "The plane holds", "type": "given", "unit": "n"}, {"id": "full", "label": "Full planes", "type": "calc", "unit": "n", "op": "÷", "from": ["people", "seats"], "sentence": "{people} people ÷ {seats} seats = {?full} full planes and {?left} people left over", "skill": "money.trips"}, {"id": "left", "label": "People left over", "type": "calc", "unit": "n", "op": "÷", "from": ["people", "seats"], "sentence": "{people} people ÷ {seats} seats = {?full} full planes and {?left} people left over", "skill": "money.trips"}]}, "tripsExtra": {"title": "The extra trip", "question": "Should the extra trip fly?", "typed": {"round": ["income"]}, "rows": [{"id": "left", "label": "People left over", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income from the extra trip", "type": "calc", "unit": "£", "op": "×", "from": ["left", "fare"], "sentence": "{left} people × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the extra trip", "type": "given", "unit": "£", "explain": true}]}, "fuel": {"title": "Buy fuel", "question": "How much will the fuel cost?", "pickLabel": "Buy from {col}", "typed": {"round": ["bill"]}, "rows": [{"id": "litres", "label": "Litres", "type": "given", "unit": "L"}, {"id": "ppl", "label": "Price per litre", "type": "given", "unit": "ppl"}, {"id": "bill", "label": "Bill", "type": "calc", "unit": "£", "op": "×", "from": ["litres", "ppl"], "sentence": "{litres} × {ppl} per litre = {?bill}", "skill": "money.fuelBill", "tool": "fuelCost"}]}, "cabin": {"title": "Seat layout", "question": "How should the seats be laid out?", "pickLabel": "Choose {col}", "typed": {"round": ["each", "rest", "breakEven"]}, "rows": [{"id": "seats", "label": "Seats", "type": "given", "unit": "n"}, {"id": "cost", "label": "Cost of the trip", "type": "given", "unit": "£", "explain": true}, {"id": "each", "label": "Cost per seat", "type": "calc", "unit": "£", "op": "÷", "from": ["cost", "seats"], "sentence": "{cost} cost ÷ {seats} seats = {?each} each and {?rest} left over", "skill": "money.perSeat"}, {"id": "rest", "label": "Left over", "type": "calc", "unit": "£", "op": "÷", "from": ["cost", "seats"], "sentence": "{cost} cost ÷ {seats} seats = {?each} each and {?rest} left over", "skill": "money.perSeat"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "breakEven", "label": "Passengers to cover the cost", "type": "calc", "unit": "n", "op": "÷", "from": ["cost", "fare"], "sentence": "{cost} cost ÷ {fare} ticket price, rounded up = {?breakEven} passengers", "skill": "money.breakEven"}]}, "plane": {"title": "Buy a plane", "question": "Which plane should you buy?", "pickLabel": "Buy the {col}", "typed": {"round": ["after", "payback"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} cash − {price} price = {?after}", "skill": "money.cashAfter"}, {"id": "ppf", "label": "Profit a trip (about)", "type": "given", "unit": "£"}, {"id": "payback", "label": "Trips to pay it back", "type": "calc", "unit": "n", "op": "÷", "from": ["price", "ppf"], "sentence": "{price} price ÷ {ppf} profit a trip, rounded up = {?payback} trips", "skill": "money.payback"}]}, "days": {"title": "Compare two days", "question": "Which day earns more?", "pickLabel": "Fly this day", "typed": {"round": ["income", "profit"]}, "rows": [{"id": "time", "label": "Time for the day", "type": "given", "unit": "dur"}, {"id": "passengers", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["passengers", "fare"], "sentence": "{passengers} passengers × {fare} ticket price = {?income}", "skill": "money.income"}, {"id": "cost", "label": "Cost of the day", "type": "given", "unit": "£", "explain": true}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["income", "cost"], "sentence": "{income} income − {cost} cost = {?profit}", "skill": "money.profit"}]}, "quick": {"title": "Today's income", "question": "How much will today's {city} tickets bring in?", "typed": {"round": ["income"]}, "rows": [{"id": "passengers", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "income", "label": "Income", "type": "calc", "unit": "£", "op": "×", "from": ["passengers", "fare"], "sentence": "{passengers} passengers × {fare} ticket price = {?income}", "skill": "money.income"}]}, "periodPlan": {"title": "The forecast", "question": "How much could the airline make?", "typed": {"round": ["total", "cashEnd"]}, "rows": [{"id": "day", "label": "Profit a day (about)", "type": "given", "unit": "£"}, {"id": "days", "label": "Days", "type": "given", "unit": "n"}, {"id": "total", "label": "Profit (about)", "type": "calc", "unit": "£", "op": "×", "from": ["day", "days"], "sentence": "{day} a day × {days} days = {?total}", "skill": "money.periodTotal"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Cash at the end (about)", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "total"], "sentence": "{cash} cash + {total} profit = {?cashEnd}", "skill": "money.cashForecast"}]}, "runPlan": {"title": "The forecast", "question": "How much could the airline make?", "typed": {"round": ["total", "cashEnd"]}, "rows": [{"id": "month", "label": "Profit a month (about)", "type": "given", "unit": "£"}, {"id": "months", "label": "Months", "type": "given", "unit": "n"}, {"id": "total", "label": "Profit (about)", "type": "calc", "unit": "£", "op": "×", "from": ["month", "months"], "sentence": "{month} a month × {months} months = {?total}", "skill": "money.periodTotal"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Cash at the end (about)", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "total"], "sentence": "{cash} cash + {total} profit = {?cashEnd}", "skill": "money.cashForecast"}]}, "afford": {"title": "Saving for a plane", "question": "When could you afford the {plane}?", "typed": {"round": ["investable", "needed", "months"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "investable", "label": "Cash you can spend", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "reserve"], "sentence": "{cash} cash − {reserve} kept back = {?investable}", "skill": "money.investable"}, {"id": "price", "label": "Price of the plane", "type": "given", "unit": "£"}, {"id": "needed", "label": "Still needed", "type": "calc", "unit": "£", "op": "−", "from": ["price", "investable"], "sentence": "{price} price − {investable} you can spend = {?needed}", "skill": "money.stillNeeded"}, {"id": "month", "label": "Profit a month (about)", "type": "given", "unit": "£"}, {"id": "months", "label": "Months to save", "type": "calc", "unit": "n", "op": "÷", "from": ["needed", "month"], "sentence": "{needed} needed ÷ {month} a month, rounded up = {?months} months", "skill": "money.monthsToAfford"}]}, "planeM": {"title": "Buy a plane", "question": "Which plane should you buy?", "pickLabel": "Buy the {col}", "typed": {"round": ["after"]}, "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} cash − {price} price = {?after}", "skill": "money.cashAfter"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "safe", "label": "Still above the emergency money?", "type": "calc", "unit": "yesno", "op": "−", "from": ["after", "reserve"]}, {"id": "dayCost", "label": "Its running costs a day", "type": "given", "unit": "£"}]}, "dayForecast": {"title": "Today's forecast", "question": "What do you expect to happen today?", "typed": {"launch": ["revenue", "profit"], "day1": ["profit"], "day2": ["profit"], "day3": ["revenue"]}, "rows": [{"id": "pax", "label": "Expected passengers", "type": "given", "unit": "n"}, {"id": "fare", "label": "Ticket price", "type": "given", "unit": "£"}, {"id": "revenue", "label": "Ticket revenue", "type": "calc", "unit": "£", "op": "×", "from": ["pax", "fare"], "sentence": "{pax} passengers × {fare} = {?revenue}", "skill": "money.income", "tool": "revenue"}, {"id": "onboard", "label": "On-board sales", "type": "given", "unit": "£"}, {"id": "run", "label": "Flight costs", "type": "given", "unit": "£"}, {"id": "fuel", "label": "Fuel", "type": "given", "unit": "£"}, {"id": "term", "label": "Terminal charges", "type": "given", "unit": "£"}, {"id": "cost", "label": "Route costs", "type": "calc", "unit": "£", "op": "+", "from": ["run", "fuel"], "sentence": "{run} + {fuel} + {term} + on-board stock = {?cost}", "skill": "money.cost", "tool": "totals"}, {"id": "profit", "label": "Route profit", "type": "calc", "unit": "£", "op": "−", "from": ["revenue", "cost"], "sentence": "{revenue} + {onboard} − {cost} = {?profit}", "skill": "money.profit", "tool": "profit"}]}, "options": {"title": "Cost your options", "question": "Which plan should your airline fly today?", "typed": {"launch": ["tk1", "profit"], "day1": ["profit"], "day2": ["profit"], "day3": ["profit"]}, "rows": [{"id": "tk1", "label": "Tickets", "type": "calc", "unit": "£", "op": "×", "from": ["pax1", "fare1"], "sentence": "{pax1} passengers × {fare1} = {?tk1}", "skill": "money.income", "tool": "revenue"}, {"id": "tk2", "label": "Tickets", "type": "given", "unit": "£"}, {"id": "snack", "label": "Snack sales", "type": "given", "unit": "£"}, {"id": "rev", "label": "Total revenue", "type": "calc", "unit": "£", "op": "+", "from": ["tk1", "tk2"], "sentence": "{tk1} + {tk2} + {snack} = {?rev}", "tool": "totals"}, {"id": "run", "label": "Flights", "type": "given", "unit": "£"}, {"id": "fuel", "label": "Fuel used", "type": "given", "unit": "£"}, {"id": "term", "label": "Terminal charges", "type": "given", "unit": "£"}, {"id": "stock", "label": "Snack stock", "type": "given", "unit": "£"}, {"id": "crew", "label": "Second crew", "type": "given", "unit": "£"}, {"id": "day", "label": "Aircraft's day", "type": "given", "unit": "£"}, {"id": "cost", "label": "Total costs", "type": "calc", "unit": "£", "op": "+", "from": ["run", "fuel"], "sentence": "all the costs added = {?cost}", "tool": "totals"}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["rev", "cost"], "sentence": "{rev} − {cost} = {?profit}", "skill": "money.profit", "tool": "profit"}]}, "periodPlan2": {"title": "Forecast", "rows": [{"id": "revDay", "label": "Revenue a day", "type": "given", "unit": "£"}, {"id": "days", "label": "Days", "type": "given", "unit": "n"}, {"id": "rev", "label": "Revenue", "type": "calc", "unit": "£", "op": "×", "from": ["revDay", "days"], "sentence": "{revDay} a day × {days} days = {?rev}", "tool": "periodTotal"}, {"id": "opsDay", "label": "Running costs a day", "type": "given", "unit": "£", "explain": true}, {"id": "ops", "label": "Running costs", "type": "calc", "unit": "£", "op": "×", "from": ["opsDay", "days"], "sentence": "{opsDay} a day × {days} days = {?ops}", "tool": "periodTotal"}, {"id": "fuel", "label": "Fuel used", "type": "given", "unit": "£", "explain": true}, {"id": "cost", "label": "Total costs", "type": "calc", "unit": "£", "op": "+", "from": ["ops", "fuel"], "sentence": "{ops} + {fuel} = {?cost}", "tool": "totals"}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["rev", "cost"], "sentence": "{rev} − {cost} = {?profit}", "tool": "profit"}, {"id": "base", "label": "Current plan's profit", "type": "given", "unit": "£"}, {"id": "diff", "label": "More profit than the current plan", "type": "calc", "unit": "£", "op": "−", "from": ["profit", "base"], "sentence": "{profit} − {base} = {?diff}", "tool": "difference"}, {"id": "diffL", "label": "Less profit than the current plan", "type": "calc", "unit": "£", "op": "−", "from": ["base", "profit"], "sentence": "{base} − {profit} = {?diffL}", "tool": "difference"}]}, "review2": {"title": "Review", "rows": [{"id": "prev", "label": "Profit the week before", "type": "given", "unit": "£"}, {"id": "last", "label": "Profit last week", "type": "given", "unit": "£"}, {"id": "rise", "label": "Rise in weekly profit", "type": "calc", "unit": "£", "op": "−", "from": ["last", "prev"], "sentence": "{last} − {prev} = {?rise}", "tool": "difference"}, {"id": "fall", "label": "Fall in weekly profit", "type": "calc", "unit": "£", "op": "−", "from": ["prev", "last"], "sentence": "{prev} − {last} = {?fall}", "tool": "difference"}, {"id": "total", "label": "Total profit", "type": "given", "unit": "£", "explain": true}, {"id": "n", "label": "Number", "type": "given", "unit": "n"}, {"id": "avg", "label": "Average", "type": "calc", "unit": "£", "op": "÷", "from": ["total", "n"], "sentence": "{total} ÷ {n}, to the nearest pound = {?avg}", "tool": "average", "tol": 0.5}]}, "yearPlan": {"title": "The year ahead", "rows": [{"id": "avg", "label": "Average profit a month", "type": "given", "unit": "£"}, {"id": "months", "label": "Months left in Year 1", "type": "given", "unit": "n"}, {"id": "proj", "label": "Projected profit", "type": "calc", "unit": "£", "op": "×", "from": ["avg", "months"], "sentence": "{avg} a month × {months} months = {?proj}", "tool": "annual"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "cashEnd", "label": "Projected cash at the end of Year 1", "type": "calc", "unit": "£", "op": "+", "from": ["cash", "proj"], "sentence": "{cash} + {proj} = {?cashEnd}", "tool": "annual"}]}, "afford2": {"title": "Time to afford", "rows": [{"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "inv", "label": "Cash you can spend", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "reserve"], "sentence": "{cash} − {reserve} = {?inv}", "tool": "difference"}, {"id": "price", "label": "Price of the aircraft", "type": "given", "unit": "£"}, {"id": "needed", "label": "Still needed", "type": "calc", "unit": "£", "op": "−", "from": ["price", "inv"], "sentence": "{price} − {inv} = {?needed}", "tool": "difference"}, {"id": "month", "label": "Average profit a month", "type": "given", "unit": "£"}, {"id": "months", "label": "Months to afford it", "type": "calc", "unit": "n", "op": "÷", "from": ["needed", "month"], "sentence": "{needed} ÷ {month} a month, rounded up = {?months} months", "tool": "timeToAfford"}]}, "yearReview": {"title": "Year 1 review", "rows": [{"id": "proj", "label": "Your projected cash", "type": "given", "unit": "£"}, {"id": "actual", "label": "Actual cash", "type": "given", "unit": "£"}, {"id": "better", "label": "Better than the projection by", "type": "calc", "unit": "£", "op": "−", "from": ["actual", "proj"], "sentence": "{actual} − {proj} = {?better}", "tool": "difference"}, {"id": "worse", "label": "Worse than the projection by", "type": "calc", "unit": "£", "op": "−", "from": ["proj", "actual"], "sentence": "{proj} − {actual} = {?worse}", "tool": "difference"}]}, "invest": {"title": "Investment", "rows": [{"id": "price", "label": "Price", "type": "given", "unit": "£"}, {"id": "cash", "label": "Cash now", "type": "given", "unit": "£"}, {"id": "after", "label": "Cash after buying", "type": "calc", "unit": "£", "op": "−", "from": ["cash", "price"], "sentence": "{cash} − {price} = {?after}", "tool": "difference"}, {"id": "reserve", "label": "Kept back for emergencies", "type": "given", "unit": "£"}, {"id": "safe", "label": "Still above the emergency money?", "type": "calc", "unit": "yesno", "op": "−", "from": ["after", "reserve"]}, {"id": "seats", "label": "Seats", "type": "given", "unit": "n"}, {"id": "extraDay", "label": "Extra profit a day", "type": "given", "unit": "£", "explain": true}, {"id": "days", "label": "Days in a month", "type": "given", "unit": "n"}, {"id": "extraMonth", "label": "Extra profit a month", "type": "calc", "unit": "£", "op": "×", "from": ["extraDay", "days"], "sentence": "{extraDay} a day × {days} days = {?extraMonth}", "tool": "periodTotal"}, {"id": "payback", "label": "Months to pay for itself", "type": "calc", "unit": "n", "op": "÷", "from": ["price", "extraMonth"], "sentence": "{price} ÷ {extraMonth} a month, rounded up = {?payback} months", "tool": "timeToAfford"}]}, "cost1": {"title": "Cost your plan", "rows": [{"id": "pax1", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare1", "label": "Fare", "type": "given", "unit": "£"}, {"id": "tk1", "label": "Tickets", "type": "calc", "unit": "£", "op": "×", "from": ["pax1", "fare1"], "sentence": "{pax1} × {fare1} = {?tk1}", "tool": "revenue"}, {"id": "pax2", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "fare2", "label": "Fare", "type": "given", "unit": "£"}, {"id": "tk2", "label": "Tickets", "type": "calc", "unit": "£", "op": "×", "from": ["pax2", "fare2"], "sentence": "{pax2} × {fare2} = {?tk2}", "tool": "routeRevenue"}, {"id": "buyers", "label": "Passengers buying snacks", "type": "given", "unit": "n"}, {"id": "snackP", "label": "Snack price", "type": "given", "unit": "£"}, {"id": "snack", "label": "Cabin sales", "type": "calc", "unit": "£", "op": "×", "from": ["buyers", "snackP"], "sentence": "{buyers} × {snackP} = {?snack}", "tool": "snacks"}, {"id": "rev", "label": "Total revenue", "type": "calc", "unit": "£", "op": "+", "from": ["tk1", "tk2"], "sentence": "{tk1} + {tk2} + {snack} = {?rev}", "tool": "totals", "total": true}, {"id": "run", "label": "Flights", "type": "given", "unit": "£", "explain": true}, {"id": "fuelL", "label": "Fuel used", "type": "given", "unit": "L"}, {"id": "ppl", "label": "Price per litre", "type": "given", "unit": "ppl"}, {"id": "fuel", "label": "Fuel cost", "type": "calc", "unit": "£", "op": "×", "from": ["fuelL", "ppl"], "sentence": "{fuelL} × {ppl} = {?fuel}", "tool": "fuelCost"}, {"id": "term", "label": "Terminal charges", "type": "given", "unit": "£"}, {"id": "stock", "label": "Snack stock", "type": "given", "unit": "£"}, {"id": "crew", "label": "Second crew", "type": "given", "unit": "£"}, {"id": "day", "label": "Aircraft's day", "type": "given", "unit": "£"}, {"id": "cost", "label": "Total costs", "type": "calc", "unit": "£", "op": "+", "from": ["run", "fuel"], "sentence": "{run} + {fuel} + {term} + {stock} + {crew} + {day} = {?cost}", "tool": "totals", "total": true, "explain": true}, {"id": "profit", "label": "Profit", "type": "calc", "unit": "£", "op": "−", "from": ["rev", "cost"], "sentence": "{rev} − {cost} = {?profit}", "tool": "profit", "total": true}]}, "empty1": {"title": "One service", "rows": [{"id": "seats", "label": "Seats", "type": "given", "unit": "n"}, {"id": "flown", "label": "Passengers", "type": "given", "unit": "n"}, {"id": "empty", "label": "Empty seats", "type": "calc", "unit": "n", "op": "−", "from": ["seats", "flown"], "sentence": "{seats} − {flown} = {?empty}", "tool": "emptySeats"}]}, "week1": {"title": "Projected week", "rows": [{"id": "revDay", "label": "Revenue a day", "type": "given", "unit": "£"}, {"id": "costDay", "label": "Costs a day", "type": "given", "unit": "£", "explain": true}, {"id": "profitDay", "label": "Profit a day", "type": "calc", "unit": "£", "op": "−", "from": ["revDay", "costDay"], "sentence": "{revDay} − {costDay} = {?profitDay}", "tool": "profit", "total": true}, {"id": "days", "label": "Days", "type": "given", "unit": "n"}, {"id": "wproj", "label": "Projected profit this week", "type": "calc", "unit": "£", "op": "×", "from": ["profitDay", "days"], "sentence": "{profitDay} × {days} = {?wproj}", "tool": "weekly", "total": true}]}}</script>
 
 <!-- REVIEW CARD POOLS. Picked deterministically by round number. {price} {city} {airline} are filled in. -->
 <script type="application/json" id="data-reviews">
@@ -2180,7 +2257,7 @@ td.c .mdl{display:inline-block;margin-left:6px;padding:0 4px;font-style:normal;f
        news: lines for the ticker. challenge: true = Captain's challenge this round (every 2 rounds).
        checkpoint: snapshot the run to Best Runs and carry on (round 12). finale: record the run (round 30); play can continue after it.
        30 rounds in five acts, from the Clear Skies 30-round workbook. -->
-<script type="application/json" id="data-world">{"id": "clear-skies", "name": "Opening prototype", "lesson": "Fuel climbs through the first year (with a shock in July), crashes in January after the oil find, then climbs to £3.20 by the final May — stock up when it is cheap.", "startingCash": 5000, "startingReputation": 3, "fuelLot": 500, "rival": "Red Kite Air", "dayStart": "06:00", "dayEnd": "22:00", "firstDeparture": "09:00", "turnaroundMin": 45, "maxTrips": 4, "tankBase": 5000, "suppliers": [{"name": "Dragon Fuels", "priceDelta": 0, "lot": 500, "note": "Sells in 500 L lots", "fromPhase": 1}, {"name": "Celtic Oil", "priceDelta": -0.1, "lot": 2000, "note": "10p cheaper, but only sells 2,000 L lots", "fromPhase": 3}], "icons": {"perIcon": 1, "bigAt": 150, "bigPerIcon": 10}, "homes": [{"id": "lhr", "code": "LHR", "city": "Heathrow", "name": "London Heathrow", "country": "England", "flag": "uk", "lat": 51.47, "lon": -0.454, "utc": 0, "fee": 120, "demandPct": 15, "biz": 1.5, "blurb": "The UK's busiest airport. Expensive to land, but lots of passengers, including business travellers.", "terminals": [{"id": "t5", "name": "Terminal 5", "turn": 35, "charge": 5, "biz": 1.2, "note": "Modern gates right by the runway: quick turnarounds. Business travellers like it."}, {"id": "t4", "name": "Terminal 4", "turn": 55, "charge": 3, "note": "Cheaper, but remote stands and buses make turnarounds slow."}]}, {"id": "lgw", "code": "LGW", "city": "Gatwick", "name": "London Gatwick", "country": "England", "flag": "uk", "lat": 51.153, "lon": -0.182, "utc": 0, "fee": 80, "demandPct": 5, "biz": 1.0, "blurb": "London's second airport. A fair landing fee and plenty of holiday passengers.", "terminals": [{"id": "north", "name": "North Terminal", "turn": 40, "charge": 4, "note": "Busy but well organised."}, {"id": "south", "name": "South Terminal", "turn": 45, "charge": 3, "note": "A little cheaper, a little slower."}]}, {"id": "ltn", "code": "LTN", "city": "Luton", "name": "London Luton", "country": "England", "flag": "uk", "lat": 51.875, "lon": -0.368, "utc": 0, "fee": 40, "demandPct": -5, "biz": 0.6, "blurb": "A low-cost airport north of London. Cheap to land, mostly leisure passengers.", "terminals": [{"id": "main", "name": "Main Terminal", "turn": 30, "charge": 2, "note": "Built for quick, cheap turnarounds. One terminal for everyone."}]}, {"id": "man", "code": "MAN", "city": "Manchester", "name": "Manchester", "country": "England", "flag": "uk", "lat": 53.354, "lon": -2.275, "utc": 0, "fee": 60, "demandPct": 0, "biz": 1.0, "blurb": "The North's biggest airport. Dublin is a short hop; Paris is a long way for a small plane.", "terminals": [{"id": "t1", "name": "Terminal 1", "turn": 40, "charge": 4, "note": "The main international terminal."}, {"id": "t3", "name": "Terminal 3", "turn": 45, "charge": 3, "note": "Smaller and cheaper, a little slower."}]}], "setupRoutes": ["dub", "par"], "routes": [{"id": "dub", "city": "Dublin", "country": "Ireland", "flag": "ie", "lat": 53.35, "lon": -6.26, "km": 300, "band": "short", "basePrice": 60, "baseDemand": 60, "step": 10, "drop": 5, "prices": [50, 60, 70, 80], "gate": "1", "dep": "09:00", "utc": 0, "blurb": "Busier and cheaper. A short hop across the Irish Sea.", "unlockPhase": 1, "setupPrices": [50, 60, 70, 80], "growth": 0, "cap": 30, "fares": [50, 60, 70, 80], "alat": 53.42, "alon": -6.27, "biz": 6}, {"id": "par", "city": "Paris", "country": "France", "flag": "fr", "lat": 48.86, "lon": 2.35, "km": 450, "band": "short", "basePrice": 90, "baseDemand": 45, "step": 10, "drop": 3, "prices": [80, 90, 100, 110, 120], "gate": "2", "dep": "10:00", "utc": 1, "blurb": "Quieter, but passengers pay more. A longer flight.", "unlockPhase": 1, "setupPrices": [80, 90, 100, 110, 120], "growth": 0, "cap": 40, "fares": [80, 90, 100, 110, 120], "alat": 49.01, "alon": 2.55, "biz": 10}, {"id": "mad", "city": "Madrid", "country": "Spain", "flag": "es", "lat": 40.42, "lon": -3.7, "km": 1200, "band": "short", "basePrice": 100, "baseDemand": 60, "step": 10, "drop": 5, "prices": [80, 90, 100, 120], "gate": "3", "dep": "11:00", "utc": 1, "blurb": "Sunny city break. Steady demand.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "rak", "city": "Marrakech", "country": "Morocco", "flag": "ma", "lat": 31.63, "lon": -8.01, "km": 2400, "band": "medium", "basePrice": 120, "baseDemand": 90, "step": 20, "drop": 10, "prices": [100, 120, 140, 160], "gate": "4", "dep": "09:30", "utc": 1, "blurb": "Holiday route. Popular in winter.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "cai", "city": "Cairo", "country": "Egypt", "flag": "eg", "lat": 30.04, "lon": 31.24, "km": 3600, "band": "medium", "basePrice": 150, "baseDemand": 110, "step": 25, "drop": 10, "prices": [125, 150, 175, 200], "gate": "5", "dep": "08:30", "utc": 2, "blurb": "Pyramids! Good demand all year.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "los", "city": "Lagos", "country": "Nigeria", "flag": "ng", "lat": 6.52, "lon": 3.38, "km": 4800, "band": "medium", "basePrice": 200, "baseDemand": 100, "step": 25, "drop": 10, "prices": [150, 175, 200, 250], "gate": "6", "dep": "12:00", "utc": 1, "blurb": "Big city, business travellers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "nyc", "city": "New York", "country": "USA", "flag": "us", "lat": 40.71, "lon": -74.01, "km": 5600, "band": "medium", "basePrice": 200, "baseDemand": 140, "step": 50, "drop": 20, "prices": [150, 200, 250, 300], "gate": "7", "dep": "13:00", "utc": -5, "blurb": "The big one. Huge demand.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "dxb", "city": "Dubai", "country": "UAE", "flag": "ae", "lat": 25.2, "lon": 55.27, "km": 5600, "band": "medium", "basePrice": 250, "baseDemand": 150, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "8", "dep": "14:00", "utc": 4, "blurb": "Shopping and sunshine. Rich passengers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "del", "city": "Delhi", "country": "India", "flag": "in", "lat": 28.61, "lon": 77.21, "km": 7200, "band": "long", "basePrice": 250, "baseDemand": 200, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "9", "dep": "20:00", "utc": 5.5, "blurb": "Very busy. Overnight flight.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "cpt", "city": "Cape Town", "country": "South Africa", "flag": "za", "lat": -33.92, "lon": 18.42, "km": 9600, "band": "long", "basePrice": 350, "baseDemand": 180, "step": 50, "drop": 20, "prices": [300, 350, 400, 450], "gate": "10", "dep": "19:00", "utc": 2, "blurb": "Table Mountain. Long, popular route.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "tyo", "city": "Tokyo", "country": "Japan", "flag": "jp", "lat": 35.68, "lon": 139.69, "km": 9600, "band": "long", "basePrice": 400, "baseDemand": 250, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "11", "dep": "18:00", "utc": 9, "blurb": "Neon lights and bullet trains. Big demand.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "sin", "city": "Singapore", "country": "Singapore", "flag": "sg", "lat": 1.35, "lon": 103.82, "km": 10800, "band": "long", "basePrice": 400, "baseDemand": 220, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "12", "dep": "21:00", "utc": 8, "blurb": "Gateway to Asia. Famous airport.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "syd", "city": "Sydney", "country": "Australia", "flag": "au", "lat": -33.87, "lon": 151.21, "km": 17600, "band": "long", "basePrice": 600, "baseDemand": 300, "step": 100, "drop": 30, "prices": [500, 600, 700, 800], "gate": "13", "dep": "22:00", "utc": 10, "blurb": "The longest flight in the world. Only one plane can do it.", "unlockPhase": 4, "growth": 3, "cap": 60}], "rounds": [{"date": "2030-05-12", "period": "setup", "fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."], "prog": 2}, {"date": "2030-05-13", "period": "day", "fuel": 1.2, "title": "Day 1", "headline": "Your first full day as an airline.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."], "onboard": true, "prog": 3.1}, {"date": "2030-05-14", "period": "day", "fuel": 1.3, "title": "Day 2", "headline": "Fuel prices are on the move, and so could your timetable.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."], "departures": true, "prog": 3.2}, {"date": "2030-05-15", "period": "day", "fuel": 1.4, "title": "Day 3", "headline": "A new market is opening up.", "opportunity": true, "news": ["Fuel now £1.40 a litre."], "prog": 3.3}, {"date": "2030-05-16", "period": "gap", "prog": 4, "stage": "routine", "title": "The timetable repeats", "headline": "Your timetable now runs every day by itself.", "news": ["Dragon routes settle into a daily rhythm."], "fuel": 1.4}, {"date": "2030-05-20", "period": "week", "prog": 4, "title": "Week 2", "headline": "Your first week of regular operations.", "news": ["Passengers say the new airline is reliable."], "fuel": 1.4}, {"date": "2030-05-27", "period": "week", "prog": 4.1, "title": "Week 3", "headline": "Another week: is the timetable still right?", "news": ["Half-term week: families are travelling."], "fuel": 1.45}, {"date": "2030-06-03", "period": "week", "prog": 4.2, "title": "Week 4", "headline": "A month of flying is almost done.", "news": ["Fuel prices are creeping up."], "fuel": 1.45}, {"date": "2030-06-10", "period": "month", "prog": 5, "stage": "stable", "title": "A stable airline", "headline": "The airline runs month by month now.", "news": ["Analysts: the new airline is here to stay."], "fuel": 1.5}, {"date": "2030-07-01", "period": "month", "prog": 5.1, "title": "July", "headline": "Summer holidays begin.", "news": ["Airports busy as the holidays start."], "fuel": 1.55}, {"date": "2030-08-01", "period": "month", "prog": 5.2, "title": "August", "headline": "The busiest month of the summer.", "news": ["Fuel steadies for August."], "fuel": 1.5}, {"date": "2030-09-01", "period": "month", "prog": 6, "stage": "year", "until": "2031-04-30", "title": "The first year", "headline": "Where will the airline be in a year?", "news": ["Aircraft makers report strong orders."], "fuel": 1.6}, {"date": "2030-10-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Autumn timetables published."], "fuel": 1.65}, {"date": "2030-11-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Winter fuel prices rise."], "fuel": 1.7}, {"date": "2030-12-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Christmas getaway: airports busy."], "fuel": 1.75}, {"date": "2031-01-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["New year, new routes for rivals."], "fuel": 1.6}, {"date": "2031-02-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Half-term in February: families fly."], "fuel": 1.65}, {"date": "2031-03-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Spring is coming: bookings pick up."], "fuel": 1.7}, {"date": "2031-04-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Easter holidays boost travel."], "fuel": 1.75}, {"date": "2031-05-01", "period": "day", "prog": 7, "stage": "review", "title": "Year 1 review", "headline": "One year of flying. Time to grow?", "news": ["A year since the airline's first flight."], "fuel": 1.8}], "fuelTopUp": 0.1, "reserveDefault": 20000, "crewDutyMin": 540, "crewCost": 300}</script>
+<script type="application/json" id="data-world">{"id": "clear-skies", "name": "Opening prototype", "lesson": "Fuel climbs through the first year (with a shock in July), crashes in January after the oil find, then climbs to £3.20 by the final May — stock up when it is cheap.", "startingCash": 5000, "startingReputation": 3, "fuelLot": 500, "rival": "Red Kite Air", "dayStart": "06:00", "dayEnd": "22:00", "firstDeparture": "09:00", "turnaroundMin": 45, "maxTrips": 4, "tankBase": 5000, "suppliers": [{"name": "Dragon Fuels", "priceDelta": 0, "lot": 500, "note": "Sells in 500 L lots", "fromPhase": 1}, {"name": "Celtic Oil", "priceDelta": -0.1, "lot": 2000, "note": "10p cheaper, but only sells 2,000 L lots", "fromPhase": 3}], "icons": {"perIcon": 1, "bigAt": 150, "bigPerIcon": 10}, "homes": [{"id": "lhr", "code": "LHR", "city": "Heathrow", "name": "London Heathrow", "country": "England", "flag": "uk", "lat": 51.47, "lon": -0.454, "utc": 0, "fee": 120, "demandPct": 15, "biz": 1.5, "blurb": "The UK's busiest airport. Expensive to land, but lots of passengers, including business travellers.", "terminals": [{"id": "t5", "name": "Terminal 5", "turn": 35, "charge": 5, "biz": 1.2, "note": "Modern gates right by the runway: quick turnarounds. Business travellers like it."}, {"id": "t4", "name": "Terminal 4", "turn": 55, "charge": 3, "note": "Cheaper, but remote stands and buses make turnarounds slow."}]}, {"id": "lgw", "code": "LGW", "city": "Gatwick", "name": "London Gatwick", "country": "England", "flag": "uk", "lat": 51.153, "lon": -0.182, "utc": 0, "fee": 80, "demandPct": 5, "biz": 1.0, "blurb": "London's second airport. A fair landing fee and plenty of holiday passengers.", "terminals": [{"id": "north", "name": "North Terminal", "turn": 40, "charge": 4, "note": "Busy but well organised."}, {"id": "south", "name": "South Terminal", "turn": 45, "charge": 3, "note": "A little cheaper, a little slower."}]}, {"id": "ltn", "code": "LTN", "city": "Luton", "name": "London Luton", "country": "England", "flag": "uk", "lat": 51.875, "lon": -0.368, "utc": 0, "fee": 40, "demandPct": -5, "biz": 0.6, "blurb": "A low-cost airport north of London. Cheap to land, mostly leisure passengers.", "terminals": [{"id": "main", "name": "Main Terminal", "turn": 30, "charge": 2, "note": "Built for quick, cheap turnarounds. One terminal for everyone."}]}, {"id": "man", "code": "MAN", "city": "Manchester", "name": "Manchester", "country": "England", "flag": "uk", "lat": 53.354, "lon": -2.275, "utc": 0, "fee": 60, "demandPct": 0, "biz": 1.0, "blurb": "The North's biggest airport. Dublin is a short hop; Paris is a long way for a small plane.", "terminals": [{"id": "t1", "name": "Terminal 1", "turn": 40, "charge": 4, "note": "The main international terminal."}, {"id": "t3", "name": "Terminal 3", "turn": 45, "charge": 3, "note": "Smaller and cheaper, a little slower."}]}], "setupRoutes": ["dub", "par"], "routes": [{"id": "dub", "city": "Dublin", "country": "Ireland", "flag": "ie", "lat": 53.35, "lon": -6.26, "km": 300, "band": "short", "basePrice": 60, "baseDemand": 60, "step": 10, "drop": 5, "prices": [50, 60, 70, 80], "gate": "1", "dep": "09:00", "utc": 0, "blurb": "Busier and cheaper. A short hop across the Irish Sea.", "unlockPhase": 1, "setupPrices": [50, 60, 70, 80], "growth": 0, "cap": 30, "fares": [50, 60, 70, 80], "alat": 53.42, "alon": -6.27, "biz": 6, "profile": {"morning": 0.5, "midday": 0.15, "evening": 0.35, "flex": 0.25, "type": "Business shuttle"}}, {"id": "par", "city": "Paris", "country": "France", "flag": "fr", "lat": 48.86, "lon": 2.35, "km": 450, "band": "short", "basePrice": 90, "baseDemand": 45, "step": 10, "drop": 3, "prices": [80, 90, 100, 110, 120], "gate": "2", "dep": "10:00", "utc": 1, "blurb": "Quieter, but passengers pay more. A longer flight.", "unlockPhase": 1, "setupPrices": [80, 90, 100, 110, 120], "growth": 0, "cap": 40, "fares": [80, 90, 100, 110, 120], "alat": 49.01, "alon": 2.55, "biz": 10, "profile": {"morning": 0.4, "midday": 0.2, "evening": 0.4, "flex": 0.3, "type": "City break / mixed"}}, {"id": "mad", "city": "Madrid", "country": "Spain", "flag": "es", "lat": 40.42, "lon": -3.7, "km": 1200, "band": "short", "basePrice": 100, "baseDemand": 60, "step": 10, "drop": 5, "prices": [80, 90, 100, 120], "gate": "3", "dep": "11:00", "utc": 1, "blurb": "Sunny city break. Steady demand.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "rak", "city": "Marrakech", "country": "Morocco", "flag": "ma", "lat": 31.63, "lon": -8.01, "km": 2400, "band": "medium", "basePrice": 120, "baseDemand": 90, "step": 20, "drop": 10, "prices": [100, 120, 140, 160], "gate": "4", "dep": "09:30", "utc": 1, "blurb": "Holiday route. Popular in winter.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "cai", "city": "Cairo", "country": "Egypt", "flag": "eg", "lat": 30.04, "lon": 31.24, "km": 3600, "band": "medium", "basePrice": 150, "baseDemand": 110, "step": 25, "drop": 10, "prices": [125, 150, 175, 200], "gate": "5", "dep": "08:30", "utc": 2, "blurb": "Pyramids! Good demand all year.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "los", "city": "Lagos", "country": "Nigeria", "flag": "ng", "lat": 6.52, "lon": 3.38, "km": 4800, "band": "medium", "basePrice": 200, "baseDemand": 100, "step": 25, "drop": 10, "prices": [150, 175, 200, 250], "gate": "6", "dep": "12:00", "utc": 1, "blurb": "Big city, business travellers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "nyc", "city": "New York", "country": "USA", "flag": "us", "lat": 40.71, "lon": -74.01, "km": 5600, "band": "medium", "basePrice": 200, "baseDemand": 140, "step": 50, "drop": 20, "prices": [150, 200, 250, 300], "gate": "7", "dep": "13:00", "utc": -5, "blurb": "The big one. Huge demand.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "dxb", "city": "Dubai", "country": "UAE", "flag": "ae", "lat": 25.2, "lon": 55.27, "km": 5600, "band": "medium", "basePrice": 250, "baseDemand": 150, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "8", "dep": "14:00", "utc": 4, "blurb": "Shopping and sunshine. Rich passengers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "del", "city": "Delhi", "country": "India", "flag": "in", "lat": 28.61, "lon": 77.21, "km": 7200, "band": "long", "basePrice": 250, "baseDemand": 200, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "9", "dep": "20:00", "utc": 5.5, "blurb": "Very busy. Overnight flight.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "cpt", "city": "Cape Town", "country": "South Africa", "flag": "za", "lat": -33.92, "lon": 18.42, "km": 9600, "band": "long", "basePrice": 350, "baseDemand": 180, "step": 50, "drop": 20, "prices": [300, 350, 400, 450], "gate": "10", "dep": "19:00", "utc": 2, "blurb": "Table Mountain. Long, popular route.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "tyo", "city": "Tokyo", "country": "Japan", "flag": "jp", "lat": 35.68, "lon": 139.69, "km": 9600, "band": "long", "basePrice": 400, "baseDemand": 250, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "11", "dep": "18:00", "utc": 9, "blurb": "Neon lights and bullet trains. Big demand.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "sin", "city": "Singapore", "country": "Singapore", "flag": "sg", "lat": 1.35, "lon": 103.82, "km": 10800, "band": "long", "basePrice": 400, "baseDemand": 220, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "12", "dep": "21:00", "utc": 8, "blurb": "Gateway to Asia. Famous airport.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "syd", "city": "Sydney", "country": "Australia", "flag": "au", "lat": -33.87, "lon": 151.21, "km": 17600, "band": "long", "basePrice": 600, "baseDemand": 300, "step": 100, "drop": 30, "prices": [500, 600, 700, 800], "gate": "13", "dep": "22:00", "utc": 10, "blurb": "The longest flight in the world. Only one plane can do it.", "unlockPhase": 4, "growth": 3, "cap": 60}], "rounds": [{"date": "2030-05-12", "period": "setup", "fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."], "prog": 2}, {"date": "2030-05-13", "period": "day", "fuel": 1.2, "title": "Day 1", "headline": "A catering company has an offer: snacks on board.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."], "onboard": true, "prog": 3.1}, {"date": "2030-05-14", "period": "day", "fuel": 1.3, "title": "Day 2", "headline": "The launch deal is over: from today the airline buys its own fuel.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."], "prog": 3.2, "fuelDay": true}, {"date": "2030-05-15", "period": "day", "fuel": 1.4, "title": "Day 3", "headline": "Some flights were full. Others had empty seats.", "news": ["Fuel now £1.40 a litre."], "prog": 3.3}, {"date": "2030-05-16", "period": "day", "fuel": 1.4, "title": "Day 4", "headline": "A second market is opening up.", "opportunity": true, "prog": 3.4}, {"date": "2030-05-17", "period": "gap", "prog": 4, "stage": "routine", "title": "The weekend", "headline": "Your regular operating plan runs by itself.", "news": ["Dragon routes settle into a daily rhythm."], "fuel": 1.4}, {"date": "2030-05-20", "period": "week", "prog": 4, "title": "Week 1", "headline": "Your first week of regular operations.", "news": ["Passengers say the new airline is reliable."], "fuel": 1.4, "noReview": true}, {"date": "2030-05-27", "period": "week", "prog": 4.1, "title": "Week 2", "headline": "Another week: is the timetable still right?", "news": ["Half-term week: families are travelling."], "fuel": 1.45}, {"date": "2030-06-03", "period": "week", "prog": 4.2, "title": "Week 3", "headline": "A month of flying is almost done.", "news": ["Fuel prices are creeping up."], "fuel": 1.45}, {"date": "2030-06-10", "period": "month", "prog": 5, "stage": "stable", "title": "A stable airline", "headline": "The airline runs month by month now.", "news": ["Analysts: the new airline is here to stay."], "fuel": 1.5}, {"date": "2030-07-01", "period": "month", "prog": 5.1, "title": "July", "headline": "Summer holidays begin.", "news": ["Airports busy as the holidays start."], "fuel": 1.55}, {"date": "2030-08-01", "period": "month", "prog": 5.2, "title": "August", "headline": "The busiest month of the summer.", "news": ["Fuel steadies for August."], "fuel": 1.5}, {"date": "2030-09-01", "period": "month", "prog": 6, "stage": "year", "until": "2031-04-30", "title": "The first year", "headline": "Where will the airline be in a year?", "news": ["Aircraft makers report strong orders."], "fuel": 1.6}, {"date": "2030-10-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Autumn timetables published."], "fuel": 1.65}, {"date": "2030-11-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Winter fuel prices rise."], "fuel": 1.7}, {"date": "2030-12-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Christmas getaway: airports busy."], "fuel": 1.75}, {"date": "2031-01-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["New year, new routes for rivals."], "fuel": 1.6}, {"date": "2031-02-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Half-term in February: families fly."], "fuel": 1.65}, {"date": "2031-03-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Spring is coming: bookings pick up."], "fuel": 1.7}, {"date": "2031-04-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Easter holidays boost travel."], "fuel": 1.75}, {"date": "2031-05-01", "period": "day", "prog": 7, "stage": "review", "title": "Year 1 review", "headline": "One year of flying. Time to grow?", "news": ["A year since the airline's first flight."], "fuel": 1.8}], "fuelTopUp": 0.1, "reserveDefault": 20000, "crewDutyMin": 540, "crewCost": 300}</script>
 
 <!-- TAIL-FIN MOTIFS the pupil can pick in setup (drawn in the livery colours; SVG symbols are below). -->
 <script type="application/json" id="data-fins">
@@ -2323,7 +2400,7 @@ td.c .mdl{display:inline-block;margin-left:6px;padding:0 4px;font-style:normal;f
         <div class="row"><button class="btn small" id="tChallengeNow">Captain's challenge now</button></div>
       </div>
       <div class="tsec tsec-tools" style="grid-column:1/-1"><h3>Maths tools</h3>
-        <p class="small muted"><b>Calculate</b>: he works the figure out. <b>Build</b>: he chooses the two figures and the sign, then works it out. <b>Model</b>: the airline's software works it out. Each tool has a default for each stage of the story; a change shows on the next screen.</p>
+        <p class="small muted"><b>Calculate</b>: he works the figure out. <b>Build</b>: he chooses the two figures and the sign; the model then works it out. <b>Model</b>: the airline's software works it out. Each tool has a default for each stage of the story; a change shows on the next screen.</p>
         <div id="tTools"></div>
         <div class="row"><button class="btn small" id="tToolsDef">Defaults for all</button><button class="btn small" id="tToolsCalc">Pupil calculates all</button><button class="btn small" id="tToolsModel">Model does all</button><button class="btn small" id="tFill">Fill this table</button><button class="btn small" id="tWorkOpen">Working space on the board</button><button class="btn small" id="tWorkClose">Close it</button></div>
       </div>
@@ -2447,7 +2524,7 @@ function newState(){
     airline:{ name:'', code:'', c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'strategy'},{t:'fin'},{t:'home'},{t:'boot'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'options'},{t:'fuelPlan'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'fin'},{t:'home'},{t:'boot'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };
@@ -3486,12 +3563,12 @@ function tableHtml(t, o){
   rows.forEach((r, ri) => {
     const rowActive = act && act.row === r.id;
     const exCol = r.explain && t.cols.find(c => c.parts && c.parts[r.id]);
-    h += `<tr class="${rowActive ? 'row-on' : ''}"><th scope="row" class="${act && !rowActive && !ops.includes(r.id) ? 'dim' : ''}">${esc(rowLabel(t, r))}${exCol ? ` <button class="link" data-explain="${cellId(exCol.id, r.id)}">What's in this?</button>` : ''}</th>`;
+    h += `<tr class="${rowActive ? 'row-on' : ''} ${r.total ? 'tot' : ''}"><th scope="row" class="${act && !rowActive && !ops.includes(r.id) ? 'dim' : ''}">${esc(rowLabel(t, r))}${exCol ? ` <button class="link" data-explain="${cellId(exCol.id, r.id)}">What's in this?</button>` : ''}</th>`;
     t.cols.forEach(c => {
       const st = cellState(t, c, ri), v = c.values[r.id], id = cellId(c.id, r.id), on = act && act.col === c.id && act.row === r.id;
       const isOp = act && act.col === c.id && (ops.includes(r.id) || (choosing && UI.picks.includes(r.id)));
       const cls = `${on ? 'on' : ''} ${isOp ? 'opd' : ''} ${act && !on && !isOp ? 'dim' : ''} ${choosing && act.col === c.id && ['given','derived','done','tick'].includes(st) ? 'pickable' : ''}`;
-      if(st === 'given' || st === 'derived' || st === 'done') h += `<td class="c ${st} ${cls}" data-cellv="${id}"><span>${fmtVal(r.unit, v)}</span>${st === 'derived' && r.tool && toolLevel(r.tool) === 'model' ? '<i class="mdl" title="Worked out by the model">model</i>' : ''}</td>`;
+      if(st === 'given' || st === 'derived' || st === 'done') h += `<td class="c ${st} ${cls}" data-cellv="${id}"><span>${fmtVal(r.unit, v)}</span>${st === 'derived' && r.tool && toolLevel(r.tool) === 'model' ? `<button class="mdl" data-fx="${t.id}|${c.id}|${r.id}" title="Worked out by the model: show how">ƒ model</button>` : ''}</td>`;
       else if(st === 'wait') h += `<td class="c wait ${cls}"><span>·</span></td>`;
       else if(st === 'enter') h += `<td class="c enter ${cls}"><button data-cell="${id}">${on ? (UI.entry ? esc(UI.entry) : 'Completing…') : 'Complete figure'}</button></td>`;
       else { const open = UI.tickOpen[t.id+'|'+id]; h += `<td class="c tick ${cls}"><button data-tick="${id}">✓ ${fmtVal(r.unit, v)}</button>${open ? `<small>${esc(TEXT.finance)}: ${esc(cellExplain(t, c, r))}</small>` : ''}</td>`; }
@@ -3541,7 +3618,7 @@ function bindTable(t, o){
   screen().querySelectorAll('td.pickable[data-cellv]').forEach(td => td.onclick = () => { const id = td.getAttribute('data-cellv').split('|')[1]; if(UI.picks.includes(id)) UI.picks = UI.picks.filter(x => x !== id); else if(UI.picks.length < 2) UI.picks.push(id); UI.msg = ''; rerender(); });
   screen().querySelectorAll('[data-op]').forEach(b => b.onclick = () => { UI.op = b.getAttribute('data-op'); UI.msg = ''; rerender(); });
   screen().querySelectorAll('[data-pk]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-pk'); if(UI.picks.includes(id)) UI.picks = UI.picks.filter(x => x !== id); else if(UI.picks.length < 2) UI.picks.push(id); UI.msg = ''; rerender(); });
-  on('trySum', () => { if(checkPair(row, UI.picks, UI.op)){ t.chosen[cellId(col.id, row.id)] = true; tRows(t).filter(r => r.sentence && r.sentence === row.sentence).forEach(r => t.chosen[cellId(col.id, r.id)] = true); UI.picks = []; UI.op = null; UI.msg = ''; } else { UI.msg = TEXT.wrongPair.replace('{row}', rowLabel(t, row).toLowerCase()); UI.picks = []; UI.op = null; } rerender(); });
+  on('trySum', () => { if(checkPair(row, UI.picks, UI.op)){ t.chosen[cellId(col.id, row.id)] = true; tRows(t).filter(r => r.sentence && r.sentence === row.sentence).forEach(r => t.chosen[cellId(col.id, r.id)] = true); UI.picks = []; UI.op = null; UI.msg = ''; if(row.tool && TOOL[row.tool] && toolLevel(row.tool) === 'build'){ cellCorrect(t, true); } } else { UI.msg = TEXT.wrongPair.replace('{row}', rowLabel(t, row).toLowerCase()); UI.picks = []; UI.op = null; } rerender(); });
   const ans = $('cellAns'); if(!ans) return;
   const sync = () => { UI.entry = ans.value; if(UI.msg){ UI.msg = ''; const fm = $('ftMsg'); if(fm){ fm.textContent = ''; fm.classList.remove('ok'); } } const s = screen().querySelector('.s-ans'); if(s) s.textContent = UI.entry || '?'; const b = screen().querySelector('td.enter.on button'); if(b) b.textContent = UI.entry || '?'; };
   ans.oninput = sync;
@@ -4689,8 +4766,8 @@ R.protoEnd = () => {
       <div><span class="label">Reputation</span><span class="stars">${starsHtml(S.rep)}</span></div></div>
     <p class="lede">Your regular airline operation is now established.</p>
     <p class="muted">In the full game, routine flights will begin operating automatically and you will start managing the airline week by week.</p>
-    <div class="row" style="justify-content:center">${S.round === 3 && typeof startBeat === 'function' ? '<button class="btn primary big" id="peGo">Continue to Week 2</button>' : ''}<button class="btn ${S.round === 3 ? '' : 'primary'} big" id="again">Play the opening again</button><button class="btn big" id="peHome">Home</button></div></div>`);
-  on('again', () => { S = newState(); S.si = 1; render(); }); on('peHome', openMenu); on('peGo', () => { S.finished = false; startBeat(4); });
+    <div class="row" style="justify-content:center">${S.round >= 3 && S.round <= 4 ? '<button class="btn primary big" id="peGo">Continue</button>' : ''}<button class="btn ${S.round === 3 ? '' : 'primary'} big" id="again">Play the opening again</button><button class="btn big" id="peHome">Home</button></div></div>`);
+  on('again', () => { S = newState(); S.si = 1; render(); }); on('peHome', openMenu); on('peGo', () => { S.finished = false; startProtoDay(S.round + 1 <= 4 ? S.round + 1 : 4); });
 };
 
 /* ==================================================================
@@ -4739,8 +4816,8 @@ function sysNotice(text){ (window.__notes = window.__notes || []).push(text); (s
 function sysNoticeNext(){
   const q = sysNotice.q; if(!q.length){ sysNotice.busy = false; return; } sysNotice.busy = true;
   let n = $('sysNote'); if(!n){ n = document.createElement('div'); n.id = 'sysNote'; n.className = 'sysnote'; n.setAttribute('role', 'status'); $('control').appendChild(n); }
-  n.textContent = q.shift(); n.classList.remove('show'); void n.offsetWidth; n.classList.add('show');
-  setTimeout(() => { n.classList.remove('show'); setTimeout(sysNoticeNext, 300); }, 2200);
+  const [a, b] = String(q.shift()).split(' · '); n.innerHTML = `<b>${esc(a)}</b>${b ? `<small>${esc(b)}</small>` : ''}`; n.classList.toggle('two', !!b); n.classList.remove('show'); void n.offsetWidth; n.classList.add('show');
+  setTimeout(() => { n.classList.remove('show'); setTimeout(sysNoticeNext, 300); }, b ? 3600 : 2200);
 }
 function planReachable(){ const t = step().t; return WS_STEPS.includes(t) || t === 'hq'; }
 function navActive(){ return UI.view || (WS_STEPS.includes(step().t) ? 'plan' : 'overview'); }
@@ -4861,13 +4938,15 @@ function wsWrap(frame, o){
 
 /* ---------- the dock ---------- */
 UI.dock = { mode:null, topic:null }; UI.dockShut = false; UI.railOpen = null; UI.justDone = null; UI.pad = { strokes:[], cur:null, erase:false }; UI.dockAt = -1;
-const DOCK_KIND = { context:'Context', calc:'Calculation', help:'Help', work:'Working space' };
+const DOCK_KIND = { context:'Context', calc:'Calculation', help:'Help', work:'Working space', archive:'Archive', fx:'Model' };
 function dockHtml(o){
   if(UI.dockAt !== S.si + ':' + S.day){ UI.dockAt = S.si + ':' + S.day; UI.dock = { mode:null, topic:null }; UI.railOpen = null; if(!o.calc) UI.justDone = null; }
   const t = o.calc || null, m = UI.dock.mode, c = o.context || {}; tidyActive(t);
   let kind = 'context', title = c.title || 'Context', body = c.html || '';
   if(m === 'help' && HELP[UI.dock.topic]){ kind = 'help'; title = HELP[UI.dock.topic]; body = helpBody(UI.dock.topic); }
   else if(m === 'work'){ kind = 'work'; title = 'Working space'; body = workPadHtml(t); }
+  else if(m === 'archive'){ kind = 'archive'; title = 'Earlier days'; body = archiveDockHtml(); }
+  else if(m === 'fx'){ kind = 'fx'; title = 'How the model works it out'; body = fxHtml(); }
   else if(t && t.active){ kind = 'calc'; title = calcTitle(t, t.active); body = calcHtml(t); }
   else if(t && UI.justDone && UI.justDone.table === t.id){ kind = 'calc'; title = doneWord(t); body = calcDoneHtml(t); }
   if(UI.dockShut && kind === 'context') return `<aside class="dock shut" data-dock="shut"><button class="dk-open" id="dkOpen" title="Show ${esc(title)}" aria-label="Show the side panel"><span>‹</span><b>${esc(title)}</b></button></aside>`;
@@ -5019,7 +5098,7 @@ function kpiRow(mode){
     ${card('k-rev', 'cash', 'Revenue', h ? money(Math.round(h.revenue)) : '—', h ? (h.type === 'setup' ? 'Launch day' : `Tickets and sales`) : 'After the first flights', spark(H.map(x => x.revenue)))}
     ${card('k-pax', 'pax', 'Passengers', h ? `${h.pax}` : '—', h ? `Flew ${when}` : 'After the first flights')}
     ${card('k-load', 'seat', 'Seats filled', h && h.seats ? `${Math.round(100 * h.pax / h.seats)}%` : '—', h && h.seats ? `${h.pax} of ${h.seats} seats` : 'After the first flights')}
-    ${card('k-fuel', 'fuel', 'Fuel stock', `${num(S.fuel)} L`, need ? (S.fuel >= need ? `<span class="green">Covers today's plan</span>` : `<span class="orange">Plan needs ${num(need)} L</span>`) : S.fuel ? `Worth ${money(S.fuelValue)}` : 'No services planned')}</div>`;
+    ${!fuelPaid() && S.round < 2 ? card('k-fuel', 'fuel', 'Fuel', 'Free', 'Supplied by the launch deal') : card('k-fuel', 'fuel', 'Fuel stock', `${num(S.fuel)} L`, need ? (S.fuel >= need ? `<span class="green">Covers today's plan</span>` : `<span class="orange">Plan needs ${num(need)} L</span>`) : S.fuel ? `Worth ${money(S.fuelValue)}` : 'No services planned')}</div>`;
 }
 function liveOpsHtml(mode){
   const fl = boardFlights().filter(f => !f.grounded);
@@ -5056,7 +5135,7 @@ function todayCard(mode){
       <div class="dr-rcp"><div class="rev"><span class="kl">Revenue</span><b data-count="${rev}">${money(rev)}</b>${first ? '<small>Money received from ticket sales</small>' : ''}</div><i>−</i>
         <div class="cost"><span class="kl">Costs</span><b>${money(Math.round(costs))}</b>${first ? '<small>Money spent operating the airline</small>' : ''}</div><i>=</i>
         <div class="prof ${pr < 0 ? 'neg' : ''}"><span class="kl">${pr >= 0 ? 'Profit' : 'Loss'}</span><b>${money(Math.round(Math.abs(pr)))}</b>${first ? '<small>Money remaining after costs</small>' : ''}</div></div>
-      ${fc ? `<p class="dr-fc">Your forecast: ${money(Math.round(fc.profit))} · actual: ${money(Math.round(pr))} ${Math.abs(diff) < 2 ? '<span class="green">✓ as forecast</span>' : `<span class="orange">${diff > 0 ? '+' : '−'}${money(Math.abs(diff))}</span> ${esc((S.rnd.vs && S.rnd.vs.why) || 'Fuel was charged at the tank\'s average price.')}`}</p>` : ''}
+      ${fc ? `<p class="dr-fc">Projected: ${money(Math.round(fc.profit))} · actual: ${money(Math.round(pr))} ${Math.abs(diff) < 2 ? '<span class="green">✓ as forecast</span>' : `<span class="orange">${diff > 0 ? '+' : '−'}${money(Math.abs(diff))}</span> ${esc((S.rnd.vs && S.rnd.vs.why) || 'Fuel was charged at the tank\'s average price.')}`}</p>` : ''}
       ${cashLine()}
       <div class="dr-routes">${h && h.routes ? Object.keys(h.routes).map(id => { const x = h.routes[id], miss = Math.max(0, (x.want || x.pax) - x.pax); return `<span>${flagSvg(routeById(id).flag, 16)} <b>${esc(routeById(id).city)}</b> ${x.want} wanted · ${x.pax} flew · <span class="${miss ? 'orange' : ''}">${miss} no seat</span></span>`; }).join('') : ''}</div>
       <div class="td-act">${first ? '' : helpChip('money')}<span class="grow"></span><button class="btn primary act" id="nx">${closeWord()} ▶</button></div></div>`; }
@@ -5067,8 +5146,8 @@ function todayCard(mode){
   // the morning: today's headline, the standing plan and one action
   const fares = Object.keys(serviceCounts(sched)).map(id => `${routeById(id).city} ${money(fareOf(id))}`).join(' · ');
   return `${hqHead("Today's Plan", periodTag().toUpperCase())}<div class="pb td2"><h3 class="td-news2">${esc(S.rnd.headline || "Today's operation")}</h3>${(S.rnd.brief || []).map(l => `<p class="td-brief">${esc(l)}</p>`).join('')}
-    <div class="td-list edits"><div><span>Timetable</span><b>${sched.length ? esc(svcLabel(sched)) + ` · until <span class="mono">${fmtTime(TIME.day(p, sched).end)}</span>` : '—'}</b><button class="link" data-plan>Edit</button></div><div><span>Last fares</span><b>${esc(fares || '—')}</b><button class="link" data-plan>Edit</button></div>${S.round >= 1 ? `<div><span>On board</span><b>${esc(onboardOf().label)}</b><button class="link" data-plan>Edit</button></div>` : ''}${S.round >= 2 ? `<div><span>First departure</span><b class="mono">${fmtTime(firstDep())}</b><button class="link" data-plan>Edit</button></div>` : ''}
-      <div><span>Fuel</span><b class="${need > S.fuel ? 'orange' : ''}"><span class="mono">${num(S.fuel)} L</span> · plan needs <span class="mono">${num(need)} L</span></b><button class="link" data-plan>Edit</button></div></div>
+    <div class="td-list edits"><div><span>Timetable</span><b>${sched.length ? esc(svcLabel(sched)) + ` · until <span class="mono">${fmtTime(TIME.day(p, sched).end)}</span>` : '—'}</b><button class="link" data-plan>Edit</button></div><div><span>Fares</span><b>${esc(fares || '—')}</b><button class="link" data-plan>Edit</button></div>${snacksOn() && S.round >= 2 ? `<div><span>On board</span><b>${esc(onboardOf().label)}</b><button class="link" data-plan>Edit</button></div>` : ''}${depsOn() && S.round >= 4 && sched.length ? `<div><span>Departures</span><b class="mono">${TIME.day(p, sched).trips.map(t => fmtTime(t.dep)).join(', ')}</b><button class="link" data-plan>Edit</button></div>` : ''}
+      ${fuelPaid() ? `<div><span>Fuel</span><b class="${need > S.fuel ? 'orange' : ''}"><span class="mono">${num(S.fuel)} L</span> · plan needs <span class="mono">${num(need)} L</span></b><button class="link" data-plan>Edit</button></div>` : '<div><span>Fuel</span><b>Supplied free by the launch deal</b><span></span></div>'}</div>
     <div class="td-act"><button class="btn primary act" id="startDay">${planWord()} ▶</button></div></div>`;
 }
 function renderOverview(mode){
@@ -5120,7 +5199,7 @@ function renderView(v){
   if(v === 'fleet') inner = `<div class="vw"><section class="hp">${hqHead('Fleet', plural(S.fleet.length, 'aircraft').toUpperCase().replace('AIRCRAFTS', 'AIRCRAFT'))}${S.fleet.length ? fleetHtml() : '<div class="pb"><p class="muted">No aircraft yet.</p></div>'}</section>
     <section class="hp">${hqHead(p.name, 'START-UP AIRCRAFT')}<div class="pb fl-specs"><div><span class="kl">Seats</span><b>${p.seats}</b></div><div><span class="kl">Speed</span><b>${num(p.speed)} km/h</b></div><div><span class="kl">Range</span><b>${num(p.range)} km</b></div><div><span class="kl">Running cost</span><b>${money(p.hourCost)} an hour</b><small>+ ${money(homeData().fee)} landing fee</small></div><div><span class="kl">Daily cost</span><b>${money(p.dayCost)}</b></div><div><span class="kl">Fuel</span><b>${p.fuelUse} L</b><small>per 100 km</small></div></div></section></div>`;
   if(v === 'finance') inner = `<div class="vw"><section class="hp">${hqHead('Financial Overview', 'BY DAY')}<div class="pb fin-pb"></div></section>
-    ${tabbedPanel('p-fd', 'fin2', [['days', 'History', () => finHistoryHtml()], ['models', 'Models', modelsHtml]])}</div>`;
+    ${tabbedPanel('p-fd', 'fin2', [['days', 'History', () => finHistoryHtml()], ['plans', 'Plans', plansHtml], ['models', 'Models', modelsHtml]])}</div>`;
   screen().innerHTML = shell(inner);
   if(v === 'network'){ if(hqMap) hqMap.destroy(); hqMap = makeMap($('hqMap'), { scale:1, pad:0.65, planes:true }); hqMap.layer = 'routes'; requestAnimationFrame(() => { if(!hqMap) return; hqMap.autoFit(true); hqMap.render(); }); }
   if(v === 'finance'){ const fb = screen().querySelector('.fin-pb'); requestAnimationFrame(() => { if(fb && S.history.length) fb.innerHTML = finChart({ n:14, w:fb.clientWidth - 28, h:Math.max(140, fb.clientHeight - 40) }); else if(fb) fb.innerHTML = '<p class="muted">The chart starts after the first flights.</p>'; }); }
@@ -5287,7 +5366,7 @@ R.fuelPlan = st => {
   const prices = []; for(let i = Math.max(0, S.round - 5); i <= S.round; i++) prices.push([beatLabel(i), fuelPrice(i)]);
   // on launch day and Day 2 the order cost is a figure to complete (in the dock); the screen never changes
   let t = null, billDone = true;
-  if(order && toolLevel('fuelCost') !== 'model'){
+  if(order && false){   // the fuel cost is worked out once, on the COST screen; the order bill is the model's
     const tid = 'fuelbill:' + S.day + ':' + order, fresh = !S.rnd.tables[tid];
     t = ensureTable(tid, 'fuel', buildFuelCols(order).slice(0, 1), { context:'round' }); if(fresh) t.active = null;
     billDone = tableComplete(t);
@@ -5367,13 +5446,18 @@ function rowTyped(t, row){ return row.type === 'calc' && !!row.tool && toolLevel
 function typedIds(t){ return tRows(t).filter(r => rowTyped(t, r)).map(r => r.id); }
 /* The table engine reads the tool levels instead of the old per-table help modes. */
 function rowLive(t, row){ return rowTyped(t, row); }
+/* A model figure waits only for the figures it is made from; a typed figure waits for the typed figures before it. */
+function rowDeps(row){ return ((row.sentence || '').match(/\{\??(\w+)\}/g) || []).map(x => x.replace(/[{}?]/g, '')).filter(id => id !== row.id); }
 function cellState(t, col, ri){
   const rows = tRows(t), row = rows[ri];
   if(row.type === 'given') return 'given';
   if(col.auto && col.auto[row.id]) return 'derived';
+  if(!rowLive(t, row)){
+    for(const id of rowDeps(row)){ const j = rows.findIndex(r => r.id === id); if(j >= 0 && j !== ri){ const s = cellState(t, col, j); if(s === 'wait' || s === 'enter') return 'wait'; } }
+    return 'derived';
+  }
   for(let i = 0; i < ri; i++){ const s = cellState(t, col, i); if(s === 'wait' || s === 'enter') return 'wait'; }
-  if(rowLive(t, row)) return t.done[cellId(col.id, row.id)] ? 'done' : 'enter';
-  return 'derived';
+  return t.done[cellId(col.id, row.id)] ? 'done' : 'enter';
 }
 function ensureTable(id, kind, cols, opts){
   opts = opts || {};
@@ -5542,7 +5626,7 @@ function wsStatus(){ const k = railKind(), P = S.period;
 function PW(){
   const P = S.period, t = P && S.phase === 'round' ? P.type : 'day';
   if(t === 'week') return { now:'this week', poss:"This week's", the:"this week's", span:'week' };
-  if(t === 'gap') return { now:'Thursday to Sunday', poss:"These four days'", the:"these four days'", span:'gap' };
+  if(t === 'gap') return { now:'Friday to Sunday', poss:"These three days'", the:"these three days'", span:'gap' };
   if(t === 'month'){ const m = monthName(P.from); return { now:`in ${m}`, poss:`${m}'s`, the:`${m}'s`, span:'month' }; }
   return { now:'today', poss:"Today's", the:"today's", span:'day' };
 }
@@ -5555,10 +5639,10 @@ function editStep(what){
   const setup = S.phase === 'setup'; return what === 'timetable' ? (setup ? 'timetable' : 'planner') : what === 'extras' ? 'planner' : 'options';
 }
 function goWord(){ const k = railKind(); return k === 'week' ? 'RUN THE WEEK' : k === 'month' ? `RUN ${monthName(S.period.from).toUpperCase()}` : k === 'year' ? 'RUN THE YEAR' : 'START OPERATIONS'; }
-function closeWord(){ const k = railKind(), P = S.period; if(S.rnd.saving) return 'Back to the aircraft'; return P && P.type === 'gap' ? 'Plan Week 2' : k === 'week' ? 'Close the week' : k === 'month' ? 'Close the month' : k === 'year' ? 'Go to the Year 1 review' : 'Close the day'; }
+function closeWord(){ const k = railKind(), P = S.period; if(S.rnd.saving) return 'Back to the aircraft'; return P && P.type === 'gap' ? 'Plan Week 1' : k === 'week' ? 'Close the week' : k === 'month' ? 'Close the month' : k === 'year' ? 'Go to the Year 1 review' : 'Close the day'; }
 function planWord(){ const k = railKind(); return k === 'week' ? 'Plan the week' : k === 'month' ? `Plan ${monthName(S.period.from)}` : k === 'year' ? 'Plan the year' : "Plan today's operation"; }
 function readyTitle(){ const k = railKind(), P = S.period; return k === 'week' ? `Ready for Week ${weekNo(P.from)}` : k === 'month' ? `Ready for ${monthName(P.from)}` : k === 'year' ? 'Ready to run the year' : S.phase === 'setup' ? 'Ready for launch' : `Ready for Day ${S.round}`; }
-function beatLabel(i){ if(!i) return 'Launch'; if(i <= 3) return 'Day ' + i; const t = periodOf(i), d = beatDay(i); return t === 'gap' ? 'Thu–Sun' : t === 'week' ? 'Week ' + weekNo(d) : monthName(d, true); }
+function beatLabel(i){ if(!i) return 'Launch'; if(i <= 4) return 'Day ' + i; const t = periodOf(i), d = beatDay(i); return t === 'gap' ? 'Fri–Sun' : t === 'week' ? 'Week ' + weekNo(d) : monthName(d, true); }
 function periodShort(h){ if(!h || h.type === 'setup' || h.from === 0) return 'launch day'; if(h.type === 'day') return dateShort(h.from); if(h.type === 'week') return 'Week ' + weekNo(h.from); if(h.type === 'gap') return `${fmtRange(h.from, h.to)}`; return isMonthSpan(h.from, h.to) || monthStart(h.from) === monthStart(h.to) ? monthName(h.from) : `${monthName(h.from, true)}–${monthName(h.to, true)}`; }
 function profitLabel(h){ if(!h) return "Yesterday's profit"; if(h.type === 'setup' || h.from === 0) return 'Launch day profit'; if(h.type === 'day') return h.to === S.day - 1 ? "Yesterday's profit" : `${dayName(h.from)}'s profit`; return `Profit · ${periodShort(h)}`; }
 function campaignSummary(id){
@@ -5588,10 +5672,10 @@ function startBeat(b){
 function stepsFor(b){
   const w = roundData(b), st = w.stage ? [{ t:'milestone', stage:w.stage }] : [], L = a => st.concat(a.map(t => ({ t })));
   if(w.period === 'gap') return L(['sim', 'results']);
-  if(w.period === 'week') return L(['hq', 'review', 'planner', 'fuelPlan', 'options', 'ready', 'sim', 'results']);
+  if(w.period === 'week') return L((w.noReview ? ['hq'] : ['hq', 'review']).concat(['planner', 'costPlan', 'testIdeas', 'fuelPlan', 'ready', 'sim', 'results']));
   if(w.until) return L(['hq', 'review', 'plans', 'fuelPlan', 'yearPlan', 'afford', 'ready', 'sim', 'results']);
   if(w.period === 'month') return L(['hq', 'review', 'fuelPlan', 'plans', 'ready', 'sim', 'results']);
-  return L(['yearReview', 'shop', 'invest', 'purchase', 'delivery', 'protoEnd']);
+  return L(['yearReview', 'strategy', 'shop', 'invest', 'purchase', 'delivery', 'protoEnd']);
 }
 function periodBrief(){
   const h = lastHist(); if(!h) return [];
@@ -5698,7 +5782,7 @@ function applyPeriodResults(){
 
 /* ---------- the forecast for a week or a month: a dry run of the real engine ---------- */
 const PL_CACHE = new Map();
-function applyPlanRaw(pl){ const f = fleetOne(); if(f){ f.schedule = pl.sched.slice(); f.route = pl.sched[0] || null; } S.prices = Object.assign({}, S.prices, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard; }
+function applyPlanRaw(pl){ const f = fleetOne(); if(f){ f.schedule = pl.sched.slice(); f.route = pl.sched[0] || null; } S.prices = Object.assign({}, S.prices, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard; S.deps = pl.deps ? pl.deps.slice() : null; }
 function periodLabels(){ const W = PW(); return { rev:`Revenue ${W.now}`, ops:`Running costs ${W.now}`, fuel:`Fuel used ${W.now}` }; }
 function periodLines(pl){
   const P = S.period, key = [planKey(pl), orderL(), P.from, P.to, S.rep, S.fuel, r2(S.fuelValue), S.round, (S.fuelLots || []).length].join('|');
@@ -5739,13 +5823,13 @@ R.milestone = st => {
 /* ---------- review: how did it go, and one figure to work out ---------- */
 function reviewSpec(){
   const H = S.history.filter(x => x.type !== 'setup'), h = H[H.length - 1], b = S.round, wk = H.filter(x => x.type === 'week'), mo = H.filter(x => x.type === 'month');
-  if(b === 6 || b === 7){ const a = wk[wk.length - 2], c = wk[wk.length - 1]; if(!a || !c) return null; const up = c.profit >= a.profit;
+  if(b === 7 || b === 8){ const a = wk[wk.length - 2], c = wk[wk.length - 1]; if(!a || !c) return null; const up = c.profit >= a.profit;
     return { title:'How much did weekly profit change?', col:periodShort(c), rows:['prev', 'last', up ? 'rise' : 'fall'], values:{ prev:a.profit, last:c.profit, rise:c.profit - a.profit, fall:a.profit - c.profit }, labels:{ prev:`Profit in ${periodShort(a)}`, last:`Profit in ${periodShort(c)}` } }; }
-  if(b === 8 && wk.length >= 3){ const w3 = wk.slice(-3), tot = w3.reduce((t, x) => t + x.profit, 0);
+  if(b === 9 && wk.length >= 3){ const w3 = wk.slice(-3), tot = w3.reduce((t, x) => t + x.profit, 0);
     return { title:'What is the average profit a week?', col:'Weeks', rows:['total', 'n', 'avg'], values:{ total:tot, n:3, avg:Math.round(tot / 3) }, labels:{ total:'Total profit, three weeks', n:'Weeks', avg:'Average profit a week' }, parts:{ total:w3.map(x => [periodShort(x), money(x.profit)]) } }; }
-  if((b === 9 || b === 10) && h && h.type === 'month'){ const n = h.to - h.from + 1;
+  if((b === 10 || b === 11) && h && h.type === 'month'){ const n = h.to - h.from + 1;
     return { title:'What is the average profit a day?', col:periodShort(h), rows:['total', 'n', 'avg'], values:{ total:h.profit, n, avg:Math.round(h.profit / n) }, labels:{ total:`Profit in ${periodShort(h)} (${fmtRange(h.from, h.to)})`, n:'Days', avg:'Average profit a day' } }; }
-  if(b === 11 && mo.length >= 2){ const m2 = mo.slice(-2), tot = m2.reduce((t, x) => t + x.profit, 0);
+  if(b === 12 && mo.length >= 2){ const m2 = mo.slice(-2), tot = m2.reduce((t, x) => t + x.profit, 0);
     return { title:'What is the average profit a month?', col:'July and August', rows:['total', 'n', 'avg'], values:{ total:tot, n:2, avg:Math.round(tot / 2) }, labels:{ total:'Total profit, July and August', n:'Months', avg:'Average profit a month' }, parts:{ total:m2.map(x => [periodShort(x), money(x.profit)]) }, keepAvg:true }; }
   return null;
 }
@@ -6034,6 +6118,504 @@ R.protoEnd = () => {
     <div class="row" style="justify-content:center"><button class="btn primary big" id="again">Play again</button><button class="btn big" id="peHome">Home</button></div></div>`);
   on('again', () => { S = newState(); S.si = 1; render(); }); on('peHome', openMenu);
 };
+/* ==================================================================
+   THE OPENING, ONE NEW IDEA A DAY (the teacher's specification).
+   Every day has the same five stages: PLAN → COST → TEST → OPERATE → REVIEW.
+     COST  = today's one deliberately chosen calculation (the new idea), everything else is the model;
+     TEST  = free modelling: change the test plan, the model costs it, no compulsory arithmetic.
+   A control only appears once its idea has been introduced:
+     Launch Day  services + fare              · ticket revenue, profit
+     Day 1       + on-board service           · cabin sales            (profit is Built, then modelled)
+     Day 2       + fuel (the airline buys it) · fuel cost
+     Day 3       + a departure time per service and time-of-day demand · empty seats
+     Day 4       + Dublin: one aircraft, two markets · revenue on a new route (Build)
+     End of Day 4 the Regular Operating Plan, then the weekend runs itself and Week 1 (weekly projection).
+   ================================================================== */
+WS_STEPS.push('costPlan', 'testIdeas', 'strategy');
+SHELL_STEPS.push('costPlan', 'testIdeas', 'strategy', 'rop');
+['strategy'].forEach(t => { const i = FOCUS_STEPS.indexOf(t); if(i >= 0) FOCUS_STEPS.splice(i, 1); });
+
+/* ---------- which ideas have been introduced ---------- */
+function opened(stage){ return S && S.phase !== 'setup' && progress() >= stage; }
+function snacksOn(){ return opened(3.1); }
+function fuelPaid(){ return opened(3.2); }
+function timeDemandOn(){ return opened(3.3); }
+function depsOn(){ return opened(3.3); }
+function secondRouteOn(){ return opened(3.4); }
+function plannerRoutes(){ return secondRouteOn() ? [S.market, otherRoute()] : [S.market]; }
+/* The old "business travellers before 08:00" rule is replaced by time-of-day demand. */
+function earlyBonus(){ return 0; }
+/* Week 1 is the first full week of regular operation: Monday 20 May 2030. */
+function weekNo(day){ return Math.max(1, Math.floor((day - 8) / 7) + 1); }
+
+/* ---------- time-of-day demand: who wants to fly when ---------- */
+const PROFILE_DEFAULT = { morning:0.4, midday:0.2, evening:0.4, flex:0.3, type:'Mixed' };
+const BAND_NAMES = { morning:'Morning peak', midday:'Quieter middle', evening:'Evening peak' };
+function bandOf(m){ return m < 600 ? 'morning' : m < 960 ? 'midday' : 'evening'; }
+function profileOf(r){ return (r && r.profile) || PROFILE_DEFAULT; }
+/* The day's passengers at this fare, split into the time each wants to fly; "flex" will take any service. */
+function demandPools(route, fare){
+  const W = paxWant(route, fare);
+  if(!timeDemandOn()) return { W, morning:0, midday:0, evening:0, flex:W };
+  const pr = profileOf(route), fixed = Math.round(W * (1 - pr.flex)), m = Math.round(fixed * pr.morning), e = Math.round(fixed * pr.evening);
+  return { W, morning:m, midday:Math.max(0, fixed - m - e), evening:e, flex:W - fixed };
+}
+function planFlights(){
+  const out = [], pools = {}, fifo = fifoCursor(S.rnd && S.rnd.fuelOrder), paid = fuelPaid(), list = [];
+  const pool = (route, price) => { if(!pools[route.id]){ const comp = competitorPrice(route); pools[route.id] = Object.assign(demandPools(route, price), { demand: demandAt(route, price), comp, cut: comp !== undefined && comp < price }); } return pools[route.id]; };
+  S.fleet.forEach((f, i) => { const sched = schedOf(f); if(!sched.length) return; const plane = planeById(f.planeId), D = TIME.day(plane, sched); D.trips.forEach((tr, k) => list.push({ f, i, k, tr, plane })); });
+  list.sort((a, b) => a.tr.dep - b.tr.dep || a.i - b.i);
+  list.forEach(({ f, i, k, tr, plane }) => {
+    const route = routeById(tr.route), price = fareOf(tr.route);
+    const base = { key:f.uid+'-'+k, uid:f.uid, trip:k, planeId:f.planeId, route:tr.route, code:flightCode(i, k), price, seats:seatsOf(f), layout:f.layout, dep:tr.dep, arr:tr.arr, segments:tr.segments, fuelL:fuelForTrip(plane, route), runCost:runCostOf(plane, route), reasons:[] };
+    if(f.grounded){ out.push(Object.assign(base, { demand:0, sold:0, revenue:0, grounded:true, fuelL:0, runCost:0, fuelCost:0, reasons:['Grounded today, waiting for a spare part.'] })); return; }
+    const d = pool(route, price), band = bandOf(tr.dep), a = Math.min(base.seats, d[band]), b = Math.min(base.seats - a, d.flex), sold = a + b;
+    d[band] -= a; d.flex -= b;
+    const reasons = [];
+    if(k === 0 || sold < base.seats){ if(S.rep >= 4) reasons.push(`Your ${S.rep} star reputation brought extra passengers.`); if(S.rep <= 2) reasons.push(`Your ${S.rep} star reputation put some people off.`); }
+    if(d.cut) reasons.push(`${WORLD.rival} was cheaper (£${num(d.comp)}), so 1 in 5 passengers went to them.`);
+    if(timeDemandOn() && sold < base.seats) reasons.push(`${fmtTime(tr.dep)} is in the ${BAND_NAMES[band].toLowerCase()}: fewer people want to fly then.`);
+    else if(k > 0 && sold < base.seats) reasons.push(`Earlier trips had already taken most of today's ${route.city} passengers.`);
+    out.push(Object.assign(base, { demand:d.demand, band, sold, revenue: sold * price, termCost: sold * termCharge(), compCut:d.cut, reasons, fuelCost: paid ? fifo.take(base.fuelL) : 0 }));
+  });
+  return out;
+}
+/* A departure time for each service (from Day 3). A service can't leave before the aircraft is ready again. */
+TIME.day = function(plane, ids, start, deps){
+  start = start === undefined ? firstDep() : start;
+  if(deps === undefined) deps = depsOn() && S && Array.isArray(S.deps) ? S.deps : null;
+  let t = deps && deps[0] !== undefined && deps[0] !== null ? deps[0] : start; const t0 = t, trips = [], segments = [];
+  ids.forEach((id, k) => {
+    const r = routeById(id);
+    if(k > 0){ const h = TIME.home(plane); segments.push({ kind:'home', start:t, end:t + h, k }); t += h; if(deps && deps[k] !== undefined && deps[k] !== null && deps[k] > t) t = deps[k]; }
+    const L = TIME.leg(plane, r), A = TIME.away(plane, r), dep = t;
+    const segs = [{ kind:'out', start:t, end:t + L, route:id, k }, { kind:'turn', start:t + L, end:t + L + A, route:id, k }, { kind:'back', start:t + L + A, end:t + 2 * L + A, route:id, k }];
+    segments.push(...segs); t = dep + 2 * L + A;
+    trips.push({ route:id, k, dep, arriveAway:dep + L, leaveAway:dep + L + A, arr:t, segments:segs });
+  });
+  return { start:t0, trips, segments, end:t, elapsed:t - t0 };
+};
+/* Launch Day and Day 1: the launch deal supplies the fuel free. From Day 2 the airline buys its own. */
+function startFlight(){
+  S.rnd.flights = planFlights(); const paid = fuelPaid();
+  S.rnd.flights.slice().sort((a, b) => a.dep - b.dep).forEach(f => {
+    if(f.grounded) return;
+    if(!paid){ f.fuelCost = 0; S.rnd.status[f.key] = 'BOARDING'; return; }
+    if(S.fuel + 1e-9 >= f.fuelL){ f.fuelCost = consumeFuel(f.fuelL); S.rnd.status[f.key] = 'BOARDING'; }
+    else { f.noFuel = true; f.sold = 0; f.revenue = 0; f.runCost = 0; f.fuelCost = 0; S.rnd.status[f.key] = 'NO FUEL'; f.reasons = ['Not enough fuel — trip grounded.']; }
+  });
+  const fl = S.rnd.flights.filter(f => !f.grounded), first = fl.length ? Math.min(...fl.map(f => f.dep)) : firstDep(), last = S.rnd.flights.reduce((m, f) => Math.max(m, f.arr || 0), first + 60);
+  S.rnd.anim = { start: Date.now(), dur: settings.flightSecs * 2500, from: first - 30, to: last + 30 };
+}
+function operandUnit(t, id){ const r = tRows(t).find(x => x.id === id); if(r) return r.unit; return ({ fuelL:'L', ppl:'ppl', snackP:'£' })[id] || (/^(fare|price)/.test(id) ? '£' : 'n'); }
+Object.assign(OPND, { run:'Flights', term:'Terminal charges', stock:'Snack stock', crew:'Second crew', day:"Aircraft's day", fuel:'Fuel cost', tk1:'Tickets', tk2:'Tickets', snack:'Cabin sales', buyers:'Passengers buying', snackP:'Snack price', fuelL:'Fuel used', ppl:'Price per litre', seats:'Seats', flown:'Passengers', revDay:'Revenue a day', costDay:'Costs a day', profitDay:'Profit a day', days:'Days' });
+
+/* ---------- plans: what the airline will do, tried on a copy ---------- */
+function currentPlan(){ const f = fleetOne(); return { sched: f ? schedOf(f).slice() : [], prices: Object.assign({}, S.prices), firstDep: firstDep(), onboard: S.onboard || 'none', deps: depsOn() && Array.isArray(S.deps) ? S.deps.slice() : null }; }
+function planKey(pl){ return JSON.stringify([pl.sched, pl.sched.map(id => pl.prices[id]), pl.firstDep, pl.onboard, pl.deps || null]); }
+function withPlan(pl, fn){
+  const f = fleetOne(), keep = { sched: f ? f.schedule : [], route: f ? f.route : null, prices: S.prices, dep: S.firstDep, ob: S.onboard, deps: S.deps };
+  try{ if(f){ f.schedule = pl.sched.slice(); f.route = pl.sched[0] || null; } S.prices = Object.assign({}, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard; S.deps = pl.deps ? pl.deps.slice() : null; return fn(); }
+  finally { if(f){ f.schedule = keep.sched; f.route = keep.route; } S.prices = keep.prices; S.firstDep = keep.dep; S.onboard = keep.ob; S.deps = keep.deps; }
+}
+/* Everything a plan would do today, as spreadsheet lines. */
+function planLines(pl){
+  return withPlan(pl, () => {
+    const p = ourPlane(), fits = !pl.sched.length || schedFits(pl.sched), fl = planFlights().filter(x => !x.grounded), X = dayExtras(fl), r1 = S.market, r2id = otherRoute(), ob = onboardOf();
+    const paxOn = id => fl.filter(x => x.route === id).reduce((t, x) => t + x.sold, 0);
+    const v = { pax1: paxOn(r1), fare1: fareOf(r1), pax2: paxOn(r2id), fare2: fareOf(r2id) };
+    v.tk1 = v.pax1 * v.fare1; v.tk2 = v.pax2 * v.fare2; v.buyers = X.buyers || 0; v.snackP = ob.price || 0; v.snack = X.obRev; v.rev = v.tk1 + v.tk2 + v.snack;
+    v.run = fl.reduce((t, x) => t + x.runCost, 0); v.fuelL = fl.reduce((t, x) => t + x.fuelL, 0); v.ppl = fuelPrice(); v.fuel = Math.round(fl.reduce((t, x) => t + x.fuelCost, 0));
+    v.term = X.term; v.stock = X.obCost; v.crew = X.crew; v.day = fleetDayCost();
+    v.cost = v.run + v.fuel + v.term + v.stock + v.crew + v.day; v.profit = v.rev - v.cost;
+    const routes = {}; fl.forEach(x => { routes[x.route] = (routes[x.route] || 0) + x.sold; });
+    const ids = [...new Set(pl.sched)], want = Object.fromEntries(ids.map(id => [id, paxWant(routeById(id), fareOf(id))]));
+    const nos = ids.reduce((t, id) => t + Math.max(0, want[id] - (routes[id] || 0)), 0);
+    const D = pl.sched.length ? TIME.day(p, pl.sched) : null, seats = fl.reduce((t, x) => t + x.seats, 0), pax = fl.reduce((t, x) => t + x.sold, 0);
+    const services = fl.map((x, k) => ({ k, route:x.route, dep:x.dep, arr:x.arr, seats:x.seats, sold:x.sold, band:x.band || bandOf(x.dep) }));
+    return { v, fits, nos, pax, seats, empty: seats - pax, want, end: D ? D.end : null, D, crews: X.crews, fuelL: v.fuelL, services, X };
+  });
+}
+function planOutcome(pl){ const L = planLines(pl); return { pax:L.pax, nos:L.nos, seats:L.seats, revenue:L.v.rev, costs:L.v.cost, profit:L.v.profit, end:L.end, crews:L.crews, fuelL:L.fuelL, X:L.X, label:svcLabel(pl.sched) }; }
+/* One line describing a plan: "Paris ×2 at £90 · snacks £3 · 07:00, 17:00". */
+function planLabel(pl){
+  const c = serviceCounts(pl.sched), parts = Object.keys(c).map(id => `${routeById(id).city} ×${c[id]} at ${money(pl.prices[id] || routeById(id).basePrice)}`);
+  if(snacksOn() && pl.onboard && pl.onboard !== 'none') parts.push(({ sell3:'snacks £3', sell5:'snacks £5', free:'free snacks' })[pl.onboard]);
+  if(depsOn() && pl.sched.length){ const D = withPlan(pl, () => TIME.day(ourPlane(), pl.sched)); parts.push(D.trips.map(t => fmtTime(t.dep)).join(', ')); }
+  return parts.join(' · ') || 'No services';
+}
+function setPlan(i, pl){
+  if(i === 0){ const f = fleetOne(); setSchedule(f.uid, pl.sched.slice()); Object.assign(S.prices, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard; S.deps = pl.deps ? pl.deps.slice() : null; refreshPlan(); }
+  else if(i === 9) S.rnd.test = pl;
+  else if(S.rnd.options) S.rnd.options[i] = pl;
+  render();
+}
+/* The departure times a plan really has (a service waits for the aircraft). */
+function actualDeps(pl){ return withPlan(pl, () => TIME.day(ourPlane(), pl.sched).trips.map(t => t.dep)); }
+/* Change plan i (0 = the airline's plan, 9 = the test plan). */
+function editPlan(i, what, a, d){
+  const base = i === 9 ? testPlan() : currentPlan(), next = JSON.parse(JSON.stringify(base)), maxT = WORLD.maxTrips || 4;
+  if(depsOn() && !next.deps) next.deps = actualDeps(next);
+  if(what === 'svc'){ const c = serviceCounts(next.sched); c[a] = clamp((c[a] || 0) + d, 0, maxT); if(c[a] && !next.prices[a]) next.prices[a] = routeById(a).basePrice; next.sched = schedFrom(c); if(next.deps) next.deps = null; }
+  else if(what === 'fare'){ const r = routeById(a), F = r.fares || [r.basePrice], k = F.indexOf(next.prices[a] || r.basePrice); next.prices[a] = F[clamp((k < 0 ? F.indexOf(r.basePrice) : k) + d, 0, F.length - 1)]; }
+  else if(what === 'dep'){ const k = +a, now = actualDeps(next), v = now[k] + 30 * d;
+    if(v < dayStart()){ toast(`The airport opens at ${WORLD.dayStart}.`); return; }
+    if(k > 0 && d < 0){ const ready = withPlan(next, () => { const D = TIME.day(ourPlane(), next.sched); return D.trips[k - 1].arr + TIME.home(ourPlane()); }); if(v < ready){ toast(`Service ${k + 1} can't leave before the aircraft is ready again at ${fmtTime(ready)}.`); return; } }
+    next.deps = now; next.deps[k] = v; }
+  else if(what === 'del'){ const k = +a; if(next.deps) next.deps.splice(k, 1); next.sched.splice(k, 1); }
+  else if(what === 'add'){ if(next.sched.length >= maxT){ toast(`One aircraft can fly at most ${maxT} services a day.`); return; } next.sched.push(a); if(!next.prices[a]) next.prices[a] = routeById(a).basePrice; if(next.deps) next.deps.push(null); }
+  else if(what === 'route'){ const k = +a, ids = plannerRoutes(), cur = ids.indexOf(next.sched[k]); next.sched[k] = ids[(cur + 1) % ids.length]; if(!next.prices[next.sched[k]]) next.prices[next.sched[k]] = routeById(next.sched[k]).basePrice; }
+  else if(what === 'ob') next.onboard = a;
+  if(next.deps) next.deps = withPlan(next, () => TIME.day(ourPlane(), next.sched).trips.map(t => t.dep));
+  const ok = withPlan(next, () => !next.sched.length || schedFits(next.sched));
+  if(!ok){ toast("That timetable won't fit in the operating day."); return; }
+  setPlan(i, next);
+}
+function testPlan(){ if(!S.rnd.test) S.rnd.test = JSON.parse(JSON.stringify(currentPlan())); return S.rnd.test; }
+
+/* ---------- the plan editor: only the controls introduced so far ---------- */
+function stepper(i, key, val, sub, o){
+  o = o || {};
+  return `<div class="pe-step ${o.cls || ''}"><button class="pe-b" data-pe="${i}|${key}|-1" aria-label="less" ${o.noLess ? 'disabled' : ''}>−</button><b class="pe-v mono">${val}</b><button class="pe-b" data-pe="${i}|${key}|1" aria-label="more" ${o.noMore ? 'disabled' : ''}>+</button>${sub ? `<small>${sub}</small>` : ''}</div>`;
+}
+function demandStrip(id){
+  const r = routeById(id), pr = profileOf(r), s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(2);
+  const bands = [['morning', s0, 600], ['midday', 600, 960], ['evening', 960, e0]], dens = bands.map(([b, a, z]) => pr[b] / Math.max(1, (z - a) / 60)), mx = Math.max(...dens);
+  return `<div class="dstrip"><span class="ds-l">${flagSvg(r.flag, 14)} ${esc(r.city)}: who wants to fly when</span><div class="ds-bar">${bands.map(([b, a, z], k) => `<i class="ds-b ${b}" style="left:${X(a)}%;width:${(100 * (z - a) / span).toFixed(2)}%;--h:${Math.round(100 * dens[k] / mx)}%"><span>${BAND_NAMES[b]}</span></i>`).join('')}</div></div>`;
+}
+function planEditor(i, pl, L, o){
+  o = o || {}; const p = ourPlane(), routes = S.phase === 'setup' ? [S.market] : plannerRoutes(), c = serviceCounts(pl.sched), per = depsOn(), maxT = WORLD.maxTrips || 4;
+  const routeBlock = id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, F = r.fares || [r.basePrice], n = c[id] || 0;
+    return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
+      ${per ? '' : `<div class="pe-f"><span class="label">Services</span>${stepper(i, 'svc|' + id, '×' + n, `${n * p.seats} seats`, { noLess: n === 0, noMore: pl.sched.length >= maxT })}</div>`}
+      <div class="pe-f"><span class="label">Fare</span>${stepper(i, 'fare|' + id, money(fare), `<b class="mono">${paxWant(r, fare)}</b> want to fly`, { noLess: fare <= F[0], noMore: fare >= F[F.length - 1] })}</div></div>`; };
+  const snacks = snacksOn() ? `<div class="pe-ob"><span class="label">On board</span>${Object.keys(ONBOARD).map(k => `<button class="opt-chip ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b></button>`).join('')}</div>` : '';
+  let services = '';
+  if(per){
+    const two = secondRouteOn();
+    services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times</span><span class="muted small">Out, a turnaround, back, then a turnaround at home.</span><span class="pe-add">${pl.sched.length >= maxT ? '<span class="muted small">4 services is the most one aircraft can fly</span>' : routes.map(id => `<button class="btn small" data-pe="${i}|add|${id}|0">+ ${esc(routeById(id).city)} service</button>`).join('')}</span></div>
+      ${(L.services || []).map((s, k) => { const r = routeById(s.route);
+        return `<div class="pe-svc ${s.band}"><span class="pe-n">Service ${k + 1}</span>${two ? `<button class="pe-rt" data-pe="${i}|route|${k}|1" title="Change the route">${flagSvg(r.flag, 14)} ${esc(r.city)} ⇄</button>` : `<span class="pe-city">${flagSvg(r.flag, 14)} ${esc(r.city)}</span>`}
+          ${stepper(i, 'dep|' + k, fmtTime(s.dep), `back ${fmtTime(s.arr)}`, { cls:'sm' })}<span class="pe-fill ${s.sold >= s.seats ? 'full' : ''}"><b class="mono">${s.sold}/${s.seats}</b><small>${s.sold >= s.seats ? 'full' : `${s.seats - s.sold} empty`}</small></span><span class="pe-band">${BAND_NAMES[s.band]}</span>
+          <button class="pe-x" data-pe="${i}|del|${k}|0" title="Remove this service" aria-label="Remove service ${k + 1}">✕</button></div>`; }).join('')}
+      </div>`;
+  }
+  const strips = per ? `<div class="pe-demand">${routes.map(demandStrip).join('')}${miniBar(L.D)}</div>` : '';
+  const sum = `<div class="pe-sum"><span><b class="mono">${L.pax}</b> fly</span><span class="${L.empty ? '' : 'muted'}"><b class="mono">${L.empty}</b> empty seat${L.empty === 1 ? '' : 's'}</span><span class="${L.nos ? 'orange' : ''}"><b class="mono">${L.nos}</b> without a seat</span>${L.end ? `<span>busy until <b class="mono">${fmtTime(L.end)}</b></span>` : ''}${opened(3.1) ? `<span class="${L.crews > 1 ? 'orange' : ''}">${L.crews} crew${L.crews > 1 ? 's' : ''}</span>` : ''}${L.fits ? '' : '<span class="red">Doesn\'t fit in the day</span>'}</div>`;
+  return `<div class="pe ${o.big ? 'big' : ''} ${o.compact ? 'compact' : ''}">${strips}<div class="pe-routes n${routes.length}">${routes.map(routeBlock).join('')}</div>${snacks}${services}${sum}</div>`;
+}
+function bindPlanEditor(){
+  screen().querySelectorAll('[data-pe]').forEach(b => b.onclick = e => { e.stopPropagation(); const [i, what, a, d] = b.getAttribute('data-pe').split('|'); editPlan(+i, what, a, +d); });
+}
+
+/* ---------- the day's steps ---------- */
+function startProtoDay(n){
+  S.round = n; S.phase = 'round'; S.day = beatDay(n); delete S.needsRestart;
+  const f = fleetOne(), w = roundData(n);
+  S.rnd = Object.assign(emptyRnd(), { featured:f.uid, focusRoute:schedOf(f)[0] || S.market, headline:w.headline || '', brief:protoBrief(n) });
+  S.period = newPeriod('day', S.day);
+  if(depsOn() && !Array.isArray(S.deps)) S.deps = TIME.day(ourPlane(), schedOf(f), undefined, null).trips.map(t => t.dep);
+  S.steps = [{ t:'hq' }, { t:'planner' }, { t:'costPlan' }, { t:'testIdeas' }].concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]);
+  S.rnd.cashStart = S.cash; UI.view = null;
+  S.si = 0; S.newRoutes = [];
+  refreshPlan();
+  addNews((w.news || []).slice(0, 2).map(t => ({ tag:'NEWS', text:t })));
+  publish(); render();
+}
+function protoBrief(n){
+  const h = lastDay(), fp = fuelPrice(n), fy = fuelPrice(n - 1), L = [];
+  if(h) L.push(`${h.type === 'setup' ? 'Launch day' : 'Yesterday'}: ${h.pax} passengers flew, ${h.profit >= 0 ? 'profit' : 'loss'} ${money(Math.round(Math.abs(h.profit)))}. The details are in Route performance.`);
+  const NEW = { 1:'New today: on-board sales. A catering company can supply snacks for your flights.', 2:'New today: fuel. The launch deal is over, so from today the airline buys its own fuel.', 3:'New today: departure times. Some flights were full and others had empty seats: demand changes through the day.', 4:`New today: ${routeById(otherRoute()).city}. One aircraft, two markets.` };
+  if(NEW[n]) L.push(NEW[n]);
+  if(n >= 3 && fp !== fy) L.push(`Fuel is ${priceL(fp)} a litre today (was ${priceL(fy)}).`);
+  return L;
+}
+function closeDay(){
+  UI.view = null; UI.fbI = 0; attachArchive();
+  if(S.phase === 'setup'){ startProtoDay(1); return; }
+  if(S.round < 4 && periodType() === 'day'){ startProtoDay(S.round + 1); return; }
+  if(S.rnd.saving){ keepSavingDone(); return; }
+  if(S.round === 4 && periodType() === 'day'){ if(!S.steps.some(s => s.t === 'rop')) S.steps.push({ t:'rop' }); next(); return; }
+  const nb = beatStartingOn(S.period.to + 1);
+  if(nb === null){ S.steps.push({ t:'protoEnd' }); next(); return; }
+  startBeat(nb);
+}
+
+/* ---------- the rail: the same five stages every day ---------- */
+const STG = {
+  plan:{ id:'plan', name:'Plan', done:'Planned', sub:'What will your airline do?' },
+  cost:{ id:'cost', name:'Cost', done:'Costed', sub:"Check today's new numbers", steps:['costPlan'] },
+  test:{ id:'test', name:'Test', done:'Ideas tested', sub:'Try other ideas with the model', steps:['testIdeas'] },
+  go:{ id:'go', name:'Operate', done:'Ready to fly', sub:'Fly the plan', steps:['fuelPlan', 'ready'] },
+  review:{ id:'review', name:'Review', done:'Reviewed', sub:'What happened?', steps:['results'] } };
+const stg = (k, steps) => Object.assign({}, STG[k], steps ? { steps } : {});
+STAGES.launch = [{ id:'air', name:'Airline ready', done:'Airline ready', sub:'Aircraft and first market', steps:['starter', 'market'] }, stg('plan', ['demand', 'rotation', 'timetable', 'fareTry']), stg('cost'), stg('test'), stg('go', ['ready']), stg('review')];
+STAGES.day = [stg('plan', ['planner']), stg('cost'), stg('test'), stg('go'), stg('review')];
+STAGES.week = [stg('plan', ['review', 'planner']), stg('cost'), stg('test'), stg('go'), stg('review', ['sim', 'results'])];
+Object.assign(RAIL_LABEL, { costPlan:"Today's new numbers", testIdeas:'Try other ideas', results:'Results', sim:'Run', fareTry:'Fare', planner:'Your plan', strategy:'Airline type' });
+Object.assign(SUB_DESC, { costPlan:'The new calculation', testIdeas:'The model costs your ideas', results:'What happened', timetable:'How many services', fareTry:'The ticket price', planner:'Services, fares and extras', strategy:'What sort of airline?' });
+Object.assign(STEP_HINT, {
+  planner:'Plan what your airline will do. Only the controls you have learned about are here.',
+  costPlan:'Check the new numbers: complete the highlighted figure. Everything else is worked out by the model.',
+  testIdeas:'Change the test plan to try an idea. The model costs it straight away: no sums.',
+  fareTry:'Choose a fare for your first route. Watch how many people want to fly.',
+  ready:'Check the operating plan. Anything can still be edited before operations start.',
+  strategy:'Your airline is growing. What sort of airline will it become?' });
+function stageSummary(id){
+  const f = fleetOne(), p = ourPlane(), sched = f ? schedOf(f) : [];
+  if(id === 'air') return [S.fleet.length ? p.name.replace(/^DHC-6 /, '') : '', S.market ? routeById(S.market).city : ''].filter(Boolean).join(' · ');
+  if(id === 'plan') return sched.length ? svcLabel(sched) : '';
+  if(id === 'cost') return S.rnd.costed ? `profit ${money(S.rnd.costed.v.profit)}` : '';
+  if(id === 'test'){ const n = (S.rnd.ideas || []).length; return S.rnd.myForecast ? `${S.rnd.myForecast.plan}${n ? ` · ${n} idea${n > 1 ? 's' : ''} saved` : ''}` : ''; }
+  if(id === 'go') return '';
+  return campaignSummary(id);
+}
+function railValue(t, i){
+  const f = fleetOne(), p = ourPlane(), sched = f ? schedOf(f) : [], passed = i < reach() && i !== S.si;
+  if(t === 'starter') return f ? `${p.name.replace(/^DHC-6 /, '')} · ${p.seats} seats` : '';
+  if(t === 'market') return S.market ? `${routeById(S.market).city} · ${paxFor(routeById(S.market), routeById(S.market).basePrice)} a day` : '';
+  if(t === 'demand'){ const r = S.market && routeById(S.market); return passed && r ? `${paxFor(r, r.basePrice)} want to fly · ${p.seats} seats` : ''; }
+  if(t === 'rotation'){ if(!passed || !S.market) return ''; const D = TIME.day(p, [S.market, S.market], undefined, null); return `ready again ${fmtTime(D.trips[1].dep)}`; }
+  if(t === 'timetable' || t === 'planner') return sched.length ? planLabel(currentPlan()) : '';
+  if(t === 'fareTry') return passed && S.market ? `${money(fareOf(S.market))} · ${wantOf(S.market)} people` : '';
+  if(t === 'fuelPlan'){ const o = S.rnd.fuelOrder; if(o) return `${num(o.litres)} L ordered · ${money(o.total)}`; return passed ? `tank covers it (${num(S.fuel)} L)` : ''; }
+  if(t === 'costPlan') return S.rnd.costed ? `profit ${money(S.rnd.costed.v.profit)}` : '';
+  if(t === 'testIdeas') return S.rnd.myForecast ? `${S.rnd.myForecast.plan} · ${money(S.rnd.myForecast.profit)}` : '';
+  return '';
+}
+function editStep(what){
+  const k = railKind();
+  if(k === 'month' || k === 'year') return what === 'forecast' && k === 'year' ? 'yearPlan' : 'plans';
+  if(what === 'forecast') return 'testIdeas';
+  if(S.phase === 'setup') return what === 'fare' ? 'fareTry' : 'timetable';
+  return 'planner';
+}
+
+/* ---------- PLAN ---------- */
+const PLAN_STORY = {
+  3.1:['A catering company can supply snacks for your flights.', 'Selling snacks brings in money, but the stock costs money too. Free snacks cost more but passengers like them.'],
+  3.2:['The launch deal is over. From today your airline buys its own fuel.', 'Does yesterday\'s plan still make sense now that fuel costs money?'],
+  3.3:['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.', `You can now choose a departure time for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 540)}; a longer day needs a second crew (${money(WORLD.crewCost || 300)}).`],
+  3.4:['A second market is open. Your one aircraft can now fly to two places.', 'How should its day be shared between them? Add a service, or change a service\'s route with ⇄.'] };
+R.planner = () => {
+  const p = ourPlane(), pl = currentPlan(), L = planLines(pl), W = PW(), per = W.span !== 'day', st = progress();
+  const story = !per ? (PLAN_STORY[st] || []) : [];
+  const gantt = depsOn() ? '' : `<section class="pnl"><div class="pnl-h"><h3>Operating day</h3><span class="muted">${WORLD.dayStart}–${WORLD.dayEnd}</span></div>${serviceGantt(pl.sched, { full:true })}</section>`;
+  const groups = depsOn() ? '' : `<section class="pnl"><div class="pnl-h"><h3>Expected passengers per service</h3>${paxKey()}</div>${plannerRoutes().filter(id => pl.sched.includes(id)).map(id => paxGroups(paxWant(routeById(id), fareOf(id)), p.seats, serviceCounts(pl.sched)[id] || 0, { small:true })).join('') || '<p class="muted">No services yet.</p>'}</section>`;
+  screen().innerHTML = taskFrame({ question: per ? `What will your airline fly ${W.now}?` : 'What will your airline do today?', work:false, story,
+    say:`Plan what your airline will do ${W.now}. ` + plannerRoutes().map(id => `${routeById(id).city}: ${paxWant(routeById(id), fareOf(id))} people want to fly at ${money(fareOf(id))}.`).join(' '),
+    context: ctxAircraft(), help:['timing', 'demand'],
+    main:`<div class="planner2"><section class="pnl"><div class="pnl-h"><h3>Your plan</h3><span class="muted">${esc(planLabel(pl))}</span></div>${planEditor(0, pl, L, { big:true })}</section>${gantt}${groups}</div>`,
+    foot:`<span class="grow"></span><button class="btn primary big" id="nx" ${pl.sched.length && L.fits ? '' : 'disabled'}>${pl.sched.length ? goLabel('Cost this plan') : 'Choose some services'} &#9654;</button>` });
+  bindPlanEditor();
+  on('nx', () => { S.rnd.focusRoute = schedOf(fleetOne())[0]; S.rnd.test = null; advance(); });
+};
+
+/* ---------- COST: today's new numbers ---------- */
+function costLabels(){ const a = routeById(S.market), b = routeById(otherRoute()); return { pax1:`${a.city} passengers`, fare1:`${a.city} fare`, tk1:`${a.city} tickets`, pax2:`${b.city} passengers`, fare2:`${b.city} fare`, tk2:`${b.city} tickets` }; }
+const COST_ROWS = () => TABLES.cost1.rows;
+function typedRow(id){ const r = COST_ROWS().find(x => x.id === id); return !!(r && r.tool && toolLevel(r.tool) !== 'model'); }
+function costRowIds(L, pl){
+  const v = L.v, two = secondRouteOn() && pl.sched.includes(otherRoute()), sn = snacksOn() && (pl.onboard || 'none') !== 'none', ids = [];
+  if(typedRow('tk1')) ids.push('pax1', 'fare1'); ids.push('tk1');
+  if(two){ if(typedRow('tk2')) ids.push('pax2', 'fare2'); ids.push('tk2'); }
+  if(sn){ if(typedRow('snack')) ids.push('buyers', 'snackP'); ids.push('snack'); }
+  ids.push('rev');
+  if(fuelPaid() && typedRow('fuel')) ids.push('fuelL', 'ppl', 'fuel');   // fuel gets its own lines on the day it is introduced
+  ids.push('cost', 'profit');                                           // the other costs are the model's: "What's in this?" shows them
+  return ids;
+}
+const NEW_TODAY = { revenue:'Ticket revenue = passengers × fare', profit:'Profit = total revenue − total costs', snacks:'Cabin sales = number buying × price', fuelCost:'Fuel cost = litres × price per litre', emptySeats:'Empty seats = seats − passengers', routeRevenue:'Revenue on the new route = passengers × fare', weekly:'Projected profit = profit a day × days' };
+function newIdeas(tables){ const ids = []; tables.filter(Boolean).forEach(t => tRows(t).forEach(r => { if(r.tool && rowTyped(t, r) && !ids.includes(r.tool)) ids.push(r.tool); })); return ids; }
+function weekLines(pl){
+  const L = dryRun(() => { S.fuelLots = []; S.fuel = 0; S.fuelValue = 0; S.rnd.fuelOrder = null; return planLines(pl); }), n = pDays(), v = L.v;
+  return Object.assign({}, L, { day:L, v:{ revDay:v.rev, costDay:v.cost, profitDay:v.profit, days:n, wproj:v.profit * n, rev:v.rev * n, cost:v.cost * n, profit:v.profit * n, fuel:v.fuel * n },
+    parts:{ costDay:[['Flights', money(v.run)], ['Fuel at today\'s price', money(v.fuel)], ['Terminal charges', money(v.term)], ['Snack stock', money(v.stock)], ['Second crew', money(v.crew)], ["Aircraft's day", money(v.day)]] } });
+}
+function weekProjected(){ return S.phase === 'round' && PW().span === 'week' && !!roundData(S.round).noReview; }
+function linesFor(pl){ const sp = PW().span; return sp === 'day' ? planLines(pl) : weekProjected() ? weekLines(pl) : periodLines(pl); }
+R.costPlan = () => {
+  const pl = currentPlan(), W = PW(), sp = W.span, setup = S.phase === 'setup';
+  let t, t2 = null, L, title, intro = '';
+  if(sp === 'day'){
+    L = planLines(pl);
+    const tid = 'cost:' + S.day, prev = S.rnd.tables[tid];
+    const v0 = L.v, parts = { cost:[['Flights', money(v0.run)]].concat(fuelPaid() ? [['Fuel', money(v0.fuel)]] : []).concat([['Terminal charges', money(v0.term)]]).concat(v0.stock ? [['Snack stock', money(v0.stock)]] : []).concat(v0.crew ? [['Second crew', money(v0.crew)]] : []).concat([["Aircraft's day", money(v0.day)]]) };
+    t = ensureTable(tid, 'cost1', [{ id:'a', label:'Your plan', sub:svcLabel(pl.sched), values:Object.assign({}, L.v), parts }], { rowIds:costRowIds(L, pl), labels:costLabels() });
+    if(t !== prev && !(setup && !prev)) t.active = null;
+    if(toolMet('emptySeats') && toolLevel('emptySeats') !== 'model' && L.services.length){
+      const s = L.services, pick = S.rnd.emptyK !== undefined && s[S.rnd.emptyK] ? S.rnd.emptyK : s.reduce((b, x, k) => (x.seats - x.sold) > (s[b].seats - s[b].sold) ? k : b, 0), x = s[pick];
+      S.rnd.emptyK = pick;
+      const tid2 = `empty:${S.day}:${pick}`, prev2 = S.rnd.tables[tid2];
+      t2 = ensureTable(tid2, 'empty1', [{ id:'s', label:`Service ${pick + 1} · ${fmtTime(x.dep)}`, sub:routeById(x.route).city, values:{ seats:x.seats, flown:x.sold, empty:x.seats - x.sold } }]);
+      if(t2 !== prev2) t2.active = null;
+      S.rnd.activeTable = (t2.active ? t2 : t).id;
+    }
+    title = "Check today's new numbers";
+  } else if(weekProjected()){
+    L = weekLines(pl);
+    const tid = 'wcost:' + S.day, prev = S.rnd.tables[tid];
+    t = ensureTable(tid, 'week1', [{ id:'a', label:'Your plan', sub:'one day, then the week', values:L.v, parts:L.parts }]); if(t !== prev) t.active = null;
+    title = 'Project the week';
+    intro = `<p class="c2-note">Your regular plan runs every day this week. Use one day's figures to project the whole week.</p>`;
+  } else {
+    L = periodLines(pl);
+    const tid = 'pcost:' + S.day + ':' + orderL(), prev = S.rnd.tables[tid];
+    t = ensureTable(tid, 'periodPlan2', [{ id:'a', label:'Your plan', sub:fmtRange(S.period.from, S.period.to), values:L.v, parts:L.parts }], { rowIds:['revDay', 'days', 'rev', 'opsDay', 'ops', 'fuel', 'cost', 'profit'], labels:periodLabels() }); if(t !== prev) t.active = null;
+    title = `Your plan ${W.now}`;
+    intro = `<p class="c2-note">Nothing new to work out ${W.now}: the model has costed your plan.</p>`;
+  }
+  const done = tableComplete(t) && (!t2 || tableComplete(t2)), fresh = newIdeas([t, t2]), calc = t2 && t2.active ? t2 : t;
+  const spot = fresh.length ? `<div class="c2-new"><span class="label">New today</span>${fresh.map(id => `<b>${esc(NEW_TODAY[id] || TOOL[id].name)}</b>`).join('')}</div>` : '';
+  const svcList = t2 ? `<div class="c2-svcl">${L.services.map((s, k) => `<button class="c2-s ${k === S.rnd.emptyK ? 'on' : ''}" data-esel="${k}" ${tableComplete(t2) || k === S.rnd.emptyK ? 'disabled' : ''}><b>Service ${k + 1}</b><span class="mono">${fmtTime(s.dep)}</span><span>${esc(routeById(s.route).city)}</span><span class="mono ${s.sold >= s.seats ? 'green' : 'orange'}">${s.sold}/${s.seats}</span></button>`).join('')}</div>` : '';
+  screen().innerHTML = taskFrame({ question:title, work: fresh.length > 0, calc,
+    story: setup ? ['This is the one place today where you check the numbers yourself. The model works out everything else.'] : [],
+    say: fresh.length ? `Check today's new numbers. ${fresh.map(id => NEW_TODAY[id] || '').join('. ')}.` : 'The model has costed your plan.',
+    context:{ title:'Your plan', html: cxSec('The plan', `<p class="cx-plan">${esc(planLabel(pl))}</p>`) + cxSec('Profit', kv([['Total revenue', `<span class="mono">${done ? money(L.v.rev) : '—'}</span>`], ['Total costs', `<span class="mono">${done ? money(L.v.cost) : '—'}</span>`], ['Profit', done ? `<span class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</span>` : '<span class="muted">—</span>', 'tot']])) + `<p class="muted cx-note">${done ? 'Next: try other ideas. The model costs them for you.' : 'Choose <b>Complete figure</b> to work out the new figure.'}</p><button class="link" data-archive>Compare with earlier days</button>` },
+    main:`<div class="cost2">${spot}${intro}<div class="c2-g ${t2 ? 'two' : ''}"><section class="pnl c2-sheet"><div class="sheet1">${tableHtml(t)}</div></section>${t2 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>One service</h3><span class="muted">How well is the aircraft used?</span></div>${svcList}<div class="sheet1">${tableHtml(t2)}</div></section>` : ''}</div></div>`,
+    foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${goLabel(done ? 'Test other ideas' : 'Complete the new figures first')} &#9654;</button>` });
+  bindTable(t); if(t2) bindTable(t2);
+  screen().querySelectorAll('[data-esel]').forEach(b => b.onclick = () => { S.rnd.emptyK = +b.getAttribute('data-esel'); resetEntry(); render(); });
+  on('nx', () => { S.rnd.costed = { label:planLabel(pl), key:planKey(pl), v:Object.assign({}, L.v, sp === 'day' ? {} : { rev:L.v.rev, cost:L.v.cost, profit: weekProjected() ? L.v.wproj : L.v.profit }) }; S.rnd.costedTools = fresh; S.rnd.test = null; resetEntry(); UI.justDone = null; advance(); });
+};
+
+/* ---------- TEST: try other ideas with the model ---------- */
+function modelRows(Lc, Lt, sp){
+  const day = sp === 'day', a = Lc.v, b = Lt.v, wk = !day && weekProjected();
+  const P = x => wk ? x.wproj : x.profit;
+  const rows = (day ? [['Passengers', Lc.pax, Lt.pax, 'n'], ['Empty seats', Lc.empty, Lt.empty, 'n', 'less'], ['Without a seat', Lc.nos, Lt.nos, 'n', 'less']] : [['Passengers a day', (Lc.day || Lc).pax, (Lt.day || Lt).pax, 'n']])
+    .concat([['Total revenue', a.rev, b.rev, '£', 'tot'], ['Total costs', a.cost, b.cost, '£', 'tot less'], [wk ? 'Projected profit' : 'Profit', P(a), P(b), '£', 'tot pr']]);
+  const f = (u, v) => u === '£' ? money(v) : num(v), dd = (x, y, u, c) => { const d = (y || 0) - (x || 0), good = /less/.test(c || '') ? d < 0 : d > 0; return `<span class="${d && good ? 'up' : d ? 'down' : ''}">${d ? (d > 0 ? '+' : '−') + f(u, Math.abs(d)) : '—'}</span>`; };
+  return `<table class="t2-cmp"><thead><tr><th></th>${rows.map(([l, , , , c]) => `<th class="${c || ''}">${l}</th>`).join('')}</tr></thead><tbody>
+    <tr><th>Your plan</th>${rows.map(([, x, , u, c]) => `<td class="mono ${c || ''}">${f(u, x || 0)}</td>`).join('')}</tr>
+    <tr><th>Test plan</th>${rows.map(([, , y, u, c]) => `<td class="mono ${c || ''}">${f(u, y || 0)}</td>`).join('')}</tr>
+    <tr class="dif"><th>Difference</th>${rows.map(([, x, y, u, c]) => `<td class="mono ${c || ''}">${dd(x, y, u, c)}</td>`).join('')}</tr></tbody></table>`;
+}
+function forecastOf(L, name, pl){
+  const sp = PW().span, v = L.v;
+  if(sp === 'day') return { profit:v.profit, revenue:v.rev, run:v.run + v.term + v.stock, fuel:v.fuel, over:v.day, crew:v.crew, plan:name, key:planKey(pl) };
+  if(weekProjected()) return { profit:v.wproj, revenue:v.rev, ops:v.cost - v.fuel, fuel:v.fuel, plan:name, key:fcKey(pl), projected:true };
+  return { profit:v.profit, revenue:v.rev, ops:v.ops, fuel:v.fuel, plan:name, key:fcKey(pl) };
+}
+R.testIdeas = () => {
+  const sp = PW().span, cur = currentPlan(), test = testPlan(), Lc = linesFor(cur), Lt = linesFor(test), same = planKey(cur) === planKey(test), wk = sp !== 'day' && weekProjected();
+  const P = x => wk ? x.v.wproj : x.v.profit, d = P(Lt) - P(Lc), ideas = S.rnd.ideas || (S.rnd.ideas = []);
+  if(!S.rnd.unlockShown){ S.rnd.unlockShown = true; (S.rnd.costedTools || []).filter(id => TOOL[id]).forEach(id => { const T = TOOL[id]; sysNotice(`${T.name} model online · ${S.airline.name || 'Your airline'} can now work out ${T.name.toLowerCase()} automatically when you test different options.`); }); }
+  const chip = same ? '<div class="t2-diff">Change the test plan to try an idea. The model costs it straight away.</div>'
+    : `<div class="t2-diff ${d >= 0 ? 'up' : 'down'}"><b class="mono">${d >= 0 ? '+' : '−'}${money(Math.abs(d))}</b><span>${d >= 0 ? 'more' : 'less'} ${wk ? 'projected ' : ''}profit than your plan${sp === 'day' ? '' : ' ' + PW().now}</span></div>`;
+  const cards = ideas.map((x, k) => `<div class="idea"><div class="id-h"><b>Idea ${k + 1}</b><span class="mono ${x.profit >= 0 ? 'green' : 'red'}">${money(x.profit)}</span></div><small>${esc(x.label)}</small><div class="id-a"><button class="link" data-iload="${k}">Load into the test plan</button><button class="btn small" data-ifly="${k}">Fly this ▶</button></div></div>`).join('');
+  const saved = ideas.some(x => planKey(x.plan) === planKey(test));
+  screen().innerHTML = taskFrame({ question:'Try other ideas', work:false,
+    story: S.phase === 'setup' ? ['Your plan is costed. Now change the test plan to try other ideas: the model works out every figure for you.'] : [],
+    say:'Try other ideas. Change the test plan; the model costs it straight away.',
+    context:{ title:'Ideas', html: cxSec('Saved ideas', cards || '<p class="muted">Ideas you save appear here.</p>') +
+      `<div class="pl-choose"><button class="btn" data-isave ${same || saved ? 'disabled' : ''}>Save this idea</button><button class="btn ${same || d < 0 ? 'primary' : ''}" data-fmine>${goLabel('Fly my plan')} &#9654;</button><button class="btn ${!same && d >= 0 ? 'primary' : ''}" data-ftest ${same ? 'disabled' : ''}>Fly the test plan &#9654;</button></div>
+      <p class="muted cx-note">Bigger profit is not the only thing: think about passengers left without a seat.</p><button class="link" data-archive>Compare with earlier days</button>` },
+    main:`<div class="test2"><div class="t2-mine"><span class="label">Your plan</span><b>${esc(planLabel(cur))}</b><span class="t2-mp mono ${P(Lc) >= 0 ? 'green' : 'red'}">${money(P(Lc))}</span></div>
+      <section class="pnl t2-test"><div class="pnl-h"><h3>Test plan</h3>${same ? '' : '<button class="link" data-treset>Start again from your plan</button>'}</div>${planEditor(9, test, Lt.day || Lt, { compact:true })}</section>
+      <section class="pnl t2-model"><div class="pnl-h"><h3>What the model says</h3>${chip}</div>${modelRows(Lc, Lt, sp)}</section></div>` });
+  bindPlanEditor();
+  const fly = (pl, L, name) => { if(planKey(pl) !== planKey(currentPlan())){ const f = fleetOne(); setSchedule(f.uid, pl.sched.slice()); Object.assign(S.prices, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard; S.deps = pl.deps ? pl.deps.slice() : null; refreshPlan(); }
+    S.rnd.myForecast = forecastOf(L, name, currentPlan());
+    S.rnd.archive = { costed: S.rnd.costed ? { label:S.rnd.costed.label, profit: wk ? S.rnd.costed.v.profit : S.rnd.costed.v.profit } : null, ideas: ideas.map((x, k) => ({ name:`Idea ${k + 1}`, label:x.label, profit:x.profit })), flown:{ name, label:planLabel(currentPlan()), profit:P(L) } };
+    S.rnd.test = null; resetEntry(); UI.justDone = null; advance(); };
+  screen().querySelectorAll('[data-isave]').forEach(b => b.onclick = () => { ideas.push({ plan:JSON.parse(JSON.stringify(test)), label:planLabel(test), profit:P(Lt) }); render(); });
+  screen().querySelectorAll('[data-iload]').forEach(b => b.onclick = () => { S.rnd.test = JSON.parse(JSON.stringify(ideas[+b.getAttribute('data-iload')].plan)); render(); });
+  screen().querySelectorAll('[data-ifly]').forEach(b => b.onclick = () => { const k = +b.getAttribute('data-ifly'), pl = ideas[k].plan; fly(pl, linesFor(pl), `Idea ${k + 1}`); });
+  screen().querySelectorAll('[data-treset]').forEach(b => b.onclick = () => { S.rnd.test = null; render(); });
+  screen().querySelectorAll('[data-fmine]').forEach(b => b.onclick = () => fly(cur, Lc, 'Your plan'));
+  screen().querySelectorAll('[data-ftest]').forEach(b => b.onclick = () => { const k = ideas.findIndex(x => planKey(x.plan) === planKey(test)); fly(test, Lt, k >= 0 ? `Idea ${k + 1}` : 'Test plan'); });
+};
+/* Models online are announced when the day's new idea has been worked out (see TEST), not by a separate check. */
+function checkTools(){ if(!S || !S.steps) return; const now = {}; TOOLS.forEach(T => { now[T.id] = toolLevel(T.id); }); S.toolSeen = now; }
+
+/* ---------- OPERATE: the operating plan ---------- */
+R.ready = () => {
+  const f = fleetOne(), p = ourPlane(), sched = schedOf(f), need = periodNeed(), o = S.rnd.fuelOrder, after = S.fuel + (o ? o.litres : 0), fc = S.rnd.myForecast, setup = S.phase === 'setup', per = PW().span !== 'day', paid = fuelPaid();
+  const fcOk = !!(fc && fc.key === fcKey(currentPlan())), fuelOk = !paid || after >= need || per, ok = sched.length > 0 && fcOk && fuelOk && readyOk();
+  const D = sched.length ? TIME.day(p, sched) : null, ids = Object.keys(serviceCounts(sched));
+  const row = (label, value, edit, good, warn) => `<div class="op-row ${good ? 'ok' : 'warn'}"><span class="op-l">${label}</span><span class="op-v">${value}</span><span class="op-s">${good ? '&#10003;' : esc(warn)}</span>${edit ? `<button class="btn small" data-edit="${edit}">Edit</button>` : '<span></span>'}</div>`;
+  const rows = [
+    row('Timetable', `${esc(svcLabel(sched))}${D ? ` · <span class="mono">${D.trips.map(t => fmtTime(t.dep)).join(', ')}</span>` : ''}`, editStep('timetable'), sched.length > 0, 'No services'),
+    row(ids.length > 1 ? 'Fares' : 'Fare', ids.map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ') || '—', editStep('fare'), true),
+    snacksOn() ? row('On board', esc(onboardOf().label), editStep('extras'), true) : '',
+    row('Fuel', paid ? `<span class="mono">${num(S.fuel)} L</span> in the tank${o ? ` + <span class="mono">${num(o.litres)} L</span> on order` : ''} · flights burn <span class="mono">${num(need)} L</span>${per && after < need ? ` · <span class="orange">${num(need - after)} L delivered</span>` : ''}` : 'Supplied free by the launch deal', paid ? 'fuelPlan' : '', fuelOk, 'Not enough fuel'),
+    row(fc && fc.projected ? 'Projected profit' : 'Profit (model)', fc ? `${esc(fc.plan || 'Your plan')} · <span class="mono ${fc.profit >= 0 ? 'green' : 'red'}">${money(fc.profit)}</span>` : '—', editStep('forecast'), fcOk, fc ? 'The plan has changed: test it again' : 'Not costed yet'), readyExtra(row)].join('');
+  screen().innerHTML = taskFrame({ question: readyTitle(), work:false,
+    say: ok ? 'Everything is ready. Start operations when you are ready.' : 'Some items need updating before operations can start.',
+    context: ctxForecast(),
+    main:`<div class="opplan"><div class="op-head"><span class="label">Operating plan</span><b>${setup ? 'Launch Day' : railTitle()[0].replace(/ Plan$/, '')} · ${esc(homeData().code)} ${esc(terminalData().name || '')}</b></div>${rows}</div>
+      <div class="launch"><button class="btn primary huge go" id="startOps" ${ok ? '' : 'disabled'}>${goWord()}</button><p class="muted">${ok ? (o ? `Your fuel order (<span class="mono">${money(o.total)}</span>) is paid when operations start.` : paid ? 'The aircraft is fuelled and the plan is costed.' : 'The plan is costed. The launch deal supplies the fuel.') : 'Update the items marked above first.'}</p></div>` });
+  on('startOps', () => { const x = S.rnd.fuelOrder; if(x){ buyFuel(x.litres, x.price); S.rnd.fuelOrder = null; } delete S.rnd.returnTo; resetEntry(); UI.view = null; next(); });
+};
+function ctxForecast(){
+  const fc = S.rnd.myForecast;
+  if(!fc) return { title:'The plan', html:'<p class="muted">The figures appear here once the plan is costed.</p>' };
+  return { title:'The plan', html: cxSec(esc(fc.plan || 'Your plan'), kv([['Revenue', `<span class="mono">${money(fc.revenue)}</span>`], ['Costs', `<span class="mono">${money(fc.revenue - fc.profit)}</span>`], [fc.projected ? 'Projected profit' : 'Profit', `<span class="mono ${fc.profit >= 0 ? 'green' : 'red'}">${money(fc.profit)}</span>`, 'tot']])) };
+}
+
+/* ---------- End of Day 4: the Regular Operating Plan ---------- */
+R.rop = () => {
+  const pl = currentPlan(), L = planLines(pl), D = L.D;
+  const rows = [['Timetable', esc(svcLabel(pl.sched))], ['Departures', D ? `<span class="mono">${D.trips.map(t => fmtTime(t.dep)).join(', ')}</span>` : '—'], ['Fares', Object.keys(serviceCounts(pl.sched)).map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ')], ['On board', esc(onboardOf().label)],
+    ['Fuel', 'Bought by the airline. If the tank runs low, fuel is delivered automatically at 10p a litre more.'], ['Profit a day (model)', `<span class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</span>`]];
+  screen().innerHTML = shell(`<div class="hp milestone rop">${hqHead('End of Day 4', 'REGULAR OPERATION')}<div class="ms-in"><span class="label">Regular Operating Plan</span><h1>Approve your regular plan</h1>
+    <p>From now on this plan runs every day by itself. You only change it when the figures say you should.</p>
+    <div class="rop-t">${rows.map(([l, v]) => `<div><span>${l}</span><b>${v}</b></div>`).join('')}</div>
+    ${UI.ropEdit ? `<section class="pnl rop-ed">${planEditor(0, pl, L)}</section>` : ''}
+    <div class="row" style="justify-content:center"><button class="btn big" id="ropEdit">${UI.ropEdit ? 'Done changing' : 'Change the plan first'}</button><button class="btn primary big" id="ropGo">Approve the plan &#9654;</button></div></div></div>`);
+  bindPlanEditor();
+  on('ropEdit', () => { UI.ropEdit = !UI.ropEdit; render(); });
+  on('ropGo', () => { UI.ropEdit = false; S.rop = Object.assign({ approved:S.day }, currentPlan()); startBeat(5); });
+};
+
+/* ---------- the Year 1 review: what sort of airline will you become? ---------- */
+R.strategy = () => {
+  const cur = S.airline.strategy, pick = STRATEGIES.find(x => x.id === cur);
+  screen().innerHTML = taskFrame({ question:'What sort of airline will you become?', work:false,
+    story:['For a year the aim was simple: make as much profit as you can. Now the airline is growing.', 'Each type of airline makes money a different way. It will shape your fares, your service and your passengers.'],
+    say:'What sort of airline will you become? ' + STRATEGIES.map(x => `${x.name}: ${x.slogan}. ${x.text}`).join(' '),
+    context:{ title:'Year 1', html: kv([['Passengers', num(S.history.reduce((t, x) => t + (x.pax || 0), 0))], ['Reputation', `${S.rep} ★`], ['Cash', `<span class="mono gold">${money(Math.round(S.cash))}</span>`]]) },
+    main:`<div class="strats ${pick ? 'has-pick' : ''}">${STRATEGIES.map(x => `<button class="strat ${cur === x.id ? 'on' : ''}" data-st="${x.id}" aria-pressed="${cur === x.id}">
+      <span class="st-name">${esc(x.name)}</span>${cur === x.id ? '<span class="st-on">&#10003; Selected</span>' : ''}<b class="st-slogan">${esc(x.slogan)}</b><span class="st-tags">${x.tags.map(esc).join(' · ')}</span><span class="st-text">${esc(x.text)}</span></button>`).join('')}</div>`,
+    foot:`<button class="btn primary big" id="nx" ${pick ? '' : 'disabled'}>${pick ? `Become a ${esc(pick.name.toLowerCase())} airline` : 'Choose one'} &#9654;</button>` });
+  screen().querySelectorAll('[data-st]').forEach(b => b.onclick = () => { S.airline.strategy = b.getAttribute('data-st'); render(); });
+  on('nx', () => { addNews([{ tag:'STRATEGY', text:`${S.airline.name} will be a ${pick.name.toLowerCase()} airline.`, cls:'good' }]); advance(); });
+};
+STAGES.buy = [{ id:'yr', name:'Year 1 review', done:'Year reviewed', sub:'Projection against actual', steps:['yearReview', 'strategy'] }].concat((STAGES.buy || []).slice(1));
+
+/* ---------- the plans archive: what was costed, tried and flown, and what happened ---------- */
+function attachArchive(){
+  const a = S.rnd && S.rnd.archive; if(!a || S.rnd.archived) return; S.rnd.archived = true;
+  const H = S.history.filter(x => x.round === S.round); if(!H.length) return;
+  const actual = H.reduce((t, x) => t + (x.profit || 0), 0); H[H.length - 1].plans = Object.assign({ actual:Math.round(actual), when: H.length > 1 ? fmtRange(H[0].from, H[H.length - 1].to) : null }, a);
+}
+function archiveRows(){ return S.history.filter(x => x.plans).slice().reverse(); }
+function whenOf(x){ return x.type === 'setup' ? 'Launch day' : x.type === 'day' ? `Day ${x.round} · ${dateShort(x.from)}` : capFirst(x.plans.when || periodShort(x)); }
+function plansHtml(){
+  const R0 = archiveRows();
+  if(!R0.length) return '<div class="pb"><p class="muted">Each day\'s plans appear here after the flights.</p></div>';
+  return `<div class="pb"><table class="hq-t arch"><thead><tr><th>When</th><th>Your costed plan</th><th>Best idea tried</th><th>Flown</th><th class="num">Projected</th><th class="num">Actual</th></tr></thead><tbody>${R0.map(x => { const p = x.plans, best = (p.ideas || []).slice().sort((a, b) => b.profit - a.profit)[0];
+    return `<tr><td>${esc(whenOf(x))}</td><td>${p.costed ? `${esc(p.costed.label)}<small class="mono">${money(p.costed.profit)}</small>` : '—'}</td><td>${best ? `${esc(best.label)}<small class="mono">${money(best.profit)}</small>` : '<span class="muted">none saved</span>'}</td><td><b>${esc(p.flown.name)}</b></td><td class="num">${money(p.flown.profit)}</td><td class="num ${p.actual >= 0 ? 'green' : 'red'}">${money(p.actual)}</td></tr>`; }).join('')}</tbody></table></div>`;
+}
+function archiveDockHtml(){
+  const R0 = archiveRows().slice(0, 6);
+  return R0.length ? R0.map(x => `<section class="cx arch-c"><h4>${esc(whenOf(x))}</h4>${kv([['Flown', `${esc(x.plans.flown.name)}`], ['Plan', `<small>${esc(x.plans.flown.label)}</small>`], ['Projected', `<span class="mono">${money(x.plans.flown.profit)}</span>`], ['Actual', `<span class="mono ${x.plans.actual >= 0 ? 'green' : 'red'}">${money(x.plans.actual)}</span>`, 'tot']])}${(x.plans.ideas || []).length ? `<p class="muted small">${x.plans.ideas.length} idea${x.plans.ideas.length > 1 ? 's' : ''} tried</p>` : ''}</section>`).join('') : '<p class="muted">Earlier days appear here after the first flights.</p>';
+}
+/* The ƒ inspector: every model figure can show its rule and its numbers. */
+function fxHtml(){
+  const x = UI.dock.fx || {}, t = S.rnd.tables[x.table]; if(!t) return '<p class="muted">Nothing selected.</p>';
+  const col = t.cols.find(c => c.id === x.col), row = tRows(t).find(r => r.id === x.row); if(!col || !row) return '';
+  const T = row.tool && TOOL[row.tool];
+  return `<div class="calc done fx"><p class="calc-q">${esc(T ? `${T.name}: ${T.what}` : rowLabel(t, row))}</p><div class="cstack">${stackHtml(stackRows(t, col, row))}<div class="cs ans"><span class="cs-op">=</span><span class="cs-l">${esc(rowLabel(t, row))}</span><b class="cs-v mono">${fmtVal(row.unit, col.values[row.id])}</b></div></div><p class="calc-hint">Worked out by the model.</p></div>`;
+}
+document.addEventListener('click', e => {
+  if(IS_DISPLAY || !S) return;
+  const a = e.target && e.target.closest ? e.target.closest('[data-archive]') : null;
+  if(a){ UI.dock = { mode:'archive', topic:null }; render(); return; }
+  const f = e.target && e.target.closest ? e.target.closest('[data-fx]') : null;
+  if(f){ const [table, col, row] = f.getAttribute('data-fx').split('|'); UI.dock = { mode:'fx', topic:null, fx:{ table, col, row } }; render(); }
+});
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).
