@@ -139,7 +139,7 @@ After the review:
 | Keeps its own plan, Paris only, nothing on board | £36,193 | after Year 1 | — | *Save until the Saab 340 is affordable*, then buys it |
 
 - **Keep saving:** a pupil who can't afford either aircraft at the review can *Keep saving* one month at a time, or *Save until the … is affordable* (one run, month by month, up to three years). The Overview says how many months it took.
-- **Reputation:** high fares cost half a star a day on the opening days; a pupil who always takes the most profitable fare sees reviews fall.
+- **Reputation is switched off for now** (teacher's decision): it stays at 3 stars, is hidden from the top bar, and nothing in the game changes it (fares, snacks, events or challenges). It will return when the pupil chooses what sort of airline to be. To switch it back on, set `reputationOn: true` in `data-world`.
 - **Tuning:** prices are in `data-planes` (`price`), the emergency money is `reserveDefault` and the time-of-day profiles are `profile` on each route in `data-world`.
 
 **Market numbers (prototype only):** demand describes the market and is never changed to suit a lesson (no growth, no extra passengers on a "lesson day"); only reputation's small effect remains.

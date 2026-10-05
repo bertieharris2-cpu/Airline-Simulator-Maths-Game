@@ -2122,6 +2122,7 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
 .pe.compact .pe-svc{min-height:0}.pe.compact .pe-step.sm .pe-b{width:28px;height:28px;font-size:16px}.pe.compact .pe-step.sm .pe-v{font-size:16px;min-width:54px}
 .t2-cmp th,.t2-cmp td{padding:3px 8px;font-size:15px}.t2-cmp td.pr{font-size:17px}.test2{gap:8px}.t2-model .pnl-h{margin-bottom:2px}.t2-diff b{font-size:22px}
 @media (max-height:900px){ .p-td .pb.td2{padding-top:6px;padding-bottom:4px;gap:4px} .p-td .td-list > div{padding-top:2px;padding-bottom:2px} .p-td .td-brief{margin:2px 0} }
+.norep .s-rep,.norep #tRepDown,.norep #tRepUp{display:none!important}
 @media print{ body{background:#fff;color:#000} }
 </style>
 </head>
@@ -2692,6 +2693,9 @@ function fifoCursor(extra){
 function flightsWorth(){ const n = fuelNeeded(); return n > 0 ? Math.floor(S.fuel / n) : 0; }
 function demandAt(route, price, n){ const w = roundData(n===undefined?S.round:n); const dm = w.demandMod || {}; const mod = (dm[route.id] || 0) + (dm.focus && S.rnd && route.id === S.rnd.focusRoute ? dm.focus : 0); const n0 = n===undefined ? S.round : n, grow = n0 >= 2 && route.growth ? Math.min(route.cap || Infinity, route.growth * (n0 - 1)) : 0;   // word spreads: more people each round
   const base = Math.floor((route.baseDemand + grow + mod) * (1 + homeData().demandPct/100)); return Math.max(0, Math.floor(base - route.drop * (price - route.basePrice) / route.step)); }
+/* Reputation is switched off for now (teacher's decision): it stays at the starting value and is not shown.
+   It returns when the pupil chooses what sort of airline to be. */
+function repLive(){ return !!(typeof WORLD !== 'undefined' && WORLD.reputationOn); }
 function repFactor(){ return 1 + 0.1*(S.rep - 3); }
 /* People who will actually fly with us at this fare (reputation, then the rival). */
 function paxFor(route, fare){ let pax = Math.floor(demandAt(route, fare) * repFactor()); const c = competitorPrice(route); if(c !== undefined && c < fare) pax = Math.floor(pax*0.8); return pax; }
@@ -2949,7 +2953,7 @@ function chooseOption(i){
   if(o.do === 'addRoute'){ const f = featuredFleet() || S.fleet[0]; if(f && o.route && canAddTrip(planeById(f.planeId), schedOf(f), routeById(o.route))) setSchedule(f.uid, schedOf(f).concat([o.route])); steps.push({t:'day', added:o.route}); }
   if(o.do === 'day') steps.push({t:'day'});
   if(o.do === 'move'){ S.rnd.newPlane = o.uid; steps.push({t:'newRoute', move:true}); }
-  if(o.do === 'effect'){ const e = o.effects || {}; if(e.cash) S.cash = r2(S.cash + e.cash); if(e.rep) S.rep = clamp(S.rep + e.rep, 1, 5); S.rnd.effectWhy = o.why || ''; addNews([{tag:'NEWS', text:fillText(o.label)}]); bankCheck(); }
+  if(o.do === 'effect'){ const e = o.effects || {}; if(e.cash) S.cash = r2(S.cash + e.cash); if(e.rep && repLive()) S.rep = clamp(S.rep + e.rep, 1, 5); S.rnd.effectWhy = o.why || ''; addNews([{tag:'NEWS', text:fillText(o.label)}]); bankCheck(); }
   if(o.do !== 'fare' && !skillFluent('money.income') && !inPeriodMode()) steps.push({t:'quick'});
   const ci = S.steps.findIndex(s => s.t === 'choice');
   S.steps = S.steps.slice(0, ci+1).concat(steps, S.steps.slice(ci+1).filter(s => !['fare','trips','day','fuel','cabin','quick','plane','newRoute'].includes(s.t)));
@@ -3121,13 +3125,13 @@ function applyPeriodResults(){
   const fr = focusRoute(), ff = featuredFleet();
   if(fr){ const fare = fareOf(fr.id), x = T.routes[fr.id];
     if(x && x.pax >= x.seats) tags.push('full'); else if(x && x.seats && x.pax / x.seats < 0.5) tags.push('empty');
-    if(fare >= fr.basePrice + 2*fr.step){ S.rep -= 0.5; why.push({ ic:'⭐', text:`${money(fare)} is a high price for ${fr.city}. Reviews say so: −½ star.` }); tags.push('price_bad'); }
-    else if(fare <= fr.basePrice - fr.step){ S.rep += 0.5; why.push({ ic:'⭐', text:`${money(fare)} is a great price for ${fr.city}. Happy passengers: +½ star.` }); tags.push('price_good'); }
+    if(repLive() && fare >= fr.basePrice + 2 * fr.step){ S.rep -= 0.5; why.push({ ic:'⭐', text:`${money(fare)} is a high price for ${fr.city}. Reviews say so: −½ star.` }); tags.push('price_bad'); }
+    else if(repLive() && fare <= fr.basePrice - fr.step){ S.rep += 0.5; why.push({ ic:'⭐', text:`${money(fare)} is a great price for ${fr.city}. Happy passengers: +½ star.` }); tags.push('price_good'); }
     else tags.push('price_fair');
     const comp = competitorPrice(fr); if(comp !== undefined && fare > comp){ why.push({ ic:'🪁', text:`${WORLD.rival} sold ${fr.city} tickets for ${money(comp)}, so 1 in 5 passengers went to them.` }); S.dec.held = { round:S.round, route:fr.id }; }
   }
-  if(ff && ff.layout === 'squeeze'){ S.rep -= 0.5; why.push({ ic:'💺', text:'The squeezed-in cabin earned more, but passengers hated it: −½ star.' }); tags.push('cramped'); }
-  if(ff && ff.layout === 'comfy'){ S.rep += 0.5; why.push({ ic:'💺', text:'The roomy cabin has fewer seats, but people love it: +½ star.' }); tags.push('comfy'); }
+  if(repLive() && ff && ff.layout === 'squeeze'){ S.rep -= 0.5; why.push({ ic:'💺', text:'The squeezed-in cabin earned more, but passengers hated it: −½ star.' }); tags.push('cramped'); }
+  if(repLive() && ff && ff.layout === 'comfy'){ S.rep += 0.5; why.push({ ic:'💺', text:'The roomy cabin has fewer seats, but people love it: +½ star.' }); tags.push('comfy'); }
   if(!tags.includes('price_bad') && !tags.includes('cramped')) tags.push('smooth');
   S.rep = clamp(Math.round(S.rep*2)/2, 1, 5); S.rnd.repDelta = S.rep - repBefore;
   const nd = T.to - T.from + 1;
@@ -3254,7 +3258,7 @@ function applyResults(){
   const over = fleetDayCost(), X = dayExtras(fl), extraCost = X.term + X.obCost + X.crew;   // terminal charges, on-board stock, a second crew
   S.cash = r2(S.cash + rev + X.obRev - run - over - extraCost);
   S.rnd.extras = X; S.rnd.ticketRev = rev; S.rnd.revenue = rev + X.obRev; S.rnd.costs = r2(run + fuelUsed + over + extraCost); S.rnd.fuelUsedCost = fuelUsed; S.rnd.over = over; S.rnd.profit = r2(rev + X.obRev - run - fuelUsed - over - extraCost);
-  if(X.free && fl.some(f => !f.grounded && !f.noFuel) && S.rep < 4){ S.rep += 0.5; S.rnd.why.push({ic:'⭐', text:'Free snacks and drinks went down well: +½ star.'}); }
+  if(repLive() && X.free && fl.some(f => !f.grounded && !f.noFuel) && S.rep < 4){ S.rep += 0.5; S.rnd.why.push({ic:'⭐', text:'Free snacks and drinks went down well: +½ star.'}); }
   fl.forEach(f => { if(!f.grounded && !f.noFuel) S.rnd.status[f.key] = (f.sold >= f.seats) ? 'FULL FLIGHT' : 'LANDED'; });
   const why = S.rnd.why, tags = [], F = featuredFlight(), repBefore = S.rep, ff = featuredFleet();
   if(F && !F.grounded && !F.noFuel){
@@ -3263,12 +3267,12 @@ function applyResults(){
     if(F.sold >= F.seats){ why.push({ic:'🎟️', text:`${F.demand} people wanted to fly to ${r.city} at ${money(F.price)}. The ${fmtTime(F.dep)} trip was full (${F.seats} seats).`}); tags.push('full'); }
     else { why.push({ic:'🎟️', text:`${F.sold} of ${F.seats} seats sold on the ${fmtTime(F.dep)} trip to ${r.city}. ${F.demand} people wanted to fly at ${money(F.price)}.`}); if(F.sold/F.seats < 0.5) tags.push('empty'); }
     [...new Set(trips.flatMap(x => x.reasons))].forEach(t => why.push({ic:'ℹ️', text:t}));
-    if(F.price >= r.basePrice + 2*r.step){ S.rep -= 0.5; why.push({ic:'⭐', text:`${money(F.price)} is a high price for ${r.city}. Reviews say so: −½ star.`}); tags.push('price_bad'); }
-    else if(F.price <= r.basePrice - r.step){ S.rep += 0.5; why.push({ic:'⭐', text:`${money(F.price)} is a great price for ${r.city}. Happy passengers: +½ star.`}); tags.push('price_good'); }
+    if(repLive() && F.price >= r.basePrice + 2 * r.step){ S.rep -= 0.5; why.push({ic:'⭐', text:`${money(F.price)} is a high price for ${r.city}. Reviews say so: −½ star.`}); tags.push('price_bad'); }
+    else if(repLive() && F.price <= r.basePrice - r.step){ S.rep += 0.5; why.push({ic:'⭐', text:`${money(F.price)} is a great price for ${r.city}. Happy passengers: +½ star.`}); tags.push('price_good'); }
     else tags.push('price_fair');
     const fr = focusRoute(); if(fr){ const comp = competitorPrice(fr); if(comp !== undefined && (S.prices[fr.id]||fr.basePrice) > comp) S.dec.held = {round:S.round, route:fr.id}; }
-    if(ff && ff.layout==='squeeze'){ S.rep -= 0.5; why.push({ic:'💺', text:`The squeezed-in cabin earned more but passengers hated it: −½ star.`}); tags.push('cramped'); }
-    if(ff && ff.layout==='comfy'){ S.rep += 0.5; why.push({ic:'💺', text:`The roomy cabin has fewer seats but people love it: +½ star.`}); tags.push('comfy'); }
+    if(repLive() && ff && ff.layout === 'squeeze'){ S.rep -= 0.5; why.push({ic:'💺', text:`The squeezed-in cabin earned more but passengers hated it: −½ star.`}); tags.push('cramped'); }
+    if(repLive() && ff && ff.layout === 'comfy'){ S.rep += 0.5; why.push({ic:'💺', text:`The roomy cabin has fewer seats but people love it: +½ star.`}); tags.push('comfy'); }
     if(!tags.includes('price_bad') && !tags.includes('cramped') && S.round>0) tags.push('smooth');
   }
   fl.filter(f => f.noFuel).forEach(f => why.push({ic:'⛽', text:`${fmtTime(f.dep)} ${routeById(f.route).city}: not enough fuel in the tank, so the trip stayed on the ground. No ticket money.`}));
@@ -3336,7 +3340,7 @@ function applyEvent(choice){
   const flew = featuredFlights().filter(f => !f.noFuel && !f.grounded).sort((x,y) => y.revenue - x.revenue), F = flew[0] || null;   // events only touch a trip that actually flew
   S.rnd.eventChoice = choice;
   if(e.cash) S.cash += e.cash;
-  if(e.rep){ S.rep = clamp(S.rep + e.rep, 1, 5); }
+  if(e.rep && repLive()){ S.rep = clamp(S.rep + e.rep, 1, 5); }
   const ahead = inPeriodMode() && !S.rnd.applied, ff0 = featuredFleet();
   if(ahead){ if((e.refund || e.groundNext) && ff0) S.disrupt = { uid:ff0.uid, cancel:!!e.refund, ground:!!e.groundNext }; if(e.status==='DELAYED'||e.status==='DIVERTED') tags.push('delay'); if(e.status==='CANCELLED') tags.push('cancel'); }
   else {
@@ -3357,7 +3361,7 @@ function applyEvent(choice){
 function countTyped(){ S.typed = (S.typed||0) + 1; }
 function applyReward(ch){
   const r = ch.reward || {};
-  if(r.cash) S.cash += r.cash; if(r.rep) S.rep = clamp(S.rep + r.rep, 1, 5); if(r.fuelDiscount) S.fuelDiscount = r.fuelDiscount;
+  if(r.cash) S.cash += r.cash; if(r.rep && repLive()) S.rep = clamp(S.rep + r.rep, 1, 5); if(r.fuelDiscount) S.fuelDiscount = r.fuelDiscount;
   S.rnd.challengeDone = true; S.rnd.challengeWon = true;
   addNews([{tag:'BONUS', text:`Captain's challenge won: ${ch.rewardText}.`, cls:'good'}]);
 }
@@ -3392,6 +3396,8 @@ function applyTextSize(){ const z = [1, 1.12, 1.25][S.textSize || 0] || 1; docum
 function render(){
   if(IS_DISPLAY) return;
   syncRoutesToHome();
+  if(!repLive() && S.rep !== WORLD.startingReputation) S.rep = WORLD.startingReputation;   // reputation is switched off for now
+  document.body.classList.toggle('norep', !repLive());
   setLivery(); applyTextSize();
   updateTopBar();
   const st = step();
@@ -4764,7 +4770,7 @@ R.protoEnd = () => {
       <div><span class="label">Aircraft</span><b>1 ${esc(ourPlane().name.replace(/^DHC-6 /, ''))}</b></div>
       <div><span class="label">Passengers</span><b class="mono">${h ? h.pax : 0}</b><small>a day · ${num(total)} flown so far</small></div>
       <div><span class="label">Cash</span><b class="mono amber">${money(S.cash)}</b></div>
-      <div><span class="label">Reputation</span><span class="stars">${starsHtml(S.rep)}</span></div></div>
+      ${repLive() ? `<div><span class="label">Reputation</span><span class="stars">${starsHtml(S.rep)}</span></div>` : ''}</div>
     <p class="lede">Your regular airline operation is now established.</p>
     <p class="muted">In the full game, routine flights will begin operating automatically and you will start managing the airline week by week.</p>
     <div class="row" style="justify-content:center">${S.round >= 3 && S.round <= 4 ? '<button class="btn primary big" id="peGo">Continue</button>' : ''}<button class="btn ${S.round === 3 ? '' : 'primary'} big" id="again">Play the opening again</button><button class="btn big" id="peHome">Home</button></div></div>`);
@@ -5767,10 +5773,10 @@ function applyPeriodResults(){
   const fr = focusRoute() || (ownedRoutes()[0] && routeById(ownedRoutes()[0]));
   if(fr){ const fare = fareOf(fr.id), x = T.routes[fr.id];
     if(x && x.pax >= x.seats) tags.push('full'); else if(x && x.seats && x.pax / x.seats < 0.5) tags.push('empty');
-    if(fare >= fr.basePrice + 2 * fr.step){ S.rep -= 0.5; why.push({ ic:'⭐', text:`${money(fare)} is a high fare for ${fr.city}. Reviews say so: −½ star.` }); tags.push('price_bad'); }
-    else if(fare <= fr.basePrice - fr.step){ S.rep += 0.5; why.push({ ic:'⭐', text:`${money(fare)} is a great fare for ${fr.city}. Happy passengers: +½ star.` }); tags.push('price_good'); }
+    if(repLive() && fare >= fr.basePrice + 2 * fr.step){ S.rep -= 0.5; why.push({ ic:'⭐', text:`${money(fare)} is a high fare for ${fr.city}. Reviews say so: −½ star.` }); tags.push('price_bad'); }
+    else if(repLive() && fare <= fr.basePrice - fr.step){ S.rep += 0.5; why.push({ ic:'⭐', text:`${money(fare)} is a great fare for ${fr.city}. Happy passengers: +½ star.` }); tags.push('price_good'); }
     else tags.push('price_fair'); }
-  if(onboardOf().free && S.rep < 4){ S.rep += 0.5; why.push({ ic:'⭐', text:'Free snacks and drinks went down well: +½ star.' }); }
+  if(repLive() && onboardOf().free && S.rep < 4){ S.rep += 0.5; why.push({ ic:'⭐', text:'Free snacks and drinks went down well: +½ star.' }); }
   if(!tags.includes('price_bad')) tags.push('smooth');
   S.rep = clamp(Math.round(S.rep * 2) / 2, 1, 5); S.rnd.repDelta = S.rep - repBefore;
   if(T.autoL) why.push({ ic:'⛽', text:`The tank ran low, so ${num(T.autoL)} L were delivered at the market price plus ${priceL(WORLD.fuelTopUp || 0)} a litre: ${money(T.autoCost)}.` });
@@ -6013,7 +6019,7 @@ R.yearReview = () => {
     say:'Compare your projected cash with the actual cash, then look at the reasons.',
     context:{ title:'Year 1', html: kv([['Projected cash', `<span class="mono">${money(pj)}</span>`], ['Actual cash', `<span class="mono gold">${money(actual)}</span>`]]) + '<p class="muted cx-note">A projection is a sensible guess, not a promise. The reasons it differed are on the left.</p>' },
     main:`<div class="rv y1rv"><section class="pnl"><div class="pnl-h"><h3>Year 1 in figures</h3><span class="muted">13 May 2030 – 30 April 2031</span></div>
-        <div class="y1">${[['Passengers', num(pax)], ['Profit', money(Math.round(profit))], ['Best month', best ? `${monthName(best.from).slice(0, 3)} ${money(best.profit)}` : '—'], ['Hardest month', worst ? `${monthName(worst.from).slice(0, 3)} ${money(worst.profit)}` : '—'], ['Reputation', `${S.rep} ★`]].map(([l, v]) => `<div><span class="label">${l}</span><b class="mono">${v}</b></div>`).join('')}</div></section>
+        <div class="y1">${[['Passengers', num(pax)], ['Profit', money(Math.round(profit))], ['Best month', best ? `${monthName(best.from).slice(0, 3)} ${money(best.profit)}` : '—'], ['Hardest month', worst ? `${monthName(worst.from).slice(0, 3)} ${money(worst.profit)}` : '—']].concat(repLive() ? [['Reputation', `${S.rep} ★`]] : []).map(([l, v]) => `<div><span class="label">${l}</span><b class="mono">${v}</b></div>`).join('')}</div></section>
       <section class="pnl"><div class="sheet1">${tableHtml(t)}</div></section>
       <section class="pnl"><div class="pnl-h"><h3>Why it differed</h3></div>${yv ? `<div class="yr-why">${yv.reasons.map(r => `<p>${esc(r)}</p>`).join('')}</div><div class="yr-aff">${NEXT_AIRCRAFT.map(id => `<span><b>${esc(planeById(id).name)}</b> ${affordWhen(yv.when[id])}</span>`).join('')}</div>` : '<p class="muted">No projection was made.</p>'}</section></div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${goLabel(done ? 'Look at aircraft' : 'Complete the figure first')} &#9654;</button>` });
@@ -6117,7 +6123,7 @@ R.protoEnd = () => {
       <div><span class="label">Fleet</span><b>1 ${esc(ourPlane().name.replace(/^DHC-6 /, ''))}</b><small>${esc(pl.name)} on order</small></div>
       <div><span class="label">Passengers</span><b class="mono">${num(pax)}</b><small>flown so far</small></div>
       <div><span class="label">Cash</span><b class="mono amber">${money(Math.round(S.cash))}</b><small>after paying ${money(o.price)}</small></div>
-      <div><span class="label">Reputation</span><span class="stars">${starsHtml(S.rep)}</span></div></div>
+      ${repLive() ? `<div><span class="label">Reputation</span><span class="stars">${starsHtml(S.rep)}</span></div>` : ''}</div>
     <p class="lede">${esc(S.airline.name)} has flown its first year and ordered its second aircraft.</p>
     <p class="muted">Next: commissioning the ${esc(pl.name)}. Where will it fly, how often, at what fares, and how much of its day will it spend in the air?</p>
     <div class="row" style="justify-content:center"><button class="btn primary big" id="again">Play again</button><button class="btn big" id="peHome">Home</button></div></div>`);
@@ -6581,7 +6587,7 @@ R.strategy = () => {
   screen().innerHTML = taskFrame({ question:'What sort of airline will you become?', work:false,
     story:['For a year the aim was simple: make as much profit as you can. Now the airline is growing.', 'Each type of airline makes money a different way. It will shape your fares, your service and your passengers.'],
     say:'What sort of airline will you become? ' + STRATEGIES.map(x => `${x.name}: ${x.slogan}. ${x.text}`).join(' '),
-    context:{ title:'Year 1', html: kv([['Passengers', num(S.history.reduce((t, x) => t + (x.pax || 0), 0))], ['Reputation', `${S.rep} ★`], ['Cash', `<span class="mono gold">${money(Math.round(S.cash))}</span>`]]) },
+    context:{ title:'Year 1', html: kv([['Passengers', num(S.history.reduce((t, x) => t + (x.pax || 0), 0))], ['Cash', `<span class="mono gold">${money(Math.round(S.cash))}</span>`]]) },
     main:`<div class="strats ${pick ? 'has-pick' : ''}">${STRATEGIES.map(x => `<button class="strat ${cur === x.id ? 'on' : ''}" data-st="${x.id}" aria-pressed="${cur === x.id}">
       <span class="st-name">${esc(x.name)}</span>${cur === x.id ? '<span class="st-on">&#10003; Selected</span>' : ''}<b class="st-slogan">${esc(x.slogan)}</b><span class="st-tags">${x.tags.map(esc).join(' · ')}</span><span class="st-text">${esc(x.text)}</span></button>`).join('')}</div>`,
     foot:`<button class="btn primary big" id="nx" ${pick ? '' : 'disabled'}>${pick ? `Become a ${esc(pick.name.toLowerCase())} airline` : 'Choose one'} &#9654;</button>` });
