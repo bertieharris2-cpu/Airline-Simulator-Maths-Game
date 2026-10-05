@@ -2043,6 +2043,7 @@ td.c .mdl{display:inline-block;margin-left:6px;padding:0 4px;font-style:normal;f
 .y1rv .yr-aff{flex-direction:row;gap:24px}
 .yr-t{border-collapse:collapse;font-size:13.5px;margin:2px 0}.yr-t th{font-weight:500;color:var(--muted);text-align:left;padding:0 14px 0 0;font-size:12.5px}.yr-t td{padding:1px 14px 1px 0;color:var(--white)}
 .sim-chips.res.y8{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}.sim-chips.res.y8 span{padding:2px 0;min-width:0}.sim-chips.res.y8 span i{font-size:11.5px;letter-spacing:-.02em}
+.calc .calc-show{display:block;margin:10px auto 0;font-size:16px}
 @media print{ body{background:#fff;color:#000} }
 </style>
 </head>
@@ -2326,6 +2327,7 @@ td.c .mdl{display:inline-block;margin-left:6px;padding:0 4px;font-style:normal;f
         <div id="tTools"></div>
         <div class="row"><button class="btn small" id="tToolsDef">Defaults for all</button><button class="btn small" id="tToolsCalc">Pupil calculates all</button><button class="btn small" id="tToolsModel">Model does all</button><button class="btn small" id="tFill">Fill this table</button><button class="btn small" id="tWorkOpen">Working space on the board</button><button class="btn small" id="tWorkClose">Close it</button></div>
       </div>
+      <div class="tsec" style="grid-column:1/-1"><h3>Calculation checks</h3><div id="tDiag"></div><div class="row"><button class="btn small" id="tDiagClear">Clear the list</button></div></div>
       <div class="tsec"><h3>Tomorrow's choice</h3>
         <div class="row" id="tJobs"></div>
         <div class="row"><button class="btn small" id="tTimeCheck">Check the time maths</button></div><div id="tTime"></div>
@@ -2713,7 +2715,7 @@ function sumSentence(t, col, row){
   return (row.sentence || '').replace(/\{(\?)?(\w+)\}/g, (m, q, id) => { const u = operandUnit(t, id); return q ? '?' : fmtVal(u, col.values[id]); });
 }
 function cellExplain(t, col, row){ return row.sentence ? row.sentence.replace(/\{(\?)?(\w+)\}/g, (m, q, id) => fmtVal(operandUnit(t, id), col.values[id])) : fmtVal(row.unit, col.values[row.id]); }
-function parseCell(unit, raw){ const s = String(raw||'').trim().toLowerCase().replace(/£|,|\s|litres?|people|trips?|l$/g,''); if(s === '') return null; const v = parseFloat(s.replace(/[^0-9.\-]/g,'')); return isNaN(v) ? null : v; }
+function parseCell(unit, raw){ const s = String(raw||'').trim().toLowerCase().replace(/[−–]/g, '-').replace(/£|,|\s|litres?|people|trips?|l$/g,''); if(s === '') return null; const v = parseFloat(s.replace(/[^0-9.\-]/g,'')); return isNaN(v) ? null : v; }
 function checkCell(t, col, row, raw){ const want = col.values[row.id], got = parseCell(row.unit, raw); if(got === null) return 'blank'; if(Math.abs(got - want) < 0.005) return 'ok'; return got > want ? 'high' : 'low'; }
 /* "Choose the sum": did he tap the right two numbers and the right operation? */
 function checkPair(row, picks, op){
@@ -3545,7 +3547,12 @@ function bindTable(t, o){
   ans.oninput = sync;
   ans.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); check(); } };
   screen().querySelectorAll('[data-k]').forEach(b => b.onclick = () => { const k = b.getAttribute('data-k'); if(k === 'back') ans.value = ans.value.slice(0,-1); else ans.value += k; sync(); ans.focus(); });
-  function check(){ const res = checkCell(t, col, row, ans.value); if(res === 'ok') cellCorrect(t); else cellWrong(res); rerender(); }
+  function check(){
+    // re-read the table now: the answer is always checked against the figure on screen at this moment
+    const T = (S.rnd.tables && S.rnd.tables[t.id]) || t, a = T.active, c2 = a && T.cols.find(x => x.id === a.col), r2 = a && tRows(T).find(x => x.id === a.row);
+    if(!c2 || !r2){ rerender(); return; }
+    if(typeof diagNote === 'function' && (T !== t || cellId(c2.id, r2.id) !== cellId(col.id, row.id) || c2.values[r2.id] !== col.values[row.id])) diagNote({ kind:'answer box out of date', table:t.id, cell:cellId(col.id, row.id), now:cellId(c2.id, r2.id), was:col.values[row.id], is:c2.values[r2.id] });
+    const res = checkCell(T, c2, r2, ans.value); if(res === 'ok') cellCorrect(T); else cellWrong(res); rerender(); }
   on('cellCheck', check);
   setTimeout(() => { try{ ans.focus(); }catch(e){} }, 30);
 }
@@ -4758,7 +4765,11 @@ function advance(){ const r = S.rnd.returnTo; delete S.rnd.returnTo; if(r !== un
 function goLabel(def){ const r = S.rnd.returnTo; return r !== undefined && r > S.si ? `Back to ${RAIL_LABEL[S.steps[r].t] || 'the plan'}` : def; }
 
 let fbTimer = null;
+const KEEP_SCROLL = ['.opts-wrap', '.tf-main', '.tf-body', '.sheet1'];
+document.addEventListener('scroll', e => { const el = e.target; if(!el || !el.matches || !S || !UI) return; const sel = KEEP_SCROLL.find(x => el.matches(x)); if(sel) (UI.scrollKeep = UI.scrollKeep || {})[S.si + ':' + S.day + sel] = el.scrollTop; }, true);
+function restoreScroll(){ const k = UI.scrollKeep; if(!k) return; KEEP_SCROLL.forEach(sel => { const v = k[S.si + ':' + S.day + sel], el = screen().querySelector(sel); if(el && v) el.scrollTop = v; }); }
 function afterRender(){
+  restoreScroll();
   screen().querySelectorAll('[data-nav]').forEach(b => b.onclick = () => {
     const v = b.getAttribute('data-nav');
     if(MODULES[v] && !moduleOn(v)){ toast(MODULES[v].note); return; }
@@ -4893,7 +4904,7 @@ function calcHtml(t){
     <div class="cstack">${stackHtml(stackRows(t, col, row))}<div class="cs ans"><span class="cs-op">=</span><span class="cs-l">${esc(rowLabel(t, row))}</span><span class="answer"><span class="unit">${row.unit === '£' ? '£' : ''}</span><input id="cellAns" class="mono" inputmode="decimal" autocomplete="off" value="${esc(UI.entry)}" aria-label="${esc(rowLabel(t, row))}"></span></div></div>
     <button class="btn primary big" id="cellCheck">Confirm figure</button>
     <div class="msg ${UI.ok ? 'ok' : ''}" id="ftMsg" role="status">${esc(UI.msg || '')}</div>
-    <p class="calc-hint">Type the figure, then press Enter.</p></div>`;
+    ${(UI.tries || 0) >= 3 ? '<button class="link calc-show" id="calcShow">Show me the answer</button>' : '<p class="calc-hint">Type the figure, then press Enter.</p>'}</div>`;
 }
 let calcTimer = null;
 function doneWord(t){ return ({ fuel:'Order cost confirmed', review2:'Figure checked', yearReview:'Figure checked', yearPlan:'Projection updated', afford2:'Figure checked', invest:'Figure checked' })[t.kind] || 'Forecast updated'; }
@@ -4923,6 +4934,7 @@ function bindDock(){
   on('dkClose', () => { if(kind === 'calc'){ const t = currentTable(); if(t) t.active = null; UI.justDone = null; resetEntry(); } UI.dock = { mode:null, topic:null }; render(); });
   on('calcNext', () => { const t = currentTable(); if(t){ t.active = nextOpenCell(t); resetEntry(); } UI.justDone = null; render(); });
   on('calcDone', () => { UI.justDone = null; render(); });
+  on('calcShow', () => { const t = currentTable(); if(t && t.active){ const a = t.active, c = t.cols.find(x => x.id === a.col); diagNote({ kind:'answer shown to pupil', table:t.id, cell:cellId(a.col, a.row), stored:c ? c.values[a.row] : null, typed:UI.entry, tries:UI.tries }); cellCorrect(t, true); } render(); });
   screen().querySelectorAll('[data-dkwork]').forEach(b => b.onclick = () => { UI.dock = { mode:'work', topic:null }; render(); });
   clearTimeout(calcTimer);
   if(kind === 'calc' && UI.justDone && !screen().querySelector('#calcNext')){ const j = UI.justDone; calcTimer = setTimeout(() => { if(UI.justDone === j){ UI.justDone = null; render(); } }, 1600); }
@@ -5375,8 +5387,44 @@ function ensureTable(id, kind, cols, opts){
   t.active = nextOpenCell(t);
   return t;
 }
-/* Figures rounded for the pupil (averages to the nearest pound) accept anything that rounds to the answer. */
-function checkCell(t, col, row, raw){ const want = col.values[row.id], got = parseCell(row.unit, raw); if(got === null) return 'blank'; if(Math.abs(got - want) < (row.tol ? row.tol + 1e-9 : 0.005)) return 'ok'; return got > want ? 'high' : 'low'; }
+/* The working the pupil can see: the dock's figures, re-read exactly as they are shown. */
+function shownAnswer(t, col, row){
+  let rows; try{ rows = stackRows(t, col, row); }catch(e){ return null; } if(!rows || rows.length < 2) return null;
+  let v = parseCell(row.unit, rows[0].value); if(v === null) return null;
+  for(let i = 1; i < rows.length; i++){ const x = parseCell(row.unit, rows[i].value), op = rows[i].op; if(x === null) return null;
+    v = op === '+' ? v + x : op === '−' ? v - x : op === '×' ? v * x : op === '÷' ? (x ? v / x : NaN) : NaN; }
+  return isFinite(v) ? v : null;
+}
+/* Anything odd about a check is written down for the teacher (teacher panel → Calculation checks). */
+function diagNote(o){
+  const n = Object.assign({ when:new Date().toTimeString().slice(0, 8), day:S.day, round:S.round, step:(step() || {}).t }, o);
+  S.diag = (S.diag || []).concat([n]).slice(-20); (window.__notes = window.__notes || []).push('check: ' + o.kind);
+  try{ console.warn('Calculation check', n); }catch(e){} save();
+}
+/* A figure is right if it matches the model, or the working on screen (should the two ever differ, that is recorded).
+   Figures rounded for the pupil (averages to the nearest pound) accept anything that rounds to the answer. */
+function checkCell(t, col, row, raw){
+  const want = col.values[row.id], got = parseCell(row.unit, raw); if(got === null) return 'blank';
+  const tol = row.tol ? row.tol + 1e-9 : 0.005, shown = shownAnswer(t, col, row), differs = shown !== null && Math.abs(shown - want) >= 1;
+  if(differs) diagNote({ kind:'working on screen differs from the model', table:t.id, cell:cellId(col.id, row.id), stored:want, shown, typed:got });
+  if(Math.abs(got - want) < tol) return 'ok';
+  if(differs && Math.abs(got - shown) < Math.max(tol, 0.5)) return 'ok';
+  if(want < 0 && Math.abs(got + want) < tol) return 'sign';
+  return got > want ? 'high' : 'low';
+}
+/* After three tries the dock offers "Show me the answer"; a loss gets its own hint. */
+function cellWrong(res){
+  const k = res === 'blank' ? (UI.tries || 0) : (UI.tries = (UI.tries || 0) + 1); let m = TEXT.retry[Math.max(0, k - 1) % TEXT.retry.length];
+  if(res === 'blank') m = 'Enter a figure first.';
+  else if(res === 'sign') m = 'Nearly! This plan makes a loss, so the answer is below zero. Put a minus sign in front (−).';
+  else if(settings.nudge) m += ' ' + (res === 'high' ? TEXT.nudgeHigh : TEXT.nudgeLow);
+  UI.msg = m; UI.ok = false;
+}
+function renderDiag(){
+  const box = $('tDiag'); if(!box || !S) return; const d = S.diag || [];
+  box.innerHTML = d.length ? `<table class="ttools"><thead><tr><th>Time</th><th>Where</th><th>What</th><th>Figures</th></tr></thead><tbody>${d.slice().reverse().map(x => `<tr><td>${esc(x.when)}</td><td>${esc(x.step || '')} · day ${x.day}</td><td>${esc(x.kind)}</td><td class="mono small">${esc(['cell', 'stored', 'shown', 'typed', 'was', 'is', 'now', 'tries'].filter(k => x[k] !== undefined && x[k] !== null && x[k] !== '').map(k => k + ' ' + x[k]).join(' · '))}</td></tr>`).join('')}</tbody></table>`
+    : '<p class="small muted">No problems recorded. If an answer is ever marked wrong when it matches the sum, a line appears here: take a photo of it.</p>';
+}
 /* If the teacher changes a tool while its figure is open, the figure closes (it is no longer typed). */
 function tidyActive(t){
   if(!t || !t.active) return;
@@ -5413,6 +5461,7 @@ function checkTools(){
 
 /* The teacher's control: one row per tool. */
 function renderTeacherTools(){
+  renderDiag(); on('tDiagClear', () => { S.diag = []; save(); renderDiag(); });
   const box = $('tTools'); if(!box || !S) return;
   box.innerHTML = `<table class="ttools"><thead><tr><th>Maths tool</th><th>First met</th><th>Level now</th><th></th></tr></thead><tbody>${TOOLS.filter(T => !T.fixed).map(T => { const lv = toolLevel(T.id), o = S.tools && S.tools[T.id];
     return `<tr><td><b>${esc(T.name)}</b><small>${esc(T.what)}</small></td><td>Phase ${Math.floor(T.phase)}</td><td class="tlv">${['calc', 'build', 'model'].map(l => `<button class="btn small" data-tlv="${T.id}|${l}" aria-pressed="${lv === l}" ${l === 'build' && !T.build ? 'disabled title="Not available for this tool"' : ''}>${LVL[l]}</button>`).join('')}</td>
