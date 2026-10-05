@@ -17,7 +17,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
-**The HQ desktop.** After the short onboarding (name, strategy, paint your planes, home airport) a start-up sequence runs (*Initialising headquarters… Operations online · Finance standby · Network standby · Fleet awaiting delivery · System ready*, or press *Enter HQ*) and everything else happens inside one HQ, in three layers:
+**The HQ desktop.** After the short onboarding (name, paint your planes, home airport) a start-up sequence runs (*Initialising headquarters… Operations online · Finance standby · Network standby · Fleet awaiting delivery · System ready*, or press *Enter HQ*) and everything else happens inside one HQ, in three layers:
 - **The chrome stays put.**
   - **Top bar, in zones:** airline and strategy · date and *Day N of operations* · status chip · reputation · the **cash balance** (the only place cash is shown, apart from the fuel calculation) · Alerts · Operations Wall · Home · Full screen.
   - **Left nav** (icon and label): Overview, Today's Plan, Network, Fleet, Finance.
@@ -63,93 +63,55 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **The Overview KPI row** shows how the airline is operating: last profit, revenue, passengers, seats filled, fuel stock. Cash and reputation stay in the top bar.
 - **Start operations** returns to the Overview in live mode: the clock, the planes on the map and Live Operations move together. The results land on the HQ (revenue − costs = profit, forecast against actual, who flew; Passenger Feedback cycles through the reviews). ***Close the day*** moves to the next morning.
 
-**Fares are decided by modelling.** There is no separate fare step any more; the fare list is a *menu*, and the decision is made by costing.
-- **The plans:** the costing screen opens with **Plan A at today's fare, Plan B one fare lower and Plan C one fare higher**, all on the chosen timetable (every route, every day).
-- **The fare menu** in the dock shows each fare, the people who want to fly at it, and which plans are trying it.
-- **Choosing:** *Use Plan X* sets the airline's fares. The Launch step's Fare line edits the costing, not a separate screen.
-- **The Day 1–3 planner** sets services, on-board sales and the first departure only. Each route card says how many want to fly at today's fare, and that the fare is chosen when you cost your options.
-- **If the timetable or extras change after costing,** Plans B and C are rebuilt from the new Plan A.
+**The opening: one new idea a day.** Every day has the same five stages on the plan rail: **1 Plan** (*What will your airline do?*) · **2 Cost** (*Check today's new numbers*) · **3 Test** (*Try other ideas with the model*) · **4 Operate** (*Fly the plan*) · **5 Review** (*What happened?*).
+- **Cost** is the one place each day where the pupil checks a figure. It shows only the plan they chose, and only *today's* new idea is typed; every other figure is the model's (with a **ƒ model** button that opens the rule and its numbers in the dock). **Total revenue**, **Total costs** and **Profit** are bold; the cost lines fold into *Total costs* with a *What's in this?* breakdown.
+- **Test** is free modelling with no compulsory arithmetic: the pupil's plan stays on top, the **test plan** has big steppers for the controls introduced so far, and the model shows passengers, empty seats, people without a seat, revenue, costs, profit and the difference ("+£380 more profit than your plan"). Good ideas can be **saved as idea cards** and loaded or flown later. Then *Fly my plan* or *Fly the test plan*.
+- **A control appears only once its idea has been introduced** (no snacks on Launch Day, no departure times before Day 3, no Dublin before Day 4).
+- **After the day's new figure,** a short notice marks the change: *Cabin sales model online · Dragon Air can now work out cabin sales automatically when you test different options.* It is narrative, not assessment: there is no answer counting.
 
-**Cost your options (three plans side by side).**
-- **The flow:** the planner builds the day's plan, then **Cost your options** shows Plan A (the planner's plan) next to Plans B and C (copies to change).
-- **Controls:** each plan has its own controls in its column: flights per route (CDG/DUB − / +), fare, snacks, and the first departure from Day 2. There is also a mini day bar and a line showing who flies, who has no seat, when the aircraft is free, and how many crews are needed.
-- **Each column is a proper spreadsheet:**
-  - **Revenue:** tickets per route, snack sales, total revenue.
-  - **Costs:** flights, fuel used, terminal charges, snack stock, second crew, aircraft's day, total costs.
-  - **Profit.**
-- **The maths:**
-  - **Every different plan's profit** (total revenue − total costs) is worked out in the calculation dock; on Launch Day, the ticket revenue too.
-  - **Changing a plan** clears only that plan's answers, and a plan that is the same as another needs no working out.
-  - Then ***Use Plan X*** in the dock's *Today's forecast*. The chosen plan's profit is the forecast the results compare against.
-- **Fuel you can see:**
-  - **The tank** keeps each batch bought (litres and price), and flights burn the **oldest fuel first**. So the fuel cost is exact and explainable ("420 L × £1.20 = £504"), and the forecast matches the result to the pound.
-  - **The fuel screen** shows Cash → Fuel in the tank (litres and what it's worth) → Today's flights burn, plus a tank graphic with a layer for each batch, today's burn hatched and the order as a ghost.
-  - **Ordering:** any amount in 500 L lots, up to the space in the tank and the cash available, with "enough for about N days". Buttons: *No order*, *Just enough for today*, *As much as I can*.
-  - **Buying fuel is not a cost:** it moves cash into the tank. The results say so: "Profit £923 · bought today (not costs): fuel stock 2,000 L £2,600 · cash down £1,173".
-  - **Elsewhere:** the fuel KPI shows the tank's value, and Finance has a fuel stock column.
-- **Fixes:**
-  - "Not quite" now clears as soon as a new answer is typed.
-  - The rotation step names the home terminal's turnaround: from Heathrow T5 it is 35 min, so the aircraft is ready at 13:20.
+| Stage | Controls in Plan and Test | New idea | Cost: what the pupil works out | From now on the model does |
+| --- | --- | --- | --- | --- |
+| Setup | name, livery, home airport, the Twin Otter, the first market | the airline | nothing | |
+| Launch Day (Sun 12 May) | services and fare | capacity, ticket revenue, costs, profit | **ticket revenue** = passengers × fare; **profit** = total revenue − total costs | the cost lines; fuel is free (launch deal) |
+| Day 1 | + on-board service | cabin sales | **cabin sales** = number buying × price | ticket revenue; profit is **built** (choose Total revenue − Total costs; the model works it out) |
+| Day 2 | + fuel: the tank and buying | fuel is now the airline's cost | **fuel cost** = litres × price per litre | revenue, cabin sales, profit (the order bill too) |
+| Day 3 | + a departure time for each service, with the demand curve | empty seats, peaks, crew | **empty seats** = seats − passengers, for one service | fuel cost and everything above |
+| Day 4 | + the second market: one aircraft, two routes | route allocation | **built once**: Dublin passengers × Dublin fare | everything |
+| End of Day 4 | | the **Regular Operating Plan** | nothing: approve the plan (or change it first) | |
+| Fri 17 – Sun 19 May | runs by itself | | | |
+| Week 1 (20–26 May) | the established controls | the weekly projection | **projected profit** = profit a day × 7 | the daily figures |
 
-**Real airports, comparable plans, more to run.**
-- **Home airport and terminal:**
-  - London Heathrow (T5 or T4), London Gatwick (North or South), London Luton, Manchester (T1 or T3).
-  - Each airport has a landing fee and a market size (more passengers at busy airports, and more business travellers at Heathrow).
-  - Each terminal has a turnaround time (which the scheduling engine uses) and a charge per passenger.
-- **Distances are real:** worked out from the airport coordinates. Flying times are rounded to 5 minutes, and fuel to 10 L.
-  - From Heathrow, Paris is 1 h 10 and Dublin 1 h 30; from Manchester, Dublin is 55 min and Paris 2 h.
-  - The normal fare follows distance (about £30 + 14p a km, to the nearest £10). The fare buttons run from £10 below to £30 above it.
-- **Nothing is final until *Start operations*:**
-  - fuel is an **order** that can be changed or cancelled, and is paid at the start;
-  - every plan step stays editable from the plan rail.
-- **Compare plans:** now done on the *Cost your options* screen (above).
-  - Each card shows passengers flown, people with no seat, when the aircraft is free, crews needed, revenue and costs, and profit "about" (nearest £50).
-  - **Use this plan** loads a pinned plan back. The forecast still asks for the exact sums.
-- **Day 1, on-board sales:** nothing, snacks at £3 (half of passengers buy), snacks at £5 (3 in 10 buy), or free snacks (£2 a passenger, +½ star). Stock costs £1 an item.
-- **Crew duty:** one crew works at most 9 hours, from the first departure to the last landing. A longer day needs a second crew (£300).
-- **Day 2, departure times:** the first departure moves between 06:00 and 10:00 in 15-minute steps.
-  - A route with a service before 08:00 attracts an extra group of business travellers (Paris 10, Dublin 6, more at Heathrow and T5).
-  - An earlier start can also free the evening for another service.
-- **Look and controls:**
-  - square corners;
-  - smaller titles;
-  - **Full screen** toggles in one click. The teacher's triple-tap corner, which used to sit on top of the button, is now top-left over the logo. *Present on two screens* is in the Home menu.
-  - The ✕ that appears at the top of the screen in full screen is the browser's own *exit full screen* button (Chrome and Edge show it when the mouse nears the top edge). The game can't remove it.
+- **The teacher panel still overrides any tool** (Calculate, Build or Model). *Build* now means: choose the two figures and the sign; the model then works it out.
+- **Time-of-day demand (from Day 3):** each route has a profile (Paris: morning peak, quieter middle, evening peak; Dublin: a strong early peak). Each service takes the passengers who want its time of day, and the flexible ones fill the rest. Services spread across both peaks may need a second crew (£300), so there is no "always fly early" answer.
+- **Departure times:** each service has its own time (30-minute steps); a service can't leave before the aircraft is ready again. Services can be added, removed and (from Day 4) switched between routes with ⇄.
+- **Fuel:** free on Launch Day and Day 1 (the launch deal). From Day 2 the tank keeps each batch bought, flights burn the oldest fuel first, and buying fuel moves cash into the tank (it is a cost only when burned).
+- **The plans archive:** Finance → **Plans** lists each day's costed plan, the best idea tried, the plan flown, its projected profit and what actually happened. *Compare with earlier days* opens the same list in the dock on the Cost and Test screens.
+- **Answers are checked against the working on screen:** if the sum in the dock and the stored figure ever disagree, the pupil's answer from the dock is accepted and the case is recorded in the teacher panel (**Calculation checks**). After three wrong tries, *Show me the answer* appears; a loss typed without its minus sign gets a hint.
+- **The airline type** (premium, full service, value) is chosen at the **Year 1 review**, when the airline starts to grow. The opening is about profit.
 
-**Flow:** name → strategy → paint your planes → home airport → **your start-up aircraft** (the Twin Otter's seats, speed, range and running cost, each explained; no shop) → **first market** (Paris or Dublin) → Launch Day → Day 1 → Day 2 → Day 3 → *Regular operations established*.
+**Real airports.** London Heathrow (T5 or T4), London Gatwick (North or South), London Luton, Manchester (T1 or T3): each airport has a landing fee and a market size, each terminal a turnaround time and a charge per passenger. Distances are real; flying times are rounded to 5 minutes and fuel to 10 L. On-board sales: nothing, snacks at £3 (half buy), at £5 (3 in 10 buy), or free (£2 a passenger, +½ star); stock costs £1 an item. One crew works at most 9 hours from the first departure to the last landing.
 
-**Launch Day (high scaffold: SHOW → TRY → RUN → EXPLAIN):**
-1. **The market:** "45 people want to fly to Paris today", drawn in aircraft-sized groups (19 | 19 | 7) next to "Your aircraft: 19 seats".
-2. **One service, start to finish:** a timeline built step by step from the scheduling engine (depart 09:00, Paris 10:30, turnaround, leave 11:15, Cardiff 12:45, turnaround, ready again 13:30), with one time question. Flight time is not the time the aircraft is busy.
-3. **What timetable do you want to run?** Paris ×1 / ×2 / ×3 fill the 06:00–22:00 bar; the passenger groups show who gets a seat and who doesn't. ×4 won't fit and says so. No single right answer.
-4. **Fares and forecast:** three plans side by side at three fares (normal, £10 lower, £10 higher), with the fare menu in the dock; the ticket revenue and profit of each are completed in the calculation dock, then one plan is chosen.
-5. **Fuel:** the tank, today's burn and price; order enough for the plan, or extra while it's cheap, and complete the order cost in the dock.
-6. **Launch:** the operating plan with Edit on every line, then **START OPERATIONS** and the Operations Wall comes alive.
-7. **Results:** revenue − costs = profit (with one-line meanings, only on launch day), the flights, who flew (wanted, seats, travelled, no seat), forecast against actual.
-
-**Days 1–3 (the help fades):** the HQ shows yesterday's evidence per route (wanted, seats, travelled, no seat) and Intelligence lists situations, never instructions (*Capacity pressure — Paris*, fuel up to £1.30, *Network opportunity — Dublin*). **Plan today's operation** opens one planner: the day bar, each route's services, and who gets a seat at today's fare (fares are chosen on the costing screen). Day 2's fuel screen has fuller help (and a typed bill); Day 3 adds the other market, so the pupil chooses a mix (Paris ×3, Paris ×2 + Dublin ×1, Paris ×1 + Dublin ×2, Dublin ×3, …), with the day's expected profit shown. Typed sums fade: Day 1 profit, Day 2 fuel bill and profit, Day 3 the revenue sums. Optional help (*How scheduling works*, *Demand*, *Fuel*, *Revenue and profit*, *Forecast*) opens in the dock beside the task; nothing is retaught automatically.
+**Launch Day (high scaffold):** the market (45 people, aircraft-sized groups 19 | 19 | 7), one service start to finish (with one time question), the timetable (×1 / ×2 / ×3), the fare, then **Cost** (ticket revenue and profit, opened in the dock), **Test**, **Operate** and the results on the HQ (revenue − costs = profit, projected against actual, who flew).
 
 **The maths toolkit (the teacher decides).** Each maths tool is at one of three levels, set in the teacher panel's **Maths tools** section (Ctrl+Shift+T):
 - **Calculate:** the pupil works the figure out with *Complete figure* and the calculation dock.
-- **Build:** the pupil first chooses the two figures and the sign (+ − × ÷) from labelled chips, then works it out. The order matters for − and ÷. *That's my sum* checks the pair; a wrong pair says "Those figures don't make the …".
-- **Model:** the airline's software fills the figure in, and the cell carries a small *model* badge.
+- **Build:** the pupil chooses the two figures and the sign (+ − × ÷) from labelled chips; the model then works it out. The order matters for − and ÷. *That's my sum* checks the pair; a wrong pair says "Those figures don't make the …".
+- **Model:** the airline's software fills the figure in, and the cell carries a small **ƒ model** button that shows the rule and its numbers.
 
 More about the levels:
-- **The tools:** Ticket revenue, Fuel cost, Total costs, Profit, Week/month totals, Difference, Average, Annual projection and Time to afford. Capacity, Fuel required, Timetable and Investment are always models.
-- **Defaults by stage**, with no competence tracking. Each tool reaches Model with a short notice (*Ticket revenue model online*):
-  - ticket revenue becomes a model on Day 1, fuel cost on Day 3, profit and totals from the first week;
-  - Difference, Average, Annual projection and Time to afford are the pupil's own figures when they first appear.
+- **The tools:** Ticket revenue, Cabin sales, Fuel cost, Empty seats, Revenue on a new route, Total costs, Profit, Weekly projection, Week/month totals, Difference, Average, Annual projection and Time to afford. Capacity, Fuel required, Timetable and Investment are always models.
+- **Defaults follow the opening's script** (see the table above), with no competence tracking: each relationship is calculated on the day it is introduced and modelled after that. Difference, Average, Annual projection and Time to afford are the pupil's own figures when they first appear.
 - **Teacher controls:** each tool has Calculate / Build / Model buttons and *Use the default*. There are also three buttons for all tools at once: *Phase defaults for all*, *Pupil calculates all* and *Model does all*.
   - A change applies straight away; a figure that stops being typed closes.
   - The settings travel in the save code.
 - **The pupil's view:** Finance → **Models** lists every tool met so far as *You work it out*, *You build it* or *Model online*.
 
-**Phases 4–7: from the first week to the first aircraft.** Time speeds up after Day 3, and each new stage opens with a short stage card.
+**Phases 4–7: from the first week to the first aircraft.** Time speeds up after Day 4, and each new stage opens with a short stage card.
 
 | Phase | When | What the pupil does |
 | --- | --- | --- |
-| 4 Establish the timetable | Thu 16 May (the timetable runs by itself), then Weeks 2–4 | Review last week; from Week 3 work out the **difference** (the rise or fall in profit). Keep or change the timetable. Fuel for the week, with automatic deliveries at the market price + 10p. **Forecast this week:** Plans A/B/C on a week sheet (revenue a day × 7, running costs a day × 7, fuel used this week, total costs, profit). |
-| 5 First stable period | 10–30 June, July, August | Review with an **average** (a week over Weeks 2–4, then a day over the month). **Current plan or test plan:** the current plan keeps flying, and the test plan is a copy to change. When they differ, the pupil works out the difference, then keeps the current plan or switches. |
+| 4 Establish the timetable | Fri 17 – Sun 19 May (the Regular Operating Plan runs by itself), then Weeks 1–3 | The same Plan → Cost → Test → Operate → Review rail. Week 1: **projected profit = profit a day × 7**. Weeks 2–3: review last week and work out the **difference** (the rise or fall in profit); the model costs the week. Fuel for the week, with automatic deliveries at the market price + 10p. |
+| 5 First stable period | 10–30 June, July, August | Review with an **average** (a week over Weeks 1–3, then a day over the month). **Current plan or test plan:** the current plan keeps flying, and the test plan is a copy to change. When they differ, the pupil works out the difference, then keeps the current plan or switches. |
 | 6 The first year | 1 September → **Run the year** to 30 April | Average month (July and August) → **annual projection**: average × 8 months + cash now = projected cash in May. **Time to afford** the Saab 340 and ATR 72: cash − emergency money (£20,000) = cash you can spend; price − that = still needed; ÷ average month = months, rounded up. Launch shows the projection; the year runs month by month on the HQ. |
 | 7 First aircraft purchase | 1 May 2031, the Year 1 review | **Year 1 in figures** (passengers, profit, best and hardest month, reputation). Projection against actual, with the difference typed and the reasons: month lengths, the fuel price through the year, profit a day against July and August, automatic fuel deliveries, and cash against profit. Each aircraft's estimated month against the month it really became affordable. |
 
