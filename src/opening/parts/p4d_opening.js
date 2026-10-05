@@ -72,13 +72,13 @@ R.starter = () => {
   const spec = (big, label, text) => `<div class="spec"><span class="label">${label}</span><b class="mono">${big}</b><p>${text}</p></div>`;
   screen().innerHTML = taskFrame({ question:'Your start-up aircraft', work:false, context: ctxHomeBase(),
     story:[`Every airline starts somewhere. Yours starts with one ${esc(p.name)}.`],
-    say:`Your start-up aircraft is the ${p.name}. ${p.seats} seats. ${p.speed} kilometres an hour. A range of ${p.range} kilometres. It costs ${money(p.hourCost)} for every hour in the air, plus a ${money(homeData().fee)} landing fee, and ${money(p.dayCost)} a day.`,
+    say:`Your start-up aircraft is the ${p.name}. ${p.seats} seats. ${p.speed} kilometres an hour. A range of ${p.range} kilometres. It costs ${money(p.hourCost)} for every hour in the air, plus a landing fee at each end of the flight, and ${money(p.dayCost)} a day.`,
     main:`<div class="starter"><div class="st-plane"><svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-${p.icon}"/></svg>${finSvg(S.airline.fin, 56)}<b>${esc(p.name)}</b><span class="muted">${esc(p.fact)}</span></div>
       <div class="specs4">${spec(p.seats, 'Seats', `Up to ${p.seats} passengers on every flight.`)}
         ${spec(num(p.speed) + ' km/h', 'Speed', rs.map(r => `${esc(r.city)} (${num(routeKm(r))} km): ${fmtDur(TIME.leg(p, r))} each way.`).join(' '))}
         ${spec(num(p.range) + ' km', 'Range', 'How far it can fly before it must land. Both first markets are well within reach.')}
-        ${spec(money(p.hourCost) + ' an hour', 'Cost to operate', `Each hour in the air, plus a ${money(homeData().fee)} landing fee: ${rs.map(r => `${esc(r.city)} <b>${money(runCostOf(p, r))}</b>`).join(', ')} a service. Plus <b>${money(p.dayCost)} a day</b>. Fuel is extra.`)}</div></div>`,
-    foot:`<span class="muted grow">${owned ? 'Delivered to ' + esc(homeData().code) : `Price <b class="mono gold">${money(p.price)}</b>`}</span><button class="btn primary big" id="nx">${owned ? goLabel('Next') : 'Take delivery'} &#9654;</button>` });
+        ${spec(money(p.hourCost) + ' an hour', 'Cost to operate', `Each hour in the air, plus landing fees at both ends (${money(homeData().fee)} at ${esc(homeData().code)}): ${rs.map(r => `${esc(r.city)} <b>${money(runCostOf(p, r))}</b>`).join(', ')} a service. Plus <b>${money(p.dayCost)} a day</b>. Fuel is extra.`)}</div></div>`,
+    foot:`<span class="muted grow">${owned ? 'Delivered to ' + esc(homeData().code) : `Price <b class="mono gold">${money(p.price)}</b>${p.listPrice > p.price ? ` <span class="muted">launch deal (normally ${money(p.listPrice)})</span>` : ''}`}</span><button class="btn primary big" id="nx">${owned ? goLabel('Next') : 'Take delivery'} &#9654;</button>` });
   on('nx', () => { if(!S.fleet.length) buyPlane(p); advance(); });
 };
 R.market = () => {

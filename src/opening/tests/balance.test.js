@@ -1,4 +1,6 @@
 // The world engine against data/Balance-Report.md: every figure the report states, from the imported workbook.
+// The game rounds as at school (halves up); the report's engine rounded halves to even. That moves three figures,
+// marked "school rounding" below with the report's figure beside them. Everything else is exactly the report's.
 // Run: node src/opening/tests/balance.test.js   (no browser needed). Re-run tools/import_world.py after editing the workbook.
 const fs = require('fs'), path = require('path');
 const ROOT = path.resolve(__dirname, '../../..');
@@ -38,7 +40,8 @@ ok('Dublin £80 with three full planes = £827', d80.pax === 57 && d80.profit ==
 ok('Dublin three compact services lose the evening = £802', at('dub', 'dhc6', 90, '3 back-to-back').profit === 802, at('dub', 'dhc6', 90, '3 back-to-back'));
 const par = best('par', 'dhc6');
 ok('Paris best: £90, morning + evening = £1,052', par.fare === 90 && par.name === '2 morning + evening' && par.profit === 1052, par);
-ok('Paris runner-up: £90, 2 compact = £877', at('par', 'dhc6', 90, '2 back-to-back').profit === 877, at('par', 'dhc6', 90, '2 back-to-back'));
+ok('Paris £90, 2 compact = £792 (school rounding; report £877)', at('par', 'dhc6', 90, '2 back-to-back').profit === 792, at('par', 'dhc6', 90, '2 back-to-back'));
+ok('Paris: the most compact timetable does not win', !par.name.includes('back-to-back'));
 const p3 = plans('par', 'dhc6', 1, n => n.startsWith('3'))[0], p2 = plans('par', 'dhc6', 1, n => n.startsWith('2'))[0];
 ok('Paris: a third service never pays', p3.profit < p2.profit, { p3, p2 });
 ok('Paris: £80 and £100 both earn less than £90', [80, 100].every(f => plans('par', 'dhc6', 1, (n, x) => x === f)[0].profit < 1052));
@@ -49,7 +52,7 @@ ok('Mixed day beats either route alone', pounds(mixed) > dub.profit && pounds(mi
 console.log('Week 2 routes (best plan per cell; "loses" = no plan makes a profit)');
 const TABLE = [
   ['Amsterdam', 'ams', 1, 1950, 2513, 1812],
-  ['Frankfurt', 'fra', 1, 601, 1185, 92],
+  ['Frankfurt', 'fra', 1, 601, 1100, 7],   // school rounding: Saab and ATR best at £100 (report £1,185 and £92 at £120)
   ['Geneva, September (×0.5)', 'gva', 0.5, 140, 'loses', 'loses'],
   ['Geneva, January (×1.4)', 'gva', 1.4, 1620, 2827, 2468],
   ['Barcelona, September (×1.1)', 'bcn', 1.1, 460, 2090, 1845],
@@ -63,7 +66,7 @@ ok('Amsterdam is the Saab\'s route: the ATR has more seats and earns less', best
 ok('Twin Otter stays the right plane for Paris', ['sf34', 'at72'].every(p => best('par', p).profit < par.profit));
 
 console.log('Threshold placements (people at a fare)');
-const ppl = (r, f, m) => WE.roundEven(W.routes.find(x => x.id === r).demandAtFare[String(f)] * (m || 1));
+const ppl = (r, f, m) => WE.roundSchool(W.routes.find(x => x.id === r).demandAtFare[String(f)] * (m || 1));
 [['dub', 90, 62], ['dub', 100, 44], ['dub', 110, 30], ['par', 90, 50], ['par', 120, 20], ['ams', 90, 76], ['ams', 100, 56], ['fra', 120, 50], ['gva', 110, 70, 1.4], ['bcn', 140, 59, 1.1]]
   .forEach(([r, f, n, m]) => ok(`${r} £${f}${m ? ' ×' + m : ''} → ${n}`, ppl(r, f, m) === n, ppl(r, f, m)));
 

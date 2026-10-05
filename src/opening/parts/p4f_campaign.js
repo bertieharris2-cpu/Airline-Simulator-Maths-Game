@@ -422,6 +422,7 @@ function yearVs(T){
   const lens = [...new Set(T.parts.map(p => p.days.length))]; if(lens.some(n => n < 31)) reasons.push(`Months are not all the same: they have ${lens.sort().join(', ')} days. Your average came from July and August, which have 31 days each.`);
   const fuels = T.parts.map(p => withBeat(beatAt(p.from), () => fuelPrice())); const lo = Math.min(...fuels), hi = Math.max(...fuels);
   if(hi - lo >= 0.05) reasons.push(`Fuel did not stay the same: it cost between ${priceL(lo)} and ${priceL(hi)} a litre during the year.`);
+  const grown = growthReason(T, dayOfDate('2030-08-01')); if(grown) reasons.push(grown);
   const perDay = Math.round(T.profit / T.days.length), was = Math.round(pj.avg / 31); if(Math.abs(perDay - was) > 20) reasons.push(`The airline made about ${money(perDay)} a day this year; July and August made about ${money(was)} a day.`);
   if(T.autoL) reasons.push(`${num(T.autoL)} L of fuel were delivered automatically at 10p a litre more than the market price.`);
   reasons.push('Cash is not the same as profit: fuel bought goes into the tank first, and only becomes a cost when it is burned.');

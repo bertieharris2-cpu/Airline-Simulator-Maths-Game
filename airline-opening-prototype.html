@@ -2064,7 +2064,7 @@ button.mdl:hover,button.mdl:focus-visible{background:#fff;outline:2px solid var(
 .pe-ob{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.pe-ob .label{font-size:12px;color:var(--muted);margin-right:4px}
 .pe-svcs{display:flex;flex-direction:column;gap:5px}.pe-sh{display:flex;align-items:baseline;gap:10px}.pe-sh .label{font-size:12px;color:var(--muted)}
 .pe-svc{display:grid;grid-template-columns:86px 140px auto 76px 1fr 32px;align-items:center;gap:8px;border:1px solid var(--hair);padding:4px 8px;background:rgba(6,20,38,.35)}
-.pe-svc.morning,.pe-svc.evening{border-left:4px solid #3ddc97}.pe-svc.midday{border-left:4px solid #f5a524}
+.pe-svc.morning,.pe-svc.evening,.pe-svc.early{border-left:4px solid #3ddc97}.pe-svc.midday{border-left:4px solid #f5a524}.pe-svc.midmorning,.pe-svc.afternoon{border-left:4px solid #5aa9ff}
 .pe-n{font-weight:700;color:#fff;font-size:15px}.pe-city{font-size:15px}.pe-band{font-size:13px;color:var(--muted)}
 .pe-rt{border:1px solid var(--line);background:#0e2c55;color:#fff;font:inherit;font-size:14px;padding:4px 8px;cursor:pointer;border-radius:2px;text-align:left}
 .pe-fill{display:flex;flex-direction:column;line-height:1.1}.pe-fill b{font-size:16px;color:var(--amber)}.pe-fill.full b{color:#3ddc97}.pe-fill small{font-size:12px;color:var(--muted)}
@@ -2075,7 +2075,7 @@ button.mdl:hover,button.mdl:focus-visible{background:#fff;outline:2px solid var(
 .dstrip{display:grid;grid-template-columns:240px 1fr;align-items:end;gap:8px}.ds-l{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ds-bar{position:relative;height:30px;border-bottom:1px solid var(--line)}
 .ds-b{position:absolute;bottom:0;height:var(--h);background:linear-gradient(180deg,rgba(61,220,151,.55),rgba(61,220,151,.15));border-right:1px dashed rgba(255,255,255,.15)}
-.ds-b.midday{background:linear-gradient(180deg,rgba(245,165,36,.55),rgba(245,165,36,.15))}
+.ds-b.midday{background:linear-gradient(180deg,rgba(245,165,36,.55),rgba(245,165,36,.15))}.ds-b.midmorning,.ds-b.afternoon{background:linear-gradient(180deg,rgba(90,169,255,.55),rgba(90,169,255,.15))}
 .ds-b span{position:absolute;left:6px;bottom:2px;font-size:11px;color:#fff;white-space:nowrap}
 .pe-demand .oc-bar{margin-left:248px}.pe-demand .oc-ax{margin-left:248px}
 .c2-new{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid rgba(255,200,61,.5);background:rgba(255,200,61,.08);padding:8px 12px}
@@ -3146,6 +3146,7 @@ function applyPeriodResults(){
     const f0 = fc.fuel, f1 = withBeat(beatAt(T.to), () => fuelPrice());
     if(Math.abs(f1 - f0) >= 0.05) vs.reasons.push(`Fuel ${f1 > f0 ? 'rose' : 'fell'} from ${priceL(f0)} to ${priceL(f1)} a litre.`);
     if(T.autoL) vs.reasons.push(`The tank ran out, so fuel was bought at the market price plus delivery.`);
+    if(fc.kind === 'run' || fc.kind === 'afford'){ const grown = growthReason(T); if(grown) vs.reasons.push(grown); }
     if(T.cancelled) vs.reasons.push('A CEO decision cost some flights on the first day.');
     if(Math.abs(exp - T.profit) >= 1 && !vs.reasons.length) vs.reasons.push(fc.kind === 'period' ? 'Your forecast used a rounded "about" figure for each day.' : 'Your forecast used a rounded "about" figure for each month.');
     if(Math.abs(r2(S.cash - fc.cash0) - T.profit) >= 1) vs.reasons.push('Cash and profit differ: fuel used from the tank was paid for earlier, and fuel bought goes into the tank.');
@@ -3381,6 +3382,137 @@ function setSchedule(uid, sched){
   refreshPlan();
 }
 function assignRoute(uid, routeId){ setSchedule(uid, [routeId]); }
+/* The world engine: one aircraft's day under the workbook's rules (Fable Pass 1, section 0).
+   Not used by the game yet. tests/balance.test.js checks it against data/Balance-Report.md.
+
+   - A service is a round trip from home. It earns one plane-load at the fare (return tickets).
+   - The day has five bands. A service belongs to the band it leaves home in.
+   - Each route's people at a fare come from its demand table (times any multiplier). Some are time-locked: in each band,
+     demand × timeSensitiveShare × the band's share, rounded as at school (halves up).
+     They only board services in their band. The rest are flexible and fill any seats left that day.
+   - Costs per service: flying hours × hourly cost + landing at both ends + fuel (litres × price) + a charge per passenger at home.
+     Per day: the aircraft's day cost, plus a second crew when duty (30 min before the first departure to 30 min after the
+     last arrival) is over the limit. */
+;(function(root){
+  const H = 60;
+  // School rounding: halves go up. A tiny allowance stops 10.4999999 (a float for 10.5) rounding down.
+  const roundSchool = x => Math.floor(x + 0.5 + 1e-9);
+  const r2 = x => Math.round(x * 100) / 100;
+  const hm = s => { if(typeof s === 'number') return s; const [h, m] = String(s).split(':').map(Number); return h * H + (m || 0); };
+  const clock = m => `${String(Math.floor(m / H)).padStart(2, '0')}:${String(Math.round(m % H)).padStart(2, '0')}`;
+
+  /* The rules the engine needs, from the imported workbook (data-workbook). */
+  function rules(W){
+    const S = W.settings || {}, E = W.engine || {};
+    const bands = E.bands || { early:[6, 9], midmorning:[9, 12], midday:[12, 15], afternoon:[15, 18], evening:[18, 22] };
+    const open = S.airportOpen ? [hm(S.airportOpen), hm(S.airportClose)] : (E.airportOpen || [6, 22]).map(h => h * H);
+    return { bands, open, crew: +(S.secondCrewCost ?? E.secondCrewCost ?? 250), maxDuty: +(S.maxDutyHours ?? E.maxDutyHours ?? 12) * H,
+             pad: +(E.dutyPaddingMinutes ?? 30) };
+  }
+  const byId = (xs, id) => xs.find(x => x.id === id);
+  function home(W, code, terminal){
+    const a = W.airports.find(x => x.code === code && (!terminal || x.terminal === terminal)) || W.airports[0];
+    return { code:a.code, terminal:a.terminal, landingFee:a.landingFee, turnaroundMin:a.turnaroundMin, passengerCharge:a.passengerCharge };
+  }
+  function bandOf(R, t){ for(const b in R.bands){ const [a, z] = R.bands[b]; if(t >= a * H && t < z * H) return b; } return null; }
+  function legMin(plane, route){ return route.km / plane.speedKmh * H; }
+
+  /* When each service leaves and gets back. Services run in the order given; one can't leave before the aircraft is ready. */
+  function timeline(W, plane, hm0, services){
+    const R = rules(W), out = [], problems = [];
+    let ready = R.open[0];
+    services.forEach((s, i) => {
+      const route = byId(W.routes, s.route), leg = legMin(plane, route), dep = hm(s.dep);
+      if(dep < ready) problems.push(`service ${i + 1} leaves at ${clock(dep)}, before the aircraft is ready at ${clock(ready)}`);
+      const arrAway = dep + leg, depAway = arrAway + route.turnaroundAwayMin, arrHome = depAway + leg;
+      if(arrHome > R.open[1]) problems.push(`service ${i + 1} gets back at ${clock(arrHome)}, after the airport closes`);
+      ready = arrHome + hm0.turnaroundMin;
+      out.push({ route:route.id, dep, arrAway, depAway, arrHome, ready, band:bandOf(R, dep), fare:s.fare, leg });
+    });
+    return { trips:out, problems, nextReady:ready };
+  }
+
+  /* Back-to-back departures from a first time: each leaves when the aircraft is ready. */
+  function backToBack(W, plane, hm0, routeIds, first){
+    let t = hm(first); const out = [];
+    routeIds.forEach(id => { out.push(t); const route = byId(W.routes, id), leg = legMin(plane, route); t = t + 2 * leg + route.turnaroundAwayMin + hm0.turnaroundMin; });
+    return out;
+  }
+
+  /* One aircraft's day. o = { plane, home:{code, terminal}, fuel (£ a litre), services:[{route, dep, fare}], mult:{routeId: x} } */
+  function day(W, o){
+    const R = rules(W), plane = typeof o.plane === 'string' ? byId(W.aircraft, o.plane) : o.plane;
+    const hm0 = o.home && o.home.landingFee !== undefined ? o.home : home(W, (o.home || {}).code || 'LHR', (o.home || {}).terminal || 'T5');
+    const T = timeline(W, plane, hm0, o.services), trips = T.trips;
+    const routes = {};
+    trips.forEach(t => { (routes[t.route] = routes[t.route] || { trips:[] }).trips.push(t); });
+    Object.keys(routes).forEach(id => {
+      const route = byId(W.routes, id), arch = byId(W.archetypes, route.archetype), x = routes[id], fare = x.trips[0].fare;
+      if(x.trips.some(t => t.fare !== fare)) T.problems.push(`${route.city}: one fare a day`);
+      const base = route.demandAtFare[String(fare)];
+      if(base === undefined) T.problems.push(`${route.city}: no demand figure at £${fare}`);
+      const demand = roundSchool((base || 0) * ((o.mult || {})[id] ?? 1));
+      const locked = {}; Object.keys(R.bands).forEach(b => { locked[b] = roundSchool(demand * arch.timeSensitiveShare * arch.bands[b]); });
+      const flex = demand - Object.values(locked).reduce((a, b) => a + b, 0);
+      x.trips.forEach(t => { t.seats = plane.seats; t.locked = 0; t.flex = 0; });
+      Object.keys(R.bands).forEach(b => { let left = locked[b]; x.trips.filter(t => t.band === b).forEach(t => { const k = Math.min(left, t.seats); t.locked = k; left -= k; }); });
+      let f = flex; // flexible passengers spread across the day's services while seats remain
+      while(f > 0){ const open = x.trips.filter(t => t.locked + t.flex < t.seats); if(!open.length) break; for(const t of open){ if(f <= 0) break; t.flex++; f--; } }
+      Object.assign(x, { demand, locked, flex, lockedLost: Object.keys(locked).reduce((a, b) => a + (x.trips.some(t => t.band === b) ? 0 : locked[b]), 0), flexLost:f });
+    });
+    let rev = 0, cost = 0;
+    trips.forEach(t => {
+      const route = byId(W.routes, t.route);
+      t.pax = t.locked + t.flex; t.revenue = t.pax * t.fare;
+      t.flyingHours = 2 * t.leg / H; t.litres = plane.fuelPer100Km * 2 * route.km / 100;
+      t.cost = { flying:r2(t.flyingHours * plane.hourlyCost), landing:hm0.landingFee + route.landingFeeAway, fuel:r2(t.litres * o.fuel), passengers:t.pax * hm0.passengerCharge };
+      t.costs = r2(t.cost.flying + t.cost.landing + t.cost.fuel + t.cost.passengers); t.profit = r2(t.revenue - t.costs);
+      rev += t.revenue; cost += t.costs;
+    });
+    const duty = trips.length ? (trips[trips.length - 1].arrHome + R.pad) - (trips[0].dep - R.pad) : 0;
+    const crew = duty > R.maxDuty ? R.crew : 0;
+    cost += plane.dayCost + crew;
+    return { ok:!T.problems.length, problems:T.problems, trips, routes, dutyMin:duty, crew, dayCost:plane.dayCost,
+             revenue:r2(rev), costs:r2(cost), profit:r2(rev - cost) };
+  }
+
+  const WE = { day, timeline, backToBack, legMin, bandOf, rules, home, roundSchool, clock, hm };
+  if(typeof module !== 'undefined' && module.exports) module.exports = WE; else root.WE = WE;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+/* ==================================================================
+   THE WORLD WORKBOOK: its values replace the prototype's, straight after the data loads, so every text built at load
+   (day stories, help) already uses them. The rules that use them are in p4h_world.js; see the note there.
+   ================================================================== */
+const WB = (() => { try { return J('data-workbook'); } catch(e){ return null; } })();
+const WBR = WB ? WE.rules(WB) : null;
+const roundSchool = x => WE.roundSchool(x);
+
+(function applyWorkbook(){
+  if(!WB) return;
+  const st = WB.settings || {};
+  WB.routes.forEach(w => {
+    const r = WORLD.routes.find(x => x.id === w.id); if(!r) return;   // the game's own routes only (Dublin and Paris for now)
+    const arch = WB.archetypes.find(a => a.id === w.archetype), F = w.fareOptions.slice();
+    Object.assign(r, { wb:true, km:w.km, alat:w.lat, alon:w.lon, utc:w.utc, basePrice:w.baseFare, fares:F, prices:F.slice(), setupPrices:F.slice(),
+      turnaroundMin:w.turnaroundAwayMin, landingFeeAway:w.landingFeeAway, demandAtFare:w.demandAtFare, arch, competition:w.competitionSensitivity,
+      blurb:w.story || r.blurb, step:10, growth:0 });
+    delete r.profile;
+  });
+  WB.aircraft.forEach(a => {
+    const p = PLANES.find(x => x.id === a.id); if(!p) return;
+    Object.assign(p, { wb:true, seats:a.seats, speed:a.speedKmh, range:a.rangeKm, fuelUse:a.fuelPer100Km, hourCost:a.hourlyCost, dayCost:a.dayCost,
+      price:a.launchDealPrice || a.listPrice, listPrice:a.listPrice });
+  });
+  WORLD.homes.forEach(h => {
+    const rows = WB.airports.filter(a => a.code === h.code); if(!rows.length) return;
+    h.fee = rows[0].landingFee; if(rows[0].demandModifier !== null && rows[0].demandModifier !== undefined) h.demandPct = Math.round(rows[0].demandModifier * 100);
+    (h.terminals || []).forEach(t => { const a = rows.find(x => String(x.terminal).toLowerCase() === t.id); if(a){ t.turn = a.turnaroundMin; t.charge = a.passengerCharge; } });
+  });
+  Object.assign(WORLD, { dayStart:st.airportOpen || WORLD.dayStart, dayEnd:st.airportClose || WORLD.dayEnd, crewCost:WBR.crew, crewDutyMin:WBR.maxDuty, crewPadMin:WBR.pad });
+  if(st.startingCash) WORLD.startingCash = st.startingCash;
+})();
+
 
 /* ==================================================================
    CONTROL WINDOW RENDERERS — HQ desk, task cards, one decision per screen
@@ -4422,13 +4554,13 @@ R.starter = () => {
   const spec = (big, label, text) => `<div class="spec"><span class="label">${label}</span><b class="mono">${big}</b><p>${text}</p></div>`;
   screen().innerHTML = taskFrame({ question:'Your start-up aircraft', work:false, context: ctxHomeBase(),
     story:[`Every airline starts somewhere. Yours starts with one ${esc(p.name)}.`],
-    say:`Your start-up aircraft is the ${p.name}. ${p.seats} seats. ${p.speed} kilometres an hour. A range of ${p.range} kilometres. It costs ${money(p.hourCost)} for every hour in the air, plus a ${money(homeData().fee)} landing fee, and ${money(p.dayCost)} a day.`,
+    say:`Your start-up aircraft is the ${p.name}. ${p.seats} seats. ${p.speed} kilometres an hour. A range of ${p.range} kilometres. It costs ${money(p.hourCost)} for every hour in the air, plus a landing fee at each end of the flight, and ${money(p.dayCost)} a day.`,
     main:`<div class="starter"><div class="st-plane"><svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-${p.icon}"/></svg>${finSvg(S.airline.fin, 56)}<b>${esc(p.name)}</b><span class="muted">${esc(p.fact)}</span></div>
       <div class="specs4">${spec(p.seats, 'Seats', `Up to ${p.seats} passengers on every flight.`)}
         ${spec(num(p.speed) + ' km/h', 'Speed', rs.map(r => `${esc(r.city)} (${num(routeKm(r))} km): ${fmtDur(TIME.leg(p, r))} each way.`).join(' '))}
         ${spec(num(p.range) + ' km', 'Range', 'How far it can fly before it must land. Both first markets are well within reach.')}
-        ${spec(money(p.hourCost) + ' an hour', 'Cost to operate', `Each hour in the air, plus a ${money(homeData().fee)} landing fee: ${rs.map(r => `${esc(r.city)} <b>${money(runCostOf(p, r))}</b>`).join(', ')} a service. Plus <b>${money(p.dayCost)} a day</b>. Fuel is extra.`)}</div></div>`,
-    foot:`<span class="muted grow">${owned ? 'Delivered to ' + esc(homeData().code) : `Price <b class="mono gold">${money(p.price)}</b>`}</span><button class="btn primary big" id="nx">${owned ? goLabel('Next') : 'Take delivery'} &#9654;</button>` });
+        ${spec(money(p.hourCost) + ' an hour', 'Cost to operate', `Each hour in the air, plus landing fees at both ends (${money(homeData().fee)} at ${esc(homeData().code)}): ${rs.map(r => `${esc(r.city)} <b>${money(runCostOf(p, r))}</b>`).join(', ')} a service. Plus <b>${money(p.dayCost)} a day</b>. Fuel is extra.`)}</div></div>`,
+    foot:`<span class="muted grow">${owned ? 'Delivered to ' + esc(homeData().code) : `Price <b class="mono gold">${money(p.price)}</b>${p.listPrice > p.price ? ` <span class="muted">launch deal (normally ${money(p.listPrice)})</span>` : ''}`}</span><button class="btn primary big" id="nx">${owned ? goLabel('Next') : 'Take delivery'} &#9654;</button>` });
   on('nx', () => { if(!S.fleet.length) buyPlane(p); advance(); });
 };
 R.market = () => {
@@ -5999,6 +6131,7 @@ function yearVs(T){
   const lens = [...new Set(T.parts.map(p => p.days.length))]; if(lens.some(n => n < 31)) reasons.push(`Months are not all the same: they have ${lens.sort().join(', ')} days. Your average came from July and August, which have 31 days each.`);
   const fuels = T.parts.map(p => withBeat(beatAt(p.from), () => fuelPrice())); const lo = Math.min(...fuels), hi = Math.max(...fuels);
   if(hi - lo >= 0.05) reasons.push(`Fuel did not stay the same: it cost between ${priceL(lo)} and ${priceL(hi)} a litre during the year.`);
+  const grown = growthReason(T, dayOfDate('2030-08-01')); if(grown) reasons.push(grown);
   const perDay = Math.round(T.profit / T.days.length), was = Math.round(pj.avg / 31); if(Math.abs(perDay - was) > 20) reasons.push(`The airline made about ${money(perDay)} a day this year; July and August made about ${money(was)} a day.`);
   if(T.autoL) reasons.push(`${num(T.autoL)} L of fuel were delivered automatically at 10p a litre more than the market price.`);
   reasons.push('Cash is not the same as profit: fuel bought goes into the tank first, and only becomes a cost when it is burned.');
@@ -6420,7 +6553,7 @@ function editStep(what){
 const PLAN_STORY = {
   3.1:['A catering company can supply snacks for your flights.', 'Selling snacks brings in money, but the stock costs money too. Free snacks cost more but passengers like them.'],
   3.2:['The launch deal is over. From today your airline buys its own fuel.', 'Does yesterday\'s plan still make sense now that fuel costs money?'],
-  3.3:['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.', `You can now choose a departure time for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 540)}; a longer day needs a second crew (${money(WORLD.crewCost || 300)}).`],
+  3.3:['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.', `You can now choose a departure time for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 720)}, from half an hour before the first departure to half an hour after the last landing. A longer day needs a second crew (${money(WORLD.crewCost || 250)}).`],
   3.4:['A second market is open. Your one aircraft can now fly to two places.', 'How should its day be shared between them? Add a service, or change a service\'s route with ⇄.'] };
 R.planner = () => {
   const p = ourPlane(), pl = currentPlan(), L = planLines(pl), W = PW(), per = W.span !== 'day', st = progress();
@@ -6465,7 +6598,7 @@ R.costPlan = () => {
   if(sp === 'day'){
     L = planLines(pl);
     const tid = 'cost:' + S.day, prev = S.rnd.tables[tid];
-    const v0 = L.v, parts = { cost:[['Flights', money(v0.run)]].concat(fuelPaid() ? [['Fuel', money(v0.fuel)]] : []).concat([['Terminal charges', money(v0.term)]]).concat(v0.stock ? [['Snack stock', money(v0.stock)]] : []).concat(v0.crew ? [['Second crew', money(v0.crew)]] : []).concat([["Aircraft's day", money(v0.day)]]) };
+    const v0 = L.v, parts = { run:flightParts(pl.sched), cost:[['Flights', money(v0.run)]].concat(fuelPaid() ? [['Fuel', money(v0.fuel)]] : []).concat([['Terminal charges', money(v0.term)]]).concat(v0.stock ? [['Snack stock', money(v0.stock)]] : []).concat(v0.crew ? [['Second crew', money(v0.crew)]] : []).concat([["Aircraft's day", money(v0.day)]]) };
     t = ensureTable(tid, 'cost1', [{ id:'a', label:'Your plan', sub:svcLabel(pl.sched), values:Object.assign({}, L.v), parts }], { rowIds:costRowIds(L, pl), labels:costLabels() });
     if(t !== prev && !(setup && !prev)) t.active = null;
     if(toolMet('emptySeats') && toolLevel('emptySeats') !== 'model' && L.services.length){
@@ -6646,6 +6779,179 @@ document.addEventListener('click', e => {
   const f = e.target && e.target.closest ? e.target.closest('[data-fx]') : null;
   if(f){ const [table, col, row] = f.getAttribute('data-fx').split('|'); UI.dock = { mode:'fx', topic:null, fx:{ table, col, row } }; render(); }
 });
+
+/* ==================================================================
+   THE WORLD WORKBOOK IN THE GAME.
+   data/Airline-World-Workbook.xlsx → tools/import_world.py → the data-workbook block. Its routes (Dublin, Paris), aircraft
+   (Twin Otter, Saab 340, ATR 72) and home airports replace the prototype's values, and its rules (Fable Pass 1, section 0)
+   replace the old demand formula, the three time bands, the 9-hour crew rule and the home-only landing fee:
+     - people at a fare come from the route's demand table (Heathrow figures; other homes scale by their demand modifier);
+     - five day bands; a service belongs to the band it leaves home in; time-locked passengers only take services in their
+       band, flexible ones spread across the route's services while seats remain (from Day 3; before that everyone is flexible);
+     - a service costs flying hours × the hourly cost + landing fees at both ends + fuel + a charge for each passenger at home;
+     - the day costs the aircraft's day cost, plus a second crew when duty (30 minutes before the first departure to 30
+       minutes after the last arrival) is over 12 hours.
+   Rounding is school rounding (halves up). The rules are in engine/world-engine.js (WE), the file the balance test checks.
+   Routes the workbook doesn't have (Madrid and beyond) keep the old rules.
+   ================================================================== */
+/* The workbook's values are applied in p4a2_workbook.js, straight after the data loads. */
+/* ---------- distance and time: the workbook's distance, the same from every home airport ---------- */
+function routeKm(route, hh){
+  if(route.wb) return route.km;
+  const h = hh || homeData(), la = route.alat !== undefined ? route.alat : route.lat, lo = route.alon !== undefined ? route.alon : route.lon, R = Math.PI / 180;
+  const a = Math.sin((la - h.lat) * R / 2) ** 2 + Math.cos(h.lat * R) * Math.cos(la * R) * Math.sin((lo - h.lon) * R / 2) ** 2;
+  return Math.round(6371 * 2 * Math.asin(Math.sqrt(a)) / 10) * 10;
+}
+function legMinutes(plane, route, hh){ return route.wb ? Math.round(route.km / plane.speed * 60) : Math.max(15, Math.round(routeKm(route, hh) / plane.speed * 60 / 5) * 5); }
+
+/* ---------- costs: flying, and landing at both ends ---------- */
+function flyCost(plane, route){ return Math.round(plane.hourCost * flyHours(plane, route)); }
+function landingFees(route){ return homeData().fee + (route.landingFeeAway || 0); }
+function runCostOf(plane, route){ return (route && plane.hourCost ? flyCost(plane, route) : plane.runCost) + (route ? landingFees(route) : homeData().fee); }
+/* What "Flights" is made of, for the cost sheet's "What's in this?". */
+function flightParts(sched){
+  const p = ourPlane(), c = serviceCounts(sched), h = homeData();
+  return Object.keys(c).map(id => { const r = routeById(id), n = c[id];
+    return [`${r.city} ×${n}: ${fmtDur(2 * legMinutes(p, r))} flying at ${money(p.hourCost)} an hour, landing ${money(h.fee)} at ${h.code} + ${money(r.landingFeeAway || 0)} at ${r.city}`, money(n * runCostOf(p, r))]; });
+}
+
+/* ---------- crew: a second crew when the duty day is over the limit ---------- */
+function dutyMin(plane, sched){ const D = TIME.day(plane, sched); if(!D.trips.length) return 0; const pad = WORLD.crewPadMin || 0; return (D.end + pad) - (D.trips[0].dep - pad); }
+function crewNeeded(sched){ const f = S.fleet[0]; if(!f) return 1; const s = sched || schedOf(f); if(!s.length) return 1; return dutyMin(planeById(f.planeId), s) > (WORLD.crewDutyMin || 720) ? 2 : 1; }
+function dayExtras(fl){
+  const flown = fl.filter(f => !f.grounded && !f.noFuel), ob = onboardOf(), by = {};
+  let term = 0, obRev = 0, obCost = 0, buyers = 0;
+  flown.forEach(f => { const x = by[f.route] || (by[f.route] = { pax:0 }); x.pax += f.sold; term += f.termCost || 0; });
+  Object.keys(by).forEach(id => { const x = by[id]; x.buyers = ob.share ? Math.floor(x.pax * ob.share) : 0; x.obRev = x.buyers * (ob.price || 0); x.obCost = ob.free ? x.pax * ob.costPax : x.buyers * (ob.costItem || 0); obRev += x.obRev; obCost += x.obCost; buyers += x.buyers; });
+  const crews = flown.length ? crewNeeded() : 1;
+  // each aircraft that flies a long day pays for its own second crew
+  const long = S.fleet.filter(f => flown.some(x => x.uid === f.uid) && dutyMin(planeById(f.planeId), schedOf(f)) > (WORLD.crewDutyMin || 720)).length;
+  return { term, obRev, obCost, buyers, crews, crew: long * (WORLD.crewCost || 250), byRoute: by, free: !!ob.free };
+}
+
+/* ---------- demand: the route's table at the fare ---------- */
+function tableAt(route, fare){
+  const T = route.demandAtFare, f = String(fare); if(T[f] !== undefined) return T[f];
+  const k = Object.keys(T).map(Number).sort((a, b) => a - b);   // a fare between two in the table: in proportion; beyond it, the nearest step carries on
+  let i = k.findIndex(x => x > fare); if(i <= 0) i = i === 0 ? 1 : k.length - 1;
+  const a = k[i - 1], b = k[i], v = T[a] + (T[b] - T[a]) * (fare - a) / (b - a);
+  return Math.max(0, v);
+}
+/* Heathrow is the reference (the tables were tested there); other homes scale by their demand modifier. */
+function homeScale(){ const ref = WB && WB.airports.find(a => a.code === 'LHR'), r = ref ? 1 + (ref.demandModifier || 0) : 1; return (1 + (homeData().demandPct || 0) / 100) / r; }
+/* Word spreads: growthPerWeek % more people each full week of regular operation (Week 1 = no growth), up to the ceiling.
+   The same all through a week or a month, so a projection made at its start still holds. */
+function growthOf(route, n){ const a = route.arch; if(!a || !a.growthPerWeek) return 1; const wk = Math.max(0, weekNo(beatDay(n)) - 1); return Math.min(a.growthCeiling || Infinity, 1 + a.growthPerWeek / 100 * wk); }
+function seasonOf(day){ const m = calDate(day).getUTCMonth(); return m >= 2 && m <= 4 ? 'spring' : m <= 7 && m >= 5 ? 'summer' : m >= 8 && m <= 10 ? 'autumn' : 'winter'; }
+function seasonMult(route, n){ const a = route.arch; return a && a.season ? (a.season[seasonOf(beatDay(n))] || 1) : 1; }
+function demandAt(route, price, n){
+  const n0 = n === undefined ? S.round : n, w = roundData(n0), dm = w.demandMod || {};
+  const mod = (dm[route.id] || 0) + (dm.focus && S.rnd && route.id === S.rnd.focusRoute ? dm.focus : 0);
+  if(!route.wb){ const grow = n0 >= 2 && route.growth ? Math.min(route.cap || Infinity, route.growth * (n0 - 1)) : 0;
+    const base = Math.floor((route.baseDemand + grow + mod) * (1 + homeData().demandPct / 100)); return Math.max(0, Math.floor(base - route.drop * (price - route.basePrice) / route.step)); }
+  return Math.max(0, roundSchool((tableAt(route, price) * growthOf(route, n0) * seasonMult(route, n0) + mod) * homeScale()));
+}
+/* People who will actually fly with us at this fare: if the rival is cheaper, the route's competition share goes to them. */
+function paxFor(route, fare){ let pax = roundSchool(demandAt(route, fare) * repFactor()); const c = competitorPrice(route); if(c !== undefined && c < fare) pax = roundSchool(pax * (1 - (route.competition !== undefined ? route.competition : 0.2))); return pax; }
+function demandRule(r){
+  if(!r.wb) return [`At ${money(r.basePrice)}, ${demandAt(r, r.basePrice)} people want to fly.`, `Each ${money(r.step)} more, ${r.drop} fewer people want to fly.`, `Each ${money(r.step)} less, ${r.drop} more.`];
+  return [`At ${money(r.basePrice)}, ${demandAt(r, r.basePrice)} people want to fly.`, 'The higher the fare, the fewer people want to fly.'];
+}
+
+/* ---------- five bands through the day ---------- */
+const BANDS = WBR ? Object.keys(WBR.bands) : ['early', 'midmorning', 'midday', 'afternoon', 'evening'];
+const BAND_SHORT = { early:'Early', midmorning:'Mid-morning', midday:'Midday', afternoon:'Afternoon', evening:'Evening' };
+Object.keys(BAND_NAMES).forEach(k => delete BAND_NAMES[k]);
+Object.assign(BAND_NAMES, { early:'Early morning', midmorning:'Mid-morning', midday:'Middle of the day', afternoon:'Afternoon', evening:'Evening' });
+function bandHours(b){ return WBR ? WBR.bands[b] : { early:[6, 9], midmorning:[9, 12], midday:[12, 15], afternoon:[15, 18], evening:[18, 22] }[b]; }
+function bandOf(m){ for(const b of BANDS){ if(m < bandHours(b)[1] * 60) return b; } return BANDS[BANDS.length - 1]; }
+function bandSpan(b){ const [a, z] = bandHours(b); return `${pad(a)}:00–${pad(z)}:00`; }
+function archOf(route){ return route.arch || { timeSensitiveShare:0.5, bands:{ early:0.3, midmorning:0.15, midday:0.1, afternoon:0.15, evening:0.3 } }; }
+/* The day's passengers at this fare: those who must fly in each band, and the flexible ones who will take any service. */
+function demandPools(route, fare){
+  const W = paxWant(route, fare), out = { W };
+  if(!timeDemandOn()){ BANDS.forEach(b => { out[b] = 0; }); out.flex = W; return out; }
+  const a = archOf(route); let locked = 0;
+  BANDS.forEach(b => { out[b] = roundSchool(W * a.timeSensitiveShare * (a.bands[b] || 0)); locked += out[b]; });
+  out.flex = Math.max(0, W - locked); return out;
+}
+function planFlights(){
+  const out = [], pools = {}, fifo = fifoCursor(S.rnd && S.rnd.fuelOrder), paid = fuelPaid(), list = [];
+  const pool = (route, price) => { if(!pools[route.id]){ const comp = competitorPrice(route); pools[route.id] = Object.assign(demandPools(route, price), { demand: demandAt(route, price), comp, cut: comp !== undefined && comp < price }); } return pools[route.id]; };
+  S.fleet.forEach((f, i) => { const sched = schedOf(f); if(!sched.length) return; const plane = planeById(f.planeId), D = TIME.day(plane, sched); D.trips.forEach((tr, k) => list.push({ f, i, k, tr, plane })); });
+  list.sort((a, b) => a.tr.dep - b.tr.dep || a.i - b.i);
+  // 1. each service takes the people who must fly in its band
+  const rows = list.map(({ f, i, k, tr, plane }) => {
+    const route = routeById(tr.route), price = fareOf(tr.route);
+    const base = { key:f.uid+'-'+k, uid:f.uid, trip:k, planeId:f.planeId, route:tr.route, code:flightCode(i, k), price, seats:seatsOf(f), layout:f.layout, dep:tr.dep, arr:tr.arr, segments:tr.segments, fuelL:fuelForTrip(plane, route), runCost:runCostOf(plane, route), reasons:[] };
+    if(f.grounded) return Object.assign(base, { demand:0, sold:0, revenue:0, grounded:true, fuelL:0, runCost:0, fuelCost:0, reasons:['Grounded today, waiting for a spare part.'] });
+    const d = pool(route, price), band = bandOf(tr.dep), a = Math.min(base.seats, d[band] || 0); d[band] -= a;
+    return Object.assign(base, { band, locked:a, flexible:0, _d:d });
+  });
+  // 2. the flexible passengers spread across the route's services while seats remain
+  const byRoute = {}; rows.forEach(x => { if(!x.grounded) (byRoute[x.route] = byRoute[x.route] || []).push(x); });
+  Object.values(byRoute).forEach(xs => { const d = xs[0]._d; let left = d.flex;
+    while(left > 0){ const open = xs.filter(x => x.locked + x.flexible < x.seats); if(!open.length) break; for(const x of open){ if(left <= 0) break; x.flexible++; left--; } }
+    d.flex = left; });
+  rows.forEach(x => {
+    if(x.grounded){ out.push(x); return; }
+    const d = x._d, sold = x.locked + x.flexible, route = routeById(x.route), reasons = []; delete x._d;
+    if(d.cut) reasons.push(`${WORLD.rival} was cheaper (£${num(d.comp)}), so some passengers went to them.`);
+    if(sold < x.seats){
+      if(timeDemandOn()) reasons.push(`${x.locked} ${x.locked === 1 ? 'person' : 'people'} wanted to fly in the ${BAND_NAMES[x.band].toLowerCase()} (${bandSpan(x.band)}) and ${x.flexible} more could fly at any time.`);
+      else if((byRoute[x.route] || []).length > 1) reasons.push(`Today's ${route.city} passengers were shared between your services.`);
+    }
+    out.push(Object.assign(x, { demand:d.demand, sold, revenue: sold * x.price, termCost: sold * termCharge(), compCut:d.cut, reasons, fuelCost: !paid ? 0 : fuelContract() ? r2(x.fuelL * fuelPrice()) : fifo.take(x.fuelL) }));
+  });
+  return out;
+}
+/* Who wants to fly when: the band shares for the route, drawn to scale across the operating day. */
+function demandStrip(id){
+  const r = routeById(id), a = archOf(r), s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(2);
+  const bands = BANDS.map(b => { const [h0, h1] = bandHours(b); return [b, Math.max(s0, h0 * 60), Math.min(e0, h1 * 60)]; });
+  const dens = bands.map(([b, s, e]) => (a.bands[b] || 0) / Math.max(1, (e - s) / 60)), mx = Math.max(...dens);
+  return `<div class="dstrip"><span class="ds-l">${flagSvg(r.flag, 14)} ${esc(r.city)}: who wants to fly when</span><div class="ds-bar">${bands.map(([b, s, e], k) => `<i class="ds-b ${b}" style="left:${X(s)}%;width:${(100 * (e - s) / span).toFixed(2)}%;--h:${Math.max(8, Math.round(100 * dens[k] / mx))}%" title="${esc(BAND_NAMES[b])} ${bandSpan(b)}"><span>${BAND_SHORT[b]}</span></i>`).join('')}</div></div>`;
+}
+
+/* ---------- fares are the workbook's, whatever the home airport ---------- */
+function syncRoutesToHome(){
+  if(S && S.steps){ const fi = S.steps.findIndex(x => x.t === 'fareTry'); if(fi >= 0 && S.si !== fi){ S.steps.splice(fi, 1); if(S.si > fi) S.si--; if(S.rnd && S.rnd.returnTo > fi) S.rnd.returnTo--; } }
+  if(S && S.steps && !S.steps.some(x => x.t === 'ready')){ const i = S.steps.findIndex(x => x.t === 'fuelPlan'); if(i >= 0 && S.si <= i) S.steps.splice(i + 1, 0, { t:'ready' }); }
+  if(!S || !S.home) return;
+  WORLD.setupRoutes.map(routeById).forEach(r => {
+    if(!r.wb && S.home !== syncRoutesToHome.home){ const b = normalFare(r); r.basePrice = b; r.fares = [b - 10, b, b + 10, b + 20, b + 30]; r.prices = r.fares.slice(); r.setupPrices = r.fares.slice(); }
+    if(S.prices && S.prices[r.id] !== undefined && !r.fares.includes(S.prices[r.id])) S.prices[r.id] = r.basePrice;   // a fare from an older save
+  });
+  syncRoutesToHome.home = S.home;
+}
+
+/* The time checks in the teacher panel, on the workbook's distances (Paris 300 km: an hour each way in a Twin Otter). */
+function timeSelfTest(){
+  const p = planeById('dhc6'), par = routeById('par'), mad = routeById('mad'), out = [], at9 = toMin('09:00');
+  const t = (name, got, want) => out.push({ name, got, want, ok: got === want });
+  const leg = legMinutes(p, par), rt = 2 * leg + TIME.away(p, par), home = TIME.home(p);
+  t('Twin Otter to Paris, one way', fmtDur(TIME.leg(p, par)), fmtDur(Math.round(par.km / p.speed * 60)));
+  t('One round trip to Paris', fmtDur(TIME.roundTrip(p, par)), fmtDur(rt));
+  t('Depart 09:00, one Paris round trip: back at', fmtTime(TIME.day(p, ['par'], at9, null).end), fmtTime(at9 + rt));
+  const two = TIME.day(p, ['par', 'par'], at9, null);
+  t('Two Paris round trips: second departure', fmtTime(two.trips[1].dep), fmtTime(at9 + rt + home));
+  t('Two Paris round trips: final return', fmtTime(two.end), fmtTime(at9 + 2 * rt + home));
+  t('Two Paris round trips: total elapsed', fmtDur(two.elapsed), fmtDur(2 * rt + home));
+  t('Madrid one way', fmtDur(TIME.leg(p, mad)), '4 h');
+  t('Madrid round trip', fmtDur(TIME.roundTrip(p, mad)), '8 h 45');
+  return out;
+}
+
+/* For the tests: the game's model and the world engine side by side (tests/engine.test.js). */
+window.__world = { WB, WE, planOutcome, beatDay, buyPlane, planeById, fuelPrice, toMin, getS: () => S };
+
+/* For the reviews: how much more demand there was by the end of a run than when the projection's figures were made. */
+function growthReason(T, fromDay){
+  const d0 = fromDay !== undefined ? fromDay : T.from, b0 = beatAt(d0), b1 = beatAt(T.to);
+  const xs = ownedRoutes().map(routeById).filter(r => r && r.wb).map(r => ({ r, up: Math.round((growthOf(r, b1) / growthOf(r, b0) - 1) * 100) })).filter(x => x.up >= 3);
+  if(!xs.length) return null;
+  return `More people wanted to fly as word spread: ${xs.map(x => `${x.r.city} ${x.up}% more`).join(', ')} by ${monthName(T.to)} than in ${monthName(d0)}.`;
+}
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).

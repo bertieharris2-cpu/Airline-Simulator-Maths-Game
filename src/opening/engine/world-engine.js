@@ -4,14 +4,15 @@
    - A service is a round trip from home. It earns one plane-load at the fare (return tickets).
    - The day has five bands. A service belongs to the band it leaves home in.
    - Each route's people at a fare come from its demand table (times any multiplier). Some are time-locked: in each band,
-     demand × timeSensitiveShare × the band's share, rounded (halves to even, as the reference engine).
+     demand × timeSensitiveShare × the band's share, rounded as at school (halves up).
      They only board services in their band. The rest are flexible and fill any seats left that day.
    - Costs per service: flying hours × hourly cost + landing at both ends + fuel (litres × price) + a charge per passenger at home.
      Per day: the aircraft's day cost, plus a second crew when duty (30 min before the first departure to 30 min after the
      last arrival) is over the limit. */
-(function(root){
+;(function(root){
   const H = 60;
-  const roundEven = x => { const f = Math.floor(x), d = x - f; return Math.abs(d - 0.5) < 1e-9 ? (f % 2 === 0 ? f : f + 1) : Math.round(x); };
+  // School rounding: halves go up. A tiny allowance stops 10.4999999 (a float for 10.5) rounding down.
+  const roundSchool = x => Math.floor(x + 0.5 + 1e-9);
   const r2 = x => Math.round(x * 100) / 100;
   const hm = s => { if(typeof s === 'number') return s; const [h, m] = String(s).split(':').map(Number); return h * H + (m || 0); };
   const clock = m => `${String(Math.floor(m / H)).padStart(2, '0')}:${String(Math.round(m % H)).padStart(2, '0')}`;
@@ -66,8 +67,8 @@
       if(x.trips.some(t => t.fare !== fare)) T.problems.push(`${route.city}: one fare a day`);
       const base = route.demandAtFare[String(fare)];
       if(base === undefined) T.problems.push(`${route.city}: no demand figure at £${fare}`);
-      const demand = roundEven((base || 0) * ((o.mult || {})[id] ?? 1));
-      const locked = {}; Object.keys(R.bands).forEach(b => { locked[b] = roundEven(demand * arch.timeSensitiveShare * arch.bands[b]); });
+      const demand = roundSchool((base || 0) * ((o.mult || {})[id] ?? 1));
+      const locked = {}; Object.keys(R.bands).forEach(b => { locked[b] = roundSchool(demand * arch.timeSensitiveShare * arch.bands[b]); });
       const flex = demand - Object.values(locked).reduce((a, b) => a + b, 0);
       x.trips.forEach(t => { t.seats = plane.seats; t.locked = 0; t.flex = 0; });
       Object.keys(R.bands).forEach(b => { let left = locked[b]; x.trips.filter(t => t.band === b).forEach(t => { const k = Math.min(left, t.seats); t.locked = k; left -= k; }); });
@@ -91,6 +92,6 @@
              revenue:r2(rev), costs:r2(cost), profit:r2(rev - cost) };
   }
 
-  const WE = { day, timeline, backToBack, legMin, bandOf, rules, home, roundEven, clock, hm };
+  const WE = { day, timeline, backToBack, legMin, bandOf, rules, home, roundSchool, clock, hm };
   if(typeof module !== 'undefined' && module.exports) module.exports = WE; else root.WE = WE;
-})(this);
+})(typeof globalThis !== 'undefined' ? globalThis : this);

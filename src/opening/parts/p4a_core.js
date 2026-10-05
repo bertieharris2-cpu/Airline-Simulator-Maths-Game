@@ -704,6 +704,7 @@ function applyPeriodResults(){
     const f0 = fc.fuel, f1 = withBeat(beatAt(T.to), () => fuelPrice());
     if(Math.abs(f1 - f0) >= 0.05) vs.reasons.push(`Fuel ${f1 > f0 ? 'rose' : 'fell'} from ${priceL(f0)} to ${priceL(f1)} a litre.`);
     if(T.autoL) vs.reasons.push(`The tank ran out, so fuel was bought at the market price plus delivery.`);
+    if(fc.kind === 'run' || fc.kind === 'afford'){ const grown = growthReason(T); if(grown) vs.reasons.push(grown); }
     if(T.cancelled) vs.reasons.push('A CEO decision cost some flights on the first day.');
     if(Math.abs(exp - T.profit) >= 1 && !vs.reasons.length) vs.reasons.push(fc.kind === 'period' ? 'Your forecast used a rounded "about" figure for each day.' : 'Your forecast used a rounded "about" figure for each month.');
     if(Math.abs(r2(S.cash - fc.cash0) - T.profit) >= 1) vs.reasons.push('Cash and profit differ: fuel used from the tank was paid for earlier, and fuel bought goes into the tank.');

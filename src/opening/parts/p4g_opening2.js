@@ -279,7 +279,7 @@ function editStep(what){
 const PLAN_STORY = {
   3.1:['A catering company can supply snacks for your flights.', 'Selling snacks brings in money, but the stock costs money too. Free snacks cost more but passengers like them.'],
   3.2:['The launch deal is over. From today your airline buys its own fuel.', 'Does yesterday\'s plan still make sense now that fuel costs money?'],
-  3.3:['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.', `You can now choose a departure time for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 540)}; a longer day needs a second crew (${money(WORLD.crewCost || 300)}).`],
+  3.3:['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.', `You can now choose a departure time for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 720)}, from half an hour before the first departure to half an hour after the last landing. A longer day needs a second crew (${money(WORLD.crewCost || 250)}).`],
   3.4:['A second market is open. Your one aircraft can now fly to two places.', 'How should its day be shared between them? Add a service, or change a service\'s route with ⇄.'] };
 R.planner = () => {
   const p = ourPlane(), pl = currentPlan(), L = planLines(pl), W = PW(), per = W.span !== 'day', st = progress();
@@ -324,7 +324,7 @@ R.costPlan = () => {
   if(sp === 'day'){
     L = planLines(pl);
     const tid = 'cost:' + S.day, prev = S.rnd.tables[tid];
-    const v0 = L.v, parts = { cost:[['Flights', money(v0.run)]].concat(fuelPaid() ? [['Fuel', money(v0.fuel)]] : []).concat([['Terminal charges', money(v0.term)]]).concat(v0.stock ? [['Snack stock', money(v0.stock)]] : []).concat(v0.crew ? [['Second crew', money(v0.crew)]] : []).concat([["Aircraft's day", money(v0.day)]]) };
+    const v0 = L.v, parts = { run:flightParts(pl.sched), cost:[['Flights', money(v0.run)]].concat(fuelPaid() ? [['Fuel', money(v0.fuel)]] : []).concat([['Terminal charges', money(v0.term)]]).concat(v0.stock ? [['Snack stock', money(v0.stock)]] : []).concat(v0.crew ? [['Second crew', money(v0.crew)]] : []).concat([["Aircraft's day", money(v0.day)]]) };
     t = ensureTable(tid, 'cost1', [{ id:'a', label:'Your plan', sub:svcLabel(pl.sched), values:Object.assign({}, L.v), parts }], { rowIds:costRowIds(L, pl), labels:costLabels() });
     if(t !== prev && !(setup && !prev)) t.active = null;
     if(toolMet('emptySeats') && toolLevel('emptySeats') !== 'model' && L.services.length){

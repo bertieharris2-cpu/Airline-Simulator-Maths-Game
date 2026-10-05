@@ -1,8 +1,8 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 05 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook` (the game does not read it yet).*
+*Written by `tools/import_world.py` on 05 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**7 to fix, 6 to check, 3 notes.**
+**9 to fix, 6 to check, 3 notes.**
 
 ## Loaded
 
@@ -29,6 +29,8 @@
 - **Calendar:** day 13 is titled "Saturday", but 13 Sep is a Friday.
 - **Calendar:** day 13 is a weekend row, but 13 Sep is a Friday.
 - **Calendar:** day 14 is titled "Sunday", but 14 Sep is a Saturday.
+- **Routes:** dub: the story says "short", but it is the longer of the routes opening on day 1 (Dublin 450 km, Paris 300 km). The game shows the story next to the flight time.
+- **Routes:** par: the story says "longer", but it is the shorter of the routes opening on day 1 (Dublin 450 km, Paris 300 km). The game shows the story next to the flight time.
 - **Settings:** startDate 01 Sep 2030 is a Sunday, but its note says "Monday". The nearest Monday after it is 02 Sep 2030.
 
 ## To check
@@ -46,11 +48,11 @@
 - **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1200. The workbook wins.
 - **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events undercut_dub, storm, crew; challenges 2. Those choices then differ only in cash.
 
-## What changes when the workbook is wired in
+## The prototype's own data and the workbook's
 
-The prototype's current values against the workbook's. Nothing changes until the engine reads `data-workbook`.
+The game uses the workbook's values. The prototype's own (in `data-world` and `data-planes`) only matter for routes and aircraft the workbook does not have yet.
 
-| | Prototype now | Workbook |
+| | Prototype's own data | Workbook (used) |
 | --- | --- | --- |
 | Dublin distance | 300 km | 450 km |
 | Dublin fares | £50, £60, £70, £80 | £70, £80, £90, £100, £110 |
@@ -69,13 +71,13 @@ The prototype's current values against the workbook's. Nothing changes until the
 | Starting cash | £5,000 | £5,000 |
 | Start date | Sun 12 May 2030 | Sun 01 Sep 2030 |
 
-## Engine rules the workbook assumes
+## Engine rules
 
-From the README sheet (Fable Pass 1, section 0). To confirm before the engine uses the data:
+From the README sheet and Fable Pass 1, section 0, as `src/opening/engine/world-engine.js` implements them:
 
 - A service is a round trip that earns one plane-load at the fare (return tickets).
 - Five day bands: early 06:00–09:00, midmorning 09:00–12:00, midday 12:00–15:00, afternoon 15:00–18:00, evening 18:00–22:00 (from Pass 1; the prototype has three). A service belongs to the band it leaves home in.
-- Time-locked passengers fly only in their band. In each band: demand × timeSensitiveShare × the band's share, rounded (halves to even). The rest are flexible and fill any seats left that day.
+- Time-locked passengers fly only in their band. In each band: demand × timeSensitiveShare × the band's share, rounded as at school (halves up). The rest are flexible and fill any seats left that day.
 - People at a fare come from the route's demand table, not a formula.
 - Costs per service: flying hours × hourly cost + landing fees at both ends + fuel + a charge for each passenger at home. Per day: the day cost, plus a second crew when duty is over 12 h (30 minutes before the first departure to 30 minutes after the last arrival).
 - Fuel: the Calendar has a price for each day; the Market sheet has one for each week, used for time skips.

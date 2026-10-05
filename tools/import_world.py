@@ -6,7 +6,8 @@ Reads data/Airline-World-Workbook.xlsx and writes:
     (live rows only, as the workbook's README asks; weekend Calendar rows marked "optional" are kept and flagged);
   * data/Import-Report.md: what was loaded, what was skipped, and every check that failed.
 
-The game does not read data-workbook yet: wiring it in is the next step, once the engine rules are confirmed.
+The opening prototype uses data-workbook: src/opening/parts/p4a2_workbook.js applies its values when the page loads, and
+src/opening/engine/world-engine.js holds the rules. Rebuild after importing: python3 src/opening/build.py
 
 Usage:
   python3 tools/import_world.py            # import and write the report
@@ -293,6 +294,19 @@ for r in routes:
     if miss: issue('error', 'Routes', f'{r["id"]}: fare options {miss} have no demand figure.')
     if r['baseFare'] not in r['fareOptions']: issue('check', 'Routes', f'{r["id"]}: base fare £{r["baseFare"]} is not one of the fare options.')
 
+# route stories against the distances (the pupil sees both side by side when choosing a first market)
+for grp in sorted({r['unlockDay'] for r in routes}):
+    rs = [r for r in routes if r['unlockDay'] == grp]
+    if len(rs) < 2: continue
+    lo, hi = min(r['km'] for r in rs), max(r['km'] for r in rs)
+    both = ', '.join(f"{x['city']} {x['km']} km" for x in rs)
+    for r in rs:
+        t = (r['story'] or '').lower()
+        if re.search(r'\bshort\b', t) and r['km'] > lo:
+            issue('error', 'Routes', f'{r["id"]}: the story says "short", but it is the longer of the routes opening on day {grp} ({both}). The game shows the story next to the flight time.')
+        if re.search(r'\blong(er)?\b', t) and r['km'] < hi:
+            issue('error', 'Routes', f'{r["id"]}: the story says "longer", but it is the shorter of the routes opening on day {grp} ({both}). The game shows the story next to the flight time.')
+
 # leg times on quarter hours (the README sheet's promise)
 live_planes = [a for a in all_aircraft if a['status'] == 'live']
 for r in [x for x in all_routes if x['status'] == 'live']:
@@ -373,7 +387,7 @@ issues.sort(key=lambda x: (order[x[0]], x[1]))
 n = Counter(l for l, _, _ in issues)
 out = [f'# Import report: {BOOK.name}', '',
        f'*Written by `tools/import_world.py` on {dt.date.today():%d %b %Y}. Loaded: {", ".join(sorted(LOAD))} rows. '
-       f'{"Check only: the game data was not changed." if "--check" in args else f"Written to `{DATA.relative_to(ROOT)}` as `{BLOCK_ID}` (the game does not read it yet)."}*', '',
+       f'{"Check only: the game data was not changed." if "--check" in args else f"Written to `{DATA.relative_to(ROOT)}` as `{BLOCK_ID}`; rebuild the prototype to use it."}*', '',
        f'**{n["error"]} to fix, {n["check"]} to check, {n["note"]} notes.**', '',
        '## Loaded', '', '| Sheet | Loaded | Rows by status |', '| --- | --- | --- |']
 for s, (k, st) in counts.items():
@@ -381,14 +395,14 @@ for s, (k, st) in counts.items():
 for title, lvl in (('To fix before wiring in', 'error'), ('To check', 'check'), ('Notes', 'note')):
     xs = [(s, msg) for l, s, msg in issues if l == lvl]
     if xs: out += ['', f'## {title}', ''] + [f'- **{s}:** {msg}' for s, msg in xs]
-out += ['', '## What changes when the workbook is wired in', '',
-        'The prototype\'s current values against the workbook\'s. Nothing changes until the engine reads `data-workbook`.', '',
-        '| | Prototype now | Workbook |', '| --- | --- | --- |'] + rows
-out += ['', '## Engine rules the workbook assumes', '',
-        'From the README sheet (Fable Pass 1, section 0). To confirm before the engine uses the data:', '',
+out += ['', '## The prototype\'s own data and the workbook\'s', '',
+        'The game uses the workbook\'s values. The prototype\'s own (in `data-world` and `data-planes`) only matter for routes and aircraft the workbook does not have yet.', '',
+        '| | Prototype\'s own data | Workbook (used) |', '| --- | --- | --- |'] + rows
+out += ['', '## Engine rules', '',
+        'From the README sheet and Fable Pass 1, section 0, as `src/opening/engine/world-engine.js` implements them:', '',
         '- A service is a round trip that earns one plane-load at the fare (return tickets).',
         '- Five day bands: ' + (', '.join(f'{b} {v[0]:02d}:00–{v[1]:02d}:00' for b, v in engine.get('bands', {}).items()) or 'boundaries unknown') + ' (from Pass 1; the prototype has three). A service belongs to the band it leaves home in.',
-        '- Time-locked passengers fly only in their band. In each band: demand × timeSensitiveShare × the band\'s share, rounded (halves to even). The rest are flexible and fill any seats left that day.',
+        '- Time-locked passengers fly only in their band. In each band: demand × timeSensitiveShare × the band\'s share, rounded as at school (halves up). The rest are flexible and fill any seats left that day.',
         '- People at a fare come from the route\'s demand table, not a formula.',
         '- Costs per service: flying hours × hourly cost + landing fees at both ends + fuel + a charge for each passenger at home. Per day: the day cost, plus a second crew when duty is over 12 h (30 minutes before the first departure to 30 minutes after the last arrival).',
         '- Fuel: the Calendar has a price for each day; the Market sheet has one for each week, used for time skips.', '']
