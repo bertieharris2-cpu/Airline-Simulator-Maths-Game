@@ -2037,7 +2037,7 @@ td.c .mdl{display:inline-block;margin-left:6px;padding:0 4px;font-style:normal;f
 .dock .fc-plan .fp-h{flex:none}.dock .fc-plan .fp-h span{display:none}
 .dock .fc-plan .fp-p{flex:1;min-height:30px}
 .dock .fm-k{margin:2px 0 0}
-.dock .fc-plan .btn.small{white-space:nowrap}
+.dock .fc-plan .btn.small{white-space:nowrap;padding:2px 8px}.dock .fc-plan .fp-p{min-width:0;gap:6px}.dock .fc-plan .fp-p b{font-size:17px}
 
 .y1rv{gap:8px}.y1rv .pnl{padding:8px 14px}.y1rv .yr-why{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}.y1rv .yr-why p{font-size:15px}
 .y1rv .yr-aff{flex-direction:row;gap:24px}
@@ -5016,6 +5016,7 @@ function liveOpsHtml(mode){
     const r = routeById(f.route), s = mode === 'live' ? displayStatus(f) : (S.rnd.status[f.key] || 'SCHEDULED');
     return `<tr><td class="num">${fmtTime(f.dep)}</td><td>${esc(f.code)}</td><td>${flagSvg(r.flag, 16)} ${esc(r.city)}</td><td class="num">${S.rnd.applied ? `${f.sold}/${f.seats}` : f.seats}</td><td><span class="st-dot ${statusClass(s)}"></span><span class="lo-st ${statusClass(s)}" data-lo="${f.key}">${esc(cap(s))}</span></td></tr>`; }).join('')}</tbody></table></div>`;
 }
+function capFirst(s){ s = String(s || ''); return s.charAt(0).toUpperCase() + s.slice(1); }
 function cap(s){ s = String(s || '').toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); }
 function dayReviews(){ return (S.rnd.applied ? S.rnd.reviews : (lastDay() && lastDay().reviews)) || []; }
 function feedbackHtml(){
@@ -5114,7 +5115,7 @@ function renderView(v){
 }
 
 function finHistoryHtml(){
-  return `<div class="pb"><table class="hq-t"><thead><tr><th>When</th><th class="num">Passengers</th><th class="num">Revenue</th><th class="num">Costs</th><th class="num">Profit</th><th class="num">Cash after</th><th class="num">Fuel stock</th></tr></thead><tbody>${S.history.slice().reverse().map(x => `<tr><td>${esc(x.type === 'setup' ? 'Launch day' : x.type === 'day' ? dateShort(x.from) : cap(periodShort(x)))}</td><td class="num">${num(x.pax)}</td><td class="num">${money(Math.round(x.revenue))}</td><td class="num">${money(Math.round(x.costs))}</td><td class="num ${x.profit >= 0 ? 'green' : 'red'}">${money(Math.round(x.profit))}</td><td class="num">${money(Math.round(x.cash))}</td><td class="num">${x.fuelL !== undefined ? `${num(x.fuelL)} L` : '—'}</td></tr>`).join('') || '<tr><td colspan="7" class="muted">Nothing flown yet.</td></tr>'}</tbody></table></div>`;
+  return `<div class="pb"><table class="hq-t"><thead><tr><th>When</th><th class="num">Passengers</th><th class="num">Revenue</th><th class="num">Costs</th><th class="num">Profit</th><th class="num">Cash after</th><th class="num">Fuel stock</th></tr></thead><tbody>${S.history.slice().reverse().map(x => `<tr><td>${esc(x.type === 'setup' ? 'Launch day' : x.type === 'day' ? dateShort(x.from) : capFirst(periodShort(x)))}</td><td class="num">${num(x.pax)}</td><td class="num">${money(Math.round(x.revenue))}</td><td class="num">${money(Math.round(x.costs))}</td><td class="num ${x.profit >= 0 ? 'green' : 'red'}">${money(Math.round(x.profit))}</td><td class="num">${money(Math.round(x.cash))}</td><td class="num">${x.fuelL !== undefined ? `${num(x.fuelL)} L` : '—'}</td></tr>`).join('') || '<tr><td colspan="7" class="muted">Nothing flown yet.</td></tr>'}</tbody></table></div>`;
 }
 /* Full screen in one click (the two-screen Present lives in the Home menu). */
 function fsEl(){ return document.fullscreenElement || document.webkitFullscreenElement; }
@@ -5233,7 +5234,7 @@ R.options = () => {
   const left = i => typed.filter(r => { const ri = tRows(t).findIndex(x => x.id === r); return ri >= 0 && ['enter', 'wait'].includes(cellState(t, cols[i], ri)); }).length;
   const cards = lines.map((L, i) => { const pl = plans[i], n = left(i), usable = pl.sched.length && L.fits && same[i] === null;
     const st = !pl.sched.length ? '<span class="muted">No flights</span>' : !L.fits ? '<span class="red">Doesn\'t fit</span>' : same[i] !== null ? `<span class="muted">Same as ${PLAN_NAMES[same[i]]}</span>` : n ? `<span class="fp-todo">${plural(n, 'figure')} to complete</span>` : `<b class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</b>`;
-    return `<div class="fc-plan ${i === best ? 'best' : ''}"><div class="fp-h"><b>${PLAN_NAMES[i]}</b><span>${pl.sched.length ? esc(svcLabel(pl.sched)) : ''}</span></div><div class="fp-p">${st}${done && usable ? `<button class="btn small ${i === best ? 'primary' : ''}" data-fly="${i}">${goLabel(`Use ${PLAN_NAMES[i].replace('Plan ', '')}`)} &#9654;</button>` : ''}</div></div>`; }).join('');
+    return `<div class="fc-plan ${i === best ? 'best' : ''}"><div class="fp-h"><b>${PLAN_NAMES[i]}</b><span>${pl.sched.length ? esc(svcLabel(pl.sched)) : ''}</span></div><div class="fp-p">${st}${done && usable ? `<button class="btn small ${i === best ? 'primary' : ''}" data-fly="${i}">${goLabel(`Use ${PLAN_NAMES[i].replace('Plan ', '')}`)}</button>` : ''}</div></div>`; }).join('');
   screen().innerHTML = taskFrame({ question: per ? `Forecast ${W.now}` : 'Cost your options', work:true, calc:t,
     story: sc === 0 ? ['Lower fares usually attract more passengers. Higher fares earn more from each ticket.', 'Each plan charges a different fare. Work out each profit (total revenue − total costs), then choose.'] : [],
     say:'Cost your options. Work out the profit of each plan: total revenue minus total costs.',
@@ -5545,7 +5546,7 @@ function stepsFor(b){
 }
 function periodBrief(){
   const h = lastHist(); if(!h) return [];
-  const L = [`${cap(periodShort(h))}: ${num(h.pax)} passengers flew, ${h.profit >= 0 ? 'profit' : 'loss'} ${money(Math.round(Math.abs(h.profit)))}.`];
+  const L = [`${capFirst(periodShort(h))}: ${num(h.pax)} passengers flew, ${h.profit >= 0 ? 'profit' : 'loss'} ${money(Math.round(Math.abs(h.profit)))}.`];
   const fp = fuelPrice(), fy = fuelPrice(Math.max(0, S.round - 1)); if(fp !== fy) L.push(`Fuel is ${priceL(fp)} a litre (was ${priceL(fy)}).`);
   return L;
 }
@@ -5704,7 +5705,7 @@ function trendHtml(){
   if(!H.length) return '<p class="muted">The trend starts after the first routine days.</p>';
   const mx = Math.max(1, ...H.map(x => Math.abs(x.profit / (x.to - x.from + 1))));
   return `<div class="trend">${H.map(x => { const n = x.to - x.from + 1, a = Math.round(x.profit / n);
-    return `<div class="tr-r"><span>${esc(cap(periodShort(x)))}</span><i class="${a < 0 ? 'neg' : ''}" style="width:${(100 * Math.abs(a) / mx).toFixed(1)}%"></i><b class="mono">${money(Math.round(x.profit))}</b><small class="mono">${money(a)} a day</small></div>`; }).join('')}</div>`;
+    return `<div class="tr-r"><span>${esc(capFirst(periodShort(x)))}</span><i class="${a < 0 ? 'neg' : ''}" style="width:${(100 * Math.abs(a) / mx).toFixed(1)}%"></i><b class="mono">${money(Math.round(x.profit))}</b><small class="mono">${money(a)} a day</small></div>`; }).join('')}</div>`;
 }
 R.review = () => {
   const h = lastHist(), spec = reviewSpec();
@@ -5756,7 +5757,7 @@ function periodResultsCard(){
   const fcLine = vs && vs.kind === 'period' ? `<p class="dr-fc">Your forecast: ${money(vs.expProfit)} · actual: ${money(vs.gotProfit)} ${Math.abs(vs.expProfit - vs.gotProfit) < 1 ? '<span class="green">✓ as forecast</span>' : `<span class="orange">${vs.gotProfit > vs.expProfit ? '+' : '−'}${money(Math.abs(vs.gotProfit - vs.expProfit))}</span>`}</p>` : '';
   const chips = T.parts.length > 1 && T.parts.length <= 8 ? `<div class="sim-chips res ${T.parts.length > 6 ? 'y8' : ''}">${T.parts.map(p => `<span class="on"><b>${esc(p.label)}</b><i class="mono ${p.profit >= 0 ? 'green' : 'red'}">${money(p.profit)}</i></span>`).join('')}</div>` : '';
   const bought = r2(S.cash - S.rnd.cashStart - pr);
-  return `${hqHead(yr ? 'The Year So Far' : `${cap(periodShort(h))} Results`, 'ALL LANDED')}<div class="pb td2 dr">
+  return `${hqHead(yr ? 'The Year So Far' : `${capFirst(periodShort(h))} Results`, 'ALL LANDED')}<div class="pb td2 dr">
     <div class="dr-rcp"><div class="rev"><span class="kl">Revenue</span><b>${money(T.rev)}</b></div><i>−</i><div class="cost"><span class="kl">Costs</span><b>${money(T.costs)}</b></div><i>=</i>
       <div class="prof ${pr < 0 ? 'neg' : ''}"><span class="kl">${pr >= 0 ? 'Profit' : 'Loss'}</span><b>${money(Math.abs(pr))}</b></div></div>
     ${fcLine}${yr ? yearResultLines() : ''}${savedLine()}${chips}
