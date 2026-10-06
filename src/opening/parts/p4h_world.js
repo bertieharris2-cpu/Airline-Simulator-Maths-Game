@@ -156,8 +156,10 @@ function timeSelfTest(){
   t('Two Paris round trips: second departure', fmtTime(two.trips[1].dep), fmtTime(at9 + rt + home));
   t('Two Paris round trips: final return', fmtTime(two.end), fmtTime(at9 + 2 * rt + home));
   t('Two Paris round trips: total elapsed', fmtDur(two.elapsed), fmtDur(2 * rt + home));
-  t('Madrid one way', fmtDur(TIME.leg(p, mad)), '4 h');
-  t('Madrid round trip', fmtDur(TIME.roundTrip(p, mad)), '8 h 45');
+  // Madrid is not on the workbook yet: its distance is the great circle from home, and a leg is distance ÷ speed to the nearest 5 minutes
+  if(mad){ const km = Math.round(routeKm(mad)), ml = Math.round(km / p.speed * 60 / 5) * 5;
+    t(`Madrid (${num(km)} km) one way`, fmtDur(TIME.leg(p, mad)), fmtDur(ml));
+    t(`Madrid (${num(km)} km) round trip`, fmtDur(TIME.roundTrip(p, mad)), fmtDur(2 * ml + TIME.away(p, mad))); }
   return out;
 }
 

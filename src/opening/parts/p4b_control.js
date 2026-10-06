@@ -807,7 +807,17 @@ function questionBank(){
     const samples = { price: buildPriceCols(f, route), tripsCount: tc, tripsExtra: buildTripsExtraCols(f, 'dub', tc[0].values.left || 11), fuel: buildFuelCols(1000), cabin: buildCabinCols(f), plane: buildPlaneCols(PLANES.slice(1,3).map(p => p.id)), options: [{ id:'a', label:'Plan A', values:{ pax1:38, fare1:90, tk1:3420, pax2:0, fare2:60, tk2:0, snack:0, rev:3420, run:1252, fuel:432, term:114, stock:0, crew:0, day:900, cost:2698, profit:722 } }], dayForecast: [{ id:'par', label:'Paris', values:{ pax:38, fare:90, revenue:3420, run:1252, fuel:432, cost:1684, profit:1736 } }], days: buildDayCols(f, ['par','par'], ['mad']), quick: buildQuickCols(f),
       periodPlan: [{ id:'w', label:'A week', values:{ day:230, days:7, total:1610, cash:3036, cashEnd:4646 } }], runPlan: [{ id:'r', label:'3 months', values:{ month:10000, months:3, total:30000, cash:40724, cashEnd:70724 } }],
       afford: [{ id:'a', label:'Saab 340', values:{ cash:40724, reserve:10000, investable:30724, price:45000, needed:14276, month:10000, months:2 } }], planeM: buildPlaneColsM(PLANES.slice(1,3).map(p => p.id)) };
-    const sec = Object.keys(TABLES).map(kind => {
+    // the opening's tables have no sample columns: each row is listed with its sum in words
+    const NOW = ['cost1', 'empty1', 'week1', 'review2', 'periodPlan2', 'yearPlan', 'afford2', 'yearReview', 'invest'];
+    const inWords = (def, r) => r.sentence ? r.sentence.replace(/\{\??(\w+)\}/g, (m, id) => { const x = def.rows.find(q => q.id === id); return m.includes('?') ? '?' : (x ? x.label : id); }) : '';
+    const now = NOW.filter(k => TABLES[k]).map(kind => { const def = TABLES[kind];
+      const rows = def.rows.map(r => `<tr><td>${esc(r.label)}</td><td>${r.type === 'calc' ? 'worked out' : 'given'}</td><td class="ex">${esc(inWords(def, r))}</td><td>${esc(r.tool || r.skill || '')}</td></tr>`).join('');
+      return `<h2>${esc(def.title)}</h2><table><tr><th>Row</th><th>Type</th><th>The sum</th><th>Maths tool</th></tr>${rows}</table>`; }).join('');
+    const STAGE_NAME = st => ({ 2:'Launch Day', 3.1:'Day 1', 3.2:'Day 2', 3.3:'Day 3', 3.4:'Day 4', 4:'Week 1', 4.1:'Week 2', 4.2:'Week 3', 5:'the months', 6:'the year', 7:'Year 1 review' })[st] || 'stage ' + st;
+    const lvAt = T => (T.def || []).map(([st, l]) => `${STAGE_NAME(st)}: ${LVL[l] || l}`).join(' · ');
+    const tools = `<h2>Maths tools</h2><p class="note">Who does each kind of sum, by stage of the story: <b>Calculate</b> (the pupil works it out), <b>Build</b> (the pupil chooses the figures and the sign; the model works it out), <b>Model</b> (done by the model). The teacher panel can change any of them.</p>
+      <table><tr><th>Tool</th><th>What</th><th>By stage</th></tr>${TOOLS.map(T => `<tr><td>${esc(T.name)}</td><td>${esc(T.what || '')}</td><td>${esc(lvAt(T))}</td></tr>`).join('')}</table>`;
+    const sec = `<h2 class="part">In the game now</h2>${now}${tools}<h2 class="part">Older tables (the first version's rounds; not in the current story)</h2>` + Object.keys(TABLES).filter(kind => samples[kind]).map(kind => {
       const def = TABLES[kind], t = { kind, cols: samples[kind] }, col = t.cols[0];
       const rows = def.rows.map(r => `<tr><td>${esc(r.label)}</td><td>${r.type === 'calc' ? (Object.values(def.typed||{}).some(ids => ids.includes(r.id)) ? 'typed' : 'shown') : 'given'}</td><td class="ex">${r.sentence ? esc(cellExplain(t, col, r)) : esc(fmtVal(r.unit, col.values[r.id]))}</td><td>${esc(r.skill||'')}</td></tr>`).join('');
       return `<h2>${esc(def.title)}</h2><p class="note">Columns: ${t.cols.map(c => esc(c.label)).join(' · ')}. Worked example uses the first column (${esc(col.label)}).</p><table><tr><th>Row</th><th>Type</th><th>Worked example</th><th>Skill id</th></tr>${rows}</table>`;
@@ -817,7 +827,7 @@ function questionBank(){
       @page{size:A4;margin:14mm} body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:#111;font-size:12pt;line-height:1.4;max-width:190mm;margin:14mm auto;padding:0 10px}
       h1{font-family:"Courier New",monospace;letter-spacing:2px;border-bottom:3px solid #111;padding-bottom:4px} h2{margin:22px 0 4px;font-size:16pt}
       table{border-collapse:collapse;width:100%;margin:6px 0 10px;font-size:11pt} th,td{border:1px solid #999;padding:5px 8px;text-align:left;vertical-align:top} th{background:#eee;font-size:10pt;text-transform:uppercase;letter-spacing:1px} td.ex{font-family:"Courier New",monospace}
-      .note{color:#555;font-size:11pt} .btn{font:inherit;padding:8px 16px;border:1px solid #111;background:#ffc83d;cursor:pointer} @media print{.btn{display:none}}
+      .note{color:#555;font-size:11pt} h2.part{margin-top:30px;border-bottom:2px solid #111;font-size:18pt} .btn{font:inherit;padding:8px 16px;border:1px solid #111;background:#ffc83d;cursor:pointer} @media print{.btn{display:none}}
     </style></head><body><button class="btn" onclick="print()">Print</button>
     <h1>✈ AIRLINE SIMULATOR — QUESTION BANK</h1>
     <p class="note">Generated from the game's data blocks on ${new Date().toLocaleDateString('en-GB')}. World: <b>${esc(WORLD.name)}</b>. Every forecast-table row with how it is worked out and a worked example. Row types: <b>given</b> (filled in), <b>typed</b> (the pupil works it out; only the correct answer is accepted), <b>shown</b> (worked out by the game). Every sum is said as a sentence with its numbers.</p>

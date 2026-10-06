@@ -373,7 +373,8 @@ function teacherOpen(){
   $('tNudge').checked = settings.nudge; $('tAuto').checked = settings.auto; $('tStartCash').value = settings.startingCash; $('tFlightSecs').value = String(settings.flightSecs);
   $('tOpsSound').checked = settings.opsSound !== false; $('tAutoWall').checked = settings.autoWall !== false;
   const evs = []; WORLD.rounds.forEach((r,i)=>{ if(r.event) evs.push([i, r.event]); });
-  $('tEventPick').innerHTML = evs.map(([i,e]) => `<option value="${i}">${esc(e.title)} (${esc(WORLD.rounds[i].date ? dateShort(beatDay(i)) + ' ' + calDate(beatDay(i)).getUTCFullYear() : 'day ' + i)})</option>`).join('');
+  $('tEventPick').innerHTML = evs.length ? evs.map(([i,e]) => `<option value="${i}">${esc(e.title)} (${esc(WORLD.rounds[i].date ? dateShort(beatDay(i)) + ' ' + calDate(beatDay(i)).getUTCFullYear() : 'day ' + i)})</option>`).join('') : '<option value="">No events in this story yet</option>';
+  ['tEventPick', 'tEventNow', 'tEventDelay', 'tEventSkip'].forEach(id => { $(id).disabled = !evs.length; });   // events come back when the story has some
   const nl = S.teacherQueue.choice || '';
   $('tJobs').innerHTML = [['','As scripted'],['fare','Ticket price'],['trips','How many trips'],['fuel','Buy fuel'],['cabin','Seat layout'],['plane','A new plane']].map(([k,l]) => `<button class="btn small" data-tl="${k}" aria-pressed="${nl===k}">${l}</button>`).join('');
   $('tJobs').querySelectorAll('[data-tl]').forEach(b => b.onclick = () => { S.teacherQueue.choice = b.getAttribute('data-tl') || null; save(); teacherOpen(); });
@@ -405,7 +406,7 @@ function initTeacher(){
   $('tFlightSecs').onchange = e => { settings.flightSecs = parseInt(e.target.value,10); saveSettings(); };
   $('tOpsSound').onchange = e => { settings.opsSound = e.target.checked; saveSettings(); };
   $('tAutoWall').onchange = e => { settings.autoWall = e.target.checked; saveSettings(); };
-  $('tEventNow').onclick = () => { const i = parseInt($('tEventPick').value,10); S.rnd.event = WORLD.rounds[i].event; S.rnd.eventChoice = null; const at = Math.max(S.si+1, S.steps.findIndex(s=>s.t==='summary')); S.steps.splice(S.steps.findIndex(s=>s.t==='summary'), 0, {t:'event'}, {t:'eventOutcome'}); teacherClose(); toast('Event queued for after this screen'); };
+  $('tEventNow').onclick = () => { const i = parseInt($('tEventPick').value,10); if(!(WORLD.rounds[i] && WORLD.rounds[i].event)){ toast('No events in this story yet'); return; } S.rnd.event = WORLD.rounds[i].event; S.rnd.eventChoice = null; const at = Math.max(S.si+1, S.steps.findIndex(s=>s.t==='summary')); S.steps.splice(S.steps.findIndex(s=>s.t==='summary'), 0, {t:'event'}, {t:'eventOutcome'}); teacherClose(); toast('Event queued for after this screen'); };
   $('tEventDelay').onclick = () => { if(!S.rnd.event){ toast('No event today'); return; } S.nextMods.event = S.rnd.event; S.rnd.event = null; S.steps = S.steps.filter(s => s.t!=='event' && s.t!=='eventOutcome'); teacherClose(); toast('Event moved to tomorrow'); };
   $('tEventSkip').onclick = () => { S.rnd.event = null; S.steps = S.steps.filter(s => s.t!=='event' && s.t!=='eventOutcome'); teacherClose(); toast('Event skipped'); };
   $('tChallengeNow').onclick = () => { S.rnd.challenge = CHALLENGES[Math.floor(S.round/2) % CHALLENGES.length]; S.rnd.challengeDone = false; S.rnd.challengeWon = false; const i = S.steps.findIndex(s=>s.t==='summary'); S.steps.splice(i<0?S.steps.length:i, 0, {t:'challenge'}); teacherClose(); toast('Challenge added to today'); };

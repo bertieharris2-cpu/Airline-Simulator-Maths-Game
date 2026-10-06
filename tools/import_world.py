@@ -391,6 +391,7 @@ out = [f'# Import report: {BOOK.name}', '',
        f'**{n["error"]} to fix, {n["check"]} to check, {n["note"]} notes.**', '',
        '## Loaded', '', '| Sheet | Loaded | Rows by status |', '| --- | --- | --- |']
 for s, (k, st) in counts.items():
+    k = f'{k} rows → {len(events)} events' if s == 'Events' else k   # one row per option: the game holds one event per id
     out.append(f'| {s} | {k} | {", ".join(f"{v} {s2}" for s2, v in sorted(st.items()))} |')
 for title, lvl in (('To fix before wiring in', 'error'), ('To check', 'check'), ('Notes', 'note')):
     xs = [(s, msg) for l, s, msg in issues if l == lvl]

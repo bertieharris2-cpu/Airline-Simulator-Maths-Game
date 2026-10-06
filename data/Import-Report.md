@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 05 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 06 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **9 to fix, 6 to check, 3 notes.**
 
@@ -17,7 +17,7 @@
 | Airports | 5 | 5 live |
 | Calendar | 14 | 10 live, 4 optional, 1 placeholder |
 | Market | 2 | 86 later, 2 live, 16 placeholder |
-| Events | 9 | 9 live, 21 placeholder |
+| Events | 9 rows → 3 events | 9 live, 21 placeholder |
 | Challenges | 4 | 4 live, 4 placeholder |
 | Mechanics | 8 | 3 later, 8 live, 2 placeholder |
 
