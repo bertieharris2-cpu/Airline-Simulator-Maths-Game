@@ -2388,6 +2388,7 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
 .shop3.list{grid-template-columns:1fr;gap:6px}.shop3.list .ac-shop{display:grid;grid-template-columns:70px 1.3fr 1.6fr 1.5fr;align-items:center;gap:6px 14px;padding:7px 12px}.shop3.list .as-pic svg{height:30px}.shop3.list .ac-shop > .muted.small{display:none}.shop3.list .as-f{grid-template-columns:1fr 1fr 1fr;font-size:12px}.shop3.list .as-offer{margin:0;padding:0;border:0;font-size:13px;gap:1px}
 .deps-t td.muted{text-align:center;font-size:12px}
 .pe.compact .pe-svc{padding:1px 6px}.pe.compact .pe-tab small{display:none}.pe.compact .pe-svcs{gap:3px}.pe.compact .pe-ac .pe-sh{gap:6px}
+@media (max-height:800px){.ov .hp .td-list > div{padding:4px 0;font-size:13px}.ov .hp .td-news2{font-size:17px}}
 </style>
 </head>
 <body>
@@ -5669,7 +5670,7 @@ function todayCard(mode){
   // the morning: today's headline, the standing plan and one action
   const fares = Object.keys(serviceCounts(sched)).map(id => `${routeById(id).city} ${money(fareOf(id))}`).join(' · ');
   return `${hqHead("Today's Plan", periodTag().toUpperCase())}<div class="pb td2"><h3 class="td-news2">${esc(S.rnd.headline || "Today's operation")}</h3>${(S.rnd.brief || []).map(l => `<p class="td-brief">${esc(l)}</p>`).join('')}
-    <div class="td-list edits"><div><span>Timetable</span><b>${sched.length ? esc(svcLabel(sched)) + ` · until <span class="mono">${fmtTime(TIME.day(p, sched).end)}</span>` : '—'}</b><button class="link" data-plan>Edit</button></div><div><span>Fares</span><b>${esc(fares || '—')}</b><button class="link" data-plan>Edit</button></div>${snacksOn() && S.round >= 2 ? `<div><span>On board</span><b>${esc(onboardOf().label)}</b><button class="link" data-plan>Edit</button></div>` : ''}${depsOn() && S.round >= 4 && sched.length ? `<div><span>Departures</span><b class="mono">${TIME.day(p, sched).trips.map(t => fmtTime(t.dep)).join(', ')}</b><button class="link" data-plan>Edit</button></div>` : ''}
+    <div class="td-list edits"><div><span>Timetable</span><b>${S.fleet.length > 1 ? `${esc(svcLabel(S.fleet.flatMap(x => schedOf(x))) || 'no services')} · ${S.fleet.length} aircraft` : sched.length ? esc(svcLabel(sched)) + ` · until <span class="mono">${fmtTime(TIME.day(p, sched).end)}</span>` : '—'}</b><button class="link" data-plan>Edit</button></div><div><span>Fares</span><b>${esc(fares || '—')}</b><button class="link" data-plan>Edit</button></div>${snacksOn() && S.round >= 2 ? `<div><span>On board</span><b>${esc(onboardOf().label)}</b><button class="link" data-plan>Edit</button></div>` : ''}${depsOn() && S.round >= 4 && sched.length ? `<div><span>Departures</span><b class="mono">${TIME.day(p, sched).trips.map(t => fmtTime(t.dep)).join(', ')}</b><button class="link" data-plan>Edit</button></div>` : ''}
       ${fuelContract() ? `<div><span>Fuel</span><b>Bought as it is used at <span class="mono">${priceL(fuelPrice())}</span> a litre</b><span></span></div>` : fuelPaid() ? `<div><span>Fuel</span><b class="${need > S.fuel ? 'orange' : ''}"><span class="mono">${num(S.fuel)} L</span> · plan needs <span class="mono">${num(need)} L</span></b><button class="link" data-plan>Edit</button></div>` : '<div><span>Fuel</span><b>Supplied free by the launch deal</b><span></span></div>'}</div>
     <div class="td-act"><button class="btn primary act" id="startDay">${planWord()} ▶</button></div></div>`;
 }

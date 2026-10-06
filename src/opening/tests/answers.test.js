@@ -33,6 +33,7 @@ const TAG = `${HOME}-${MK}-${W}`;
   await p.click(`[data-svc="${MK}|2"]`); await p.click('#nx');
 
   const probe = async () => {
+    const TK = await p.evaluate(() => { const t = window.__sim.currentTable(), r = t && (t.rows || []).find(x => x.tool === 'revenue'); return r ? r.id : 'tk1'; });
     const diag = () => p.evaluate(() => (window.__sim.S().diag || []).map(d => d.kind));
     const dockAns = async () => { const v = await p.$$eval('.dock .cs:not(.ans)', e => e.map(x => [x.querySelector('.cs-op').textContent.trim(), x.querySelector('.cs-v').textContent])); let a = null;
       v.forEach(([op, t]) => { const n = +t.replace(/[−–]/g, '-').replace(/[^0-9.\-]/g, ''); a = a === null ? n : op === '+' ? a + n : op === '−' ? a - n : op === '×' ? a * n : a / n; }); return Math.round(a * 100) / 100; };
@@ -48,12 +49,12 @@ const TAG = `${HOME}-${MK}-${W}`;
     ok('working on screen accepted when the model disagrees', await accepted()); ok('the disagreement is recorded', (await diag()).some(k => /differs/.test(k)), await diag());
     // 3. a loss: the minus-sign hint, then accepted with −  (re-open the profit figure on a fresh table)
     await p.evaluate(() => { const t = window.__sim.currentTable(); t.done = {}; t.active = null; }); await p.click('[data-cell]').catch(() => {}); await p.waitForTimeout(100);
-    await p.evaluate(() => { const t = window.__sim.currentTable(); t.done = {}; const c = t.cols[0]; ['tk1'].forEach(r => { t.done['a|' + r] = true; }); t.active = { col:'a', row:'profit' }; c.values.rev = c.values.cost - 150; c.values.profit = -150; });
+    await p.evaluate(TK0 => { const t = window.__sim.currentTable(); t.done = {}; const c = t.cols[0]; [TK0].forEach(r => { t.done['a|' + r] = true; }); t.active = { col:'a', row:'profit' }; c.values.rev = c.values.cost - 150; c.values.profit = -150; }, TK);
     await p.fill('#cellAns', '150'); await p.click('#cellCheck'); await p.waitForTimeout(150);
     const msg = await p.evaluate(() => (document.getElementById('ftMsg') || {}).textContent); ok('a loss typed without the minus gets the minus-sign hint', /minus/.test(msg), msg);
     await p.fill('#cellAns', '−150'); await p.click('#cellCheck'); await p.waitForTimeout(150); ok('a loss typed with − is accepted', await accepted());
     // 4. three wrong tries: Show me the answer
-    await p.evaluate(() => { const t = window.__sim.currentTable(); t.done = {}; t.active = { col:'a', row:'tk1' }; }); await p.click('[data-cell]').catch(() => {}); await p.waitForTimeout(120);
+    await p.evaluate(TK0 => { const t = window.__sim.currentTable(); t.done = {}; t.active = { col:'a', row:TK0 }; }, TK); await p.click('[data-cell]').catch(() => {}); await p.waitForTimeout(120);
     if(!await p.$('#cellAns')){ await open1(); }
     for(let k = 0; k < 3; k++){ ok('Show me hidden before 3 tries ' + k, !await p.$('#calcShow')); await p.fill('#cellAns', '1'); await p.click('#cellCheck'); await p.waitForTimeout(120); }
     ok('Show me appears after 3 wrong tries', !!await p.$('#calcShow')); await p.click('#calcShow'); await p.waitForTimeout(150);
