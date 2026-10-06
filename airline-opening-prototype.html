@@ -2249,6 +2249,95 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
   .test2:not(.roomy) .t2-cmp th,.test2:not(.roomy) .t2-cmp td{font-size:17px;padding:5px 8px}.test2:not(.roomy) .t2-cmp thead th{font-size:14px}
   .test2:not(.roomy) .t2-mine b{font-size:17px}.test2:not(.roomy) .t2-mine .label{font-size:13px}.test2:not(.roomy) .t2-diff b{font-size:26px}
 }
+
+/* What's new: a short introduction to a new idea, three pages (what is new · the maths · your turn) */
+.ni-kick{display:block;font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:2px}
+.ni{display:flex;flex-direction:column;gap:16px;max-width:1120px}
+.ni-tabs{display:flex;gap:8px;list-style:none;margin:0;padding:0}
+.ni-tabs button{display:flex;align-items:center;gap:8px;padding:7px 14px 7px 8px;border:1px solid var(--line);border-radius:2px;background:rgba(110,160,255,.05);color:var(--muted);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.ni-tabs button i{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;border:1px solid currentColor;font-style:normal;font-size:13px}
+.ni-tabs button.on{color:var(--white);border-color:var(--sel);background:rgba(57,185,255,.14)}
+.ni-tabs button.seen:not(.on){color:var(--white)}
+.ni-tabs button:disabled{opacity:.45;cursor:default}
+.ni-page{display:flex;flex-direction:column;gap:16px}
+.ni-text p{margin:0 0 6px;font-size:20px;line-height:1.45;color:var(--white)}
+.ni-text p:last-child{margin-bottom:0}
+.ni-cards{display:grid;gap:12px}
+.ni-cards.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.ni-cards.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ni-card{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border:1px solid var(--line);background:rgba(110,160,255,.06)}
+.ni-card em{font-style:normal;font-size:30px;font-weight:800;line-height:1.1;color:var(--amber)}
+.ni-card b{font-size:18px;color:var(--white)}
+.ni-card span{font-size:16px;line-height:1.4;color:var(--muted)}
+.ni-card.rt span{font-size:17px;color:var(--white)}
+.ni-flow{display:flex;align-items:stretch;gap:10px}
+.ni-flow>div{flex:1;display:flex;flex-direction:column;gap:2px;padding:12px 16px;border:1px solid var(--line);background:rgba(110,160,255,.06)}
+.ni-flow .kl{font-size:14px;color:var(--muted)}.ni-flow b{font-size:28px;color:var(--white)}.ni-flow small{font-size:14px;color:var(--muted)}
+.ni-flow>i{align-self:center;font-style:normal;font-size:26px;color:var(--cy)}
+.ni-prices{display:flex;align-items:flex-end;gap:12px}
+.ni-prices>div{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:70px}
+.ni-prices i{display:block;width:36px;height:calc(var(--h) * 1px);background:rgba(var(--cyrgb),.35)}
+.ni-prices .now i{background:var(--amber)}.ni-prices b{font-size:16px;color:var(--white)}.ni-prices span{font-size:14px;color:var(--muted)}.ni-prices .now span{color:var(--amber);font-weight:700}
+.ni-rule{align-self:flex-start;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:14px 20px;border:2px solid rgba(var(--cyrgb),.6);background:rgba(var(--cyrgb),.08);font-size:28px;font-weight:700;color:var(--white)}
+.ni-rule b{color:var(--amber)}.ni-rule i{font-style:normal;color:var(--cy)}.ni-rule span{padding:2px 12px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+.ni-eg p{margin:0 0 10px;font-size:20px;line-height:1.5;color:var(--white)}
+.ni-eg p:last-child{margin-bottom:0}
+.ni-sum{display:inline-block;padding:0 10px;border-radius:2px;background:rgba(255,255,255,.08);font-weight:700;white-space:nowrap}
+.ni-eg p.ni-tip{font-size:18px;color:var(--muted);border-left:3px solid var(--cy);padding-left:12px}
+.ni-eg p.ni-cost{color:var(--muted)}
+.ni-dots{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 12px}
+.ni-dots i{width:20px;height:20px;border-radius:50%;border:2px solid rgba(var(--cyrgb),.55)}
+.ni-dots i.on{background:var(--cy);border-color:var(--cy)}.ni-dots i.buy{background:var(--amber);border-color:var(--amber)}
+.ni-q{margin:0;font-size:22px;line-height:1.4;font-weight:700;color:var(--white)}
+.ni-opts{display:flex;gap:14px;flex-wrap:wrap}
+.ni-opt{min-width:210px;padding:16px 24px;border:2px solid var(--line);border-radius:2px;background:rgba(110,160,255,.06);color:var(--white);font:inherit;font-size:28px;font-weight:700;cursor:pointer}
+.ni-opt:hover:not(:disabled){border-color:var(--sel)}
+.ni-opt.right{border-color:var(--green);background:rgba(61,220,151,.14)}.ni-opt.wrong{border-color:var(--orange);background:rgba(255,159,67,.10)}
+.ni-opt:disabled{cursor:default}.ni-opt.right:disabled{opacity:1}.ni-opt:disabled:not(.right){opacity:.4}
+.ni-fb p{margin:0;font-size:20px;line-height:1.45}
+.ni-yes{color:var(--green);font-weight:700}.ni-no{color:var(--amber2)}
+.ni-think{padding:12px 18px;border-left:4px solid var(--amber);background:rgba(243,199,84,.08)}
+.ni-think .kl{display:block;margin-bottom:4px;font-size:14px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
+.ni-think p{margin:0 0 4px;font-size:19px;line-height:1.45;color:var(--white)}
+.ni-bands>.kl{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:16px;color:var(--muted)}
+.nb-cols{display:flex;align-items:flex-end;gap:10px}
+.nb-cols>div{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nb-cols i{display:block;width:70%;height:calc(var(--h) * 1px);background:rgba(var(--cyrgb),.45)}.nb-cols .flex i{background:rgba(61,220,151,.45)}
+.nb-cols b{font-size:20px;color:var(--white)}.nb-cols span{font-size:15px;color:var(--white)}.nb-cols small{font-size:12px;color:var(--muted);text-align:center}
+.ni-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.ni-week>div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 4px;border:1px solid var(--line);background:rgba(110,160,255,.06)}
+.ni-week b{font-size:18px;color:var(--white)}.ni-week span{font-size:13px;color:var(--muted)}
+/* the plan screen: the on-board choice as cards, and NEW on a control the day its idea arrives */
+.new-tag{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:2px;background:var(--amber);color:#071226;font-size:11px;font-weight:800;letter-spacing:.1em;vertical-align:middle;text-transform:none}
+.pe-obc{display:flex;flex-direction:column;gap:8px}
+.pe-obc .pe-sh{display:flex;align-items:baseline;gap:12px}
+.obc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.obc{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:10px 14px;border:1px solid var(--line);border-radius:2px;background:rgba(110,160,255,.05);color:var(--white);font:inherit;text-align:left;cursor:pointer}
+.obc b{font-size:18px}.obc small{font-size:14px;line-height:1.35;color:var(--muted)}
+.obc:hover{border-color:rgba(var(--cyrgb),.6)}
+.obc.on{border-color:var(--sel);background:rgba(57,185,255,.14);box-shadow:inset 4px 0 0 var(--sel)}
+.obc.on small{color:var(--white)}
+/* the key words in the side panel */
+.ni-words{margin:0}.ni-words dt{margin-top:10px;font-size:16px;font-weight:700;color:var(--white)}.ni-words dt:first-child{margin-top:0}.ni-words dd{margin:2px 0 0;font-size:15px;line-height:1.4;color:var(--muted)}
+/* taller screens: the same pages, larger */
+@media (min-height:860px){
+  .ni{gap:22px}.ni-page{gap:22px}.ni-kick{font-size:15px}
+  .ni-text p,.ni-eg p{font-size:23px}.ni-eg p{margin-bottom:14px}.ni-eg p.ni-tip{font-size:20px}
+  .ni-card{padding:18px 20px;gap:8px}.ni-card em{font-size:36px}.ni-card b{font-size:21px}.ni-card span{font-size:18px}.ni-card.rt span{font-size:20px}
+  .ni-rule{font-size:34px;padding:16px 24px}.ni-flow b{font-size:34px}.ni-flow .kl,.ni-flow small{font-size:16px}.ni-flow>div{padding:16px 20px}
+  .ni-prices i{height:calc(var(--h) * 1.5px);width:44px}.ni-prices b{font-size:18px}.ni-prices span{font-size:15px}
+  .nb-cols i{height:calc(var(--h) * 1.5px)}.nb-cols b{font-size:24px}.nb-cols span{font-size:17px}.nb-cols small{font-size:13px}
+  .ni-dots i{width:26px;height:26px}.ni-dots{gap:8px}
+  .ni-q{font-size:26px}.ni-opt{font-size:34px;padding:20px 30px;min-width:250px}.ni-fb p{font-size:23px}
+  .ni-think p{font-size:21px}.ni-think .kl{font-size:15px}.ni-week>div{padding:18px 4px}.ni-week b{font-size:21px}.ni-week span{font-size:15px}
+  .ni-tabs button{font-size:17px;padding:8px 16px 8px 9px}
+}
+@media (max-height:800px){
+  .pe-obc{gap:4px}.pe-obc .pe-sh .label{font-size:13px}
+  .obc-grid{gap:6px}.obc{padding:5px 10px;gap:1px}.obc b{font-size:15px}.obc small{font-size:12px;line-height:1.25}
+  .pe-obc:not(.fresh){flex-direction:row;align-items:center;gap:8px}.pe-obc:not(.fresh) .pe-sh{flex:none}.pe-obc:not(.fresh) .pe-sh .muted{display:none}
+  .pe-obc:not(.fresh) .obc-grid{flex:1}.pe-obc:not(.fresh) .obc small{display:none}
+}
 </style>
 </head>
 <body>
@@ -2384,7 +2473,7 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
        news: lines for the ticker. challenge: true = Captain's challenge this round (every 2 rounds).
        checkpoint: snapshot the run to Best Runs and carry on (round 12). finale: record the run (round 30); play can continue after it.
        30 rounds in five acts, from the Clear Skies 30-round workbook. -->
-<script type="application/json" id="data-world">{"id": "clear-skies", "name": "Opening prototype", "lesson": "Fuel climbs through the first year (with a shock in July), crashes in January after the oil find, then climbs to £3.20 by the final May — stock up when it is cheap.", "startingCash": 5000, "startingReputation": 3, "fuelLot": 500, "rival": "Red Kite Air", "dayStart": "06:00", "dayEnd": "22:00", "firstDeparture": "09:00", "turnaroundMin": 45, "maxTrips": 4, "tankBase": 5000, "suppliers": [{"name": "Dragon Fuels", "priceDelta": 0, "lot": 500, "note": "Sells in 500 L lots", "fromPhase": 1}, {"name": "Celtic Oil", "priceDelta": -0.1, "lot": 2000, "note": "10p cheaper, but only sells 2,000 L lots", "fromPhase": 3}], "icons": {"perIcon": 1, "bigAt": 150, "bigPerIcon": 10}, "homes": [{"id": "lhr", "code": "LHR", "city": "Heathrow", "name": "London Heathrow", "country": "England", "flag": "uk", "lat": 51.47, "lon": -0.454, "utc": 0, "fee": 120, "demandPct": 15, "biz": 1.5, "blurb": "The UK's busiest airport. Expensive to land, but lots of passengers, including business travellers.", "terminals": [{"id": "t5", "name": "Terminal 5", "turn": 35, "charge": 5, "biz": 1.2, "note": "Modern gates right by the runway: quick turnarounds. Business travellers like it."}, {"id": "t4", "name": "Terminal 4", "turn": 55, "charge": 3, "note": "Cheaper, but remote stands and buses make turnarounds slow."}]}, {"id": "lgw", "code": "LGW", "city": "Gatwick", "name": "London Gatwick", "country": "England", "flag": "uk", "lat": 51.153, "lon": -0.182, "utc": 0, "fee": 80, "demandPct": 5, "biz": 1.0, "blurb": "London's second airport. A fair landing fee and plenty of holiday passengers.", "terminals": [{"id": "north", "name": "North Terminal", "turn": 40, "charge": 4, "note": "Busy but well organised."}, {"id": "south", "name": "South Terminal", "turn": 45, "charge": 3, "note": "A little cheaper, a little slower."}]}, {"id": "ltn", "code": "LTN", "city": "Luton", "name": "London Luton", "country": "England", "flag": "uk", "lat": 51.875, "lon": -0.368, "utc": 0, "fee": 40, "demandPct": -5, "biz": 0.6, "blurb": "A low-cost airport north of London. Cheap to land, mostly leisure passengers.", "terminals": [{"id": "main", "name": "Main Terminal", "turn": 30, "charge": 2, "note": "Built for quick, cheap turnarounds. One terminal for everyone."}]}, {"id": "man", "code": "MAN", "city": "Manchester", "name": "Manchester", "country": "England", "flag": "uk", "lat": 53.354, "lon": -2.275, "utc": 0, "fee": 60, "demandPct": 0, "biz": 1.0, "blurb": "The North's biggest airport. Dublin is a short hop; Paris is a long way for a small plane.", "terminals": [{"id": "t1", "name": "Terminal 1", "turn": 40, "charge": 4, "note": "The main international terminal."}, {"id": "t3", "name": "Terminal 3", "turn": 45, "charge": 3, "note": "Smaller and cheaper, a little slower."}]}], "setupRoutes": ["dub", "par"], "routes": [{"id": "dub", "city": "Dublin", "country": "Ireland", "flag": "ie", "lat": 53.35, "lon": -6.26, "km": 300, "band": "short", "basePrice": 60, "baseDemand": 60, "step": 10, "drop": 5, "prices": [50, 60, 70, 80], "gate": "1", "dep": "09:00", "utc": 0, "blurb": "Busier and cheaper. A short hop across the Irish Sea.", "unlockPhase": 1, "setupPrices": [50, 60, 70, 80], "growth": 0, "cap": 30, "fares": [50, 60, 70, 80], "alat": 53.42, "alon": -6.27, "biz": 6, "profile": {"morning": 0.5, "midday": 0.15, "evening": 0.35, "flex": 0.25, "type": "Business shuttle"}}, {"id": "par", "city": "Paris", "country": "France", "flag": "fr", "lat": 48.86, "lon": 2.35, "km": 450, "band": "short", "basePrice": 90, "baseDemand": 45, "step": 10, "drop": 3, "prices": [80, 90, 100, 110, 120], "gate": "2", "dep": "10:00", "utc": 1, "blurb": "Quieter, but passengers pay more. A longer flight.", "unlockPhase": 1, "setupPrices": [80, 90, 100, 110, 120], "growth": 0, "cap": 40, "fares": [80, 90, 100, 110, 120], "alat": 49.01, "alon": 2.55, "biz": 10, "profile": {"morning": 0.4, "midday": 0.2, "evening": 0.4, "flex": 0.3, "type": "City break / mixed"}}, {"id": "mad", "city": "Madrid", "country": "Spain", "flag": "es", "lat": 40.42, "lon": -3.7, "km": 1200, "band": "short", "basePrice": 100, "baseDemand": 60, "step": 10, "drop": 5, "prices": [80, 90, 100, 120], "gate": "3", "dep": "11:00", "utc": 1, "blurb": "Sunny city break. Steady demand.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "rak", "city": "Marrakech", "country": "Morocco", "flag": "ma", "lat": 31.63, "lon": -8.01, "km": 2400, "band": "medium", "basePrice": 120, "baseDemand": 90, "step": 20, "drop": 10, "prices": [100, 120, 140, 160], "gate": "4", "dep": "09:30", "utc": 1, "blurb": "Holiday route. Popular in winter.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "cai", "city": "Cairo", "country": "Egypt", "flag": "eg", "lat": 30.04, "lon": 31.24, "km": 3600, "band": "medium", "basePrice": 150, "baseDemand": 110, "step": 25, "drop": 10, "prices": [125, 150, 175, 200], "gate": "5", "dep": "08:30", "utc": 2, "blurb": "Pyramids! Good demand all year.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "los", "city": "Lagos", "country": "Nigeria", "flag": "ng", "lat": 6.52, "lon": 3.38, "km": 4800, "band": "medium", "basePrice": 200, "baseDemand": 100, "step": 25, "drop": 10, "prices": [150, 175, 200, 250], "gate": "6", "dep": "12:00", "utc": 1, "blurb": "Big city, business travellers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "nyc", "city": "New York", "country": "USA", "flag": "us", "lat": 40.71, "lon": -74.01, "km": 5600, "band": "medium", "basePrice": 200, "baseDemand": 140, "step": 50, "drop": 20, "prices": [150, 200, 250, 300], "gate": "7", "dep": "13:00", "utc": -5, "blurb": "The big one. Huge demand.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "dxb", "city": "Dubai", "country": "UAE", "flag": "ae", "lat": 25.2, "lon": 55.27, "km": 5600, "band": "medium", "basePrice": 250, "baseDemand": 150, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "8", "dep": "14:00", "utc": 4, "blurb": "Shopping and sunshine. Rich passengers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "del", "city": "Delhi", "country": "India", "flag": "in", "lat": 28.61, "lon": 77.21, "km": 7200, "band": "long", "basePrice": 250, "baseDemand": 200, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "9", "dep": "20:00", "utc": 5.5, "blurb": "Very busy. Overnight flight.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "cpt", "city": "Cape Town", "country": "South Africa", "flag": "za", "lat": -33.92, "lon": 18.42, "km": 9600, "band": "long", "basePrice": 350, "baseDemand": 180, "step": 50, "drop": 20, "prices": [300, 350, 400, 450], "gate": "10", "dep": "19:00", "utc": 2, "blurb": "Table Mountain. Long, popular route.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "tyo", "city": "Tokyo", "country": "Japan", "flag": "jp", "lat": 35.68, "lon": 139.69, "km": 9600, "band": "long", "basePrice": 400, "baseDemand": 250, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "11", "dep": "18:00", "utc": 9, "blurb": "Neon lights and bullet trains. Big demand.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "sin", "city": "Singapore", "country": "Singapore", "flag": "sg", "lat": 1.35, "lon": 103.82, "km": 10800, "band": "long", "basePrice": 400, "baseDemand": 220, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "12", "dep": "21:00", "utc": 8, "blurb": "Gateway to Asia. Famous airport.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "syd", "city": "Sydney", "country": "Australia", "flag": "au", "lat": -33.87, "lon": 151.21, "km": 17600, "band": "long", "basePrice": 600, "baseDemand": 300, "step": 100, "drop": 30, "prices": [500, 600, 700, 800], "gate": "13", "dep": "22:00", "utc": 10, "blurb": "The longest flight in the world. Only one plane can do it.", "unlockPhase": 4, "growth": 3, "cap": 60}], "rounds": [{"date": "2030-05-12", "period": "setup", "fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."], "prog": 2}, {"date": "2030-05-13", "period": "day", "fuel": 1.2, "title": "Day 1", "headline": "A catering company has an offer: snacks on board.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."], "onboard": true, "prog": 3.1}, {"date": "2030-05-14", "period": "day", "fuel": 1.3, "title": "Day 2", "headline": "The launch deal is over: from today the airline buys its own fuel.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."], "prog": 3.2, "fuelDay": true}, {"date": "2030-05-15", "period": "day", "fuel": 1.4, "title": "Day 3", "headline": "Some flights were full. Others had empty seats.", "news": ["Fuel now £1.40 a litre."], "prog": 3.3}, {"date": "2030-05-16", "period": "day", "fuel": 1.4, "title": "Day 4", "headline": "A second market is opening up.", "opportunity": true, "prog": 3.4}, {"date": "2030-05-17", "period": "gap", "prog": 4, "stage": "routine", "title": "The weekend", "headline": "Your regular operating plan runs by itself.", "news": ["Dragon routes settle into a daily rhythm."], "fuel": 1.4}, {"date": "2030-05-20", "period": "week", "prog": 4, "title": "Week 1", "headline": "Your first week of regular operations.", "news": ["Passengers say the new airline is reliable."], "fuel": 1.4, "noReview": true}, {"date": "2030-05-27", "period": "week", "prog": 4.1, "title": "Week 2", "headline": "Another week: is the timetable still right?", "news": ["Half-term week: families are travelling."], "fuel": 1.45}, {"date": "2030-06-03", "period": "week", "prog": 4.2, "title": "Week 3", "headline": "A month of flying is almost done.", "live": {"weather": {"day": 2, "delay": 40}}, "news": ["Fuel prices are creeping up."], "fuel": 1.45}, {"date": "2030-06-10", "period": "month", "prog": 5, "stage": "stable", "title": "A stable airline", "headline": "The airline runs month by month now.", "news": ["Analysts: the new airline is here to stay."], "fuel": 1.5}, {"date": "2030-07-01", "period": "month", "prog": 5.1, "title": "July", "headline": "Summer holidays begin.", "news": ["Airports busy as the holidays start."], "fuel": 1.55}, {"date": "2030-08-01", "period": "month", "prog": 5.2, "title": "August", "headline": "The busiest month of the summer.", "news": ["Fuel steadies for August."], "fuel": 1.5}, {"date": "2030-09-01", "period": "month", "prog": 6, "stage": "year", "until": "2031-04-30", "title": "The first year", "headline": "Where will the airline be in a year?", "news": ["Aircraft makers report strong orders."], "fuel": 1.6}, {"date": "2030-10-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Autumn timetables published."], "fuel": 1.65}, {"date": "2030-11-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Winter fuel prices rise."], "fuel": 1.7}, {"date": "2030-12-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Christmas getaway: airports busy."], "fuel": 1.75}, {"date": "2031-01-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["New year, new routes for rivals."], "fuel": 1.6}, {"date": "2031-02-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Half-term in February: families fly."], "fuel": 1.65}, {"date": "2031-03-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Spring is coming: bookings pick up."], "fuel": 1.7}, {"date": "2031-04-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Easter holidays boost travel."], "fuel": 1.75}, {"date": "2031-05-01", "period": "day", "prog": 7, "stage": "review", "title": "Year 1 review", "headline": "One year of flying. Time to grow?", "news": ["A year since the airline's first flight."], "fuel": 1.8}], "fuelTopUp": 0.1, "reserveDefault": 20000, "crewDutyMin": 540, "crewCost": 300}</script>
+<script type="application/json" id="data-world">{"id": "clear-skies", "name": "Opening prototype", "lesson": "Fuel climbs through the first year (with a shock in July), crashes in January after the oil find, then climbs to £3.20 by the final May — stock up when it is cheap.", "startingCash": 5000, "startingReputation": 3, "fuelLot": 500, "rival": "Red Kite Air", "dayStart": "06:00", "dayEnd": "22:00", "firstDeparture": "09:00", "turnaroundMin": 45, "maxTrips": 4, "tankBase": 5000, "suppliers": [{"name": "Dragon Fuels", "priceDelta": 0, "lot": 500, "note": "Sells in 500 L lots", "fromPhase": 1}, {"name": "Celtic Oil", "priceDelta": -0.1, "lot": 2000, "note": "10p cheaper, but only sells 2,000 L lots", "fromPhase": 3}], "icons": {"perIcon": 1, "bigAt": 150, "bigPerIcon": 10}, "homes": [{"id": "lhr", "code": "LHR", "city": "Heathrow", "name": "London Heathrow", "country": "England", "flag": "uk", "lat": 51.47, "lon": -0.454, "utc": 0, "fee": 120, "demandPct": 15, "biz": 1.5, "blurb": "The UK's busiest airport. Expensive to land, but lots of passengers, including business travellers.", "terminals": [{"id": "t5", "name": "Terminal 5", "turn": 35, "charge": 5, "biz": 1.2, "note": "Modern gates right by the runway: quick turnarounds. Business travellers like it."}, {"id": "t4", "name": "Terminal 4", "turn": 55, "charge": 3, "note": "Cheaper, but remote stands and buses make turnarounds slow."}]}, {"id": "lgw", "code": "LGW", "city": "Gatwick", "name": "London Gatwick", "country": "England", "flag": "uk", "lat": 51.153, "lon": -0.182, "utc": 0, "fee": 80, "demandPct": 5, "biz": 1.0, "blurb": "London's second airport. A fair landing fee and plenty of holiday passengers.", "terminals": [{"id": "north", "name": "North Terminal", "turn": 40, "charge": 4, "note": "Busy but well organised."}, {"id": "south", "name": "South Terminal", "turn": 45, "charge": 3, "note": "A little cheaper, a little slower."}]}, {"id": "ltn", "code": "LTN", "city": "Luton", "name": "London Luton", "country": "England", "flag": "uk", "lat": 51.875, "lon": -0.368, "utc": 0, "fee": 40, "demandPct": -5, "biz": 0.6, "blurb": "A low-cost airport north of London. Cheap to land, mostly leisure passengers.", "terminals": [{"id": "main", "name": "Main Terminal", "turn": 30, "charge": 2, "note": "Built for quick, cheap turnarounds. One terminal for everyone."}]}, {"id": "man", "code": "MAN", "city": "Manchester", "name": "Manchester", "country": "England", "flag": "uk", "lat": 53.354, "lon": -2.275, "utc": 0, "fee": 60, "demandPct": 0, "biz": 1.0, "blurb": "The North's biggest airport. Dublin is a short hop; Paris is a long way for a small plane.", "terminals": [{"id": "t1", "name": "Terminal 1", "turn": 40, "charge": 4, "note": "The main international terminal."}, {"id": "t3", "name": "Terminal 3", "turn": 45, "charge": 3, "note": "Smaller and cheaper, a little slower."}]}], "setupRoutes": ["dub", "par"], "routes": [{"id": "dub", "city": "Dublin", "country": "Ireland", "flag": "ie", "lat": 53.35, "lon": -6.26, "km": 300, "band": "short", "basePrice": 60, "baseDemand": 60, "step": 10, "drop": 5, "prices": [50, 60, 70, 80], "gate": "1", "dep": "09:00", "utc": 0, "blurb": "Busier and cheaper. A short hop across the Irish Sea.", "unlockPhase": 1, "setupPrices": [50, 60, 70, 80], "growth": 0, "cap": 30, "fares": [50, 60, 70, 80], "alat": 53.42, "alon": -6.27, "biz": 6, "profile": {"morning": 0.5, "midday": 0.15, "evening": 0.35, "flex": 0.25, "type": "Business shuttle"}}, {"id": "par", "city": "Paris", "country": "France", "flag": "fr", "lat": 48.86, "lon": 2.35, "km": 450, "band": "short", "basePrice": 90, "baseDemand": 45, "step": 10, "drop": 3, "prices": [80, 90, 100, 110, 120], "gate": "2", "dep": "10:00", "utc": 1, "blurb": "Quieter, but passengers pay more. A longer flight.", "unlockPhase": 1, "setupPrices": [80, 90, 100, 110, 120], "growth": 0, "cap": 40, "fares": [80, 90, 100, 110, 120], "alat": 49.01, "alon": 2.55, "biz": 10, "profile": {"morning": 0.4, "midday": 0.2, "evening": 0.4, "flex": 0.3, "type": "City break / mixed"}}, {"id": "mad", "city": "Madrid", "country": "Spain", "flag": "es", "lat": 40.42, "lon": -3.7, "km": 1200, "band": "short", "basePrice": 100, "baseDemand": 60, "step": 10, "drop": 5, "prices": [80, 90, 100, 120], "gate": "3", "dep": "11:00", "utc": 1, "blurb": "Sunny city break. Steady demand.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "rak", "city": "Marrakech", "country": "Morocco", "flag": "ma", "lat": 31.63, "lon": -8.01, "km": 2400, "band": "medium", "basePrice": 120, "baseDemand": 90, "step": 20, "drop": 10, "prices": [100, 120, 140, 160], "gate": "4", "dep": "09:30", "utc": 1, "blurb": "Holiday route. Popular in winter.", "unlockPhase": 2, "growth": 3, "cap": 60}, {"id": "cai", "city": "Cairo", "country": "Egypt", "flag": "eg", "lat": 30.04, "lon": 31.24, "km": 3600, "band": "medium", "basePrice": 150, "baseDemand": 110, "step": 25, "drop": 10, "prices": [125, 150, 175, 200], "gate": "5", "dep": "08:30", "utc": 2, "blurb": "Pyramids! Good demand all year.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "los", "city": "Lagos", "country": "Nigeria", "flag": "ng", "lat": 6.52, "lon": 3.38, "km": 4800, "band": "medium", "basePrice": 200, "baseDemand": 100, "step": 25, "drop": 10, "prices": [150, 175, 200, 250], "gate": "6", "dep": "12:00", "utc": 1, "blurb": "Big city, business travellers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "nyc", "city": "New York", "country": "USA", "flag": "us", "lat": 40.71, "lon": -74.01, "km": 5600, "band": "medium", "basePrice": 200, "baseDemand": 140, "step": 50, "drop": 20, "prices": [150, 200, 250, 300], "gate": "7", "dep": "13:00", "utc": -5, "blurb": "The big one. Huge demand.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "dxb", "city": "Dubai", "country": "UAE", "flag": "ae", "lat": 25.2, "lon": 55.27, "km": 5600, "band": "medium", "basePrice": 250, "baseDemand": 150, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "8", "dep": "14:00", "utc": 4, "blurb": "Shopping and sunshine. Rich passengers.", "unlockPhase": 3, "growth": 3, "cap": 60}, {"id": "del", "city": "Delhi", "country": "India", "flag": "in", "lat": 28.61, "lon": 77.21, "km": 7200, "band": "long", "basePrice": 250, "baseDemand": 200, "step": 50, "drop": 20, "prices": [200, 250, 300, 350], "gate": "9", "dep": "20:00", "utc": 5.5, "blurb": "Very busy. Overnight flight.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "cpt", "city": "Cape Town", "country": "South Africa", "flag": "za", "lat": -33.92, "lon": 18.42, "km": 9600, "band": "long", "basePrice": 350, "baseDemand": 180, "step": 50, "drop": 20, "prices": [300, 350, 400, 450], "gate": "10", "dep": "19:00", "utc": 2, "blurb": "Table Mountain. Long, popular route.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "tyo", "city": "Tokyo", "country": "Japan", "flag": "jp", "lat": 35.68, "lon": 139.69, "km": 9600, "band": "long", "basePrice": 400, "baseDemand": 250, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "11", "dep": "18:00", "utc": 9, "blurb": "Neon lights and bullet trains. Big demand.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "sin", "city": "Singapore", "country": "Singapore", "flag": "sg", "lat": 1.35, "lon": 103.82, "km": 10800, "band": "long", "basePrice": 400, "baseDemand": 220, "step": 50, "drop": 20, "prices": [350, 400, 450, 500], "gate": "12", "dep": "21:00", "utc": 8, "blurb": "Gateway to Asia. Famous airport.", "unlockPhase": 4, "growth": 3, "cap": 60}, {"id": "syd", "city": "Sydney", "country": "Australia", "flag": "au", "lat": -33.87, "lon": 151.21, "km": 17600, "band": "long", "basePrice": 600, "baseDemand": 300, "step": 100, "drop": 30, "prices": [500, 600, 700, 800], "gate": "13", "dep": "22:00", "utc": 10, "blurb": "The longest flight in the world. Only one plane can do it.", "unlockPhase": 4, "growth": 3, "cap": 60}], "rounds": [{"date": "2030-05-12", "period": "setup", "fuel": 1.2, "news": ["Welcome to the skies! Your first flight is ready."], "prog": 2}, {"date": "2030-05-13", "period": "day", "fuel": 1.2, "title": "Day 1", "headline": "A catering company has an offer: snacks on board.", "news": ["New airline launches from Cardiff.", "Fuel steady at £1.20 a litre."], "onboard": true, "prog": 3.1, "intro": "snacks"}, {"date": "2030-05-14", "period": "day", "fuel": 1.3, "title": "Day 2", "headline": "The launch deal is over: from today the airline buys its own fuel.", "news": ["Fuel rises to £1.30 a litre.", "Oil experts say fuel will keep rising this year."], "prog": 3.2, "fuelDay": true, "intro": "fuel"}, {"date": "2030-05-15", "period": "day", "fuel": 1.4, "title": "Day 3", "headline": "Some flights were full. Others had empty seats.", "news": ["Fuel now £1.40 a litre."], "prog": 3.3, "intro": "times"}, {"date": "2030-05-16", "period": "day", "fuel": 1.4, "title": "Day 4", "headline": "A second market is opening up.", "opportunity": true, "prog": 3.4, "intro": "route"}, {"date": "2030-05-17", "period": "gap", "prog": 4, "stage": "routine", "title": "The weekend", "headline": "Your regular operating plan runs by itself.", "news": ["Dragon routes settle into a daily rhythm."], "fuel": 1.4}, {"date": "2030-05-20", "period": "week", "prog": 4, "title": "Week 1", "headline": "Your first week of regular operations.", "news": ["Passengers say the new airline is reliable."], "fuel": 1.4, "noReview": true, "intro": "week"}, {"date": "2030-05-27", "period": "week", "prog": 4.1, "title": "Week 2", "headline": "Another week: is the timetable still right?", "news": ["Half-term week: families are travelling."], "fuel": 1.45}, {"date": "2030-06-03", "period": "week", "prog": 4.2, "title": "Week 3", "headline": "A month of flying is almost done.", "live": {"weather": {"day": 2, "delay": 40}}, "news": ["Fuel prices are creeping up."], "fuel": 1.45}, {"date": "2030-06-10", "period": "month", "prog": 5, "stage": "stable", "title": "A stable airline", "headline": "The airline runs month by month now.", "news": ["Analysts: the new airline is here to stay."], "fuel": 1.5, "intro": "tank"}, {"date": "2030-07-01", "period": "month", "prog": 5.1, "title": "July", "headline": "Summer holidays begin.", "news": ["Airports busy as the holidays start."], "fuel": 1.55}, {"date": "2030-08-01", "period": "month", "prog": 5.2, "title": "August", "headline": "The busiest month of the summer.", "news": ["Fuel steadies for August."], "fuel": 1.5}, {"date": "2030-09-01", "period": "month", "prog": 6, "stage": "year", "until": "2031-04-30", "title": "The first year", "headline": "Where will the airline be in a year?", "news": ["Aircraft makers report strong orders."], "fuel": 1.6}, {"date": "2030-10-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Autumn timetables published."], "fuel": 1.65}, {"date": "2030-11-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Winter fuel prices rise."], "fuel": 1.7}, {"date": "2030-12-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Christmas getaway: airports busy."], "fuel": 1.75}, {"date": "2031-01-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["New year, new routes for rivals."], "fuel": 1.6}, {"date": "2031-02-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Half-term in February: families fly."], "fuel": 1.65}, {"date": "2031-03-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Spring is coming: bookings pick up."], "fuel": 1.7}, {"date": "2031-04-01", "period": "month", "prog": 6, "routine": true, "title": "", "headline": "", "news": ["Easter holidays boost travel."], "fuel": 1.75}, {"date": "2031-05-01", "period": "day", "prog": 7, "stage": "review", "title": "Year 1 review", "headline": "One year of flying. Time to grow?", "news": ["A year since the airline's first flight."], "fuel": 1.8}], "fuelTopUp": 0.1, "reserveDefault": 20000, "crewDutyMin": 540, "crewCost": 300}</script>
 
 <!-- TAIL-FIN MOTIFS the pupil can pick in setup (drawn in the livery colours; SVG symbols are below). -->
 <script type="application/json" id="data-fins">
@@ -5945,7 +6034,7 @@ function startBeat(b){
   publish(); render();
 }
 function stepsFor(b){
-  const w = roundData(b), st = w.stage ? [{ t:'milestone', stage:w.stage }] : [], L = a => st.concat(a.map(t => ({ t })));
+  const w = roundData(b), st = w.stage ? [{ t:'milestone', stage:w.stage }] : [], L = a => withIntro(st.concat(a.map(t => ({ t }))), w);
   if(w.period === 'gap') return L(['sim', 'results']);
   if(w.period === 'week') return L((w.noReview ? ['hq'] : ['hq', 'review']).concat(['planner', 'costPlan', 'testIdeas', 'ready', 'sim', 'results']));
   if(w.until) return L(['hq', 'review', 'plans', 'fuelPlan', 'yearPlan', 'afford', 'ready', 'sim', 'results']);
@@ -6563,6 +6652,8 @@ function editPlan(i, what, a, d){
 function testPlan(){ if(!S.rnd.test) S.rnd.test = JSON.parse(JSON.stringify(currentPlan())); return S.rnd.test; }
 
 /* ---------- the plan editor: only the controls introduced so far ---------- */
+/* A NEW tag on a control on the day its idea arrives. */
+function newTag(stage){ return progress() === stage && S.phase === 'round' && periodType() === 'day' ? '<span class="new-tag">NEW</span>' : ''; }
 function stepper(i, key, val, sub, o){
   o = o || {};
   return `<div class="pe-step ${o.cls || ''}"><button class="pe-b" data-pe="${i}|${key}|-1" aria-label="less" ${o.noLess ? 'disabled' : ''}>−</button><b class="pe-v mono">${val}</b><button class="pe-b" data-pe="${i}|${key}|1" aria-label="more" ${o.noMore ? 'disabled' : ''}>+</button>${sub ? `<small>${sub}</small>` : ''}</div>`;
@@ -6575,14 +6666,16 @@ function demandStrip(id){
 function planEditor(i, pl, L, o){
   o = o || {}; const p = ourPlane(), routes = S.phase === 'setup' ? [S.market] : plannerRoutes(), c = serviceCounts(pl.sched), per = depsOn(), maxT = WORLD.maxTrips || 4;
   const routeBlock = id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, F = r.fares || [r.basePrice], n = c[id] || 0;
-    return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
+    return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${o.big && id === otherRoute() ? newTag(3.4) : ''}${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
       ${per ? '' : `<div class="pe-f"><span class="label">Services</span>${stepper(i, 'svc|' + id, '×' + n, `${n * p.seats} seats`, { noLess: n === 0, noMore: pl.sched.length >= maxT })}</div>`}
       <div class="pe-f"><span class="label">Fare</span>${stepper(i, 'fare|' + id, money(fare), `<b class="mono">${paxWant(r, fare)}</b> want to fly`, { noLess: fare <= F[0], noMore: fare >= F[F.length - 1] })}</div></div>`; };
-  const snacks = snacksOn() ? `<div class="pe-ob"><span class="label">On board</span>${Object.keys(ONBOARD).map(k => `<button class="opt-chip ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b></button>`).join('')}</div>` : '';
+  // on the Plan screen the on-board choice is four cards, each with its rule; elsewhere a row of chips
+  const snacks = !snacksOn() ? '' : o.big ? `<div class="pe-obc ${newTag(3.1) ? 'fresh' : ''}"><div class="pe-sh"><span class="label">On board${newTag(3.1)}</span><span class="muted small">What happens on board today?</span></div><div class="obc-grid">${Object.keys(ONBOARD).map(k => `<button class="obc ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`).join('')}</div></div>`
+    : `<div class="pe-ob"><span class="label">On board</span>${Object.keys(ONBOARD).map(k => `<button class="opt-chip ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b></button>`).join('')}</div>`;
   let services = '';
   if(per){
     const two = secondRouteOn();
-    services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times</span><span class="muted small">Out, a turnaround, back, then a turnaround at home.</span><span class="pe-add">${pl.sched.length >= maxT ? '<span class="muted small">4 services is the most one aircraft can fly</span>' : routes.map(id => `<button class="btn small" data-pe="${i}|add|${id}|0">+ ${esc(routeById(id).city)} service</button>`).join('')}</span></div>
+    services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times${o.big ? newTag(3.3) : ''}</span><span class="muted small">Out, a turnaround, back, then a turnaround at home.</span><span class="pe-add">${pl.sched.length >= maxT ? '<span class="muted small">4 services is the most one aircraft can fly</span>' : routes.map(id => `<button class="btn small" data-pe="${i}|add|${id}|0">+ ${esc(routeById(id).city)} service</button>`).join('')}</span></div>
       ${(L.services || []).map((s, k) => { const r = routeById(s.route);
         return `<div class="pe-svc ${s.band}"><span class="pe-n">Service ${k + 1}</span>${two ? `<button class="pe-rt" data-pe="${i}|route|${k}|1" title="Change the route">${flagSvg(r.flag, 14)} ${esc(r.city)} ⇄</button>` : `<span class="pe-city">${flagSvg(r.flag, 14)} ${esc(r.city)}</span>`}
           ${stepper(i, 'dep|' + k, fmtTime(s.dep), `back ${fmtTime(s.arr)}`, { cls:'sm' })}<span class="pe-fill ${s.sold >= s.seats ? 'full' : ''}"><b class="mono">${s.sold}/${s.seats}</b><small>${s.sold >= s.seats ? 'full' : `${s.seats - s.sold} empty`}</small></span><span class="pe-band">${BAND_NAMES[s.band]}</span>
@@ -6590,7 +6683,7 @@ function planEditor(i, pl, L, o){
       </div>`;
   }
   const strips = per ? `<div class="pe-demand">${routes.map(demandStrip).join('')}${miniBar(L.D)}</div>` : '';
-  const sum = `<div class="pe-sum"><span><b class="mono">${L.pax}</b> fly</span><span class="${L.empty ? '' : 'muted'}"><b class="mono">${L.empty}</b> empty seat${L.empty === 1 ? '' : 's'}</span><span class="${L.nos ? 'orange' : ''}"><b class="mono">${L.nos}</b> without a seat</span>${L.end ? `<span>busy until <b class="mono">${fmtTime(L.end)}</b></span>` : ''}${opened(3.1) ? `<span class="${L.crews > 1 ? 'orange' : ''}">${L.crews} crew${L.crews > 1 ? 's' : ''}</span>` : ''}${L.fits ? '' : '<span class="red">Doesn\'t fit in the day</span>'}</div>`;
+  const sum = `<div class="pe-sum"><span><b class="mono">${L.pax}</b> fly</span><span class="${L.empty ? '' : 'muted'}"><b class="mono">${L.empty}</b> empty seat${L.empty === 1 ? '' : 's'}</span><span class="${L.nos ? 'orange' : ''}"><b class="mono">${L.nos}</b> without a seat</span>${L.end ? `<span>busy until <b class="mono">${fmtTime(L.end)}</b></span>` : ''}${fuelPaid() && L.fuelL ? `<span>burns <b class="mono">${num(L.fuelL)} L</b> of fuel${o.big ? newTag(3.2) : ''}</span>` : ''}${opened(3.1) ? `<span class="${L.crews > 1 ? 'orange' : ''}">${L.crews} crew${L.crews > 1 ? 's' : ''}</span>` : ''}${L.fits ? '' : '<span class="red">Doesn\'t fit in the day</span>'}</div>`;
   return `<div class="pe ${o.big ? 'big' : ''} ${o.compact ? 'compact' : ''}">${strips}<div class="pe-routes n${routes.length}">${routes.map(routeBlock).join('')}</div>${snacks}${services}${sum}</div>`;
 }
 function bindPlanEditor(){
@@ -6604,7 +6697,7 @@ function startProtoDay(n){
   S.rnd = Object.assign(emptyRnd(), { featured:f.uid, focusRoute:schedOf(f)[0] || S.market, headline:w.headline || '', brief:protoBrief(n) });
   S.period = newPeriod('day', S.day);
   if(depsOn() && !Array.isArray(S.deps)) S.deps = TIME.day(ourPlane(), schedOf(f), undefined, null).trips.map(t => t.dep);
-  S.steps = [{ t:'hq' }, { t:'planner' }, { t:'costPlan' }, { t:'testIdeas' }].concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]);
+  S.steps = withIntro([{ t:'hq' }, { t:'planner' }, { t:'costPlan' }, { t:'testIdeas' }].concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
   S.rnd.cashStart = S.cash; UI.view = null;
   S.si = 0; S.newRoutes = [];
   refreshPlan();
@@ -6670,6 +6763,7 @@ function railValue(t, i){
   if(t === 'fuelPlan'){ const o = S.rnd.fuelOrder; if(o) return `${num(o.litres)} L ordered · ${money(o.total)}`; return passed ? `tank covers it (${num(S.fuel)} L)` : ''; }
   if(t === 'costPlan') return S.rnd.costed ? `profit ${money(S.rnd.costed.v.profit)}` : '';
   if(t === 'testIdeas') return S.rnd.myForecast ? `${S.rnd.myForecast.plan} · ${money(S.rnd.myForecast.profit)}` : '';
+  if(t === 'intro'){ const I = introNow(); return I ? niVal(I.title) : ''; }
   return '';
 }
 function editStep(what){
@@ -6682,7 +6776,7 @@ function editStep(what){
 
 /* ---------- PLAN ---------- */
 const PLAN_STORY = {
-  3.1:['A catering company can supply snacks for your flights.', 'Selling snacks brings in money, but the stock costs money too. Free snacks cost more but passengers like them.'],
+  3.1:['Snacks are new today. Choose what happens on board: each card gives its rule.'],
   3.2:['The launch deal is over. From today your airline buys its own fuel.', 'Does yesterday\'s plan still make sense now that fuel costs money?'],
   3.3:['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.', `You can now choose a departure time for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 720)}, from half an hour before the first departure to half an hour after the last landing. A longer day needs a second crew (${money(WORLD.crewCost || 250)}).`],
   3.4:['A second market is open. Your one aircraft can now fly to two places.', 'How should its day be shared between them? Add a service, or change a service\'s route with ⇄.'] };
@@ -7699,6 +7793,146 @@ function liveSummary(){
 /* For the tests: jump the clock to a moment and hold it there. */
 window.__live = { seek(g, rate){ const L = S.rnd.live; if(!L) return null; L.clock = { t0:Date.now(), g0:g, rate:rate || 0, last:1 }; publish(); if(wallView) renderLiveWall(); return liveNow(L); },
   show(){ return S.rnd.live; }, now(){ return liveNow(); }, mode(){ const L = S.rnd.live; return L ? liveMode(L, liveNow(L)) : null; }, phase(key, g){ const F = S.rnd.live.flights.find(x => x.key === key); return F ? livePhase(F, g) : null; } };
+/* ==================================================================
+   WHAT'S NEW: a short introduction whenever a beat brings a new idea (the beat's "intro" in data-world).
+   Three pages, about a minute: what is new, the maths (the rule and a worked example), your turn (which sum?).
+   The examples use the game's rules but never today's own figures, so the COST step still asks the pupil.
+   It sits at the start of the PLAN stage (before fuel in the first month) and can be opened again from the rail.
+   ================================================================== */
+WS_STEPS.push('intro'); SHELL_STEPS.push('intro');
+Object.assign(RAIL_LABEL, { intro:"What's new" });
+Object.assign(SUB_DESC, { intro:'The new idea and its maths' });
+Object.assign(STEP_HINT, { intro:'Something new arrives. Read what it is, look at the sum, then try one yourself.' });
+STAGES.day[0].steps = ['intro'].concat(STAGES.day[0].steps);
+STAGES.week[0].steps = ['intro'].concat(STAGES.week[0].steps);
+(STAGES.month || []).forEach(g => { if(g.id === 'plan') g.steps = ['intro'].concat(g.steps); });
+
+/* The beat's intro goes just before the step that uses the new idea. */
+function withIntro(steps, w){
+  const I = w && w.intro && INTRO[w.intro]; if(!I) return steps;
+  const at = steps.findIndex(s => s.t === (I.before || 'planner'));
+  if(at < 0) return steps;
+  return steps.slice(0, at).concat([{ t:'intro', key:w.intro, page:0 }], steps.slice(at));
+}
+function introNow(){ const st = S.steps && S.steps.find(s => s.t === 'intro'); return st ? INTRO[st.key] : null; }
+
+/* ---------- small pictures ---------- */
+const niDots = (n, on, cls) => `<span class="ni-dots">${Array.from({ length:n }, (_, k) => `<i class="${k < on ? cls || 'on' : ''}"></i>`).join('')}</span>`;
+const niSum = s => `<span class="ni-sum mono">${s}</span>`;
+const niRule = (a, op, b, res) => `<div class="ni-rule"><b>${res}</b><i>=</i><span>${a}</span><i>${op}</i><span>${b}</span></div>`;
+function niPrices(from, to){
+  const L = []; for(let i = Math.max(0, from); i <= to; i++) L.push([beatLabel(i), fuelPrice(i)]);
+  const mx = Math.max(...L.map(x => x[1])), mn = Math.min(...L.map(x => x[1])) - 0.15;
+  return `<div class="ni-prices">${L.map(([l, v], k) => `<div class="${k === L.length - 1 ? 'now' : ''}"><b class="mono">${priceL(v)}</b><i style="--h:${Math.round(18 + 70 * (v - mn) / Math.max(0.01, mx - mn))}"></i><span>${esc(k === L.length - 1 ? 'Now' : l)}</span></div>`).join('')}</div>`;
+}
+
+/* ---------- the introductions ---------- */
+const INTRO = {
+  snacks:{ kicker:'New today · On board', title:'Snacks on board', words:[['Cabin sales', 'Money from selling snacks on board. It is added to your revenue.'], ['Stock', 'The snacks you buy so you can sell them. It is a cost.']],
+    what:() => [['A catering company can supply snacks for your flights. Each day you choose what happens on board.'],
+      `<div class="ni-cards four">${Object.keys(ONBOARD).map(k => { const o = ONBOARD[k], big = k === 'none' ? '—' : o.free ? 'Free' : money(o.price);
+        const rule = k === 'none' ? 'No snacks. No extra money and no extra cost.' : o.free ? `Every passenger gets one. It costs ${money(o.costPax)} a passenger. Passengers like it.` : `${o.share === 0.5 ? 'About half' : `About ${Math.round(o.share * 10)} in 10`} of passengers buy one. Each snack costs ${money(o.costItem)} to stock.`;
+        return `<div class="ni-card"><em>${big}</em><b>${esc(o.label)}</b><span>${rule}</span></div>`; }).join('')}</div>`,
+      ['The money from snacks is called <b>cabin sales</b>. It is added to your revenue.']],
+    maths:() => { const n = ourPlane().seats, o = ONBOARD.sell3, b = Math.floor(n * o.share);
+      return [niRule('number buying', '×', 'price', 'Cabin sales'),
+        `<div class="ni-eg"><p>One full ${esc(ourPlane().name.replace(/^DHC-6 /, ''))}: <b>${n} passengers</b>. At ${money(o.price)}, about half of them buy a snack.</p>${niDots(n, b, 'buy')}
+          <p>Half of ${n} is ${n / 2}. You can't sell half a snack, so <b>${b}</b> people buy.</p>
+          <p>Cabin sales: ${niSum(`${b} × ${money(o.price)} = ${money(b * o.price)}`)}</p>
+          <p class="ni-cost">The stock is a cost: ${niSum(`${b} × ${money(o.costItem)} = ${money(b * o.costItem)}`)}</p></div>`]; },
+    check:{ q:'On one flight, 10 passengers buy a snack at £5. Which sum works out the cabin sales?', opts:[['10 + £5', 'Adding gives £15, but every one of the 10 passengers pays £5.'], ['10 × £5', ''], ['10 ÷ £5', 'Dividing shares something out. Here each of the 10 passengers pays £5.']], ok:1, done:'10 × £5 = £50 of cabin sales.' },
+    think:['Which brings in more money: more people buying at £3, or fewer people at £5?', 'Remember the stock costs money too. You can try each choice in the Test step.'] },
+
+  fuel:{ kicker:'New today · Fuel', title:'Buying fuel', before:'planner', words:[['Litre (L)', 'How fuel is measured.'], ['Price per litre', 'What one litre costs today. It changes.'], ['Tank', () => `Where your fuel is kept. It holds ${num(tankCapacity())} L.`], ['Fuel cost', 'The fuel your flights burn, at the price you paid for it.']],
+    what:() => { const r = routeById(S.market), per = fuelForTrip(ourPlane(), r);
+      return [['The launch deal is over. From today your airline buys its own fuel, and fuel is sold by the litre.'],
+        `<div class="ni-flow"><div><span class="kl">Cash</span><b class="mono">${money(S.cash)}</b><small>pays for fuel</small></div><i>→</i><div><span class="kl">Your tank</span><b class="mono">${num(S.fuel)} L</b><small>holds ${num(tankCapacity())} L</small></div><i>→</i><div><span class="kl">Each ${esc(r.city)} service burns</span><b class="mono">${num(per)} L</b><small>out and back</small></div></div>`,
+        ['You buy fuel before you fly. It goes into your tank, and your flights burn it.', `The price changes from day to day. Today it is <b class="mono">${priceL(fuelPrice())}</b> a litre.`],
+        niPrices(0, S.round)]; },
+    maths:() => [niRule('litres', '×', 'price per litre', 'Cost'),
+      `<div class="ni-eg"><p>Buying <b>500 L</b> at <b>£1.30</b> a litre: ${niSum('500 × £1.30 = £650')}</p>
+        <p class="ni-tip">One way to work it out: ${niSum('500 × £1 = £500')} and ${niSum('500 × 30p = £150')}, then ${niSum('£500 + £150 = £650')}</p>
+        <p>The same sum works out the <b>fuel cost</b> of a day's flying: the litres your flights burn × the price per litre. You will work out today's on the Cost step.</p></div>`],
+    check:{ q:'You want to buy 1,000 L of fuel at £1.30 a litre. Which sum works out the cost?', opts:[['1,000 + £1.30', 'Adding gives £1,001.30, but every one of the 1,000 litres costs £1.30.'], ['1,000 × £1.30', ''], ['1,000 ÷ £1.30', 'Dividing shares something out. Here each of the 1,000 litres costs £1.30.']], ok:1, done:'1,000 × £1.30 = £1,300.' },
+    think:['Fuel prices go up and down, like in the real world. Keep an eye on the price and the news.', () => `Your tank holds ${num(tankCapacity())} L. Why might an airline buy more fuel than it needs today?`] },
+
+  times:{ kicker:'New today · Times of day', title:'Departure times', words:[['Departure time', 'When a service leaves your home airport.'], ['Empty seats', 'Seats with nobody in them.'], ['Crew', `The pilots who fly the aircraft. A crew can work ${fmtDur(WORLD.crewDutyMin || 720)} a day.`]],
+    what:() => { const r = routeById(S.market), fare = fareOf(S.market), P = demandPools(r, fare), mx = Math.max(1, ...BANDS.map(b => P[b] || 0), P.flex || 0);
+      const col = (n, l, s, cls) => `<div class="${cls || ''}"><b class="mono">${n}</b><i style="--h:${Math.round(8 + 92 * n / mx)}"></i><span>${l}</span><small>${s}</small></div>`;
+      return [['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.'],
+        `<div class="ni-bands"><p class="kl">${flagSvg(r.flag, 14)} The ${P.W} people who want to fly to ${esc(r.city)} at ${money(fare)}</p><div class="nb-cols">${BANDS.map(b => col(P[b] || 0, BAND_SHORT[b], bandSpan(b))).join('')}${col(P.flex || 0, 'Any time', 'will take any service', 'flex')}</div></div>`,
+        [`Now you choose a <b>departure time</b> for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 720)}: from half an hour before the first departure to half an hour after the last landing. A longer day needs a second crew (${money(WORLD.crewCost || 250)}).`]]; },
+    maths:() => { const n = ourPlane().seats;
+      return [niRule('seats', '−', 'passengers', 'Empty seats'),
+        `<div class="ni-eg"><p>A ${n}-seat service with <b>8 passengers</b>:</p>${niDots(n, 8)}<p>${niSum(`${n} − 8 = ${n - 8}`)} empty seats.</p>
+          <p class="ni-tip">The crew's day: first departure <b class="mono">07:00</b>, last landing <b class="mono">18:45</b>. The crew works from <b class="mono">06:30</b> to <b class="mono">19:15</b>: ${niSum('12 h 45 min')}. That is more than ${fmtDur(WORLD.crewDutyMin || 720)}, so a second crew is needed.</p></div>`]; },
+    check:{ q:() => `A service has ${ourPlane().seats} seats and 12 passengers. Which sum works out the empty seats?`, opts:() => { const n = ourPlane().seats; return [[`${n} + 12`, `Adding gives ${n + 12}: more than the seats on the aircraft.`], [`${n} − 12`, ''], [`${n} × 12`, 'Multiplying makes it much bigger. The empty seats are the ones left over.']]; }, ok:1, done:() => `${ourPlane().seats} − 12 = ${ourPlane().seats - 12} empty seats.` },
+    think:['When do most of your passengers want to fly?', 'Which departure times would fill your seats?'] },
+
+  route:{ kicker:'New today · A second route', title:() => `A second route: ${routeById(otherRoute()).city}`, words:[['Route', 'A place your airline flies to, and back.'], ['Ticket revenue', 'The money from tickets: passengers × fare.']],
+    what:() => { const p = ourPlane(), card = id => { const r = routeById(id), f = fareOf(id) || r.basePrice;
+        return `<div class="ni-card rt"><em>${flagSvg(r.flag, 30)}</em><b>${esc(r.city)}</b><span><b class="mono">${num(Math.round(routeKm(r)))} km</b> · <b class="mono">${fmtDur(legMinutes(p, r))}</b> each way</span><span><b class="mono">${paxWant(r, f)}</b> people want to fly at <b class="mono">${money(f)}</b></span></div>`; };
+      return [[`A second market is open. Your one aircraft can now fly to ${esc(routeById(S.market).city)} and to ${esc(routeById(otherRoute()).city)}.`],
+        `<div class="ni-cards two">${card(S.market)}${card(otherRoute())}</div>`,
+        ['One aircraft can\'t be in two places at once, so you share its day between the two routes.']]; },
+    maths:() => { const a = routeById(S.market).city, b = routeById(otherRoute()).city;
+      return [niRule('passengers', '×', 'fare', 'Ticket revenue'),
+        `<div class="ni-eg"><p>Each route has its own tickets. If <b>12 people</b> fly to ${esc(b)} at <b>£70</b>: ${niSum('12 × £70 = £840')}</p>
+          <p class="ni-tip">One way to work it out: ${niSum('10 × £70 = £700')} and ${niSum('2 × £70 = £140')}, then ${niSum('£700 + £140 = £840')}</p>
+          <p>Then add the routes together: ${niSum(`${esc(a)} tickets + ${esc(b)} tickets = ticket revenue`)}</p></div>`]; },
+    check:{ q:() => `16 passengers fly to ${routeById(otherRoute()).city} at £90 each. Which sum works out the ticket revenue?`, opts:[['16 + £90', 'Adding gives £106, but every one of the 16 passengers pays £90.'], ['16 × £90', ''], ['£90 − 16', 'Taking away makes it smaller. Each of the 16 passengers pays £90.']], ok:1, done:'16 × £90 = £1,440.' },
+    think:[() => `How will you share the aircraft's day between ${routeById(S.market).city} and ${routeById(otherRoute()).city}?`, 'Where are more people waiting for a seat?'] },
+
+  week:{ kicker:'New this week · Weeks', title:'Planning a whole week', words:[['Projection', 'What you expect to happen, worked out from your plan.'], ['Week', 'Seven days: Monday to Sunday.']],
+    what:() => [['Your timetable now runs every day by itself. From now on you plan <b>a whole week</b> at a time: seven days with the same plan.'],
+      `<div class="ni-week">${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => `<div><b>${d}</b><span>same plan</span></div>`).join('')}</div>`,
+      [`In the weeks, fuel is bought as it is used, at that week's price (<b class="mono">${priceL(fuelPrice())}</b> a litre this week). There are no fuel orders.`]],
+    maths:() => [niRule('profit a day', '×', '7 days', 'Profit this week'),
+      `<div class="ni-eg"><p>If one day makes <b>£500</b> profit: ${niSum('£500 × 7 = £3,500')}</p>
+        <p class="ni-tip">One way to work it out: × 7 is × 5 and × 2. ${niSum('£500 × 5 = £2,500')} and ${niSum('£500 × 2 = £1,000')}, then ${niSum('£2,500 + £1,000 = £3,500')}</p></div>`],
+    check:{ q:'Each day makes £600 profit. Which sum works out the profit for the week?', opts:[['£600 + 7', 'Adding gives £607: that is only a little more than one day.'], ['£600 × 7', ''], ['£600 ÷ 7', 'Dividing shares one day\'s profit out. A week has 7 days of profit.']], ok:1, done:'£600 × 7 = £4,200.' },
+    think:['If every day has the same plan, why might one week make more money than another?', 'Read the news each week.'] },
+
+  tank:{ kicker:'New this month · Fuel', title:'Buying fuel ahead', before:'fuelPlan', words:[['Tank', () => `Where your fuel is kept. It holds ${num(tankCapacity())} L.`], ['Buying ahead', 'Buying fuel now for flights later.'], ['Delivered automatically', `If the tank runs out, fuel is delivered at the price that day plus ${Math.round(100 * (WORLD.fuelTopUp || 0.1))}p a litre.`]],
+    what:() => { const need = periodNeed();
+      return [['From now on you plan a month at a time, and fuel goes back into your tank. <b>You decide when to buy fuel, and how much.</b>'],
+        `<div class="ni-flow"><div><span class="kl">Your tank holds</span><b class="mono">${num(tankCapacity())} L</b><small>${num(S.fuel)} L in it now</small></div><div><span class="kl">This month's flights burn about</span><b class="mono">${num(need)} L</b><small>${need > tankCapacity() ? 'more than the tank holds' : 'less than the tank holds'}</small></div><div><span class="kl">If the tank runs out</span><b class="mono">+ ${Math.round(100 * (WORLD.fuelTopUp || 0.1))}p</b><small>a litre, delivered automatically</small></div></div>`,
+        ['The price of fuel changes, like in the real world. Here is the price so far:'], niPrices(S.round - 5, S.round)]; },
+    maths:() => [niRule('litres', '×', 'price per litre', 'Cost'),
+      `<div class="ni-eg"><p>The same <b>2,000 L</b> at two different prices:</p>
+        <p>At £1.50 a litre: ${niSum('2,000 × £1.50 = £3,000')}</p><p>At £1.60 a litre: ${niSum('2,000 × £1.60 = £3,200')}</p>
+        <p>The difference: ${niSum('£3,200 − £3,000 = £200')}</p></div>`],
+    check:{ q:'One month fuel costs £1.50 a litre. The next month it costs £1.60. Which sum shows how much more each litre costs?', opts:[['£1.60 + £1.50', 'Adding gives £3.10: that is two litres, one at each price.'], ['£1.60 − £1.50', ''], ['£1.60 × £1.50', 'Multiplying two prices doesn\'t give a price. The difference is what is left when you take one from the other.']], ok:1, done:'£1.60 − £1.50 = 10p more for every litre.' },
+    think:[() => `Your tank holds ${num(tankCapacity())} L. What does the news say about fuel?`, 'When would you fill the tank?'] }
+};
+const niVal = v => typeof v === 'function' ? v() : v;
+
+/* ---------- the screen ---------- */
+const NI_PAGES = ["What's new", 'The maths', 'Your turn'];
+R.intro = st => {
+  const I = INTRO[st.key]; if(!I){ next(); return; }
+  const page = clamp(st.page || 0, 0, 2), C = I.check, opts = niVal(C.opts), picked = st.pick, right = st.done;
+  st.seen = Math.max(st.seen || 0, page);
+  const para = a => a.map(l => `<p>${l}</p>`).join(''), block = x => Array.isArray(x) ? `<div class="ni-text">${para(x)}</div>` : x;
+  let body = '';
+  if(page === 0) body = I.what().map(block).join('');
+  else if(page === 1) body = I.maths().map(block).join('');
+  else body = `<p class="ni-q">${esc(niVal(C.q))}</p><div class="ni-opts">${opts.map(([t], k) => `<button class="ni-opt ${picked === k ? (k === C.ok ? 'right' : 'wrong') : ''} ${right && k === C.ok ? 'right' : ''}" data-ni="${k}" ${right ? 'disabled' : ''}><span class="mono">${esc(t)}</span></button>`).join('')}</div>
+    <div class="ni-fb" aria-live="polite">${right ? `<p class="ni-yes">&#10003; ${esc(niVal(C.done))}</p>` : picked !== undefined && picked !== C.ok ? `<p class="ni-no">${esc(opts[picked][1])} Have another go.</p>` : ''}</div>
+    ${right ? `<div class="ni-think"><span class="kl">Think about it as you plan</span>${I.think.map(l => `<p>${esc(niVal(l))}</p>`).join('')}</div>` : ''}`;
+  const tabs = `<ol class="ni-tabs">${NI_PAGES.map((l, k) => `<li><button class="${k === page ? 'on' : ''} ${k < page || (k <= st.seen) ? 'seen' : ''}" data-nip="${k}" ${k <= (st.seen || 0) ? '' : 'disabled'}><i>${k < page || (k === 2 && right) ? '&#10003;' : k + 1}</i>${l}</button></li>`).join('')}</ol>`;
+  const sayText = (page === 2 ? [niVal(C.q)].concat(opts.map(o => o[0])) : (page === 0 ? I.what() : I.maths()).filter(Array.isArray).flat()).join(' ').replace(/<[^>]+>/g, '').replace(/×/g, 'times').replace(/−/g, 'minus');
+  const W = PW(), go = W.span === 'day' ? "Plan today's flying" : I.before === 'fuelPlan' ? 'Buy fuel' : `Plan the ${W.span}`;
+  screen().innerHTML = taskFrame({ question:`<span class="ni-kick">${esc(I.kicker)}</span>${esc(niVal(I.title))}`, work:false, say:sayText,
+    context:{ title:'Key words', html:cxSec('New words', `<dl class="ni-words">${I.words.map(([w, m]) => `<dt>${esc(w)}</dt><dd>${esc(niVal(m))}</dd>`).join('')}</dl>`) },
+    main:`<div class="ni p${page}">${tabs}<div class="ni-page">${body}</div></div>`,
+    foot:`${page ? '<button class="btn big" id="niBack">&#9664; Back</button>' : ''}<span class="grow"></span>${page < 2 ? `<button class="btn primary big" id="niNext">${NI_PAGES[page + 1]} &#9654;</button>` : `<button class="btn primary big" id="nx" ${right ? '' : 'disabled'}>${right ? goLabel(go) : 'Choose a sum first'} &#9654;</button>`}` });
+  const go2 = k => { st.page = k; render(); };
+  on('niBack', () => go2(page - 1)); on('niNext', () => go2(page + 1));
+  screen().querySelectorAll('[data-nip]').forEach(b => b.onclick = () => go2(+b.getAttribute('data-nip')));
+  screen().querySelectorAll('[data-ni]').forEach(b => b.onclick = () => { const k = +b.getAttribute('data-ni'); st.pick = k; if(k === C.ok) st.done = true; render(); });
+  on('nx', () => { UI.justDone = null; advance(); });
+};
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).

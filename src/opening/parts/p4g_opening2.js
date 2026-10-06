@@ -158,6 +158,8 @@ function editPlan(i, what, a, d){
 function testPlan(){ if(!S.rnd.test) S.rnd.test = JSON.parse(JSON.stringify(currentPlan())); return S.rnd.test; }
 
 /* ---------- the plan editor: only the controls introduced so far ---------- */
+/* A NEW tag on a control on the day its idea arrives. */
+function newTag(stage){ return progress() === stage && S.phase === 'round' && periodType() === 'day' ? '<span class="new-tag">NEW</span>' : ''; }
 function stepper(i, key, val, sub, o){
   o = o || {};
   return `<div class="pe-step ${o.cls || ''}"><button class="pe-b" data-pe="${i}|${key}|-1" aria-label="less" ${o.noLess ? 'disabled' : ''}>−</button><b class="pe-v mono">${val}</b><button class="pe-b" data-pe="${i}|${key}|1" aria-label="more" ${o.noMore ? 'disabled' : ''}>+</button>${sub ? `<small>${sub}</small>` : ''}</div>`;
@@ -170,14 +172,16 @@ function demandStrip(id){
 function planEditor(i, pl, L, o){
   o = o || {}; const p = ourPlane(), routes = S.phase === 'setup' ? [S.market] : plannerRoutes(), c = serviceCounts(pl.sched), per = depsOn(), maxT = WORLD.maxTrips || 4;
   const routeBlock = id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, F = r.fares || [r.basePrice], n = c[id] || 0;
-    return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
+    return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${o.big && id === otherRoute() ? newTag(3.4) : ''}${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
       ${per ? '' : `<div class="pe-f"><span class="label">Services</span>${stepper(i, 'svc|' + id, '×' + n, `${n * p.seats} seats`, { noLess: n === 0, noMore: pl.sched.length >= maxT })}</div>`}
       <div class="pe-f"><span class="label">Fare</span>${stepper(i, 'fare|' + id, money(fare), `<b class="mono">${paxWant(r, fare)}</b> want to fly`, { noLess: fare <= F[0], noMore: fare >= F[F.length - 1] })}</div></div>`; };
-  const snacks = snacksOn() ? `<div class="pe-ob"><span class="label">On board</span>${Object.keys(ONBOARD).map(k => `<button class="opt-chip ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b></button>`).join('')}</div>` : '';
+  // on the Plan screen the on-board choice is four cards, each with its rule; elsewhere a row of chips
+  const snacks = !snacksOn() ? '' : o.big ? `<div class="pe-obc ${newTag(3.1) ? 'fresh' : ''}"><div class="pe-sh"><span class="label">On board${newTag(3.1)}</span><span class="muted small">What happens on board today?</span></div><div class="obc-grid">${Object.keys(ONBOARD).map(k => `<button class="obc ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`).join('')}</div></div>`
+    : `<div class="pe-ob"><span class="label">On board</span>${Object.keys(ONBOARD).map(k => `<button class="opt-chip ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b></button>`).join('')}</div>`;
   let services = '';
   if(per){
     const two = secondRouteOn();
-    services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times</span><span class="muted small">Out, a turnaround, back, then a turnaround at home.</span><span class="pe-add">${pl.sched.length >= maxT ? '<span class="muted small">4 services is the most one aircraft can fly</span>' : routes.map(id => `<button class="btn small" data-pe="${i}|add|${id}|0">+ ${esc(routeById(id).city)} service</button>`).join('')}</span></div>
+    services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times${o.big ? newTag(3.3) : ''}</span><span class="muted small">Out, a turnaround, back, then a turnaround at home.</span><span class="pe-add">${pl.sched.length >= maxT ? '<span class="muted small">4 services is the most one aircraft can fly</span>' : routes.map(id => `<button class="btn small" data-pe="${i}|add|${id}|0">+ ${esc(routeById(id).city)} service</button>`).join('')}</span></div>
       ${(L.services || []).map((s, k) => { const r = routeById(s.route);
         return `<div class="pe-svc ${s.band}"><span class="pe-n">Service ${k + 1}</span>${two ? `<button class="pe-rt" data-pe="${i}|route|${k}|1" title="Change the route">${flagSvg(r.flag, 14)} ${esc(r.city)} ⇄</button>` : `<span class="pe-city">${flagSvg(r.flag, 14)} ${esc(r.city)}</span>`}
           ${stepper(i, 'dep|' + k, fmtTime(s.dep), `back ${fmtTime(s.arr)}`, { cls:'sm' })}<span class="pe-fill ${s.sold >= s.seats ? 'full' : ''}"><b class="mono">${s.sold}/${s.seats}</b><small>${s.sold >= s.seats ? 'full' : `${s.seats - s.sold} empty`}</small></span><span class="pe-band">${BAND_NAMES[s.band]}</span>
@@ -185,7 +189,7 @@ function planEditor(i, pl, L, o){
       </div>`;
   }
   const strips = per ? `<div class="pe-demand">${routes.map(demandStrip).join('')}${miniBar(L.D)}</div>` : '';
-  const sum = `<div class="pe-sum"><span><b class="mono">${L.pax}</b> fly</span><span class="${L.empty ? '' : 'muted'}"><b class="mono">${L.empty}</b> empty seat${L.empty === 1 ? '' : 's'}</span><span class="${L.nos ? 'orange' : ''}"><b class="mono">${L.nos}</b> without a seat</span>${L.end ? `<span>busy until <b class="mono">${fmtTime(L.end)}</b></span>` : ''}${opened(3.1) ? `<span class="${L.crews > 1 ? 'orange' : ''}">${L.crews} crew${L.crews > 1 ? 's' : ''}</span>` : ''}${L.fits ? '' : '<span class="red">Doesn\'t fit in the day</span>'}</div>`;
+  const sum = `<div class="pe-sum"><span><b class="mono">${L.pax}</b> fly</span><span class="${L.empty ? '' : 'muted'}"><b class="mono">${L.empty}</b> empty seat${L.empty === 1 ? '' : 's'}</span><span class="${L.nos ? 'orange' : ''}"><b class="mono">${L.nos}</b> without a seat</span>${L.end ? `<span>busy until <b class="mono">${fmtTime(L.end)}</b></span>` : ''}${fuelPaid() && L.fuelL ? `<span>burns <b class="mono">${num(L.fuelL)} L</b> of fuel${o.big ? newTag(3.2) : ''}</span>` : ''}${opened(3.1) ? `<span class="${L.crews > 1 ? 'orange' : ''}">${L.crews} crew${L.crews > 1 ? 's' : ''}</span>` : ''}${L.fits ? '' : '<span class="red">Doesn\'t fit in the day</span>'}</div>`;
   return `<div class="pe ${o.big ? 'big' : ''} ${o.compact ? 'compact' : ''}">${strips}<div class="pe-routes n${routes.length}">${routes.map(routeBlock).join('')}</div>${snacks}${services}${sum}</div>`;
 }
 function bindPlanEditor(){
@@ -199,7 +203,7 @@ function startProtoDay(n){
   S.rnd = Object.assign(emptyRnd(), { featured:f.uid, focusRoute:schedOf(f)[0] || S.market, headline:w.headline || '', brief:protoBrief(n) });
   S.period = newPeriod('day', S.day);
   if(depsOn() && !Array.isArray(S.deps)) S.deps = TIME.day(ourPlane(), schedOf(f), undefined, null).trips.map(t => t.dep);
-  S.steps = [{ t:'hq' }, { t:'planner' }, { t:'costPlan' }, { t:'testIdeas' }].concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]);
+  S.steps = withIntro([{ t:'hq' }, { t:'planner' }, { t:'costPlan' }, { t:'testIdeas' }].concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
   S.rnd.cashStart = S.cash; UI.view = null;
   S.si = 0; S.newRoutes = [];
   refreshPlan();
@@ -265,6 +269,7 @@ function railValue(t, i){
   if(t === 'fuelPlan'){ const o = S.rnd.fuelOrder; if(o) return `${num(o.litres)} L ordered · ${money(o.total)}`; return passed ? `tank covers it (${num(S.fuel)} L)` : ''; }
   if(t === 'costPlan') return S.rnd.costed ? `profit ${money(S.rnd.costed.v.profit)}` : '';
   if(t === 'testIdeas') return S.rnd.myForecast ? `${S.rnd.myForecast.plan} · ${money(S.rnd.myForecast.profit)}` : '';
+  if(t === 'intro'){ const I = introNow(); return I ? niVal(I.title) : ''; }
   return '';
 }
 function editStep(what){
@@ -277,7 +282,7 @@ function editStep(what){
 
 /* ---------- PLAN ---------- */
 const PLAN_STORY = {
-  3.1:['A catering company can supply snacks for your flights.', 'Selling snacks brings in money, but the stock costs money too. Free snacks cost more but passengers like them.'],
+  3.1:['Snacks are new today. Choose what happens on board: each card gives its rule.'],
   3.2:['The launch deal is over. From today your airline buys its own fuel.', 'Does yesterday\'s plan still make sense now that fuel costs money?'],
   3.3:['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.', `You can now choose a departure time for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 720)}, from half an hour before the first departure to half an hour after the last landing. A longer day needs a second crew (${money(WORLD.crewCost || 250)}).`],
   3.4:['A second market is open. Your one aircraft can now fly to two places.', 'How should its day be shared between them? Add a service, or change a service\'s route with ⇄.'] };

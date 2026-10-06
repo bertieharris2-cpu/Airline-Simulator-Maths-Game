@@ -37,6 +37,12 @@ const TAG = `${HOME}-${MK}-${W}`;
     const where = `${t}@${s.round}@${s.si}`; if(where === last) await p.waitForTimeout(250); last = where;
     const R = s.round, setup = s.phase === 'setup', day = setup ? 0 : R;
     if(t === 'fareTry'){ await fits('fareTry'); await shot('d0-fare'); await p.click('#nx'); continue; }
+    if(t === 'intro'){ const key = s.steps[s.si].key;
+      for(let pg = 0; pg < 3; pg++){ await fits(`intro ${key} p${pg}`); await shot(`in-${key}-p${pg}`); if(pg < 2) await p.click('#niNext'); }
+      ok(`intro ${key}: continue waits for the sum`, await p.$eval('#nx', e => e.disabled));
+      const n = (await p.$$('[data-ni]')).length; let wrong = 0;
+      for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++){ await p.click(`[data-ni="${k}"]`); if(await p.$eval('#nx', e => e.disabled)){ wrong++; ok(`intro ${key}: a wrong sum explains why`, await vis('.ni-no')); } }
+      ok(`intro ${key}: the right sum opens the plan`, !(await p.$eval('#nx', e => e.disabled)), { wrong }); await fits(`intro ${key} done`); await shot(`in-${key}-done`); await p.click('#nx'); continue; }
     if(t === 'hq'){ await fits('hq ' + R); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ await fits('milestone ' + R); await shot('ms-' + R); await p.click('#msGo'); continue; }
     if(t === 'review'){ await solve('review ' + R); await p.click('#nx'); continue; }

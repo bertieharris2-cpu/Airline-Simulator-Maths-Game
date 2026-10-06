@@ -106,7 +106,7 @@ function startBeat(b){
   publish(); render();
 }
 function stepsFor(b){
-  const w = roundData(b), st = w.stage ? [{ t:'milestone', stage:w.stage }] : [], L = a => st.concat(a.map(t => ({ t })));
+  const w = roundData(b), st = w.stage ? [{ t:'milestone', stage:w.stage }] : [], L = a => withIntro(st.concat(a.map(t => ({ t }))), w);
   if(w.period === 'gap') return L(['sim', 'results']);
   if(w.period === 'week') return L((w.noReview ? ['hq'] : ['hq', 'review']).concat(['planner', 'costPlan', 'testIdeas', 'ready', 'sim', 'results']));
   if(w.until) return L(['hq', 'review', 'plans', 'fuelPlan', 'yearPlan', 'afford', 'ready', 'sim', 'results']);

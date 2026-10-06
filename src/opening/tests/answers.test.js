@@ -67,6 +67,7 @@ const TAG = `${HOME}-${MK}-${W}`;
     const where = `${t}@${s.round}@${s.si}`; if(where === last) await p.waitForTimeout(250); last = where;
     const R = s.round, setup = s.phase === 'setup', day = setup ? 0 : R;
     if(t === 'fareTry'){ await fits('fareTry'); await shot('d0-fare'); await p.click('#nx'); continue; }
+    if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) await p.click('#niNext'); for(let k = 0; k < 3 && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
     if(t === 'hq'){ await fits('hq ' + R); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ await fits('milestone ' + R); await shot('ms-' + R); await p.click('#msGo'); continue; }
     if(t === 'review'){ await solve('review ' + R); await p.click('#nx'); continue; }
