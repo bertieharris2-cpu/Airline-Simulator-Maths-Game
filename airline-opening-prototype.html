@@ -6944,9 +6944,9 @@ function tableAt(route, fare){
 }
 /* Heathrow is the reference (the tables were tested there); other homes scale by their demand modifier. */
 function homeScale(){ const ref = WB && WB.airports.find(a => a.code === 'LHR'), r = ref ? 1 + (ref.demandModifier || 0) : 1; return (1 + (homeData().demandPct || 0) / 100) / r; }
-/* Word spreads: growthPerWeek % more people each full week of regular operation (Week 1 = no growth), up to the ceiling.
+/* Word spreads: growthPerWeek % more people each week from Week 3 (Weeks 1 and 2 stay flat), up to the ceiling.
    The same all through a week or a month, so a projection made at its start still holds. */
-function growthOf(route, n){ const a = route.arch; if(!a || !a.growthPerWeek) return 1; const wk = Math.max(0, weekNo(beatDay(n)) - 1); return Math.min(a.growthCeiling || Infinity, 1 + a.growthPerWeek / 100 * wk); }
+function growthOf(route, n){ const a = route.arch; if(!a || !a.growthPerWeek) return 1; const wk = Math.max(0, weekNo(beatDay(n)) - 2); return Math.min(a.growthCeiling || Infinity, 1 + a.growthPerWeek / 100 * wk); }
 function seasonOf(day){ const m = calDate(day).getUTCMonth(); return m >= 2 && m <= 4 ? 'spring' : m <= 7 && m >= 5 ? 'summer' : m >= 8 && m <= 10 ? 'autumn' : 'winter'; }
 function seasonMult(route, n){ const a = route.arch; return a && a.season ? (a.season[seasonOf(beatDay(n))] || 1) : 1; }
 function demandAt(route, price, n){
