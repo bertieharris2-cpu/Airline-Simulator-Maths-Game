@@ -1,9 +1,12 @@
 PW: p4d_opening.js -> p4f_campaign.js
+actualDeps: p4g_opening2.js -> p4m_fleet.js
 advance: p4a_core.js -> p4d_opening.js
 applyPeriodResults: p4a_core.js -> p4f_campaign.js
+applyPlanRaw: p4f_campaign.js -> p4m_fleet.js
 aptCode: p4d_opening.js -> p4i_liveops.js
 bandOf: p4g_opening2.js -> p4h_world.js
 beatLabel: p4d_opening.js -> p4f_campaign.js -> p4k_chapter.js
+bindPlanEditor: p4g_opening2.js -> p4m_fleet.js
 campaignSummary: p4d_opening.js -> p4f_campaign.js
 capFirst: p4a2_workbook.js -> p4d_opening.js
 cellState: p4a_core.js -> p4e_toolkit.js
@@ -12,19 +15,26 @@ checkCell: p4a_core.js -> p4e_toolkit.js
 checkTools: p4e_toolkit.js -> p4g_opening2.js
 closeDay: p4d_opening.js -> p4f_campaign.js -> p4g_opening2.js -> p4k_chapter.js
 closeWord: p4d_opening.js -> p4f_campaign.js
+costLabels: p4g_opening2.js -> p4m_fleet.js
+costRowIds: p4g_opening2.js -> p4l_handsums.js -> p4m_fleet.js
 crewNeeded: p4a_core.js -> p4h_world.js
 ctxForecast: p4d_opening.js -> p4g_opening2.js
-currentPlan: p4d_opening.js -> p4g_opening2.js
+currentPlan: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js
+dayCostOf: p4a_core.js -> p4m_fleet.js
 dayExtras: p4a_core.js -> p4h_world.js
 dayTag: p4a_core.js -> p4k_chapter.js
-demandAt: p4a_core.js -> p4h_world.js
+decideHandSums: p4l_handsums.js -> p4m_fleet.js
+demandAt: p4a_core.js -> p4h_world.js -> p4l_handsums.js
 demandPools: p4g_opening2.js -> p4h_world.js
 demandRule: p4b_control.js -> p4h_world.js
 demandStrip: p4g_opening2.js -> p4h_world.js
 earlyBonus: p4a_core.js -> p4g_opening2.js
+editPlan: p4g_opening2.js -> p4m_fleet.js
 editStep: p4d_opening.js -> p4f_campaign.js -> p4g_opening2.js
 ensureTable: p4a_core.js -> p4e_toolkit.js
 fcKey: p4d_opening.js -> p4f_campaign.js
+flightParts: p4h_world.js -> p4m_fleet.js
+fmtVal: p4a_core.js -> p4m_fleet.js
 forecastCols: p4b_control.js -> p4d_opening.js
 goWord: p4d_opening.js -> p4f_campaign.js
 legMinutes: p4a_core.js -> p4h_world.js
@@ -36,32 +46,39 @@ periodNeed: p4d_opening.js -> p4f_campaign.js
 periodShort: p4a_core.js -> p4f_campaign.js -> p4k_chapter.js
 periodTag: p4a_core.js -> p4k_chapter.js
 phaseOf: p4a_core.js -> p4k_chapter.js
+planEditor: p4g_opening2.js -> p4m_fleet.js
 planFlights: p4a_core.js -> p4g_opening2.js -> p4h_world.js
-planKey: p4d_opening.js -> p4g_opening2.js
-planLines: p4d_opening.js -> p4g_opening2.js
+planKey: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js
+planLabel: p4g_opening2.js -> p4m_fleet.js
+planLines: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js
 planOutcome: p4d_opening.js -> p4g_opening2.js
 planWord: p4d_opening.js -> p4f_campaign.js
-plannerRoutes: p4d_opening.js -> p4g_opening2.js
+plannedLitres: p4l_handsums.js -> p4m_fleet.js
+plannerRoutes: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js
 profitLabel: p4b_control.js -> p4f_campaign.js
 protoBrief: p4d_opening.js -> p4g_opening2.js -> p4k_chapter.js
 railKind: p4d_opening.js -> p4f_campaign.js
 railTitle: p4d_opening.js -> p4f_campaign.js
 railValue: p4d_opening.js -> p4g_opening2.js
-readyExtra: p4d_opening.js -> p4f_campaign.js
-readyOk: p4d_opening.js -> p4f_campaign.js
+readyExtra: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
+readyOk: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyTitle: p4d_opening.js -> p4f_campaign.js
+recordHandSums: p4l_handsums.js -> p4m_fleet.js
 routeKm: p4a_core.js -> p4h_world.js
-routeOpen: p4a_core.js -> p4k_chapter.js
+routeOpen: p4a_core.js -> p4k_chapter.js -> p4m_fleet.js
 rowLive: p4a_core.js -> p4e_toolkit.js
+rowTyped: p4e_toolkit.js -> p4m_fleet.js
 runCostOf: p4a_core.js -> p4h_world.js
-setPlan: p4d_opening.js -> p4g_opening2.js
+setPlan: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js
 simulateDays: p4a_core.js -> p4f_campaign.js
 simulateRun: p4a_core.js -> p4f_campaign.js
 stageSummary: p4d_opening.js -> p4g_opening2.js
 startFlight: p4a_core.js -> p4g_opening2.js -> p4i_liveops.js
-startProtoDay: p4d_opening.js -> p4g_opening2.js
+startProtoDay: p4d_opening.js -> p4g_opening2.js -> p4l_handsums.js -> p4m_fleet.js
 stepsFor: p4f_campaign.js -> p4k_chapter.js
 syncRoutesToHome: p4d_opening.js -> p4h_world.js
 testPlan: p4f_campaign.js -> p4g_opening2.js
 timeSelfTest: p4a_core.js -> p4h_world.js
+toolLevel: p4e_toolkit.js -> p4l_handsums.js -> p4m_fleet.js
+withPlan: p4g_opening2.js -> p4m_fleet.js
 wsStatus: p4d_opening.js -> p4f_campaign.js

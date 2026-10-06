@@ -38,7 +38,7 @@ function mechanicsBy(day){ const out = []; CAL.forEach(c => { if(c.day <= day) (
 function mechanicOn(name, day){ return mechanicsBy(day === undefined ? (S ? S.day : 1) : day).some(m => m.includes(name)); }
 /* The toolkit's progress numbers (data-tools levels) from the mechanics: snacks 3.1, fuel 3.2, time of day 3.3, second route 3.4; weeks 4+; months 5. */
 const MECH_PROG = [['snacks', 3.1], ['fuel', 3.2], ['time-of-day', 3.3], ['second route', 3.4]];
-const MECH_INTRO = [['snacks', 'snacks'], ['fuel', 'fuel'], ['time-of-day', 'times'], ['second route', 'route']];
+const MECH_INTRO = [['snacks', 'snacks'], ['fuel', 'fuel'], ['time-of-day', 'times'], ['second route', 'route'], ['crew duty', 'crew'], ['finance', 'fleet'], ['season forecast card', 'season'], ['range check', 'jets']];
 function progOn(day){ let p = 2; mechanicsBy(day).forEach(m => MECH_PROG.forEach(([k, v]) => { if(m.includes(k)) p = Math.max(p, v); })); return p; }
 
 function buildBeats(){
@@ -52,6 +52,7 @@ function buildBeats(){
   for(let d = startDay; d < weekFrom && d <= reviewDay; d++){
     const c = calRow(d) || {}, first = d === startDay, mechs = (c.unlocks || {}).mechanics || [], intro = [];
     MECH_INTRO.forEach(([k, key]) => { if(mechs.some(m => m.includes(k))) intro.push(key); });
+    if(calDate(d).getUTCDay() === 6 && d - startDay < 7) intro.push('weekend');   // the first Saturday: who flies at the weekend
     R.push({ date:c.date || isoOf(d), day:d, period: first ? 'setup' : 'day', fuel:fuelOn(d), prog:progOn(d), title: first ? (c.title || 'Launch Day') : (c.title || 'Day ' + d),
       headline:(c.headlines || [])[0] || '', news:(c.headlines || []).slice(), intro: intro.length ? (intro.length === 1 ? intro[0] : intro) : undefined,
       eventId:c.event || null, event:gameEvent(c.event), competitor:c.rivalFares || null, demandMod:modOf(c.demandChanges), demandChanges:c.demandChanges || null,
@@ -88,6 +89,7 @@ function beatLabel(i){ const t = periodOf(i), d = beatDay(i); if(t === 'setup') 
 function monthNo(day){ const d = calDate(day); return (d.getUTCFullYear() - 2030) * 12 + d.getUTCMonth() - 7; }   // September 2030 = Month 1
 function dayTag(n){ n = n === undefined ? (S && S.day !== undefined ? S.day : 1) : n; return S && S.phase === 'setup' ? 'Launch Day' : 'Day ' + n; }
 PERIOD_CHIP.review = 'Chapter review';
+STAGES.review = [{ id:'rev', name:'Review', done:'Reviewed', sub:'The accounts for the chapter', steps:['review'] }];
 /* "Thursday 5 September 2030" · "Week 4 · 23–29 September" · "December 2030" · "Chapter review · Saturday 28 December 2030" */
 function periodLabel(P){
   P = P || S.period; if(!P || P.type === 'setup') return 'Launch Day';
@@ -118,8 +120,9 @@ function protoBrief(n){
   if(opening.some(r => WORLD.setupRoutes.includes(r.id))) L.push(`${routeById(otherRoute()).city} is now open: one aircraft, two markets.`);
   else if(opening.length) L.push(`New route${opening.length > 1 ? 's' : ''} open: ${opening.map(r => r.city).join(', ')}.`);
   if(w.event) L.push(`${w.event.title}.`);
+  if(w.competitor) Object.keys(w.competitor).forEach(id => { const r = routeById(id); if(r) L.push(`${WORLD.rival} is selling ${r.city} tickets for ${money(w.competitor[id])}.`); });
   if(fuelPaid() && fp !== fy) L.push(`Fuel is ${priceL(fp)} a litre today (was ${priceL(fy)}).`);
-  return L;
+  return L.slice(0, 3);
 }
 /* Closing a day or a period: the next beat the calendar gives, the standing plan before the first week, the chapter end after the review. */
 function closeDay(){

@@ -108,8 +108,8 @@ function planLines(pl){
     const v = { pax1: paxOn(r1), fare1: fareOf(r1), pax2: paxOn(r2id), fare2: fareOf(r2id) };
     v.tk1 = v.pax1 * v.fare1; v.tk2 = v.pax2 * v.fare2; v.buyers = X.buyers || 0; v.snackP = ob.price || 0; v.snack = X.obRev; v.rev = v.tk1 + v.tk2 + v.snack;
     v.run = fl.reduce((t, x) => t + x.runCost, 0); v.fuelL = fl.reduce((t, x) => t + x.fuelL, 0); v.ppl = fuelPrice(); v.fuel = Math.round(fl.reduce((t, x) => t + x.fuelCost, 0));
-    v.term = X.term; v.stock = X.obCost; v.crew = X.crew; v.day = fleetDayCost();
-    v.cost = v.run + v.fuel + v.term + v.stock + v.crew + v.day; v.profit = v.rev - v.cost;
+    v.term = X.term; v.stock = X.obCost; v.crew = X.crew; v.day = fleetDayCost(); v.event = (S.rnd && S.rnd.eventCost) || 0;
+    v.cost = v.run + v.fuel + v.term + v.stock + v.crew + v.day + v.event; v.profit = v.rev - v.cost;
     const routes = {}; fl.forEach(x => { routes[x.route] = (routes[x.route] || 0) + x.sold; });
     const ids = [...new Set(pl.sched)], want = Object.fromEntries(ids.map(id => [id, paxWant(routeById(id), fareOf(id))]));
     const nos = ids.reduce((t, id) => t + Math.max(0, want[id] - (routes[id] || 0)), 0);
@@ -170,7 +170,8 @@ function demandStrip(id){
 function planEditor(i, pl, L, o){
   o = o || {}; const p = ourPlane(), routes = S.phase === 'setup' ? [S.market] : plannerRoutes(), c = serviceCounts(pl.sched), per = depsOn(), maxT = WORLD.maxTrips || 4;
   const routeBlock = id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, F = r.fares || [r.basePrice], n = c[id] || 0;
-    return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${o.big && id === otherRoute() ? newTag(3.4) : ''}${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
+    const rival = competitorPrice(r);
+    return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${o.big && id === otherRoute() ? newTag(3.4) : ''}${rival !== undefined ? `<span class="pe-rival" title="${esc(WORLD.rival)} is selling tickets at this price">${esc(WORLD.rival)} ${money(rival)}</span>` : ''}${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
       ${per ? '' : `<div class="pe-f"><span class="label">Services</span>${stepper(i, 'svc|' + id, '×' + n, `${n * p.seats} seats`, { noLess: n === 0, noMore: pl.sched.length >= maxT })}</div>`}
       <div class="pe-f"><span class="label">Fare</span>${stepper(i, 'fare|' + id, money(fare), `<b class="mono">${paxWant(r, fare)}</b> want to fly`, { noLess: fare <= F[0], noMore: fare >= F[F.length - 1] })}</div></div>`; };
   // on the Plan screen the on-board choice is four cards, each with its rule; elsewhere a row of chips
@@ -323,12 +324,12 @@ function weekProjected(){ return S.phase === 'round' && PW().span === 'week' && 
 function linesFor(pl){ const sp = PW().span; return sp === 'day' ? planLines(pl) : weekProjected() ? weekLines(pl) : periodLines(pl); }
 R.costPlan = () => {
   const pl = currentPlan(), W = PW(), sp = W.span, setup = S.phase === 'setup';
-  let t, t2 = null, L, title, intro = '';
+  let t, t2 = null, t3 = null, L, title, intro = '';
   if(sp === 'day'){
     L = planLines(pl);
     const tid = 'cost:' + S.day, prev = S.rnd.tables[tid];
-    const v0 = L.v, parts = { run:flightParts(pl.sched), cost:[['Flights', money(v0.run)]].concat(fuelPaid() ? [['Fuel', money(v0.fuel)]] : []).concat([['Terminal charges', money(v0.term)]]).concat(v0.stock ? [['Snack stock', money(v0.stock)]] : []).concat(v0.crew ? [['Second crew', money(v0.crew)]] : []).concat([["Aircraft's day", money(v0.day)]]) };
-    t = ensureTable(tid, 'cost1', [{ id:'a', label:'Your plan', sub:svcLabel(pl.sched), values:Object.assign({}, L.v), parts }], { rowIds:costRowIds(L, pl), labels:costLabels() });
+    const v0 = L.v, parts = { run:flightParts(pl), day:typeof dayParts === 'function' ? dayParts() : [], cost:[['Flights', money(v0.run)]].concat(fuelPaid() ? [['Fuel', money(v0.fuel)]] : []).concat([['Terminal charges', money(v0.term)]]).concat(v0.stock ? [['Snack stock', money(v0.stock)]] : []).concat(v0.crew ? [['Second crew', money(v0.crew)]] : []).concat(v0.event ? [[S.rnd.event ? S.rnd.event.title : 'Event', money(v0.event)]] : []).concat([["Aircraft's day", money(v0.day)]]) };
+    t = ensureTable(tid, 'cost1', [{ id:'a', label:'Your plan', sub:planLabel(pl).split(' · ').slice(0, 2).join(' · '), values:Object.assign({}, L.v), parts }], { rows:costRowsFor(L), rowIds:costRowIds(L, pl), labels:costLabels() });
     if(t !== prev && !(setup && !prev)) t.active = null;
     if(toolMet('emptySeats') && toolLevel('emptySeats') !== 'model' && L.services.length){
       const s = L.services, pick = S.rnd.emptyK !== undefined && s[S.rnd.emptyK] ? S.rnd.emptyK : s.reduce((b, x, k) => (x.seats - x.sold) > (s[b].seats - s[b].sold) ? k : b, 0), x = s[pick];
@@ -337,6 +338,13 @@ R.costPlan = () => {
       t2 = ensureTable(tid2, 'empty1', [{ id:'s', label:`Service ${pick + 1} · ${fmtTime(x.dep)}`, sub:routeById(x.route).city, values:{ seats:x.seats, flown:x.sold, empty:x.seats - x.sold } }]);
       if(t2 !== prev2) t2.active = null;
       S.rnd.activeTable = (t2.active ? t2 : t).id;
+    }
+    if(S.rnd.handSums && S.rnd.handSums.flightTime && typeof flightTimePlane === 'function'){   // a new route: distance ÷ speed (rule 4)
+      const rid = S.rnd.handSums.flightTime.route, r3 = routeById(rid), p3 = flightTimePlane(pl, rid), km = routeKm(r3);
+      const tid3 = `time:${S.day}:${rid}:${p3.id}`, prev3 = S.rnd.tables[tid3];
+      t3 = ensureTable(tid3, 'time1', [{ id:'t', label:`${r3.city} by ${p3.name.replace(/^DHC-6 /, '')}`, sub:`${num(km)} km at ${num(p3.speed)} km/h`, values:{ km, speed:p3.speed, hours:r2(km / p3.speed) } }]); t3.rid = rid;
+      if(t3 !== prev3) t3.active = null;
+      if(!t2) S.rnd.activeTable = (t3.active ? t3 : t).id;
     }
     title = "Check today's new numbers";
   } else if(weekProjected()){
@@ -352,18 +360,18 @@ R.costPlan = () => {
     title = `Your plan ${W.now}`;
     intro = `<p class="c2-note">Nothing new to work out ${W.now}: the model has costed your plan.</p>`;
   }
-  const done = tableComplete(t) && (!t2 || tableComplete(t2)), fresh = newIdeas([t, t2]), calc = t2 && t2.active ? t2 : t;
+  const done = tableComplete(t) && (!t2 || tableComplete(t2)) && (!t3 || tableComplete(t3)), fresh = newIdeas([t, t2, t3]), calc = t3 && t3.active ? t3 : t2 && t2.active ? t2 : t;
   const spot = fresh.length ? `<div class="c2-new"><span class="label">New today</span>${fresh.map(id => `<b>${esc(NEW_TODAY[id] || TOOL[id].name)}</b>`).join('')}</div>` : '';
   const svcList = t2 ? `<div class="c2-svcl">${L.services.map((s, k) => `<button class="c2-s ${k === S.rnd.emptyK ? 'on' : ''}" data-esel="${k}" ${tableComplete(t2) || k === S.rnd.emptyK ? 'disabled' : ''}><b>Service ${k + 1}</b><span class="mono">${fmtTime(s.dep)}</span><span>${esc(routeById(s.route).city)}</span><span class="mono ${s.sold >= s.seats ? 'green' : 'orange'}">${s.sold}/${s.seats}</span></button>`).join('')}</div>` : '';
   screen().innerHTML = taskFrame({ question:title, work: fresh.length > 0, calc,
     story: setup ? ['This is the one place today where you check the numbers yourself. The model works out everything else.'] : [],
     say: fresh.length ? `Check today's new numbers. ${fresh.map(id => NEW_TODAY[id] || '').join('. ')}.` : 'The model has costed your plan.',
     context:{ title:'Your plan', html: cxSec('The plan', `<p class="cx-plan">${esc(planLabel(pl))}</p>`) + cxSec('Profit', kv([['Total revenue', `<span class="mono">${done ? money(L.v.rev) : '—'}</span>`], ['Total costs', `<span class="mono">${done ? money(L.v.cost) : '—'}</span>`], ['Profit', done ? `<span class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</span>` : '<span class="muted">—</span>', 'tot']])) + `<p class="muted cx-note">${done ? 'Next: try other ideas. The model costs them for you.' : 'Choose <b>Complete figure</b> to work out the new figure.'}</p><button class="link" data-archive>Compare with earlier days</button>` },
-    main:`<div class="cost2">${spot}${intro}<div class="c2-g ${t2 ? 'two' : ''}"><section class="pnl c2-sheet"><div class="sheet1">${tableHtml(t)}</div></section>${t2 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>One service</h3><span class="muted">How well is the aircraft used?</span></div>${svcList}<div class="sheet1">${tableHtml(t2)}</div></section>` : ''}</div></div>`,
+    main:`<div class="cost2">${spot}${intro}<div class="c2-g ${t2 || t3 ? 'two' : ''}"><section class="pnl c2-sheet"><div class="sheet1">${tableHtml(t)}</div></section>${t3 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>Flight time</h3><span class="muted">${esc(routeById(t3.rid).city)}: how long each way?</span></div><div class="sheet1">${tableHtml(t3)}</div></section>` : ''}${t2 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>One service</h3><span class="muted">How well is the aircraft used?</span></div>${svcList}<div class="sheet1">${tableHtml(t2)}</div></section>` : ''}</div></div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${goLabel(done ? 'Test other ideas' : 'Complete the new figures first')} &#9654;</button>` });
-  bindTable(t); if(t2) bindTable(t2);
+  bindTable(t); if(t2) bindTable(t2); if(t3) bindTable(t3);
   screen().querySelectorAll('[data-esel]').forEach(b => b.onclick = () => { S.rnd.emptyK = +b.getAttribute('data-esel'); resetEntry(); render(); });
-  on('nx', () => { S.rnd.costed = { label:planLabel(pl), key:planKey(pl), v:Object.assign({}, L.v, sp === 'day' ? {} : { rev:L.v.rev, cost:L.v.cost, profit: weekProjected() ? L.v.wproj : L.v.profit }) }; S.rnd.costedTools = fresh; S.rnd.test = null; resetEntry(); UI.justDone = null; advance(); });
+  on('nx', () => { S.rnd.costed = { label:planLabel(pl), key:planKey(pl), v:Object.assign({}, L.v, sp === 'day' ? {} : { rev:L.v.rev, cost:L.v.cost, profit: weekProjected() ? L.v.wproj : L.v.profit }) }; S.rnd.costedTools = fresh; if(sp === 'day' && typeof recordHandSums === 'function') recordHandSums(L); S.rnd.test = null; resetEntry(); UI.justDone = null; advance(); });
 };
 
 /* ---------- TEST: try other ideas with the model ---------- */
@@ -402,7 +410,7 @@ R.testIdeas = () => {
       <section class="pnl t2-test"><div class="pnl-h"><h3>Test plan</h3>${same ? '' : '<button class="link" data-treset>Start again from your plan</button>'}</div>${planEditor(9, test, Lt.day || Lt, { compact:true })}</section>
       <section class="pnl t2-model"><div class="pnl-h"><h3>What the model says</h3>${chip}</div>${modelRows(Lc, Lt, sp)}</section></div>` });
   bindPlanEditor();
-  const fly = (pl, L, name) => { if(planKey(pl) !== planKey(currentPlan())){ const f = fleetOne(); setSchedule(f.uid, pl.sched.slice()); Object.assign(S.prices, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard; S.deps = pl.deps ? pl.deps.slice() : null; refreshPlan(); }
+  const fly = (pl, L, name) => { if(planKey(pl) !== planKey(currentPlan())) applyPlan(pl);
     S.rnd.myForecast = forecastOf(L, name, currentPlan());
     S.rnd.archive = { costed: S.rnd.costed ? { label:S.rnd.costed.label, profit: wk ? S.rnd.costed.v.profit : S.rnd.costed.v.profit } : null, ideas: ideas.map((x, k) => ({ name:`Idea ${k + 1}`, label:x.label, profit:x.profit })), flown:{ name, label:planLabel(currentPlan()), profit:P(L) } };
     S.rnd.test = null; resetEntry(); UI.justDone = null; advance(); };
@@ -423,7 +431,8 @@ R.ready = () => {
   const D = sched.length ? TIME.day(p, sched) : null, ids = Object.keys(serviceCounts(sched));
   const row = (label, value, edit, good, warn) => `<div class="op-row ${good ? 'ok' : 'warn'}"><span class="op-l">${label}</span><span class="op-v">${value}</span><span class="op-s">${good ? '&#10003;' : esc(warn)}</span>${edit ? `<button class="btn small" data-edit="${edit}">Edit</button>` : '<span></span>'}</div>`;
   const rows = [
-    row('Timetable', `${esc(svcLabel(sched))}${D ? ` · <span class="mono">${D.trips.map(t => fmtTime(t.dep)).join(', ')}</span>` : ''}`, editStep('timetable'), sched.length > 0, 'No services'),
+    S.fleet.map(x => { const px = planeById(x.planeId), sx = schedOf(x), Dx = sx.length ? TIME.day(px, sx, undefined, typeof fleetDeps === 'function' ? fleetDeps(x) : undefined) : null;
+      return row(S.fleet.length > 1 ? `${esc(px.name.replace(/^DHC-6 /, ''))} <span class="mono small">${esc(regOf(x.uid))}</span>` : 'Timetable', sx.length ? `${esc(svcLabel(sx))}${Dx ? ` · <span class="mono">${Dx.trips.map(t => fmtTime(t.dep)).join(', ')}</span>` : ''}` : `No services · costs ${money(dayCostOf(x))} today anyway`, editStep('timetable'), sx.length > 0 || S.fleet.length > 1, 'No services'); }).join(''),
     row(ids.length > 1 ? 'Fares' : 'Fare', ids.map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ') || '—', editStep('fare'), true),
     snacksOn() ? row('On board', esc(onboardOf().label), editStep('extras'), true) : '',
     fuelContract() ? row('Fuel', `Bought as it is used at <span class="mono">${priceL(fuelPrice())}</span> a litre ${PW().now}`, '', true) : row('Fuel', paid ? `<span class="mono">${num(S.fuel)} L</span> in the tank${o ? ` + <span class="mono">${num(o.litres)} L</span> on order` : ''} · flights burn <span class="mono">${num(need)} L</span>${per && after < need ? ` · <span class="orange">${num(need - after)} L delivered</span>` : ''}` : 'Supplied free by the launch deal', paid ? 'fuelPlan' : '', fuelOk, 'Not enough fuel'),

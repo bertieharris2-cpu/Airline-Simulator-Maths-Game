@@ -97,13 +97,15 @@ function demandPools(route, fare){
 function planFlights(){
   const out = [], pools = {}, fifo = fifoCursor(S.rnd && S.rnd.fuelOrder), paid = fuelPaid(), list = [];
   const pool = (route, price) => { if(!pools[route.id]){ const comp = competitorPrice(route); pools[route.id] = Object.assign(demandPools(route, price), { demand: demandAt(route, price), comp, cut: comp !== undefined && comp < price }); } return pools[route.id]; };
-  S.fleet.forEach((f, i) => { const sched = schedOf(f); if(!sched.length) return; const plane = planeById(f.planeId), D = TIME.day(plane, sched); D.trips.forEach((tr, k) => list.push({ f, i, k, tr, plane })); });
+  S.fleet.forEach((f, i) => { const sched = schedOf(f); if(!sched.length) return; const plane = planeById(f.planeId), D = TIME.day(plane, sched, undefined, typeof fleetDeps === 'function' ? fleetDeps(f) : undefined); D.trips.forEach((tr, k) => list.push({ f, i, k, tr, plane })); });
   list.sort((a, b) => a.tr.dep - b.tr.dep || a.i - b.i);
   // 1. each service takes the people who must fly in its band
   const rows = list.map(({ f, i, k, tr, plane }) => {
     const route = routeById(tr.route), price = fareOf(tr.route);
     const base = { key:f.uid+'-'+k, uid:f.uid, trip:k, planeId:f.planeId, route:tr.route, code:flightCode(i, k), price, seats:seatsOf(f), layout:f.layout, dep:tr.dep, arr:tr.arr, segments:tr.segments, fuelL:fuelForTrip(plane, route), runCost:runCostOf(plane, route), reasons:[] };
     if(f.grounded) return Object.assign(base, { demand:0, sold:0, revenue:0, grounded:true, fuelL:0, runCost:0, fuelCost:0, reasons:['Grounded today, waiting for a spare part.'] });
+    // a service cancelled by today's event (p4l): no passengers, no flying costs, no fuel burned, fares refunded
+    if(S.rnd && S.rnd.cancelled === base.key) return Object.assign(base, { demand:0, sold:0, revenue:0, grounded:true, cancelled:true, fuelL:0, runCost:0, fuelCost:0, termCost:0, reasons:[`Cancelled: ${S.rnd.cancelReason || 'the weather'}. Fares refunded.`] });
     const d = pool(route, price), band = bandOf(tr.dep), a = Math.min(base.seats, d[band] || 0); d[band] -= a;
     return Object.assign(base, { band, locked:a, flexible:0, _d:d });
   });

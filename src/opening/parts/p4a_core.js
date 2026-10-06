@@ -320,11 +320,11 @@ function tableKey(cols){ return JSON.stringify(cols.map(c => [c.id, c.values, c.
 /* Create the table, or keep the pupil's progress if nothing in it has changed. */
 function ensureTable(id, kind, cols, opts){
   opts = opts || {};
-  const live = opts.live !== undefined ? opts.live : isLive(), mode = live ? (opts.mode || settings.tableMode) : 'fluent', key = tableKey(cols) + (opts.rowIds ? '|' + opts.rowIds.join(',') : '');
+  const live = opts.live !== undefined ? opts.live : isLive(), mode = live ? (opts.mode || settings.tableMode) : 'fluent', key = tableKey(cols) + (opts.rowIds ? '|' + opts.rowIds.join(',') : '') + (opts.rows ? '|' + opts.rows.map(r => r.id + (r.tool || '')).join(',') : '');
   const typed = (TABLES[kind].typed || {})[opts.context || 'round'] || [];
   const old = S.rnd.tables[id];
   if(old && old.key === key && old.live === live && old.mode === mode){ S.rnd.activeTable = id; return old; }
-  const t = { id, kind, key, cols, live, mode, onlyRows: typed, labels: opts.labels || {}, rowIds: opts.rowIds || null, done:{}, chosen:{}, active:null, picked:null };
+  const t = { id, kind, key, cols, live, mode, onlyRows: typed, labels: opts.labels || {}, rowIds: opts.rowIds || null, rows: opts.rows || null, done:{}, chosen:{}, active:null, picked:null };
   // keep the answers in any column that hasn't changed (the three-option costing screen)
   if(old && old.kind === kind && old.mode === mode) cols.forEach(c => { const oc = old.cols.find(x => x.id === c.id); if(!oc || JSON.stringify(oc.values) !== JSON.stringify(c.values)) return;
     Object.keys(old.done).forEach(k => { if(k.startsWith(c.id + '|')) t.done[k] = old.done[k]; }); Object.keys(old.chosen).forEach(k => { if(k.startsWith(c.id + '|')) t.chosen[k] = old.chosen[k]; }); });
@@ -332,7 +332,7 @@ function ensureTable(id, kind, cols, opts){
   if(live && mode !== 'choose') t.active = nextOpenCell(t);      // the first sum opens by itself
   return t;
 }
-const tRows = t => t.rowIds ? TABLES[t.kind].rows.filter(r => t.rowIds.includes(r.id)) : TABLES[t.kind].rows;
+const tRows = t => { const all = t.rows || TABLES[t.kind].rows; return t.rowIds ? all.filter(r => t.rowIds.includes(r.id)) : all; };
 const cellId = (c, r) => c + '|' + r;
 function rowLabel(t, row){ return t.labels[row.id] || row.label; }
 function rowLive(t, row){ return t.live && row.type === 'calc' && t.mode !== 'fluent' && t.onlyRows.includes(row.id); }
@@ -824,9 +824,11 @@ function applyResults(){
   if(S.rnd.applied) return; S.rnd.applied = true;
   const want = {}; S.rnd.flights.forEach(f => { if(!f.grounded && want[f.route] === undefined) want[f.route] = paxWant(routeById(f.route), f.price); });   // the market today, before reviews move the stars
   const fl = S.rnd.flights, rev = fl.reduce((t,f)=>t+f.revenue,0), run = fl.reduce((t,f)=>t+f.runCost,0), fuelUsed = r2(fl.reduce((t,f)=>t+(f.fuelCost||0),0));
-  const over = fleetDayCost(), X = dayExtras(fl), extraCost = X.term + X.obCost + X.crew;   // terminal charges, on-board stock, a second crew
-  S.cash = r2(S.cash + rev + X.obRev - run - over - extraCost);
+  const over = fleetDayCost(), X = dayExtras(fl), evCost = S.rnd.eventCost || 0, extraCost = X.term + X.obCost + X.crew + evCost;   // terminal charges, on-board stock, a second crew, today's event
+  S.cash = r2(S.cash + rev + X.obRev - run - over - extraCost); if(typeof payFinanceDay === 'function') payFinanceDay();
   S.rnd.extras = X; S.rnd.ticketRev = rev; S.rnd.revenue = rev + X.obRev; S.rnd.costs = r2(run + fuelUsed + over + extraCost); S.rnd.fuelUsedCost = fuelUsed; S.rnd.over = over; S.rnd.profit = r2(rev + X.obRev - run - fuelUsed - over - extraCost);
+  if(evCost && S.rnd.event) S.rnd.why.push({ ic:'🧾', text:`${S.rnd.event.title}: ${money(evCost)} today.` });
+  fl.filter(f => f.cancelled).forEach(f => S.rnd.why.push({ ic:'⛔', text:`The ${fmtTime(f.dep)} to ${routeById(f.route).city} was cancelled. No ticket money, but no flying costs either.` }));
   if(repLive() && X.free && fl.some(f => !f.grounded && !f.noFuel) && S.rep < 4){ S.rep += 0.5; S.rnd.why.push({ic:'⭐', text:'Free snacks and drinks went down well: +½ star.'}); }
   fl.forEach(f => { if(!f.grounded && !f.noFuel) S.rnd.status[f.key] = (f.sold >= f.seats) ? 'FULL FLIGHT' : 'LANDED'; });
   const why = S.rnd.why, tags = [], F = featuredFlight(), repBefore = S.rep, ff = featuredFleet();

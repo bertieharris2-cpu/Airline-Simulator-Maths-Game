@@ -358,7 +358,7 @@ function liveHqLine(L, g, k){
   if(mode === 'done') return 'All services complete.';
   const fm = liveFocus(L, g); if(fm) return `<b>${esc(fm.m.title)}</b>`;
   if(mode === 'sim') return `Simulating ${esc(dateShort(L.days[k].d))}…`;
-  const A = liveAircraft(L, (S.fleet[0] || {}).uid, g, k);
+  const A = liveAircraft(L, liveFeaturedUid(L, g, k), g, k);
   if(!A.F) return A.next ? `Ready · next <b>${esc(A.next.code)}</b> to ${esc(A.next.city)} at ${fmtTime(A.next.dep)}` : 'All services complete.';
   const back = A.p.back || A.p.st === 'turnH', code = back ? A.F.rcode : A.F.code;
   return `<b>${esc(code)}</b> ${back ? 'from' : 'to'} ${esc(A.F.city)} · <span class="${statusClass(A.p.label)}">${esc(cap(A.p.label))}</span>${['board', 'final', 'closed'].includes(A.p.st) ? ` · ${A.p.boarded} / ${A.F.seats}` : ''}`;
@@ -470,7 +470,7 @@ function liveIntroHtml(L){
   const t = Date.now(), f = clamp(1 - (L.clock.t0 - t) / Math.max(1, L.intro), 0, 1), name = (S.airline.name || 'Your airline').toUpperCase(), on = L.flights.filter(F => !F.off), d0 = L.days[0];
   const routes = [...new Set(on.filter(F => F.k === 0).map(F => F.city))].join(' and '), p = planeById((S.fleet[0] || {}).planeId) || {};
   const sched = L.kind === 'day' ? `${plural(on.length, 'service')} to ${esc(routes)}` : `${plural(on.length, 'service')} over ${plural(L.days.length, 'day')}`;
-  const items = [['Schedule received', sched], ['Aircraft ready', `${esc(p.name || '')} ${esc(regOf((S.fleet[0] || {}).uid))}`], ['Gates opening', [...new Set(on.filter(F => F.k === 0).map(F => 'Gate ' + F.gate))].join(' · ')]];
+  const items = [['Schedule received', sched], ['Aircraft ready', S.fleet.map(f => `${esc(planeById(f.planeId).name.replace(/^DHC-6 /, ''))} ${esc(regOf(f.uid))}`).join(' · ')], ['Gates opening', [...new Set(on.filter(F => F.k === 0).map(F => 'Gate ' + F.gate))].join(' · ')]];
   return `<div class="lo-intro"><small>OPERATING PLAN APPROVED</small><h1>${esc(name)} OPERATIONS</h1><p class="li-when">${esc(L.kind === 'day' ? dateLong(d0.d) : fmtRange(d0.d, L.days[L.days.length - 1].d))}</p>
     <div class="li-list">${items.map(([a, b], i) => `<div class="${f > (i + 1) * .2 ? 'on' : ''}"><i>${f > (i + 1) * .2 ? '✓' : '…'}</i><b>${a}</b><span>${b}</span></div>`).join('')}</div>
     <div class="li-go ${f > .8 ? 'on' : ''}">● LIVE OPERATIONS STARTING</div></div>`;
@@ -511,7 +511,7 @@ function liveChecklist(title, items, u, foot){
   return `<div class="lf-check"><b class="lf-ct">${esc(title)}</b>${items.map(([label, a, b], i) => { const done = u >= b, on = u >= a && u < b; return `<span class="${done ? 'done' : on ? 'on' : ''}"><i>${done ? '✓' : on ? '…' : '·'}</i>${label}</span>`; }).join('')}${foot ? `<span class="lf-cf">${foot}</span>` : ''}</div>`;
 }
 function liveFeatHtml(L, g, k){
-  const uid = (S.fleet[0] || {}).uid, A = liveAircraft(L, uid, g, k), h = homeData(), rib = liveRibbon(L, g);
+  const uid = liveFeaturedUid(L, g, k), A = liveAircraft(L, uid, g, k), h = homeData(), rib = liveRibbon(L, g);
   const ribbon = rib ? `<div class="lf-rib k-${rib.kind}"><b>★ ${esc(rib.title)}</b><span>${esc(rib.sub)}</span></div>` : '';
   if(!A.F){
     const day = L.flights.filter(F => F.k === k && !F.off), n = day.length, pax = day.reduce((t, F) => t + F.sold, 0);   // the whole day, every aircraft

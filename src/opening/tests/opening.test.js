@@ -18,7 +18,7 @@ const TAG = `${HOME}-${MK}-${W}`;
   const typedLog = {};
   const solve = async tag => { const seen = [];
     for(let i = 0; i < 20; i++){ const c = await p.$('[data-cell]'); if(!c) break; const id = await c.getAttribute('data-cell'); seen.push(id); await c.click();
-      if(await p.$('.dock [data-pk]')){ const row = id.split('|')[1], pr = PAIR[row]; seen[seen.length - 1] += ':build';
+      if(await p.$('.dock [data-pk]')){ const row = id.split('|')[1], pr = PAIR[row] || (row.startsWith('tk_') ? ['pax_' + row.slice(3), 'fare_' + row.slice(3), '×'] : null); seen[seen.length - 1] += ':build'; if(!pr){ ok('build pair known for ' + row, false); break; }
         for(const k of pr.slice(0, 2)) await p.click(`.dock [data-pk="${k}"]`); await p.click(`.dock [data-op="${pr[2]}"]`); await p.click('#trySum'); await p.waitForTimeout(100); continue; }
       await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); }
     typedLog[tag] = seen; return seen; };
@@ -51,6 +51,12 @@ const TAG = `${HOME}-${MK}-${W}`;
       const n = (await p.$$('[data-ni]')).length; let wrong = 0;
       for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++){ await p.click(`[data-ni="${k}"]`); if(await p.$eval('#nx', e => e.disabled)){ wrong++; ok(`intro ${key}: a wrong sum explains why`, await vis('.ni-no')); } }
       ok(`intro ${key}: the right sum opens the plan`, !(await p.$eval('#nx', e => e.disabled)), { wrong }); await fits(`intro ${key} done`); await shot(`in-${key}-done`); await p.click('#nx'); continue; }
+    if(t === 'shop2'){ await fits('shop ' + R); await shot('shop-' + R); if(R === 7){ await p.click('[data-pick="sf34"]'); ok('shop: the Saab can be looked at', !(await p.$eval('#nx', e => e.disabled))); await p.click('#nx'); } else await p.click('#skipShop'); continue; }
+    if(t === 'fleetSums'){ await fits('fleetSums ' + R); const typed = await solve('fleetSums'); checks.push('info fleetSums ' + JSON.stringify(typed)); if(await p.$('#calcDone')) await p.click('#calcDone'); await shot('fleetSums-' + R); ok('fleet sums: continue enabled', await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
+    if(t === 'acquire'){ await fits('acquire ' + R); await shot('acquire-' + R); const before = (await S()).cash; await p.click('[data-terms="lease"]'); await p.click('#nx'); const a = await S(); ok('acquire: renting adds an aircraft without spending cash', a.fleet.length === 2 && Math.abs(a.cash - before) < 0.01, [a.fleet.length, before, a.cash]); continue; }
+    if(t === 'event'){ await fits('event ' + R); await shot('ev-' + R); const opts = (await p.$$('[data-o]')).length; ok(`event ${R}: options offered`, opts >= 2, opts);
+      ok(`event ${R}: decide waits for a choice`, await p.$eval('#nx', e => e.disabled)); await p.click(`[data-o="${R === 4 ? 2 : 1}"]`); await p.click('#nx');
+      ok(`event ${R}: the choice is recorded`, (await S()).rnd.eventChoice !== undefined); await fits('event decided ' + R); await shot('ev-' + R + '-done'); await p.click('#nx'); continue; }
     if(t === 'hq'){ await fits('hq ' + R); ok('no Back on the morning HQ', !(await vis('#wsBack'))); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ await fits('milestone ' + R); await shot('ms-' + R); await p.click('#msGo'); continue; }
     if(t === 'review'){ await solve('review ' + R); await p.click('#nx'); continue; }
@@ -63,6 +69,7 @@ const TAG = `${HOME}-${MK}-${W}`;
         if(R === 3){ const before = await p.evaluate(() => window.__sim.S().deps); await p.click('[data-pe="0|dep|0|-1"]'); await p.click('[data-pe="0|dep|0|-1"]'); const after = await p.evaluate(() => window.__sim.S().deps); ok('Day 3: a departure time can be moved', after && before && after[0] === before[0] - 60, [before, after]); }
         if(R === 3 && POL !== 'weak') await p.click(`[data-pe="0|add|${OTHER}|0"]`).catch(() => {});
       }
+      if(s.fleet.length > 1 && s.period.type === 'day' && !s.fleet[1].schedule.length){ const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); await add.click().catch(() => {}); ok(`Day ${R + 1}: the second aircraft gets Amsterdam services`, (await S()).fleet[1].schedule.length > 0); } }
       await fits('planner ' + R); if(R <= 4) await shot(`d${day}-plan`); await p.click('#nx'); continue; }
     if(t === 'costPlan'){
       if(R === 2 && !s.rnd.backTried){ await p.evaluate(() => { window.__sim.S().rnd.backTried = true; }); ok('Day 2: Back on Cost', await vis('#wsBack')); await p.click('#wsBack'); ok('Day 2: Back from Cost goes to the plan', await T() === 'planner', await T()); await p.click('#nx'); ok('Day 2: forward again returns to Cost', await T() === 'costPlan', await T()); }
@@ -86,6 +93,7 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(t === 'fly' || t === 'sim'){ for(let i = 0; i < 80 && ['fly', 'sim'].includes(await T()); i++) await p.waitForTimeout(250); continue; }
     if(t === 'results'){ ok('no Back on the results ' + R, !(await vis('#wsBack'))); const r = await S(), fc = r.rnd.myForecast;
       if(!r.rnd.sim && fc) ok(`day ${day}: projected = actual`, Math.abs(fc.profit - r.rnd.profit) < 1, [fc.profit, r.rnd.profit]);
+      if(!r.rnd.sim && fc && Math.abs(fc.profit - r.rnd.profit) >= 1) checks.push('info diff ' + JSON.stringify({ fc, rev:r.rnd.revenue, costs:r.rnd.costs, fuel:r.rnd.fuelUsedCost, over:r.rnd.over, ev:r.rnd.eventCost, X:r.rnd.extras && { term:r.rnd.extras.term, ob:r.rnd.extras.obCost, crew:r.rnd.extras.crew }, fl:(r.rnd.flights || []).map(f => [f.key, f.sold, f.revenue, f.runCost, f.fuelCost, f.cancelled || '', r.rnd.status[f.key]]) }));
       if(r.rnd.sim && r.rnd.vs) checks.push(`info period ${R} projected ${r.rnd.vs.expProfit} actual ${r.rnd.vs.gotProfit}`);
       if(day === 0 || day === 1) ok(`day ${day}: fuel is free`, (r.rnd.flights || []).every(f => !f.fuelCost), (r.rnd.flights || []).map(f => f.fuelCost));
       ok(`results ${R}: reputation unchanged and hidden`, r.rep === 3 && !(r.rnd.why || []).some(w => w.ic === '⭐') && await p.evaluate(() => getComputedStyle(document.querySelector('.s-rep')).display === 'none'), r.rep);

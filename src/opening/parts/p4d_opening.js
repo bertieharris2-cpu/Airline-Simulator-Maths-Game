@@ -209,11 +209,12 @@ R.timetable = st => {
     say:`What timetable do you want to run? ${want} people want to fly to ${r.city}. Each service has ${p.seats} seats.`,
     context: ctxAircraft(), help:['timing'],
     main:`<div class="tt"><section class="pnl"><div class="pnl-h"><h3>Operating day · ${n ? esc(svcLabel(sched)) : 'no services yet'}</h3><span class="muted">${WORLD.dayStart}–${WORLD.dayEnd}</span></div>${serviceGantt(sched, { full:true })}</section>
-      <section class="pnl"><div class="pnl-h"><h3>Services to ${esc(r.city)}</h3><span class="muted">${capLine(want, n * p.seats)}</span></div>${serviceButtons(r.id, sched)}</section>
+      <section class="pnl"><div class="pnl-h tt-h"><h3>Services to ${esc(r.city)}</h3><div class="fares xs" title="The fare: how many want to fly at each price"><span class="label">Fare</span>${(r.fares || [r.basePrice]).map(x => `<button class="fare ${x === fareOf(r.id) ? 'on' : ''}" data-fare="${x}" aria-pressed="${x === fareOf(r.id)}"><b class="mono">${money(x)}</b><span>${paxFor(r, x)}</span></button>`).join('')}</div><span class="muted">${capLine(want, n * p.seats)}</span></div>${serviceButtons(r.id, sched)}</section>
       ${schedPanel(st, r, sched)}
-      <section class="pnl"><div class="pnl-h"><h3>Expected passengers per service</h3>${paxKey()}</div>${paxGroups(want, p.seats, n, { times:TIME.day(p, sched).trips.map(x => x.dep) })}</section></div>`,
-    foot:`<button class="btn primary big" id="nx" ${n ? '' : 'disabled'}>${n ? goLabel(`Run ${esc(svcLabel(sched))}`) : 'Choose a timetable'} &#9654;</button>` });
+      <section class="pnl tt-pax"><div class="pnl-h"><h3>Expected passengers per service</h3>${paxKey()}</div>${paxGroups(want, p.seats, n, { times:TIME.day(p, sched).trips.map(x => x.dep), small:true })}</section></div>`,
+    foot:`<button class="btn primary big" id="nx" ${n ? '' : 'disabled'}>${n ? goLabel(`Run ${esc(svcLabel(sched))} at ${money(fareOf(r.id))}`) : 'Choose a timetable'} &#9654;</button>` });
   bindServices(); bindSched(st, r, sched); on('nx', () => { costingCheck(); advance(); });
+  screen().querySelectorAll('[data-fare]').forEach(b => b.onclick = () => { S.prices[r.id] = +b.getAttribute('data-fare'); refreshPlan(); render(); });
 };
 /* The fare: the timetable is already decided, so it appears here as the current plan (with Edit), never as a second selector. */
 R.fareTry = () => {
@@ -827,7 +828,7 @@ function todayCard(mode){
   if(mode === 'results'){
     const pr = S.rnd.profit, rev = S.rnd.revenue, costs = S.rnd.costs, first = S.phase === 'setup', fc = S.rnd.myForecast, h = lastDay();
     const diff = fc ? Math.round(pr) - Math.round(fc.profit) : 0;
-    return `${hqHead(first ? 'Launch Day Results' : `Day ${S.round} Results`, 'ALL LANDED')}<div class="pb td2 dr">
+    return `${hqHead(first ? 'Launch Day Results' : `Day ${S.day} Results`, 'ALL LANDED')}<div class="pb td2 dr">
       <div class="dr-rcp"><div class="rev"><span class="kl">Revenue</span><b data-count="${rev}">${money(rev)}</b>${first ? '<small>Money received from ticket sales</small>' : ''}</div><i>−</i>
         <div class="cost"><span class="kl">Costs</span><b>${money(Math.round(costs))}</b>${first ? '<small>Money spent operating the airline</small>' : ''}</div><i>=</i>
         <div class="prof ${pr < 0 ? 'neg' : ''}"><span class="kl">${pr >= 0 ? 'Profit' : 'Loss'}</span><b>${money(Math.round(Math.abs(pr)))}</b>${first ? '<small>Money remaining after costs</small>' : ''}</div></div>

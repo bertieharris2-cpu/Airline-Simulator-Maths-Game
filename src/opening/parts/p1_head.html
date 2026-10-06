@@ -2360,5 +2360,26 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
   .ws-rail .ws-h{padding:9px 14px 8px}.stages{gap:5px;padding:6px}.stg-h{padding:7px 10px}
   .stg.next .stg-t small{display:none}
 }
+
+/* events before flying (p4l), the rival's fare on the planner, the teacher's hand-sum log */
+.ev{display:grid;gap:14px;max-width:980px}.ev-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.ev-opts .opt{display:flex;flex-direction:column;gap:6px;min-height:120px;border:1px solid var(--line);border-left:4px solid var(--amber,#ffc83d)}
+.ev-opts .opt.on{border-color:var(--amber,#ffc83d);background:rgba(255,200,61,.12)}.ev-opts .opt[disabled]{opacity:.75}.ev-cost{margin-top:auto;color:var(--amber,#ffc83d);font-weight:700}
+.ev-why{padding:12px 14px;border:1px solid var(--line);border-left:4px solid var(--amber,#ffc83d);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.pe-rival{margin-left:auto;font-size:12px;padding:2px 8px;border:1px solid var(--line);color:var(--amber,#ffc83d);white-space:nowrap}
+.t-log{border-collapse:collapse;font-size:13px}.t-log th,.t-log td{border-bottom:1px solid var(--line);padding:4px 10px 4px 0;text-align:left;vertical-align:top}
+@media (max-height:800px){.ev-opts .opt{min-height:96px;padding:12px 14px}}
+
+.tt-h{flex-wrap:wrap;gap:8px 14px}.fares.xs{display:flex;align-items:center;gap:5px;margin:0}.fares.xs .label{margin-right:4px}.fares.xs .fare{flex-direction:row;gap:6px;min-width:0;padding:3px 9px;font-size:13px}.fares.xs .fare span{font-size:11px;opacity:.8}.fares.xs .fare span::after{content:' pax'}
+@media (max-height:800px){.opplan .op-row{padding:7px 16px;font-size:16px}}
+@media (max-height:800px){.tt .tt-pax{display:none}}
+/* the fleet (p4m): aircraft panels on the planner, the shop, the terms */
+.pe-ac{border:1px solid var(--line);background:rgba(6,20,38,.4);padding:8px 10px;display:flex;flex-direction:column;gap:5px}.pe-acn{display:flex;align-items:center;gap:8px}.pe-acn b{font-size:16px;color:#fff}.pe-acn .mono{font-size:12px;opacity:.8}.pe-pic{width:44px;height:18px}
+.pe-none{margin:2px 0}.pe-more{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.pe-more .label{font-size:12px;color:var(--muted)}
+.shop3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.shop3 .ac-shop{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);padding:12px 14px;background:rgba(6,20,38,.4);cursor:pointer;text-align:left;color:inherit;font:inherit}
+.shop3 .ac-shop.on{border-color:var(--amber,#ffc83d);background:rgba(255,200,61,.1)}.shop3 .ac-shop.owned{opacity:.85}.shop3 .as-f{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:13px}.shop3 .as-f b{color:#fff}
+.shop3 .as-offer{display:flex;flex-direction:column;gap:2px;margin-top:4px;padding-top:6px;border-top:1px solid var(--hair);font-size:14px}.shop3 .as-offer span{display:flex;justify-content:space-between;gap:8px}.shop3 .as-offer .off{opacity:.45;text-decoration:line-through}
+.terms{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.terms .opt{display:flex;flex-direction:column;gap:6px;min-height:118px;border:1px solid var(--line);border-left:4px solid var(--amber,#ffc83d)}.terms .opt.on{border-color:var(--amber,#ffc83d);background:rgba(255,200,61,.12)}.terms .opt[disabled]{opacity:.5}.terms .sub{font-size:14px}
+.fs-model{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.fs-model div{border:1px solid var(--line);padding:10px 12px}.fs-model b{display:block;font-size:22px;color:#fff}.fs-model small{color:var(--muted)}
+@media (max-height:800px){.shop3 .ac-shop{padding:9px 11px;gap:4px}.shop3 .as-f{font-size:12px}.terms .opt{min-height:96px}}
 </style>
 </head>

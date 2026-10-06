@@ -44,6 +44,7 @@ function railKind(){
   const P = S.period, w = roundData(S.round);
   if((w.prog || 0) >= 7) return 'buy';
   if(!P || P.type === 'day') return 'day';
+  if(P.type === 'review') return 'review';
   if(isYearRun()) return 'year';
   return P.type === 'month' ? 'month' : 'week';
 }
@@ -54,10 +55,11 @@ function railTitle(){
   if(k === 'month') return [`${monthName(P.from)} Plan`, fmtRange(P.from, P.to)];
   if(k === 'year') return ['The Year Ahead', 'September 2030 – April 2031'];
   if(k === 'buy') return ['Year 1 Review', 'Time to grow?'];
-  return [`Day ${S.round} Plan`, "Plan and launch today's flying"];
+  if(k === 'review') return [`Chapter ${chapterNo()} Review`, 'The accounts for the chapter'];
+  return [`Day ${S.day} Plan`, "Plan and launch today's flying"];
 }
 function wsStatus(){ const k = railKind(), P = S.period;
-  return k === 'launch' ? 'LAUNCH DAY' : k === 'week' ? `WEEK ${weekNo(P.from)}` : k === 'month' ? monthName(P.from).toUpperCase() : k === 'year' ? 'YEAR 1' : k === 'buy' ? 'YEAR 1 REVIEW' : `DAY ${S.round}`; }
+  return k === 'launch' ? 'LAUNCH DAY' : k === 'week' ? `WEEK ${weekNo(P.from)}` : k === 'month' ? monthName(P.from).toUpperCase() : k === 'year' ? 'YEAR 1' : k === 'buy' ? 'YEAR 1 REVIEW' : k === 'review' ? 'CHAPTER REVIEW' : `DAY ${S.day}`; }
 function PW(){
   const P = S.period, t = P && S.phase === 'round' ? P.type : 'day';
   if(t === 'week') return { now:'this week', poss:"This week's", the:"this week's", span:'week' };
@@ -76,7 +78,7 @@ function editStep(what){
 function goWord(){ const k = railKind(); return k === 'week' ? 'SEND THE WEEK TO OPERATIONS' : k === 'month' ? `RUN ${monthName(S.period.from).toUpperCase()}` : k === 'year' ? 'RUN THE YEAR' : 'SEND TO OPERATIONS WALL'; }
 function closeWord(){ const k = railKind(), P = S.period; if(S.rnd.saving) return 'Back to the aircraft'; return P && P.type === 'gap' ? 'Plan Week 1' : k === 'week' ? 'Close the week' : k === 'month' ? 'Close the month' : k === 'year' ? 'Go to the Year 1 review' : 'Close the day'; }
 function planWord(){ const k = railKind(); return k === 'week' ? 'Plan the week' : k === 'month' ? `Plan ${monthName(S.period.from)}` : k === 'year' ? 'Plan the year' : "Plan today's operation"; }
-function readyTitle(){ const k = railKind(), P = S.period; return k === 'week' ? `Ready for Week ${weekNo(P.from)}` : k === 'month' ? `Ready for ${monthName(P.from)}` : k === 'year' ? 'Ready to run the year' : S.phase === 'setup' ? 'Ready for launch' : `Ready for Day ${S.round}`; }
+function readyTitle(){ const k = railKind(), P = S.period; return k === 'week' ? `Ready for Week ${weekNo(P.from)}` : k === 'month' ? `Ready for ${monthName(P.from)}` : k === 'year' ? 'Ready to run the year' : S.phase === 'setup' ? 'Ready for launch' : `Ready for Day ${S.day}`; }
 function beatLabel(i){ if(!i) return 'Launch'; if(i <= 4) return 'Day ' + i; const t = periodOf(i), d = beatDay(i); return t === 'gap' ? 'Fri–Sun' : t === 'week' ? 'Week ' + weekNo(d) : monthName(d, true); }
 function periodShort(h){ if(!h || h.type === 'setup' || h.from === 0) return 'launch day'; if(h.type === 'day') return dateShort(h.from); if(h.type === 'week') return 'Week ' + weekNo(h.from); if(h.type === 'gap') return `${fmtRange(h.from, h.to)}`; return isMonthSpan(h.from, h.to) || monthStart(h.from) === monthStart(h.to) ? monthName(h.from) : `${monthName(h.from, true)}–${monthName(h.to, true)}`; }
 function profitLabel(h){ if(!h) return "Yesterday's profit"; if(h.type === 'setup' || h.from === 0) return 'Launch day profit'; if(h.type === 'day') return h.to === S.day - 1 ? "Yesterday's profit" : `${dayName(h.from)}'s profit`; return `Profit · ${periodShort(h)}`; }
@@ -137,8 +139,8 @@ function simulateDays(a, b, o){
   o = o || {}; const auto = o.auto !== false;
   const out = { from:a, to:b, rev:0, run:0, extra:0, fuelUsed:0, over:0, autoL:0, autoCost:0, pax:0, seats:0, trips:0, cancelled:0, routes:{}, planes:{}, days:[] };
   for(let d = a; d <= b; d++){
-    const beat = beatAt(d), fl = withBeat(beat, () => planFlights()).sort((x, y) => x.dep - y.dep), want = {};
-    fl.forEach(f => { if(!f.grounded && want[f.route] === undefined) want[f.route] = withBeat(beat, () => paxWant(routeById(f.route), f.price)); });
+    const beat = beatAt(d), fl = withDay(d, () => withBeat(beat, () => planFlights())).sort((x, y) => x.dep - y.dep), want = {};
+    fl.forEach(f => { if(!f.grounded && want[f.route] === undefined) want[f.route] = withDay(d, () => withBeat(beat, () => paxWant(routeById(f.route), f.price))); });
     let rev = 0, run = 0, fuel = 0, pax = 0, seats = 0;
     fl.forEach(f => {
       if(f.grounded) return;
@@ -161,9 +163,9 @@ function simulateDays(a, b, o){
       x.pax += f.sold; x.seats += f.seats; x.rev += f.revenue; x.cost = r2(x.cost + f.runCost + fc + (f.termCost || 0)); x.trips++;
     });
     Object.keys(want).forEach(id => { if(out.routes[id]) out.routes[id].want += want[id]; });
-    const X = withBeat(beat, () => dayExtras(fl)), extra = X.term + X.obCost + X.crew, over = fleetDayCost();
+    const X = withDay(d, () => withBeat(beat, () => dayExtras(fl))), extra = X.term + X.obCost + X.crew, over = fleetDayCost();
     Object.keys(X.byRoute || {}).forEach(id => { const x = out.routes[id], y = X.byRoute[id]; if(x){ x.rev += y.obRev; x.cost = r2(x.cost + y.obCost); } });
-    S.cash = r2(S.cash + rev + X.obRev - run - over - extra);
+    S.cash = r2(S.cash + rev + X.obRev - run - over - extra); if(typeof payFinanceDay === 'function') payFinanceDay();
     const dayRev = rev + X.obRev, dayCost = r2(run + fuel + over + extra);
     ledgerPut(d, dayRev, dayCost, pax, seats);
     out.rev += dayRev; out.run += run; out.extra += extra; out.fuelUsed = r2(out.fuelUsed + fuel); out.over += over; out.pax += pax; out.seats += seats; out.days.push(r2(dayRev - dayCost));
