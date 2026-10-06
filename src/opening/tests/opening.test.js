@@ -26,11 +26,19 @@ const TAG = `${HOME}-${MK}-${W}`;
   // ---- setup ----
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx');
   ok('no airline-type choice at the start', await T() !== 'strategy', await T());
+  ok('Back on the livery card goes to the name', await vis('#wsBack')); await p.click('#wsBack'); ok('… and lands on the name', await T() === 'name', await T()); await p.click('#nx');
   await p.click('#nx');   // livery
   await p.click(`[data-h="${HOME}"]`); await p.click('#nx'); if(await T() === 'boot') await p.click('#enterHq');
   await p.click('#nx'); await p.click(`[data-mk="${MK}"]`); await p.click('#nx'); await p.click('#nx');
   for(let k = 0; k < 4; k++) await p.click('#nx'); const rq = await p.$$eval('[data-rq]', e => e.map(x => x.getAttribute('data-rq'))); await p.click(`[data-rq="${rq[1]}"]`); await p.click('#nx');
-  await p.click(`[data-svc="${MK}|2"]`); await p.click('#nx');
+  await p.click(`[data-svc="${MK}|2"]`);
+  { // scheduling, worked through: a wrong departure first, then the right one; then whether another service fits
+    const sq = await p.$$eval('[data-sq1]', e => e.map(x => x.getAttribute('data-sq1'))); ok('timetable: the scheduling question appears with two services', sq.length === 3, sq);
+    await p.click(`[data-sq1="${sq[0]}"]`); ok('timetable: a wrong departure time explains why', await vis('.sq-no'));
+    await p.click(`[data-sq1="${sq[1]}"]`); ok('timetable: the right departure time is accepted', await vis('.sq-yes'));
+    for(const a of ['1', '0']){ if(await p.$('[data-sq2]')) await p.click(`[data-sq2="${a}"]`); }
+    ok('timetable: whether another service fits is answered', !(await p.$('[data-sq2]'))); await fits('timetable'); await shot('d0-timetable'); }
+  await p.click('#nx');
   let guard = 0, last = '', saves = 0, strategySeen = false; const calib = {};
   while(guard++ < 600){
     const t = await T(), s = await S(); if(s.round >= UPTO || t === 'protoEnd') break;
@@ -43,7 +51,7 @@ const TAG = `${HOME}-${MK}-${W}`;
       const n = (await p.$$('[data-ni]')).length; let wrong = 0;
       for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++){ await p.click(`[data-ni="${k}"]`); if(await p.$eval('#nx', e => e.disabled)){ wrong++; ok(`intro ${key}: a wrong sum explains why`, await vis('.ni-no')); } }
       ok(`intro ${key}: the right sum opens the plan`, !(await p.$eval('#nx', e => e.disabled)), { wrong }); await fits(`intro ${key} done`); await shot(`in-${key}-done`); await p.click('#nx'); continue; }
-    if(t === 'hq'){ await fits('hq ' + R); await p.click('#startDay'); continue; }
+    if(t === 'hq'){ await fits('hq ' + R); ok('no Back on the morning HQ', !(await vis('#wsBack'))); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ await fits('milestone ' + R); await shot('ms-' + R); await p.click('#msGo'); continue; }
     if(t === 'review'){ await solve('review ' + R); await p.click('#nx'); continue; }
     if(t === 'planner'){
@@ -57,6 +65,7 @@ const TAG = `${HOME}-${MK}-${W}`;
       }
       await fits('planner ' + R); if(R <= 4) await shot(`d${day}-plan`); await p.click('#nx'); continue; }
     if(t === 'costPlan'){
+      if(R === 2 && !s.rnd.backTried){ await p.evaluate(() => { window.__sim.S().rnd.backTried = true; }); ok('Day 2: Back on Cost', await vis('#wsBack')); await p.click('#wsBack'); ok('Day 2: Back from Cost goes to the plan', await T() === 'planner', await T()); await p.click('#nx'); ok('Day 2: forward again returns to Cost', await T() === 'costPlan', await T()); }
       await fits('cost ' + R); if(R <= 6) await shot(`d${day}-cost`); const typed = await solve(`cost ${day}`);
       checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`);
       if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(150);
@@ -75,7 +84,7 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); await fits('fuel ' + R); if(R === 2) await shot('d2-fuel'); await p.click('#nx'); continue; }
     if(t === 'ready'){ await fits('ready ' + R); if(R <= 2) await shot(`d${day}-ready`); const en = await p.$eval('#startOps', e => !e.disabled); ok('ready enabled ' + day, en, await p.textContent('.opplan')); if(!en) break; await p.click('#startOps'); continue; }
     if(t === 'fly' || t === 'sim'){ for(let i = 0; i < 80 && ['fly', 'sim'].includes(await T()); i++) await p.waitForTimeout(250); continue; }
-    if(t === 'results'){ const r = await S(), fc = r.rnd.myForecast;
+    if(t === 'results'){ ok('no Back on the results ' + R, !(await vis('#wsBack'))); const r = await S(), fc = r.rnd.myForecast;
       if(!r.rnd.sim && fc) ok(`day ${day}: projected = actual`, Math.abs(fc.profit - r.rnd.profit) < 1, [fc.profit, r.rnd.profit]);
       if(r.rnd.sim && r.rnd.vs) checks.push(`info period ${R} projected ${r.rnd.vs.expProfit} actual ${r.rnd.vs.gotProfit}`);
       if(day === 0 || day === 1) ok(`day ${day}: fuel is free`, (r.rnd.flights || []).every(f => !f.fuelCost), (r.rnd.flights || []).map(f => f.fuelCost));

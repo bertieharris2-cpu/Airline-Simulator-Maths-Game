@@ -56,15 +56,18 @@ function liveCabin(list){
     xs.forEach((F, i) => { F.ob = { n:n[i], price:ob.price, rev:n[i] * ob.price }; });
   });
 }
-/* People left without a seat: those who wanted a full service's time of day, and (on the last full service) the flexible ones. */
+/* People left without a seat at a full service: those who wanted that time of day (counted once, on the band's last full
+   service) and, on the day's last full service, the flexible ones. A grounded service's passengers held tickets, so they are
+   not counted as turned away. The day's whole "without a seat" (wanted − flew, as at HQ) is in liveSummary. */
 function liveWaiting(list){
-  const by = {}; list.forEach(F => { if(!F.off) (by[F.route] = by[F.route] || []).push(F); });
+  const by = {}; list.forEach(F => { (by[F.route] = by[F.route] || []).push(F); });
   Object.keys(by).forEach(id => {
     const xs = by[id], P = demandPools(routeById(id), fareOf(id)), left = {};
     Object.keys(P).forEach(b => { if(b !== 'W') left[b] = P[b]; });
     xs.forEach(F => { const f = F._f || {}; if(left[F.band] !== undefined) left[F.band] -= (f.locked || 0); left.flex -= (f.flexible || 0); F.want = P.W; });
-    const full = xs.filter(F => F.sold >= F.seats);
-    full.forEach(F => { F.waiting = Math.max(0, left[F.band] || 0); });
+    const full = xs.filter(F => !F.off && F.sold >= F.seats), lastIn = {};
+    full.forEach(F => { lastIn[F.band] = F; });
+    Object.keys(lastIn).forEach(b => { lastIn[b].waiting = Math.max(0, left[b] || 0); });
     if(full.length && left.flex > 0) full[full.length - 1].waiting += left.flex;
   });
 }
@@ -120,7 +123,7 @@ function liveMoments(L, cfg, ord){
   // the everyday ones, once a show: in compressed time if there is any, so the simulation slows down for them
   const fast = L.days.filter(D => D.style === 'compressed').map(D => D.k), pick = f => fast.length ? fast[Math.min(fast.length - 1, Math.floor(fast.length * f))] : 0;
   { const F = onDay(pick(.4)).filter(x => x.sold >= x.seats && x.waiting > 0).sort((a, b) => b.waiting - a.waiting)[0];
-    if(F) M.push({ kind:'capacity', g:F.dep - LO.close, key:F.key, route:F.route, title:`${F.city.toUpperCase()} ${BAND_SHORT[F.band].toUpperCase()} SERVICE — FULL`, sub:`${F.seats} / ${F.seats} boarded. ${F.waiting} more ${F.waiting === 1 ? 'person' : 'people'} could not get a seat on this departure.` }); }
+    if(F) M.push({ kind:'capacity', g:F.dep - LO.close, key:F.key, route:F.route, title:`${F.city.toUpperCase()} ${BAND_SHORT[F.band].toUpperCase()} SERVICE — FULL`, sub:`${F.seats} / ${F.seats} boarded. ${F.waiting} more ${F.waiting === 1 ? 'person' : 'people'} wanted a seat, but the flight is full.` }); }
   { const F = onDay(pick(.75)).filter(x => x.sold <= x.seats / 2).sort((a, b) => a.sold / a.seats - b.sold / b.seats)[0];
     if(F) M.push({ kind:'quiet', g:F.dep - LO.close, key:F.key, route:F.route, title:`QUIET ${BAND_SHORT[F.band].toUpperCase()} SERVICE`, sub:`${F.code} to ${F.city} leaves with ${F.sold} / ${F.seats} passengers: ${F.seats - F.sold} empty seats.` }); }
   { let best = null; const by = {}; onDay(pick(.15)).forEach(F => (by[F.uid] = by[F.uid] || []).push(F));
@@ -307,6 +310,7 @@ function livePeriodShow(){
   if(!days.some(D => D.flights.some(f => !f.grounded && !f.noFuel))) return;
   const L = buildShow('period', days, roundData(S.round).live);
   L.profits = (T.days || []).map(v => Math.round(v * 100) / 100);
+  if(L.profits.length && T.profit !== undefined){ const sum = L.profits.reduce((t, v) => t + v, 0); L.profits[L.profits.length - 1] += T.profit - sum; }   // ends on the period's profit exactly
   L.notes.forEach(n => S.rnd.why.push(n));
   S.rnd.live = L;
 }
@@ -483,7 +487,7 @@ function liveCardsHtml(L, g, k){
     if(A.F){ const F = A.F, P = A.p, back = P.back || P.st === 'turnH' || P.st === 'done', r = routeById(F.route);
       st = P.st === 'turnA' || P.st === 'turnH' ? 'TURNAROUND' : P.st === 'checkin' || P.st === 'prep' ? 'PREPARING' : P.st === 'cruise' ? 'AIRBORNE' : P.label; cls = statusClass(st);
       code = back ? F.rcode : F.code; rt = back ? `${aptCode(r)} → ${h.code}` : `${h.code} → ${aptCode(r)}`;
-      pax = `${P.st === 'board' ? P.boarded : P.st === 'turnH' || P.st === 'prep' ? 0 : F.sold} / ${F.seats}`;
+      pax = `${P.st === 'board' || P.st === 'turnA' ? (P.boarded || 0) : P.st === 'turnH' ? 0 : F.sold} / ${F.seats}`;   // checked in, boarding, on board; off at the turnaround, then boarding again
       eta = P.at === 'air' || P.st === 'push' || P.st === 'taxi' ? ['ETA', fmtTime(P.eta)] : P.st === 'turnA' ? ['Leaves again', fmtTime(F.depAway)] : P.st === 'turnH' ? ['Ready again', fmtTime(F.ready)] : ['Departs', fmtTime(F.dep)]; }
     else if(A.prev){ st = 'READY'; cls = 's-landed'; eta = ['Ready since', fmtTime(A.prev.ready)]; }
     const nx = A.next ? `${esc(A.next.code)} · ${esc(A.next.city)} · ${fmtTime(A.next.dep)}` : 'No more services today';
@@ -510,7 +514,7 @@ function liveFeatHtml(L, g, k){
   const uid = (S.fleet[0] || {}).uid, A = liveAircraft(L, uid, g, k), h = homeData(), rib = liveRibbon(L, g);
   const ribbon = rib ? `<div class="lf-rib k-${rib.kind}"><b>★ ${esc(rib.title)}</b><span>${esc(rib.sub)}</span></div>` : '';
   if(!A.F){
-    const n = A.fl.length, pax = A.fl.reduce((t, F) => t + F.sold, 0);
+    const day = L.flights.filter(F => F.k === k && !F.off), n = day.length, pax = day.reduce((t, F) => t + F.sold, 0);   // the whole day, every aircraft
     if(A.next){ const N = A.next, wx = liveWeatherAt(L, N, g);
       return `<div class="lo-feat st-ready">${ribbon}<div class="lf-h"><b class="lf-code">${esc(regOf(uid))}</b><span class="lf-rt">${esc(h.city)}</span><span class="lf-st s-landed">${A.prev ? 'READY AGAIN' : 'AT THE GATE'}</span></div>
         <div class="lf-b"><div class="lf-big">${A.prev ? fmtTime(A.prev.ready) : fmtTime(g - k * 1440)}<small>${A.prev ? 'ready again' : 'airport time'}</small></div><div class="lf-txt">Next: <b>${esc(N.code)}</b> to ${esc(N.city)}${wx ? ` · <span class="orange">delayed by the weather, now ${fmtTime(N.dep)}</span>` : ` at ${fmtTime(N.dep)}`}. Boarding opens at ${fmtTime(N.dep - LO.board)} at Gate ${esc(N.gate)}. <b>${N.sold}</b> passengers booked.</div></div>${liveSteps(null, true)}</div>`; }
@@ -528,12 +532,12 @@ function liveFeatHtml(L, g, k){
   if(['checkin', 'prep', 'sched'].includes(P.st)) body = `<div class="lf-big">${F.sold}<small>checked in</small></div>${seatDots(F.seats, 0, F.sold, 0)}<div class="lf-txt">Bags loading · fuel checked · cabin ready. Boarding at <b>${fmtTime(F.dep - LO.board)}</b>.</div>`;
   else if(P.st === 'board') body = `<div class="lf-big">${P.boarded} / ${F.seats}<small>boarded</small></div>${seatDots(F.seats, P.boarded, F.sold, 0)}<div class="lf-txt">${F.sold - P.boarded ? `${F.sold - P.boarded} still to board` : 'Everyone is on board'}${tightNote}</div>`;
   else if(P.st === 'final') body = `<div class="lf-big">${F.sold} / ${F.seats}<small>on board</small></div>${seatDots(F.seats, F.sold, F.sold, 0)}<div class="lf-txt">Final call for ${esc(F.code)}.${tightNote}</div>`;
-  else if(P.st === 'closed') body = `<div class="lf-big ${full ? 'full' : ''}">${F.sold} / ${F.seats}<small>${full ? 'FULL LOAD' : plural(empty, 'empty seat')}</small></div>${seatDots(F.seats, F.sold, F.sold, full ? F.waiting : 0)}<div class="lf-txt">${full ? (F.waiting ? `Every seat taken. ${F.waiting} more ${F.waiting === 1 ? 'person' : 'people'} could not get a seat.` : 'Every seat taken.') : `${F.sold} passengers · ${plural(empty, 'empty seat')}`}${tightNote}</div>`;
-  else if(P.st === 'turnA'){ const A0 = F.A, items = [['Passengers off', 0, .22], ['Bags unloaded', .22, .4], ['Fuel checked', .4, .55], ['Cabin cleaned', .55, .7], [`Boarding: ${P.boarded} / ${F.sold}`, .7, .995]];
+  else if(P.st === 'closed') body = `<div class="lf-big ${full ? 'full' : ''}">${F.sold} / ${F.seats}<small>${full ? 'FULL LOAD' : plural(empty, 'empty seat')}</small></div>${seatDots(F.seats, F.sold, F.sold, full ? F.waiting : 0)}<div class="lf-txt">${full ? (F.waiting ? `Every seat taken. ${F.waiting} more ${F.waiting === 1 ? 'person' : 'people'} wanted a seat.` : 'Every seat taken.') : `${F.sold} passengers · ${plural(empty, 'empty seat')}`}${tightNote}</div>`;
+  else if(P.st === 'turnA'){ const A0 = F.A, items = [['Passengers off', 0, .22], ['Bags unloaded', .22, .4], ['Fuel checked', .4, .55], ['Cabin cleaned', .55, .7], [`Boarding: ${P.boarded} / ${F.seats}`, .7, .995]];
     body = liveChecklist(`${r.city.toUpperCase()} TURNAROUND · ${A0} MIN`, items, P.u, P.u >= .98 ? `READY FOR ${esc(F.rcode)}` : '') + `<div class="lf-txt side">Landed at ${fmtTime(F.arrAway - legShape(F.L).land)} · leaves again at <b>${fmtTime(F.depAway)}</b></div>`; }
   else if(P.st === 'turnH'){ const items = [['Passengers off', 0, .3], ['Bags unloaded', .3, .55], ['Fuel and checks', .55, .8], ['Cabin cleaned', .8, .995]], N = A.next, nb = N && A.overlap ? livePhase(N, g) : null;
     body = liveChecklist(`${h.city.toUpperCase()} TURNAROUND · ${F.ready - F.arr} MIN`, items, P.u, P.u >= .98 ? `READY AGAIN · ${fmtTime(F.ready)}` : '') +
-      `<div class="lf-txt side">${N ? (nb && (nb.st === 'board' || nb.st === 'final') ? `<span class="orange">${esc(N.code)} is already boarding at Gate ${esc(N.gate)}: ${nb.boarded} / ${N.sold}. It leaves at ${fmtTime(N.dep)}.</span>` : `Ready again at <b>${fmtTime(F.ready)}</b> · next: ${esc(N.code)} to ${esc(N.city)} at ${fmtTime(N.dep)}`) : `Ready again at <b>${fmtTime(F.ready)}</b> · no more services today`}</div>`; }
+      `<div class="lf-txt side">${N ? (nb && (nb.st === 'board' || nb.st === 'final') ? `<span class="orange">${esc(N.code)} is already boarding at Gate ${esc(N.gate)}: ${nb.boarded} / ${N.seats}. It leaves at ${fmtTime(N.dep)}.</span>` : `Ready again at <b>${fmtTime(F.ready)}</b> · next: ${esc(N.code)} to ${esc(N.city)} at ${fmtTime(N.dep)}`) : `Ready again at <b>${fmtTime(F.ready)}</b> · no more services today`}</div>`; }
   else {   // on a leg
     const s = legShape(F.L), km = routeKm(r), left = Math.round(km * (1 - P.u)), cab = !back && F.ob && P.cruiseU >= .25 && P.cruiseU < .8;
     const big = { push:'PUSHBACK', taxi:'TAXI TO RUNWAY', takeoff:'TAKE-OFF', cruise:'AIRBORNE', desc:`DESCENDING INTO ${(back ? h.city : r.city).toUpperCase()}`, taxiin:`LANDED ${fmtTime((back ? F.arr : F.arrAway) - s.land)}` }[P.st];
@@ -609,7 +613,11 @@ function liveMapDraw(M, toS, planesG){
 function liveSummary(){
   const L = S.rnd.live; if(!L) return null;
   const on = L.flights.filter(F => !F.off), seats = on.reduce((t, F) => t + F.seats, 0), pax = on.reduce((t, F) => t + F.sold, 0);
-  return { services:on.length, pax, full:on.filter(F => F.sold >= F.seats).length, empty:seats - pax, onTime:on.filter(F => F.delay < 15).length, waiting:on.reduce((t, F) => t + F.waiting, 0) };
+  // without a seat, as at HQ: for each day and route, the people who wanted to fly minus the people who flew
+  const per = {}; L.flights.forEach(F => { const x = per[F.k + '|' + F.route] || (per[F.k + '|' + F.route] = { want:F.want || 0, pax:0 }); x.pax += F.sold; });
+  const noSeat = Object.values(per).reduce((t, x) => t + Math.max(0, x.want - x.pax), 0), waiting = on.reduce((t, F) => t + F.waiting, 0);
+  const sn = on.filter(F => F.ob && !F.ob.free), snacks = sn.reduce((t, F) => t + F.ob.n, 0), snackRev = sn.reduce((t, F) => t + F.ob.rev, 0);
+  return { services:on.length, pax, full:on.filter(F => F.sold >= F.seats).length, empty:seats - pax, onTime:on.filter(F => F.delay < 15).length, waiting, noSeat, otherTimes:Math.max(0, noSeat - waiting), snacks, snackRev, snacksOn:sn.length > 0 };
 }
 /* For the tests: jump the clock to a moment and hold it there. */
 window.__live = { seek(g, rate){ const L = S.rnd.live; if(!L) return null; L.clock = { t0:Date.now(), g0:g, rate:rate || 0, last:1 }; publish(); if(wallView) renderLiveWall(); return liveNow(L); },

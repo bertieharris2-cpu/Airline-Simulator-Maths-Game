@@ -11,6 +11,8 @@ Object.assign(STEP_HINT, { intro:'Something new arrives. Read what it is, look a
 STAGES.day[0].steps = ['intro'].concat(STAGES.day[0].steps);
 STAGES.week[0].steps = ['intro'].concat(STAGES.week[0].steps);
 (STAGES.month || []).forEach(g => { if(g.id === 'plan') g.steps = ['intro'].concat(g.steps); });
+(STAGES.year || []).forEach(g => { if(g.id === 'proj') g.steps = ['intro'].concat(g.steps); });
+(STAGES.buy || []).forEach(g => { if(g.id === 'pick') g.steps = ['intro'].concat(g.steps); });
 
 /* The beat's intro goes just before the step that uses the new idea. */
 function withIntro(steps, w){
@@ -108,7 +110,30 @@ const INTRO = {
         <p>At £1.50 a litre: ${niSum('2,000 × £1.50 = £3,000')}</p><p>At £1.60 a litre: ${niSum('2,000 × £1.60 = £3,200')}</p>
         <p>The difference: ${niSum('£3,200 − £3,000 = £200')}</p></div>`],
     check:{ q:'One month fuel costs £1.50 a litre. The next month it costs £1.60. Which sum shows how much more each litre costs?', opts:[['£1.60 + £1.50', 'Adding gives £3.10: that is two litres, one at each price.'], ['£1.60 − £1.50', ''], ['£1.60 × £1.50', 'Multiplying two prices doesn\'t give a price. The difference is what is left when you take one from the other.']], ok:1, done:'£1.60 − £1.50 = 10p more for every litre.' },
-    think:[() => `Your tank holds ${num(tankCapacity())} L. What does the news say about fuel?`, 'When would you fill the tank?'] }
+    think:[() => `Your tank holds ${num(tankCapacity())} L. What does the news say about fuel?`, 'When would you fill the tank?'] },
+
+  year:{ kicker:'New this stage · The year ahead', title:'Projecting the year', before:'yearPlan', go:'Project the year', words:[['Projection', 'What you expect to happen, worked out from what has happened so far.'], ['Average month', 'The profit of a typical month: the total shared equally between the months.'], ['Emergency money', () => `Cash kept in the bank for when things go wrong: ${money(reserveNow())}.`], ['Rounded up', 'Go up to the next whole number: 2.4 months becomes 3 months.']],
+    what:() => { const d0 = S.period ? S.period.from : S.day, months = []; for(let d = monthStart(d0), k = 0; k < 8; k++, d = monthEnd(d) + 1) months.push([monthName(d, true), monthEnd(d) - d + 1]);
+      return [['From now on the airline runs on its own until the end of April. Before it does, you will work out <b>where the airline will be next May</b>, and <b>when you could afford a second aircraft</b>.'],
+        `<div class="ni-week months">${months.map(([m, n]) => `<div><b>${m}</b><span>${n} days</span></div>`).join('')}</div>`,
+        `<div class="ni-flow"><div><span class="kl">Cash now</span><b class="mono">${money(Math.round(S.cash))}</b><small>in the bank today</small></div><div><span class="kl">Kept back for emergencies</span><b class="mono">${money(reserveNow())}</b><small>always stays in the bank</small></div><div><span class="kl">Months to project</span><b class="mono">8</b><small>September to April</small></div></div>`]; },
+    maths:() => [niRule('cash now', '+', 'average month × months', 'Cash in May'),
+      `<div class="ni-eg"><p>An airline with <b>£100,000</b> that makes about <b>£30,000</b> a month: ${niSum('£30,000 × 8 = £240,000')}, then ${niSum('£100,000 + £240,000 = £340,000')}</p>
+        <p><b>When could it afford a £100,000 aircraft?</b> Say it has £60,000 and keeps £20,000 back: ${niSum('£60,000 − £20,000 = £40,000')} to spend.</p>
+        <p>${niSum('£100,000 − £40,000 = £60,000')} still needed. At £25,000 a month: ${niSum('£60,000 ÷ £25,000 = 2.4')}. You can't buy it part-way through a month, so round up: <b>3 months</b>.</p></div>`],
+    check:{ q:'An airline makes about £20,000 profit a month. Which sum projects the profit for 8 months?', opts:[['£20,000 + 8', 'Adding gives £20,008: hardly more than one month.'], ['£20,000 × 8', ''], ['£20,000 ÷ 8', 'Dividing shares one month\'s profit out. Eight months each bring about £20,000.']], ok:1, done:'£20,000 × 8 = £160,000.' },
+    think:['Is every month like the average month? Think about winter, and about fuel prices.', 'Why keep money back for emergencies?'] },
+
+  buy:{ kicker:'New this stage · A second aircraft', title:'Buying an aircraft', before:'shop', go:'Look at the aircraft', words:[['Investment', 'Spending money now to make more money later.'], ['Pays for itself', 'When the extra profit it makes adds up to its price.'], ['Running cost', 'What an aircraft costs for each hour in the air, and each day it is owned.']],
+    what:() => [['A year of flying has built up cash. A second aircraft could carry the people who couldn\'t get a seat, but it costs money to buy and money every day.'],
+      `<div class="ni-cards two">${NEXT_AIRCRAFT.map(id => { const pl = planeById(id); return `<div class="ni-card rt"><em class="mono">${money(pl.price)}</em><b>${esc(pl.name)}</b><span><b class="mono">${pl.seats}</b> seats · <b class="mono">${money(pl.hourCost || 0)}</b> an hour in the air</span><span><b class="mono">${money(pl.dayCost || 0)}</b> a day to own</span></div>`; }).join('')}</div>`,
+      [`Whatever you choose, <b class="mono">${money(reserveNow())}</b> stays in the bank for emergencies.`]],
+    maths:() => [niRule('extra profit a day', '×', '30 days', 'Extra a month'),
+      niRule('price', '÷', 'extra a month', 'Months to pay for itself'),
+      `<div class="ni-eg"><p>An aircraft costs <b>£12,000</b> and adds <b>£150</b> profit a day: ${niSum('£150 × 30 = £4,500')} a month.</p>
+        <p>${niSum('£12,000 ÷ £4,500 = 2.67')}. Round up: it pays for itself in <b>3 months</b>.</p></div>`],
+    check:{ q:'An aircraft costs £8,000 and adds £2,000 profit a month. Which sum gives the months it takes to pay for itself?', opts:[['£8,000 − £2,000', 'Taking away gives what is still to pay after one month, not the number of months.'], ['£8,000 ÷ £2,000', ''], ['£8,000 × £2,000', 'Multiplying makes a huge number. How many £2,000s make £8,000?']], ok:1, done:'£8,000 ÷ £2,000 = 4 months.' },
+    think:['Are there enough people without a seat to fill a bigger aircraft?', 'What happens to the emergency money if you buy it?'] }
 };
 const niVal = v => typeof v === 'function' ? v() : v;
 
@@ -127,7 +152,7 @@ R.intro = st => {
     ${right ? `<div class="ni-think"><span class="kl">Think about it as you plan</span>${I.think.map(l => `<p>${esc(niVal(l))}</p>`).join('')}</div>` : ''}`;
   const tabs = `<ol class="ni-tabs">${NI_PAGES.map((l, k) => `<li><button class="${k === page ? 'on' : ''} ${k < page || (k <= st.seen) ? 'seen' : ''}" data-nip="${k}" ${k <= (st.seen || 0) ? '' : 'disabled'}><i>${k < page || (k === 2 && right) ? '&#10003;' : k + 1}</i>${l}</button></li>`).join('')}</ol>`;
   const sayText = (page === 2 ? [niVal(C.q)].concat(opts.map(o => o[0])) : (page === 0 ? I.what() : I.maths()).filter(Array.isArray).flat()).join(' ').replace(/<[^>]+>/g, '').replace(/×/g, 'times').replace(/−/g, 'minus');
-  const W = PW(), go = W.span === 'day' ? "Plan today's flying" : I.before === 'fuelPlan' ? 'Buy fuel' : `Plan the ${W.span}`;
+  const W = PW(), go = I.go || (W.span === 'day' ? "Plan today's flying" : I.before === 'fuelPlan' ? 'Buy fuel' : `Plan the ${W.span}`);
   screen().innerHTML = taskFrame({ question:`<span class="ni-kick">${esc(I.kicker)}</span>${esc(niVal(I.title))}`, work:false, say:sayText,
     context:{ title:'Key words', html:cxSec('New words', `<dl class="ni-words">${I.words.map(([w, m]) => `<dt>${esc(w)}</dt><dd>${esc(niVal(m))}</dd>`).join('')}</dl>`) },
     main:`<div class="ni p${page}">${tabs}<div class="ni-page">${body}</div></div>`,

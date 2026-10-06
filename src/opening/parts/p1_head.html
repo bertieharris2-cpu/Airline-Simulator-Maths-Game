@@ -2338,5 +2338,27 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
   .pe-obc:not(.fresh){flex-direction:row;align-items:center;gap:8px}.pe-obc:not(.fresh) .pe-sh{flex:none}.pe-obc:not(.fresh) .pe-sh .muted{display:none}
   .pe-obc:not(.fresh) .obc-grid{flex:1}.pe-obc:not(.fresh) .obc small{display:none}
 }
+
+/* Back: the general step back, at the left of the action bar (and on the setup cards) */
+.ab-act .ab-back{margin-right:4px}
+.home-r .actions{display:flex;gap:10px}.home-r .actions .btn.primary{flex:1;letter-spacing:.02em;font-size:17px;white-space:nowrap}
+.ni-week.months{grid-template-columns:repeat(8,minmax(0,1fr))}
+
+/* Launch Day timetable: scheduling worked through */
+.pnl.sq .sq-q,.pnl.sq .sq-p{margin:4px 0 8px;font-size:18px;line-height:1.45;color:var(--white)}
+.pnl.sq .sq-p{color:var(--muted)}
+.sq-opts{display:flex;gap:10px;flex-wrap:wrap}.sq-opts .btn{min-width:110px}
+.sq-yes{margin:4px 0;font-size:18px;color:var(--green);font-weight:700}.sq-no{margin:8px 0 0;font-size:17px;color:var(--amber2)}
+
+/* the wall's summary: without a seat (as at HQ) and snacks bought (as on the Cost sheet) */
+.wo-facts{display:flex;gap:14px;margin-bottom:14px}
+.wo-facts>div{flex:1;display:flex;flex-direction:column;gap:2px;padding:10px 14px;border:1px solid rgba(var(--cyrgb),.3);background:rgba(var(--cyrgb),.06)}
+.wo-facts span{font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.wo-facts b{font-size:34px;color:var(--white)}.wo-facts small{font-size:15px;color:var(--muted)}
+
+/* the plan rail on short screens: tighter, and the stages still to come show only their names */
+@media (max-height:800px){
+  .ws-rail .ws-h{padding:9px 14px 8px}.stages{gap:5px;padding:6px}.stg-h{padding:7px 10px}
+  .stg.next .stg-t small{display:none}
+}
 </style>
 </head>

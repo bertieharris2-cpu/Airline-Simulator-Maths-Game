@@ -95,7 +95,7 @@ R.fin = () => {
       <div class="livery-preview"><div class="lp-art"><svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-jet"/></svg>${finSvg(S.airline.fin, 64)}</div><span class="lp-name">${esc(S.airline.name.toUpperCase())}</span>${strategyBadge()}</div></div>
     <span class="label">Tail fin</span>
     <div class="options fins">${FINS.map(f=>`<button class="opt ${S.airline.fin===f.id?'on':''}" data-fin="${f.id}">${finSvg(f.id, 72)}<span class="sub">${esc(f.name)}</span></button>`).join('')}</div>
-    <div class="actions"><button class="btn primary big" id="nx">Next &#9654;</button></div></div>`;
+    <div class="actions">${backBtn()}<button class="btn primary big" id="nx">Next &#9654;</button></div></div>`;
   ['sw1','sw2'].forEach((id,i) => $(id).querySelectorAll('.sw').forEach(b => b.onclick = () => { S.airline[i?'c2':'c1'] = b.getAttribute('data-c'); setLivery(); $(id).querySelectorAll('.sw').forEach(x=>x.classList.toggle('on', x===b)); }));
   screen().querySelectorAll('[data-fin]').forEach(b => b.onclick = () => { S.airline.fin = b.getAttribute('data-fin'); render(); });
   on('nx', next);

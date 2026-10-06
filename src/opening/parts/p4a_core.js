@@ -809,6 +809,7 @@ function outcomeLine(f){
   const pct = Math.round(100*f.sold/f.seats);
   let s = `${when}: ${st==='DELAYED' ? 'landed late' : st==='DIVERTED' ? 'diverted, landed eventually' : 'landed'}. ${f.sold >= f.seats ? 'Full flight' : pct+'% full'} (${f.sold} of ${f.seats})`;
   if(f.compCut) s += ` — ${WORLD.rival} was cheaper`;
+  else if(f.sold < f.seats && typeof timeDemandOn === 'function' && timeDemandOn() && f.band) s += ` — fewer people want to fly in the ${BAND_NAMES[f.band].toLowerCase()}`;
   else if(f.trip > 0 && f.sold < f.seats) s += ` — earlier trips took most of the passengers`;
   return s + `. ${money(f.revenue)}.`;
 }

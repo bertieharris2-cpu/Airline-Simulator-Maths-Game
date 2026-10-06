@@ -51,7 +51,7 @@ const TAG = `${HOME}-${MK}-${W}`;
       await lshot(`${tag}-1checkin`, F0.dep - 30); await lshot(`${tag}-2boarding`, F0.dep - 16); await lshot(`${tag}-3closed`, F0.dep - 2);
       const ph = await p.evaluate(([k, g]) => window.__live.phase(k, g).st, [F0.key, F0.dep - 16]); ok('launch: boarding at dep − 16', ph === 'board', ph);
       await lshot(`${tag}-4taxi`, F0.dep + 4); await lshot(`${tag}-5takeoff`, F0.dep + shape(F0.L).up + .2); await lshot(`${tag}-6cruise`, F0.dep + F0.L * .5);
-      await lshot(`${tag}-7landed`, F0.arrAway - 2); await lshot(`${tag}-8turn`, F0.arrAway + F0.A * .45); await lshot(`${tag}-9reboard`, F0.arrAway + F0.A * .85);
+      await lshot(`${tag}-7landed`, F0.arrAway - 2); await lshot(`${tag}-8turn`, F0.arrAway + F0.A * .45); await lshot(`${tag}-9reboard`, F0.arrAway + F0.A * .85); { const tx = await p.evaluate(() => (document.querySelector('#wOps .lo-feat') || {}).textContent || ''); ok('launch: re-boarding counts against the seats', new RegExp('Boarding: \\d+ / ' + F0.seats).test(tx), tx.slice(0, 160)); }
       await lshot(`${tag}-10back`, F0.depAway + F0.L * .5); await lshot(`${tag}-11hometurn`, F0.arr + 12);
       const N = on[1]; if(N) await lshot(`${tag}-12ready`, Math.min(N.dep - 30, F0.ready + 3));
       await p.click('[data-ops="hq"]'); await p.waitForTimeout(250); await shot(`${tag}-13hq`); ok('launch: the HQ shows the live card', await vis('#loPace .btn')); await p.click('[data-ops="wall"]'); await p.waitForTimeout(250);
@@ -117,7 +117,9 @@ const TAG = `${HOME}-${MK}-${W}`;
       ok('IWB: the HQ sees the wall window', await p.evaluate(() => document.querySelector('.iwb.on') !== null)); }
     if(t === 'ready'){ await fits('ready ' + R); if(R <= 2) await shot(`d${day}-ready`); const en = await p.$eval('#startOps', e => !e.disabled); ok('ready enabled ' + day, en, await p.textContent('.opplan')); if(!en) break; await p.click('#startOps'); continue; }
     if(t === 'fly' || t === 'sim'){ await liveShots(R, day, s); for(let i = 0; i < 80 && ['fly', 'sim'].includes(await T()); i++) await p.waitForTimeout(250); continue; }
-    if(t === 'results' && await p.evaluate(() => document.body.classList.contains('wallview'))){ await p.waitForTimeout(500); await shot(`r${day}-wall-complete`); ok(`results ${R}: the wall shows the summary`, await vis('#wOver:not([hidden]) .wo-head h1')); await p.click('#wOver [data-ops="hq"]'); await p.waitForTimeout(200); ok(`results ${R}: Review at HQ returns to the HQ`, !(await p.evaluate(() => document.body.classList.contains('wallview')))); }
+    if(t === 'results' && await p.evaluate(() => document.body.classList.contains('wallview'))){ await p.waitForTimeout(500); await shot(`r${day}-wall-complete`); ok(`results ${R}: the wall shows the summary`, await vis('#wOver:not([hidden]) .wo-head h1'));
+      if(s.period.type === 'day' || s.phase === 'setup'){ const m = await p.evaluate(() => { const S = window.__sim.S(), h = S.history[S.history.length - 1], hq = Object.values(h.routes || {}).reduce((t, x) => t + Math.max(0, (x.want || x.pax) - x.pax), 0), b = document.querySelector('#wOver .wo-facts b'); return [hq, b ? +b.textContent.replace(/,/g, '') : null]; });
+        ok(`results ${R}: the wall's "without a seat" matches HQ`, m[0] === m[1], m); } await p.click('#wOver [data-ops="hq"]'); await p.waitForTimeout(200); ok(`results ${R}: Review at HQ returns to the HQ`, !(await p.evaluate(() => document.body.classList.contains('wallview')))); }
     if(t === 'results'){ const r = await S(), fc = r.rnd.myForecast;
       if(!r.rnd.sim && fc) ok(`day ${day}: projected = actual`, Math.abs(fc.profit - r.rnd.profit) < 1, [fc.profit, r.rnd.profit]);
       if(r.rnd.sim && r.rnd.vs) checks.push(`info period ${R} projected ${r.rnd.vs.expProfit} actual ${r.rnd.vs.gotProfit}`);

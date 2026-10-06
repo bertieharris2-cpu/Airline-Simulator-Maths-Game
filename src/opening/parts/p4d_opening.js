@@ -91,7 +91,7 @@ R.market = () => {
         <span class="mk-row"><span>Normal fare <b class="mono">${money(r.basePrice)}</b></span><span>Flight <b class="mono">${fmtDur(TIME.leg(p, r))}</b> each way</span><span><b class="mono">${num(routeKm(r))} km</b></span></span>
         <span class="muted">${esc(r.blurb)}</span></button>`; }).join('')}</div>`,
     foot:`<button class="btn primary big" id="nx" ${S.market ? '' : 'disabled'}>${S.market ? goLabel(`Open ${esc(routeById(S.market).city)}`) : 'Choose a market'} &#9654;</button>` });
-  screen().querySelectorAll('[data-mk]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-mk'); S.market = id; S.prices = { [id]: routeById(id).basePrice }; const f = fleetOne(); if(f) f.schedule = []; render(); });
+  screen().querySelectorAll('[data-mk]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-mk'); if(id !== S.market) delete S.rnd.returnTo; S.market = id; S.prices = { [id]: routeById(id).basePrice }; const f = fleetOne(); if(f) f.schedule = []; render(); });
   on('nx', () => { const f = fleetOne(); S.rnd.featured = f.uid; S.rnd.focusRoute = S.market; advance(); });
 };
 
@@ -180,7 +180,29 @@ function serviceGantt(sched, o){
       ${i < trips.length - 1 ? blk('turn home', t.arr, Math.min(t.ready, hi), 'Turnaround', fmtDur(t.ready - t.arr)) : `<i class="sg-b rdy ${late ? 'late' : ''}" style="${+X(t.arr) > 80 ? 'right:0' : `left:${X(t.arr)}%`}"><b>${late ? 'Past closing' : 'Ready again'}</b><small>${fmtTimeDay(t.ready)}</small></i>`}</div></div>`; }).join('');
   return `<div class="sgantt ${o.full ? 'full' : ''}"><div class="sg-ax"><span class="sg-l"></span><div class="sg-tk">${ticks}</div></div>${rows || `<div class="sg-row empty"><span class="sg-l">No services</span><div class="sg-tr"><small>The operating day is ${WORLD.dayStart}–${WORLD.dayEnd}. Add a service below.</small></div></div>`}</div>`;
 }
-R.timetable = () => {
+/* Scheduling, worked through once the day has two services: when can the next service leave, and would another one fit? */
+function schedPanel(st, r, sched){
+  const p = ourPlane(), n = sched.length, maxT = WORLD.maxTrips || 4;
+  if(n < 2) return `<section class="pnl sq"><div class="pnl-h"><h3>Scheduling</h3></div><p class="sq-p">${n ? `Add a second service to see how the aircraft's day is scheduled.` : 'Choose how many services to fly.'}</p></section>`;
+  const D = TIME.day(p, sched), t0 = D.trips[0], turnH = TIME.home(p), ready = t0.arr + turnH, opts = [ready - 15, ready, ready + 15];
+  const last = D.trips[n - 1], lastReady = last.arr + turnH, more = sched.concat([r.id]), canMore = n < maxT, D2 = TIME.day(p, more), fits = canMore && schedFits(more), end2 = D2.end;
+  let q;
+  if(!st.sq1) q = `<p class="sq-q">Service 1 is back at <b class="mono">${fmtTime(t0.arr)}</b>. The turnaround at home takes <b class="mono">${fmtDur(turnH)}</b>. When can service 2 leave?</p>
+    <div class="sq-opts">${opts.map(m => `<button class="btn big mono" data-sq1="${m}">${fmtTime(m)}</button>`).join('')}</div>${st.sqMsg ? `<p class="sq-no">${esc(st.sqMsg)}</p>` : ''}`;
+  else q = `<p class="sq-yes">&#10003; ${fmtTime(t0.arr)} + ${fmtDur(turnH)} = <b class="mono">${fmtTime(ready)}</b>: service 2 can leave at ${fmtTime(ready)}.</p>` + (!canMore ? `<p class="sq-p">${maxT} services is the most one aircraft can fly in a day.</p>`
+    : !st.sq2 ? `<p class="sq-q">Service ${n} is back at <b class="mono">${fmtTime(last.arr)}</b> and ready again at <b class="mono">${fmtTime(lastReady)}</b>. Another ${esc(r.city)} service keeps the aircraft busy for <b class="mono">${fmtDur(end2 - lastReady)}</b>. The airport closes at <b class="mono">${WORLD.dayEnd}</b>. Could another service fit?</p>
+      <div class="sq-opts"><button class="btn big" data-sq2="1">Yes, it fits</button><button class="btn big" data-sq2="0">No, it doesn't</button></div>${st.sqMsg ? `<p class="sq-no">${esc(st.sqMsg)}</p>` : ''}`
+    : `<p class="sq-yes">&#10003; ${fmtTime(lastReady)} + ${fmtDur(end2 - lastReady)} = <b class="mono">${fmtTimeDay(end2)}</b>: ${fits ? `before ${WORLD.dayEnd}, so another service would fit.` : `after ${WORLD.dayEnd}, so another service won't fit.`}</p>`);
+  return `<section class="pnl sq"><div class="pnl-h"><h3>Scheduling</h3><span class="muted">How the aircraft's day fits together</span></div>${q}</section>`;
+}
+function bindSched(st, r, sched){
+  const p = ourPlane(), D = sched.length > 1 ? TIME.day(p, sched) : null;
+  screen().querySelectorAll('[data-sq1]').forEach(b => b.onclick = () => { const t0 = D.trips[0], ready = t0.arr + TIME.home(p);
+    if(+b.getAttribute('data-sq1') === ready){ st.sq1 = true; st.sqMsg = ''; } else st.sqMsg = `Not quite. Start at ${fmtTime(t0.arr)} and add the ${fmtDur(TIME.home(p))} turnaround.`; render(); });
+  screen().querySelectorAll('[data-sq2]').forEach(b => b.onclick = () => { const more = sched.concat([r.id]), fits = schedFits(more), yes = b.getAttribute('data-sq2') === '1';
+    if(yes === fits){ st.sq2 = true; st.sqMsg = ''; } else st.sqMsg = `Have another look. Add the busy time to ${fmtTime(D.trips[sched.length - 1].arr + TIME.home(p))} and compare it with ${WORLD.dayEnd}.`; render(); });
+}
+R.timetable = st => {
   const r = routeById(S.market), p = ourPlane(), f = fleetOne(), sched = schedOf(f), n = sched.length, want = wantOf(r.id);
   screen().innerHTML = taskFrame({ question:'What timetable do you want to run?', work:false,
     story:[`The airport is open ${WORLD.dayStart} to ${WORLD.dayEnd}. Each service fills more of the aircraft's day.`, 'You don\'t have to carry everyone. Is a service worth flying if only a few people are on it?'],
@@ -188,9 +210,10 @@ R.timetable = () => {
     context: ctxAircraft(), help:['timing'],
     main:`<div class="tt"><section class="pnl"><div class="pnl-h"><h3>Operating day · ${n ? esc(svcLabel(sched)) : 'no services yet'}</h3><span class="muted">${WORLD.dayStart}–${WORLD.dayEnd}</span></div>${serviceGantt(sched, { full:true })}</section>
       <section class="pnl"><div class="pnl-h"><h3>Services to ${esc(r.city)}</h3><span class="muted">${capLine(want, n * p.seats)}</span></div>${serviceButtons(r.id, sched)}</section>
+      ${schedPanel(st, r, sched)}
       <section class="pnl"><div class="pnl-h"><h3>Expected passengers per service</h3>${paxKey()}</div>${paxGroups(want, p.seats, n, { times:TIME.day(p, sched).trips.map(x => x.dep) })}</section></div>`,
     foot:`<button class="btn primary big" id="nx" ${n ? '' : 'disabled'}>${n ? goLabel(`Run ${esc(svcLabel(sched))}`) : 'Choose a timetable'} &#9654;</button>` });
-  bindServices(); on('nx', () => { costingCheck(); advance(); });
+  bindServices(); bindSched(st, r, sched); on('nx', () => { costingCheck(); advance(); });
 };
 /* The fare: the timetable is already decided, so it appears here as the current plan (with Edit), never as a second selector. */
 R.fareTry = () => {
@@ -364,7 +387,7 @@ R.home = () => {
         <span class="apt-f"><span>Landing fee <b class="mono">${money(x.fee)}</b></span><span>Passengers <b class="mono">${x.demandPct > 0 ? '+' : ''}${x.demandPct}%</b></span></span><span class="apt-rs">${times(x)}</span></button>`).join('')}</div>
       <span class="label">Your terminal at ${esc(h.name)}</span>
       <div class="terms">${T.map(t => `<button class="term ${S.terminal === t.id ? 'on' : ''}" data-tm="${t.id}" aria-pressed="${S.terminal === t.id}"><b>${esc(t.name)}</b><span class="apt-f"><span>Turnaround <b class="mono">${t.turn} min</b></span><span><b class="mono">${money(t.charge)}</b> a passenger</span></span><span class="muted">${esc(t.note)}</span></button>`).join('')}</div>
-    </div><div class="home-r">${locatorMap()}<button class="btn primary big" id="nx">Base the airline at ${esc(h.code)}${T.length > 1 ? ' ' + esc((T.find(t => t.id === S.terminal) || T[0]).name) : ''} &#9654;</button></div></div></div>`;
+    </div><div class="home-r">${locatorMap()}<div class="actions">${backBtn()}<button class="btn primary big" id="nx">Base the airline at ${esc(h.code)}${T.length > 1 ? ' ' + esc((T.find(t => t.id === S.terminal) || T[0]).name) : ''} &#9654;</button></div></div></div></div>`;
   screen().querySelectorAll('[data-h]').forEach(b => b.onclick = () => { S.home = b.getAttribute('data-h'); S.terminal = null; render(); });
   screen().querySelectorAll('[data-tm]').forEach(b => b.onclick = () => { S.terminal = b.getAttribute('data-tm'); render(); });
   on('nx', next);
@@ -497,6 +520,19 @@ function shellView(st){
 function reach(){ return Math.max(S.si, S.rnd.returnTo || 0); }
 function jumpTo(i){ if(i === S.si || i < 0) return; S.rnd.returnTo = reach(); S.si = i; resetEntry(); UI.justDone = null; UI.view = null; render(); }
 function advance(){ const r = S.rnd.returnTo; delete S.rnd.returnTo; if(r !== undefined && r > S.si){ S.si = r; resetEntry(); UI.justDone = null; render(); } else next(); }
+/* Back: one step back through any process, never past something that has already happened (operations flown, a period run,
+   an order signed), and never onto a screen that only moves on by itself (the HQ start-up, the morning HQ, a milestone, a run). */
+const NO_BACK = ['welcome', 'name', 'boot', 'hq', 'milestone', 'fly', 'sim', 'results', 'rop', 'yearReview', 'delivery', 'protoEnd'];
+const BACK_SKIP = ['welcome', 'boot', 'hq', 'milestone', 'fly', 'sim', 'results', 'rop', 'protoEnd'];
+const BACK_WALL = ['fly', 'sim', 'results', 'purchase'];
+function backTarget(){
+  const st = step(); if(!st || S.overlay || NO_BACK.includes(st.t)) return -1;
+  if((st.t === 'intro' && st.page > 0) || (st.t === 'rotation' && st.k > 0)) return -1;   // these screens page back by themselves first
+  for(let i = S.si - 1; i >= 0; i--){ const t = S.steps[i].t; if(BACK_WALL.includes(t)) return -1; if(!BACK_SKIP.includes(t)) return i; }
+  return -1;
+}
+function goBack(){ const i = backTarget(); if(i < 0) return; clearTimeout(bootTimer); if(S.phase === 'setup' && ['name', 'fin', 'home'].includes(S.steps[i].t)){ S.si = i; render(); return; } jumpTo(i); }
+function backBtn(){ return backTarget() >= 0 ? '<button class="btn big ab-back" id="wsBack">&#9664; Back</button>' : ''; }
 function goLabel(def){ const r = S.rnd.returnTo; return r !== undefined && r > S.si ? `Back to ${RAIL_LABEL[S.steps[r].t] || 'the plan'}` : def; }
 
 let fbTimer = null;
@@ -511,6 +547,7 @@ function afterRender(){
     if(v === 'plan'){ if(!planReachable()) return; UI.view = null; if(step().t === 'hq'){ next(); return; } render(); return; }
     UI.view = v === 'overview' && !WS_STEPS.includes(step().t) ? null : v; render(); });
   screen().querySelectorAll('[data-ri]').forEach(b => b.onclick = () => jumpTo(+b.getAttribute('data-ri')));
+  on('wsBack', goBack);
   screen().querySelectorAll('[data-stg]').forEach(b => b.onclick = () => { const g = b.getAttribute('data-stg'); UI.railOpen = UI.railOpen === g ? null : g; render(); });
   screen().querySelectorAll('[data-edit]').forEach(b => b.onclick = () => jumpTo(S.steps.findIndex(s => s.t === b.getAttribute('data-edit'))));
   bindDock();
@@ -590,7 +627,7 @@ function planRail(){
 }
 function wsWrap(frame, o){
   o = o || {}; const t = step().t, hint = o.hint || STEP_HINT[t] || '';
-  const bar = `<footer class="actbar"><span class="ab-i" aria-hidden="true">i</span><p class="ab-hint">${hint}</p><div class="ab-act">${o.foot || ''}</div></footer>`;
+  const bar = `<footer class="actbar"><span class="ab-i" aria-hidden="true">i</span><p class="ab-hint">${hint}</p><div class="ab-act">${backBtn()}${o.foot || ''}</div></footer>`;
   return shell(`<div class="ws ws-${t} ${UI.dockShut ? 'dock-shut' : ''}">${planRail()}<div class="ws-main">${frame}</div>${dockHtml(o)}</div>`, bar);
 }
 

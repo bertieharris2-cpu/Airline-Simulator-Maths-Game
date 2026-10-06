@@ -86,8 +86,12 @@ The opening is being made excellent before the later campaign continues. `airlin
   | Day 4 | A second route | ticket revenue = passengers × fare, route by route | 16 passengers at £90 | how will you share the aircraft's day? |
   | Week 1 | Planning a whole week | profit this week = profit a day × 7 | £600 a day | why might one week make more than another? |
   | The first month (before fuel) | Buying fuel ahead | cost = litres × price; the same litres at two prices | how much more is £1.60 than £1.50 a litre? | what does the news say? When would you fill the tank? |
+  | The first year (before the projection) | Projecting the year | cash in May = cash now + average month × months; months to afford = (price − cash you can spend) ÷ profit a month, rounded up | £20,000 a month for 8 months | is every month like the average? why keep emergency money? |
+  | Year 1 review (before the shop) | Buying an aircraft | extra a month = extra a day × 30; months to pay for itself = price ÷ extra a month, rounded up | £8,000 at £2,000 a month | enough people without a seat to fill it? what happens to the emergency money? |
 
   Each introduction is data: a beat names it with `"intro"` in `data-world`, and the text lives in `INTRO` in `src/opening/parts/p4j_intro.js`.
+- **Back, through every process.** A **◀ Back** button at the left of the action bar returns to the previous screen, keeping the furthest step reached, so the plan rail stays ticked and the forward button says *Back to …*. It is on the setup cards too (livery → name, home airport → livery). It never goes back past something that has already happened: operations flown, a week or month run, an aircraft order signed. It never lands on a screen that only moves on by itself (the HQ start-up, the morning HQ, a milestone, a run). Screens with their own pages (*One service*, *What's new*) page back first.
+- **Scheduling on the Launch Day timetable.** Once the day has two services, a *Scheduling* panel works through how the day fits together. First: "Service 1 is back at 11:45. The turnaround at home takes 35 min. When can service 2 leave?" (three times; a wrong one explains). Then: "Service 2 is ready again at 15:40. Another service keeps the aircraft busy for 2 h 45. The airport closes at 22:00. Could another service fit?" The answer shows the sum (15:40 + 2 h 45 = 18:25, before 22:00). It doesn't block a pupil who wants one service.
 - **The on-board choice** is four cards on the Plan screen, each with its rule (*Half of passengers buy · stock costs £1 an item*). On a 1366×768 laptop the cards keep their rule text on Day 1, then become one-line cards from Day 2 (the rule shows on hover). The Test screen keeps a row of chips. From Day 2 the plan's summary line also shows the litres of fuel the plan burns.
 - **After the day's new figure,** a short notice marks the change: *Cabin sales model online · Dragon Air can now work out cabin sales automatically when you test different options.* It is narrative, not assessment: there is no answer counting.
 
@@ -333,6 +337,7 @@ Market rules (in the engine, published on screen): demand falls by `drop` passen
 
 ## Open items (from the brief)
 
+- [ ] **Parked:** working out the time of each flight (distance ÷ speed, then out + turnaround + back) in Week 3.
 - [ ] Step 3: the commissioning loop for new planes (configure, route, timetable, launch week, review, "Regular service approved"), story callbacks (`S.flags` already records each event choice) and a multi-award finale.
 - [ ] Tune Year 2 (long-haul) numbers with real play.
 
