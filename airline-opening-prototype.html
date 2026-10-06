@@ -2389,6 +2389,7 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
 .deps-t td.muted{text-align:center;font-size:12px}
 .pe.compact .pe-svc{padding:1px 6px}.pe.compact .pe-tab small{display:none}.pe.compact .pe-svcs{gap:3px}.pe.compact .pe-ac .pe-sh{gap:6px}
 @media (max-height:800px){.ov .hp .td-list > div{padding:4px 0;font-size:13px}.ov .hp .td-news2{font-size:17px}}
+@media (max-height:800px){.hq-t.lo{table-layout:fixed;width:100%}.hq-t.lo td,.hq-t.lo th{padding-left:5px;padding-right:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hq-t.lo th:first-child,.hq-t.lo td:first-child{width:52px}.hq-t.lo th:nth-child(2),.hq-t.lo td:nth-child(2){width:62px}.hq-t.lo th.num,.hq-t.lo td.num:nth-child(4){width:48px}}
 </style>
 </head>
 <body>
@@ -5626,9 +5627,10 @@ function kpiRow(mode){
 function liveOpsHtml(mode){
   const fl = boardFlights().filter(f => !f.grounded);
   if(!fl.length) return '<div class="pb"><p class="muted">No services planned yet.</p></div>';
-  return `<div class="pb"><table class="hq-t lo"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th class="num">Seats</th><th>Status</th></tr></thead><tbody>${fl.map(f => {
+  const maxRows = innerHeight < 800 ? 3 : 8, shown = fl.length > maxRows ? fl.slice(0, maxRows) : fl, more = fl.length - shown.length;   // a short screen lists the first flights
+  return `<div class="pb"><table class="hq-t lo"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th class="num">Seats</th><th>Status</th></tr></thead><tbody>${shown.map(f => {
     const r = routeById(f.route), s = mode === 'live' ? displayStatus(f) : (S.rnd.status[f.key] || 'SCHEDULED');
-    return `<tr><td class="num">${fmtTime(f.dep)}</td><td>${esc(f.code)}</td><td>${flagSvg(r.flag, 16)} ${esc(r.city)}</td><td class="num">${S.rnd.applied ? `${f.sold}/${f.seats}` : f.seats}</td><td><span class="st-dot ${statusClass(s)}"></span><span class="lo-st ${statusClass(s)}" data-lo="${f.key}">${esc(cap(s))}</span></td></tr>`; }).join('')}</tbody></table></div>`;
+    return `<tr><td class="num">${fmtTime(f.dep)}</td><td>${esc(f.code)}</td><td>${flagSvg(r.flag, 16)} ${esc(r.city)}</td><td class="num">${S.rnd.applied ? `${f.sold}/${f.seats}` : f.seats}</td><td><span class="st-dot ${statusClass(s)}"></span><span class="lo-st ${statusClass(s)}" data-lo="${f.key}">${esc(cap(s))}</span></td></tr>`; }).join('')}${more ? `<tr><td colspan="5" class="muted">and ${more} more flight${more === 1 ? '' : 's'} today</td></tr>` : ''}</tbody></table></div>`;
 }
 function capFirst(s){ s = String(s || ''); return s.charAt(0).toUpperCase() + s.slice(1); }
 function cap(s){ s = String(s || '').toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); }

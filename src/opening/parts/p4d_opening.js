@@ -799,9 +799,10 @@ function kpiRow(mode){
 function liveOpsHtml(mode){
   const fl = boardFlights().filter(f => !f.grounded);
   if(!fl.length) return '<div class="pb"><p class="muted">No services planned yet.</p></div>';
-  return `<div class="pb"><table class="hq-t lo"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th class="num">Seats</th><th>Status</th></tr></thead><tbody>${fl.map(f => {
+  const maxRows = innerHeight < 800 ? 3 : 8, shown = fl.length > maxRows ? fl.slice(0, maxRows) : fl, more = fl.length - shown.length;   // a short screen lists the first flights
+  return `<div class="pb"><table class="hq-t lo"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th class="num">Seats</th><th>Status</th></tr></thead><tbody>${shown.map(f => {
     const r = routeById(f.route), s = mode === 'live' ? displayStatus(f) : (S.rnd.status[f.key] || 'SCHEDULED');
-    return `<tr><td class="num">${fmtTime(f.dep)}</td><td>${esc(f.code)}</td><td>${flagSvg(r.flag, 16)} ${esc(r.city)}</td><td class="num">${S.rnd.applied ? `${f.sold}/${f.seats}` : f.seats}</td><td><span class="st-dot ${statusClass(s)}"></span><span class="lo-st ${statusClass(s)}" data-lo="${f.key}">${esc(cap(s))}</span></td></tr>`; }).join('')}</tbody></table></div>`;
+    return `<tr><td class="num">${fmtTime(f.dep)}</td><td>${esc(f.code)}</td><td>${flagSvg(r.flag, 16)} ${esc(r.city)}</td><td class="num">${S.rnd.applied ? `${f.sold}/${f.seats}` : f.seats}</td><td><span class="st-dot ${statusClass(s)}"></span><span class="lo-st ${statusClass(s)}" data-lo="${f.key}">${esc(cap(s))}</span></td></tr>`; }).join('')}${more ? `<tr><td colspan="5" class="muted">and ${more} more flight${more === 1 ? '' : 's'} today</td></tr>` : ''}</tbody></table></div>`;
 }
 function capFirst(s){ s = String(s || ''); return s.charAt(0).toUpperCase() + s.slice(1); }
 function cap(s){ s = String(s || '').toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); }
