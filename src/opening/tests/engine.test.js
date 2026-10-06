@@ -9,11 +9,11 @@ const path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   // the setup, as a pupil would do it
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await p.click('#nx');
-  await p.click('[data-h="lhr"]'); await p.click('#nx'); if(await p.evaluate(() => window.__sim.step().t) === 'boot') await p.click('#enterHq');
+  if(await p.evaluate(() => window.__sim.step().t) === 'boot') await p.click('#enterHq');
   await p.click('#nx'); await p.click('[data-mk="par"]'); await p.click('#nx');
   const res = await p.evaluate(() => {
     const { WB, WE, planOutcome, beatDay, buyPlane, planeById, fuelPrice, toMin } = window.__world, out = [], S = window.__world.getS();
-    S.phase = 'round'; S.round = 3; S.day = beatDay(3); S.onboard = 'none'; S.fuel = 0; S.fuelValue = 0; S.fuelLots = []; S.terminal = 't5';
+    S.phase = 'round'; S.round = 7; S.day = beatDay(7);   // day 8: time-of-day demand is on and Red Kite's Dublin fares (days 4–7) are over S.onboard = 'none'; S.fuel = 0; S.fuelValue = 0; S.fuelLots = []; S.terminal = 't5';
     if(!S.fleet.length) buyPlane(planeById('dhc6'));
     const T = s => toMin(s), plans = [
       ['Dublin £90, 07:00 11:20 18:00', ['dub', 'dub', 'dub'], { dub:90 }, ['07:00', '11:20', '18:00']],
@@ -27,7 +27,7 @@ const path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../
     ];
     for(const [name, sched, prices, deps] of plans){
       const pl = { sched, prices:Object.assign({}, S.prices, prices), firstDep:T(deps[0]), onboard:'none', deps:deps.map(T) };
-      const g = planOutcome(pl), fuel = fuelPrice(3);
+      const g = planOutcome(pl), fuel = fuelPrice(7);
       const e = WE.day(WB, { plane:'dhc6', fuel, home:{ code:'LHR', terminal:'T5' }, services: sched.map((r, k) => ({ route:r, dep:deps[k], fare:pl.prices[r] })) });
       out.push({ name, fuel, game:{ pax:g.pax, rev:g.revenue, cost:Math.round(g.costs), profit:Math.round(g.profit) }, engine:{ pax:e.trips.reduce((a, t) => a + t.pax, 0), rev:e.revenue, cost:Math.round(e.costs), profit:Math.round(e.profit) } });
     }

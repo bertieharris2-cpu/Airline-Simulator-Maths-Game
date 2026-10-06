@@ -3,18 +3,20 @@ advance: p4a_core.js -> p4d_opening.js
 applyPeriodResults: p4a_core.js -> p4f_campaign.js
 aptCode: p4d_opening.js -> p4i_liveops.js
 bandOf: p4g_opening2.js -> p4h_world.js
-beatLabel: p4d_opening.js -> p4f_campaign.js
+beatLabel: p4d_opening.js -> p4f_campaign.js -> p4k_chapter.js
 campaignSummary: p4d_opening.js -> p4f_campaign.js
+capFirst: p4a2_workbook.js -> p4d_opening.js
 cellState: p4a_core.js -> p4e_toolkit.js
 cellWrong: p4b_control.js -> p4e_toolkit.js
 checkCell: p4a_core.js -> p4e_toolkit.js
 checkTools: p4e_toolkit.js -> p4g_opening2.js
-closeDay: p4d_opening.js -> p4f_campaign.js -> p4g_opening2.js
+closeDay: p4d_opening.js -> p4f_campaign.js -> p4g_opening2.js -> p4k_chapter.js
 closeWord: p4d_opening.js -> p4f_campaign.js
 crewNeeded: p4a_core.js -> p4h_world.js
 ctxForecast: p4d_opening.js -> p4g_opening2.js
 currentPlan: p4d_opening.js -> p4g_opening2.js
 dayExtras: p4a_core.js -> p4h_world.js
+dayTag: p4a_core.js -> p4k_chapter.js
 demandAt: p4a_core.js -> p4h_world.js
 demandPools: p4g_opening2.js -> p4h_world.js
 demandRule: p4b_control.js -> p4h_world.js
@@ -26,10 +28,14 @@ fcKey: p4d_opening.js -> p4f_campaign.js
 forecastCols: p4b_control.js -> p4d_opening.js
 goWord: p4d_opening.js -> p4f_campaign.js
 legMinutes: p4a_core.js -> p4h_world.js
+monthNo: p4a_core.js -> p4k_chapter.js
 operandUnit: p4a_core.js -> p4g_opening2.js
 paxFor: p4a_core.js -> p4h_world.js
+periodLabel: p4a_core.js -> p4k_chapter.js
 periodNeed: p4d_opening.js -> p4f_campaign.js
-periodShort: p4a_core.js -> p4f_campaign.js
+periodShort: p4a_core.js -> p4f_campaign.js -> p4k_chapter.js
+periodTag: p4a_core.js -> p4k_chapter.js
+phaseOf: p4a_core.js -> p4k_chapter.js
 planFlights: p4a_core.js -> p4g_opening2.js -> p4h_world.js
 planKey: p4d_opening.js -> p4g_opening2.js
 planLines: p4d_opening.js -> p4g_opening2.js
@@ -37,7 +43,7 @@ planOutcome: p4d_opening.js -> p4g_opening2.js
 planWord: p4d_opening.js -> p4f_campaign.js
 plannerRoutes: p4d_opening.js -> p4g_opening2.js
 profitLabel: p4b_control.js -> p4f_campaign.js
-protoBrief: p4d_opening.js -> p4g_opening2.js
+protoBrief: p4d_opening.js -> p4g_opening2.js -> p4k_chapter.js
 railKind: p4d_opening.js -> p4f_campaign.js
 railTitle: p4d_opening.js -> p4f_campaign.js
 railValue: p4d_opening.js -> p4g_opening2.js
@@ -45,6 +51,7 @@ readyExtra: p4d_opening.js -> p4f_campaign.js
 readyOk: p4d_opening.js -> p4f_campaign.js
 readyTitle: p4d_opening.js -> p4f_campaign.js
 routeKm: p4a_core.js -> p4h_world.js
+routeOpen: p4a_core.js -> p4k_chapter.js
 rowLive: p4a_core.js -> p4e_toolkit.js
 runCostOf: p4a_core.js -> p4h_world.js
 setPlan: p4d_opening.js -> p4g_opening2.js
@@ -53,8 +60,8 @@ simulateRun: p4a_core.js -> p4f_campaign.js
 stageSummary: p4d_opening.js -> p4g_opening2.js
 startFlight: p4a_core.js -> p4g_opening2.js -> p4i_liveops.js
 startProtoDay: p4d_opening.js -> p4g_opening2.js
+stepsFor: p4f_campaign.js -> p4k_chapter.js
 syncRoutesToHome: p4d_opening.js -> p4h_world.js
 testPlan: p4f_campaign.js -> p4g_opening2.js
 timeSelfTest: p4a_core.js -> p4h_world.js
-weekNo: p4a_core.js -> p4g_opening2.js
 wsStatus: p4d_opening.js -> p4f_campaign.js

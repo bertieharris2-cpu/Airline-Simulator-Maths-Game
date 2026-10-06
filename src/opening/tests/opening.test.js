@@ -28,7 +28,7 @@ const TAG = `${HOME}-${MK}-${W}`;
   ok('no airline-type choice at the start', await T() !== 'strategy', await T());
   ok('Back on the livery card goes to the name', await vis('#wsBack')); await p.click('#wsBack'); ok('… and lands on the name', await T() === 'name', await T()); await p.click('#nx');
   await p.click('#nx');   // livery
-  await p.click(`[data-h="${HOME}"]`); await p.click('#nx'); if(await T() === 'boot') await p.click('#enterHq');
+  if(await T() === 'boot') await p.click('#enterHq');
   await p.click('#nx'); await p.click(`[data-mk="${MK}"]`); await p.click('#nx'); await p.click('#nx');
   for(let k = 0; k < 4; k++) await p.click('#nx'); const rq = await p.$$eval('[data-rq]', e => e.map(x => x.getAttribute('data-rq'))); await p.click(`[data-rq="${rq[1]}"]`); await p.click('#nx');
   await p.click(`[data-svc="${MK}|2"]`);
@@ -56,12 +56,12 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(t === 'review'){ await solve('review ' + R); await p.click('#nx'); continue; }
     if(t === 'planner'){
       if(R <= 4 && s.period.type === 'day'){
-        ok(`Day ${R}: snacks only from Day 1`, (await vis('[data-pe^="0|ob|"]')) === (R >= 1));
-        ok(`Day ${R}: departure times only from Day 3`, (await vis('[data-pe^="0|dep|"]')) === (R >= 3));
-        ok(`Day ${R}: the second market only from Day 4`, (await vis(`[data-pe="0|fare|${OTHER}|1"]`)) === (R >= 4));
-        if(R === 1 && POL !== 'weak') await p.click('[data-pe="0|ob|sell3|0"]');
+        ok(`Day ${R + 1}: snacks only from Day 2`, (await vis('[data-pe^="0|ob|"]')) === (R >= 1));
+        ok(`Day ${R + 1}: departure times only from Day 4`, (await vis('[data-pe^="0|dep|"]')) === (R >= 3));
+        ok(`Day ${R + 1}: the second market only from Day 4`, (await vis(`[data-pe="0|fare|${OTHER}|1"]`)) === (R >= 3));
+        if(R === 1 && POL !== 'weak') await p.click('[data-pe="0|ob|low|0"]');
         if(R === 3){ const before = await p.evaluate(() => window.__sim.S().deps); await p.click('[data-pe="0|dep|0|-1"]'); await p.click('[data-pe="0|dep|0|-1"]'); const after = await p.evaluate(() => window.__sim.S().deps); ok('Day 3: a departure time can be moved', after && before && after[0] === before[0] - 60, [before, after]); }
-        if(R === 4 && POL !== 'weak') await p.click(`[data-pe="0|add|${OTHER}|0"]`).catch(() => {});
+        if(R === 3 && POL !== 'weak') await p.click(`[data-pe="0|add|${OTHER}|0"]`).catch(() => {});
       }
       await fits('planner ' + R); if(R <= 4) await shot(`d${day}-plan`); await p.click('#nx'); continue; }
     if(t === 'costPlan'){

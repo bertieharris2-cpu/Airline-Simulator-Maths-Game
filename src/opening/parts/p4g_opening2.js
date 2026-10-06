@@ -28,8 +28,6 @@ function fuelContract(){ return !!(S && S.phase === 'round' && S.period && (S.pe
 function plannerRoutes(){ return secondRouteOn() ? [S.market, otherRoute()] : [S.market]; }
 /* The old "business travellers before 08:00" rule is replaced by time-of-day demand. */
 function earlyBonus(){ return 0; }
-/* Week 1 is the first full week of regular operation: Monday 20 May 2030. */
-function weekNo(day){ return Math.max(1, Math.floor((day - 8) / 7) + 1); }
 
 /* ---------- time-of-day demand: who wants to fly when ---------- */
 const PROFILE_DEFAULT = { morning:0.4, midday:0.2, evening:0.4, flex:0.3, type:'Mixed' };
@@ -124,7 +122,7 @@ function planOutcome(pl){ const L = planLines(pl); return { pax:L.pax, nos:L.nos
 /* One line describing a plan: "Paris ×2 at £90 · snacks £3 · 07:00, 17:00". */
 function planLabel(pl){
   const c = serviceCounts(pl.sched), parts = Object.keys(c).map(id => `${routeById(id).city} ×${c[id]} at ${money(pl.prices[id] || routeById(id).basePrice)}`);
-  if(snacksOn() && pl.onboard && pl.onboard !== 'none') parts.push(({ sell3:'snacks £3', sell5:'snacks £5', free:'free snacks' })[pl.onboard]);
+  if(snacksOn() && pl.onboard && pl.onboard !== 'none') parts.push(({ low:'snacks £3', high:'snacks £5', sell3:'snacks £3', sell5:'snacks £5', free:'free snacks' })[pl.onboard]);
   if(depsOn() && pl.sched.length){ const D = withPlan(pl, () => TIME.day(ourPlane(), pl.sched)); parts.push(D.trips.map(t => fmtTime(t.dep)).join(', ')); }
   return parts.join(' · ') || 'No services';
 }
@@ -455,7 +453,7 @@ R.rop = () => {
     <div class="row" style="justify-content:center"><button class="btn big" id="ropEdit">${UI.ropEdit ? 'Done changing' : 'Change the plan first'}</button><button class="btn primary big" id="ropGo">Approve the plan &#9654;</button></div></div></div>`);
   bindPlanEditor();
   on('ropEdit', () => { UI.ropEdit = !UI.ropEdit; render(); });
-  on('ropGo', () => { UI.ropEdit = false; S.rop = Object.assign({ approved:S.day }, currentPlan()); returnTankFuel(); startBeat(5); });
+  on('ropGo', () => { UI.ropEdit = false; S.rop = Object.assign({ approved:S.day }, currentPlan()); returnTankFuel(); startBeat(S.round + 1); });
 };
 
 function returnTankFuel(){

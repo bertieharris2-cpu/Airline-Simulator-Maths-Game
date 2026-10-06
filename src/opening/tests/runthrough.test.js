@@ -34,7 +34,7 @@ const UPTO = +(process.env.UPTO || 9);
     '- **Model:** the game shows the figure and nothing is asked.');
   // ---- setup ----
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await p.click('#nx');
-  await p.click('[data-h="lhr"]'); await p.click('#nx'); if(await T() === 'boot') await p.click('#enterHq');
+  if(await T() === 'boot') await p.click('#enterHq');
   head('Launch Day, Sunday 12 May 2030 (fuel free: the launch deal)');
   q('Model', 'Cash after the aircraft', '£5,000 − £2,500 (shown on the start-up aircraft card)', '£2,500');
   await p.click('#nx'); await p.click('[data-mk="par"]'); await p.click('#nx');
@@ -62,7 +62,7 @@ const UPTO = +(process.env.UPTO || 9);
     if(t === 'milestone'){ head((await txt('.ms-in h1')) + ' (milestone)'); q('Model', 'Read the milestone', (await txt('.ms-in')).split('\n').slice(2, 4).join(' '), '—'); await p.click('#msGo'); continue; }
     if(t === 'review'){ const before = L.length; await solve(); if(L.length === before) q('Model', 'Review last week', 'no figure is asked', '—'); await p.click('#nx'); continue; }
     if(t === 'planner'){
-      if(R === 1) await p.click('[data-pe="0|ob|sell3|0"]');
+      if(R === 1) await p.click('[data-pe="0|ob|low|0"]');
       if(R === 3) for(let k = 0; k < 4; k++) await p.click('[data-pe="0|dep|0|-1"]');   // 09:00 → 07:00
       if(R === 4) await p.click('[data-pe="0|add|dub|0"]').catch(() => {});
       q('Model', 'Plan', (await txt('.pe-sum')) + ' · ' + (await p.evaluate(() => window.__sim.S().deps ? 'departures ' + window.__sim.S().deps.map(m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0')).join(', ') : '')), '—');

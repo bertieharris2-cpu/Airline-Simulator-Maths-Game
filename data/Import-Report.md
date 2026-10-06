@@ -1,52 +1,53 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 06 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 06 Oct 2026. Loaded: live, optional rows. Check only: the game data was not changed.*
 
-**9 to fix, 6 to check, 3 notes.**
+**0 to fix, 2 to check, 8 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 11 | 3 later, 11 live, 2 placeholder |
+| Settings | 41 | 41 live, 7 placeholder |
 | Archetypes | 4 | 2 later, 4 live |
-| Routes | 6 | 2 later, 6 live, 2 placeholder |
-| RouteCatalogue | 0 | 21 placeholder |
-| Aircraft | 3 | 5 later, 3 live, 4 placeholder |
-| Finance | 3 | 3 live, 1 placeholder |
-| Airports | 5 | 5 live |
-| Calendar | 14 | 10 live, 4 optional, 1 placeholder |
-| Market | 2 | 86 later, 2 live, 16 placeholder |
-| Events | 9 rows → 3 events | 9 live, 21 placeholder |
-| Challenges | 4 | 4 live, 4 placeholder |
-| Mechanics | 8 | 3 later, 8 live, 2 placeholder |
-
-## To fix before wiring in
-
-- **Calendar:** day 6 is titled "Saturday", but 06 Sep is a Friday.
-- **Calendar:** day 6 is a weekend row, but 06 Sep is a Friday.
-- **Calendar:** day 7 is titled "Sunday", but 07 Sep is a Saturday.
-- **Calendar:** day 13 is titled "Saturday", but 13 Sep is a Friday.
-- **Calendar:** day 13 is a weekend row, but 13 Sep is a Friday.
-- **Calendar:** day 14 is titled "Sunday", but 14 Sep is a Saturday.
-- **Routes:** dub: the story says "short", but it is the longer of the routes opening on day 1 (Dublin 450 km, Paris 300 km). The game shows the story next to the flight time.
-- **Routes:** par: the story says "longer", but it is the shorter of the routes opening on day 1 (Dublin 450 km, Paris 300 km). The game shows the story next to the flight time.
-- **Settings:** startDate 01 Sep 2030 is a Sunday, but its note says "Monday". The nearest Monday after it is 02 Sep 2030.
+| Routes | 18 | 2 later, 18 live |
+| RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
+| Aircraft | 8 | 6 later, 8 live, 1 note row, 1 placeholder, 1 removed |
+| Finance | 8 | 6 later, 8 live, 1 note row, 1 placeholder |
+| Airports | 1 | 1 later, 1 live, 3 removed |
+| Calendar | 21 | 21 live |
+| Market | 17 | 397 later, 17 live, 2 placeholder |
+| Events | 16 rows → 10 events | 6 later, 16 live, 14 placeholder, 2 removed |
+| Challenges | 2 | 2 live, 6 placeholder |
+| Mechanics | 15 | 6 later, 15 live, 4 placeholder |
+| Chapters | 1 | 3 later, 1 live, 1 note row, 2 placeholder |
+| HandSumRules | 8 | 8 live, 1 note row |
+| Catering | 4 | 4 live, 1 note row |
+| Hunts | 0 | 1 note row, 7 placeholder |
 
 ## To check
 
-- **Market:** weeks start on a Sunday, not a Monday, so a Mon–Fri game week straddles two Market rows.
-- **Market:** week 2 fuel is £1.30, but the Calendar has £1.50–£1.70 on its days. Time skips use the Market price, so the two should agree.
-- **Market:** week 3 fuel is £1.40, but the Calendar has £1.70 on its days. Time skips use the Market price, so the two should agree.
-- **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min.
-- **Routes:** ams (375 km): legs not on a quarter hour: Saab 340 50 min, ATR 72 50 min.
-- **Routes:** gva (750 km): legs not on a quarter hour: Saab 340 100 min, ATR 72 100 min.
+- **Routes:** ist is loaded, but its archetype "long_haul_mixed" is not live. The game uses the route's own demand table and applies no business/leisure or season multipliers to it.
+- **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Embraer E175 20 min.
 
 ## Notes
 
 - **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 800. The workbook wins.
 - **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1200. The workbook wins.
+- **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900. The workbook wins.
+- **Calendar:** day 3 names challenge 1, but Settings captainsChallengeCadence starts challenges on 2031-01-06 (one a term). The game follows the Challenges sheet dates; the Calendar column is ignored.
+- **Calendar:** day 5 names challenge 2, but Settings captainsChallengeCadence starts challenges on 2031-04-21 (one a term). The game follows the Challenges sheet dates; the Calendar column is ignored.
+- **Calendar:** day 9 names challenge 3, but Settings captainsChallengeCadence starts challenges on 2031-09-02 (one a term). The game follows the Challenges sheet dates; the Calendar column is ignored.
+- **Calendar:** day 11 names challenge 4, but Settings captainsChallengeCadence starts challenges on 2032-01-05 (one a term). The game follows the Challenges sheet dates; the Calendar column is ignored.
 - **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events undercut_dub, storm, crew; challenges 2. Those choices then differ only in cash.
+
+## Chapter 1 touches
+
+Rows dated on or before 28 Dec 2030 (chapter 1's review) that the game would read but are not `live`, and values the chapter-1 flow needs that the workbook lacks. The game reports these; it never invents a value.
+
+- **Routes:** ist opens on day 50 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
+- **Settings:** `timeSkip` is `placeholder`: not loaded (the game builds teacher skips of 0 / 1 / 4 / 8 weeks from the brief and reports it here).
+- **Settings:** `reputationFromDate` is `placeholder`: not loaded (a date gate only in chapter 1).
 
 ## The prototype's own data and the workbook's
 
@@ -58,6 +59,12 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | Dublin fares | £50, £60, £70, £80 | £70, £80, £90, £100, £110 |
 | Paris distance | 450 km | 300 km |
 | Paris fares | £80, £90, £100, £110, £120 | £70, £80, £90, £100, £110 |
+| Madrid distance | 1200 km | 1350 km |
+| Madrid fares | £80, £90, £100, £120 | £150, £160, £170, £180, £190 |
+| Marrakech distance | 2400 km | 2250 km |
+| Marrakech fares | £100, £120, £140, £160 | £220, £230, £240, £250, £260 |
+| Cairo distance | 3600 km | 3600 km |
+| Cairo fares | £125, £150, £175, £200 | £330, £340, £350, £360, £370 |
 | DHC-6 Twin Otter price | £2,500 | £5,000 (launch deal £2,500) |
 | DHC-6 Twin Otter running costs | £192 an hour, £900 a day | £150 an hour, £600 a day |
 | DHC-6 Twin Otter fuel | 20 L per 100 km | 20 L per 100 km |
@@ -67,9 +74,21 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | ATR 72 price | £280,000 | £15,000 |
 | ATR 72 running costs | £520 an hour, £1600 a day | £350 an hour, £1200 a day |
 | ATR 72 fuel | 40 L per 100 km | 40 L per 100 km |
+| Embraer E190 price | £300,000 | £30,000 |
+| Embraer E190 running costs | £— an hour, £2650 a day | £900 an hour, £2500 a day |
+| Embraer E190 fuel | 35 L per 100 km | 70 L per 100 km |
+| Airbus A220 price | £450,000 | £300,000 |
+| Airbus A220 running costs | £— an hour, £6250 a day | £1100 an hour, £3000 a day |
+| Airbus A220 fuel | 45 L per 100 km | 80 L per 100 km |
+| Airbus A320 price | £550,000 | £400,000 |
+| Airbus A320 running costs | £— an hour, £6550 a day | £1300 an hour, £3500 a day |
+| Airbus A320 fuel | 60 L per 100 km | 90 L per 100 km |
+| Boeing 737 price | £600,000 | £400,000 |
+| Boeing 737 running costs | £— an hour, £7150 a day | £1300 an hour, £3500 a day |
+| Boeing 737 fuel | 62 L per 100 km | 90 L per 100 km |
 | Second crew | £300 | £250 when duty is over 12 h |
 | Starting cash | £5,000 | £5,000 |
-| Start date | Sun 12 May 2030 | Sun 01 Sep 2030 |
+| Start date | Sun 12 May 2030 | Mon 02 Sep 2030 |
 
 ## Engine rules
 

@@ -600,7 +600,7 @@ function readyOk(){ return true; }
 function readyTitle(){ return S.phase === 'setup' ? 'Ready for launch' : `Ready for Day ${S.round}`; }
 function beatLabel(i){ return i ? 'Day ' + i : 'Launch'; }
 function wsCrumb(){ const g = stageOf(step().t); return `${S.airline.name || 'Airline'} HQ${g ? ' · ' + g.name : ''}`; }
-function wsStatus(){ return S.phase === 'setup' ? 'LAUNCH DAY' : `DAY ${S.round}`; }
+function wsStatus(){ return S.phase === 'setup' ? 'LAUNCH DAY' : periodType() === 'day' ? `DAY ${S.day}` : periodTag().toUpperCase(); }
 const STEP_HINT = { starter:'Your start-up aircraft is waiting for delivery at your home airport.', market:'Compare the two markets, then open one.', demand:'Compare the people who want to fly with the seats on one service.',
   rotation:'Follow one service from departure until the aircraft is ready again.', timetable:'Add services until the timetable suits the market. Each one must fit in the operating day.',
   fareTry:"You're building your first route. Set a fare and check the timetable, then continue.", options:"Each plan charges a different fare. Work out each profit, then choose the plan your airline will fly.",
@@ -920,7 +920,7 @@ function syncRoutesToHome(){
   if(S && S.steps && !S.steps.some(x => x.t === 'ready')){ const i = S.steps.findIndex(x => x.t === 'fuelPlan'); if(i >= 0 && S.si <= i) S.steps.splice(i + 1, 0, { t:'ready' }); }
   if(!S || !S.home) return;
   if(S.home === syncRoutesToHome.home) return; syncRoutesToHome.home = S.home;
-  WORLD.setupRoutes.map(routeById).forEach(r => { const b = normalFare(r); r.basePrice = b; r.fares = [b - 10, b, b + 10, b + 20, b + 30]; r.prices = r.fares.slice(); r.setupPrices = r.fares.slice();
+  WORLD.setupRoutes.map(routeById).forEach(r => { if(r.wb) return; const b = normalFare(r); r.basePrice = b; r.fares = [b - 10, b, b + 10, b + 20, b + 30]; r.prices = r.fares.slice(); r.setupPrices = r.fares.slice();
     if(S.phase === 'setup' && S.prices && S.prices[r.id] !== undefined && !r.fares.includes(S.prices[r.id])) S.prices[r.id] = b; });
 }
 /* For the balance checks in testing. */

@@ -85,14 +85,14 @@ Object.assign(BAND_NAMES, { early:'Early morning', midmorning:'Mid-morning', mid
 function bandHours(b){ return WBR ? WBR.bands[b] : { early:[6, 9], midmorning:[9, 12], midday:[12, 15], afternoon:[15, 18], evening:[18, 22] }[b]; }
 function bandOf(m){ for(const b of BANDS){ if(m < bandHours(b)[1] * 60) return b; } return BANDS[BANDS.length - 1]; }
 function bandSpan(b){ const [a, z] = bandHours(b); return `${pad(a)}:00–${pad(z)}:00`; }
-function archOf(route){ return route.arch || { timeSensitiveShare:0.5, bands:{ early:0.3, midmorning:0.15, midday:0.1, afternoon:0.15, evening:0.3 } }; }
+function archOf(route){ return route.arch || (route.wb ? { timeSensitiveShare:0, bands:{} } : { timeSensitiveShare:0.5, bands:{ early:0.3, midmorning:0.15, midday:0.1, afternoon:0.15, evening:0.3 } }); }   // a workbook route whose archetype is not live: everyone flexible, no multipliers
 /* The day's passengers at this fare: those who must fly in each band, and the flexible ones who will take any service. */
 function demandPools(route, fare){
   const W = paxWant(route, fare), out = { W };
   if(!timeDemandOn()){ BANDS.forEach(b => { out[b] = 0; }); out.flex = W; return out; }
-  const a = archOf(route); let locked = 0;
-  BANDS.forEach(b => { out[b] = roundSchool(W * a.timeSensitiveShare * (a.bands[b] || 0)); locked += out[b]; });
-  out.flex = Math.max(0, W - locked); return out;
+  const a = archOf(route), ts = roundSchool(W * a.timeSensitiveShare);   // the time-sensitive total first, then its share per band (as the Balance Report's engine)
+  BANDS.forEach(b => { out[b] = roundSchool(ts * (a.bands[b] || 0)); });
+  out.flex = Math.max(0, W - ts); return out;
 }
 function planFlights(){
   const out = [], pools = {}, fifo = fifoCursor(S.rnd && S.rnd.fuelOrder), paid = fuelPaid(), list = [];

@@ -1,5 +1,5 @@
 /* The world engine: one aircraft's day under the workbook's rules (Fable Pass 1, section 0).
-   Not used by the game yet. tests/balance.test.js checks it against data/Balance-Report.md.
+   Not used by the game yet. tests/balance.test.js checks it against the reports in data/balance/.
 
    - A service is a round trip from home. It earns one plane-load at the fare (return tickets).
    - The day has five bands. A service belongs to the band it leaves home in.
@@ -63,13 +63,16 @@
     const routes = {};
     trips.forEach(t => { (routes[t.route] = routes[t.route] || { trips:[] }).trips.push(t); });
     Object.keys(routes).forEach(id => {
-      const route = byId(W.routes, id), arch = byId(W.archetypes, route.archetype), x = routes[id], fare = x.trips[0].fare;
+      const route = byId(W.routes, id), x = routes[id], fare = x.trips[0].fare;
+      const arch = byId(W.archetypes, route.archetype) || { timeSensitiveShare:0, bands:{} };   // no live archetype: everyone is flexible, no multipliers (reported by the importer)
       if(x.trips.some(t => t.fare !== fare)) T.problems.push(`${route.city}: one fare a day`);
       const base = route.demandAtFare[String(fare)];
       if(base === undefined) T.problems.push(`${route.city}: no demand figure at £${fare}`);
       const demand = roundSchool((base || 0) * ((o.mult || {})[id] ?? 1));
-      const locked = {}; Object.keys(R.bands).forEach(b => { locked[b] = roundSchool(demand * arch.timeSensitiveShare * arch.bands[b]); });
-      const flex = demand - Object.values(locked).reduce((a, b) => a + b, 0);
+      // the time-sensitive total is rounded first, then shared between the bands (Balance Report v3 §1); the rest are flexible
+      const ts = roundSchool(demand * arch.timeSensitiveShare), locked = {};
+      Object.keys(R.bands).forEach(b => { locked[b] = roundSchool(ts * (arch.bands[b] || 0)); });
+      const flex = demand - ts;
       x.trips.forEach(t => { t.seats = plane.seats; t.locked = 0; t.flex = 0; });
       Object.keys(R.bands).forEach(b => { let left = locked[b]; x.trips.filter(t => t.band === b).forEach(t => { const k = Math.min(left, t.seats); t.locked = k; left -= k; }); });
       let f = flex; // flexible passengers spread across the day's services while seats remain

@@ -30,9 +30,11 @@ function toMin(hhmm){ const p = String(hhmm).split(':'); return parseInt(p[0],10
 function fmtDur(min){ min = Math.round(min); const h = Math.floor(min/60), m = min%60; return h ? (m ? `${h} h ${pad(m)}` : `${h} h`) : `${m} min`; }
 function fmtHours(h){ return fmtDur(h*60); }
 function fmtTimeDay(min){ const d = Math.floor(min/1440); return fmtTime(min) + (d >= 1 ? (d===1 ? ' next day' : ` +${d} days`) : ''); }
-/* CALENDAR (Step 1 of the time brief): the pupil sees dates, never "Round". Launch day (the setup flight) is
-   Sunday 12 May 2030; day n of the game is n days later, so Monday 13 May 2030 is Day 1. Internally S.round stays the day number. */
-const CAL0 = Date.UTC(2030, 4, 12), WDAY = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], MONTH = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+/* CALENDAR: the pupil sees dates, never "Round". Day 1 is the workbook's startDate (Launch Day, Monday 2 September 2030,
+   the set-up flight); S.day is the workbook's day number and S.round the beat in force (p4k_chapter.js). */
+const WB0 = (() => { try { return J('data-workbook'); } catch(e){ return null; } })();
+const START_ISO = (WB0 && WB0.settings && WB0.settings.startDate) || '2030-09-02';
+const CAL0 = Date.UTC(+START_ISO.slice(0, 4), +START_ISO.slice(5, 7) - 1, +START_ISO.slice(8, 10)) - 86400000, WDAY = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], MONTH = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 function calDate(n){ return new Date(CAL0 + (n === undefined ? (S && S.day !== undefined ? S.day : 0) : n) * 86400000); }
 function dateLong(n){ const d = calDate(n); return `${WDAY[d.getUTCDay()]} ${d.getUTCDate()} ${MONTH[d.getUTCMonth()]} ${d.getUTCFullYear()}`; }
 function dateShort(n){ const d = calDate(n); return `${WDAY[d.getUTCDay()].slice(0,3)} ${d.getUTCDate()} ${MONTH[d.getUTCMonth()].slice(0,3)}`; }
@@ -81,17 +83,22 @@ function saveSettings(){ try{ localStorage.setItem(SET_KEY, JSON.stringify(setti
 let S = null;
 function emptyRnd(){ return { flights:[], status:{}, why:[], reviews:[], tasks:[], open:null, brief:[], tables:{}, activeTable:null }; }
 function newState(){
-  return { v:4, world:WORLD.id, phase:'setup', round:0, day:0, period:{ type:'setup', from:0, to:0, run:{kind:'one'} }, ledger:{ rev:[], cost:[], pax:[], seats:[] }, home: WORLD.homes[0].id,
+  return { v:5, world:WORLD.id, phase:'setup', round:0, day:1, period:{ type:'setup', from:1, to:1, run:{kind:'one'} }, ledger:{ rev:[], cost:[], pax:[], seats:[] }, home: WORLD.homes[0].id, terminal:'t5',
     airline:{ name:'', code:'', c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'fin'},{t:'home'},{t:'boot'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'fin'},{t:'boot'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };
 }
-/* Saves from the previous version: keep the airline, rebuild the current round from HQ. */
+/* Saves from before workbook v4 (the May 2030 calendar) cannot carry on: the game starts again. */
 function migrate(s){
+  if(!s) return null;
+  if(s.v===5 && s.steps) return s;
+  return null;
+}
+function migrateOld(s){
   if(!s) return null;
   if(s.v===4 && s.steps) return s;
   if(s.v===3 && s.steps){   // before the calendar sped up: keep the airline, start the matching beat again
@@ -111,13 +118,13 @@ function fixOldHistory(s){ (s.history || []).forEach(h => { if(h.from === undefi
   const L = s.ledger; L.rev[h.from] = h.revenue || 0; L.cost[h.from] = h.costs || 0; L.pax[h.from] = h.pax || 0; L.seats[h.from] = h.seats || 0; }); }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY)||'null'); if(s) return migrate(s); const o = JSON.parse(localStorage.getItem(OLD_KEY)||'null'); return migrate(o); }catch(e){} return null; }
-function saveCode(){ const c = Object.assign({}, S); delete c.roundStart; return 'ASIM4.'+b64e(JSON.stringify(c)); }
-function loadCode(code){ code = String(code||'').trim(); const m = code.match(/^ASIM([234])\.(.*)$/); if(!m) throw new Error('Not a save code'); const s = migrate(JSON.parse(b64d(m[2]))); if(!s) throw new Error('This code is from setup in an older version — start a new game'); return s; }
+function saveCode(){ const c = Object.assign({}, S); delete c.roundStart; return 'ASIM5.'+b64e(JSON.stringify(c)); }
+function loadCode(code){ code = String(code||'').trim(); const m = code.match(/^ASIM([2345])\.(.*)$/); if(!m) throw new Error('Not a save code'); const s = migrate(JSON.parse(b64d(m[2]))); if(!s) throw new Error('This code is from an older version of the game — start a new game'); return s; }
 function loadRuns(){ try{ const r = JSON.parse(localStorage.getItem(RUNS_KEY)||'[]'); return Array.isArray(r)?r:[]; }catch(e){ return []; } }
 function recordRun(checkpoint){
   if(!S.airline.name || (S.finished && !checkpoint)) return;
   const runs = loadRuns();
-  runs.push({ world:WORLD.name, name:S.airline.name, rounds:S.round, cash:Math.round(S.cash), rep:S.rep, fleet:S.fleet.map(f=>planeById(f.planeId).name), date:new Date().toISOString().slice(0,10), checkpoint:!!checkpoint });
+  runs.push({ world:WORLD.name, name:S.airline.name, rounds:S.round, day:S.day, gameDate:dateShort(S.day), cash:Math.round(S.cash), rep:S.rep, fleet:S.fleet.map(f=>planeById(f.planeId).name), date:new Date().toISOString().slice(0,10), checkpoint:!!checkpoint });
   try{ localStorage.setItem(RUNS_KEY, JSON.stringify(runs)); }catch(e){}
   if(!checkpoint) S.finished = true;
 }
@@ -558,12 +565,12 @@ function pausesRun(i){ const r = WORLD.rounds[i]; return !!r && !r.routine; }
 function monthEnd(day){ const d = calDate(day); return Math.round((Date.UTC(d.getUTCFullYear(), d.getUTCMonth()+1, 1) - CAL0) / DAY_MS) - 1; }
 function monthStart(day){ const d = calDate(day); return Math.round((Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) - CAL0) / DAY_MS); }
 function daysIn(day){ return monthEnd(day) - monthStart(day) + 1; }
-function weekNo(day){ return Math.floor((day - 1) / 7) + 1; }                       // Week 1 = Monday 13 – Sunday 19 May 2030
+function weekNo(day){ return Math.floor((day - 1) / 7) + 1; }                       // Week 1 = days 1–7 (Monday 2 – Sunday 8 September 2030), as the Calendar sheet numbers them
 function monthNo(day){ const d = calDate(day); return (d.getUTCFullYear() - 2030) * 12 + d.getUTCMonth() - 3; }   // May 2030 = Month 1
 function monthName(day, short){ const m = MONTH[calDate(day).getUTCMonth()]; return short ? m.slice(0, 3) : m; }
 function fmtRange(a, b){ const A = calDate(a), B = calDate(b); return A.getUTCMonth() === B.getUTCMonth() ? `${A.getUTCDate()}–${B.getUTCDate()} ${MONTH[B.getUTCMonth()]}` : `${A.getUTCDate()} ${MONTH[A.getUTCMonth()]} – ${B.getUTCDate()} ${MONTH[B.getUTCMonth()]}`; }
 function isMonthSpan(a, b){ return a === monthStart(a) && b === monthEnd(b); }
-/* "Thursday 16 May 2030" · "Week 3 · 27 May – 2 June" · "October 2030" · "July – September 2030" */
+/* "Thursday 5 September 2030" · "Week 4 · 23–29 September" · "October 2030" · "July – September 2030" (p4k adds the chapter review) */
 function periodLabel(P){
   P = P || S.period; if(!P || P.type === 'setup') return 'Launch day';
   if(P.type === 'day') return dateLong(P.from);

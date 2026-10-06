@@ -16,10 +16,11 @@ STAGES.week[0].steps = ['intro'].concat(STAGES.week[0].steps);
 
 /* The beat's intro goes just before the step that uses the new idea. */
 function withIntro(steps, w){
-  const I = w && w.intro && INTRO[w.intro]; if(!I) return steps;
-  const at = steps.findIndex(s => s.t === (I.before || 'planner'));
-  if(at < 0) return steps;
-  return steps.slice(0, at).concat([{ t:'intro', key:w.intro, page:0 }], steps.slice(at));
+  const keys = !w || !w.intro ? [] : Array.isArray(w.intro) ? w.intro : [w.intro];
+  keys.forEach(key => { const I = INTRO[key]; if(!I) return;
+    const at = steps.findIndex(s => s.t === (I.before || 'planner')); if(at < 0) return;
+    steps = steps.slice(0, at).concat([{ t:'intro', key, page:0 }], steps.slice(at)); });
+  return steps;
 }
 function introNow(){ const st = S.steps && S.steps.find(s => s.t === 'intro'); return st ? INTRO[st.key] : null; }
 
@@ -41,7 +42,7 @@ const INTRO = {
         const rule = k === 'none' ? 'No snacks. No extra money and no extra cost.' : o.free ? `Every passenger gets one. It costs ${money(o.costPax)} a passenger. Passengers like it.` : `${o.share === 0.5 ? 'About half' : `About ${Math.round(o.share * 10)} in 10`} of passengers buy one. Each snack costs ${money(o.costItem)} to stock.`;
         return `<div class="ni-card"><em>${big}</em><b>${esc(o.label)}</b><span>${rule}</span></div>`; }).join('')}</div>`,
       ['The money from snacks is called <b>cabin sales</b>. It is added to your revenue.']],
-    maths:() => { const n = ourPlane().seats, o = ONBOARD.sell3, b = Math.floor(n * o.share);
+    maths:() => { const n = ourPlane().seats, o = ONBOARD.low || ONBOARD.sell3, b = Math.floor(n * o.share);
       return [niRule('number buying', '×', 'price', 'Cabin sales'),
         `<div class="ni-eg"><p>One full ${esc(ourPlane().name.replace(/^DHC-6 /, ''))}: <b>${n} passengers</b>. At ${money(o.price)}, about half of them buy a snack.</p>${niDots(n, b, 'buy')}
           <p>Half of ${n} is ${n / 2}. You can't sell half a snack, so <b>${b}</b> people buy.</p>

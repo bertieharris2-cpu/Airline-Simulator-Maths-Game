@@ -12,7 +12,7 @@ r = lambda *p: open(os.path.join(HERE, *p), encoding='utf-8').read()
 p2 = r('parts', 'p2_data.html').replace('<!--DEFS-->', r('assets', 'flags.svg').strip())
 p3 = r('parts', 'p3_html.html').replace('<!--LAND-->', '            ' + r('assets', 'land.svg').strip()).replace('<!--BORDERS-->', '            ' + r('assets', 'borders.svg').strip())
 head = r('parts', 'p1_head.html')
-JS = ['p4a_core.js', '../engine/world-engine.js', 'p4a2_workbook.js', 'p4b_control.js', 'p4d_opening.js', 'p4e_toolkit.js', 'p4f_campaign.js', 'p4g_opening2.js', 'p4h_world.js', 'p4i_liveops.js', 'p4j_intro.js', 'p4c_display.js']
+JS = ['p4a_core.js', '../engine/world-engine.js', 'p4a2_workbook.js', 'p4b_control.js', 'p4d_opening.js', 'p4e_toolkit.js', 'p4f_campaign.js', 'p4g_opening2.js', 'p4h_world.js', 'p4i_liveops.js', 'p4j_intro.js', 'p4k_chapter.js', 'p4c_display.js']
 out = head + p2 + p3 + ''.join(r('parts', f) for f in JS)
 seen = {}
 for f in JS:

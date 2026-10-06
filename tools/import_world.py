@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Import the world workbook into the prototype's data.
 
-Reads data/Airline-World-Workbook.xlsx and writes:
+Reads data/Airline-World-Workbook.xlsx (v4.2) and writes:
   * a JSON block <script type="application/json" id="data-workbook"> in src/opening/parts/p2_data.html
-    (live rows only, as the workbook's README asks; weekend Calendar rows marked "optional" are kept and flagged);
-  * data/Import-Report.md: what was loaded, what was skipped, and every check that failed.
+    (live rows only, as the workbook's README asks; "optional" rows are kept and flagged; note rows with no status are skipped);
+  * data/Import-Report.md: what was loaded, what was skipped, every check that failed, and the rows dated inside
+    chapter 1 that are not live (the game reports them rather than inventing values).
 
 The opening prototype uses data-workbook: src/opening/parts/p4a2_workbook.js applies its values when the page loads, and
 src/opening/engine/world-engine.js holds the rules. Rebuild after importing: python3 src/opening/build.py
@@ -70,8 +71,8 @@ def sheet(wb, name):
 
 counts = {}
 def live(name, rows):
-    st = Counter((r.get('status') or 'no status') for r in rows)
-    keep = [r for r in rows if (r.get('status') or 'live') in LOAD]
+    st = Counter((r.get('status') or 'note row') for r in rows)
+    keep = [r for r in rows if r.get('status') in LOAD]          # a row with no status is a note under the table
     counts[name] = (len(keep), dict(st))
     return keep
 
@@ -95,6 +96,8 @@ def changes(s):         # 'business:-30%,gva:+10' -> {'business': {'pct': -30}, 
     if not s: return None
     out = {}
     for part in str(s).split(','):
+        if ':' not in part:                      # free text such as 'weekend multipliers (Settings)': the game reads Settings for that
+            out['note'] = part.strip(); continue
         k, v = part.split(':'); v = v.strip()
         out[k.strip()] = {'pct': num(v.rstrip('%').replace('+', ''))} if v.endswith('%') else {'add': num(v.replace('+', ''))}
     return out
@@ -124,7 +127,9 @@ wb = openpyxl.load_workbook(BOOK, data_only=True)
 
 settings_rows = sheet(wb, 'Settings')
 settings = {r['key']: r['value'] for r in live('Settings', settings_rows)}
+settings_status = {r['key']: (r.get('status') or 'note row') for r in settings_rows if r.get('key')}
 start = date(settings['startDate'])
+CH1_END = dt.date(2030, 12, 28)   # chapter 1's review date; rows dated on or before it must be live (see "Chapter 1 touches")
 
 arche = live('Archetypes', sheet(wb, 'Archetypes'))
 archetypes = []
@@ -158,9 +163,12 @@ aircraft = [{'id': AIRCRAFT_IDS.get(a['id'], a['id']), 'wbId': a['id'], 'name': 
             for a in live('Aircraft', all_aircraft)]
 
 finance_rows = live('Finance', sheet(wb, 'Finance'))
-finance = [{'aircraft': AIRCRAFT_IDS.get(f['aircraftId'], f['aircraftId']), 'cashPrice': f['cashPrice'], 'deposit': f['deposit'],
-            'dailyPayment': f['dailyPayment'], 'days': f['days'], 'totalPaid': f['totalPaid'],
-            'leaseUpfront': f['leaseUpfront'], 'leaseDaily': f['leaseDaily'], 'notes': f['notes'], 'status': f['status']}
+TUTORIAL = {'dhc6', 'saab340', 'atr72', 'e175', 'e190'}      # launch-deal finance is paid by the day; from the A220 by the week
+def fin_num(v): return v if isinstance(v, (int, float)) else None
+finance = [{'aircraft': AIRCRAFT_IDS.get(f['aircraftId'], f['aircraftId']), 'cashPrice': f['cashPrice'], 'leaseDaily': f['leaseDaily'],
+            'financeDeposit': f['financeDeposit'], 'financePayment': f['financeWeeklyPayment'], 'financeCount': f['financeWeeks'],
+            'paymentUnit': 'day' if f['aircraftId'] in TUTORIAL else 'week', 'financeTotalPaid': fin_num(f['financeTotalPaid']),
+            'leaseFrom': f['leaseFrom'], 'buyFrom': f['buyFrom'], 'financeFrom': f['financeFrom'], 'notes': f['notes'], 'status': f['status']}
            for f in finance_rows]
 
 airports = [{'code': a['code'], 'name': a['name'], 'terminal': a['terminal'], 'landingFee': a['landingFee'],
@@ -179,7 +187,7 @@ calendar = [{'day': c['day'], 'date': c['date'], 'weekday': c['weekday'], 'week'
 all_market = sheet(wb, 'Market')
 market = [{'week': m['week'], 'weekStart': m['weekStart'], 'season': m['season'], 'fuel': m['fuel'],
            'businessMult': m['businessMult'], 'leisureMult': m['leisureMult'],
-           'seasonMult': {'bcn': m['bcnSeasonMult'], 'gva': m['gvaSeasonMult']},
+           'seasonMult': {k[:-len('SeasonMult')]: v for k, v in m.items() if k.endswith('SeasonMult')},
            'weather': m['weather'], 'headline': m['headline'], 'status': m['status']}
           for m in live('Market', all_market)]
 
@@ -190,7 +198,7 @@ for e in ev_rows:
     x = by_id.get(e['eventId'])
     if not x:
         x = by_id[e['eventId']] = {'id': e['eventId'], 'date': e['date'], 'title': e['title'], 'text': e['text'],
-                                   'options': [], 'effects': None, 'status': e['status']}
+                                   'options': [], 'effects': None, 'costShare': e.get('costShare'), 'status': e['status']}
         events.append(x)
     if e['option'] is not None:
         x['options'].append({'n': e['option'], 'label': e['label'], 'sub': e['subLabel'], 'cash': e['cash'],
@@ -199,12 +207,29 @@ for e in ev_rows:
         x['effects'] = e['otherEffects']
 
 all_ch = sheet(wb, 'Challenges')
-challenges = [{'n': c['n'], 'day': c['day'], 'title': c['title'], 'story': c['story'], 'question': c['question'],
+challenges = [{'n': c['n'], 'fromDate': c.get('fromDate'), 'title': c['title'], 'story': c['story'], 'question': c['question'],
                'answer': c['answer'], 'unit': c['unit'], 'reward': c['reward'], 'status': c['status']}
               for c in live('Challenges', all_ch)]
 
 mechanics = [{'fromDay': m['fromDay'], 'mechanic': m['mechanic'], 'notes': m['notes'], 'status': m['status']}
              for m in live('Mechanics', sheet(wb, 'Mechanics'))]
+
+# v4 sheets: chapters pace the game, hand-sum rules decide what is done by hand, catering replaces the game's snack options, hunts are read only
+def opt_sheet(name): return sheet(wb, name) if name in wb.sheetnames else []
+if any(n not in wb.sheetnames for n in ('Chapters', 'HandSumRules', 'Catering', 'Hunts')):
+    issue('error', 'Workbook', 'a v4 sheet is missing: ' + ', '.join(n for n in ('Chapters', 'HandSumRules', 'Catering', 'Hunts') if n not in wb.sheetnames))
+all_chapters = opt_sheet('Chapters')
+chapters = [{'chapter': c['chapter'], 'name': c['name'], 'start': c['start'], 'end': c['end'], 'setUpDays': c['setUpDays'], 'runCadence': c['runCadence'],
+             'reviewDate': c['reviewDate'], 'newIdea': c['newIdea'], 'mechanicsArriving': c['mechanicsArriving'], 'handSumsPlanned': c['handSumsPlanned'],
+             'mathsFront': c['mathsFront'], 'status': c['status']} for c in live('Chapters', all_chapters)]
+handSumRules = [{'rule': r['rule'], 'name': r['name'], 'text': r['ruleText'], 'trigger': r['trigger'], 'examples': r['examples'], 'status': r['status']}
+                for r in live('HandSumRules', opt_sheet('HandSumRules'))]
+catering = [{'id': c['optionId'], 'name': c['name'], 'sellingPrice': c['sellingPrice'], 'takeUp': c['takeUp'], 'unitStockCost': c['unitStockCost'],
+             'freeCostPerPassenger': c['freeCostPerPassenger'], 'reputationEffect': c['reputationEffect'], 'notes': c['notes'], 'status': c['status']}
+            for c in live('Catering', opt_sheet('Catering'))]
+all_hunts = opt_sheet('Hunts')
+hunts = [{'id': h['huntId'], 'date': h['date'], 'chapter': h['chapter'], 'host': h['host'], 'whatIsWrong': h['whatIsWrong'], 'pupilChecks': h['pupilChecks'],
+          'consequenceIfMissed': h['consequenceIfMissed'], 'status': h['status']} for h in live('Hunts', all_hunts)]
 
 # The engine rules the workbook assumes. Band times and duty padding are not on a sheet yet, so they come from Pass 1.
 engine = {}
@@ -228,7 +253,8 @@ else:
 world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isoformat(), 'loaded': sorted(LOAD),
          'settings': settings, 'archetypes': archetypes, 'routes': routes, 'routeCatalogue': catalogue,
          'aircraft': aircraft, 'finance': finance, 'airports': airports, 'calendar': calendar, 'market': market,
-         'events': events, 'challenges': challenges, 'mechanics': mechanics}
+         'events': events, 'challenges': challenges, 'mechanics': mechanics,
+         'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts}
 
 
 # ---------- checks ----------
@@ -236,8 +262,10 @@ WD = lambda d: d.strftime('%a')
 
 # dates and weekdays
 note = next((r.get('notes') or '' for r in settings_rows if r['key'] == 'startDate'), '')
-for wd in ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'):
-    if wd in note and start.strftime('%A') != wd:
+import re
+first_wd = re.search(r'Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday', note)
+for wd in ([first_wd.group(0)] if first_wd else []):
+    if start.strftime('%A') != wd:
         nxt = start + dt.timedelta(days=(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].index(wd) - start.weekday()) % 7)
         issue('error', 'Settings', f'startDate {start:%d %b %Y} is a {start:%A}, but its note says "{wd}". '
               f'The nearest {wd} after it is {nxt:%d %b %Y}.')
@@ -281,7 +309,7 @@ for r in all_routes + sheet(wb, 'RouteCatalogue'):
     if r.get('archetype') and r['archetype'] not in {a['id'] for a in sheet(wb, 'Archetypes')}:
         issue('error', 'Routes', f'{r["id"]}: archetype "{r["archetype"]}" is not on the Archetypes sheet.')
     elif r.get('archetype') and r['archetype'] not in aids and (r.get('status') in LOAD):
-        issue('error', 'Routes', f'{r["id"]} is loaded, but its archetype "{r["archetype"]}" is not.')
+        issue('check', 'Routes', f'{r["id"]} is loaded, but its archetype "{r["archetype"]}" is not live. The game uses the route\'s own demand table and applies no business/leisure or season multipliers to it.')
 
 # routes: demand tables
 for r in routes:
@@ -329,16 +357,20 @@ for c in all_cal:
     if c['challenge'] is not None:
         ch = ch_by_n.get(c['challenge'])
         if not ch: issue('error', 'Calendar', f'day {c["day"]}: challenge {c["challenge"]} is not on the Challenges sheet.')
-        elif ch['day'] != c['day']: issue('error', 'Challenges', f'challenge {c["challenge"]} says day {ch["day"]}, the Calendar day {c["day"]}.')
+        else: issue('note', 'Calendar', f'day {c["day"]} names challenge {c["challenge"]}, but Settings captainsChallengeCadence starts challenges on {ch.get("fromDate")} (one a term). The game follows the Challenges sheet dates; the Calendar column is ignored.')
     u = unlocks(c['unlocks']) or {}
     for rid in u.get('routes', []):
-        if rid not in route_ids: issue('error', 'Calendar', f'day {c["day"]} unlocks route "{rid}", which is not on the Routes sheet.')
+        if rid not in route_ids and not (' ' in rid):      # 'first market (pupil chooses dub or par)' is a description, not an id
+            issue('error', 'Calendar', f'day {c["day"]} unlocks route "{rid}", which is not on the Routes sheet.')
     for pid in u.get('planes', []):
         if pid not in plane_ids: issue('error', 'Calendar', f'day {c["day"]} unlocks plane "{pid}", which is not on the Aircraft sheet.')
 for f in finance_rows:
     if AIRCRAFT_IDS.get(f['aircraftId'], f['aircraftId']) not in plane_ids: issue('error', 'Finance', f'"{f["aircraftId"]}" is not on the Aircraft sheet.')
-    if f['deposit'] + f['dailyPayment'] * f['days'] != f['totalPaid']:
-        issue('error', 'Finance', f'{f["aircraftId"]}: deposit + daily × days = {f["deposit"] + f["dailyPayment"] * f["days"]}, not {f["totalPaid"]}.')
+    tot = fin_num(f['financeTotalPaid'])
+    if tot is not None and f['financeDeposit'] + f['financeWeeklyPayment'] * f['financeWeeks'] != tot:
+        issue('check', 'Finance', f'{f["aircraftId"]}: deposit + payment × {f["financeWeeks"]} = {f["financeDeposit"] + f["financeWeeklyPayment"] * f["financeWeeks"]:,}, but financeTotalPaid says {tot:,} (rounded to £1,000 as the note says).')
+    if f['leaseDaily'] and f['cashPrice'] and f['aircraftId'] not in TUTORIAL and f['cashPrice'] / f['leaseDaily'] != 1000:
+        issue('check', 'Finance', f'{f["aircraftId"]}: price ÷ lease a day = {f["cashPrice"] / f["leaseDaily"]:g}, not the 1,000 days of F4.')
 dates = [e['date'] for e in events]
 if dates != sorted(dates): issue('note', 'Events', 'events are not in date order (harmless; the game sorts them).')
 
@@ -354,9 +386,11 @@ src = DATA.read_text()
 m = re.search(r'<script type="application/json" id="%s">(.*?)</script>' % BLOCK_ID, src, re.S)
 if m:
     old = json.loads(m.group(1))
+    removed = {AIRCRAFT_IDS.get(x.get('id'), x.get('id')) for x in all_aircraft + all_routes + all_events if x.get('status') == 'removed'}
     for part, idk in (('routes', 'id'), ('aircraft', 'id'), ('archetypes', 'id'), ('events', 'id')):
         gone = {x[idk] for x in old.get(part, [])} - {x[idk] for x in world[part]}
-        if gone: issue('error', part.title(), f'ids in the last import are missing now: {", ".join(sorted(gone))}. Ids never change.')
+        if gone & removed: issue('note', part.title(), f'now marked removed and no longer loaded: {", ".join(sorted(gone & removed))}. The id is kept on the sheet.')
+        if gone - removed: issue('error', part.title(), f'ids in the last import are missing now: {", ".join(sorted(gone - removed))}. Ids never change.')
 
 
 # ---------- what changes when this is wired in ----------
@@ -378,7 +412,7 @@ for a in aircraft:
     rows.append(f'| {a["name"]} fuel | {g["fuelUse"]} L per 100 km | {a["fuelPer100Km"]} L per 100 km |')
 rows.append(f'| Second crew | £{GW.get("crewCost", "—")} | £{settings.get("secondCrewCost")} when duty is over {settings.get("maxDutyHours")} h |')
 rows.append(f'| Starting cash | £{GW.get("startingCash", "—"):,} | £{settings.get("startingCash"):,} |')
-rows.append(f'| Start date | Sun 12 May 2030 | {start:%a %d %b %Y} |')
+rows.append(f'| Start date | {GW.get("startDate", "Sun 12 May 2030")} | {start:%a %d %b %Y} |')
 
 
 # ---------- write ----------
@@ -396,6 +430,43 @@ for s, (k, st) in counts.items():
 for title, lvl in (('To fix before wiring in', 'error'), ('To check', 'check'), ('Notes', 'note')):
     xs = [(s, msg) for l, s, msg in issues if l == lvl]
     if xs: out += ['', f'## {title}', ''] + [f'- **{s}:** {msg}' for s, msg in xs]
+# chapter 1 touches: every row dated inside chapter 1 that the game would read but is not live, and anything it needs that is missing
+touch = []
+def dated(rows, when, label):
+    for r in rows:
+        d = r.get(when)
+        try: dd = date(d) if d else None
+        except Exception: dd = None
+        if dd and dd <= CH1_END and r.get('status') not in LOAD: touch.append(f'- **{label}:** {r.get("eventId") or r.get("id") or r.get("huntId") or r.get("n") or r.get("week") or r.get("day")} on {dd:%d %b %Y} is `{r.get("status")}`: not loaded.')
+dated(all_cal, 'date', 'Calendar'); dated(all_market, 'weekStart', 'Market'); dated([e for e in all_events if e.get('title')], 'date', 'Events')
+dated(all_ch, 'fromDate', 'Challenges'); dated(all_hunts, 'date', 'Hunts')
+ch1_days = 118   # 2 Sep to 28 Dec 2030
+for r in all_routes:
+    if isinstance(r.get('unlockDay'), int) and r['unlockDay'] <= ch1_days:
+        if r.get('status') not in LOAD: touch.append(f'- **Routes:** {r["id"]} opens on day {r["unlockDay"]} but is `{r.get("status")}`: not loaded.')
+        elif not pairs(r.get('demandAtFare')): touch.append(f'- **Routes:** {r["id"]} opens on day {r["unlockDay"]} with no demand table: it stays locked and the game says so.')
+        elif r.get('archetype') not in aids: touch.append(f'- **Routes:** {r["id"]} opens on day {r["unlockDay"]} but its archetype `{r.get("archetype")}` is not live: no weekend or season multipliers on this route, and the game says so on its route card.')
+for a in all_aircraft:
+    if isinstance(a.get('shopFromDay'), int) and a['shopFromDay'] <= ch1_days and a.get('status') not in LOAD:
+        touch.append(f'- **Aircraft:** {a["id"]} is in the shop from day {a["shopFromDay"]} but is `{a.get("status")}`: not loaded.')
+for f in sheet(wb, 'Finance'):
+    pid = f.get('aircraftId'); a = next((x for x in all_aircraft if x.get('id') == pid), None)
+    if a and isinstance(a.get('shopFromDay'), int) and a['shopFromDay'] <= ch1_days and f.get('status') not in LOAD:
+        touch.append(f'- **Finance:** {pid} is in the shop from day {a["shopFromDay"]} but its finance row is `{f.get("status")}`: no price, rent or finance terms.')
+NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurnaroundMin', 'secondCrewCost', 'maxDutyHours', 'fuelLotLitres', 'playableDays',
+          'weekendBusinessMultSat', 'weekendBusinessMultSun', 'weekendLeisureMult', 'cashReserve', 'negativeProjectionWarning', 'eventCostScaleFromDay',
+          'loadFactorPercentFromDay', 'fuelHandSumPriceStep', 'fuelHandSumLitresShare', 'snacksHandSumOnce', 'timeSkip', 'leaseFromDate', 'buyFromDate',
+          'financeFromDate', 'reputationFromDate', 'quarterlyTaskFromDate', 'huntPerReview', 'captainsChallengeCadence', 'fareStepWeek2', 'reportCadence']
+for k in NEEDED:
+    st_ = settings_status.get(k)
+    if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')
+    elif st_ not in LOAD: touch.append(f'- **Settings:** `{k}` is `{st_}`: not loaded' + (' (the game builds teacher skips of 0 / 1 / 4 / 8 weeks from the brief and reports it here).' if k == 'timeSkip' else ' (a date gate only in chapter 1).' if k == 'reputationFromDate' else '.'))
+if not catering: touch.append('- **Catering:** no live rows: the game has no snack options.')
+if not chapters or chapters[0].get('chapter') != 1: touch.append('- **Chapters:** chapter 1 is not live: nothing paces the game.')
+out += ['', '## Chapter 1 touches', '',
+        'Rows dated on or before 28 Dec 2030 (chapter 1\'s review) that the game would read but are not `live`, and values the chapter-1 flow needs that the workbook lacks. '
+        'The game reports these; it never invents a value.', ''] + (touch or ['- Nothing: every row chapter 1 touches is live.'])
+
 out += ['', '## The prototype\'s own data and the workbook\'s', '',
         'The game uses the workbook\'s values. The prototype\'s own (in `data-world` and `data-planes`) only matter for routes and aircraft the workbook does not have yet.', '',
         '| | Prototype\'s own data | Workbook (used) |', '| --- | --- | --- |'] + rows
@@ -416,4 +487,4 @@ if '--check' not in args:
     DATA.write_text(src)
 
 print(f'{REPORT.relative_to(ROOT)}: {n["error"]} to fix, {n["check"]} to check, {n["note"]} notes'
-      + ('' if '--check' in args else f'; {BLOCK_ID} written ({len(routes)} routes, {len(aircraft)} aircraft, {len(calendar)} days, {len(market)} weeks, {len(events)} events)'))
+      + ('' if '--check' in args else f'; {BLOCK_ID} written ({len(routes)} routes, {len(aircraft)} aircraft, {len(calendar)} days, {len(market)} weeks, {len(events)} events, {len(chapters)} chapters, {len(catering)} catering options)'))

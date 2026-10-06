@@ -350,7 +350,7 @@ function periodResultsCard(){
    ================================================================== */
 function testPlan(){ if(!S.rnd.test) S.rnd.test = currentPlan(); return S.rnd.test; }
 function planSummaryHtml(pl, L){
-  const c = serviceCounts(pl.sched), ob = { none:'None', sell3:'£3', sell5:'£5', free:'Free' }[pl.onboard] || 'None';
+  const c = serviceCounts(pl.sched), ob = { none:'None', low:'£3', high:'£5', sell3:'£3', sell5:'£5', free:'Free' }[pl.onboard] || 'None';
   const row = (l, v) => `<div class="oc-r ro"><span class="oc-l">${l}</span><i></i><span class="oc-v">${v}</span><i></i></div>`;
   return `<div class="oc">${Object.keys(c).map(id => { const r = routeById(id); return row(`${flagSvg(r.flag, 14)} ${({ par:'CDG', dub:'DUB' })[id] || esc(r.city)}`, '×' + c[id]) + row('Fare', money(pl.prices[id] || r.basePrice)); }).join('')}
     ${row('Snacks', ob)}${row('From', fmtTime(pl.firstDep))}

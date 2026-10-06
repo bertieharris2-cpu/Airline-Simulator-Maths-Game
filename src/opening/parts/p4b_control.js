@@ -454,8 +454,8 @@ function hqFit(){
 function updateTopBar(){
   $('cName').textContent = S.airline.name || 'Airline Simulator';
   const sx = strategyOf(), cs = $('cStrat'); if(cs){ cs.textContent = sx ? sx.badge : ''; cs.className = sx ? 'sb-' + sx.id : ''; }
-  $('cDate').textContent = S.phase === 'setup' ? 'Sunday 12 May 2030' : periodLabel();
-  $('cDay').textContent = S.phase === 'setup' ? 'First day of operations' : S.phase === 'round' && S.round ? `Day ${S.round} of operations` : periodTag(); const chip = document.querySelector('.cdate i.chip'); if(chip) chip.textContent = PERIOD_CHIP[S.phase === 'setup' ? 'setup' : periodType()] || '';
+  $('cDate').textContent = S.phase === 'setup' ? dateLong(1) : periodLabel();
+  $('cDay').textContent = S.phase === 'setup' ? 'First day of operations' : S.phase === 'round' && periodType() === 'day' ? `Day ${S.day} of operations` : periodTag(); const chip = document.querySelector('.cdate i.chip'); if(chip) chip.textContent = PERIOD_CHIP[S.phase === 'setup' ? 'setup' : periodType()] || '';
   $('cCash').textContent = money(S.cash); $('cStars').innerHTML = starsHtml(S.rep); $('cFuel').textContent = num(S.fuel)+' L';
   $('cFleet').textContent = S.fleet.length ? `${activeFleet().length}/${S.fleet.length}` : '0';
   const o = opsStatus(); $('cOps').className = 'cops ' + o.k; $('cOps').textContent = (o.k === 'run' ? '▶ ' : o.k === 'alert' || o.k === 'hold' ? '■ ' : '● ') + o.t;
@@ -685,8 +685,8 @@ R.setupDone = () => {
     ${strategyBadge()}
     <div class="row">${finSvg(S.airline.fin, 80)}<svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1);width:260px"><use href="#pl-${planeById(S.fleet[0].planeId).icon}"/></svg></div>
     <p class="lede">Your airline is up and running with <b class="amber mono">${money(S.cash)}</b> in the bank and <b class="amber mono">${num(S.fuel)} L</b> in the tank.</p>
-    <p class="muted">Next: Day 1 at your HQ, Monday 13 May. Your progress is saved on this computer.</p>
-    <div class="row" style="justify-content:center"><button class="btn primary big" id="nx">Go to HQ: Day 1 &#9654;</button><button class="btn big" id="code">Show save code</button></div></div>`;
+    <p class="muted">Next: Day 2 at your HQ, ${dateLong(2)}. Your progress is saved on this computer.</p>
+    <div class="row" style="justify-content:center"><button class="btn primary big" id="nx">Go to HQ: Day 2 &#9654;</button><button class="btn big" id="code">Show save code</button></div></div>`;
   on('nx', () => startProtoDay(1)); on('code', () => showCode());
 };
 
