@@ -395,7 +395,7 @@ R.testIdeas = () => {
     context:{ title:'Ideas', html: cxSec('Saved ideas', cards || '<p class="muted">Ideas you save appear here.</p>') +
       `<div class="pl-choose"><button class="btn" data-isave ${same || saved ? 'disabled' : ''}>Save this idea</button><button class="btn ${same || d < 0 ? 'primary' : ''}" data-fmine>${goLabel('Fly my plan')} &#9654;</button><button class="btn ${!same && d >= 0 ? 'primary' : ''}" data-ftest ${same ? 'disabled' : ''}>Fly the test plan &#9654;</button></div>
       <p class="muted cx-note">Bigger profit is not the only thing: think about passengers left without a seat.</p><button class="link" data-archive>Compare with earlier days</button>` },
-    main:`<div class="test2"><div class="t2-mine"><span class="label">Your plan</span><b>${esc(planLabel(cur))}</b><span class="t2-mp mono ${P(Lc) >= 0 ? 'green' : 'red'}">${money(P(Lc))}</span></div>
+    main:`<div class="test2 ${depsOn() || secondRouteOn() ? '' : 'roomy'}"><div class="t2-mine"><span class="label">Your plan</span><b>${esc(planLabel(cur))}</b><span class="t2-mp mono ${P(Lc) >= 0 ? 'green' : 'red'}">${money(P(Lc))}</span></div>
       <section class="pnl t2-test"><div class="pnl-h"><h3>Test plan</h3>${same ? '' : '<button class="link" data-treset>Start again from your plan</button>'}</div>${planEditor(9, test, Lt.day || Lt, { compact:true })}</section>
       <section class="pnl t2-model"><div class="pnl-h"><h3>What the model says</h3>${chip}</div>${modelRows(Lc, Lt, sp)}</section></div>` });
   bindPlanEditor();

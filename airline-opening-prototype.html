@@ -2045,7 +2045,10 @@ td.c .mdl{display:inline-block;margin-left:6px;padding:0 4px;font-style:normal;f
 .sim-chips.res.y8{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}.sim-chips.res.y8 span{padding:2px 0;min-width:0}.sim-chips.res.y8 span i{font-size:11.5px;letter-spacing:-.02em}
 .calc .calc-show{display:block;margin:10px auto 0;font-size:16px}
 /* ---- the opening, one new idea a day: PLAN / COST / TEST ---- */
-table.fx tr.tot th{font-weight:800;color:#fff}table.fx tr.tot td.c span{font-weight:800}
+/* totals: normal type, a highlighted line above and below the row (consecutive totals share one line) */
+table.fx tr.tot th{color:#fff}
+table.fx tr.tot > th,table.fx tr.tot > td{border-bottom:2px solid rgba(var(--cyrgb),.75)}
+table.fx tr:not(.tot) + tr.tot > th,table.fx tr:not(.tot) + tr.tot > td,table.fx tbody tr.tot:first-child > *{border-top:2px solid rgba(var(--cyrgb),.75)}
 button.mdl{border:0;font:inherit;cursor:pointer;margin-left:6px;padding:1px 5px;font-size:11px;font-weight:700;letter-spacing:.04em;color:#06203f;background:#7fd6ff;border-radius:2px;vertical-align:2px}
 button.mdl:hover,button.mdl:focus-visible{background:#fff;outline:2px solid var(--cy)}
 .planner2,.cost2,.test2{display:flex;flex-direction:column;gap:10px;min-height:0}
@@ -2093,7 +2096,7 @@ button.mdl:hover,button.mdl:focus-visible{background:#fff;outline:2px solid var(
 .t2-diff{font-size:15px;color:var(--muted);display:flex;align-items:baseline;gap:8px}.t2-diff b{font-size:26px}
 .t2-diff.up b{color:#3ddc97}.t2-diff.down b{color:#ff7a7a}
 .t2-cmp{width:100%;border-collapse:collapse;font-size:16px}.t2-cmp th,.t2-cmp td{padding:5px 10px;border-bottom:1px solid var(--hair);text-align:right}.t2-cmp th:first-child{text-align:left;font-weight:500;color:var(--muted)}
-.t2-cmp thead th{font-size:13px;color:var(--muted);font-weight:600}.t2-cmp tr.tot th{color:#fff;font-weight:800}.t2-cmp tr.pr td{font-size:19px;font-weight:800}
+.t2-cmp thead th{font-size:13px;color:var(--muted);font-weight:600}.t2-cmp tr.tot th{color:#fff}.t2-cmp tr.tot > *{border-top:2px solid rgba(var(--cyrgb),.75);border-bottom:2px solid rgba(var(--cyrgb),.75)}.t2-cmp tr.pr td{font-size:19px;font-weight:800}
 .t2-cmp td.up{color:#3ddc97}.t2-cmp td.down{color:#ff7a7a}
 .idea{border:1px solid var(--line);background:rgba(6,20,38,.45);padding:6px 9px;margin-bottom:6px;display:flex;flex-direction:column;gap:3px}
 .id-h{display:flex;justify-content:space-between}.idea small{font-size:13px;color:var(--muted);line-height:1.3}.id-a{display:flex;justify-content:space-between;align-items:center}
@@ -2223,6 +2226,29 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
 @keyframes loIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes loPulse{0%,100%{opacity:1}50%{opacity:.55}}
 @media (prefers-reduced-motion: reduce){ .lo-ann,.lf-cab,.lf-rib,.lo-focus,.mode-ops .s-boarding,.lo-ac .s-boarding{animation:none!important} .lf-seats i{transition:none} }
+
+/* the Test screen: the "start again" link at text size; a roomier layout while the plan is simple
+   (one route, no departure times) on screens taller than 800px, and a little larger text on taller screens when it is busier */
+.t2-test .pnl-h .link{font-size:15px}
+@media (min-height:800px){
+.test2.roomy{gap:14px}
+.test2.roomy .t2-mine{padding:12px 16px}.test2.roomy .t2-mine .label{font-size:14px}.test2.roomy .t2-mine b{font-size:19px}.test2.roomy .t2-mp{font-size:26px}
+.test2.roomy .pnl{padding:14px 18px}.test2.roomy .pnl-h h3{font-size:22px}
+.test2.roomy .pe.compact{gap:12px}.test2.roomy .pe.compact .pe-route{padding:12px 16px;gap:10px}.test2.roomy .pe-rh b{font-size:22px}
+.test2.roomy .pe.compact .pe-f{grid-template-columns:110px 1fr}.test2.roomy .pe-f .label,.test2.roomy .pe-ob .label{font-size:15px}
+.test2.roomy .pe.compact .pe-b{width:48px;height:48px;font-size:24px}.test2.roomy .pe.compact .pe-v{min-width:84px;font-size:26px}
+.test2.roomy .pe-step small{font-size:18px}
+.test2.roomy .pe.compact .pe-ob .opt-chip{padding:8px 12px}.test2.roomy .pe-ob .opt-chip b{font-size:16px}
+.test2.roomy .pe.compact .pe-sum{font-size:18px;gap:22px;padding-top:10px}
+.test2.roomy .t2-diff{font-size:18px}.test2.roomy .t2-diff b{font-size:30px}
+.test2.roomy .t2-cmp th,.test2.roomy .t2-cmp td{font-size:19px;padding:8px 10px}.test2.roomy .t2-cmp thead th{font-size:15px}.test2.roomy .t2-cmp td.pr{font-size:21px}
+}
+@media (min-height:860px){
+  .test2:not(.roomy) .pe-f .label,.test2:not(.roomy) .pe-sh .label,.test2:not(.roomy) .pe-ob .label{font-size:14px}
+  .test2:not(.roomy) .pe-step small{font-size:16px}.test2:not(.roomy) .pe.compact .pe-sum{font-size:16px}
+  .test2:not(.roomy) .t2-cmp th,.test2:not(.roomy) .t2-cmp td{font-size:17px;padding:5px 8px}.test2:not(.roomy) .t2-cmp thead th{font-size:14px}
+  .test2:not(.roomy) .t2-mine b{font-size:17px}.test2:not(.roomy) .t2-mine .label{font-size:13px}.test2:not(.roomy) .t2-diff b{font-size:26px}
+}
 </style>
 </head>
 <body>
@@ -6774,7 +6800,7 @@ R.testIdeas = () => {
     context:{ title:'Ideas', html: cxSec('Saved ideas', cards || '<p class="muted">Ideas you save appear here.</p>') +
       `<div class="pl-choose"><button class="btn" data-isave ${same || saved ? 'disabled' : ''}>Save this idea</button><button class="btn ${same || d < 0 ? 'primary' : ''}" data-fmine>${goLabel('Fly my plan')} &#9654;</button><button class="btn ${!same && d >= 0 ? 'primary' : ''}" data-ftest ${same ? 'disabled' : ''}>Fly the test plan &#9654;</button></div>
       <p class="muted cx-note">Bigger profit is not the only thing: think about passengers left without a seat.</p><button class="link" data-archive>Compare with earlier days</button>` },
-    main:`<div class="test2"><div class="t2-mine"><span class="label">Your plan</span><b>${esc(planLabel(cur))}</b><span class="t2-mp mono ${P(Lc) >= 0 ? 'green' : 'red'}">${money(P(Lc))}</span></div>
+    main:`<div class="test2 ${depsOn() || secondRouteOn() ? '' : 'roomy'}"><div class="t2-mine"><span class="label">Your plan</span><b>${esc(planLabel(cur))}</b><span class="t2-mp mono ${P(Lc) >= 0 ? 'green' : 'red'}">${money(P(Lc))}</span></div>
       <section class="pnl t2-test"><div class="pnl-h"><h3>Test plan</h3>${same ? '' : '<button class="link" data-treset>Start again from your plan</button>'}</div>${planEditor(9, test, Lt.day || Lt, { compact:true })}</section>
       <section class="pnl t2-model"><div class="pnl-h"><h3>What the model says</h3>${chip}</div>${modelRows(Lc, Lt, sp)}</section></div>` });
   bindPlanEditor();
