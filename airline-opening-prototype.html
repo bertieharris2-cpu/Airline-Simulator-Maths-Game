@@ -2381,6 +2381,13 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
 .terms{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.terms .opt{display:flex;flex-direction:column;gap:6px;min-height:118px;border:1px solid var(--line);border-left:4px solid var(--amber,#ffc83d)}.terms .opt.on{border-color:var(--amber,#ffc83d);background:rgba(255,200,61,.12)}.terms .opt[disabled]{opacity:.5}.terms .sub{font-size:14px}
 .fs-model{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.fs-model div{border:1px solid var(--line);padding:10px 12px}.fs-model b{display:block;font-size:22px;color:#fff}.fs-model small{color:var(--muted)}
 @media (max-height:800px){.shop3 .ac-shop{padding:9px 11px;gap:4px}.shop3 .as-f{font-size:12px}.terms .opt{min-height:96px}}
+.pe-tabs{display:flex;gap:6px;flex-wrap:wrap}.pe-tab{display:flex;align-items:center;gap:8px;padding:5px 12px;border:1px solid var(--line);background:rgba(6,20,38,.4);color:inherit;font:inherit;cursor:pointer}.pe-tab.on{border-color:var(--amber,#ffc83d);background:rgba(255,200,61,.12)}.pe-tab b{color:#fff}.pe-tab .mono{font-size:12px;opacity:.8}.pe-tab small{color:var(--muted)}
+.pe.compact .pe-tab{padding:3px 9px;font-size:13px}.pe.compact .pe-ac{padding:5px 8px;gap:3px}.pe.compact .pe-acn b{font-size:14px}
+@media (max-height:800px){.shop3 .ac-shop > .muted.small{display:none}.shop3 .as-pic svg{height:34px}.shop3 .ac-shop{gap:3px}.pe-ac{padding:6px 8px;gap:3px}.pe-svc{padding:3px 8px}}
+.opplan.many .op-row{padding:7px 16px;font-size:16px}.opplan.many .op-row .op-l{font-size:14px}
+.shop3.list{grid-template-columns:1fr;gap:6px}.shop3.list .ac-shop{display:grid;grid-template-columns:70px 1.3fr 1.6fr 1.5fr;align-items:center;gap:6px 14px;padding:7px 12px}.shop3.list .as-pic svg{height:30px}.shop3.list .ac-shop > .muted.small{display:none}.shop3.list .as-f{grid-template-columns:1fr 1fr 1fr;font-size:12px}.shop3.list .as-offer{margin:0;padding:0;border:0;font-size:13px;gap:1px}
+.deps-t td.muted{text-align:center;font-size:12px}
+.pe.compact .pe-svc{padding:1px 6px}.pe.compact .pe-tab small{display:none}.pe.compact .pe-svcs{gap:3px}.pe.compact .pe-ac .pe-sh{gap:6px}
 </style>
 </head>
 <body>
@@ -2675,6 +2682,7 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
         <div id="tTools"></div>
         <div class="row"><button class="btn small" id="tToolsDef">Defaults for all</button><button class="btn small" id="tToolsCalc">Pupil calculates all</button><button class="btn small" id="tToolsModel">Model does all</button><button class="btn small" id="tFill">Fill this table</button><button class="btn small" id="tWorkOpen">Working space on the board</button><button class="btn small" id="tWorkClose">Close it</button></div>
       </div>
+      <div class="tsec" style="grid-column:1/-1"><h3>Chapters 2–6: the gates</h3><p class="small muted">Read from the workbook, not yet built: dates that switch things on, the challenges and hunts to come.</p><div id="tGates"></div></div>
       <div class="tsec" style="grid-column:1/-1"><h3>By hand so far</h3><p class="small muted">The hand-sum rules (workbook HandSumRules 1–6) decide what the pupil works out each day; the Maths tools levels above override them.</p><div id="tHand"></div></div>
       <div class="tsec" style="grid-column:1/-1"><h3>Calculation checks</h3><div id="tDiag"></div><div class="row"><button class="btn small" id="tDiagClear">Clear the list</button></div></div>
       <div class="tsec"><h3>Tomorrow's choice</h3>
@@ -2686,6 +2694,7 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
         <div class="row"><span>Adjust cash now</span><input type="number" id="tCashDelta" step="100" placeholder="+/- £"><button class="btn small" id="tCashApply">Apply</button></div>
         <div class="row"><span>Reputation</span><button class="btn small" id="tRepDown">−½ ★</button><button class="btn small" id="tRepUp">+½ ★</button></div>
         <div class="row"><span>Jump</span><button class="btn small" id="tRoundNext">Skip to the next story beat</button><button class="btn small" id="tRepeat">Repeat this period</button></div>
+        <div class="row"><span>Skip ahead (weeks only)</span><select id="tSkipN"><option value="0">0 weeks</option><option value="1">1 week</option><option value="4">4 weeks</option><option value="8">8 weeks</option></select><button class="btn small" id="tSkipGo">Run the standing plan and skip</button></div>
         <div class="row"><span>Live operations pace</span><select id="tFlightSecs"><option value="4">Brisk</option><option value="7">Standard</option><option value="12">Slow</option></select></div>
         <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tOpsSound" style="width:24px;height:24px"> Airport chimes and announcements during live operations</label></div>
         <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tAutoWall" style="width:24px;height:24px"> With no IWB window open, show live operations full screen on this screen</label></div>
@@ -2800,7 +2809,7 @@ function newState(){
     airline:{ name:'', code:'', c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'fin'},{t:'boot'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'fin'},{t:'boot'},{t:'chapter'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };
@@ -3581,7 +3590,7 @@ function applyResults(){
   Object.keys(routes).forEach(id => { const b = X.byRoute[id]; if(b){ routes[id].rev += b.obRev; routes[id].cost = r2(routes[id].cost + b.obCost); routes[id].onboard = b.obRev; } });
   Object.keys(routes).forEach(id => { routes[id].profit = r2(routes[id].rev - routes[id].cost); });
   ledgerPut(S.day || 0, rev, S.rnd.costs, flown.reduce((t,f) => t+f.sold, 0), flown.reduce((t,f) => t+f.seats, 0));
-  S.history.push({ round:S.round, type: S.phase === 'setup' ? 'setup' : 'day', from:S.day || 0, to:S.day || 0, over, revenue:rev, costs:S.rnd.costs, profit:S.rnd.profit, cash:S.cash, rep:S.rep, fuelPaid:avgFuelPrice(), fuelPrice:fuelPrice(), emptyTrips: fl.filter(f => !f.grounded && !f.noFuel && f.sold < f.seats/2).length,
+  S.history.push({ round:S.round, type: S.phase === 'setup' ? 'setup' : 'day', from:S.day || 0, to:S.day || 0, over, proj: S.rnd.myForecast ? S.rnd.myForecast.profit : (S.rnd.forecast ? S.rnd.forecast.profit : null), revenue:rev, costs:S.rnd.costs, profit:S.rnd.profit, cash:S.cash, rep:S.rep, fuelPaid:avgFuelPrice(), fuelPrice:fuelPrice(), emptyTrips: fl.filter(f => !f.grounded && !f.noFuel && f.sold < f.seats/2).length,
     pax: flown.reduce((t,f) => t+f.sold, 0), seats: flown.reduce((t,f) => t+f.seats, 0), trips: flown.length, routes, reviews: S.rnd.reviews, fuelL: S.fuel, fuelStock: S.fuelValue });
   checkMilestones();
   addNews([{tag:'£', text:`${S.airline.name}: ${S.rnd.profit>=0?'profit':'loss'} of ${money(Math.round(Math.abs(S.rnd.profit)))} on ${S.phase === 'setup' ? 'launch day' : dateShort()}.`, cls:S.rnd.profit>=0?'good':'warn'}]);
@@ -4021,7 +4030,7 @@ function sentenceHtml(t, col, row){
 function tableHtml(t, o){
   o = o || {};
   const rows = tRows(t), def = TABLES[t.kind], act = t.active, ops = opsFor(t), choosing = act && t.mode === 'choose' && !t.chosen[cellId(act.col, act.row)];
-  let h = `<div class="ft2 ${act ? 'is-active' : ''}"><table class="fx ${t.cols.length === 1 ? 'one' : ''} ${tRows(t).length > 6 && (innerHeight < 900 || t.kind === 'options') ? 'dense' : ''}"><thead><tr><th></th>`;
+  let h = `<div class="ft2 ${act ? 'is-active' : ''}" data-tbl="${esc(t.id)}"><table class="fx ${t.cols.length === 1 ? 'one' : ''} ${tRows(t).length > 6 && (innerHeight < 900 || t.kind === 'options') ? 'dense' : ''}"><thead><tr><th></th>`;
   t.cols.forEach(c => { h += `<th class="${t.picked===c.id?'picked':''} ${act && act.col!==c.id ? 'dim' : ''}">${c.flag?flagSvg(c.flag,26):''}<b>${esc(c.label)}</b>${c.sub?`<small>${esc(c.sub)}</small>`:''}${c.headHtml || ''}</th>`; });
   h += `</tr></thead><tbody>`;
   rows.forEach((r, ri) => {
@@ -4072,7 +4081,8 @@ function cellCorrect(t, byTeacher){
 function cellWrong(res){ const k = (UI.tries = (UI.tries||0) + 1); let m = TEXT.retry[(k-1) % TEXT.retry.length]; if(res === 'blank') m = 'Enter a figure first.'; else if(settings.nudge) m += ' ' + (res === 'high' ? TEXT.nudgeHigh : TEXT.nudgeLow); UI.msg = m; UI.ok = false; }
 function bindTable(t, o){
   o = o || {}; const rerender = () => render();
-  screen().querySelectorAll('[data-cell]').forEach(b => b.onclick = () => { const [col, row] = b.getAttribute('data-cell').split('|'); setActive(t, {col, row}); UI.justDone = null; if(UI.dock) UI.dock.mode = null; publish(); rerender(); });
+  screen().querySelectorAll('[data-cell]').forEach(b => { const root = b.closest('[data-tbl]'); if(root && root.getAttribute('data-tbl') !== t.id) return;   // two tables on one screen: each binds its own cells
+    b.onclick = () => { const [col, row] = b.getAttribute('data-cell').split('|'); setActive(t, {col, row}); UI.justDone = null; if(UI.dock) UI.dock.mode = null; publish(); rerender(); }; });
   screen().querySelectorAll('[data-tick]').forEach(b => b.onclick = () => { const k = t.id+'|'+b.getAttribute('data-tick'); UI.tickOpen[k] = !UI.tickOpen[k]; rerender(); });
   screen().querySelectorAll('[data-explain]').forEach(b => b.onclick = e => { e.stopPropagation(); const k = b.getAttribute('data-explain'); UI.explain = k && UI.explain !== k ? k : null; rerender(); });
   screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { const c = t.cols.find(x => x.id === b.getAttribute('data-pick')); if(!c || c.disabled || !tableComplete(t)) return; t.picked = c.id; o.onPick && o.onPick(c); });
@@ -5576,10 +5586,10 @@ function ctxTiming(k){
 function ctxAircraft(){
   const p = ourPlane(), f = fleetOne(), sched = f ? schedOf(f) : [], D = sched.length ? TIME.day(p, sched) : null, end = D ? D.trips[D.trips.length - 1].arr + TIME.home(p) : null;
   const fits = id => schedFits(sched.concat([id]));
-  const room = plannerRoutes().filter(fits).map(id => esc(routeById(id).city)), more = [['Room for another service', room.length ? `<span class="green">${room.join(', ')}</span>` : '<span class="orange">None</span>']];
+  const room = plannerRoutes().filter(fits).map(id => esc(routeById(id).city)), more = S.fleet.length > 1 ? [] : [['Room for another service', room.length ? `<span class="green">${room.join(', ')}</span>` : '<span class="orange">None</span>']];
   const fl = sched.length ? planFlights().filter(x => !x.grounded) : [];
   return { title:'Aircraft status', html: cxSec(`${esc(p.name.replace(/^DHC-6 /, ''))} · <span class="mono">${p.seats}</span> seats`, kv([['Services scheduled', `<span class="mono">${sched.length}</span>`], ['Next available', `<span class="mono">${end ? fmtTime(end) : fmtTime(firstDep())}</span>`], ['Operating day left', `<span class="mono">${fmtDur(Math.max(0, dayEnd() - (end || dayStart())))}</span>`]].concat(more))) +
-    `<section class="cx deps"><h4>Departures</h4>${fl.length ? `<table class="deps-t"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th>Back</th></tr></thead><tbody>${fl.map(x => `<tr><td class="mono">${fmtTime(x.dep)}</td><td class="mono">${esc(x.code)}</td><td>${esc(routeById(x.route).city)}</td><td class="mono">${fmtTimeDay(x.arr)}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">No services yet.</p>'}</section>` };
+    `<section class="cx deps"><h4>Departures</h4>${fl.length ? `<table class="deps-t"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th>Back</th></tr></thead><tbody>${fl.slice(0, 3).map(x => `<tr><td class="mono">${fmtTime(x.dep)}</td><td class="mono">${esc(x.code)}</td><td>${esc(routeById(x.route).city)}</td><td class="mono">${fmtTimeDay(x.arr)}</td></tr>`).join('')}${fl.length > 3 ? `<tr><td colspan="4" class="muted">and ${fl.length - 3} more</td></tr>` : ''}</tbody></table>` : '<p class="muted">No services yet.</p>'}</section>` };
 }
 function acCard(){ const p = ourPlane(); return `<div class="ac-card"><div class="ac-pic"><svg viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-${p.icon}"/></svg></div><div class="ac-t"><b>${esc(p.name)}</b><span><span class="mono">${p.seats}</span> seats</span><small>${esc(p.fact)}</small></div></div>`; }
 function ctxMarket(){
@@ -5974,9 +5984,10 @@ function cellState(t, col, ri){
 }
 function ensureTable(id, kind, cols, opts){
   opts = opts || {};
-  const key = tableKey(cols) + (opts.rowIds ? '|' + opts.rowIds.join(',') : ''), old = S.rnd.tables[id];
+  const key = tableKey(cols) + (opts.rowIds ? '|' + opts.rowIds.join(',') : '') + (opts.rows ? '|' + opts.rows.map(r => r.id + (r.tool || '')).join(',') : ''), old = S.rnd.tables[id];
   if(old && old.key === key){ S.rnd.activeTable = id; old.labels = opts.labels || old.labels; return old; }
-  const t = { id, kind, key, cols, live:true, mode:'shown', onlyRows:[], labels: opts.labels || {}, rowIds: opts.rowIds || null, done:{}, chosen:{}, active:null, picked:null };
+  // a table may carry its own row definitions (the cost sheet builds a ticket line per route; the chapter accounts a line per month)
+  const t = { id, kind, key, cols, live:true, mode:'shown', onlyRows:[], labels: opts.labels || {}, rowIds: opts.rowIds || null, rows: opts.rows || null, done:{}, chosen:{}, active:null, picked:null };
   // keep the answers in any column that hasn't changed
   if(old && old.kind === kind) cols.forEach(c => { const oc = old.cols.find(x => x.id === c.id); if(!oc || JSON.stringify(oc.values) !== JSON.stringify(c.values)) return;
     Object.keys(old.done).forEach(k => { if(k.startsWith(c.id + '|')) t.done[k] = old.done[k]; }); Object.keys(old.chosen).forEach(k => { if(k.startsWith(c.id + '|')) t.chosen[k] = old.chosen[k]; }); });
@@ -6222,6 +6233,7 @@ function simulateDays(a, b, o){
   o = o || {}; const auto = o.auto !== false;
   const out = { from:a, to:b, rev:0, run:0, extra:0, fuelUsed:0, over:0, autoL:0, autoCost:0, pax:0, seats:0, trips:0, cancelled:0, routes:{}, planes:{}, days:[] };
   for(let d = a; d <= b; d++){
+    if(S.disrupt && S.disrupt.ground) S.fleet.forEach(f => { f.grounded = f.uid === S.disrupt.uid && d === (S.disrupt.day || a); });   // an event grounds an aircraft for a day
     const beat = beatAt(d), fl = withDay(d, () => withBeat(beat, () => planFlights())).sort((x, y) => x.dep - y.dep), want = {};
     fl.forEach(f => { if(!f.grounded && want[f.route] === undefined) want[f.route] = withDay(d, () => withBeat(beat, () => paxWant(routeById(f.route), f.price))); });
     let rev = 0, run = 0, fuel = 0, pax = 0, seats = 0;
@@ -6254,6 +6266,7 @@ function simulateDays(a, b, o){
     out.rev += dayRev; out.run += run; out.extra += extra; out.fuelUsed = r2(out.fuelUsed + fuel); out.over += over; out.pax += pax; out.seats += seats; out.days.push(r2(dayRev - dayCost));
     if(S.cash < 0) bankCheck();
   }
+  if(S.disrupt && S.disrupt.ground) S.fleet.forEach(f => { f.grounded = false; });
   Object.keys(out.routes).forEach(id => { const x = out.routes[id]; x.rev = r2(x.rev); x.profit = r2(x.rev - x.cost); });
   out.rev = r2(out.rev); out.costs = r2(out.run + out.extra + out.fuelUsed + out.over); out.profit = r2(out.rev - out.costs);
   out.cashEnd = S.cash; out.fuelEnd = S.fuel; out.fuelStock = S.fuelValue;
@@ -6300,9 +6313,9 @@ function applyPeriodResults(){
   if(T.autoL) why.push({ ic:'⛽', text:`The tank ran low, so ${num(T.autoL)} L were delivered at the market price plus ${priceL(WORLD.fuelTopUp || 0)} a litre: ${money(T.autoCost)}.` });
   const fc = S.rnd.myForecast;
   if(isYearRun()) S.rnd.vs = yearVs(T);
-  else if(fc) S.rnd.vs = { kind:'period', expProfit:fc.profit, gotProfit:T.profit, expFuel:fc.fuel, gotFuel:T.fuelUsed };
+  else if(fc) S.rnd.vs = { kind:'period', expProfit:fc.profit, gotProfit:T.profit, expFuel:fc.fuel, gotFuel:T.fuelUsed, why: fc.projected && Math.abs(fc.profit - T.profit) >= 1 ? 'The projection took one weekday × 7. Saturday and Sunday carry fewer business travellers, so the week came out differently.' : '' };
   const F = { route: fr ? fr.id : null, price: fr ? fareOf(fr.id) : 0, sold: fr && T.routes[fr.id] ? T.routes[fr.id].pax : 0 }; S.rnd.reviews = tags.slice(0, 3).map(t => pickReview(t, F)).filter(Boolean);
-  T.parts.forEach(p => S.history.push({ round:S.round, type: P.type, from:p.from, to:p.to, revenue:p.rev, costs:p.costs, profit:p.profit, cash:p.cashEnd, rep:S.rep, pax:p.pax, seats:p.seats, trips:p.trips,
+  T.parts.forEach(p => S.history.push({ round:S.round, type: P.type, from:p.from, to:p.to, revenue:p.rev, costs:p.costs, profit:p.profit, cash:p.cashEnd, rep:S.rep, pax:p.pax, seats:p.seats, trips:p.trips, proj: fc && T.parts.length === 1 ? fc.profit : null,
     routes:Object.fromEntries(Object.keys(p.routes).map(id => [id, Object.assign({}, p.routes[id], { rev:Math.round(p.routes[id].rev), cost:Math.round(p.routes[id].cost), profit:Math.round(p.routes[id].profit) })])), fuelL:p.fuelEnd, fuelStock:p.fuelStock, over:p.over }));
   if(S.history.length > 160) S.history = S.history.slice(-160);
   addNews([{ tag:'£', text:`${S.airline.name}: ${T.profit >= 0 ? 'profit' : 'loss'} of ${money(Math.abs(T.profit))} ${isYearRun() ? 'from September to April' : 'in ' + periodShort(lastHist())}.`, cls: T.profit >= 0 ? 'good' : 'warn' }]);
@@ -6312,14 +6325,15 @@ function applyPeriodResults(){
 /* ---------- the forecast for a week or a month: a dry run of the real engine ---------- */
 const PL_CACHE = new Map();
 function applyPlanRaw(pl){ const f = fleetOne(); if(f){ f.schedule = pl.sched.slice(); f.route = pl.sched[0] || null; } S.prices = Object.assign({}, S.prices, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard; S.deps = pl.deps ? pl.deps.slice() : null; }
-function periodLabels(){ const W = PW(); return { rev:`Revenue ${W.now}`, ops:`Running costs ${W.now}`, fuel:`Fuel used ${W.now}` }; }
+function periodLabels(){ const W = PW(); return { revDay:'Revenue a day (average)', opsDay:'Running costs a day (average)', rev:`Revenue ${W.now}`, ops:`Running costs ${W.now}`, fuel:`Fuel used ${W.now}` }; }
 function periodLines(pl){
   const P = S.period, key = [planKey(pl), orderL(), P.from, P.to, S.rep, S.fuel, r2(S.fuelValue), S.round, (S.fuelLots || []).length].join('|');
   if(PL_CACHE.has(key)) return PL_CACHE.get(key);
   const L = planLines(pl);
   const T = dryRun(() => { applyPlanRaw(pl); const o = S.rnd.fuelOrder; if(o){ buyFuel(o.litres, o.price); S.rnd.fuelOrder = null; } return simulateDays(P.from, P.to); });
-  const days = P.to - P.from + 1, v = L.v, opsDay = v.cost - v.fuel, fuel = Math.round(T.fuelUsed);
-  const w = Object.assign({}, v, { revDay:v.rev, days, rev:v.rev * days, opsDay, ops:opsDay * days, fuel, cost:opsDay * days + fuel, profit:v.rev * days - opsDay * days - fuel, base:0, diff:0, diffL:0 });
+  const days = P.to - P.from + 1, v = L.v, fuel = Math.round(T.fuelUsed), rev = Math.round(T.rev), ops = Math.round(T.costs - T.fuelUsed);   // the dry run: weekends, events and the Market included
+  const revDay = r2(rev / days), opsDay = r2(ops / days);
+  const w = Object.assign({}, v, { revDay, days, rev, opsDay, ops, fuel, cost:ops + fuel, profit:rev - ops - fuel, base:0, diff:0, diffL:0 });
   const parts = { opsDay:[['Flights', money(v.run)], ['Terminal charges', money(v.term)]].concat(v.stock ? [['Snack stock', money(v.stock)]] : []).concat(v.crew ? [['Second crew', money(v.crew)]] : []).concat([["Aircraft's day", money(v.day)]]) };
   const out = Object.assign({}, L, { v:w, parts, autoL:T.autoL, autoCost:T.autoCost, exactRev:T.rev, exactCost:Math.round(T.costs) });
   if(PL_CACHE.size > 200) PL_CACHE.clear(); PL_CACHE.set(key, out);
@@ -6423,7 +6437,7 @@ function periodResultsCard(){
   return `${hqHead(yr ? 'The Year So Far' : `${capFirst(periodShort(h))} Results`, 'ALL LANDED')}<div class="pb td2 dr">
     <div class="dr-rcp"><div class="rev"><span class="kl">Revenue</span><b>${money(T.rev)}</b></div><i>−</i><div class="cost"><span class="kl">Costs</span><b>${money(T.costs)}</b></div><i>=</i>
       <div class="prof ${pr < 0 ? 'neg' : ''}"><span class="kl">${pr >= 0 ? 'Profit' : 'Loss'}</span><b>${money(Math.abs(pr))}</b></div></div>
-    ${fcLine}${yr ? yearResultLines() : ''}${savedLine()}${chips}
+    ${fcLine}${typeof loadFactorLine === 'function' ? loadFactorLine(T) : ''}${yr ? yearResultLines() : ''}${savedLine()}${chips}
     ${yr ? `<p class="dr-cash">Cash now <b>${money(Math.round(S.cash))}</b></p>` : ''}<p class="dr-cash" ${yr ? 'hidden' : ''}>Profit <b>${money(pr)}</b>${Math.abs(bought) >= 1 ? ` · fuel stock bought or used up: ${bought < 0 ? '−' : '+'}${money(Math.abs(Math.round(bought)))}` : ''} · cash now <b>${money(Math.round(S.cash))}</b></p>
     ${yr ? '' : `<div class="dr-routes">${Object.keys(T.routes).map(id => { const x = T.routes[id], miss = Math.max(0, (x.want || x.pax) - x.pax); return `<span>${flagSvg(routeById(id).flag, 16)} <b>${esc(routeById(id).city)}</b> ${num(x.want)} wanted · ${num(x.pax)} flew · <span class="${miss ? 'orange' : ''}">${num(miss)} no seat</span></span>`; }).join('')}</div>`}
     <div class="td-act"><span class="grow"></span><button class="btn primary act" id="nx">${closeWord()} ▶</button></div></div>`;
@@ -6938,7 +6952,7 @@ const PLAN_STORY = {
   3.4:['A second market is open. Your one aircraft can now fly to two places.', 'How should its day be shared between them? Add a service, or change a service\'s route with ⇄.'] };
 R.planner = () => {
   const p = ourPlane(), pl = currentPlan(), L = planLines(pl), W = PW(), per = W.span !== 'day', st = progress();
-  const story = !per ? (PLAN_STORY[st] || []) : [];
+  const story = !per && (S.round === 0 || roundData(S.round).prog !== roundData(S.round - 1).prog) ? (PLAN_STORY[st] || []) : [];   // the stage's story on the day it arrives
   const gantt = depsOn() ? '' : `<section class="pnl"><div class="pnl-h"><h3>Operating day</h3><span class="muted">${WORLD.dayStart}–${WORLD.dayEnd}</span></div>${serviceGantt(pl.sched, { full:true })}</section>`;
   const groups = depsOn() ? '' : `<section class="pnl"><div class="pnl-h"><h3>Expected passengers per service</h3>${paxKey()}</div>${plannerRoutes().filter(id => pl.sched.includes(id)).map(id => paxGroups(paxWant(routeById(id), fareOf(id)), p.seats, serviceCounts(pl.sched)[id] || 0, { small:true })).join('') || '<p class="muted">No services yet.</p>'}</section>`;
   screen().innerHTML = taskFrame({ question: per ? `What will your airline fly ${W.now}?` : 'What will your airline do today?', work:false, story,
@@ -6975,7 +6989,7 @@ function weekProjected(){ return S.phase === 'round' && PW().span === 'week' && 
 function linesFor(pl){ const sp = PW().span; return sp === 'day' ? planLines(pl) : weekProjected() ? weekLines(pl) : periodLines(pl); }
 R.costPlan = () => {
   const pl = currentPlan(), W = PW(), sp = W.span, setup = S.phase === 'setup';
-  let t, t2 = null, t3 = null, L, title, intro = '';
+  let t, t2 = null, t3 = null, tH = null, L, title, intro = '';
   if(sp === 'day'){
     L = planLines(pl);
     const tid = 'cost:' + S.day, prev = S.rnd.tables[tid];
@@ -7004,25 +7018,27 @@ R.costPlan = () => {
     t = ensureTable(tid, 'week1', [{ id:'a', label:'Your plan', sub:'one day, then the week', values:L.v, parts:L.parts }]); if(t !== prev) t.active = null;
     title = 'Project the week';
     intro = `<p class="c2-note">Your regular plan runs every day this week. Use one day's figures to project the whole week.</p>`;
+    if(typeof periodHandTable === 'function'){ tH = periodHandTable(pl, L.day || planLines(pl)); t3 = flightTimeTable(pl); }
   } else {
     L = periodLines(pl);
     const tid = 'pcost:' + S.day + ':' + orderL(), prev = S.rnd.tables[tid];
     t = ensureTable(tid, 'periodPlan2', [{ id:'a', label:'Your plan', sub:fmtRange(S.period.from, S.period.to), values:L.v, parts:L.parts }], { rowIds:['revDay', 'days', 'rev', 'opsDay', 'ops', 'fuel', 'cost', 'profit'], labels:periodLabels() }); if(t !== prev) t.active = null;
     title = `Your plan ${W.now}`;
-    intro = `<p class="c2-note">Nothing new to work out ${W.now}: the model has costed your plan.</p>`;
+    if(typeof periodHandTable === 'function'){ tH = periodHandTable(pl, planLines(pl)); t3 = flightTimeTable(pl); }
+    intro = tH || t3 ? `<p class="c2-note">Something has changed: check the new figures for one day of the plan. The model does the rest of ${W.the.replace(/'s$/, '')}.</p>` : `<p class="c2-note">Nothing new to work out ${W.now}: the model has costed your plan.</p>`;
   }
-  const done = tableComplete(t) && (!t2 || tableComplete(t2)) && (!t3 || tableComplete(t3)), fresh = newIdeas([t, t2, t3]), calc = t3 && t3.active ? t3 : t2 && t2.active ? t2 : t;
+  const done = tableComplete(t) && (!t2 || tableComplete(t2)) && (!t3 || tableComplete(t3)) && (!tH || tableComplete(tH)), fresh = newIdeas([t, t2, t3, tH]), calc = [tH, t3, t2].find(x => x && x.active) || (tH && !tableComplete(tH) ? tH : t); S.rnd.activeTable = calc.id;
   const spot = fresh.length ? `<div class="c2-new"><span class="label">New today</span>${fresh.map(id => `<b>${esc(NEW_TODAY[id] || TOOL[id].name)}</b>`).join('')}</div>` : '';
   const svcList = t2 ? `<div class="c2-svcl">${L.services.map((s, k) => `<button class="c2-s ${k === S.rnd.emptyK ? 'on' : ''}" data-esel="${k}" ${tableComplete(t2) || k === S.rnd.emptyK ? 'disabled' : ''}><b>Service ${k + 1}</b><span class="mono">${fmtTime(s.dep)}</span><span>${esc(routeById(s.route).city)}</span><span class="mono ${s.sold >= s.seats ? 'green' : 'orange'}">${s.sold}/${s.seats}</span></button>`).join('')}</div>` : '';
   screen().innerHTML = taskFrame({ question:title, work: fresh.length > 0, calc,
     story: setup ? ['This is the one place today where you check the numbers yourself. The model works out everything else.'] : [],
     say: fresh.length ? `Check today's new numbers. ${fresh.map(id => NEW_TODAY[id] || '').join('. ')}.` : 'The model has costed your plan.',
     context:{ title:'Your plan', html: cxSec('The plan', `<p class="cx-plan">${esc(planLabel(pl))}</p>`) + cxSec('Profit', kv([['Total revenue', `<span class="mono">${done ? money(L.v.rev) : '—'}</span>`], ['Total costs', `<span class="mono">${done ? money(L.v.cost) : '—'}</span>`], ['Profit', done ? `<span class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</span>` : '<span class="muted">—</span>', 'tot']])) + `<p class="muted cx-note">${done ? 'Next: try other ideas. The model costs them for you.' : 'Choose <b>Complete figure</b> to work out the new figure.'}</p><button class="link" data-archive>Compare with earlier days</button>` },
-    main:`<div class="cost2">${spot}${intro}<div class="c2-g ${t2 || t3 ? 'two' : ''}"><section class="pnl c2-sheet"><div class="sheet1">${tableHtml(t)}</div></section>${t3 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>Flight time</h3><span class="muted">${esc(routeById(t3.rid).city)}: how long each way?</span></div><div class="sheet1">${tableHtml(t3)}</div></section>` : ''}${t2 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>One service</h3><span class="muted">How well is the aircraft used?</span></div>${svcList}<div class="sheet1">${tableHtml(t2)}</div></section>` : ''}</div></div>`,
+    main:`<div class="cost2">${spot}${intro}<div class="c2-g ${t2 || t3 || tH ? 'two' : ''}"><section class="pnl c2-sheet"><div class="sheet1">${tableHtml(t)}</div></section>${tH ? `<section class="pnl c2-sheet"><div class="pnl-h"><h3>One day of the plan</h3><span class="muted">New figures to check</span></div><div class="sheet1">${tableHtml(tH)}</div></section>` : ''}${t3 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>Flight time</h3><span class="muted">${esc(routeById(t3.rid).city)}: how long each way?</span></div><div class="sheet1">${tableHtml(t3)}</div></section>` : ''}${t2 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>One service</h3><span class="muted">How well is the aircraft used?</span></div>${svcList}<div class="sheet1">${tableHtml(t2)}</div></section>` : ''}</div></div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${goLabel(done ? 'Test other ideas' : 'Complete the new figures first')} &#9654;</button>` });
-  bindTable(t); if(t2) bindTable(t2); if(t3) bindTable(t3);
+  bindTable(t); if(t2) bindTable(t2); if(t3) bindTable(t3); if(tH) bindTable(tH);
   screen().querySelectorAll('[data-esel]').forEach(b => b.onclick = () => { S.rnd.emptyK = +b.getAttribute('data-esel'); resetEntry(); render(); });
-  on('nx', () => { S.rnd.costed = { label:planLabel(pl), key:planKey(pl), v:Object.assign({}, L.v, sp === 'day' ? {} : { rev:L.v.rev, cost:L.v.cost, profit: weekProjected() ? L.v.wproj : L.v.profit }) }; S.rnd.costedTools = fresh; if(sp === 'day' && typeof recordHandSums === 'function') recordHandSums(L); S.rnd.test = null; resetEntry(); UI.justDone = null; advance(); });
+  on('nx', () => { S.rnd.costed = { label:planLabel(pl), key:planKey(pl), v:Object.assign({}, L.v, sp === 'day' ? {} : { rev:L.v.rev, cost:L.v.cost, profit: weekProjected() ? L.v.wproj : L.v.profit }) }; S.rnd.costedTools = fresh; if(typeof recordHandSums === 'function' && S.rnd.handSums) recordHandSums(L); S.rnd.test = null; resetEntry(); UI.justDone = null; advance(); });
 };
 
 /* ---------- TEST: try other ideas with the model ---------- */
@@ -7091,7 +7107,7 @@ R.ready = () => {
   screen().innerHTML = taskFrame({ question: readyTitle(), work:false,
     say: ok ? 'The operating plan is ready. Send it to the Operations Wall when you are ready to watch it fly.' : 'Some items need updating before operations can start.',
     context: ctxForecast(),
-    main:`<div class="opplan"><div class="op-head"><span class="label">Operating plan</span><b>${setup ? 'Launch Day' : railTitle()[0].replace(/ Plan$/, '')} · ${esc(homeData().code)} ${esc(terminalData().name || '')}</b></div>${rows}</div>
+    main:`<div class="opplan ${S.fleet.length > 1 ? 'many' : ''}"><div class="op-head"><span class="label">Operating plan</span><b>${setup ? 'Launch Day' : railTitle()[0].replace(/ Plan$/, '')} · ${esc(homeData().code)} ${esc(terminalData().name || '')}</b></div>${rows}</div>
       <div class="launch"><button class="btn primary huge go" id="startOps" ${ok ? '' : 'disabled'}>${goWord()}</button><p class="muted">${ok ? (o ? `Your fuel order (<span class="mono">${money(o.total)}</span>) is paid when operations start.` : paid ? 'The aircraft is fuelled and the plan is costed.' : 'The plan is costed. The launch deal supplies the fuel.') : 'Update the items marked above first.'}</p></div>` });
   on('startOps', () => { const x = S.rnd.fuelOrder; if(x){ buyFuel(x.litres, x.price); S.rnd.fuelOrder = null; } delete S.rnd.returnTo; resetEntry(); UI.view = null; next(); });
 };
@@ -8198,7 +8214,7 @@ function buildBeats(){
   let d = weekFrom, k = 0;
   while(d <= monthFrom && d < reviewDay){
     const m = marketWeekOf(d) || {}, evs = WB_EVENTS.filter(e => e.date && dayOfDate(e.date) >= d && dayOfDate(e.date) <= d + 6);
-    R.push({ date:isoOf(d), day:d, period:'week', fuel:fuelOn(d), prog: k === 0 ? 4 : k === 1 ? 4.1 : 4.2, title:'Week ' + weekNo(d), headline:m.headline || '', news: m.headline ? [m.headline] : [],
+    R.push({ date:isoOf(d), day:d, period:'week', fuel:fuelOn(d), prog: k === 0 ? 4 : k === 1 ? 4.1 : 4.2, title:'Week ' + weekNo(d), headline:m.headline || '', news: m.headline ? [m.headline] : [], projectWeek: k === 0,
       intro: k === 0 ? 'week' : undefined, market:m, season:m.season, weather:m.weather, events:evs.map(e => Object.assign({ day:dayOfDate(e.date) }, gameEvent(e.id) || { id:e.id, title:e.title, text:e.text, info:true, effectsText:e.effects })) });
     d += 7; k++;
   }
@@ -8250,16 +8266,16 @@ function stepsFor(b){
 /* The day's brief: yesterday, what the Calendar brings today, routes opening, fuel. */
 function protoBrief(n){
   const w = roundData(n), h = lastDay(), fp = fuelPrice(n), fy = fuelPrice(Math.max(0, n - 1)), L = [];
-  if(h) L.push(`${h.type === 'setup' ? 'Launch Day' : 'Yesterday'}: ${h.pax} passengers flew, ${h.profit >= 0 ? 'profit' : 'loss'} ${money(Math.round(Math.abs(h.profit)))}. The details are in Route performance.`);
+  if(h) L.push(`${h.type === 'setup' ? 'Launch Day' : 'Yesterday'}: ${h.pax} passengers flew, ${h.profit >= 0 ? 'profit' : 'loss'} ${money(Math.round(Math.abs(h.profit)))}.`);
   const mech = ((w.unlocks || {}).mechanics || []).filter(m => !/^(fare|services|timetable)$/.test(m));
-  if(mech.length) L.push(`New today: ${mech.join(', ')}.`);
+  if(mech.length) L.push(`New today: ${mech.slice(0, 2).join(', ')}.`);
   const opening = routesOpening(w.day);
   if(opening.some(r => WORLD.setupRoutes.includes(r.id))) L.push(`${routeById(otherRoute()).city} is now open: one aircraft, two markets.`);
   else if(opening.length) L.push(`New route${opening.length > 1 ? 's' : ''} open: ${opening.map(r => r.city).join(', ')}.`);
   if(w.event) L.push(`${w.event.title}.`);
   if(w.competitor) Object.keys(w.competitor).forEach(id => { const r = routeById(id); if(r) L.push(`${WORLD.rival} is selling ${r.city} tickets for ${money(w.competitor[id])}.`); });
   if(fuelPaid() && fp !== fy) L.push(`Fuel is ${priceL(fp)} a litre today (was ${priceL(fy)}).`);
-  return L.slice(0, 3);
+  return L.slice(0, S.fleet.length > 1 ? 2 : 3);
 }
 /* Closing a day or a period: the next beat the calendar gives, the standing plan before the first week, the chapter end after the review. */
 function closeDay(){
@@ -8504,7 +8520,7 @@ MECH_INTRO.push(['crew duty', 'crew']);
 function fmtVal(unit, v){
   if(v === null || v === undefined) return '—';
   if(unit === '£') return money(v); if(unit === 'L') return num(v) + ' L'; if(unit === 'ppl') return priceL(v); if(unit === 'dur') return fmtDur(v);
-  if(unit === 'yesno') return v ? 'Yes' : 'No'; if(unit === 'km') return num(v) + ' km'; if(unit === 'kmh') return num(v) + ' km/h'; if(unit === 'h') return num(v) + ' h'; if(unit === 'days') return num(v) + ' days';
+  if(unit === 'yesno') return v ? 'Yes' : 'No'; if(unit === 'km') return num(v) + ' km'; if(unit === 'kmh') return num(v) + ' km/h'; if(unit === 'h') return num(v) + ' h'; if(unit === 'days') return (Math.round(v * 10) / 10) + ' days';
   return num(v);
 }
 
@@ -8585,24 +8601,26 @@ function editPlan(i, what, a, d, j){
   normPlan(next);
   const ok = withPlan(next, () => next.fleet.every(z => !z.sched.length || fitsFor(z)));
   if(!ok){ toast("That timetable won't fit in the operating day."); return; }
+  if(what === 'open'){ const y = next.fleet.findIndex(z => z.sched.length && z.sched[z.sched.length - 1] === a); if(y >= 0) UI.peTab = y; } else if(next.fleet.length > 1) UI.peTab = j;
   setPlan(i, next);
 }
 function bindPlanEditor(){
   screen().querySelectorAll('[data-pe]').forEach(b => b.onclick = e => { e.stopPropagation(); const [i, what, a, d, j] = b.getAttribute('data-pe').split('|'); editPlan(+i, what, a, +d, +(j || 0)); });
+  screen().querySelectorAll('[data-petab]').forEach(b => b.onclick = e => { e.stopPropagation(); UI.peTab = +b.getAttribute('data-petab'); render(); });
 }
 function termsWord(t){ if(!t) return ''; if(t.kind === 'lease') return `rented, ${money(t.daily)} a day`; if(t.kind === 'finance') return t.left > 0 ? `${money(t.daily)} a day, ${t.left} payment${t.left === 1 ? '' : 's'} left` : 'paid off'; return 'owned'; }
 /* The plan editor: fares per route, the snack choice, then each aircraft's services. */
 function planEditor(i, pl, L, o){
   o = o || {}; pl = normPlan(pl); const per = depsOn(), maxT = WORLD.maxTrips || 4, allRoutes = S.phase === 'setup' ? [S.market] : plannerRoutes(), multi = pl.fleet.length > 1;
   const inPlan = [...new Set(pl.fleet.flatMap(x => x.sched))];
-  const shown = allRoutes.filter(id => inPlan.includes(id) || id === S.market || (allRoutes.length <= 2)), more = allRoutes.filter(id => !shown.includes(id));
+  const shown = allRoutes.filter(id => inPlan.includes(id) || (allRoutes.length <= 2) || (!inPlan.length && id === S.market)), more = allRoutes.filter(id => !shown.includes(id));
   const routeBlock = id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, F = r.fares || [r.basePrice], n = serviceCounts(pl.fleet.flatMap(x => x.sched))[id] || 0, rival = competitorPrice(r);
     const p0 = planeById(pl.fleet[0].planeId);
     return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${o.big && id === otherRoute() ? newTag(3.4) : ''}${rival !== undefined ? `<span class="pe-rival" title="${esc(WORLD.rival)} is selling tickets at this price">${esc(WORLD.rival)} ${money(rival)}</span>` : ''}${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
       ${per || multi ? '' : `<div class="pe-f"><span class="label">Services</span>${stepper(i, 'svc|' + id, '×' + n, `${n * p0.seats} seats`, { noLess: n === 0, noMore: pl.fleet[0].sched.length >= maxT })}</div>`}
       <div class="pe-f"><span class="label">Fare</span>${stepper(i, 'fare|' + id, money(fare), `<b class="mono">${paxWant(r, fare)}</b> want to fly`, { noLess: fare <= F[0], noMore: fare >= F[F.length - 1] })}</div></div>`; };
-  const moreRow = more.length ? `<div class="pe-more"><span class="label">Open routes</span>${more.map(id => { const r = routeById(id), can = pl.fleet.some(z => planeCanFly(planeById(z.planeId), r)); return `<button class="btn small" data-pe="${i}|open|${id}|0|0" ${can ? '' : 'disabled'} title="${can ? `${num(routeKm(r))} km · ${paxWant(r, r.basePrice)} want to fly at ${money(r.basePrice)}` : `No aircraft you own can reach ${r.city} (${num(routeKm(r))} km)`}">${flagSvg(r.flag, 14)} ${esc(r.city)}${(r.openDay || 1) === S.day ? newTag(progress()) || ' <span class="new-tag">NEW</span>' : ''}${can ? '' : ' <small>out of range</small>'}</button>`; }).join('')}</div>` : '';
-  const snacks = !snacksOn() ? '' : o.big ? `<div class="pe-obc ${newTag(3.1) ? 'fresh' : ''}"><div class="pe-sh"><span class="label">On board${newTag(3.1)}</span><span class="muted small">What happens on board today?</span></div><div class="obc-grid">${Object.keys(ONBOARD).map(k => `<button class="obc ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`).join('')}</div></div>`
+  const moreRow = more.length && !o.compact ? `<div class="pe-more"><span class="label">Open routes</span>${more.map(id => { const r = routeById(id), can = pl.fleet.some(z => planeCanFly(planeById(z.planeId), r)); return `<button class="btn small" data-pe="${i}|open|${id}|0|0" ${can ? '' : 'disabled'} title="${can ? `${num(routeKm(r))} km · ${paxWant(r, r.basePrice)} want to fly at ${money(r.basePrice)}` : `No aircraft you own can reach ${r.city} (${num(routeKm(r))} km)`}">${flagSvg(r.flag, 14)} ${esc(r.city)}${(r.openDay || 1) === S.day ? newTag(progress()) || ' <span class="new-tag">NEW</span>' : ''}${can ? '' : ' <small>out of range</small>'}</button>`; }).join('')}</div>` : '';
+  const snacks = !snacksOn() ? '' : o.big && newTag(3.1) ? `<div class="pe-obc ${newTag(3.1) ? 'fresh' : ''}"><div class="pe-sh"><span class="label">On board${newTag(3.1)}</span><span class="muted small">What happens on board today?</span></div><div class="obc-grid">${Object.keys(ONBOARD).map(k => `<button class="obc ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`).join('')}</div></div>`
     : `<div class="pe-ob"><span class="label">On board</span>${Object.keys(ONBOARD).map(k => `<button class="opt-chip ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b></button>`).join('')}</div>`;
   let services = '';
   if(per || multi){
@@ -8610,13 +8628,15 @@ function planEditor(i, pl, L, o){
       return `<div class="pe-svc ${s.band}"><span class="pe-n">Service ${s.k + 1}</span>${many ? `<button class="pe-rt" data-pe="${i}|route|${s.k}|1|${j}" title="Change the route">${flagSvg(r.flag, 14)} ${esc(r.city)} ⇄</button>` : `<span class="pe-city">${flagSvg(r.flag, 14)} ${esc(r.city)}</span>`}
         ${per ? stepper(i, 'dep|' + s.k, fmtTime(s.dep), `back ${fmtTime(s.arr)}`, { cls:'sm' }) : `<span class="mono">${fmtTime(s.dep)}</span>`}<span class="pe-fill ${s.sold >= s.seats ? 'full' : ''}"><b class="mono">${s.sold}/${s.seats}</b><small>${s.sold >= s.seats ? 'full' : `${s.seats - s.sold} empty`}</small></span><span class="pe-band">${BAND_NAMES[s.band] || ''}</span>
         <button class="pe-x" data-pe="${i}|del|${s.k}|0|${j}" title="Remove this service" aria-label="Remove service ${s.k + 1}">✕</button></div>`; };
-    services = pl.fleet.map((x, j) => { const p = planeById(x.planeId), svcs = (L.services || []).filter(s => s.uid === x.uid), D = x.sched.length ? TIME.day(p, x.sched, undefined, x.deps || null) : null;
+    const tab = multi ? clamp(UI.peTab || 0, 0, pl.fleet.length - 1) : 0;
+    const tabs = multi ? `<div class="pe-tabs">${pl.fleet.map((x, j) => { const p = planeById(x.planeId); return `<button class="pe-tab ${j === tab ? 'on' : ''}" data-petab="${j}" aria-pressed="${j === tab}">${planeSvg(p, 'pe-pic')}<b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><span class="mono">${esc(regOf(x.uid))}</span><small>${x.sched.length ? plural(x.sched.length, 'service') : 'no services yet'}</small></button>`; }).join('')}</div>` : '';
+    services = pl.fleet.map((x, j) => { if(multi && j !== tab) return ''; const p = planeById(x.planeId), svcs = (L.services || []).filter(s => s.uid === x.uid), D = x.sched.length ? TIME.day(p, x.sched, undefined, x.deps || null) : null;
       const adds = allRoutes.map(id => { const r = routeById(id), can = planeCanFly(p, r); return `<button class="btn small" data-pe="${i}|add|${id}|0|${j}" ${can && x.sched.length < maxT ? '' : 'disabled'} title="${can ? `Add a ${r.city} service` : `${p.name}: range ${num(p.range)} km, ${r.city} is ${num(routeKm(r))} km away`}">+ ${esc(r.city)}${can ? '' : ' <small>out of range</small>'}</button>`; }).join('');
       return `<div class="pe-ac"><div class="pe-sh"><span class="pe-acn">${planeSvg(p, 'pe-pic')}<b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><span class="mono">${esc(regOf(x.uid))}</span><span class="muted small">${p.seats} seats${multi && S.fleet.find(f => f.uid === x.uid) && S.fleet.find(f => f.uid === x.uid).terms ? ' · ' + termsWord(S.fleet.find(f => f.uid === x.uid).terms) : ''}</span></span>${D ? `<span class="muted small">busy until ${fmtTime(D.end)}</span>` : ''}<span class="pe-add">${x.sched.length >= maxT ? `<span class="muted small">${maxT} services is the most one aircraft can fly</span>` : adds}</span></div>
         ${svcs.map(s => svcRow(s, j, p)).join('') || `<p class="muted small pe-none">${multi ? 'No services yet: this aircraft costs its day anyway.' : 'Add a service.'}</p>`}</div>`; }).join('');
-    services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times${o.big ? newTag(3.3) : ''}</span><span class="muted small">Out, a turnaround, back, then a turnaround at home.</span></div>${services}</div>`;
+    services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times${o.big ? newTag(3.3) : ''}</span>${multi ? '' : '<span class="muted small">Out, a turnaround, back, then a turnaround at home.</span>'}</div>${tabs}${services}</div>`;
   }
-  const strips = per ? `<div class="pe-demand">${shown.slice(0, 3).map(demandStrip).join('')}${multi ? '' : miniBar(L.D)}</div>` : '';
+  const strips = per && !o.compact && !multi ? `<div class="pe-demand">${shown.filter(id => inPlan.includes(id)).slice(0, 3).map(demandStrip).join('')}${miniBar(L.D)}</div>` : '';
   const sum = `<div class="pe-sum"><span><b class="mono">${L.pax}</b> fly</span><span class="${L.empty ? '' : 'muted'}"><b class="mono">${L.empty}</b> empty seat${L.empty === 1 ? '' : 's'}</span><span class="${L.nos ? 'orange' : ''}"><b class="mono">${L.nos}</b> without a seat</span>${L.end ? `<span>busy until <b class="mono">${fmtTime(L.end)}</b></span>` : ''}${fuelPaid() && L.fuelL ? `<span>burns <b class="mono">${num(L.fuelL)} L</b> of fuel${o.big ? newTag(3.2) : ''}</span>` : ''}${opened(3.1) ? `<span class="${L.crews > 1 ? 'orange' : ''}">${L.crews} crew${L.crews > 1 ? 's' : ''}</span>` : ''}${L.fits ? '' : '<span class="red">Doesn\'t fit in the day</span>'}</div>`;
   return `<div class="pe ${o.big ? 'big' : ''} ${o.compact ? 'compact' : ''}">${strips}<div class="pe-routes n${Math.min(3, shown.length)}">${shown.map(routeBlock).join('')}</div>${moreRow}${snacks}${services}${sum}</div>`;
 }
@@ -8766,7 +8786,7 @@ function acquirePlane(p, kind){
   if(kind === 'buy'){ S.cash = r2(S.cash - o.price); terms = { kind:'buy', price:o.price, since:S.day }; }
   else if(kind === 'lease') terms = { kind:'lease', daily:o.lease, since:S.day };
   else { S.cash = r2(S.cash - o.deposit); terms = { kind:'finance', deposit:o.deposit, daily:o.daily, pay:o.pay, unit:o.unit, left:o.left, since:S.day }; }
-  S.fleet.push({ uid, planeId:p.id, route:null, schedule:[], deps:null, layout:'standard', grounded:false, terms, acquired:S.day });
+  S.fleet.push({ uid, planeId:p.id, route:null, schedule:[], deps:null, layout:'standard', grounded:false, terms, acquired:S.day }); UI.peTab = S.fleet.length - 1;
   S.dec.planeBought = { round:S.round, day:S.day, planeId:p.id, kind };
   addNews([{ tag:'FLEET', text:`${S.airline.name} ${kind === 'buy' ? 'buys' : kind === 'lease' ? 'rents' : 'finances'} a ${p.name}!`, cls:'good' }]);
   if(typeof sysNotice === 'function') sysNotice(`${p.name} ${esc(regOf(uid))} joins the fleet`);
@@ -8786,7 +8806,7 @@ function startProtoDay(n){
   const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
   S.steps = withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat([{ t:'planner' }]).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'costPlan' }, { t:'testIdeas' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
   S.rnd.cashStart = S.cash; UI.view = null;
-  S.si = 0; S.newRoutes = [];
+  S.si = 0; S.newRoutes = []; if(typeof revealReputation === 'function') revealReputation();
   refreshPlan();
   addNews((w.news || []).slice(0, 2).map(t => ({ tag:'NEWS', text:t })));
   publish(); render();
@@ -8802,10 +8822,10 @@ R.shop2 = st => {
   const list = shopPlanes(), picked = S.rnd.shopPick || null, owned = id => S.fleet.filter(f => f.planeId === id).length;
   const opening = routesOpening(S.day), newR = opening.length ? `<p class="small muted">New route${opening.length > 1 ? 's' : ''} today: ${opening.map(r => `${r.city} (${num(routeKm(r))} km)`).join(', ')}.</p>` : '';
   screen().innerHTML = taskFrame({ question:'Aircraft for sale', work:false,
-    story:['Your airline could fly more. Each aircraft is for sale, for rent by the day, or on finance: a deposit now and a payment every day.', 'A bigger aircraft carries more people, but costs more every day whether it flies or not.'],
+    story:['Each aircraft is for sale, for rent by the day, or on finance (a deposit now, then a payment every day). A bigger aircraft carries more people but costs more every day, flying or not.'],
     say:`Aircraft for sale. ${list.map(p => `${p.name}: ${p.seats} seats, ${money(shopOffer(p).price)} to buy${shopOffer(p).lease ? `, or ${money(shopOffer(p).lease)} a day to rent` : ''}.`).join(' ')}`,
     context:{ title:'Your airline', html: cxSec('Cash', `<p class="cx-plan mono">${money(Math.round(S.cash))}</p><p class="small muted">Keep ${money(WORLD.cashReserve || 0)} back for emergencies.</p>`) + cxSec('Fleet', S.fleet.map(f => `<p class="small">${esc(planeById(f.planeId).name)} <span class="mono">${esc(regOf(f.uid))}</span> · ${esc(svcLabel(schedOf(f)) || 'no services')}</p>`).join('')) + (newR ? cxSec('Routes', newR) : '') },
-    main:`<div class="shop3">${list.map(p => shopCard(p, shopOffer(p), picked === p.id, owned(p.id))).join('')}</div>`,
+    main:`<div class="shop3 ${list.length > 3 ? 'list' : ''}">${list.map(p => shopCard(p, shopOffer(p), picked === p.id, owned(p.id))).join('')}</div>`,
     foot:`<button class="btn big" id="skipShop">Not today</button><span class="grow"></span><button class="btn primary big" id="nx" ${picked ? '' : 'disabled'}>${picked ? goLabel(`Look closer at the ${planeById(picked).name.replace(/^DHC-6 /, '')}`) : 'Choose an aircraft, or not today'} &#9654;</button>` });
   screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { S.rnd.shopPick = b.getAttribute('data-pick'); render(); });
   const strip = () => { S.steps = S.steps.filter(x => !['fleetSums', 'acquire'].includes(x.t)); };
@@ -8820,14 +8840,14 @@ R.fleetSums = st => {
   const tables = [];
   if(o.lease && o.price){ const tid = `rentbuy:${S.day}:${p.id}`, prev = S.rnd.tables[tid], t = ensureTable(tid, 'rentbuy1', [{ id:'a', label:p.name, sub:`${money(o.price)} to buy · ${money(o.lease)} a day to rent`, values:{ price:o.price, rent:o.lease, days:r2(o.price / o.lease) } }], { live: rbNew }); if(t !== prev) t.active = null; tables.push(t); }
   { const tid = `seatfare:${S.day}:${p.id}:${r.id}:${fare}`, prev = S.rnd.tables[tid], t = ensureTable(tid, 'seatfare1', [{ id:'a', label:`${p.name} to ${r.city}`, sub:`${p.seats} seats at ${money(fare)}`, values:{ seats:p.seats, fare, full:p.seats * fare } }], { live: sfNew }); if(t !== prev) t.active = null; tables.push(t); }
-  const done = tables.every(tableComplete), calc = tables.find(t => t.active) || tables[0];
+  const done = tables.every(tableComplete), calc = tables.find(t => t.active) || tables[0]; S.rnd.activeTable = calc.id;
   const days = o.lease ? r2(o.price / o.lease) : null, payback = m.extra > 0 ? Math.ceil(o.price / m.extra) : null;
   const model = `<div class="fs-model"><div><small>The model's suggestion</small><b>${m.sched.length ? esc(svcLabel(m.sched)) : 'No useful services yet'}</b><small>where people are left without a seat</small></div>
     <div><small>Extra profit a day</small><b class="${m.extra >= 0 ? 'green' : 'red'}">${money(m.extra)}</b><small>with those services, at today's fares</small></div>
     <div><small>${o.lease ? 'Against the rent' : 'Pays back in'}</small><b>${o.lease ? (m.extra > o.lease ? `${money(m.extra - o.lease)} a day ahead` : `${money(o.lease - m.extra)} a day short`) : payback ? `${payback} days` : '—'}</b><small>${o.lease ? `rent ${money(o.lease)} a day` : `price ${money(o.price)}`}${payback ? ` · buying pays back in about ${payback} days` : ''}</small></div></div>`;
   screen().innerHTML = taskFrame({ question:`Is the ${esc(p.name.replace(/^DHC-6 /, ''))} worth it?`, work:true, calc,
     say:`Two sums about the ${p.name}. How many days of rent equal its price? And what does a full plane bring in at ${money(fare)}?`,
-    context:{ title:'The offer', html: kv([['Buy', `<span class="mono">${money(o.price)}</span>`], ['Rent', o.lease ? `<span class="mono">${money(o.lease)}</span> a day` : '—'], ['Finance', o.deposit ? `<span class="mono">${money(o.deposit)}</span> down, then <span class="mono">${money(o.pay)}</span> a ${esc(o.unit)} × ${o.n}` : '—'], ['Day cost', `<span class="mono">${money(p.dayCost)}</span>`]]) + `<p class="muted cx-note">${days ? `If you rent for more than ${num(days)} days, buying would have been cheaper.` : ''}</p>` },
+    context:{ title:'The offer', html: kv([['Buy', `<span class="mono">${money(o.price)}</span>`], ['Rent', o.lease ? `<span class="mono">${money(o.lease)}</span> a day` : '—'], ['Finance', o.deposit ? `<span class="mono">${money(o.deposit)}</span> + <span class="mono">${money(o.pay)}</span> × ${o.n}` : '—']]) },
     main:`<div class="cost2"><div class="c2-g two">${tables.map(t => `<section class="pnl c2-sheet"><div class="pnl-h"><h3>${esc(TABLES[t.kind].title)}</h3></div><div class="sheet1">${tableHtml(t)}</div></section>`).join('')}</div>${model}</div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${done ? goLabel('Decide: buy, rent or finance') : 'Complete the sums first'} &#9654;</button>` });
   tables.forEach(bindTable);
@@ -8865,9 +8885,9 @@ Object.assign(INTRO, {
     what:() => { const s = planeById('sf34'), o = shopOffer(s, 8); return [['Your airline can grow. Aircraft are for sale, and each one can be bought, rented by the day, or financed.'],
       `<div class="ni-cards four"><div class="ni-card"><em>${money(o.price)}</em><b>Buy</b><span>Pay it all now. Nothing more to pay.</span></div><div class="ni-card"><em>${money(o.lease)}</em><b>Rent, a day</b><span>Every day, for as long as you keep it.</span></div><div class="ni-card"><em>${money(o.deposit)}</em><b>Finance, down</b><span>Then ${money(o.pay)} a day for ${o.n} days.</span></div><div class="ni-card"><em>${s.seats}</em><b>Seats</b><span>A ${esc(s.name)} carries ${s.seats} people a service: nearly twice the Twin Otter.</span></div></div>`,
       ['Four new routes open today too. A second aircraft can fly one of them while the Twin Otter keeps its routes.', 'An aircraft costs its day cost whether it flies or not, so give it work.']]; },
-    maths:() => { const s = planeById('sf34'), o = shopOffer(s, 8), d = o.price / o.lease; return [niRule('price', '÷', 'rent a day', 'Days of rent that equal the price'),
-      `<div class="ni-eg"><p>The ${esc(s.name)} costs <b>${money(o.price)}</b> to buy or <b>${money(o.lease)}</b> a day to rent.</p><p>${niSum(`${num(o.price)} ÷ ${num(o.lease)} = ${num(d)}`)} days. Rent for longer than that and buying would have been cheaper.</p>
-        <p class="ni-tip">One way: ${niSum(`${num(o.lease)} × 20 = ${num(o.lease * 20)}`)}, then ${niSum(`${num(o.price - o.lease * 20)} ÷ ${num(o.lease)} = ${num((o.price - o.lease * 20) / o.lease)}`)} more, so ${num(d)} days.</p></div>`]; },
+    maths:() => { const s = planeById('sf34'), o = shopOffer(s, 8), d = Math.round(o.price / o.lease * 10) / 10; return [niRule('price', '÷', 'rent a day', 'Days of rent that equal the price'),
+      `<div class="ni-eg"><p>The ${esc(s.name)} costs <b>${money(o.price)}</b> to buy or <b>${money(o.lease)}</b> a day to rent.</p><p>${niSum(`${num(o.price)} ÷ ${num(o.lease)} = ${d}`)} days. Rent for longer than that and buying would have been cheaper.</p>
+        <p class="ni-tip">One way: ${niSum(`${num(o.lease)} × 20 = ${num(o.lease * 20)}`)}, then ${niSum(`${num(o.price - o.lease * 20)} ÷ ${num(o.lease)} = ${Math.round((o.price - o.lease * 20) / o.lease * 10) / 10}`)} more, so ${d} days.</p></div>`]; },
     check:{ q:'An aircraft costs £15,000 to buy or £500 a day to rent. After how many days of rent would buying have been cheaper?', opts:[['30 days', ''], ['15 days', '15 × £500 is £7,500, only half the price.'], ['300 days', '300 × £500 is £150,000, ten times the price.']], ok:0, done:'£15,000 ÷ £500 = 30 days.' },
     think:['How many days will you keep the aircraft? Longer than the rent-or-buy days means buy.', 'Does the extra profit a day cover the rent? The model says what the aircraft would add.'] },
   season:{ kicker:'New today · The seasons', title:'Some routes have a season', before:'planner', words:[['Season', 'A time of year when more or fewer people want to fly a route.'], ['Multiplier', 'The number demand is multiplied by: ×0.5 is half, ×1.4 is nearly one and a half times.']],
@@ -8887,6 +8907,290 @@ Object.assign(INTRO, {
         <p>The ${esc(j.name)} flies at <b>${num(j.speed)} km/h</b>: ${niSum(`${num(routeKm(r))} ÷ ${num(j.speed)} = ${num(r2(routeKm(r) / j.speed))}`)} hours each way.</p><p class="ni-tip">Out, a turnaround, and back: the ATR's day has room for one ${esc(r.city)} service and little else.</p></div>`]; },
     check:{ q:'A route is 1,800 km long and the aircraft flies at 900 km/h. How long is the flight each way?', opts:[['2 hours', ''], ['9 hours', '900 km takes one hour, so 1,800 km takes two.'], ['1 hour', '1,800 km is twice 900 km, so twice one hour.']], ok:0, done:'1,800 ÷ 900 = 2 hours each way.' },
     think:['Which aircraft should fly Madrid, and how many services fit in its day?', 'A jet costs more each hour. Does a full plane at a Madrid fare pay for it?'] } });
+/* ==================================================================
+   THE WEEKS (day 22, Monday 23 September, to Sunday 1 December): the Market sheet runs the airline a week at a time.
+     - Each week: review (load factor as a percentage from Settings loadFactorPercentFromDay), the shop, the plan for
+       every aircraft, the Cost sheet (hand sums only when HandSumRules 2 and 4 fire: a fuel jump, a new route), Test,
+       Ready, the run, results.
+     - The Market gives fuel, season, business and leisure multipliers and the weather; dated Events ride on their week.
+       An event with choices (the technical fault) is decided before the week runs; its cost is a share of yesterday's
+       profit from day 22 (Settings eventCostScaleFromDay, the Events sheet's costShare). An event without choices
+       (football final, price war, first snow, Christmas) is applied from the sheet's effects text.
+     - The teacher can skip 1, 4 or 8 weeks: the standing plan runs by itself (Settings timeSkip is a placeholder; the
+       values are the brief's).
+   ================================================================== */
+function weekProjected(){ return S.phase === 'round' && PW().span === 'week' && !!roundData(S.round).projectWeek; }
+function stepsFor(b){
+  const w = roundData(b), st = w.stage ? [{ t:'milestone', stage:w.stage }] : [], L = a => withIntro(st.concat(a.map(t => ({ t }))), w);
+  if(w.period === 'gap') return L(['sim', 'results']);
+  if(w.period === 'week') return L(['hq', 'review', 'shop2', 'planner'].concat(w.events && w.events.some(e => e.options && e.options.length) ? ['event'] : []).concat(['costPlan', 'testIdeas', 'ready', 'sim', 'results']));
+  if(w.period === 'month') return L(['hq', 'review', 'shop2', 'fuelPlan', 'plans', 'ready', 'sim', 'results']);
+  if(w.period === 'review') return L(['hq', 'review', 'chapterReview', 'protoEnd']);
+  return L(['hq', 'planner', 'costPlan', 'testIdeas', 'ready', 'fly', 'results']);
+}
+/* The effects text of an event without choices: "demand mad+40 par+10 dub+10", "gva demand +20", "businessMult 0.7, leisureMult 1.3", "cuts every fare by 20%". */
+function infoEffects(ev){
+  const t = String((ev && (ev.effectsText || ev.effects)) || '') + ' ' + String((ev && ev.text) || ''), out = { demandMod:{} };
+  let m; const re1 = /\b([a-z]{3})\s*([+-]\d+)\b/g; while((m = re1.exec(t))){ if(routeById(m[1])) out.demandMod[m[1]] = (out.demandMod[m[1]] || 0) + parseInt(m[2], 10); }
+  const re2 = /\b([a-z]{3}) demand ([+-]\d+)/g; while((m = re2.exec(t))){ if(routeById(m[1])) out.demandMod[m[1]] = parseInt(m[2], 10); }
+  const b = /businessMult\s*([\d.]+)/.exec(t); if(b) out.biz = +b[1]; const l = /leisureMult\s*([\d.]+)/.exec(t); if(l) out.lei = +l[1];
+  const c = /cuts every fare by (\d+)%/.exec(t); if(c || /rival fares/.test(t)) out.rivalCut = c ? +c[1] / 100 : 0.2;
+  return out;
+}
+/* The fault's three choices come from the Events sheet's text ("fix £800 +½★ / fly −1★ / wait: plane misses next day"). */
+function weekChoiceEvent(w){
+  const e = (w.events || []).find(x => x.options && x.options.length) || (w.events || []).find(x => x.id === 'fault'); if(!e) return null;
+  if(e.options && e.options.length) return JSON.parse(JSON.stringify(e));
+  return { id:e.id, day:e.day, date:e.date, title:e.title, text:e.text, costShare:'fix 0.5 / wait 0 / fly 0', options:[
+    { key:'fix', label:'Fix it now', sub:'Engineers replace the part before the flight', effects:{ cash:-800, rep:0.5 }, why:'The engineers fixed it. It cost money, but passengers trust you: +½ star.' },
+    { key:'fly', label:'Fly anyway', sub:'The light is probably nothing', effects:{ rep:-1 }, why:'The flight went, but word got round that you flew with a warning light: −1 star.' },
+    { key:'wait', label:'Wait for the part', sub:'The aircraft misses a day', effects:{ groundNext:true }, why:'The aircraft sat on the ground for a day while the part came. No flying, no fares.' }] };
+}
+function costShareOf(ev, opt){ const s = String(ev.costShare || ''); if(!s || /fixed/.test(s)) return null; const key = (opt.key || opt.label || '').toLowerCase().split(/\s+/)[0]; const m = new RegExp(key + '\\s+([\\d.]+)').exec(s); return m ? +m[1] : null; }
+function yesterdayProfit(){ const h = lastHist(); if(!h) return 0; const n = Math.max(1, (h.to || h.from || 0) - (h.from || 0) + 1); return r2((h.profit || 0) / n); }
+function startBeat(b){
+  const w = roundData(b), last = S.period && S.phase === 'round' ? S.period.to : S.day;
+  S.round = b; S.phase = 'round'; delete S.needsRestart;
+  S.day = Math.max(beatDay(b), (last || 0) + 1);
+  S.period = newPeriod(w.period === 'gap' ? 'gap' : w.period, S.day);
+  if(w.until) S.period.run = { kind:'until', to: dayOfDate(w.until) };
+  const keep = { featured:S.rnd.featured, focusRoute:S.rnd.focusRoute, avgMonth:S.rnd.avgMonth, skippedNote:S.rnd.skippedNote };
+  S.fleet.forEach(f => { f.grounded = false; }); S.disrupt = null;
+  if((w.period === 'week' || w.period === 'gap') && typeof returnTankFuel === 'function') returnTankFuel();
+  const ev = weekChoiceEvent(w), infos = (w.events || []).filter(x => !(x.options && x.options.length) && !(ev && x.id === ev.id));
+  const mods = { demandMod:{}, notes:[] }, m = w.market || {};
+  infos.forEach(x => { const fx = infoEffects(x); Object.assign(mods.demandMod, fx.demandMod); if(fx.rivalCut) mods.rivalCut = fx.rivalCut;
+    if(fx.biz && (m.businessMult === undefined || m.businessMult === 1)) mods.biz = fx.biz; if(fx.lei && (m.leisureMult === undefined || m.leisureMult === 1)) mods.lei = fx.lei; mods.notes.push(`${x.title}: ${x.text}`); });
+  S.rnd = Object.assign(emptyRnd(), keep, { headline: w.headline || '', event: ev, eventDay: ev ? ev.day : null, weekMods: mods });
+  S.rnd.brief = periodBrief(); if(typeof revealReputation === 'function') revealReputation();
+  S.rnd.cashStart = S.cash; S.rnd.fuelStart = S.fuel;
+  S.steps = stepsFor(b); S.si = 0; S.newRoutes = []; UI.view = null;
+  refreshPlan(); addNews((w.news || []).slice(0, 2).map(t => ({ tag:'NEWS', text:t })));
+  publish(); render();
+}
+function periodBrief(){
+  const h = lastHist(), w = roundData(S.round), L = [];
+  if(S.rnd && S.rnd.skippedNote){ L.push(S.rnd.skippedNote); }
+  if(h) L.push(`${capFirst(periodShort(h))}: ${num(h.pax)} passengers flew, ${h.profit >= 0 ? 'profit' : 'loss'} ${money(Math.round(Math.abs(h.profit)))}${h.seats && S.day >= ((WORLD.settings || {}).loadFactorPercentFromDay || 22) ? `, load factor ${Math.round(100 * h.pax / h.seats)}%` : ''}.`);
+  const fp = fuelPrice(), fy = fuelPrice(Math.max(0, S.round - 1)); if(fp !== fy) L.push(`Fuel is ${priceL(fp)} a litre ${PW().now} (was ${priceL(fy)}).`);
+  const opening = WORLD.routes.filter(r => (r.openDay || 1) > (S.period ? S.period.from - (S.period.to - S.period.from + 1) : 0) && (r.openDay || 1) <= S.day && (r.openDay || 1) > 21); if(opening.length) L.push(`New route${opening.length > 1 ? 's' : ''}: ${opening.map(r => r.city).join(', ')}.`);
+  if(S.rnd && S.rnd.weekMods && S.rnd.weekMods.notes.length) L.push(S.rnd.weekMods.notes[0]);
+  if(w.weather && !/clear/i.test(w.weather)) L.push(`Weather ${PW().now}: ${w.weather}.`);
+  return L.slice(0, 4);
+}
+/* The Market's and the week's events shape demand. */
+function competitorPrice(route, n){
+  const w = roundData(n === undefined ? S.round : n), M = S && S.rnd && S.rnd.weekMods;
+  if(M && M.rivalCut && ownedRoutes().includes(route.id)) return Math.max(5, Math.round(fareOf(route.id) * (1 - M.rivalCut) / 5) * 5);
+  if(!w.competitor) return undefined;
+  if(w.competitor[route.id] !== undefined) return w.competitor[route.id];
+  return undefined;
+}
+const demandMult0 = (route, day) => {
+  const a = route.arch; if(!a) return 1;
+  const ST = WORLD.settings || {}, wd = calDate(day).getUTCDay(), m = marketWeekOf(day) || {}, M = S && S.rnd && S.rnd.weekMods, bs = a.businessShare !== undefined && a.businessShare !== null ? a.businessShare : 0.5;
+  let biz = (M && M.biz) || m.businessMult || 1, lei = (M && M.lei) || m.leisureMult || 1;
+  if(wd === 6){ biz *= ST.weekendBusinessMultSat || 0.7; lei *= ST.weekendLeisureMult || 1.2; }
+  if(wd === 0){ biz *= ST.weekendBusinessMultSun || 0.6; lei *= ST.weekendLeisureMult || 1.2; }
+  const ms = m.seasonMult && m.seasonMult[route.id] !== undefined && m.seasonMult[route.id] !== null ? m.seasonMult[route.id] : null;
+  const season = ms !== null ? ms : (a.season ? (a.season[seasonOf(day)] || 1) : 1);
+  return (bs * biz + (1 - bs) * lei) * season;
+};
+function demandMult(route, day){ return demandMult0(route, day); }
+function demandAt(route, price, n){
+  const n0 = n === undefined ? S.round : n, w = roundData(n0), M = S && S.rnd && S.rnd.weekMods, dm = Object.assign({}, w.demandMod || {}, M ? M.demandMod : {}), day = dayFor(n0);
+  const mod = (dm[route.id] || 0) + (dm.focus && S.rnd && route.id === S.rnd.focusRoute ? dm.focus : 0);
+  if(!route.wb){ const grow = n0 >= 2 && route.growth ? Math.min(route.cap || Infinity, route.growth * (n0 - 1)) : 0;
+    const base = Math.floor((route.baseDemand + grow + mod) * (1 + homeData().demandPct / 100)); return Math.max(0, Math.floor(base - route.drop * (price - route.basePrice) / route.step)); }
+  return Math.max(0, roundSchool((tableAt(route, price) * growthOf(route, n0) * demandMult(route, day) + mod) * homeScale()));
+}
+/* An event decided before the week: its cost is a share of yesterday's profit from day 22; "wait" grounds the aircraft for a day. */
+function applyEventNow(choice){
+  const ev = S.rnd.event, opt = ev.options[choice], e = opt.effects || {}, F = featuredFlight(), ST = WORLD.settings || {};
+  S.rnd.eventChoice = choice; S.rnd.eventWhy = opt.why || '';
+  const share = costShareOf(ev, opt), scaled = S.day >= (ST.eventCostScaleFromDay || 22) && share !== null;
+  S.rnd.eventCost = scaled ? Math.max(0, Math.round(share * Math.max(0, yesterdayProfit()))) : (e.cash ? r2(-e.cash) : 0);
+  if(scaled) S.rnd.eventCostNote = `${Math.round(share * 100)}% of yesterday's profit (${money(yesterdayProfit())})`;
+  bankStars(e.rep || 0);
+  if(PW().span === 'day'){
+    if(e.status && F){ S.rnd.status[F.key] = e.status; }
+    if((e.refund || e.status === 'CANCELLED') && F){ S.rnd.cancelled = F.key; S.rnd.cancelReason = ev.title; S.rnd.status[F.key] = 'CANCELLED'; }
+  } else if(e.groundNext || e.refund || e.status === 'CANCELLED'){ const ff = featuredFleet() || S.fleet[0]; if(ff) S.disrupt = { uid:ff.uid, ground:true, day:(S.rnd.eventDay || S.period.from) + (e.groundNext ? 1 : 0) }; }
+  if(e.setPrice) Object.keys(e.setPrice).forEach(id => { if(!routeById(id)) return; const v = e.setPrice[id]; S.prices[id] = v === 'match' ? (competitorPrice(routeById(id)) || S.prices[id]) : v; });
+  (S.flags = S.flags || {})[ev.id] = choice;
+  S.rnd.why.push({ ic:'⚠️', text:`${ev.title}: ${opt.label}. ${S.rnd.eventWhy}`.trim() });
+  addNews([{ tag:'EVENT', text:`${ev.title}: ${opt.label}.`, cls:'warn' }]);
+  refreshPlan();
+}
+function undoEvent(){
+  const ev = S.rnd.event; if(!ev || S.rnd.eventChoice === undefined) return;
+  const opt = ev.options[S.rnd.eventChoice], e = opt.effects || {}, F = S.rnd.cancelled ? S.rnd.flights.find(f => f.key === S.rnd.cancelled) : null;
+  bankStars(-(e.rep || 0)); S.rnd.eventCost = 0; delete S.rnd.eventCostNote; S.disrupt = null;
+  if(S.rnd.cancelled){ delete S.rnd.status[S.rnd.cancelled]; delete S.rnd.cancelled; delete S.rnd.cancelReason; }
+  else if(e.status && F) delete S.rnd.status[F.key];
+  if(e.setPrice) Object.keys(e.setPrice).forEach(id => { if(routeById(id)) S.prices[id] = S.rnd.pricesBefore && S.rnd.pricesBefore[id] !== undefined ? S.rnd.pricesBefore[id] : routeById(id).basePrice; });
+  S.rnd.why = S.rnd.why.filter(w => w.ic !== '⚠️'); delete S.rnd.eventChoice; delete S.rnd.eventWhy;
+  refreshPlan();
+}
+/* The hand sums of a week or a month: a day of the plan on the Cost sheet, only when a rule fires. */
+function periodHandTable(pl, L){
+  const H = decideHandSums(L, pl); S.rnd.handSums = H;
+  const by = Object.keys(H).filter(k => H[k] && H[k] !== 'model' && k !== 'flightTime'); if(!by.length) return null;
+  const tid = 'dcost:' + S.day, prev = S.rnd.tables[tid], v0 = L.v;
+  const parts = { run:flightParts(pl), day:dayParts(), cost:[['Flights', money(v0.run)], ['Fuel', money(v0.fuel)], ['Terminal charges', money(v0.term)]].concat(v0.stock ? [['Snack stock', money(v0.stock)]] : []).concat(v0.crew ? [['Second crew', money(v0.crew)]] : []).concat([["Aircraft's day", money(v0.day)]]) };
+  const t = ensureTable(tid, 'cost1', [{ id:'a', label:'One day of the plan', sub:planLabel(pl).split(' · ').slice(0, 2).join(' · '), values:Object.assign({}, v0), parts }], { rows:costRowsFor(L), rowIds:costRowIds(L, pl), labels:costLabels() });
+  if(t !== prev) t.active = null; return t;
+}
+function flightTimeTable(pl){
+  const H = S.rnd.handSums; if(!H || !H.flightTime) return null;
+  const rid = H.flightTime.route, r3 = routeById(rid), p3 = flightTimePlane(pl, rid), km = routeKm(r3), tid3 = `time:${S.day}:${rid}:${p3.id}`, prev3 = S.rnd.tables[tid3];
+  const t3 = ensureTable(tid3, 'time1', [{ id:'t', label:`${r3.city} by ${p3.name.replace(/^DHC-6 /, '')}`, sub:`${num(km)} km at ${num(p3.speed)} km/h`, values:{ km, speed:p3.speed, hours:r2(km / p3.speed) } }]); t3.rid = rid;
+  if(t3 !== prev3) t3.active = null; return t3;
+}
+function loadFactorLine(T){ if(!T || !T.seats || S.day < ((WORLD.settings || {}).loadFactorPercentFromDay || 22)) return ''; const pct = Math.round(100 * T.pax / T.seats); return `<p class="dr-fc">Load factor <b class="mono">${pct}%</b>: ${num(T.pax)} passengers in ${num(T.seats)} seats.</p>`; }
+/* The review's sum, once each: how profit changed (two periods), the average a week (three), the average a day (a month). */
+function reviewSpec(){
+  const H = S.history.filter(x => x.type !== 'setup'), h = H[H.length - 1], wk = H.filter(x => x.type === 'week'), sk = skills();
+  if(!h) return null;
+  if(h.type === 'month' && !sk.averageDay){ const n = h.to - h.from + 1; return { id:'averageDay', title:'What is the average profit a day?', col:periodShort(h), rows:['total', 'n', 'avg'], values:{ total:h.profit, n, avg:Math.round(h.profit / n) }, labels:{ total:`Profit in ${periodShort(h)} (${fmtRange(h.from, h.to)})`, n:'Days', avg:'Average profit a day' } }; }
+  if(wk.length >= 3 && !sk.averageWeek){ const w3 = wk.slice(-3), tot = w3.reduce((t, x) => t + x.profit, 0);
+    return { id:'averageWeek', title:'What is the average profit a week?', col:'Weeks', rows:['total', 'n', 'avg'], values:{ total:tot, n:3, avg:Math.round(tot / 3) }, labels:{ total:'Total profit, three weeks', n:'Weeks', avg:'Average profit a week' }, parts:{ total:w3.map(x => [periodShort(x), money(x.profit)]) } }; }
+  if(wk.length >= 2 && !sk.difference){ const a = wk[wk.length - 2], c = wk[wk.length - 1], up = c.profit >= a.profit;
+    return { id:'difference', title:'How much did weekly profit change?', col:periodShort(c), rows:['prev', 'last', up ? 'rise' : 'fall'], values:{ prev:a.profit, last:c.profit, rise:c.profit - a.profit, fall:a.profit - c.profit }, labels:{ prev:`Profit in ${periodShort(a)}`, last:`Profit in ${periodShort(c)}` } }; }
+  return null;
+}
+const review0 = R.review;
+R.review = () => { const spec = reviewSpec(); review0(); if(spec){ const t = S.rnd.tables['rev:' + S.round]; if(t && tableComplete(t) && !skills()[spec.id]){ skills()[spec.id] = { first:S.day, count:1 }; (S.handSumLog = S.handSumLog || []).push({ day:S.day, date:dateShort(S.day), tools:[spec.title] }); } } };
+
+/* ---------- the teacher's skip: the standing plan runs by itself for 1, 4 or 8 weeks ---------- */
+function autoSkip(n){
+  if(!S || S.phase !== 'round' || periodType() !== 'week' || !(n > 0)) return false;
+  let b = S.round, skipped = 0;
+  const keep = { featured:S.rnd.featured, focusRoute:S.rnd.focusRoute };
+  for(let i = 0; i < n; i++){
+    const w = WORLD.rounds[b]; if(!w || w.period !== 'week') break;
+    S.round = b; S.period = newPeriod('week', Math.max(beatDay(b), S.day)); S.day = S.period.from;
+    S.rnd = Object.assign(emptyRnd(), keep, { headline:w.headline || '', weekMods:{ demandMod:{}, notes:[] }, auto:true });
+    S.fleet.forEach(f => { f.grounded = false; }); S.disrupt = null;
+    refreshPlan(); S.rnd.sim = simulateRun(); applyPeriodResults(); skipped++;
+    const nb = beatStartingOn(S.period.to + 1); if(nb === null) break; b = nb;
+  }
+  S.skipped = (S.skipped || 0) + skipped;
+  S.rnd.skippedNote = `${skipped} week${skipped === 1 ? '' : 's'} skipped: your standing plan ran by itself, and any event was left to run its course.`;
+  addNews([{ tag:'SKIP', text:`${skipped} week${skipped === 1 ? '' : 's'} ran on the standing plan.`, cls:'warn' }]);
+  startBeat(b); return true;
+}
+document.addEventListener('click', e => {
+  const t = e.target; if(!t || t.id !== 'tSkipGo') return;
+  const sel = document.getElementById('tSkipN'), n = sel ? +sel.value : 0;
+  if(!n){ toast('Choose how many weeks to skip.'); return; }
+  if(periodType() !== 'week' || S.phase !== 'round'){ toast('Skips are for the weeks (from day 22) only.'); return; }
+  if(typeof teacherClose === 'function') teacherClose();
+  autoSkip(n);
+});
+/* ==================================================================
+   DECEMBER AND THE CHAPTER REVIEW (28 December 2030), and the gates for chapters 2–6.
+     - December runs as a month (the tank comes back; current plan against test plan); its results are the monthly report.
+     - The chapter review: the chapter's accounts, month by month, with the totals and profit by hand (HandSumRule 3) and
+       projected − actual; a summary of the chapter; the long-haul decision as the hook for chapter 2.
+     - Gates (Stage F): the shop's lease/buy/finance dates (p4m shopOffer), reputation hidden until reputationFromDate
+       and revealed at the level earned, the Challenges and Hunts readers and the quarterly task date for the teacher panel.
+   ================================================================== */
+HAND_TOOLS.push('totals', 'difference');
+WS_STEPS.push('chapterReview'); SHELL_STEPS.push('chapterReview', 'chapter');
+STAGES.review = [{ id:'rev', name:'Review', done:'Reviewed', sub:'How did December go?', steps:['review'] }, { id:'acc', name:'Accounts', done:'Accounts done', sub:'The chapter in figures', steps:['chapterReview'] }];
+Object.assign(RAIL_LABEL, { chapterReview:'Chapter accounts', chapter:'Chapter' }); Object.assign(SUB_DESC, { chapterReview:'Totals by hand' });
+Object.assign(STEP_HINT, { chapterReview:'The model shows each month\'s lines. You add them up: total revenue, total costs, profit, and how far the year went from your projections.' });
+
+/* The chapter's months from the history: revenue, costs, profit and the projections the pupil made. */
+function chapterMonths(){
+  const ch = WORLD.chapter || {}, a = dayOfDate(ch.start || WORLD.startDate), z = WORLD.reviewDay || S.day, out = [];
+  S.history.filter(h => h.from >= a && h.from <= z).forEach(h => {
+    const d = calDate(h.from), key = d.getUTCFullYear() * 12 + d.getUTCMonth(); let m = out.find(x => x.key === key);
+    if(!m){ m = { key, name:MONTH[d.getUTCMonth()], short:MONTH[d.getUTCMonth()].slice(0, 3), rev:0, cost:0, profit:0, pax:0, seats:0, proj:0, projN:0, from:h.from, to:h.to }; out.push(m); }
+    m.rev += h.revenue || 0; m.cost += h.costs || 0; m.profit += h.profit || 0; m.pax += h.pax || 0; m.seats += h.seats || 0; m.to = Math.max(m.to, h.to || h.from);
+    if(h.proj !== undefined && h.proj !== null){ m.proj += h.proj; m.projN++; }
+  });
+  out.forEach(m => { ['rev', 'cost', 'profit', 'proj'].forEach(k => { m[k] = Math.round(m[k]); }); });
+  return out;
+}
+function chapterRows(months){
+  const rows = [], ids = months.map(m => m.short.toLowerCase());
+  months.forEach((m, k) => rows.push({ id:'rev_' + ids[k], label:`Revenue, ${m.name}`, type:'given', unit:'£' }));
+  rows.push({ id:'revTotal', label:'Total revenue', type:'calc', unit:'£', op:'+', from:ids.map(x => 'rev_' + x), sentence:ids.map(x => `{rev_${x}}`).join(' + ') + ' = {?revTotal}', tool:'totals', total:true });
+  months.forEach((m, k) => rows.push({ id:'cost_' + ids[k], label:`Costs, ${m.name}`, type:'given', unit:'£' }));
+  rows.push({ id:'costTotal', label:'Total costs', type:'calc', unit:'£', op:'+', from:ids.map(x => 'cost_' + x), sentence:ids.map(x => `{cost_${x}}`).join(' + ') + ' = {?costTotal}', tool:'totals', total:true });
+  rows.push({ id:'profit', label:'Profit for the chapter', type:'calc', unit:'£', op:'−', from:['revTotal', 'costTotal'], sentence:'{revTotal} − {costTotal} = {?profit}', tool:'profit', total:true });
+  rows.push({ id:'proj', label:'Profit you projected', type:'given', unit:'£', explain:true });
+  rows.push({ id:'better', label:'Better than projected by', type:'calc', unit:'£', op:'−', from:['profit', 'proj'], sentence:'{profit} − {proj} = {?better}', tool:'difference' });
+  rows.push({ id:'worse', label:'Worse than projected by', type:'calc', unit:'£', op:'−', from:['proj', 'profit'], sentence:'{proj} − {profit} = {?worse}', tool:'difference' });
+  return rows;
+}
+R.chapterReview = st => {
+  const ch = WORLD.chapter || { chapter:1, name:'Starting out' }, months = chapterMonths(), rows = chapterRows(months), ids = months.map(m => m.short.toLowerCase());
+  const v = {}; months.forEach((m, k) => { v['rev_' + ids[k]] = m.rev; v['cost_' + ids[k]] = m.cost; });
+  v.revTotal = months.reduce((t, m) => t + m.rev, 0); v.costTotal = months.reduce((t, m) => t + m.cost, 0); v.profit = v.revTotal - v.costTotal;
+  v.proj = months.reduce((t, m) => t + m.proj, 0); v.better = v.profit - v.proj; v.worse = v.proj - v.profit;
+  S.rnd.handSums = Object.assign({}, S.rnd.handSums || {}, { totals:'calc', profit:'calc', difference:'calc' });   // HandSumRule 3: the totals at every review are by hand
+  const rowIds = rows.map(r => r.id).filter(id => id !== (v.better >= 0 ? 'worse' : 'better'));
+  const parts = { proj: months.map(m => [`${m.name}: ${m.projN ? 'your projections' : 'no projection'}`, money(m.proj)]) };
+  const tid = 'chapter:' + (ch.chapter || 1), prev = S.rnd.tables[tid];
+  const t = ensureTable(tid, 'cost1', [{ id:'c', label:`Chapter ${ch.chapter || 1}`, sub:`${dateShort(dayOfDate(ch.start || WORLD.startDate))} – ${dateShort(WORLD.reviewDay || S.day)}`, values:v, parts }], { rows, rowIds });
+  if(t !== prev) t.active = null; S.rnd.activeTable = t.id;
+  const done = tableComplete(t);
+  const pax = S.history.reduce((a, h) => a + (h.pax || 0), 0), seats = S.history.reduce((a, h) => a + (h.seats || 0), 0), opened = WORLD.routes.filter(r => S.history.some(h => h.routes && h.routes[r.id]));
+  const byHand = (S.handSumLog || []).reduce((a, x) => a + x.tools.length, 0), cash0 = WORLD.startingCash || 5000;
+  const summary = kv([['Passengers flown', `<span class="mono">${num(pax)}</span>`], ['Load factor', `<span class="mono">${seats ? Math.round(100 * pax / seats) : 0}%</span>`], ['Routes flown', `${opened.length}: ${opened.map(r => esc(r.city)).join(', ')}`],
+    ['Fleet', S.fleet.map(f => `${esc(planeById(f.planeId).name.replace(/^DHC-6 /, ''))}${f.terms && f.terms.kind !== 'buy' ? ` (${esc(termsWord(f.terms))})` : ''}`).join(', ')], ['Cash', `<span class="mono">${money(cash0)}</span> → <span class="mono gold">${money(Math.round(S.cash))}</span>`], ['Sums by hand', `<span class="mono">${byHand}</span><small>${ch.handSumsPlanned ? ` of about ${ch.handSumsPlanned} planned` : ''}</small>`]]);
+  screen().innerHTML = taskFrame({ question:`Chapter ${ch.chapter || 1}: the accounts`, work:true, calc:t,
+    story: done ? [] : ['The model shows each month\'s revenue and costs. You add up the totals and work out the profit, then see how far the chapter went from what you projected.'],
+    say:`The chapter's accounts. Add up the revenue, add up the costs, work out the profit, and compare it with what you projected.`,
+    context:{ title:'The chapter', html: cxSec(esc(ch.name || 'Starting out'), summary) + (done ? cxSec('Next', `<p class="small">${esc(nextChapterLine())}</p>`) : '') },
+    main:`<div class="cost2"><div class="c2-g"><section class="pnl c2-sheet"><div class="pnl-h"><h3>Chapter ${ch.chapter || 1} accounts</h3><span class="muted">${months.map(m => m.name).join(' · ')}</span></div><div class="sheet1">${tableHtml(t)}</div></section></div></div>`,
+    foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${done ? goLabel('Close the chapter') : 'Complete the accounts first'} &#9654;</button>` });
+  bindTable(t);
+  on('nx', () => { if(!st.done){ st.done = true; (S.handSumLog = S.handSumLog || []).push({ day:S.day, date:dateShort(S.day), tools:['Chapter accounts: total revenue, total costs, profit, projected − actual (Calculate)'] }); S.chapterAccounts = { revenue:v.revTotal, costs:v.costTotal, profit:v.profit, projected:v.proj }; } resetEntry(); UI.justDone = null; advance(); });
+};
+function nextChapterLine(){ const c2 = CHAPTERS[1]; return c2 ? `Chapter ${c2.chapter}, ${c2.name}, opens on ${dateLong(dayOfDate(c2.start))}: ${c2.newIdea || 'the long-haul decision'}. That part of the game is not built yet.` : 'Chapter 2 is not in the workbook yet.'; }
+
+/* ---------- the chapter banner at the chapter's start (chapter 1 on Launch Day; later chapters are read, not shown) ---------- */
+R.chapter = st => {
+  const ch = chapterOf(S.day || 1) || CHAPTERS[0] || { chapter:1, name:'Starting out' };
+  screen().innerHTML = shell(`<div class="hp milestone chap">${hqHead(`Chapter ${ch.chapter}`, 'CHAPTER')}<div class="ms-in"><span class="label">${esc(dateLong(dayOfDate(ch.start)))} – ${esc(dateLong(dayOfDate(ch.end)))}</span><h1>${esc(ch.name)}</h1>
+    <p>${esc(ch.newIdea || '')}</p>${ch.mechanicsArriving ? `<p class="muted">Arriving this chapter: ${esc(ch.mechanicsArriving)}.</p>` : ''}${ch.mathsFront ? `<p class="muted">The maths: ${esc(ch.mathsFront)}.</p>` : ''}
+    <button class="btn primary big" id="chGo">Begin &#9654;</button></div></div>`);
+  on('chGo', () => { UI.view = null; next(); });
+};
+
+/* ---------- gates for chapters 2–6: dates read from Settings, Challenges and Hunts; nothing fires in chapter 1 ---------- */
+function gateDay(key){ const v = SET[key]; if(!v) return null; const d = String(v).match(/\d{4}-\d{2}-\d{2}/); return d ? dayOfDate(d[0]) : null; }
+function repLive(){ const d = gateDay('reputationFromDate'); return !!(d !== null && S && S.day >= d) || !!(WORLD.reputationOn); }
+/* When reputation goes live the stars appear at the level earned so far (the banked event stars). */
+function revealReputation(){ if(!S || S.repRevealed || !repLive()) return; S.rep = clamp(Math.round(((WORLD.startingReputation || 3) + (S.repBank || 0)) * 2) / 2, 1, 5); S.repRevealed = true; }
+function challengesFrom(day){ return (WB && WB.challenges || []).filter(c => c.fromDate).map(c => Object.assign({ day:dayOfDate(c.fromDate) }, c)).sort((a, b) => a.day - b.day).filter(c => c.day >= (day || 0)); }
+function nextChallenge(day){ const used = S && S.challengesDone || []; return challengesFrom(0).find(c => !used.includes(c.n) && c.day <= (day === undefined ? S.day : day)) || null; }
+function huntsFrom(){ return (WB && WB.hunts || []).map(h => Object.assign({ day:dayOfDate(h.date) }, h)).sort((a, b) => a.day - b.day); }
+function quarterlyTaskDue(day){ const d = gateDay('quarterlyTaskFromDate'); return d !== null && (day === undefined ? S.day : day) >= d; }
+function gatesHtml(){
+  const day = S ? S.day : 1, row = (k, v) => `<tr><td>${k}</td><td>${v}</td></tr>`, when = key => { const d = gateDay(key); return d === null ? `<i class="muted">${SET[key] === undefined ? 'not on the sheet (placeholder)' : esc(String(SET[key]))}</i>` : `${dateShort(d)} ${calDate(d).getUTCFullYear()} · ${d <= day ? 'open' : `day ${d}`}`; };
+  const ch = CHAPTERS.map(c => `${c.chapter}. ${esc(c.name)}: ${esc(c.start)} – ${esc(c.end)}${c.chapter === (chapterOf(day) || {}).chapter ? ' <b>(now)</b>' : ''}`).join('<br>');
+  const chl = challengesFrom(0), hunts = huntsFrom();
+  return `<table class="t-log">${row('Chapters', ch || 'none loaded')}${row('Lease from', when('leaseFromDate'))}${row('Buy from', when('buyFromDate'))}${row('Finance from', when('financeFromDate'))}${row('Reputation from', when('reputationFromDate'))}${row('Quarterly task from', when('quarterlyTaskFromDate'))}
+    ${row("Captain's challenges", chl.length ? chl.map(c => `${dateShort(c.day)} ${calDate(c.day).getUTCFullYear()}: ${esc(c.title)}`).join('<br>') : 'none live')}${row('Hunts', hunts.length ? hunts.map(h => `${dateShort(h.day)}: ${esc(h.whatIsWrong || h.id)}`).join('<br>') : 'none live (the Hunts sheet is placeholder)')}</table>`;
+}
+const renderDiag0 = renderDiag;
+function renderDiag(){ const g = $('tGates'); if(g && S) g.innerHTML = gatesHtml(); renderDiag0(); }
+
+/* The month's test-plan controls (p4f R.plans) edit the fleet plan through editPlan; the first departure steps by 15 minutes. */
+function changePlan(i, key, d){
+  const [what, id] = key.split('|');
+  if(what !== 'dep'){ editPlan(i, what, id, d, 0); return; }
+  const pl = i === 9 ? testPlan() : currentPlan(), next = normPlan(JSON.parse(JSON.stringify(pl)));
+  next.firstDep = clamp((next.firstDep || firstDep()) + 15 * d, DEP_MIN, DEP_MAX); next.fleet.forEach(x => { x.deps = null; }); normPlan(next);
+  const ok = withPlan(next, () => next.fleet.every(x => !x.sched.length || fitsFor(x)));
+  if(!ok){ toast("That timetable won't fit in the day."); return; }
+  setPlan(i, next);
+}
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).

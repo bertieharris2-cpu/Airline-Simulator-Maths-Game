@@ -61,7 +61,7 @@ function buildBeats(){
   let d = weekFrom, k = 0;
   while(d <= monthFrom && d < reviewDay){
     const m = marketWeekOf(d) || {}, evs = WB_EVENTS.filter(e => e.date && dayOfDate(e.date) >= d && dayOfDate(e.date) <= d + 6);
-    R.push({ date:isoOf(d), day:d, period:'week', fuel:fuelOn(d), prog: k === 0 ? 4 : k === 1 ? 4.1 : 4.2, title:'Week ' + weekNo(d), headline:m.headline || '', news: m.headline ? [m.headline] : [],
+    R.push({ date:isoOf(d), day:d, period:'week', fuel:fuelOn(d), prog: k === 0 ? 4 : k === 1 ? 4.1 : 4.2, title:'Week ' + weekNo(d), headline:m.headline || '', news: m.headline ? [m.headline] : [], projectWeek: k === 0,
       intro: k === 0 ? 'week' : undefined, market:m, season:m.season, weather:m.weather, events:evs.map(e => Object.assign({ day:dayOfDate(e.date) }, gameEvent(e.id) || { id:e.id, title:e.title, text:e.text, info:true, effectsText:e.effects })) });
     d += 7; k++;
   }
@@ -113,16 +113,16 @@ function stepsFor(b){
 /* The day's brief: yesterday, what the Calendar brings today, routes opening, fuel. */
 function protoBrief(n){
   const w = roundData(n), h = lastDay(), fp = fuelPrice(n), fy = fuelPrice(Math.max(0, n - 1)), L = [];
-  if(h) L.push(`${h.type === 'setup' ? 'Launch Day' : 'Yesterday'}: ${h.pax} passengers flew, ${h.profit >= 0 ? 'profit' : 'loss'} ${money(Math.round(Math.abs(h.profit)))}. The details are in Route performance.`);
+  if(h) L.push(`${h.type === 'setup' ? 'Launch Day' : 'Yesterday'}: ${h.pax} passengers flew, ${h.profit >= 0 ? 'profit' : 'loss'} ${money(Math.round(Math.abs(h.profit)))}.`);
   const mech = ((w.unlocks || {}).mechanics || []).filter(m => !/^(fare|services|timetable)$/.test(m));
-  if(mech.length) L.push(`New today: ${mech.join(', ')}.`);
+  if(mech.length) L.push(`New today: ${mech.slice(0, 2).join(', ')}.`);
   const opening = routesOpening(w.day);
   if(opening.some(r => WORLD.setupRoutes.includes(r.id))) L.push(`${routeById(otherRoute()).city} is now open: one aircraft, two markets.`);
   else if(opening.length) L.push(`New route${opening.length > 1 ? 's' : ''} open: ${opening.map(r => r.city).join(', ')}.`);
   if(w.event) L.push(`${w.event.title}.`);
   if(w.competitor) Object.keys(w.competitor).forEach(id => { const r = routeById(id); if(r) L.push(`${WORLD.rival} is selling ${r.city} tickets for ${money(w.competitor[id])}.`); });
   if(fuelPaid() && fp !== fy) L.push(`Fuel is ${priceL(fp)} a litre today (was ${priceL(fy)}).`);
-  return L.slice(0, 3);
+  return L.slice(0, S.fleet.length > 1 ? 2 : 3);
 }
 /* Closing a day or a period: the next beat the calendar gives, the standing plan before the first week, the chapter end after the review. */
 function closeDay(){

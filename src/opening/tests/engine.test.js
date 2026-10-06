@@ -9,7 +9,7 @@ const path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   // the setup, as a pupil would do it
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await p.click('#nx');
-  if(await p.evaluate(() => window.__sim.step().t) === 'boot') await p.click('#enterHq');
+  if(await p.evaluate(() => window.__sim.step().t) === 'boot') await p.click('#enterHq'); if(await p.evaluate(() => window.__sim.step().t) === 'chapter') await p.click('#chGo');
   await p.click('#nx'); await p.click('[data-mk="par"]'); await p.click('#nx');
   const res = await p.evaluate(() => {
     const { WB, WE, planOutcome, beatDay, buyPlane, planeById, fuelPrice, toMin } = window.__world, out = [], S = window.__world.getS();

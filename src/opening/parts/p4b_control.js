@@ -182,7 +182,7 @@ function sentenceHtml(t, col, row){
 function tableHtml(t, o){
   o = o || {};
   const rows = tRows(t), def = TABLES[t.kind], act = t.active, ops = opsFor(t), choosing = act && t.mode === 'choose' && !t.chosen[cellId(act.col, act.row)];
-  let h = `<div class="ft2 ${act ? 'is-active' : ''}"><table class="fx ${t.cols.length === 1 ? 'one' : ''} ${tRows(t).length > 6 && (innerHeight < 900 || t.kind === 'options') ? 'dense' : ''}"><thead><tr><th></th>`;
+  let h = `<div class="ft2 ${act ? 'is-active' : ''}" data-tbl="${esc(t.id)}"><table class="fx ${t.cols.length === 1 ? 'one' : ''} ${tRows(t).length > 6 && (innerHeight < 900 || t.kind === 'options') ? 'dense' : ''}"><thead><tr><th></th>`;
   t.cols.forEach(c => { h += `<th class="${t.picked===c.id?'picked':''} ${act && act.col!==c.id ? 'dim' : ''}">${c.flag?flagSvg(c.flag,26):''}<b>${esc(c.label)}</b>${c.sub?`<small>${esc(c.sub)}</small>`:''}${c.headHtml || ''}</th>`; });
   h += `</tr></thead><tbody>`;
   rows.forEach((r, ri) => {
@@ -233,7 +233,8 @@ function cellCorrect(t, byTeacher){
 function cellWrong(res){ const k = (UI.tries = (UI.tries||0) + 1); let m = TEXT.retry[(k-1) % TEXT.retry.length]; if(res === 'blank') m = 'Enter a figure first.'; else if(settings.nudge) m += ' ' + (res === 'high' ? TEXT.nudgeHigh : TEXT.nudgeLow); UI.msg = m; UI.ok = false; }
 function bindTable(t, o){
   o = o || {}; const rerender = () => render();
-  screen().querySelectorAll('[data-cell]').forEach(b => b.onclick = () => { const [col, row] = b.getAttribute('data-cell').split('|'); setActive(t, {col, row}); UI.justDone = null; if(UI.dock) UI.dock.mode = null; publish(); rerender(); });
+  screen().querySelectorAll('[data-cell]').forEach(b => { const root = b.closest('[data-tbl]'); if(root && root.getAttribute('data-tbl') !== t.id) return;   // two tables on one screen: each binds its own cells
+    b.onclick = () => { const [col, row] = b.getAttribute('data-cell').split('|'); setActive(t, {col, row}); UI.justDone = null; if(UI.dock) UI.dock.mode = null; publish(); rerender(); }; });
   screen().querySelectorAll('[data-tick]').forEach(b => b.onclick = () => { const k = t.id+'|'+b.getAttribute('data-tick'); UI.tickOpen[k] = !UI.tickOpen[k]; rerender(); });
   screen().querySelectorAll('[data-explain]').forEach(b => b.onclick = e => { e.stopPropagation(); const k = b.getAttribute('data-explain'); UI.explain = k && UI.explain !== k ? k : null; rerender(); });
   screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { const c = t.cols.find(x => x.id === b.getAttribute('data-pick')); if(!c || c.disabled || !tableComplete(t)) return; t.picked = c.id; o.onPick && o.onPick(c); });

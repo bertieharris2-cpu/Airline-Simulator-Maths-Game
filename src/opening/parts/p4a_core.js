@@ -87,7 +87,7 @@ function newState(){
     airline:{ name:'', code:'', c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'fin'},{t:'boot'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'fin'},{t:'boot'},{t:'chapter'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };
@@ -868,7 +868,7 @@ function applyResults(){
   Object.keys(routes).forEach(id => { const b = X.byRoute[id]; if(b){ routes[id].rev += b.obRev; routes[id].cost = r2(routes[id].cost + b.obCost); routes[id].onboard = b.obRev; } });
   Object.keys(routes).forEach(id => { routes[id].profit = r2(routes[id].rev - routes[id].cost); });
   ledgerPut(S.day || 0, rev, S.rnd.costs, flown.reduce((t,f) => t+f.sold, 0), flown.reduce((t,f) => t+f.seats, 0));
-  S.history.push({ round:S.round, type: S.phase === 'setup' ? 'setup' : 'day', from:S.day || 0, to:S.day || 0, over, revenue:rev, costs:S.rnd.costs, profit:S.rnd.profit, cash:S.cash, rep:S.rep, fuelPaid:avgFuelPrice(), fuelPrice:fuelPrice(), emptyTrips: fl.filter(f => !f.grounded && !f.noFuel && f.sold < f.seats/2).length,
+  S.history.push({ round:S.round, type: S.phase === 'setup' ? 'setup' : 'day', from:S.day || 0, to:S.day || 0, over, proj: S.rnd.myForecast ? S.rnd.myForecast.profit : (S.rnd.forecast ? S.rnd.forecast.profit : null), revenue:rev, costs:S.rnd.costs, profit:S.rnd.profit, cash:S.cash, rep:S.rep, fuelPaid:avgFuelPrice(), fuelPrice:fuelPrice(), emptyTrips: fl.filter(f => !f.grounded && !f.noFuel && f.sold < f.seats/2).length,
     pax: flown.reduce((t,f) => t+f.sold, 0), seats: flown.reduce((t,f) => t+f.seats, 0), trips: flown.length, routes, reviews: S.rnd.reviews, fuelL: S.fuel, fuelStock: S.fuelValue });
   checkMilestones();
   addNews([{tag:'£', text:`${S.airline.name}: ${S.rnd.profit>=0?'profit':'loss'} of ${money(Math.round(Math.abs(S.rnd.profit)))} on ${S.phase === 'setup' ? 'launch day' : dateShort()}.`, cls:S.rnd.profit>=0?'good':'warn'}]);

@@ -102,6 +102,7 @@
         <div id="tTools"></div>
         <div class="row"><button class="btn small" id="tToolsDef">Defaults for all</button><button class="btn small" id="tToolsCalc">Pupil calculates all</button><button class="btn small" id="tToolsModel">Model does all</button><button class="btn small" id="tFill">Fill this table</button><button class="btn small" id="tWorkOpen">Working space on the board</button><button class="btn small" id="tWorkClose">Close it</button></div>
       </div>
+      <div class="tsec" style="grid-column:1/-1"><h3>Chapters 2–6: the gates</h3><p class="small muted">Read from the workbook, not yet built: dates that switch things on, the challenges and hunts to come.</p><div id="tGates"></div></div>
       <div class="tsec" style="grid-column:1/-1"><h3>By hand so far</h3><p class="small muted">The hand-sum rules (workbook HandSumRules 1–6) decide what the pupil works out each day; the Maths tools levels above override them.</p><div id="tHand"></div></div>
       <div class="tsec" style="grid-column:1/-1"><h3>Calculation checks</h3><div id="tDiag"></div><div class="row"><button class="btn small" id="tDiagClear">Clear the list</button></div></div>
       <div class="tsec"><h3>Tomorrow's choice</h3>
@@ -113,6 +114,7 @@
         <div class="row"><span>Adjust cash now</span><input type="number" id="tCashDelta" step="100" placeholder="+/- £"><button class="btn small" id="tCashApply">Apply</button></div>
         <div class="row"><span>Reputation</span><button class="btn small" id="tRepDown">−½ ★</button><button class="btn small" id="tRepUp">+½ ★</button></div>
         <div class="row"><span>Jump</span><button class="btn small" id="tRoundNext">Skip to the next story beat</button><button class="btn small" id="tRepeat">Repeat this period</button></div>
+        <div class="row"><span>Skip ahead (weeks only)</span><select id="tSkipN"><option value="0">0 weeks</option><option value="1">1 week</option><option value="4">4 weeks</option><option value="8">8 weeks</option></select><button class="btn small" id="tSkipGo">Run the standing plan and skip</button></div>
         <div class="row"><span>Live operations pace</span><select id="tFlightSecs"><option value="4">Brisk</option><option value="7">Standard</option><option value="12">Slow</option></select></div>
         <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tOpsSound" style="width:24px;height:24px"> Airport chimes and announcements during live operations</label></div>
         <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tAutoWall" style="width:24px;height:24px"> With no IWB window open, show live operations full screen on this screen</label></div>

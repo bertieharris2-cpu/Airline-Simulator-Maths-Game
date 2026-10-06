@@ -760,10 +760,10 @@ function ctxTiming(k){
 function ctxAircraft(){
   const p = ourPlane(), f = fleetOne(), sched = f ? schedOf(f) : [], D = sched.length ? TIME.day(p, sched) : null, end = D ? D.trips[D.trips.length - 1].arr + TIME.home(p) : null;
   const fits = id => schedFits(sched.concat([id]));
-  const room = plannerRoutes().filter(fits).map(id => esc(routeById(id).city)), more = [['Room for another service', room.length ? `<span class="green">${room.join(', ')}</span>` : '<span class="orange">None</span>']];
+  const room = plannerRoutes().filter(fits).map(id => esc(routeById(id).city)), more = S.fleet.length > 1 ? [] : [['Room for another service', room.length ? `<span class="green">${room.join(', ')}</span>` : '<span class="orange">None</span>']];
   const fl = sched.length ? planFlights().filter(x => !x.grounded) : [];
   return { title:'Aircraft status', html: cxSec(`${esc(p.name.replace(/^DHC-6 /, ''))} · <span class="mono">${p.seats}</span> seats`, kv([['Services scheduled', `<span class="mono">${sched.length}</span>`], ['Next available', `<span class="mono">${end ? fmtTime(end) : fmtTime(firstDep())}</span>`], ['Operating day left', `<span class="mono">${fmtDur(Math.max(0, dayEnd() - (end || dayStart())))}</span>`]].concat(more))) +
-    `<section class="cx deps"><h4>Departures</h4>${fl.length ? `<table class="deps-t"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th>Back</th></tr></thead><tbody>${fl.map(x => `<tr><td class="mono">${fmtTime(x.dep)}</td><td class="mono">${esc(x.code)}</td><td>${esc(routeById(x.route).city)}</td><td class="mono">${fmtTimeDay(x.arr)}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">No services yet.</p>'}</section>` };
+    `<section class="cx deps"><h4>Departures</h4>${fl.length ? `<table class="deps-t"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th>Back</th></tr></thead><tbody>${fl.slice(0, 3).map(x => `<tr><td class="mono">${fmtTime(x.dep)}</td><td class="mono">${esc(x.code)}</td><td>${esc(routeById(x.route).city)}</td><td class="mono">${fmtTimeDay(x.arr)}</td></tr>`).join('')}${fl.length > 3 ? `<tr><td colspan="4" class="muted">and ${fl.length - 3} more</td></tr>` : ''}</tbody></table>` : '<p class="muted">No services yet.</p>'}</section>` };
 }
 function acCard(){ const p = ourPlane(); return `<div class="ac-card"><div class="ac-pic"><svg viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-${p.icon}"/></svg></div><div class="ac-t"><b>${esc(p.name)}</b><span><span class="mono">${p.seats}</span> seats</span><small>${esc(p.fact)}</small></div></div>`; }
 function ctxMarket(){

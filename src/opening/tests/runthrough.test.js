@@ -34,7 +34,7 @@ const UPTO = +(process.env.UPTO || 9);
     '- **Model:** the game shows the figure and nothing is asked.');
   // ---- setup ----
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await p.click('#nx');
-  if(await T() === 'boot') await p.click('#enterHq');
+  if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
   head('Launch Day, Sunday 12 May 2030 (fuel free: the launch deal)');
   q('Model', 'Cash after the aircraft', '£5,000 − £2,500 (shown on the start-up aircraft card)', '£2,500');
   await p.click('#nx'); await p.click('[data-mk="par"]'); await p.click('#nx');
@@ -58,6 +58,10 @@ const UPTO = +(process.env.UPTO || 9);
       const qq = await txt('.ni-q'), opts = await p.$$eval('[data-ni]', e => e.map(x => x.textContent.trim()));
       for(let k = 0; k < opts.length && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`);
       q('**Chosen**', `What's new (${key}): which sum?`, `${qq} · options ${opts.join(' / ')}`, (await txt('.ni-yes')).replace('✓ ', '') + ' (the game shows the answer; nothing is worked out)'); await p.click('#nx'); continue; }
+    if(t === 'chapter'){ head('Chapter banner'); await p.click('#chGo'); continue; }
+    if(t === 'event'){ head((await txt('h1, .tf-q')) + ' (event)'); q('Model', 'Decide', 'the choice is made; a cash option joins the day\'s costs'); await p.click('[data-o="1"]'); await p.click('#nx'); await p.click('#nx'); continue; }
+    if(t === 'shop2'){ head('Aircraft for sale'); q('Model', 'Look at the aircraft, or not today', 'this run-through keeps one aircraft'); await p.click('#skipShop'); continue; }
+    if(t === 'chapterReview'){ head('Chapter accounts'); await solve(); if(await p.$('#calcDone')) await p.click('#calcDone'); await p.click('#nx'); continue; }
     if(t === 'hq'){ head(await p.evaluate(() => { const S = window.__sim.S(); return (S.period.type === 'day' ? `Day ${S.round} · ` : '') + window.__sim.periodLabel(); })); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ head((await txt('.ms-in h1')) + ' (milestone)'); q('Model', 'Read the milestone', (await txt('.ms-in')).split('\n').slice(2, 4).join(' '), '—'); await p.click('#msGo'); continue; }
     if(t === 'review'){ const before = L.length; await solve(); if(L.length === before) q('Model', 'Review last week', 'no figure is asked', '—'); await p.click('#nx'); continue; }

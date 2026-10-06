@@ -139,6 +139,7 @@ function simulateDays(a, b, o){
   o = o || {}; const auto = o.auto !== false;
   const out = { from:a, to:b, rev:0, run:0, extra:0, fuelUsed:0, over:0, autoL:0, autoCost:0, pax:0, seats:0, trips:0, cancelled:0, routes:{}, planes:{}, days:[] };
   for(let d = a; d <= b; d++){
+    if(S.disrupt && S.disrupt.ground) S.fleet.forEach(f => { f.grounded = f.uid === S.disrupt.uid && d === (S.disrupt.day || a); });   // an event grounds an aircraft for a day
     const beat = beatAt(d), fl = withDay(d, () => withBeat(beat, () => planFlights())).sort((x, y) => x.dep - y.dep), want = {};
     fl.forEach(f => { if(!f.grounded && want[f.route] === undefined) want[f.route] = withDay(d, () => withBeat(beat, () => paxWant(routeById(f.route), f.price))); });
     let rev = 0, run = 0, fuel = 0, pax = 0, seats = 0;
@@ -171,6 +172,7 @@ function simulateDays(a, b, o){
     out.rev += dayRev; out.run += run; out.extra += extra; out.fuelUsed = r2(out.fuelUsed + fuel); out.over += over; out.pax += pax; out.seats += seats; out.days.push(r2(dayRev - dayCost));
     if(S.cash < 0) bankCheck();
   }
+  if(S.disrupt && S.disrupt.ground) S.fleet.forEach(f => { f.grounded = false; });
   Object.keys(out.routes).forEach(id => { const x = out.routes[id]; x.rev = r2(x.rev); x.profit = r2(x.rev - x.cost); });
   out.rev = r2(out.rev); out.costs = r2(out.run + out.extra + out.fuelUsed + out.over); out.profit = r2(out.rev - out.costs);
   out.cashEnd = S.cash; out.fuelEnd = S.fuel; out.fuelStock = S.fuelValue;
@@ -217,9 +219,9 @@ function applyPeriodResults(){
   if(T.autoL) why.push({ ic:'⛽', text:`The tank ran low, so ${num(T.autoL)} L were delivered at the market price plus ${priceL(WORLD.fuelTopUp || 0)} a litre: ${money(T.autoCost)}.` });
   const fc = S.rnd.myForecast;
   if(isYearRun()) S.rnd.vs = yearVs(T);
-  else if(fc) S.rnd.vs = { kind:'period', expProfit:fc.profit, gotProfit:T.profit, expFuel:fc.fuel, gotFuel:T.fuelUsed };
+  else if(fc) S.rnd.vs = { kind:'period', expProfit:fc.profit, gotProfit:T.profit, expFuel:fc.fuel, gotFuel:T.fuelUsed, why: fc.projected && Math.abs(fc.profit - T.profit) >= 1 ? 'The projection took one weekday × 7. Saturday and Sunday carry fewer business travellers, so the week came out differently.' : '' };
   const F = { route: fr ? fr.id : null, price: fr ? fareOf(fr.id) : 0, sold: fr && T.routes[fr.id] ? T.routes[fr.id].pax : 0 }; S.rnd.reviews = tags.slice(0, 3).map(t => pickReview(t, F)).filter(Boolean);
-  T.parts.forEach(p => S.history.push({ round:S.round, type: P.type, from:p.from, to:p.to, revenue:p.rev, costs:p.costs, profit:p.profit, cash:p.cashEnd, rep:S.rep, pax:p.pax, seats:p.seats, trips:p.trips,
+  T.parts.forEach(p => S.history.push({ round:S.round, type: P.type, from:p.from, to:p.to, revenue:p.rev, costs:p.costs, profit:p.profit, cash:p.cashEnd, rep:S.rep, pax:p.pax, seats:p.seats, trips:p.trips, proj: fc && T.parts.length === 1 ? fc.profit : null,
     routes:Object.fromEntries(Object.keys(p.routes).map(id => [id, Object.assign({}, p.routes[id], { rev:Math.round(p.routes[id].rev), cost:Math.round(p.routes[id].cost), profit:Math.round(p.routes[id].profit) })])), fuelL:p.fuelEnd, fuelStock:p.fuelStock, over:p.over }));
   if(S.history.length > 160) S.history = S.history.slice(-160);
   addNews([{ tag:'£', text:`${S.airline.name}: ${T.profit >= 0 ? 'profit' : 'loss'} of ${money(Math.abs(T.profit))} ${isYearRun() ? 'from September to April' : 'in ' + periodShort(lastHist())}.`, cls: T.profit >= 0 ? 'good' : 'warn' }]);
@@ -229,14 +231,15 @@ function applyPeriodResults(){
 /* ---------- the forecast for a week or a month: a dry run of the real engine ---------- */
 const PL_CACHE = new Map();
 function applyPlanRaw(pl){ const f = fleetOne(); if(f){ f.schedule = pl.sched.slice(); f.route = pl.sched[0] || null; } S.prices = Object.assign({}, S.prices, pl.prices); S.firstDep = pl.firstDep; S.onboard = pl.onboard; S.deps = pl.deps ? pl.deps.slice() : null; }
-function periodLabels(){ const W = PW(); return { rev:`Revenue ${W.now}`, ops:`Running costs ${W.now}`, fuel:`Fuel used ${W.now}` }; }
+function periodLabels(){ const W = PW(); return { revDay:'Revenue a day (average)', opsDay:'Running costs a day (average)', rev:`Revenue ${W.now}`, ops:`Running costs ${W.now}`, fuel:`Fuel used ${W.now}` }; }
 function periodLines(pl){
   const P = S.period, key = [planKey(pl), orderL(), P.from, P.to, S.rep, S.fuel, r2(S.fuelValue), S.round, (S.fuelLots || []).length].join('|');
   if(PL_CACHE.has(key)) return PL_CACHE.get(key);
   const L = planLines(pl);
   const T = dryRun(() => { applyPlanRaw(pl); const o = S.rnd.fuelOrder; if(o){ buyFuel(o.litres, o.price); S.rnd.fuelOrder = null; } return simulateDays(P.from, P.to); });
-  const days = P.to - P.from + 1, v = L.v, opsDay = v.cost - v.fuel, fuel = Math.round(T.fuelUsed);
-  const w = Object.assign({}, v, { revDay:v.rev, days, rev:v.rev * days, opsDay, ops:opsDay * days, fuel, cost:opsDay * days + fuel, profit:v.rev * days - opsDay * days - fuel, base:0, diff:0, diffL:0 });
+  const days = P.to - P.from + 1, v = L.v, fuel = Math.round(T.fuelUsed), rev = Math.round(T.rev), ops = Math.round(T.costs - T.fuelUsed);   // the dry run: weekends, events and the Market included
+  const revDay = r2(rev / days), opsDay = r2(ops / days);
+  const w = Object.assign({}, v, { revDay, days, rev, opsDay, ops, fuel, cost:ops + fuel, profit:rev - ops - fuel, base:0, diff:0, diffL:0 });
   const parts = { opsDay:[['Flights', money(v.run)], ['Terminal charges', money(v.term)]].concat(v.stock ? [['Snack stock', money(v.stock)]] : []).concat(v.crew ? [['Second crew', money(v.crew)]] : []).concat([["Aircraft's day", money(v.day)]]) };
   const out = Object.assign({}, L, { v:w, parts, autoL:T.autoL, autoCost:T.autoCost, exactRev:T.rev, exactCost:Math.round(T.costs) });
   if(PL_CACHE.size > 200) PL_CACHE.clear(); PL_CACHE.set(key, out);
@@ -340,7 +343,7 @@ function periodResultsCard(){
   return `${hqHead(yr ? 'The Year So Far' : `${capFirst(periodShort(h))} Results`, 'ALL LANDED')}<div class="pb td2 dr">
     <div class="dr-rcp"><div class="rev"><span class="kl">Revenue</span><b>${money(T.rev)}</b></div><i>−</i><div class="cost"><span class="kl">Costs</span><b>${money(T.costs)}</b></div><i>=</i>
       <div class="prof ${pr < 0 ? 'neg' : ''}"><span class="kl">${pr >= 0 ? 'Profit' : 'Loss'}</span><b>${money(Math.abs(pr))}</b></div></div>
-    ${fcLine}${yr ? yearResultLines() : ''}${savedLine()}${chips}
+    ${fcLine}${typeof loadFactorLine === 'function' ? loadFactorLine(T) : ''}${yr ? yearResultLines() : ''}${savedLine()}${chips}
     ${yr ? `<p class="dr-cash">Cash now <b>${money(Math.round(S.cash))}</b></p>` : ''}<p class="dr-cash" ${yr ? 'hidden' : ''}>Profit <b>${money(pr)}</b>${Math.abs(bought) >= 1 ? ` · fuel stock bought or used up: ${bought < 0 ? '−' : '+'}${money(Math.abs(Math.round(bought)))}` : ''} · cash now <b>${money(Math.round(S.cash))}</b></p>
     ${yr ? '' : `<div class="dr-routes">${Object.keys(T.routes).map(id => { const x = T.routes[id], miss = Math.max(0, (x.want || x.pax) - x.pax); return `<span>${flagSvg(routeById(id).flag, 16)} <b>${esc(routeById(id).city)}</b> ${num(x.want)} wanted · ${num(x.pax)} flew · <span class="${miss ? 'orange' : ''}">${num(miss)} no seat</span></span>`; }).join('')}</div>`}
     <div class="td-act"><span class="grow"></span><button class="btn primary act" id="nx">${closeWord()} ▶</button></div></div>`;

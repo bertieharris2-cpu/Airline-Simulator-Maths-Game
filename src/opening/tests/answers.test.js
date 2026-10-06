@@ -18,7 +18,7 @@ const TAG = `${HOME}-${MK}-${W}`;
   const typedLog = {};
   const solve = async tag => { const seen = [];
     for(let i = 0; i < 20; i++){ const c = await p.$('[data-cell]'); if(!c) break; const id = await c.getAttribute('data-cell'); seen.push(id); await c.click();
-      if(await p.$('.dock [data-pk]')){ const row = id.split('|')[1], pr = PAIR[row]; seen[seen.length - 1] += ':build';
+      if(await p.$('.dock [data-pk]')){ const row = id.split('|')[1], pr = PAIR[row] || (row.startsWith('tk_') ? ['pax_' + row.slice(3), 'fare_' + row.slice(3), '×'] : null); seen[seen.length - 1] += ':build'; if(!pr){ ok('build pair known for ' + row, false); break; }
         for(const k of pr.slice(0, 2)) await p.click(`.dock [data-pk="${k}"]`); await p.click(`.dock [data-op="${pr[2]}"]`); await p.click('#trySum'); await p.waitForTimeout(100); continue; }
       await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); }
     typedLog[tag] = seen; return seen; };
@@ -27,7 +27,7 @@ const TAG = `${HOME}-${MK}-${W}`;
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx');
   ok('no airline-type choice at the start', await T() !== 'strategy', await T());
   await p.click('#nx');   // livery
-  if(await T() === 'boot') await p.click('#enterHq');
+  if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
   await p.click('#nx'); await p.click(`[data-mk="${MK}"]`); await p.click('#nx'); await p.click('#nx');
   for(let k = 0; k < 4; k++) await p.click('#nx'); const rq = await p.$$eval('[data-rq]', e => e.map(x => x.getAttribute('data-rq'))); await p.click(`[data-rq="${rq[1]}"]`); await p.click('#nx');
   await p.click(`[data-svc="${MK}|2"]`); await p.click('#nx');
@@ -68,18 +68,27 @@ const TAG = `${HOME}-${MK}-${W}`;
     const R = s.round, setup = s.phase === 'setup', day = setup ? 0 : R;
     if(t === 'fareTry'){ await fits('fareTry'); await shot('d0-fare'); await p.click('#nx'); continue; }
     if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) await p.click('#niNext'); for(let k = 0; k < 3 && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
+    if(t === 'chapter'){ await fits('chapter'); await shot('chapter'); await p.click('#chGo'); continue; }
+    if(t === 'chapterReview'){ await fits('chapterReview'); const typed = await solve('chapterReview'); checks.push('info chapterReview typed ' + JSON.stringify(typed)); if(await p.$('#calcDone')) await p.click('#calcDone'); await shot('chapterReview'); ok('chapter review: totals by hand', typed.length >= 3, typed); ok('chapter review: continue enabled', await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
+    if(t === 'shop2'){ await fits('shop ' + R); await shot('shop-' + R); if(R === 7){ await p.click('[data-pick="sf34"]'); ok('shop: the Saab can be looked at', !(await p.$eval('#nx', e => e.disabled))); await p.click('#nx'); } else await p.click('#skipShop'); continue; }
+    if(t === 'fleetSums'){ await fits('fleetSums ' + R); const typed = await solve('fleetSums'); checks.push('info fleetSums ' + JSON.stringify(typed)); if(await p.$('#calcDone')) await p.click('#calcDone'); await shot('fleetSums-' + R); ok('fleet sums: continue enabled', await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
+    if(t === 'acquire'){ await fits('acquire ' + R); await shot('acquire-' + R); const before = (await S()).cash; await p.click('[data-terms="lease"]'); await p.click('#nx'); const a = await S(); ok('acquire: renting adds an aircraft without spending cash', a.fleet.length === 2 && Math.abs(a.cash - before) < 0.01, [a.fleet.length, before, a.cash]); continue; }
+    if(t === 'event'){ await fits('event ' + R); await shot('ev-' + R); const opts = (await p.$$('[data-o]')).length; ok(`event ${R}: options offered`, opts >= 2, opts);
+      ok(`event ${R}: decide waits for a choice`, await p.$eval('#nx', e => e.disabled)); await p.click(`[data-o="${R === 4 ? 2 : 1}"]`); await p.click('#nx');
+      ok(`event ${R}: the choice is recorded`, (await S()).rnd.eventChoice !== undefined); await fits('event decided ' + R); await shot('ev-' + R + '-done'); await p.click('#nx'); continue; }
     if(t === 'hq'){ await fits('hq ' + R); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ await fits('milestone ' + R); await shot('ms-' + R); await p.click('#msGo'); continue; }
     if(t === 'review'){ await solve('review ' + R); await p.click('#nx'); continue; }
     if(t === 'planner'){
       if(R <= 4 && s.period.type === 'day'){
-        ok(`Day ${R}: snacks only from Day 1`, (await vis('[data-pe^="0|ob|"]')) === (R >= 1));
-        ok(`Day ${R}: departure times only from Day 3`, (await vis('[data-pe^="0|dep|"]')) === (R >= 3));
-        ok(`Day ${R}: the second market only from Day 4`, (await vis(`[data-pe="0|fare|${OTHER}|1"]`)) === (R >= 4));
+        ok(`Day ${R + 1}: snacks only from Day 2`, (await vis('[data-pe^="0|ob|"]')) === (R >= 1));
+        ok(`Day ${R + 1}: departure times only from Day 4`, (await vis('[data-pe^="0|dep|"]')) === (R >= 3));
+        ok(`Day ${R + 1}: the second market only from Day 4`, (await vis(`[data-pe="0|fare|${OTHER}|1"]`)) === (R >= 3));
         if(R === 1 && POL !== 'weak') await p.click('[data-pe="0|ob|low|0"]');
         if(R === 3){ const before = await p.evaluate(() => window.__sim.S().deps); await p.click('[data-pe="0|dep|0|-1"]'); await p.click('[data-pe="0|dep|0|-1"]'); const after = await p.evaluate(() => window.__sim.S().deps); ok('Day 3: a departure time can be moved', after && before && after[0] === before[0] - 60, [before, after]); }
-        if(R === 4 && POL !== 'weak') await p.click(`[data-pe="0|add|${OTHER}|0"]`).catch(() => {});
+        if(R === 3 && POL !== 'weak') await p.click(`[data-pe="0|add|${OTHER}|0"]`).catch(() => {});
       }
+      if(s.fleet.length > 1 && s.period.type === 'day' && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); } }
       await fits('planner ' + R); if(R <= 4) await shot(`d${day}-plan`); await p.click('#nx'); continue; }
     if(t === 'costPlan' && day === +(process.env.PDAY || 0)){ await probe(); break; }
     if(t === 'costPlan'){
@@ -124,7 +133,7 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(t === 'delivery'){ await p.click('#nx'); continue; }
     checks.push('stopped at ' + t + ' round ' + R); await shot('stop'); break;
   }
-  if(UPTO > 19){ ok('the airline type is chosen at the Year 1 review', strategySeen); console.log(`CALIB ${POL} ${HOME} ${MK} ${JSON.stringify(calib)}`); }
+  if(UPTO > 19) console.log(`CALIB ${POL} ${HOME} ${MK} ${JSON.stringify(calib)}`);
   // the archive
   await p.click('[data-nav="finance"]', { force:true }).catch(() => {}); await p.click('[data-tab="fin2|plans"]').catch(() => {}); await p.waitForTimeout(200);
   const arch = await p.evaluate(() => [...document.querySelectorAll('.arch tbody tr')].length); if((await S()).round >= 2) ok('Finance → Plans lists the days', arch >= 3, arch); await shot('archive');

@@ -287,7 +287,7 @@ const PLAN_STORY = {
   3.4:['A second market is open. Your one aircraft can now fly to two places.', 'How should its day be shared between them? Add a service, or change a service\'s route with ⇄.'] };
 R.planner = () => {
   const p = ourPlane(), pl = currentPlan(), L = planLines(pl), W = PW(), per = W.span !== 'day', st = progress();
-  const story = !per ? (PLAN_STORY[st] || []) : [];
+  const story = !per && (S.round === 0 || roundData(S.round).prog !== roundData(S.round - 1).prog) ? (PLAN_STORY[st] || []) : [];   // the stage's story on the day it arrives
   const gantt = depsOn() ? '' : `<section class="pnl"><div class="pnl-h"><h3>Operating day</h3><span class="muted">${WORLD.dayStart}–${WORLD.dayEnd}</span></div>${serviceGantt(pl.sched, { full:true })}</section>`;
   const groups = depsOn() ? '' : `<section class="pnl"><div class="pnl-h"><h3>Expected passengers per service</h3>${paxKey()}</div>${plannerRoutes().filter(id => pl.sched.includes(id)).map(id => paxGroups(paxWant(routeById(id), fareOf(id)), p.seats, serviceCounts(pl.sched)[id] || 0, { small:true })).join('') || '<p class="muted">No services yet.</p>'}</section>`;
   screen().innerHTML = taskFrame({ question: per ? `What will your airline fly ${W.now}?` : 'What will your airline do today?', work:false, story,
@@ -324,7 +324,7 @@ function weekProjected(){ return S.phase === 'round' && PW().span === 'week' && 
 function linesFor(pl){ const sp = PW().span; return sp === 'day' ? planLines(pl) : weekProjected() ? weekLines(pl) : periodLines(pl); }
 R.costPlan = () => {
   const pl = currentPlan(), W = PW(), sp = W.span, setup = S.phase === 'setup';
-  let t, t2 = null, t3 = null, L, title, intro = '';
+  let t, t2 = null, t3 = null, tH = null, L, title, intro = '';
   if(sp === 'day'){
     L = planLines(pl);
     const tid = 'cost:' + S.day, prev = S.rnd.tables[tid];
@@ -353,25 +353,27 @@ R.costPlan = () => {
     t = ensureTable(tid, 'week1', [{ id:'a', label:'Your plan', sub:'one day, then the week', values:L.v, parts:L.parts }]); if(t !== prev) t.active = null;
     title = 'Project the week';
     intro = `<p class="c2-note">Your regular plan runs every day this week. Use one day's figures to project the whole week.</p>`;
+    if(typeof periodHandTable === 'function'){ tH = periodHandTable(pl, L.day || planLines(pl)); t3 = flightTimeTable(pl); }
   } else {
     L = periodLines(pl);
     const tid = 'pcost:' + S.day + ':' + orderL(), prev = S.rnd.tables[tid];
     t = ensureTable(tid, 'periodPlan2', [{ id:'a', label:'Your plan', sub:fmtRange(S.period.from, S.period.to), values:L.v, parts:L.parts }], { rowIds:['revDay', 'days', 'rev', 'opsDay', 'ops', 'fuel', 'cost', 'profit'], labels:periodLabels() }); if(t !== prev) t.active = null;
     title = `Your plan ${W.now}`;
-    intro = `<p class="c2-note">Nothing new to work out ${W.now}: the model has costed your plan.</p>`;
+    if(typeof periodHandTable === 'function'){ tH = periodHandTable(pl, planLines(pl)); t3 = flightTimeTable(pl); }
+    intro = tH || t3 ? `<p class="c2-note">Something has changed: check the new figures for one day of the plan. The model does the rest of ${W.the.replace(/'s$/, '')}.</p>` : `<p class="c2-note">Nothing new to work out ${W.now}: the model has costed your plan.</p>`;
   }
-  const done = tableComplete(t) && (!t2 || tableComplete(t2)) && (!t3 || tableComplete(t3)), fresh = newIdeas([t, t2, t3]), calc = t3 && t3.active ? t3 : t2 && t2.active ? t2 : t;
+  const done = tableComplete(t) && (!t2 || tableComplete(t2)) && (!t3 || tableComplete(t3)) && (!tH || tableComplete(tH)), fresh = newIdeas([t, t2, t3, tH]), calc = [tH, t3, t2].find(x => x && x.active) || (tH && !tableComplete(tH) ? tH : t); S.rnd.activeTable = calc.id;
   const spot = fresh.length ? `<div class="c2-new"><span class="label">New today</span>${fresh.map(id => `<b>${esc(NEW_TODAY[id] || TOOL[id].name)}</b>`).join('')}</div>` : '';
   const svcList = t2 ? `<div class="c2-svcl">${L.services.map((s, k) => `<button class="c2-s ${k === S.rnd.emptyK ? 'on' : ''}" data-esel="${k}" ${tableComplete(t2) || k === S.rnd.emptyK ? 'disabled' : ''}><b>Service ${k + 1}</b><span class="mono">${fmtTime(s.dep)}</span><span>${esc(routeById(s.route).city)}</span><span class="mono ${s.sold >= s.seats ? 'green' : 'orange'}">${s.sold}/${s.seats}</span></button>`).join('')}</div>` : '';
   screen().innerHTML = taskFrame({ question:title, work: fresh.length > 0, calc,
     story: setup ? ['This is the one place today where you check the numbers yourself. The model works out everything else.'] : [],
     say: fresh.length ? `Check today's new numbers. ${fresh.map(id => NEW_TODAY[id] || '').join('. ')}.` : 'The model has costed your plan.',
     context:{ title:'Your plan', html: cxSec('The plan', `<p class="cx-plan">${esc(planLabel(pl))}</p>`) + cxSec('Profit', kv([['Total revenue', `<span class="mono">${done ? money(L.v.rev) : '—'}</span>`], ['Total costs', `<span class="mono">${done ? money(L.v.cost) : '—'}</span>`], ['Profit', done ? `<span class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</span>` : '<span class="muted">—</span>', 'tot']])) + `<p class="muted cx-note">${done ? 'Next: try other ideas. The model costs them for you.' : 'Choose <b>Complete figure</b> to work out the new figure.'}</p><button class="link" data-archive>Compare with earlier days</button>` },
-    main:`<div class="cost2">${spot}${intro}<div class="c2-g ${t2 || t3 ? 'two' : ''}"><section class="pnl c2-sheet"><div class="sheet1">${tableHtml(t)}</div></section>${t3 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>Flight time</h3><span class="muted">${esc(routeById(t3.rid).city)}: how long each way?</span></div><div class="sheet1">${tableHtml(t3)}</div></section>` : ''}${t2 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>One service</h3><span class="muted">How well is the aircraft used?</span></div>${svcList}<div class="sheet1">${tableHtml(t2)}</div></section>` : ''}</div></div>`,
+    main:`<div class="cost2">${spot}${intro}<div class="c2-g ${t2 || t3 || tH ? 'two' : ''}"><section class="pnl c2-sheet"><div class="sheet1">${tableHtml(t)}</div></section>${tH ? `<section class="pnl c2-sheet"><div class="pnl-h"><h3>One day of the plan</h3><span class="muted">New figures to check</span></div><div class="sheet1">${tableHtml(tH)}</div></section>` : ''}${t3 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>Flight time</h3><span class="muted">${esc(routeById(t3.rid).city)}: how long each way?</span></div><div class="sheet1">${tableHtml(t3)}</div></section>` : ''}${t2 ? `<section class="pnl c2-empty"><div class="pnl-h"><h3>One service</h3><span class="muted">How well is the aircraft used?</span></div>${svcList}<div class="sheet1">${tableHtml(t2)}</div></section>` : ''}</div></div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${goLabel(done ? 'Test other ideas' : 'Complete the new figures first')} &#9654;</button>` });
-  bindTable(t); if(t2) bindTable(t2); if(t3) bindTable(t3);
+  bindTable(t); if(t2) bindTable(t2); if(t3) bindTable(t3); if(tH) bindTable(tH);
   screen().querySelectorAll('[data-esel]').forEach(b => b.onclick = () => { S.rnd.emptyK = +b.getAttribute('data-esel'); resetEntry(); render(); });
-  on('nx', () => { S.rnd.costed = { label:planLabel(pl), key:planKey(pl), v:Object.assign({}, L.v, sp === 'day' ? {} : { rev:L.v.rev, cost:L.v.cost, profit: weekProjected() ? L.v.wproj : L.v.profit }) }; S.rnd.costedTools = fresh; if(sp === 'day' && typeof recordHandSums === 'function') recordHandSums(L); S.rnd.test = null; resetEntry(); UI.justDone = null; advance(); });
+  on('nx', () => { S.rnd.costed = { label:planLabel(pl), key:planKey(pl), v:Object.assign({}, L.v, sp === 'day' ? {} : { rev:L.v.rev, cost:L.v.cost, profit: weekProjected() ? L.v.wproj : L.v.profit }) }; S.rnd.costedTools = fresh; if(typeof recordHandSums === 'function' && S.rnd.handSums) recordHandSums(L); S.rnd.test = null; resetEntry(); UI.justDone = null; advance(); });
 };
 
 /* ---------- TEST: try other ideas with the model ---------- */
@@ -440,7 +442,7 @@ R.ready = () => {
   screen().innerHTML = taskFrame({ question: readyTitle(), work:false,
     say: ok ? 'The operating plan is ready. Send it to the Operations Wall when you are ready to watch it fly.' : 'Some items need updating before operations can start.',
     context: ctxForecast(),
-    main:`<div class="opplan"><div class="op-head"><span class="label">Operating plan</span><b>${setup ? 'Launch Day' : railTitle()[0].replace(/ Plan$/, '')} · ${esc(homeData().code)} ${esc(terminalData().name || '')}</b></div>${rows}</div>
+    main:`<div class="opplan ${S.fleet.length > 1 ? 'many' : ''}"><div class="op-head"><span class="label">Operating plan</span><b>${setup ? 'Launch Day' : railTitle()[0].replace(/ Plan$/, '')} · ${esc(homeData().code)} ${esc(terminalData().name || '')}</b></div>${rows}</div>
       <div class="launch"><button class="btn primary huge go" id="startOps" ${ok ? '' : 'disabled'}>${goWord()}</button><p class="muted">${ok ? (o ? `Your fuel order (<span class="mono">${money(o.total)}</span>) is paid when operations start.` : paid ? 'The aircraft is fuelled and the plan is costed.' : 'The plan is costed. The launch deal supplies the fuel.') : 'Update the items marked above first.'}</p></div>` });
   on('startOps', () => { const x = S.rnd.fuelOrder; if(x){ buyFuel(x.litres, x.price); S.rnd.fuelOrder = null; } delete S.rnd.returnTo; resetEntry(); UI.view = null; next(); });
 };

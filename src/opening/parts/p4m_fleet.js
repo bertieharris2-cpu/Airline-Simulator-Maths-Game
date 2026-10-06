@@ -12,7 +12,7 @@
 function fmtVal(unit, v){
   if(v === null || v === undefined) return '—';
   if(unit === '£') return money(v); if(unit === 'L') return num(v) + ' L'; if(unit === 'ppl') return priceL(v); if(unit === 'dur') return fmtDur(v);
-  if(unit === 'yesno') return v ? 'Yes' : 'No'; if(unit === 'km') return num(v) + ' km'; if(unit === 'kmh') return num(v) + ' km/h'; if(unit === 'h') return num(v) + ' h'; if(unit === 'days') return num(v) + ' days';
+  if(unit === 'yesno') return v ? 'Yes' : 'No'; if(unit === 'km') return num(v) + ' km'; if(unit === 'kmh') return num(v) + ' km/h'; if(unit === 'h') return num(v) + ' h'; if(unit === 'days') return (Math.round(v * 10) / 10) + ' days';
   return num(v);
 }
 
@@ -93,24 +93,26 @@ function editPlan(i, what, a, d, j){
   normPlan(next);
   const ok = withPlan(next, () => next.fleet.every(z => !z.sched.length || fitsFor(z)));
   if(!ok){ toast("That timetable won't fit in the operating day."); return; }
+  if(what === 'open'){ const y = next.fleet.findIndex(z => z.sched.length && z.sched[z.sched.length - 1] === a); if(y >= 0) UI.peTab = y; } else if(next.fleet.length > 1) UI.peTab = j;
   setPlan(i, next);
 }
 function bindPlanEditor(){
   screen().querySelectorAll('[data-pe]').forEach(b => b.onclick = e => { e.stopPropagation(); const [i, what, a, d, j] = b.getAttribute('data-pe').split('|'); editPlan(+i, what, a, +d, +(j || 0)); });
+  screen().querySelectorAll('[data-petab]').forEach(b => b.onclick = e => { e.stopPropagation(); UI.peTab = +b.getAttribute('data-petab'); render(); });
 }
 function termsWord(t){ if(!t) return ''; if(t.kind === 'lease') return `rented, ${money(t.daily)} a day`; if(t.kind === 'finance') return t.left > 0 ? `${money(t.daily)} a day, ${t.left} payment${t.left === 1 ? '' : 's'} left` : 'paid off'; return 'owned'; }
 /* The plan editor: fares per route, the snack choice, then each aircraft's services. */
 function planEditor(i, pl, L, o){
   o = o || {}; pl = normPlan(pl); const per = depsOn(), maxT = WORLD.maxTrips || 4, allRoutes = S.phase === 'setup' ? [S.market] : plannerRoutes(), multi = pl.fleet.length > 1;
   const inPlan = [...new Set(pl.fleet.flatMap(x => x.sched))];
-  const shown = allRoutes.filter(id => inPlan.includes(id) || id === S.market || (allRoutes.length <= 2)), more = allRoutes.filter(id => !shown.includes(id));
+  const shown = allRoutes.filter(id => inPlan.includes(id) || (allRoutes.length <= 2) || (!inPlan.length && id === S.market)), more = allRoutes.filter(id => !shown.includes(id));
   const routeBlock = id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, F = r.fares || [r.basePrice], n = serviceCounts(pl.fleet.flatMap(x => x.sched))[id] || 0, rival = competitorPrice(r);
     const p0 = planeById(pl.fleet[0].planeId);
     return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${o.big && id === otherRoute() ? newTag(3.4) : ''}${rival !== undefined ? `<span class="pe-rival" title="${esc(WORLD.rival)} is selling tickets at this price">${esc(WORLD.rival)} ${money(rival)}</span>` : ''}${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
       ${per || multi ? '' : `<div class="pe-f"><span class="label">Services</span>${stepper(i, 'svc|' + id, '×' + n, `${n * p0.seats} seats`, { noLess: n === 0, noMore: pl.fleet[0].sched.length >= maxT })}</div>`}
       <div class="pe-f"><span class="label">Fare</span>${stepper(i, 'fare|' + id, money(fare), `<b class="mono">${paxWant(r, fare)}</b> want to fly`, { noLess: fare <= F[0], noMore: fare >= F[F.length - 1] })}</div></div>`; };
-  const moreRow = more.length ? `<div class="pe-more"><span class="label">Open routes</span>${more.map(id => { const r = routeById(id), can = pl.fleet.some(z => planeCanFly(planeById(z.planeId), r)); return `<button class="btn small" data-pe="${i}|open|${id}|0|0" ${can ? '' : 'disabled'} title="${can ? `${num(routeKm(r))} km · ${paxWant(r, r.basePrice)} want to fly at ${money(r.basePrice)}` : `No aircraft you own can reach ${r.city} (${num(routeKm(r))} km)`}">${flagSvg(r.flag, 14)} ${esc(r.city)}${(r.openDay || 1) === S.day ? newTag(progress()) || ' <span class="new-tag">NEW</span>' : ''}${can ? '' : ' <small>out of range</small>'}</button>`; }).join('')}</div>` : '';
-  const snacks = !snacksOn() ? '' : o.big ? `<div class="pe-obc ${newTag(3.1) ? 'fresh' : ''}"><div class="pe-sh"><span class="label">On board${newTag(3.1)}</span><span class="muted small">What happens on board today?</span></div><div class="obc-grid">${Object.keys(ONBOARD).map(k => `<button class="obc ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`).join('')}</div></div>`
+  const moreRow = more.length && !o.compact ? `<div class="pe-more"><span class="label">Open routes</span>${more.map(id => { const r = routeById(id), can = pl.fleet.some(z => planeCanFly(planeById(z.planeId), r)); return `<button class="btn small" data-pe="${i}|open|${id}|0|0" ${can ? '' : 'disabled'} title="${can ? `${num(routeKm(r))} km · ${paxWant(r, r.basePrice)} want to fly at ${money(r.basePrice)}` : `No aircraft you own can reach ${r.city} (${num(routeKm(r))} km)`}">${flagSvg(r.flag, 14)} ${esc(r.city)}${(r.openDay || 1) === S.day ? newTag(progress()) || ' <span class="new-tag">NEW</span>' : ''}${can ? '' : ' <small>out of range</small>'}</button>`; }).join('')}</div>` : '';
+  const snacks = !snacksOn() ? '' : o.big && newTag(3.1) ? `<div class="pe-obc ${newTag(3.1) ? 'fresh' : ''}"><div class="pe-sh"><span class="label">On board${newTag(3.1)}</span><span class="muted small">What happens on board today?</span></div><div class="obc-grid">${Object.keys(ONBOARD).map(k => `<button class="obc ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`).join('')}</div></div>`
     : `<div class="pe-ob"><span class="label">On board</span>${Object.keys(ONBOARD).map(k => `<button class="opt-chip ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b></button>`).join('')}</div>`;
   let services = '';
   if(per || multi){
@@ -118,13 +120,15 @@ function planEditor(i, pl, L, o){
       return `<div class="pe-svc ${s.band}"><span class="pe-n">Service ${s.k + 1}</span>${many ? `<button class="pe-rt" data-pe="${i}|route|${s.k}|1|${j}" title="Change the route">${flagSvg(r.flag, 14)} ${esc(r.city)} ⇄</button>` : `<span class="pe-city">${flagSvg(r.flag, 14)} ${esc(r.city)}</span>`}
         ${per ? stepper(i, 'dep|' + s.k, fmtTime(s.dep), `back ${fmtTime(s.arr)}`, { cls:'sm' }) : `<span class="mono">${fmtTime(s.dep)}</span>`}<span class="pe-fill ${s.sold >= s.seats ? 'full' : ''}"><b class="mono">${s.sold}/${s.seats}</b><small>${s.sold >= s.seats ? 'full' : `${s.seats - s.sold} empty`}</small></span><span class="pe-band">${BAND_NAMES[s.band] || ''}</span>
         <button class="pe-x" data-pe="${i}|del|${s.k}|0|${j}" title="Remove this service" aria-label="Remove service ${s.k + 1}">✕</button></div>`; };
-    services = pl.fleet.map((x, j) => { const p = planeById(x.planeId), svcs = (L.services || []).filter(s => s.uid === x.uid), D = x.sched.length ? TIME.day(p, x.sched, undefined, x.deps || null) : null;
+    const tab = multi ? clamp(UI.peTab || 0, 0, pl.fleet.length - 1) : 0;
+    const tabs = multi ? `<div class="pe-tabs">${pl.fleet.map((x, j) => { const p = planeById(x.planeId); return `<button class="pe-tab ${j === tab ? 'on' : ''}" data-petab="${j}" aria-pressed="${j === tab}">${planeSvg(p, 'pe-pic')}<b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><span class="mono">${esc(regOf(x.uid))}</span><small>${x.sched.length ? plural(x.sched.length, 'service') : 'no services yet'}</small></button>`; }).join('')}</div>` : '';
+    services = pl.fleet.map((x, j) => { if(multi && j !== tab) return ''; const p = planeById(x.planeId), svcs = (L.services || []).filter(s => s.uid === x.uid), D = x.sched.length ? TIME.day(p, x.sched, undefined, x.deps || null) : null;
       const adds = allRoutes.map(id => { const r = routeById(id), can = planeCanFly(p, r); return `<button class="btn small" data-pe="${i}|add|${id}|0|${j}" ${can && x.sched.length < maxT ? '' : 'disabled'} title="${can ? `Add a ${r.city} service` : `${p.name}: range ${num(p.range)} km, ${r.city} is ${num(routeKm(r))} km away`}">+ ${esc(r.city)}${can ? '' : ' <small>out of range</small>'}</button>`; }).join('');
       return `<div class="pe-ac"><div class="pe-sh"><span class="pe-acn">${planeSvg(p, 'pe-pic')}<b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><span class="mono">${esc(regOf(x.uid))}</span><span class="muted small">${p.seats} seats${multi && S.fleet.find(f => f.uid === x.uid) && S.fleet.find(f => f.uid === x.uid).terms ? ' · ' + termsWord(S.fleet.find(f => f.uid === x.uid).terms) : ''}</span></span>${D ? `<span class="muted small">busy until ${fmtTime(D.end)}</span>` : ''}<span class="pe-add">${x.sched.length >= maxT ? `<span class="muted small">${maxT} services is the most one aircraft can fly</span>` : adds}</span></div>
         ${svcs.map(s => svcRow(s, j, p)).join('') || `<p class="muted small pe-none">${multi ? 'No services yet: this aircraft costs its day anyway.' : 'Add a service.'}</p>`}</div>`; }).join('');
-    services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times${o.big ? newTag(3.3) : ''}</span><span class="muted small">Out, a turnaround, back, then a turnaround at home.</span></div>${services}</div>`;
+    services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times${o.big ? newTag(3.3) : ''}</span>${multi ? '' : '<span class="muted small">Out, a turnaround, back, then a turnaround at home.</span>'}</div>${tabs}${services}</div>`;
   }
-  const strips = per ? `<div class="pe-demand">${shown.slice(0, 3).map(demandStrip).join('')}${multi ? '' : miniBar(L.D)}</div>` : '';
+  const strips = per && !o.compact && !multi ? `<div class="pe-demand">${shown.filter(id => inPlan.includes(id)).slice(0, 3).map(demandStrip).join('')}${miniBar(L.D)}</div>` : '';
   const sum = `<div class="pe-sum"><span><b class="mono">${L.pax}</b> fly</span><span class="${L.empty ? '' : 'muted'}"><b class="mono">${L.empty}</b> empty seat${L.empty === 1 ? '' : 's'}</span><span class="${L.nos ? 'orange' : ''}"><b class="mono">${L.nos}</b> without a seat</span>${L.end ? `<span>busy until <b class="mono">${fmtTime(L.end)}</b></span>` : ''}${fuelPaid() && L.fuelL ? `<span>burns <b class="mono">${num(L.fuelL)} L</b> of fuel${o.big ? newTag(3.2) : ''}</span>` : ''}${opened(3.1) ? `<span class="${L.crews > 1 ? 'orange' : ''}">${L.crews} crew${L.crews > 1 ? 's' : ''}</span>` : ''}${L.fits ? '' : '<span class="red">Doesn\'t fit in the day</span>'}</div>`;
   return `<div class="pe ${o.big ? 'big' : ''} ${o.compact ? 'compact' : ''}">${strips}<div class="pe-routes n${Math.min(3, shown.length)}">${shown.map(routeBlock).join('')}</div>${moreRow}${snacks}${services}${sum}</div>`;
 }
@@ -274,7 +278,7 @@ function acquirePlane(p, kind){
   if(kind === 'buy'){ S.cash = r2(S.cash - o.price); terms = { kind:'buy', price:o.price, since:S.day }; }
   else if(kind === 'lease') terms = { kind:'lease', daily:o.lease, since:S.day };
   else { S.cash = r2(S.cash - o.deposit); terms = { kind:'finance', deposit:o.deposit, daily:o.daily, pay:o.pay, unit:o.unit, left:o.left, since:S.day }; }
-  S.fleet.push({ uid, planeId:p.id, route:null, schedule:[], deps:null, layout:'standard', grounded:false, terms, acquired:S.day });
+  S.fleet.push({ uid, planeId:p.id, route:null, schedule:[], deps:null, layout:'standard', grounded:false, terms, acquired:S.day }); UI.peTab = S.fleet.length - 1;
   S.dec.planeBought = { round:S.round, day:S.day, planeId:p.id, kind };
   addNews([{ tag:'FLEET', text:`${S.airline.name} ${kind === 'buy' ? 'buys' : kind === 'lease' ? 'rents' : 'finances'} a ${p.name}!`, cls:'good' }]);
   if(typeof sysNotice === 'function') sysNotice(`${p.name} ${esc(regOf(uid))} joins the fleet`);
@@ -294,7 +298,7 @@ function startProtoDay(n){
   const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
   S.steps = withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat([{ t:'planner' }]).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'costPlan' }, { t:'testIdeas' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
   S.rnd.cashStart = S.cash; UI.view = null;
-  S.si = 0; S.newRoutes = [];
+  S.si = 0; S.newRoutes = []; if(typeof revealReputation === 'function') revealReputation();
   refreshPlan();
   addNews((w.news || []).slice(0, 2).map(t => ({ tag:'NEWS', text:t })));
   publish(); render();
@@ -310,10 +314,10 @@ R.shop2 = st => {
   const list = shopPlanes(), picked = S.rnd.shopPick || null, owned = id => S.fleet.filter(f => f.planeId === id).length;
   const opening = routesOpening(S.day), newR = opening.length ? `<p class="small muted">New route${opening.length > 1 ? 's' : ''} today: ${opening.map(r => `${r.city} (${num(routeKm(r))} km)`).join(', ')}.</p>` : '';
   screen().innerHTML = taskFrame({ question:'Aircraft for sale', work:false,
-    story:['Your airline could fly more. Each aircraft is for sale, for rent by the day, or on finance: a deposit now and a payment every day.', 'A bigger aircraft carries more people, but costs more every day whether it flies or not.'],
+    story:['Each aircraft is for sale, for rent by the day, or on finance (a deposit now, then a payment every day). A bigger aircraft carries more people but costs more every day, flying or not.'],
     say:`Aircraft for sale. ${list.map(p => `${p.name}: ${p.seats} seats, ${money(shopOffer(p).price)} to buy${shopOffer(p).lease ? `, or ${money(shopOffer(p).lease)} a day to rent` : ''}.`).join(' ')}`,
     context:{ title:'Your airline', html: cxSec('Cash', `<p class="cx-plan mono">${money(Math.round(S.cash))}</p><p class="small muted">Keep ${money(WORLD.cashReserve || 0)} back for emergencies.</p>`) + cxSec('Fleet', S.fleet.map(f => `<p class="small">${esc(planeById(f.planeId).name)} <span class="mono">${esc(regOf(f.uid))}</span> · ${esc(svcLabel(schedOf(f)) || 'no services')}</p>`).join('')) + (newR ? cxSec('Routes', newR) : '') },
-    main:`<div class="shop3">${list.map(p => shopCard(p, shopOffer(p), picked === p.id, owned(p.id))).join('')}</div>`,
+    main:`<div class="shop3 ${list.length > 3 ? 'list' : ''}">${list.map(p => shopCard(p, shopOffer(p), picked === p.id, owned(p.id))).join('')}</div>`,
     foot:`<button class="btn big" id="skipShop">Not today</button><span class="grow"></span><button class="btn primary big" id="nx" ${picked ? '' : 'disabled'}>${picked ? goLabel(`Look closer at the ${planeById(picked).name.replace(/^DHC-6 /, '')}`) : 'Choose an aircraft, or not today'} &#9654;</button>` });
   screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { S.rnd.shopPick = b.getAttribute('data-pick'); render(); });
   const strip = () => { S.steps = S.steps.filter(x => !['fleetSums', 'acquire'].includes(x.t)); };
@@ -328,14 +332,14 @@ R.fleetSums = st => {
   const tables = [];
   if(o.lease && o.price){ const tid = `rentbuy:${S.day}:${p.id}`, prev = S.rnd.tables[tid], t = ensureTable(tid, 'rentbuy1', [{ id:'a', label:p.name, sub:`${money(o.price)} to buy · ${money(o.lease)} a day to rent`, values:{ price:o.price, rent:o.lease, days:r2(o.price / o.lease) } }], { live: rbNew }); if(t !== prev) t.active = null; tables.push(t); }
   { const tid = `seatfare:${S.day}:${p.id}:${r.id}:${fare}`, prev = S.rnd.tables[tid], t = ensureTable(tid, 'seatfare1', [{ id:'a', label:`${p.name} to ${r.city}`, sub:`${p.seats} seats at ${money(fare)}`, values:{ seats:p.seats, fare, full:p.seats * fare } }], { live: sfNew }); if(t !== prev) t.active = null; tables.push(t); }
-  const done = tables.every(tableComplete), calc = tables.find(t => t.active) || tables[0];
+  const done = tables.every(tableComplete), calc = tables.find(t => t.active) || tables[0]; S.rnd.activeTable = calc.id;
   const days = o.lease ? r2(o.price / o.lease) : null, payback = m.extra > 0 ? Math.ceil(o.price / m.extra) : null;
   const model = `<div class="fs-model"><div><small>The model's suggestion</small><b>${m.sched.length ? esc(svcLabel(m.sched)) : 'No useful services yet'}</b><small>where people are left without a seat</small></div>
     <div><small>Extra profit a day</small><b class="${m.extra >= 0 ? 'green' : 'red'}">${money(m.extra)}</b><small>with those services, at today's fares</small></div>
     <div><small>${o.lease ? 'Against the rent' : 'Pays back in'}</small><b>${o.lease ? (m.extra > o.lease ? `${money(m.extra - o.lease)} a day ahead` : `${money(o.lease - m.extra)} a day short`) : payback ? `${payback} days` : '—'}</b><small>${o.lease ? `rent ${money(o.lease)} a day` : `price ${money(o.price)}`}${payback ? ` · buying pays back in about ${payback} days` : ''}</small></div></div>`;
   screen().innerHTML = taskFrame({ question:`Is the ${esc(p.name.replace(/^DHC-6 /, ''))} worth it?`, work:true, calc,
     say:`Two sums about the ${p.name}. How many days of rent equal its price? And what does a full plane bring in at ${money(fare)}?`,
-    context:{ title:'The offer', html: kv([['Buy', `<span class="mono">${money(o.price)}</span>`], ['Rent', o.lease ? `<span class="mono">${money(o.lease)}</span> a day` : '—'], ['Finance', o.deposit ? `<span class="mono">${money(o.deposit)}</span> down, then <span class="mono">${money(o.pay)}</span> a ${esc(o.unit)} × ${o.n}` : '—'], ['Day cost', `<span class="mono">${money(p.dayCost)}</span>`]]) + `<p class="muted cx-note">${days ? `If you rent for more than ${num(days)} days, buying would have been cheaper.` : ''}</p>` },
+    context:{ title:'The offer', html: kv([['Buy', `<span class="mono">${money(o.price)}</span>`], ['Rent', o.lease ? `<span class="mono">${money(o.lease)}</span> a day` : '—'], ['Finance', o.deposit ? `<span class="mono">${money(o.deposit)}</span> + <span class="mono">${money(o.pay)}</span> × ${o.n}` : '—']]) },
     main:`<div class="cost2"><div class="c2-g two">${tables.map(t => `<section class="pnl c2-sheet"><div class="pnl-h"><h3>${esc(TABLES[t.kind].title)}</h3></div><div class="sheet1">${tableHtml(t)}</div></section>`).join('')}</div>${model}</div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${done ? goLabel('Decide: buy, rent or finance') : 'Complete the sums first'} &#9654;</button>` });
   tables.forEach(bindTable);
@@ -373,9 +377,9 @@ Object.assign(INTRO, {
     what:() => { const s = planeById('sf34'), o = shopOffer(s, 8); return [['Your airline can grow. Aircraft are for sale, and each one can be bought, rented by the day, or financed.'],
       `<div class="ni-cards four"><div class="ni-card"><em>${money(o.price)}</em><b>Buy</b><span>Pay it all now. Nothing more to pay.</span></div><div class="ni-card"><em>${money(o.lease)}</em><b>Rent, a day</b><span>Every day, for as long as you keep it.</span></div><div class="ni-card"><em>${money(o.deposit)}</em><b>Finance, down</b><span>Then ${money(o.pay)} a day for ${o.n} days.</span></div><div class="ni-card"><em>${s.seats}</em><b>Seats</b><span>A ${esc(s.name)} carries ${s.seats} people a service: nearly twice the Twin Otter.</span></div></div>`,
       ['Four new routes open today too. A second aircraft can fly one of them while the Twin Otter keeps its routes.', 'An aircraft costs its day cost whether it flies or not, so give it work.']]; },
-    maths:() => { const s = planeById('sf34'), o = shopOffer(s, 8), d = o.price / o.lease; return [niRule('price', '÷', 'rent a day', 'Days of rent that equal the price'),
-      `<div class="ni-eg"><p>The ${esc(s.name)} costs <b>${money(o.price)}</b> to buy or <b>${money(o.lease)}</b> a day to rent.</p><p>${niSum(`${num(o.price)} ÷ ${num(o.lease)} = ${num(d)}`)} days. Rent for longer than that and buying would have been cheaper.</p>
-        <p class="ni-tip">One way: ${niSum(`${num(o.lease)} × 20 = ${num(o.lease * 20)}`)}, then ${niSum(`${num(o.price - o.lease * 20)} ÷ ${num(o.lease)} = ${num((o.price - o.lease * 20) / o.lease)}`)} more, so ${num(d)} days.</p></div>`]; },
+    maths:() => { const s = planeById('sf34'), o = shopOffer(s, 8), d = Math.round(o.price / o.lease * 10) / 10; return [niRule('price', '÷', 'rent a day', 'Days of rent that equal the price'),
+      `<div class="ni-eg"><p>The ${esc(s.name)} costs <b>${money(o.price)}</b> to buy or <b>${money(o.lease)}</b> a day to rent.</p><p>${niSum(`${num(o.price)} ÷ ${num(o.lease)} = ${d}`)} days. Rent for longer than that and buying would have been cheaper.</p>
+        <p class="ni-tip">One way: ${niSum(`${num(o.lease)} × 20 = ${num(o.lease * 20)}`)}, then ${niSum(`${num(o.price - o.lease * 20)} ÷ ${num(o.lease)} = ${Math.round((o.price - o.lease * 20) / o.lease * 10) / 10}`)} more, so ${d} days.</p></div>`]; },
     check:{ q:'An aircraft costs £15,000 to buy or £500 a day to rent. After how many days of rent would buying have been cheaper?', opts:[['30 days', ''], ['15 days', '15 × £500 is £7,500, only half the price.'], ['300 days', '300 × £500 is £150,000, ten times the price.']], ok:0, done:'£15,000 ÷ £500 = 30 days.' },
     think:['How many days will you keep the aircraft? Longer than the rent-or-buy days means buy.', 'Does the extra profit a day cover the rent? The model says what the aircraft would add.'] },
   season:{ kicker:'New today · The seasons', title:'Some routes have a season', before:'planner', words:[['Season', 'A time of year when more or fewer people want to fly a route.'], ['Multiplier', 'The number demand is multiplied by: ×0.5 is half, ×1.4 is nearly one and a half times.']],

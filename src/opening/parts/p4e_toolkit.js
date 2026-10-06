@@ -33,9 +33,10 @@ function cellState(t, col, ri){
 }
 function ensureTable(id, kind, cols, opts){
   opts = opts || {};
-  const key = tableKey(cols) + (opts.rowIds ? '|' + opts.rowIds.join(',') : ''), old = S.rnd.tables[id];
+  const key = tableKey(cols) + (opts.rowIds ? '|' + opts.rowIds.join(',') : '') + (opts.rows ? '|' + opts.rows.map(r => r.id + (r.tool || '')).join(',') : ''), old = S.rnd.tables[id];
   if(old && old.key === key){ S.rnd.activeTable = id; old.labels = opts.labels || old.labels; return old; }
-  const t = { id, kind, key, cols, live:true, mode:'shown', onlyRows:[], labels: opts.labels || {}, rowIds: opts.rowIds || null, done:{}, chosen:{}, active:null, picked:null };
+  // a table may carry its own row definitions (the cost sheet builds a ticket line per route; the chapter accounts a line per month)
+  const t = { id, kind, key, cols, live:true, mode:'shown', onlyRows:[], labels: opts.labels || {}, rowIds: opts.rowIds || null, rows: opts.rows || null, done:{}, chosen:{}, active:null, picked:null };
   // keep the answers in any column that hasn't changed
   if(old && old.kind === kind) cols.forEach(c => { const oc = old.cols.find(x => x.id === c.id); if(!oc || JSON.stringify(oc.values) !== JSON.stringify(c.values)) return;
     Object.keys(old.done).forEach(k => { if(k.startsWith(c.id + '|')) t.done[k] = old.done[k]; }); Object.keys(old.chosen).forEach(k => { if(k.startsWith(c.id + '|')) t.chosen[k] = old.chosen[k]; }); });
