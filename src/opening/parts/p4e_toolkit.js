@@ -77,7 +77,7 @@ function cellWrong(res){
   else if(settings.nudge) m += ' ' + (res === 'high' ? TEXT.nudgeHigh : TEXT.nudgeLow);
   UI.msg = m; UI.ok = false;
 }
-function renderDiag(){
+function renderDiagBase(){
   const hb = $('tHand'); if(hb && S && typeof handSumLogHtml === 'function') hb.innerHTML = handSumLogHtml();
   const box = $('tDiag'); if(!box || !S) return; const d = S.diag || [];
   box.innerHTML = d.length ? `<table class="ttools"><thead><tr><th>Time</th><th>Where</th><th>What</th><th>Figures</th></tr></thead><tbody>${d.slice().reverse().map(x => `<tr><td>${esc(x.when)}</td><td>${esc(x.step || '')} · day ${x.day}</td><td>${esc(x.kind)}</td><td class="mono small">${esc(['cell', 'stored', 'shown', 'typed', 'was', 'is', 'now', 'tries'].filter(k => x[k] !== undefined && x[k] !== null && x[k] !== '').map(k => k + ' ' + x[k]).join(' · '))}</td></tr>`).join('')}</tbody></table>`

@@ -69,7 +69,6 @@ readyExtra: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyOk: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyTitle: p4d_opening.js -> p4f_campaign.js
 recordHandSums: p4l_handsums.js -> p4m_fleet.js
-renderDiag: p4e_toolkit.js -> p4o_review.js
 repLive: p4a_core.js -> p4o_review.js
 reviewSpec: p4f_campaign.js -> p4n_weeks.js
 routeKm: p4a_core.js -> p4h_world.js

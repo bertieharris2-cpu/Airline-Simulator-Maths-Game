@@ -88,8 +88,7 @@ function gatesHtml(){
   return `<table class="t-log">${row('Chapters', ch || 'none loaded')}${row('Lease from', when('leaseFromDate'))}${row('Buy from', when('buyFromDate'))}${row('Finance from', when('financeFromDate'))}${row('Reputation from', when('reputationFromDate'))}${row('Quarterly task from', when('quarterlyTaskFromDate'))}
     ${row("Captain's challenges", chl.length ? chl.map(c => `${dateShort(c.day)} ${calDate(c.day).getUTCFullYear()}: ${esc(c.title)}`).join('<br>') : 'none live')}${row('Hunts', hunts.length ? hunts.map(h => `${dateShort(h.day)}: ${esc(h.whatIsWrong || h.id)}`).join('<br>') : 'none live (the Hunts sheet is placeholder)')}</table>`;
 }
-const renderDiag0 = renderDiag;
-function renderDiag(){ const g = $('tGates'); if(g && S) g.innerHTML = gatesHtml(); renderDiag0(); }
+function renderDiag(){ const g = $('tGates'); if(g && S) g.innerHTML = gatesHtml(); renderDiagBase(); }   // renderDiagBase is the toolkit's (p4e); a function alias would hoist onto itself
 
 /* The month's test-plan controls (p4f R.plans) edit the fleet plan through editPlan; the first departure steps by 15 minutes. */
 function changePlan(i, key, d){
