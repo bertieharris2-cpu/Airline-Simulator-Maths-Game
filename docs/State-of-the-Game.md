@@ -17,8 +17,12 @@
 | # | Screen | When | What the pupil does |
 |---|---|---|---|
 | 1 | Welcome / Home menu | Start | Continue, New game (confirm; the old run goes to Best runs), Best runs, Save code, open the wall window |
-| 2 | Name your airline | Setup | Type a name |
-| 3 | Paint your planes | Setup | Two colours and a tail fin (6 fins) |
+| 2 | Name your airline | Launch day, step 1 of 6 | Type a name (1–20 characters); it shows on the wall's departure board as he types |
+| 2a | Pick a flight code | Step 2 | Two letters, suggested from the name; real codes (Settings `blockedFlightCodes`) refused calmly; preview *BE101 · Dublin · 09:00* |
+| 2b | Make a logo | Step 3 | Shape × symbol × two colours (Livery sheet); replaces the fin mark in the top bar and on the wall |
+| 3 | Paint your first plane | Step 4 | The paint shop: colours (main, belly, engines), stripe and tail colour, four stripes, seven tail symbols incl. the logo; *Name it*: G- + four letters (unique), a name with suggestions; *Surprise me*; live on the wall |
+| 3a | Roll it out | Step 5 | The hangar reveal (doors, roll-in, shine), Skip, Continue |
+| 3b | Your certificate | Step 6 | Air Operator Certificate on screen; Print |
 | 4 | HQ start-up | Setup | Animation; moves on by itself |
 | 5 | Chapter banner | Setup | Chapter 1, *Starting out*, 2 Sep – 28 Dec 2030, from the Chapters sheet; Begin |
 | 6 | Your start-up aircraft | Launch Day (Mon 2 Sep) | Twin Otter specs; Take delivery (£2,500 launch deal) |
@@ -28,7 +32,8 @@
 | 10 | Timetable | Launch Day | ×1–×4 services on a Gantt; the fare chips (£70–£110, people at each); the scheduling questions |
 | 11 | What's new (3 pages) | Days 2, 3, 4 (two), 5, 6, 8, 12, 15; week 4; December | What's new, the maths, choose the right sum; key words in the dock |
 | 12 | Today's Plan (morning HQ) | Every day, week and month | Headline from the Calendar or Market; the brief (yesterday, what's new, routes opening, the rival, fuel); the standing plan |
-| 13 | Aircraft for sale | Days 8 and 15, every week | Cards from the Aircraft and Finance sheets: buy, rent a day, finance; Look closer or Not today |
+| 13 | The air show (aircraft for sale) | Days 8 and 15, every week | Flip cards: photo or plain drawing, facts, four bars on one scale, Buy / Rent / Finance from the Finance sheet; a locked *Coming soon* row; Look closer or Not today |
+| 13a | Paint your new plane · Roll it out | After buying | The paint shop for the new aircraft (its own registration), then a short reveal |
 | 14 | The sums (fleet) | After choosing an aircraft | Rent or buy = price ÷ rent a day; a full plane = seats × fare; the model's suggested services and extra profit a day |
 | 15 | Buy or rent | After the sums | Buy, Rent or Finance (gated by the Finance sheet's dates and the £1,000 reserve) |
 | 16 | Plan | Every day and week | Fares per route, open-route chips, snacks, one tab per aircraft with its services and departure times (range checked) |
@@ -37,6 +42,7 @@
 | 19 | Test | Every day and week | Change a test plan; the model costs it; save ideas; Fly my plan / the test plan |
 | 20 | Fuel | Days 3–21, December | Order fuel in 500 L lots; tank batches, oldest burned first |
 | 21 | Ready | Every period | Each aircraft's timetable, fares, on board, fuel, the decision, the projection; blocked below the cash reserve; warned on a loss |
+| 21a | Take-off | Launch day, before live operations | The first take-off on the wall (taxi, roll, climb-out) with sound if on; Skip, Continue |
 | 22 | Operations (live) | Days 1–21 | Live show on the HQ and the wall; the featured aircraft is the one flying |
 | 23 | Results | After each day or period | Revenue − costs = profit, projected against actual, routes, load factor % (from day 22) |
 | 24 | Approve your regular plan | End of day 21 | Change it, or Approve; the tank's fuel goes back |
@@ -53,7 +59,9 @@
 | Dock (right) | Context (aircraft status with a departures board of up to four rows, your airline, the offer, key words); help; working space; ƒ model inspector; calculation dock |
 | Back | ◀ Back on every planning screen; never past operations, a run or a signed order |
 | Operations Wall | Boards, map, strip, news; live handoff, featured aircraft, announcements, focus moments, compressed days; second window via `?display` |
-| Teacher panel (Ctrl+Shift+T) | Release, skip, text size, events, maths tools (Calculate/Build/Model), **By hand so far**, **Chapters 2–6: the gates**, **Skip ahead 1/4/8 weeks**, calculation checks, time check, cash and reputation, pace, sound, menu, runs, question bank |
+| Teacher panel (Ctrl+Shift+T) | Release, skip, text size, events, maths tools (Calculate/Build/Model), **By hand so far**, **Chapters 2–6: the gates**, **Skip ahead 1/4/8 weeks**, calculation checks, time check, cash and reputation, pace, **sound (off by default)**, **reduce motion**, menu, runs, question bank |
+| Your airline (home menu) | Edit the name, flight code and logo; Repaint any plane |
+| Fleet view | Every plane side by side in its livery, with Repaint |
 
 ### In the code but not reachable in normal play
 
@@ -110,12 +118,14 @@
 
 | Block | Contains | Used now? |
 |---|---|---|
-| data-workbook | Imported from `data/Airline-World-Workbook.xlsx` v4.2: settings 41, archetypes 4, routes 18, aircraft 8, finance 8, airports 1, calendar 21, market 17, events 10, challenges 2, mechanics 15, chapters 1, hand-sum rules 8, catering 4, hunts 0 | Yes: it drives the game |
+| data-workbook | Imported from `data/Airline-World-Workbook.xlsx` v4.2 + the v4.3 draft (Livery 35 rows, Aircraft artwork and photo columns, 3 Settings keys): settings 44, archetypes 4, routes 18, aircraft 8, finance 8, airports 1, calendar 21, market 17, events 10, challenges 2, mechanics 15, chapters 1, hand-sum rules 8, catering 4, hunts 0 | Yes: it drives the game |
 | data-world | Starting values, day hours, fuel lot, tank, max services, rival name; 4 homes (only Heathrow T5 used), 13 old routes (overridden), `setupRoutes`; no beat list any more | Partly |
 | data-planes | 12 old aircraft (overridden by the workbook's 8; pictures and makers kept) | Pictures only |
 | data-tools | Maths tools and their default levels; `rentOrBuy`, `seatsFare`, `flightTime` added | Yes |
 | data-tables | Calculation tables; `rentbuy1`, `seatfare1`, `time1` added; the cost sheet and the chapter accounts build their own rows | Yes |
-| data-reviews, data-fins, data-text | As before | Yes |
+| data-artwork | The painted side views from `src/opening/assets/aircraft/*.svg` (dhc6, sf34, at72, e175, e190, narrowbody) | Yes |
+| data-photos | Showroom photos from `src/opening/assets/photos/`, by the Aircraft sheet's `photoFile` (none yet) | Yes, when present |
+| data-reviews, data-fins, data-text | As before (`data-fins` is superseded by the logo) | Partly |
 | data-jobs, data-phases, data-challenges | The old round flow | Legacy |
 
 ### Values the workbook does not carry (reported, not invented)
@@ -128,6 +138,8 @@
 | The fault's options | Events sheet (text only) | Built from the text: fix (50% of yesterday's profit, +½★), fly (−1★), wait (the aircraft misses a day) |
 | Red Kite's own fares in the price war | Events sheet | 80% of your fare on every route that week |
 | Finance for the tutorial tier (`financeFrom` n/a) | Finance sheet | Offered from the aircraft's `buyFrom` day |
+| Showroom photos | Aircraft sheet photo columns (empty) | The card front shows the painted drawing in plain colours until a licensed photo is recorded |
+| The coming-soon aircraft (787, A350, 747, A380, A340, 777, 757) | Aircraft sheet, not live | Name, date and picture only (`aircraftPreview`); no figures are read |
 
 ### Hard-coded in the code, not read from data
 

@@ -32,7 +32,7 @@ if wbm:
 p2 = p2.replace('<!--PHOTOS-->', '<script type="application/json" id="data-photos">%s</script>' % json.dumps(photos, separators=(',', ':')))
 print(len(art), 'aircraft drawings;', len(photos), 'photos embedded' + ('; over 150 KB: ' + ', '.join(big) if big else ''))
 head = r('parts', 'p1_head.html')
-JS = ['p4a_core.js', '../engine/world-engine.js', 'p4a2_workbook.js', 'p4b_control.js', 'p4d_opening.js', 'p4e_toolkit.js', 'p4f_campaign.js', 'p4g_opening2.js', 'p4h_world.js', 'p4i_liveops.js', 'p4j_intro.js', 'p4k_chapter.js', 'p4l_handsums.js', 'p4m_fleet.js', 'p4n_weeks.js', 'p4o_review.js', 'p4p_identity.js', 'p4q_paint.js', 'p4c_display.js']
+JS = ['p4a_core.js', '../engine/world-engine.js', 'p4a2_workbook.js', 'p4b_control.js', 'p4d_opening.js', 'p4e_toolkit.js', 'p4f_campaign.js', 'p4g_opening2.js', 'p4h_world.js', 'p4i_liveops.js', 'p4j_intro.js', 'p4k_chapter.js', 'p4l_handsums.js', 'p4m_fleet.js', 'p4n_weeks.js', 'p4o_review.js', 'p4p_identity.js', 'p4q_paint.js', 'p4r_showroom.js', 'p4c_display.js']
 out = head + p2 + p3 + ''.join(r('parts', f) for f in JS)
 seen = {}
 for f in JS:

@@ -1,4 +1,5 @@
 PW: p4d_opening.js -> p4f_campaign.js
+acquirePlane: p4m_fleet.js -> p4r_showroom.js
 actualDeps: p4g_opening2.js -> p4m_fleet.js
 advance: p4a_core.js -> p4d_opening.js
 applyEventNow: p4l_handsums.js -> p4n_weeks.js
@@ -38,6 +39,7 @@ editPlan: p4g_opening2.js -> p4m_fleet.js
 editStep: p4d_opening.js -> p4f_campaign.js -> p4g_opening2.js
 ensureTable: p4a_core.js -> p4e_toolkit.js
 fcKey: p4d_opening.js -> p4f_campaign.js
+fleetHtml: p4b_control.js -> p4r_showroom.js
 flightParts: p4h_world.js -> p4m_fleet.js
 fmtVal: p4a_core.js -> p4m_fleet.js
 forecastCols: p4b_control.js -> p4d_opening.js

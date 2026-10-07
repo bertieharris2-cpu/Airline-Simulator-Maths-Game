@@ -1,0 +1,54 @@
+<!-- ATR 72, port side, nose left. Box 0 0 1200 440. Same layer and marker conventions as dhc6.svg. -->
+<defs>
+  <clipPath id="fus@U"><path d="M100 268 C100 250 132 236 182 226 L232 206 C246 192 264 186 302 186 L900 186 C972 188 1042 200 1092 224 L1098 236 C1042 248 952 264 852 294 C822 304 782 306 742 306 L232 306 C172 306 122 292 100 268 Z"/></clipPath>
+  <clipPath id="fin@U"><path d="M868 190 L940 52 C946 42 962 38 982 38 L1020 40 C1032 42 1036 50 1037 60 L1070 228 C1020 206 950 192 868 190 Z"/></clipPath>
+  <clipPath id="whole@U"><path d="M100 268 C100 250 132 236 182 226 L232 206 C246 192 264 186 302 186 L900 186 C972 188 1042 200 1092 224 L1098 236 C1042 248 952 264 852 294 C822 304 782 306 742 306 L232 306 C172 306 122 292 100 268 Z"/><path d="M868 190 L940 52 C946 42 962 38 982 38 L1020 40 C1032 42 1036 50 1037 60 L1070 228 C1020 206 950 192 868 190 Z"/></clipPath>
+  <linearGradient id="shadeV@U" x1="0" y1="186" x2="0" y2="306" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".22" stop-color="#fff" stop-opacity=".08"/><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient>
+  <linearGradient id="shadeFin@U" x1="868" y1="0" x2="1070" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  <linearGradient id="shadeS@U" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+  <linearGradient id="glintG@U" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".65"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <radialGradient id="shadow@U"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+</defs>
+<g class="art-plane">
+  <ellipse class="art-shadow" cx="600" cy="382" rx="540" ry="22" fill="url(#shadow@U)"/>
+  <rect x="232" y="296" width="8" height="38" fill="#2A3442"/><circle cx="236" cy="342" r="19" fill="#171C24"/><circle cx="236" cy="342" r="8" fill="#9AA5B1"/><rect x="598" y="300" width="12" height="40" fill="#2A3442"/><circle cx="604" cy="350" r="25" fill="#171C24"/><circle cx="604" cy="350" r="10" fill="#9AA5B1"/>
+  <path class="p-body" d="M780 189 C820 186 846 176 872 158 L868 190 Z"/>
+  <path class="p-body" d="M868 190 L940 52 C946 42 962 38 982 38 L1020 40 C1032 42 1036 50 1037 60 L1070 228 C1020 206 950 192 868 190 Z"/>
+  <g clip-path="url(#fin@U)"><g transform="translate(2 -4) scale(1 1)">
+    <polygon class="p-second tl tl-stripe" points="900,230 968,44 1002,44 934,230"/>
+    <polygon class="p-second tl tl-star" points="975,82 984,104 1008,105 989,120 996,143 975,130 954,143 961,120 942,105 966,104"/>
+    <path class="p-second tl tl-chevron" d="M922 170 L972 92 L1024 170 L1000 170 L972 126 L946 170 Z"/>
+    <path class="p-second tl tl-wave" d="M850 150 C900 120 940 170 990 130 C1010 116 1030 112 1050 116 L1050 150 C1030 146 1012 150 994 162 C944 200 902 152 850 182 Z"/>
+    <g class="tl tl-circle"><circle class="p-second" cx="978" cy="112" r="30"/><circle class="p-body" cx="978" cy="112" r="13"/></g>
+    <path class="p-second tl tl-arrow" d="M978 64 L1010 110 L990 110 L990 160 L966 160 L966 110 L946 110 Z"/>
+    <g class="tl tl-logo" transform="translate(936 66) scale(2.1)">@LOGO</g>
+  </g></g>
+  <path d="M868 190 L940 52 C946 42 962 38 982 38 L1020 40 C1032 42 1036 50 1037 60 L1070 228 C1020 206 950 192 868 190 Z" fill="url(#shadeFin@U)"/>
+  <path class="p-line" d="M868 190 L940 52 C946 42 962 38 982 38 L1020 40 C1032 42 1036 50 1037 60 L1070 228 C1020 206 950 192 868 190 Z"/>
+  <path d="M1014 52 L1056 218" stroke="rgba(8,20,34,.45)" stroke-width="1.6" fill="none"/>
+  <!-- T-tail -->
+  <path class="p-body" d="M932 48 L1112 40 C1124 40 1124 50 1112 52 L932 62 Z"/><path d="M932 48 L1112 40 C1124 40 1124 50 1112 52 L932 62 Z" fill="url(#shadeS@U)"/><path class="p-line" d="M932 48 L1112 40 C1124 40 1124 50 1112 52 L932 62 Z"/>
+  <g clip-path="url(#fus@U)">
+    <rect class="p-body" x="40" y="176" width="1140" height="160"/>
+    <rect class="p-belly" x="40" y="272" width="1140" height="74"/>
+    <rect class="p-second st st-thin" x="60" y="250" width="1100" height="9"/>
+    <g class="st st-band"><rect class="p-second" x="60" y="246" width="1100" height="22"/><rect class="p-second" x="60" y="272" width="1100" height="4" opacity=".8"/></g>
+    <path class="p-second st st-swoosh" d="M60 300 C420 300 720 282 1120 196 L1120 232 C720 312 420 324 60 322 Z"/>
+    <rect x="40" y="176" width="1140" height="160" fill="url(#shadeV@U)"/>
+  </g>
+  <path class="p-line" d="M100 268 C100 250 132 236 182 226 L232 206 C246 192 264 186 302 186 L900 186 C972 188 1042 200 1092 224 L1098 236 C1042 248 952 264 852 294 C822 304 782 306 742 306 L232 306 C172 306 122 292 100 268 Z"/>
+  <!-- main-gear fairing on the fuselage side -->
+  <path d="M470 302 L650 302 C668 304 668 326 650 328 L470 328 C452 328 452 304 470 302 Z" fill="rgba(8,20,34,.22)"/><path class="p-line" d="M470 302 L650 302 C668 304 668 326 650 328 L470 328 C452 328 452 304 470 302 Z"/>
+  <path class="p-glass" d="M206 226 L240 205 C252 199 268 197 284 197 L288 226 Z"/><path d="M214 222 L240 207 L252 205 L226 222 Z" fill="#fff" opacity=".35"/>
+  <g class="p-glass"><rect x="352" y="216" width="20" height="22" rx="5"/><rect x="382" y="216" width="20" height="22" rx="5"/><rect x="412" y="216" width="20" height="22" rx="5"/><rect x="442" y="216" width="20" height="22" rx="5"/><rect x="472" y="216" width="20" height="22" rx="5"/><rect x="502" y="216" width="20" height="22" rx="5"/><rect x="532" y="216" width="20" height="22" rx="5"/><rect x="562" y="216" width="20" height="22" rx="5"/><rect x="592" y="216" width="20" height="22" rx="5"/><rect x="622" y="216" width="20" height="22" rx="5"/><rect x="652" y="216" width="20" height="22" rx="5"/><rect x="682" y="216" width="20" height="22" rx="5"/><rect x="712" y="216" width="20" height="22" rx="5"/><rect x="742" y="216" width="20" height="22" rx="5"/><rect x="772" y="216" width="20" height="22" rx="5"/><rect x="802" y="216" width="20" height="22" rx="5"/></g>
+  <rect x="282" y="198" width="52" height="84" rx="6" class="p-line"/>
+  <rect x="838" y="200" width="38" height="96" rx="6" class="p-line"/><rect x="846" y="212" width="22" height="18" rx="4" class="p-glass"/>
+  <text class="t-name" x="720" y="212" text-anchor="middle" font-weight="700" font-size="19" letter-spacing="3" fill="@NAMEFILL">@NAME</text><text class="t-reg" x="950" y="250" text-anchor="middle" font-weight="700" font-size="17" letter-spacing="1" fill="@REGFILL">@REG</text><text class="t-pname" x="250" y="296" text-anchor="middle" font-style="italic" font-size="13" fill="@PNAMEFILL">@PNAME</text>
+  <!-- high wing, the near engine nacelle, a 6-blade propeller -->
+  <path d="M500 194 L470 302" stroke="#3A4656" stroke-width="5" stroke-linecap="round" opacity=".6"/>
+  <path class="p-body" d="M372 190 C380 170 420 164 476 164 L650 168 C662 170 662 182 650 184 L372 194 Z"/><path d="M372 190 C380 170 420 164 476 164 L650 168 C662 170 662 182 650 184 L372 194 Z" fill="url(#shadeS@U)"/><path class="p-line" d="M372 190 C380 170 420 164 476 164 L650 168 C662 170 662 182 650 184 L372 194 Z"/>
+  <path class="p-engine" d="M292 184 C292 164 312 158 348 158 L532 160 C554 162 562 174 562 184 C562 194 552 204 532 206 L348 208 C312 208 292 202 292 184 Z"/><path d="M292 184 C292 164 312 158 348 158 L532 160 C554 162 562 174 562 184 C562 194 552 204 532 206 L348 208 C312 208 292 202 292 184 Z" fill="url(#shadeS@U)"/><path class="p-line" d="M292 184 C292 164 312 158 348 158 L532 160 C554 162 562 174 562 184 C562 194 552 204 532 206 L348 208 C312 208 292 202 292 184 Z"/>
+  <rect x="420" y="200" width="30" height="8" rx="3" fill="#2A3442"/>
+  <ellipse cx="284" cy="184" rx="6" ry="100.0" fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.18)"/><rect class="blade" x="280" y="84.0" width="8" height="200" rx="4" fill="#1E2630"/><rect class="blade b2" x="280" y="84.0" width="8" height="200" rx="4" fill="#1E2630" opacity=".6"/><rect class="blade" x="280" y="84.0" width="8" height="200" rx="4" fill="#1E2630" opacity=".35" transform="rotate(30 284 184)"/><ellipse cx="290" cy="184" rx="14" ry="17" class="p-second"/><ellipse cx="290" cy="184" rx="14" ry="17" fill="url(#shadeS@U)"/>
+  <g clip-path="url(#whole@U)"><rect class="glint" x="-200" y="30" width="220" height="300" fill="url(#glintG@U)"/></g>
+</g>

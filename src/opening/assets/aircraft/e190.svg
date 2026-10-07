@@ -1,0 +1,50 @@
+<!-- Embraer E190, port side, nose left. Box 0 0 1200 440. Same layer and marker conventions as dhc6.svg. -->
+<defs>
+  <clipPath id="fus@U"><path d="M92 262 C92 240 132 224 192 214 L242 198 C260 188 282 184 322 184 L900 184 C980 186 1050 200 1100 228 L1106 240 C1050 254 960 270 850 296 C820 306 770 308 720 308 L232 308 C162 308 114 290 92 262 Z"/></clipPath>
+  <clipPath id="fin@U"><path d="M870 188 L970 56 C978 44 996 40 1018 40 L1060 42 C1072 44 1076 52 1077 62 L1090 224 C1040 204 960 192 870 188 Z"/></clipPath>
+  <clipPath id="whole@U"><path d="M92 262 C92 240 132 224 192 214 L242 198 C260 188 282 184 322 184 L900 184 C980 186 1050 200 1100 228 L1106 240 C1050 254 960 270 850 296 C820 306 770 308 720 308 L232 308 C162 308 114 290 92 262 Z"/><path d="M870 188 L970 56 C978 44 996 40 1018 40 L1060 42 C1072 44 1076 52 1077 62 L1090 224 C1040 204 960 192 870 188 Z"/></clipPath>
+  <linearGradient id="shadeV@U" x1="0" y1="184" x2="0" y2="308" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".22" stop-color="#fff" stop-opacity=".08"/><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient>
+  <linearGradient id="shadeFin@U" x1="870" y1="0" x2="1090" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  <linearGradient id="shadeS@U" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+  <linearGradient id="glintG@U" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".65"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <radialGradient id="shadow@U"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+</defs>
+<g class="art-plane">
+  <ellipse class="art-shadow" cx="600" cy="382" rx="540" ry="22" fill="url(#shadow@U)"/>
+  <rect x="228" y="296" width="8" height="38" fill="#2A3442"/><circle cx="232" cy="342" r="19" fill="#171C24"/><circle cx="232" cy="342" r="8" fill="#9AA5B1"/><rect x="554" y="306" width="12" height="40" fill="#2A3442"/><circle cx="560" cy="354" r="25" fill="#171C24"/><circle cx="560" cy="354" r="10" fill="#9AA5B1"/>
+  <path class="p-body" d="M780 188 C820 184 850 170 880 150 L870 188 Z"/>
+  <path class="p-body" d="M870 188 L970 56 C978 44 996 40 1018 40 L1060 42 C1072 44 1076 52 1077 62 L1090 224 C1040 204 960 192 870 188 Z"/>
+  <g clip-path="url(#fin@U)"><g transform="translate(32 -2) scale(1 1)">
+    <polygon class="p-second tl tl-stripe" points="900,230 968,44 1002,44 934,230"/>
+    <polygon class="p-second tl tl-star" points="975,82 984,104 1008,105 989,120 996,143 975,130 954,143 961,120 942,105 966,104"/>
+    <path class="p-second tl tl-chevron" d="M922 170 L972 92 L1024 170 L1000 170 L972 126 L946 170 Z"/>
+    <path class="p-second tl tl-wave" d="M850 150 C900 120 940 170 990 130 C1010 116 1030 112 1050 116 L1050 150 C1030 146 1012 150 994 162 C944 200 902 152 850 182 Z"/>
+    <g class="tl tl-circle"><circle class="p-second" cx="978" cy="112" r="30"/><circle class="p-body" cx="978" cy="112" r="13"/></g>
+    <path class="p-second tl tl-arrow" d="M978 64 L1010 110 L990 110 L990 160 L966 160 L966 110 L946 110 Z"/>
+    <g class="tl tl-logo" transform="translate(936 66) scale(2.1)">@LOGO</g>
+  </g></g>
+  <path d="M870 188 L970 56 C978 44 996 40 1018 40 L1060 42 C1072 44 1076 52 1077 62 L1090 224 C1040 204 960 192 870 188 Z" fill="url(#shadeFin@U)"/>
+  <path class="p-line" d="M870 188 L970 56 C978 44 996 40 1018 40 L1060 42 C1072 44 1076 52 1077 62 L1090 224 C1040 204 960 192 870 188 Z"/>
+  <path d="M1058 52 L1074 214" stroke="rgba(8,20,34,.45)" stroke-width="1.6" fill="none"/>
+  <path class="p-body" d="M970 230 L1140 222 C1152 222 1152 232 1140 234 L970 240 Z"/><path class="p-line" d="M970 230 L1140 222 C1152 222 1152 232 1140 234 L970 240 Z"/>
+  <g clip-path="url(#fus@U)">
+    <rect class="p-body" x="40" y="174" width="1140" height="164"/>
+    <rect class="p-belly" x="40" y="270" width="1140" height="78"/>
+    <rect class="p-second st st-thin" x="60" y="250" width="1100" height="9"/>
+    <g class="st st-band"><rect class="p-second" x="60" y="246" width="1100" height="22"/><rect class="p-second" x="60" y="272" width="1100" height="4" opacity=".8"/></g>
+    <path class="p-second st st-swoosh" d="M60 302 C420 302 720 284 1120 194 L1120 230 C720 314 420 326 60 324 Z"/>
+    <rect x="40" y="174" width="1140" height="164" fill="url(#shadeV@U)"/>
+  </g>
+  <path class="p-line" d="M92 262 C92 240 132 224 192 214 L242 198 C260 188 282 184 322 184 L900 184 C980 186 1050 200 1100 228 L1106 240 C1050 254 960 270 850 296 C820 306 770 308 720 308 L232 308 C162 308 114 290 92 262 Z"/>
+  <path class="p-glass" d="M200 222 L236 201 C250 195 268 193 286 193 L290 222 Z"/><path d="M208 218 L236 203 L250 201 L222 218 Z" fill="#fff" opacity=".35"/>
+  <g class="p-glass"><rect x="338" y="216" width="15" height="20" rx="4"/><rect x="359" y="216" width="15" height="20" rx="4"/><rect x="380" y="216" width="15" height="20" rx="4"/><rect x="401" y="216" width="15" height="20" rx="4"/><rect x="422" y="216" width="15" height="20" rx="4"/><rect x="443" y="216" width="15" height="20" rx="4"/><rect x="464" y="216" width="15" height="20" rx="4"/><rect x="485" y="216" width="15" height="20" rx="4"/><rect x="506" y="216" width="15" height="20" rx="4"/><rect x="527" y="216" width="15" height="20" rx="4"/><rect x="548" y="216" width="15" height="20" rx="4"/><rect x="569" y="216" width="15" height="20" rx="4"/><rect x="590" y="216" width="15" height="20" rx="4"/><rect x="611" y="216" width="15" height="20" rx="4"/><rect x="632" y="216" width="15" height="20" rx="4"/><rect x="653" y="216" width="15" height="20" rx="4"/><rect x="674" y="216" width="15" height="20" rx="4"/><rect x="695" y="216" width="15" height="20" rx="4"/><rect x="716" y="216" width="15" height="20" rx="4"/><rect x="737" y="216" width="15" height="20" rx="4"/><rect x="758" y="216" width="15" height="20" rx="4"/><rect x="779" y="216" width="15" height="20" rx="4"/></g>
+  <rect x="286" y="198" width="36" height="96" rx="6" class="p-line"/>
+  <rect x="830" y="200" width="36" height="96" rx="6" class="p-line"/><rect x="837" y="212" width="22" height="18" rx="4" class="p-glass"/>
+  <text class="t-name" x="560" y="212" text-anchor="middle" font-weight="700" font-size="19" letter-spacing="3" fill="@NAMEFILL">@NAME</text><text class="t-reg" x="940" y="252" text-anchor="middle" font-weight="700" font-size="17" letter-spacing="1" fill="@REGFILL">@REG</text><text class="t-pname" x="238" y="296" text-anchor="middle" font-style="italic" font-size="13" fill="@PNAMEFILL">@PNAME</text>
+  <!-- low wing and the near engine under it -->
+  <path class="p-body" d="M404 300 L672 296 C700 298 708 316 676 320 L446 324 C414 324 400 312 404 300 Z"/><path d="M404 300 L672 296 C700 298 708 316 676 320 L446 324 C414 324 400 312 404 300 Z" fill="url(#shadeS@U)"/><path class="p-line" d="M404 300 L672 296 C700 298 708 316 676 320 L446 324 C414 324 400 312 404 300 Z"/>
+  <rect x="470" y="300" width="60" height="14" fill="#2A3442" opacity=".7"/>
+  <path class="p-engine" d="M398 302 C398 284 420 276 452 276 L586 278 C614 280 624 296 624 318 C624 340 612 356 586 358 L452 360 C420 360 398 350 398 328 Z"/><path d="M398 302 C398 284 420 276 452 276 L586 278 C614 280 624 296 624 318 C624 340 612 356 586 358 L452 360 C420 360 398 350 398 328 Z" fill="url(#shadeS@U)"/><path class="p-line" d="M398 302 C398 284 420 276 452 276 L586 278 C614 280 624 296 624 318 C624 340 612 356 586 358 L452 360 C420 360 398 350 398 328 Z"/>
+  <circle cx="414" cy="318" r="30" fill="#171C24"/><g class="fan"><line x1="414" y1="318" x2="441.6" y2="318.0" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="437.9" y2="331.8" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="427.8" y2="341.9" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="414.0" y2="345.6" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="400.2" y2="341.9" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="390.1" y2="331.8" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="386.4" y2="318.0" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="390.1" y2="304.2" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="400.2" y2="294.1" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="414.0" y2="290.4" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="427.8" y2="294.1" stroke="#9AA5B1" stroke-width="2.2"/><line x1="414" y1="318" x2="437.9" y2="304.2" stroke="#9AA5B1" stroke-width="2.2"/></g><circle cx="414" cy="318" r="8.4" class="p-second"/><circle cx="414" cy="318" r="30" fill="none" stroke="#C9CFD8" stroke-width="3"/>
+  <g clip-path="url(#whole@U)"><rect class="glint" x="-200" y="30" width="220" height="300" fill="url(#glintG@U)"/></g>
+</g>

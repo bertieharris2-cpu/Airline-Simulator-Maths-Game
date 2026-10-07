@@ -1,0 +1,49 @@
+<!-- Saab 340, port side, nose left. Box 0 0 1200 440. Same layer and marker conventions as dhc6.svg. -->
+<defs>
+  <clipPath id="fus@U"><path d="M118 262 C118 242 150 226 198 216 L246 200 C260 192 282 188 322 188 L880 188 C950 190 1012 206 1062 232 L1068 244 C1012 258 930 272 822 290 C792 300 742 304 702 304 L242 304 C184 304 140 290 118 262 Z"/></clipPath>
+  <clipPath id="fin@U"><path d="M836 192 L920 58 C928 46 944 42 964 42 L1000 44 C1012 46 1016 54 1017 64 L1046 226 C1000 206 930 194 836 192 Z"/></clipPath>
+  <clipPath id="whole@U"><path d="M118 262 C118 242 150 226 198 216 L246 200 C260 192 282 188 322 188 L880 188 C950 190 1012 206 1062 232 L1068 244 C1012 258 930 272 822 290 C792 300 742 304 702 304 L242 304 C184 304 140 290 118 262 Z"/><path d="M836 192 L920 58 C928 46 944 42 964 42 L1000 44 C1012 46 1016 54 1017 64 L1046 226 C1000 206 930 194 836 192 Z"/></clipPath>
+  <linearGradient id="shadeV@U" x1="0" y1="188" x2="0" y2="304" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".22" stop-color="#fff" stop-opacity=".08"/><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient>
+  <linearGradient id="shadeFin@U" x1="836" y1="0" x2="1046" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  <linearGradient id="shadeS@U" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+  <linearGradient id="glintG@U" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".65"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <radialGradient id="shadow@U"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+</defs>
+<g class="art-plane">
+  <ellipse class="art-shadow" cx="600" cy="380" rx="520" ry="22" fill="url(#shadow@U)"/>
+  <rect x="232" y="296" width="8" height="38" fill="#2A3442"/><circle cx="236" cy="342" r="19" fill="#171C24"/><circle cx="236" cy="342" r="8" fill="#9AA5B1"/><rect x="481" y="296" width="10" height="44" fill="#2A3442"/><circle cx="486" cy="350" r="25" fill="#171C24"/><circle cx="486" cy="350" r="10" fill="#9AA5B1"/>
+  <path class="p-body" d="M740 191 C790 187 822 174 854 150 L836 192 Z"/>
+  <path class="p-body" d="M836 192 L920 58 C928 46 944 42 964 42 L1000 44 C1012 46 1016 54 1017 64 L1046 226 C1000 206 930 194 836 192 Z"/>
+  <g clip-path="url(#fin@U)"><g transform="translate(-14 -2) scale(1 1)">
+    <polygon class="p-second tl tl-stripe" points="900,230 968,44 1002,44 934,230"/>
+    <polygon class="p-second tl tl-star" points="975,82 984,104 1008,105 989,120 996,143 975,130 954,143 961,120 942,105 966,104"/>
+    <path class="p-second tl tl-chevron" d="M922 170 L972 92 L1024 170 L1000 170 L972 126 L946 170 Z"/>
+    <path class="p-second tl tl-wave" d="M850 150 C900 120 940 170 990 130 C1010 116 1030 112 1050 116 L1050 150 C1030 146 1012 150 994 162 C944 200 902 152 850 182 Z"/>
+    <g class="tl tl-circle"><circle class="p-second" cx="978" cy="112" r="30"/><circle class="p-body" cx="978" cy="112" r="13"/></g>
+    <path class="p-second tl tl-arrow" d="M978 64 L1010 110 L990 110 L990 160 L966 160 L966 110 L946 110 Z"/>
+    <g class="tl tl-logo" transform="translate(936 66) scale(2.1)">@LOGO</g>
+  </g></g>
+  <path d="M836 192 L920 58 C928 46 944 42 964 42 L1000 44 C1012 46 1016 54 1017 64 L1046 226 C1000 206 930 194 836 192 Z" fill="url(#shadeFin@U)"/>
+  <path class="p-line" d="M836 192 L920 58 C928 46 944 42 964 42 L1000 44 C1012 46 1016 54 1017 64 L1046 226 C1000 206 930 194 836 192 Z"/>
+  <path d="M998 52 L1034 214" stroke="rgba(8,20,34,.45)" stroke-width="1.6" fill="none"/>
+  <path class="p-body" d="M932 220 L1100 210 C1112 210 1112 220 1100 222 L932 230 Z"/><path class="p-line" d="M932 220 L1100 210 C1112 210 1112 220 1100 222 L932 230 Z"/>
+  <g clip-path="url(#fus@U)">
+    <rect class="p-body" x="40" y="178" width="1140" height="156"/>
+    <rect class="p-belly" x="40" y="268" width="1140" height="76"/>
+    <rect class="p-second st st-thin" x="60" y="249" width="1100" height="9"/>
+    <g class="st st-band"><rect class="p-second" x="60" y="246" width="1100" height="22"/><rect class="p-second" x="60" y="272" width="1100" height="4" opacity=".8"/></g>
+    <path class="p-second st st-swoosh" d="M60 298 C420 298 720 280 1120 198 L1120 234 C720 310 420 322 60 320 Z"/>
+    <rect x="40" y="178" width="1140" height="156" fill="url(#shadeV@U)"/>
+  </g>
+  <path class="p-line" d="M118 262 C118 242 150 226 198 216 L246 200 C260 192 282 188 322 188 L880 188 C950 190 1012 206 1062 232 L1068 244 C1012 258 930 272 822 290 C792 300 742 304 702 304 L242 304 C184 304 140 290 118 262 Z"/>
+  <path class="p-glass" d="M214 222 L248 203 C260 197 276 195 292 195 L296 222 Z"/><path d="M222 218 L248 205 L260 203 L234 218 Z" fill="#fff" opacity=".35"/>
+  <g class="p-glass"><rect x="362" y="218" width="22" height="20" rx="5"/><rect x="402" y="218" width="22" height="20" rx="5"/><rect x="442" y="218" width="22" height="20" rx="5"/><rect x="482" y="218" width="22" height="20" rx="5"/><rect x="522" y="218" width="22" height="20" rx="5"/><rect x="562" y="218" width="22" height="20" rx="5"/><rect x="602" y="218" width="22" height="20" rx="5"/><rect x="642" y="218" width="22" height="20" rx="5"/><rect x="682" y="218" width="22" height="20" rx="5"/><rect x="722" y="218" width="22" height="20" rx="5"/><rect x="762" y="218" width="22" height="20" rx="5"/></g>
+  <rect x="300" y="200" width="34" height="92" rx="5" class="p-line"/>
+  <rect x="792" y="202" width="48" height="86" rx="6" class="p-line"/><rect x="800" y="212" width="22" height="18" rx="4" class="p-glass"/>
+  <text class="t-name" x="560" y="212" text-anchor="middle" font-weight="700" font-size="19" letter-spacing="3" fill="@NAMEFILL">@NAME</text><text class="t-reg" x="905" y="248" text-anchor="middle" font-weight="700" font-size="17" letter-spacing="1" fill="@REGFILL">@REG</text><text class="t-pname" x="246" y="292" text-anchor="middle" font-style="italic" font-size="13" fill="@PNAMEFILL">@PNAME</text>
+  <!-- low wing root and the near engine on it -->
+  <path class="p-body" d="M420 298 L646 296 C666 298 668 318 646 320 L472 324 C442 324 420 314 420 298 Z"/><path d="M420 298 L646 296 C666 298 668 318 646 320 L472 324 C442 324 420 314 420 298 Z" fill="url(#shadeS@U)"/><path class="p-line" d="M420 298 L646 296 C666 298 668 318 646 320 L472 324 C442 324 420 314 420 298 Z"/>
+  <path class="p-engine" d="M336 250 C336 232 356 226 390 226 L524 230 C546 232 554 244 554 258 C554 272 544 284 524 286 L390 288 C356 288 336 276 336 250 Z"/><path d="M336 250 C336 232 356 226 390 226 L524 230 C546 232 554 244 554 258 C554 272 544 284 524 286 L390 288 C356 288 336 276 336 250 Z" fill="url(#shadeS@U)"/><path class="p-line" d="M336 250 C336 232 356 226 390 226 L524 230 C546 232 554 244 554 258 C554 272 544 284 524 286 L390 288 C356 288 336 276 336 250 Z"/>
+  <ellipse cx="330" cy="256" rx="6" ry="95.0" fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.18)"/><rect class="blade" x="326" y="161.0" width="8" height="190" rx="4" fill="#1E2630"/><rect class="blade b2" x="326" y="161.0" width="8" height="190" rx="4" fill="#1E2630" opacity=".6"/><rect class="blade" x="326" y="161.0" width="8" height="190" rx="4" fill="#1E2630" opacity=".35" transform="rotate(30 330 256)"/><ellipse cx="336" cy="256" rx="13" ry="15" class="p-second"/><ellipse cx="336" cy="256" rx="13" ry="15" fill="url(#shadeS@U)"/>
+  <g clip-path="url(#whole@U)"><rect class="glint" x="-200" y="30" width="220" height="300" fill="url(#glintG@U)"/></g>
+</g>
