@@ -197,7 +197,7 @@ function launchPlane(){
 }
 function wallMode(){
   if(!S || !S.steps || !S.steps.length) return 'live';
-  const st = step().t;
+  const st = step().t, idm = identityWallMode(); if(idm) return idm;
   if(st === 'event') return 'alert';
   if(st === 'stage') return 'stage';
   if(liveOn()) return 'ops';
@@ -236,7 +236,7 @@ function wallReviewHtml(){
 }
 function wallLaunchHtml(f){
   const p = planeById(f.planeId), sch = schedOf(f), r = sch.length ? routeById(sch[0]) : null, trip = S.rnd.flights.find(x => x.uid === f.uid);
-  return `<div class="wo-launch"><small>FLEET UPDATE</small><h1>WELCOME TO THE FLEET</h1><div class="wl-plane">${planeSvg(p)}</div><h2>${esc(p.name)}</h2>
+  return `<div class="wo-launch"><small>FLEET UPDATE</small><h1>WELCOME TO THE FLEET</h1><div class="wl-plane">${aircraftArt(ensureIdentity(f), { cls:'anim pic' })}</div><h2>${esc(p.name)}</h2>
     <div class="wl-facts"><span><b>${p.seats}</b> seats</span><span><b>${num(p.range)}</b> km range</span><span><b>${num(p.speed)}</b> km/h</span></div>
     <p>${r ? `First route: <b>${esc(homeData().city)} → ${esc(r.city)}</b> · first departure <b>${fmtTime(trip ? trip.dep : firstDep())}</b>` : 'Choosing its first route at HQ…'}</p></div>`;
 }
@@ -256,6 +256,7 @@ function renderDisplay(){
   const sx = strategyOf(); document.querySelector('.w-brand small').textContent = sx ? sx.badge : 'Network operations';
   const w = roundData(S.round), news = S.log.slice(-4);
   $('dTicker').textContent = ((w.news||[]).map(fillText).concat(news.map(n => n.text)).join('   ✈   ') || 'Welcome to the skies').toUpperCase();
+  if(IDENTITY_MODES.includes(mode)){ renderIdentityWall(mode); return; }
   if(mode === 'ops'){ renderLiveWall(); if(IS_DISPLAY) liveWallLoop(); return; }
   $('wOps').hidden = true; $('wOps')._h = ''; $('wStatus').className = 'w-status'; $('wStatus')._h = ''; $('dRows')._h = ''; $('aRows')._h = ''; liveMapMode(false);
   const PT = periodType();
@@ -371,7 +372,7 @@ function syncTools(){ document.querySelectorAll('[data-wcol]').forEach(b => b.se
 function teacherOpen(){
   const T = $('teacher'); T.hidden = false;
   $('tNudge').checked = settings.nudge; $('tAuto').checked = settings.auto; $('tStartCash').value = settings.startingCash; $('tFlightSecs').value = String(settings.flightSecs);
-  $('tOpsSound').checked = settings.opsSound !== false; $('tAutoWall').checked = settings.autoWall !== false;
+  $('tOpsSound').checked = opsSoundOn(); $('tMotion').checked = !!settings.reduceMotion; $('tAutoWall').checked = settings.autoWall !== false;
   const evs = []; WORLD.rounds.forEach((r,i)=>{ if(r.event) evs.push([i, r.event]); });
   $('tEventPick').innerHTML = evs.length ? evs.map(([i,e]) => `<option value="${i}">${esc(e.title)} (${esc(WORLD.rounds[i].date ? dateShort(beatDay(i)) + ' ' + calDate(beatDay(i)).getUTCFullYear() : 'day ' + i)})</option>`).join('') : '<option value="">No events in this story yet</option>';
   ['tEventPick', 'tEventNow', 'tEventDelay', 'tEventSkip'].forEach(id => { $(id).disabled = !evs.length; });   // events come back when the story has some
@@ -404,7 +405,7 @@ function initTeacher(){
   $('tNudge').onchange = e => { settings.nudge = e.target.checked; saveSettings(); };
   $('tAuto').onchange = e => { settings.auto = e.target.checked; saveSettings(); };
   $('tFlightSecs').onchange = e => { settings.flightSecs = parseInt(e.target.value,10); saveSettings(); };
-  $('tOpsSound').onchange = e => { settings.opsSound = e.target.checked; saveSettings(); };
+  $('tOpsSound').onchange = e => { settings.opsSound = e.target.checked; saveSettings(); syncSoundBtn(); };
   $('tAutoWall').onchange = e => { settings.autoWall = e.target.checked; saveSettings(); };
   $('tEventNow').onclick = () => { const i = parseInt($('tEventPick').value,10); if(!(WORLD.rounds[i] && WORLD.rounds[i].event)){ toast('No events in this story yet'); return; } S.rnd.event = WORLD.rounds[i].event; S.rnd.eventChoice = null; const at = Math.max(S.si+1, S.steps.findIndex(s=>s.t==='summary')); S.steps.splice(S.steps.findIndex(s=>s.t==='summary'), 0, {t:'event'}, {t:'eventOutcome'}); teacherClose(); toast('Event queued for after this screen'); };
   $('tEventDelay').onclick = () => { if(!S.rnd.event){ toast('No event today'); return; } S.nextMods.event = S.rnd.event; S.rnd.event = null; S.steps = S.steps.filter(s => s.t!=='event' && s.t!=='eventOutcome'); teacherClose(); toast('Event moved to tomorrow'); };

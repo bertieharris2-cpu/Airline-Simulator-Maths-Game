@@ -129,6 +129,7 @@ settings_rows = sheet(wb, 'Settings')
 settings = {r['key']: r['value'] for r in live('Settings', settings_rows)}
 settings_status = {r['key']: (r.get('status') or 'note row') for r in settings_rows if r.get('key')}
 start = date(settings['startDate'])
+if 'blockedFlightCodes' in settings: settings['blockedFlightCodes'] = [w.upper() for w in words(settings['blockedFlightCodes'])]
 CH1_END = dt.date(2030, 12, 28)   # chapter 1's review date; rows dated on or before it must be live (see "Chapter 1 touches")
 
 arche = live('Archetypes', sheet(wb, 'Archetypes'))
@@ -159,8 +160,13 @@ all_aircraft = sheet(wb, 'Aircraft')
 aircraft = [{'id': AIRCRAFT_IDS.get(a['id'], a['id']), 'wbId': a['id'], 'name': a['name'], 'tier': a['tier'], 'seats': a['seats'],
              'speedKmh': a['speedKmh'], 'rangeKm': a['rangeKm'], 'fuelPer100Km': a['fuelPer100Km'], 'hourlyCost': a['hourlyCost'],
              'dayCost': a['dayCost'], 'listPrice': a['listPrice'], 'launchDealPrice': a['launchDealPrice'],
-             'shopFromDay': a['shopFromDay'], 'identity': a['identity'], 'status': a['status']}
+             'shopFromDay': a['shopFromDay'], 'identity': a['identity'], 'status': a['status'],
+             'artworkId': a.get('artworkId'), 'photoFile': a.get('photoFile'), 'photoCredit': a.get('photoCredit'), 'photoLicence': a.get('photoLicence'), 'photoSource': a.get('photoSource')}
             for a in live('Aircraft', all_aircraft)]
+# The showroom's "coming soon" row (CR5): the aircraft not yet live, by name, date and picture only. No seats, prices or costs are read.
+aircraft_preview = [{'id': AIRCRAFT_IDS.get(a['id'], a['id']), 'name': a['name'], 'tier': a['tier'], 'shopFromDay': a['shopFromDay'], 'status': a['status'],
+                     'photoFile': a.get('photoFile'), 'photoCredit': a.get('photoCredit'), 'photoLicence': a.get('photoLicence'), 'photoSource': a.get('photoSource')}
+                    for a in all_aircraft if a.get('id') and a.get('status') in ('placeholder', 'later')]
 
 finance_rows = live('Finance', sheet(wb, 'Finance'))
 TUTORIAL = {'dhc6', 'saab340', 'atr72', 'e175', 'e190'}      # launch-deal finance is paid by the day; from the A220 by the week
@@ -228,6 +234,21 @@ catering = [{'id': c['optionId'], 'name': c['name'], 'sellingPrice': c['sellingP
              'freeCostPerPassenger': c['freeCostPerPassenger'], 'reputationEffect': c['reputationEffect'], 'notes': c['notes'], 'status': c['status']}
             for c in live('Catering', opt_sheet('Catering'))]
 all_hunts = opt_sheet('Hunts')
+# Livery (v4.3 draft, CR5): the paint shop's fixed choices, grouped by kind
+all_livery = opt_sheet('Livery')
+if 'Livery' not in wb.sheetnames: issue('error', 'Livery', 'no Livery sheet: the paint shop has no palette, stripes, tail symbols, logo shapes or name suggestions.')
+livery = {'colours': [], 'stripes': [], 'tails': [], 'logoShapes': [], 'planeNames': []}
+LIVERY_KINDS = {'colour': 'colours', 'stripe': 'stripes', 'tail': 'tails', 'logoShape': 'logoShapes', 'planeName': 'planeNames'}
+for r in live('Livery', all_livery):
+    k = LIVERY_KINDS.get(r.get('kind'))
+    if not k: issue('check', 'Livery', f'row {r.get("id")}: unknown kind `{r.get("kind")}` (colour, stripe, tail, logoShape or planeName).'); continue
+    row = {'id': r['id'], 'name': r['name']}
+    if k == 'colours':
+        if not re.fullmatch(r'#[0-9A-Fa-f]{6}', str(r.get('value') or '')): issue('check', 'Livery', f'colour {r["id"]} has no hex value.'); continue
+        row['hex'] = str(r['value']).upper()
+    livery[k].append(row)
+for k, least in (('colours', 6), ('stripes', 2), ('tails', 2), ('logoShapes', 2), ('planeNames', 4)):
+    if len(livery[k]) < least: issue('check', 'Livery', f'only {len(livery[k])} live {k}: the paint shop wants at least {least}.')
 hunts = [{'id': h['huntId'], 'date': h['date'], 'chapter': h['chapter'], 'host': h['host'], 'whatIsWrong': h['whatIsWrong'], 'pupilChecks': h['pupilChecks'],
           'consequenceIfMissed': h['consequenceIfMissed'], 'status': h['status']} for h in live('Hunts', all_hunts)]
 
@@ -254,7 +275,8 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'settings': settings, 'archetypes': archetypes, 'routes': routes, 'routeCatalogue': catalogue,
          'aircraft': aircraft, 'finance': finance, 'airports': airports, 'calendar': calendar, 'market': market,
          'events': events, 'challenges': challenges, 'mechanics': mechanics,
-         'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts}
+         'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
+         'livery': livery, 'aircraftPreview': aircraft_preview}
 
 
 # ---------- checks ----------
@@ -456,7 +478,8 @@ for f in sheet(wb, 'Finance'):
 NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurnaroundMin', 'secondCrewCost', 'maxDutyHours', 'fuelLotLitres', 'playableDays',
           'weekendBusinessMultSat', 'weekendBusinessMultSun', 'weekendLeisureMult', 'cashReserve', 'negativeProjectionWarning', 'eventCostScaleFromDay',
           'loadFactorPercentFromDay', 'fuelHandSumPriceStep', 'fuelHandSumLitresShare', 'snacksHandSumOnce', 'timeSkip', 'leaseFromDate', 'buyFromDate',
-          'financeFromDate', 'reputationFromDate', 'quarterlyTaskFromDate', 'huntPerReview', 'captainsChallengeCadence', 'fareStepWeek2', 'reportCadence']
+          'financeFromDate', 'reputationFromDate', 'quarterlyTaskFromDate', 'huntPerReview', 'captainsChallengeCadence', 'fareStepWeek2', 'reportCadence',
+          'blockedFlightCodes', 'soundDefault', 'revealSeconds']
 for k in NEEDED:
     st_ = settings_status.get(k)
     if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')
@@ -466,6 +489,29 @@ if not chapters or chapters[0].get('chapter') != 1: touch.append('- **Chapters:*
 out += ['', '## Chapter 1 touches', '',
         'Rows dated on or before 28 Dec 2030 (chapter 1\'s review) that the game would read but are not `live`, and values the chapter-1 flow needs that the workbook lacks. '
         'The game reports these; it never invents a value.', ''] + (touch or ['- Nothing: every row chapter 1 touches is live.'])
+
+# identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
+PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'
+CREDITS = ROOT / 'data' / 'Photo-Credits.md'
+ph = ['| Aircraft | Status | Artwork | Photo | Credit and licence |', '| --- | --- | --- | --- | --- |']
+credits = ['# Showroom photo credits', '', '*Written by `tools/import_world.py` from the Aircraft sheet\'s photo columns. Every photo in the showroom is openly licensed and shows the aircraft in plain or maker colours.*', '',
+           '| Aircraft | File | Author | Licence | Source |', '| --- | --- | --- | --- | --- |']
+for a in all_aircraft:
+    if not a.get('id') or a.get('status') == 'removed': continue
+    f = a.get('photoFile'); have = bool(f) and (PHOTOS / str(f)).exists()
+    size = f'{(PHOTOS / str(f)).stat().st_size // 1024} KB' if have else ''
+    art = a.get('artworkId') or ('—' if a.get('status') in LOAD else '')
+    cred = ' · '.join(str(a.get(k)) for k in ('photoCredit', 'photoLicence') if a.get(k))
+    photo = f'`{f}` {size}' if have else (f'`{f}` **missing on disk**' if f else 'none yet')
+    ph.append(f'| {a["id"]} | {a.get("status")} | {art} | {photo} | {cred or "—"} |')
+    if have and not (a.get('photoCredit') and a.get('photoLicence') and a.get('photoSource')): issue('check', 'Aircraft', f'{a["id"]}: the photo {f} has no credit, licence or source recorded: it must not be shown.')
+    if f and not have: issue('check', 'Aircraft', f'{a["id"]}: photoFile {f} is not in {PHOTOS.relative_to(ROOT)}.')
+    if have: credits.append(f'| {a["name"]} | {f} | {a.get("photoCredit") or "?"} | {a.get("photoLicence") or "?"} | {a.get("photoSource") or "?"} |')
+CREDITS.write_text('\n'.join(credits) + ('\n' if len(credits) > 6 else '\n\nNo photos yet.\n'))
+out += ['', '## Identity and photos (CR5)', '',
+        f'Livery sheet: {len(livery["colours"])} colours, {len(livery["stripes"])} stripes, {len(livery["tails"])} tail symbols, {len(livery["logoShapes"])} logo shapes, {len(livery["planeNames"])} name suggestions. '
+        'Photos live in `src/opening/assets/photos/` and are embedded by the build; credits are listed in `data/Photo-Credits.md`. '
+        'The showroom\'s "coming soon" row reads the name, date and picture of aircraft that are not live (never their figures).', ''] + ph
 
 out += ['', '## The prototype\'s own data and the workbook\'s', '',
         'The game uses the workbook\'s values. The prototype\'s own (in `data-world` and `data-planes`) only matter for routes and aircraft the workbook does not have yet.', '',
@@ -487,4 +533,4 @@ if '--check' not in args:
     DATA.write_text(src)
 
 print(f'{REPORT.relative_to(ROOT)}: {n["error"]} to fix, {n["check"]} to check, {n["note"]} notes'
-      + ('' if '--check' in args else f'; {BLOCK_ID} written ({len(routes)} routes, {len(aircraft)} aircraft, {len(calendar)} days, {len(market)} weeks, {len(events)} events, {len(chapters)} chapters, {len(catering)} catering options)'))
+      + ('' if '--check' in args else f'; {BLOCK_ID} written ({len(routes)} routes, {len(aircraft)} aircraft, {len(calendar)} days, {len(market)} weeks, {len(events)} events, {len(chapters)} chapters, {len(catering)} catering options, {sum(len(v) for v in livery.values())} livery rows)'))

@@ -73,7 +73,7 @@ R.starter = () => {
   screen().innerHTML = taskFrame({ question:'Your start-up aircraft', work:false, context: ctxHomeBase(),
     story:[`Every airline starts somewhere. Yours starts with one ${esc(p.name)}.`],
     say:`Your start-up aircraft is the ${p.name}. ${p.seats} seats. ${p.speed} kilometres an hour. A range of ${p.range} kilometres. It costs ${money(p.hourCost)} for every hour in the air, plus a landing fee at each end of the flight, and ${money(p.dayCost)} a day.`,
-    main:`<div class="starter"><div class="st-plane"><svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-${p.icon}"/></svg>${finSvg(S.airline.fin, 56)}<b>${esc(p.name)}</b><span class="muted">${esc(p.fact)}</span></div>
+    main:`<div class="starter"><div class="st-plane">${owned ? aircraftArt(ensureIdentity(S.fleet[0]), { cls:'anim pic' }) : `<svg class="preview-plane" viewBox="0 0 120 48" style="fill:var(--c1)"><use href="#pl-${p.icon}"/></svg>`}<b>${esc(p.name)}</b>${owned && S.fleet[0].registration ? `<span class="mono muted">${esc(S.fleet[0].registration)}${S.fleet[0].name ? ' · ' + esc(S.fleet[0].name) : ''}</span>` : ''}<span class="muted">${esc(p.fact)}</span></div>
       <div class="specs4">${spec(p.seats, 'Seats', `Up to ${p.seats} passengers on every flight.`)}
         ${spec(num(p.speed) + ' km/h', 'Speed', rs.map(r => `${esc(r.city)} (${num(routeKm(r))} km): ${fmtDur(TIME.leg(p, r))} each way.`).join(' '))}
         ${spec(num(p.range) + ' km', 'Range', 'How far it can fly before it must land. Both first markets are well within reach.')}
@@ -401,7 +401,7 @@ let bootTimer = null;
 function enterHq(){ clearTimeout(bootTimer); if(step().t !== 'boot') return; document.body.classList.add('hq-enter'); next(); setTimeout(() => document.body.classList.remove('hq-enter'), 800); }
 R.boot = () => {
   const h = homeData(), T = terminalData(), lines = ['Operations online', 'Finance standby', 'Network standby', 'Fleet awaiting delivery'];
-  screen().innerHTML = `<div class="hqboot" role="status"><div class="hb-in">${finSvg(S.airline.fin, 52)}<div class="hb-name">${esc(S.airline.name || 'Your airline')}</div><div class="hb-at">${esc(h.name)}${T.name ? ' · ' + esc(T.name) : ''}</div><p class="hb-init">Initialising headquarters…</p>
+  screen().innerHTML = `<div class="hqboot" role="status"><div class="hb-in">${logoSvg(52)}<div class="hb-name">${esc(S.airline.name || 'Your airline')}</div><div class="hb-at">${esc(h.name)}${T.name ? ' · ' + esc(T.name) : ''}</div><p class="hb-init">Initialising headquarters…</p>
     <ol class="hb-l">${lines.map((l, i) => `<li style="--d:${(0.4 + i * 0.32).toFixed(2)}s"><i></i><span>${l}</span></li>`).join('')}<li class="sys" style="--d:${(0.4 + lines.length * 0.32 + 0.15).toFixed(2)}s"><i></i><span>System ready</span></li></ol>
     <button class="btn primary big" id="enterHq">Enter HQ &#9654;</button></div></div>`;
   on('enterHq', enterHq);
@@ -523,8 +523,8 @@ function jumpTo(i){ if(i === S.si || i < 0) return; S.rnd.returnTo = reach(); S.
 function advance(){ const r = S.rnd.returnTo; delete S.rnd.returnTo; if(r !== undefined && r > S.si){ S.si = r; resetEntry(); UI.justDone = null; render(); } else next(); }
 /* Back: one step back through any process, never past something that has already happened (operations flown, a period run,
    an order signed), and never onto a screen that only moves on by itself (the HQ start-up, the morning HQ, a milestone, a run). */
-const NO_BACK = ['welcome', 'name', 'boot', 'hq', 'milestone', 'fly', 'sim', 'results', 'rop', 'yearReview', 'delivery', 'protoEnd'];
-const BACK_SKIP = ['welcome', 'boot', 'hq', 'milestone', 'fly', 'sim', 'results', 'rop', 'protoEnd'];
+const NO_BACK = ['welcome', 'name', 'reveal', 'takeoff', 'boot', 'hq', 'milestone', 'fly', 'sim', 'results', 'rop', 'yearReview', 'delivery', 'protoEnd'];
+const BACK_SKIP = ['welcome', 'reveal', 'boot', 'hq', 'milestone', 'fly', 'sim', 'results', 'rop', 'protoEnd'];
 const BACK_WALL = ['fly', 'sim', 'results', 'purchase'];
 function backTarget(){
   const st = step(); if(!st || S.overlay || NO_BACK.includes(st.t)) return -1;
@@ -532,7 +532,7 @@ function backTarget(){
   for(let i = S.si - 1; i >= 0; i--){ const t = S.steps[i].t; if(BACK_WALL.includes(t)) return -1; if(!BACK_SKIP.includes(t)) return i; }
   return -1;
 }
-function goBack(){ const i = backTarget(); if(i < 0) return; clearTimeout(bootTimer); if(S.phase === 'setup' && ['name', 'fin', 'home'].includes(S.steps[i].t)){ S.si = i; render(); return; } jumpTo(i); }
+function goBack(){ const i = backTarget(); if(i < 0) return; clearTimeout(bootTimer); if(S.phase === 'setup' && ['name', 'code', 'logo', 'fin', 'paint', 'cert', 'home'].includes(S.steps[i].t)){ S.si = i; render(); return; } jumpTo(i); }
 function backBtn(){ return backTarget() >= 0 ? '<button class="btn big ab-back" id="wsBack">&#9664; Back</button>' : ''; }
 function goLabel(def){ const r = S.rnd.returnTo; return r !== undefined && r > S.si ? `Back to ${RAIL_LABEL[S.steps[r].t] || 'the plan'}` : def; }
 

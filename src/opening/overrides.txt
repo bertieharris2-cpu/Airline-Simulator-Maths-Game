@@ -8,6 +8,7 @@ aptCode: p4d_opening.js -> p4i_liveops.js
 bandOf: p4g_opening2.js -> p4h_world.js
 beatLabel: p4d_opening.js -> p4f_campaign.js -> p4k_chapter.js
 bindPlanEditor: p4g_opening2.js -> p4m_fleet.js
+buyPlane: p4a_core.js -> p4p_identity.js
 campaignSummary: p4d_opening.js -> p4f_campaign.js
 capFirst: p4a2_workbook.js -> p4d_opening.js
 cellState: p4a_core.js -> p4e_toolkit.js
@@ -44,6 +45,7 @@ goWord: p4d_opening.js -> p4f_campaign.js
 legMinutes: p4a_core.js -> p4h_world.js
 monthNo: p4a_core.js -> p4k_chapter.js
 operandUnit: p4a_core.js -> p4g_opening2.js
+opsSoundOn: p4i_liveops.js -> p4p_identity.js
 paxFor: p4a_core.js -> p4h_world.js
 periodBrief: p4f_campaign.js -> p4n_weeks.js
 periodLabel: p4a_core.js -> p4k_chapter.js
@@ -69,6 +71,7 @@ readyExtra: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyOk: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyTitle: p4d_opening.js -> p4f_campaign.js
 recordHandSums: p4l_handsums.js -> p4m_fleet.js
+regOf: p4i_liveops.js -> p4p_identity.js
 repLive: p4a_core.js -> p4o_review.js
 reviewSpec: p4f_campaign.js -> p4n_weeks.js
 routeKm: p4a_core.js -> p4h_world.js
@@ -76,6 +79,7 @@ routeOpen: p4a_core.js -> p4k_chapter.js -> p4m_fleet.js
 rowLive: p4a_core.js -> p4e_toolkit.js
 rowTyped: p4e_toolkit.js -> p4m_fleet.js
 runCostOf: p4a_core.js -> p4h_world.js
+setLivery: p4b_control.js -> p4p_identity.js
 setPlan: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js
 simulateDays: p4a_core.js -> p4f_campaign.js
 simulateRun: p4a_core.js -> p4f_campaign.js

@@ -66,10 +66,14 @@ const TAG = `${HOME}-${MK}-${W}`;
     await p.evaluate(() => { const b = document.querySelector('.lo-ctl [data-ops="summary"]'); if(b) b.click(); });
     for(let i = 0; i < 40 && ['fly', 'sim'].includes(await T()); i++) await p.waitForTimeout(150);
   }
+  // launch-day identity (CR5): the flight code, the logo, the paint shop, the reveal, the certificate
+  const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
+    if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
+    if(await T() === 'reveal'){ await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); } if(await T() === 'cert') await p.click('#nx'); };
   // ---- setup ----
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx');
   ok('no airline-type choice at the start', await T() !== 'strategy', await T());
-  await p.click('#nx');   // livery
+  await identity();
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
   await p.click('#nx'); await p.click(`[data-mk="${MK}"]`); await p.click('#nx'); await p.click('#nx');
   for(let k = 0; k < 4; k++) await p.click('#nx'); const rq = await p.$$eval('[data-rq]', e => e.map(x => x.getAttribute('data-rq'))); await p.click(`[data-rq="${rq[1]}"]`); await p.click('#nx');
@@ -120,6 +124,9 @@ const TAG = `${HOME}-${MK}-${W}`;
       if(POL === 'typical' && better && await vis('[data-ftest]:not([disabled])')) await p.click('[data-ftest]'); else await p.click('[data-fmine]');
       const fc = (await S()).rnd.myForecast; checks.push(`info test ${day} flew ${fc && fc.plan} projected ${fc && fc.profit}`); continue; }
     if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); await fits('fuel ' + R); if(R === 2) await shot('d2-fuel'); await p.click('#nx'); continue; }
+    if(t === 'paint'){ await fits('paint ' + R); await shot('paint-' + R); const a = await S(); ok(`paint ${R}: the new plane has its own registration`, new Set(a.fleet.map(f => f.registration)).size === a.fleet.length, a.fleet.map(f => f.registration)); await p.click('#roll'); continue; }
+    if(t === 'reveal'){ await p.click('#skipReveal'); for(let i = 0; i < 50 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); await shot('reveal-' + R); await p.click('#nx'); continue; }
+    if(t === 'takeoff'){ await fits('takeoff'); await shot('d0-takeoff'); await p.click('#toGo'); for(let i = 0; i < 200 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); ok('take-off: continue appears', !(await p.$eval('#nx', e => e.hidden))); await shot('d0-takeoff-done'); await p.click('#nx'); continue; }
     if(t === 'ready' && IWB && !d){
       const pop = ctx.waitForEvent('page'); await p.evaluate(() => document.getElementById('tOpenIwb').click()); d = await pop;
       d.on('pageerror', e => errors.push('wall: ' + e.message)); await d.waitForLoadState(); await p.waitForTimeout(5000);

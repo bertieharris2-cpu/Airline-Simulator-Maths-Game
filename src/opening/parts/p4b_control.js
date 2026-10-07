@@ -9,7 +9,7 @@ function factsHtml(list){ return `<div class="facts">${list.map(([l,v,c]) => `<d
 function on(id, fn){ const e = $(id); if(e) e.onclick = fn; }
 function roundLabel(){ if(S.phase==='setup') return 'Launch day'; const P = S.period; if(!P || P.type === 'day') return dateShort() + ' · Day ' + S.day; if(P.type === 'gap') return fmtRange(P.from, P.to); if(P.type === 'week') return periodTag() + ' · ' + fmtRange(P.from, P.to); return periodTag() + ' · ' + periodLabel(P); }
 
-const FOCUS_STEPS = ['boot','strategy','plane','newRoute','results','route','setupFuel','setupPrice','choice','fare','trips','day','fuel','cabin','quick','challenge','challengeCalc'];
+const FOCUS_STEPS = ['boot','paint','fin','reveal','takeoff','strategy','plane','newRoute','results','route','setupFuel','setupPrice','choice','fare','trips','day','fuel','cabin','quick','challenge','challengeCalc'];
 function applyTextSize(){ const z = [1, 1.12, 1.25][S.textSize || 0] || 1; document.documentElement.style.setProperty('--tz', z); }
 function render(){
   if(IS_DISPLAY) return;
@@ -730,6 +730,7 @@ function openShop(){ S.overlay = {type:'shop', pick:[]}; render(); }
 function closeOverlay(){ S.overlay = null; render(); }
 function renderOverlay(){
   const o = S.overlay;
+  if(R['ov_' + o.type]){ R['ov_' + o.type](o); return; }
   if(o.type==='help'){ screen().innerHTML = helpHtml(o.topic); on('hClose', closeOverlay); return; }
   if(o.type==='menu'){
     const runs = loadRuns();

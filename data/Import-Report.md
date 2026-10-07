@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 06 Oct 2026. Loaded: live, optional rows. Check only: the game data was not changed.*
+*Written by `tools/import_world.py` on 07 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **0 to fix, 2 to check, 8 notes.**
 
@@ -8,11 +8,11 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 41 | 41 live, 7 placeholder |
+| Settings | 44 | 44 live, 7 placeholder |
 | Archetypes | 4 | 2 later, 4 live |
 | Routes | 18 | 2 later, 18 live |
 | RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
-| Aircraft | 8 | 6 later, 8 live, 1 note row, 1 placeholder, 1 removed |
+| Aircraft | 8 | 6 later, 8 live, 2 note row, 1 placeholder, 1 removed |
 | Finance | 8 | 6 later, 8 live, 1 note row, 1 placeholder |
 | Airports | 1 | 1 later, 1 live, 3 removed |
 | Calendar | 21 | 21 live |
@@ -23,6 +23,7 @@
 | Chapters | 1 | 3 later, 1 live, 1 note row, 2 placeholder |
 | HandSumRules | 8 | 8 live, 1 note row |
 | Catering | 4 | 4 live, 1 note row |
+| Livery | 35 | 35 live, 1 note row |
 | Hunts | 0 | 1 note row, 7 placeholder |
 
 ## To check
@@ -48,6 +49,30 @@ Rows dated on or before 28 Dec 2030 (chapter 1's review) that the game would rea
 - **Routes:** ist opens on day 50 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
 - **Settings:** `timeSkip` is `placeholder`: not loaded (the game builds teacher skips of 0 / 1 / 4 / 8 weeks from the brief and reports it here).
 - **Settings:** `reputationFromDate` is `placeholder`: not loaded (a date gate only in chapter 1).
+
+## Identity and photos (CR5)
+
+Livery sheet: 12 colours, 4 stripes, 7 tail symbols, 4 logo shapes, 8 name suggestions. Photos live in `src/opening/assets/photos/` and are embedded by the build; credits are listed in `data/Photo-Credits.md`. The showroom's "coming soon" row reads the name, date and picture of aircraft that are not live (never their figures).
+
+| Aircraft | Status | Artwork | Photo | Credit and licence |
+| --- | --- | --- | --- | --- |
+| dhc6 | live | dhc6 | none yet | — |
+| saab340 | live | sf34 | none yet | — |
+| atr72 | live | at72 | none yet | — |
+| e190 | live | e190 | none yet | — |
+| a220 | live | narrowbody | none yet | — |
+| a320 | live | narrowbody | none yet | — |
+| b737 | live | narrowbody | none yet | — |
+| b787 | later |  | none yet | — |
+| a350 | later |  | none yet | — |
+| b747 | later |  | none yet | — |
+| a380 | later |  | none yet | — |
+| e175 | live | e175 | none yet | — |
+| b757 | placeholder |  | none yet | — |
+| a340 | later |  | none yet | — |
+| b777 | later |  | none yet | — |
+| Prices from the A220 up are tuned to the cash curve (F5, replacing D16's three-tenths rule): on the Steady path each plane is a few lessons of saving away when it is meant to arrive. Tutorial planes (Twin Otter to E190, E175) keep launch-deal prices. Real prices are on the plane card for interest only. | None |  | none yet | — |
+| v4.3 draft (CR5): artworkId names the painted side-view drawing (narrowbody is a stand-in until the A220, A320 and 737 are drawn); photo* record the showroom photo: file name under src/opening/assets/photos, author, licence, source URL. Openly licensed only, plain or maker colours. | None |  | none yet | — |
 
 ## The prototype's own data and the workbook's
 

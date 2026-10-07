@@ -84,10 +84,10 @@ let S = null;
 function emptyRnd(){ return { flights:[], status:{}, why:[], reviews:[], tasks:[], open:null, brief:[], tables:{}, activeTable:null }; }
 function newState(){
   return { v:5, world:WORLD.id, phase:'setup', round:0, day:1, period:{ type:'setup', from:1, to:1, run:{kind:'one'} }, ledger:{ rev:[], cost:[], pax:[], seats:[] }, home: WORLD.homes[0].id, terminal:'t5',
-    airline:{ name:'', code:'', c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
+    airline:{ name:'', code:'', flightCode:'', logo:null, c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'fin'},{t:'boot'},{t:'chapter'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'code'},{t:'logo'},{t:'paint'},{t:'reveal'},{t:'cert'},{t:'boot'},{t:'chapter'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'takeoff'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };
@@ -895,7 +895,7 @@ function opsStatus(){
   if(st === 'sim') return { k:'run', t:'SIMULATING' };
   if(S.rnd && S.rnd.applied) return { k:'done', t:'ALL LANDED' };
   if(st === 'hq') return { k:'ready', t:'READY' };
-  if(S.phase === 'setup' || ['welcome','name','fin','home','route','setupFuel','setupPrice'].includes(st)) return { k:'hold', t:'SETTING UP' };
+  if(S.phase === 'setup' || ['welcome','name','code','logo','fin','paint','reveal','cert','home','route','setupFuel','setupPrice'].includes(st)) return { k:'hold', t:'SETTING UP' };
   return { k:'hold', t:'PLANNING AT HQ' };
 }
 /* No game over: if cash runs out the bank tops the airline up (and says so). */

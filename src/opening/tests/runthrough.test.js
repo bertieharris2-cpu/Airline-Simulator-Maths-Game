@@ -33,7 +33,7 @@ const UPTO = +(process.env.UPTO || 9);
     '- **Chosen:** the pupil picks one answer from three on screen.',
     '- **Model:** the game shows the figure and nothing is asked.');
   // ---- setup ----
-  await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await p.click('#nx');
+  await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await p.click('#nx'); await p.click('#nx'); await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); await p.click('#nx');
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
   head('Launch Day, Sunday 12 May 2030 (fuel free: the launch deal)');
   q('Model', 'Cash after the aircraft', '£5,000 − £2,500 (shown on the start-up aircraft card)', '£2,500');
@@ -76,6 +76,9 @@ const UPTO = +(process.env.UPTO || 9);
     if(t === 'testIdeas'){ q('Model', 'Test other ideas (optional; the model costs them)', 'flies the plan as planned', '—'); await p.click('[data-fmine]'); continue; }
     if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)');
       q('Model', 'Fuel order', (await txt('.ff-parts')) + ' · ' + (await txt('.ff-bill')), '—'); await p.click('#nx'); continue; }
+    if(t === 'paint'){ await p.click('#roll'); continue; }
+    if(t === 'reveal'){ await p.click('#skipReveal'); for(let i = 0; i < 50 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
+    if(t === 'takeoff'){ await p.click('#toGo'); for(let i = 0; i < 200 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     if(t === 'ready'){ await p.click('#startOps'); continue; }
     if(t === 'fly' || t === 'sim'){ for(let i = 0; i < 120 && ['fly', 'sim'].includes(await T()); i++) await p.waitForTimeout(250); continue; }
     if(t === 'results'){ const r = await S(), fl = (r.rnd.flights || []).filter(f => !f.grounded), fuelL = fl.reduce((a, f) => a + (f.fuelL || 0), 0);

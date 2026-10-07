@@ -1,0 +1,75 @@
+<!-- DHC-6 Twin Otter, port side, nose left. Box 0 0 1200 440. Ids carry @U (made unique per copy); paint classes p-body p-belly p-engine p-second;
+     stripes .st.st-<id>, tail symbols .tl.tl-<id>; text @NAME @REG @PNAME with @NAMEFILL @REGFILL @PNAMEFILL; @LOGO is the airline logo (40 x 40). -->
+<defs>
+  <clipPath id="fus@U"><path d="M118 268 C118 250 150 236 196 228 L238 206 C252 192 270 186 300 186 L860 186 C930 188 1000 200 1052 224 L1056 236 C1000 246 900 262 790 296 C760 304 720 306 690 306 L250 306 C190 306 140 292 118 268 Z"/></clipPath>
+  <clipPath id="fin@U"><path d="M846 190 L930 60 C938 48 956 43 976 44 L1010 46 C1022 48 1026 56 1027 66 L1052 224 C1000 202 930 190 846 190 Z"/></clipPath>
+  <clipPath id="whole@U"><path d="M118 268 C118 250 150 236 196 228 L238 206 C252 192 270 186 300 186 L860 186 C930 188 1000 200 1052 224 L1056 236 C1000 246 900 262 790 296 C760 304 720 306 690 306 L250 306 C190 306 140 292 118 268 Z"/><path d="M846 190 L930 60 C938 48 956 43 976 44 L1010 46 C1022 48 1026 56 1027 66 L1052 224 C1000 202 930 190 846 190 Z"/></clipPath>
+  <linearGradient id="shadeV@U" x1="0" y1="186" x2="0" y2="306" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".22" stop-color="#fff" stop-opacity=".08"/><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient>
+  <linearGradient id="shadeFin@U" x1="846" y1="0" x2="1052" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  <linearGradient id="shadeS@U" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+  <linearGradient id="glintG@U" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".65"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <radialGradient id="shadow@U"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+</defs>
+<g class="art-plane">
+  <ellipse class="art-shadow" cx="600" cy="380" rx="520" ry="22" fill="url(#shadow@U)"/>
+  <!-- landing gear: fixed, nose wheel and mains -->
+  <rect x="245" y="296" width="8" height="38" fill="#2A3442"/>
+  <circle cx="249" cy="342" r="19" fill="#171C24"/><circle cx="249" cy="342" r="8" fill="#9AA5B1"/>
+  <path d="M512 300 L556 344" stroke="#2A3442" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="558" cy="352" r="25" fill="#171C24"/><circle cx="558" cy="352" r="10" fill="#9AA5B1"/>
+  <!-- tail fin with its fillet -->
+  <path class="p-body" d="M760 189 C800 187 832 176 864 160 L846 190 Z"/>
+  <path class="p-body" d="M846 190 L930 60 C938 48 956 43 976 44 L1010 46 C1022 48 1026 56 1027 66 L1052 224 C1000 202 930 190 846 190 Z"/>
+  <g clip-path="url(#fin@U)">
+    <polygon class="p-second tl tl-stripe" points="900,230 968,44 1002,44 934,230"/>
+    <polygon class="p-second tl tl-star" points="975,82 984,104 1008,105 989,120 996,143 975,130 954,143 961,120 942,105 966,104"/>
+    <path class="p-second tl tl-chevron" d="M922 170 L972 92 L1024 170 L1000 170 L972 126 L946 170 Z"/>
+    <path class="p-second tl tl-wave" d="M850 150 C900 120 940 170 990 130 C1010 116 1030 112 1050 116 L1050 150 C1030 146 1012 150 994 162 C944 200 902 152 850 182 Z"/>
+    <g class="tl tl-circle"><circle class="p-second" cx="978" cy="112" r="30"/><circle class="p-body" cx="978" cy="112" r="13"/></g>
+    <path class="p-second tl tl-arrow" d="M978 64 L1010 110 L990 110 L990 160 L966 160 L966 110 L946 110 Z"/>
+    <g class="tl tl-logo" transform="translate(936 66) scale(2.1)">@LOGO</g>
+  </g>
+  <path d="M846 190 L930 60 C938 48 956 43 976 44 L1010 46 C1022 48 1026 56 1027 66 L1052 224 C1000 202 930 190 846 190 Z" fill="url(#shadeFin@U)"/>
+  <path class="p-line" d="M846 190 L930 60 C938 48 956 43 976 44 L1010 46 C1022 48 1026 56 1027 66 L1052 224"/>
+  <path d="M1008 54 L1040 214" stroke="rgba(8,20,34,.45)" stroke-width="1.6" fill="none"/>
+  <!-- tailplane -->
+  <path class="p-body" d="M930 214 L1100 204 C1112 204 1112 214 1100 216 L930 224 Z"/>
+  <path class="p-line" d="M930 214 L1100 204 C1112 204 1112 214 1100 216 L930 224 Z"/>
+  <!-- fuselage: body, belly, stripe, shading -->
+  <g clip-path="url(#fus@U)">
+    <rect class="p-body" x="100" y="180" width="1000" height="140"/>
+    <rect class="p-belly" x="100" y="276" width="1000" height="60"/>
+    <rect class="p-second st st-thin" x="100" y="246" width="1000" height="9"/>
+    <g class="st st-band"><rect class="p-second" x="100" y="244" width="1000" height="22"/><rect class="p-second" x="100" y="270" width="1000" height="4" opacity=".8"/></g>
+    <path class="p-second st st-swoosh" d="M100 300 C420 300 720 282 1070 196 L1070 232 C720 312 420 324 100 322 Z"/>
+    <rect x="100" y="180" width="1000" height="140" fill="url(#shadeV@U)"/>
+  </g>
+  <path class="p-line" d="M118 268 C118 250 150 236 196 228 L238 206 C252 192 270 186 300 186 L860 186 C930 188 1000 200 1052 224 L1056 236 C1000 246 900 262 790 296 C760 304 720 306 690 306 L250 306 C190 306 140 292 118 268 Z"/>
+  <!-- windscreen, cabin windows, doors -->
+  <path class="p-glass" d="M206 226 L240 205 C252 199 268 197 284 197 L288 226 Z"/>
+  <path d="M214 222 L240 207 L252 205 L226 222 Z" fill="#fff" opacity=".35"/>
+  <g class="p-glass"><rect x="346" y="216" width="26" height="22" rx="5"/><rect x="390" y="216" width="26" height="22" rx="5"/><rect x="434" y="216" width="26" height="22" rx="5"/><rect x="478" y="216" width="26" height="22" rx="5"/><rect x="522" y="216" width="26" height="22" rx="5"/><rect x="566" y="216" width="26" height="22" rx="5"/><rect x="610" y="216" width="26" height="22" rx="5"/><rect x="654" y="216" width="26" height="22" rx="5"/><rect x="698" y="216" width="26" height="22" rx="5"/><rect x="742" y="216" width="26" height="22" rx="5"/></g>
+  <rect x="300" y="198" width="36" height="94" rx="5" class="p-line"/>
+  <rect x="782" y="200" width="44" height="96" rx="6" class="p-line"/>
+  <rect x="792" y="212" width="24" height="20" rx="4" class="p-glass"/>
+  <!-- wording -->
+  <text class="t-name" x="560" y="210" text-anchor="middle" font-weight="700" font-size="19" letter-spacing="3" fill="@NAMEFILL">@NAME</text>
+  <text class="t-reg" x="930" y="246" text-anchor="middle" font-weight="700" font-size="17" letter-spacing="1" fill="@REGFILL">@REG</text>
+  <text class="t-pname" x="250" y="296" text-anchor="middle" font-style="italic" font-size="13" fill="@PNAMEFILL">@PNAME</text>
+  <!-- high wing, strut, engine nacelle, propeller -->
+  <path d="M482 192 L452 302" stroke="#3A4656" stroke-width="7" stroke-linecap="round"/>
+  <path class="p-body" d="M372 188 C380 172 420 166 470 166 L592 170 C602 172 602 182 592 184 L372 192 Z"/>
+  <path d="M372 188 C380 172 420 166 470 166 L592 170 C602 172 602 182 592 184 L372 192 Z" fill="url(#shadeS@U)"/>
+  <path class="p-line" d="M372 188 C380 172 420 166 470 166 L592 170 C602 172 602 182 592 184 L372 192 Z"/>
+  <path class="p-engine" d="M300 178 C300 160 318 154 350 154 L470 156 C492 158 500 168 500 176 C500 184 490 192 470 194 L350 198 C318 198 300 192 300 178 Z"/>
+  <path d="M300 178 C300 160 318 154 350 154 L470 156 C492 158 500 168 500 176 C500 184 490 192 470 194 L350 198 C318 198 300 192 300 178 Z" fill="url(#shadeS@U)"/>
+  <path class="p-line" d="M300 178 C300 160 318 154 350 154 L470 156 C492 158 500 168 500 176 C500 184 490 192 470 194 L350 198 C318 198 300 192 300 178 Z"/>
+  <rect x="396" y="190" width="30" height="8" rx="3" fill="#2A3442"/>
+  <ellipse cx="290" cy="176" rx="6" ry="82" fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.18)"/>
+  <rect class="blade" x="286" y="98" width="8" height="156" rx="4" fill="#1E2630"/>
+  <rect class="blade b2" x="286" y="98" width="8" height="156" rx="4" fill="#1E2630" opacity=".6"/>
+  <ellipse cx="296" cy="176" rx="13" ry="15" class="p-second"/>
+  <ellipse cx="296" cy="176" rx="13" ry="15" fill="url(#shadeS@U)"/>
+  <!-- the shine of light when paint goes on -->
+  <g clip-path="url(#whole@U)"><rect class="glint" x="-200" y="30" width="220" height="300" fill="url(#glintG@U)"/></g>
+</g>
