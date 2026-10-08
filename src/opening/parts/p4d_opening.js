@@ -83,7 +83,7 @@ R.starter = () => {
 };
 /* STEP_TODO: the one line under each question that says what to do here; parts add their own steps (later entries win) */
 const STEP_TODO = { starter:'Read about your aircraft, then press Take delivery.', market:'Press one market to choose it, then press Open.', demand:'Look at the groups, then press the button to follow one service.',
-  rotation:'Press Next to follow the service, stage by stage.', timetable:'Press the × buttons to add services, then press Next.', costPlan:'Press each Complete figure and type the answer.', testIdeas:'Change the test plan with − and +, then press a Fly button.',
+  rotation:'Press Next to follow the service, stage by stage.', timetable:'Press the × buttons to add services, then press Next.', costPlan:'Press each Complete figure and type the answer.',
   fuelPlan:'Press + until the tank covers today, then press Next.', ready:'Check the plan. Press Start operations when it is right.', planner:"Set today's services and extras, then press Cost this plan." };
 R.market = () => {
   const p = ourPlane(), ids = WORLD.setupRoutes.slice().sort((a, b) => routeKm(routeById(b)) - routeKm(routeById(a)));

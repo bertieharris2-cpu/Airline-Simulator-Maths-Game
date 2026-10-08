@@ -89,6 +89,11 @@ const TAG = `${HOME}-${MK}-${W}`;
       const fx = await p.$('button.mdl'); if(fx && R <= 4){ await fx.click(); ok(`Day ${day}: the ƒ inspector shows the rule`, await vis('.calc.fx')); await shot(`d${day}-fx`); await p.click('#dkClose').catch(() => {}); }
       if(await p.$('#woPad')){ await p.click('#woPad'); ok(`Day ${day}: squared paper opens`, await vis('.wo-pad #padCv')); if(R <= 1) await shot(`d${day}-paper`); await p.click('#woPad'); }
       ok(`work ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.textContent('.wo-sheet .pnl-h')); await p.click('#nx'); continue; }
+    if(t === 'costPlan'){   // weeks
+      await fits('cost ' + R); const typed = await solve(`cost ${day}`);
+      checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`);
+      if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(150);
+      ok(`cost ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'testIdeas'){
       await fits('test ' + R); ok(`test ${day}: no typed figures`, !(await vis('[data-cell]')));
       const keys = await p.$$eval('[data-pe^="9|fare|"]:not([disabled])', e => e.map(x => x.getAttribute('data-pe'))); const up = keys.find(k => k.endsWith('|1')) || keys[0];

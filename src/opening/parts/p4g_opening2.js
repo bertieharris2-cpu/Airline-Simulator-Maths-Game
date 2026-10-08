@@ -244,7 +244,7 @@ Object.assign(SUB_DESC, { costPlan:'The new calculation', testIdeas:'The model c
 Object.assign(STEP_HINT, {
   planner:'Plan what your airline will do. Only the controls you have learned about are here.',
   costPlan:'Check the new numbers: complete the highlighted figure. Everything else is worked out by the model.',
-  testIdeas:'Change the test plan to try an idea. The model costs it straight away: no sums.',
+  testIdeas:'Press − or + on the test plan to try an idea; the model costs it straight away. Then press Fly my plan or Fly the test plan.',
   fareTry:'Choose a fare for your first route. Watch how many people want to fly.',
   ready:'Check the operating plan. Anything can still be edited before operations start.',
   strategy:'Your airline is growing. What sort of airline will it become?' });
