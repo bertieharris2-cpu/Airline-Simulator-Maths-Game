@@ -471,6 +471,7 @@ const ICON = {
   plan:'<svg viewBox="0 0 24 24"><path d="M8 3h8v3H8zM6 5H4v16h16V5h-2v3H6zm2 7h8v2H8zm0 4h6v2H8z"/></svg>',
   network:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 9h-3a15 15 0 0 0-1.3-6A8 8 0 0 1 18.9 11zM12 4c.9 1.2 1.8 3.6 2 7h-4c.2-3.4 1.1-5.8 2-7zM9.4 5a15 15 0 0 0-1.3 6h-3A8 8 0 0 1 9.4 5zM5.1 13h3a15 15 0 0 0 1.3 6A8 8 0 0 1 5.1 13zM12 20c-.9-1.2-1.8-3.6-2-7h4c-.2 3.4-1.1 5.8-2 7zm2.6-1a15 15 0 0 0 1.3-6h3a8 8 0 0 1-4.3 6z"/></svg>',
   fleet:'<svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>',
+  shop:'<svg viewBox="0 0 24 24"><path d="M3 3h8.5L21 12.5 12.5 21 3 11.5zm4.5 3A1.5 1.5 0 1 0 7.5 9a1.5 1.5 0 0 0 0-3z"/></svg>',
   finance:'<svg viewBox="0 0 24 24"><path d="M4 20h16v2H4zM5 10h3v8H5zm5.5-5h3v13h-3zM16 13h3v5h-3z"/></svg>',
   cash:'<svg viewBox="0 0 24 24"><path d="M3 6h18v12H3zm2 2v8h14V8zm7 1.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg>',
   profit:'<svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 7-7v5h2V4h-9v2h5l-5 5-4-4-8 8z"/></svg>',
@@ -479,7 +480,7 @@ const ICON = {
   star:'<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>',
   fuel:'<svg viewBox="0 0 24 24"><path d="M12 2.5S5 10 5 14.5a7 7 0 0 0 14 0C19 10 12 2.5 12 2.5z"/></svg>',
   lock:'<svg viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>' };
-const NAV = [['overview', 'Overview'], ['plan', "Today's Plan"], ['network', 'Network'], ['fleet', 'Fleet'], ['finance', 'Finance']];
+const NAV = [['overview', 'Overview'], ['plan', "Today's Plan"], ['network', 'Network'], ['fleet', 'Fleet'], ['shop', 'Plane shop'], ['finance', 'Finance']];
 
 /* HQ modules come online as the airline grows; until then they are visible but locked. */
 const MODULES = { finance:{ name:'Finance', note:'Available after the first flight', short:'After first flight' }, network:{ name:'Network', note:'Available once a regular timetable is running (Day 1)', short:'From Day 1' }, fleet:{ name:'Fleet', note:'Available after the first full day of operations', short:'After Day 1' } };
@@ -909,7 +910,9 @@ function renderView(v){
     <section class="hp">${hqHead(p.name, 'START-UP AIRCRAFT')}<div class="pb fl-specs"><div><span class="kl">Seats</span><b>${p.seats}</b></div><div><span class="kl">Speed</span><b>${num(p.speed)} km/h</b></div><div><span class="kl">Range</span><b>${num(p.range)} km</b></div><div><span class="kl">Running cost</span><b>${money(p.hourCost)} an hour</b><small>+ ${money(homeData().fee)} landing fee</small></div><div><span class="kl">Daily cost</span><b>${money(p.dayCost)}</b></div><div><span class="kl">Fuel</span><b>${p.fuelUse} L</b><small>per 100 km</small></div></div></section></div>`;
   if(v === 'finance') inner = `<div class="vw"><section class="hp">${hqHead('Financial Overview', 'BY DAY')}<div class="pb fin-pb"></div></section>
     ${tabbedPanel('p-fd', 'fin2', [['days', 'History', () => finHistoryHtml()], ['plans', 'Plans', plansHtml], ['models', 'Models', modelsHtml]])}</div>`;
+  if(v === 'shop') inner = `<div class="vw solo"><section class="hp">${hqHead('Plane shop', 'LOOK ONLY')}<div class="pb shop-browse">${shopBrowseHtml()}</div></section></div>`;   // CR5: every aircraft, any day (p4r_showroom.js)
   screen().innerHTML = shell(inner);
+  if(v === 'shop') bindShopBrowse();
   if(v === 'network'){ if(hqMap) hqMap.destroy(); hqMap = makeMap($('hqMap'), { scale:1, pad:0.65, planes:true }); hqMap.layer = 'routes'; requestAnimationFrame(() => { if(!hqMap) return; hqMap.autoFit(true); hqMap.render(); }); }
   if(v === 'finance'){ const fb = screen().querySelector('.fin-pb'); requestAnimationFrame(() => { if(fb && S.history.length) fb.innerHTML = finChart({ n:14, w:fb.clientWidth - 28, h:Math.max(140, fb.clientHeight - 40) }); else if(fb) fb.innerHTML = '<p class="muted">The chart starts after the first flights.</p>'; }); }
 }

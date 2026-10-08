@@ -1286,6 +1286,7 @@ b.pos,.mp-cash b.pos{color:var(--green)}b.neg,.mp-cash b.neg{color:var(--red)}
 /* views */
 .vw{height:100%;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .vw.net{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+.vw.solo{grid-template-columns:minmax(0,1fr)}.pb.shop-browse{overflow:auto;min-height:0}.shop-browse .show-cards{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}.shop-browse .show-card,.shop-browse .show-card .sc-inner{min-height:312px}.shop-browse .sc-photo,.shop-browse .sc-art{aspect-ratio:3/2}.sr-note{margin:0 0 2px;font-size:13px;color:var(--muted)}.sc-price.soon b{font-size:14px;color:var(--amber);font-weight:650}
 .vw .hp .pb{padding:10px 14px;overflow:auto;flex:1;min-height:0}
 .vw .fin-pb{overflow:hidden}
 .fl-specs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:start}
@@ -5514,6 +5515,7 @@ const ICON = {
   plan:'<svg viewBox="0 0 24 24"><path d="M8 3h8v3H8zM6 5H4v16h16V5h-2v3H6zm2 7h8v2H8zm0 4h6v2H8z"/></svg>',
   network:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 9h-3a15 15 0 0 0-1.3-6A8 8 0 0 1 18.9 11zM12 4c.9 1.2 1.8 3.6 2 7h-4c.2-3.4 1.1-5.8 2-7zM9.4 5a15 15 0 0 0-1.3 6h-3A8 8 0 0 1 9.4 5zM5.1 13h3a15 15 0 0 0 1.3 6A8 8 0 0 1 5.1 13zM12 20c-.9-1.2-1.8-3.6-2-7h4c-.2 3.4-1.1 5.8-2 7zm2.6-1a15 15 0 0 0 1.3-6h3a8 8 0 0 1-4.3 6z"/></svg>',
   fleet:'<svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>',
+  shop:'<svg viewBox="0 0 24 24"><path d="M3 3h8.5L21 12.5 12.5 21 3 11.5zm4.5 3A1.5 1.5 0 1 0 7.5 9a1.5 1.5 0 0 0 0-3z"/></svg>',
   finance:'<svg viewBox="0 0 24 24"><path d="M4 20h16v2H4zM5 10h3v8H5zm5.5-5h3v13h-3zM16 13h3v5h-3z"/></svg>',
   cash:'<svg viewBox="0 0 24 24"><path d="M3 6h18v12H3zm2 2v8h14V8zm7 1.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg>',
   profit:'<svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 7-7v5h2V4h-9v2h5l-5 5-4-4-8 8z"/></svg>',
@@ -5522,7 +5524,7 @@ const ICON = {
   star:'<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>',
   fuel:'<svg viewBox="0 0 24 24"><path d="M12 2.5S5 10 5 14.5a7 7 0 0 0 14 0C19 10 12 2.5 12 2.5z"/></svg>',
   lock:'<svg viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>' };
-const NAV = [['overview', 'Overview'], ['plan', "Today's Plan"], ['network', 'Network'], ['fleet', 'Fleet'], ['finance', 'Finance']];
+const NAV = [['overview', 'Overview'], ['plan', "Today's Plan"], ['network', 'Network'], ['fleet', 'Fleet'], ['shop', 'Plane shop'], ['finance', 'Finance']];
 
 /* HQ modules come online as the airline grows; until then they are visible but locked. */
 const MODULES = { finance:{ name:'Finance', note:'Available after the first flight', short:'After first flight' }, network:{ name:'Network', note:'Available once a regular timetable is running (Day 1)', short:'From Day 1' }, fleet:{ name:'Fleet', note:'Available after the first full day of operations', short:'After Day 1' } };
@@ -5952,7 +5954,9 @@ function renderView(v){
     <section class="hp">${hqHead(p.name, 'START-UP AIRCRAFT')}<div class="pb fl-specs"><div><span class="kl">Seats</span><b>${p.seats}</b></div><div><span class="kl">Speed</span><b>${num(p.speed)} km/h</b></div><div><span class="kl">Range</span><b>${num(p.range)} km</b></div><div><span class="kl">Running cost</span><b>${money(p.hourCost)} an hour</b><small>+ ${money(homeData().fee)} landing fee</small></div><div><span class="kl">Daily cost</span><b>${money(p.dayCost)}</b></div><div><span class="kl">Fuel</span><b>${p.fuelUse} L</b><small>per 100 km</small></div></div></section></div>`;
   if(v === 'finance') inner = `<div class="vw"><section class="hp">${hqHead('Financial Overview', 'BY DAY')}<div class="pb fin-pb"></div></section>
     ${tabbedPanel('p-fd', 'fin2', [['days', 'History', () => finHistoryHtml()], ['plans', 'Plans', plansHtml], ['models', 'Models', modelsHtml]])}</div>`;
+  if(v === 'shop') inner = `<div class="vw solo"><section class="hp">${hqHead('Plane shop', 'LOOK ONLY')}<div class="pb shop-browse">${shopBrowseHtml()}</div></section></div>`;   // CR5: every aircraft, any day (p4r_showroom.js)
   screen().innerHTML = shell(inner);
+  if(v === 'shop') bindShopBrowse();
   if(v === 'network'){ if(hqMap) hqMap.destroy(); hqMap = makeMap($('hqMap'), { scale:1, pad:0.65, planes:true }); hqMap.layer = 'routes'; requestAnimationFrame(() => { if(!hqMap) return; hqMap.autoFit(true); hqMap.render(); }); }
   if(v === 'finance'){ const fb = screen().querySelector('.fin-pb'); requestAnimationFrame(() => { if(fb && S.history.length) fb.innerHTML = finChart({ n:14, w:fb.clientWidth - 28, h:Math.max(140, fb.clientHeight - 40) }); else if(fb) fb.innerHTML = '<p class="muted">The chart starts after the first flights.</p>'; }); }
 }
@@ -9861,9 +9865,9 @@ function statMax(){ const all = PLANES.filter(p => p.wb !== false); const m = {}
 function statBars(p){ const M = statMax(); return `<div class="sc-bars">${STAT_KEYS.map(([k, l, get, fmt]) => { const v = get(p), w = Math.max(3, Math.round(100 * v / M[k])); return `<div class="sb"><span class="sb-l">${l}</span><span class="sb-bar"><i style="width:${w}%"></i></span><b class="sb-v">${fmt(v)}</b></div>`; }).join('')}</div>`; }
 function offerHtml(o){ const rows = [['Buy', money(o.price), o.canBuy], ['Rent', o.lease ? `${money(o.lease)} a day` : '—', o.canLease], ['Finance', o.deposit ? `${money(o.deposit)} down + ${money(o.pay)} a ${o.unit} × ${o.n}` : '—', o.canFinance]];
   return `<div class="as-offer">${rows.map(([l, v, ok]) => `<span class="${ok ? '' : 'off'}"><span>${l}</span><b class="mono">${v}</b></span>`).join('')}</div>`; }
-function showCard(p, o, picked, owned, flipped){
+function showCard(p, o, picked, owned, flipped, soonFrom){
   return `<button class="show-card ${picked ? 'on' : ''} ${owned ? 'owned' : ''} ${flipped ? 'flip' : ''}" data-pick="${p.id}" aria-pressed="${picked}" title="Tap to turn the card over"><div class="sc-inner">
-    <div class="sc-front">${pictureHtml(p, null, 'pic')}<div class="sc-name"><b>${esc(p.name)}</b><span class="muted">${esc(p.tier || '')}${owned ? ` · you fly ${owned}` : ''}</span></div><div class="sc-price"><span>From</span><b class="mono">${money(o.lease && o.canLease ? o.lease : o.price)}</b><small>${o.lease && o.canLease ? 'a day to rent' : 'to buy'}</small></div><span class="sc-turn">Tap for the facts ↻</span></div>
+    <div class="sc-front">${pictureHtml(p, null, 'pic')}<div class="sc-name"><b>${esc(p.name)}</b><span class="muted">${esc(p.tier || '')}${owned ? ` · you fly ${owned}` : ''}</span></div>${soonFrom ? `<div class="sc-price soon"><span>In the shop</span><b>from ${esc(soonFrom)}</b></div>` : `<div class="sc-price"><span>From</span><b class="mono">${money(o.lease && o.canLease ? o.lease : o.price)}</b><small>${o.lease && o.canLease ? 'a day to rent' : 'to buy'}</small></div>`}<span class="sc-turn">Tap for the facts ↻</span></div>
     <div class="sc-back"><div class="sc-name"><b>${esc(p.name)}</b></div><div class="sc-facts"><span>Seats <b>${p.seats}</b></span><span>Speed <b>${num(p.speed)} km/h</b></span><span>Range <b>${num(p.range)} km</b></span><span>Fuel <b>${p.fuelUse} L</b> per 100 km</span><span>Flying cost <b>${money(p.hourCost)}</b> an hour</span><span>Day cost <b>${money(p.dayCost)}</b></span></div>
       <p class="sc-id">${esc(p.fact || '')}</p>${statBars(p)}${offerHtml(o)}<span class="sc-turn">Tap to turn back ↻</span></div></div></button>`;
 }
@@ -9871,7 +9875,8 @@ function showCard(p, o, picked, owned, flipped){
 function comingSoon(){ const day = S.day, live = PLANES.filter(p => p.wb !== false && (p.shopFromDay || 1) > day && (p.status === undefined || p.status === 'live')).map(p => ({ id:p.id, name:p.name, tier:p.tier, shopFromDay:p.shopFromDay, photoFile:p.photoFile, photoCredit:p.photoCredit, photoLicence:p.photoLicence, photoSource:p.photoSource, live:true }));
   const later = ((WB && WB.aircraftPreview) || []).filter(a => !PLANES.some(p => p.id === a.id)).map(a => Object.assign({ live:false }, a));
   return live.concat(later).sort((a, b) => (a.shopFromDay || 9999) - (b.shopFromDay || 9999)); }
-function soonCard(a){ const when = a.shopFromDay ? dateShort(a.shopFromDay) + (calDate(a.shopFromDay).getUTCFullYear() !== calDate(S.day).getUTCFullYear() ? ' ' + calDate(a.shopFromDay).getUTCFullYear() : '') : 'later';
+function fromWhen(day){ return day ? dateShort(day) + (calDate(day).getUTCFullYear() !== calDate(S.day).getUTCFullYear() ? ' ' + calDate(day).getUTCFullYear() : '') : 'later'; }
+function soonCard(a){ const when = fromWhen(a.shopFromDay);
   return `<div class="soon-card" title="${esc(a.name)}: arrives ${esc(when)}">${pictureHtml(a, a.live ? null : 'narrowbody', 'pic')}<div class="soon-lock">${ICON.lock}</div><b>${esc(a.name)}</b><small>${a.shopFromDay ? 'From ' + esc(when) : 'Later in the game'}</small></div>`; }
 R.shop2 = st => {
   const list = shopPlanes(), picked = S.rnd.shopPick || null, owned = id => S.fleet.filter(f => f.planeId === id).length, flips = UI.flip || (UI.flip = {});
@@ -9888,6 +9893,17 @@ R.shop2 = st => {
   on('skipShop', () => { strip(); delete S.rnd.shopPick; UI.justDone = null; advance(); });
   on('nx', () => { strip(); const k = S.steps.findIndex(x => x.t === 'shop2'); S.steps.splice(k + 1, 0, { t:'fleetSums' }, { t:'acquire' }); UI.justDone = null; advance(); });
 };
+/* the Plane shop on the left rail: every aircraft on any day, to look at. Cards flip for the facts; a plane not yet for sale says
+   when it arrives. Buying, renting and finance stay with the air show step in Today's Plan (day 8, day 15, then every week). */
+function shopBrowseHtml(){
+  const flips = UI.flipBrowse || (UI.flipBrowse = {}), owned = id => S.fleet.filter(f => f.planeId === id).length;
+  const all = PLANES.filter(p => p.wb !== false && (p.status === undefined || p.status === 'live')).slice().sort((a, b) => (a.shopFromDay || 1) - (b.shopFromDay || 1) || (a.price || 0) - (b.price || 0));
+  const later = ((WB && WB.aircraftPreview) || []).filter(a => !PLANES.some(p => p.id === a.id)).map(a => Object.assign({ live:false }, a)).sort((a, b) => (a.shopFromDay || 9999) - (b.shopFromDay || 9999));
+  return `<div class="showroom"><p class="sr-note">Look all you like: tap a card for the facts. Buying, renting and finance happen at the air show in Today's Plan, on day 8, day 15 and then every week.</p>
+    <div class="show-cards">${all.map(p => showCard(p, shopOffer(p), false, owned(p.id), !!flips[p.id], (p.shopFromDay || 1) > S.day ? fromWhen(p.shopFromDay) : null)).join('')}</div>
+    ${later.length ? `<div class="show-soon"><div class="ss-h"><b>Later in the game</b><span class="muted small">The aircraft you can aim for. Their day will come.</span></div><div class="soon-row">${later.map(soonCard).join('')}</div></div>` : ''}</div>`;
+}
+function bindShopBrowse(){ screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-pick'); UI.flipBrowse[id] = !UI.flipBrowse[id]; render(); }); }
 /* every new plane gets its paint, name, registration and a short reveal */
 function acquirePlane(p, kind){
   const o = shopOffer(p), uid = S.nextUid++; let terms;

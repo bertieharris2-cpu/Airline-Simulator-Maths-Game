@@ -33,6 +33,7 @@
 | 11 | What's new (3 pages) | Days 2, 3, 4 (two), 6, 8, 12, 15; week 4; December | What's new, the maths (worked in a column), your turn: three practice questions in week 1, "which sum?" later; key words in the dock |
 | 12 | Today's Plan (morning HQ) | Every day, week and month | Headline from the Calendar or Market; the brief (yesterday, what's new, routes opening, the rival, fuel); the standing plan |
 | 13 | The air show (aircraft for sale) | Days 8 and 15, every week | Flip cards: photo or plain drawing, facts, four bars on one scale, Buy / Rent / Finance from the Finance sheet; a locked *Coming soon* row; Look closer or Not today |
+| 13a | Plane shop (left rail) | Any day in the HQ shell | Look only: every live aircraft as a flip card (photo, facts, bars, prices), *In the shop from* a date for the ones not yet for sale, and the later aircraft in a locked row. No buying here: the rail entry points pupils to the air show step. |
 | 13a | Paint your new plane · Roll it out | After buying | The paint shop for the new aircraft (its own registration), then a short reveal |
 | 14 | The sums (fleet) | After choosing an aircraft | Rent or buy = price ÷ rent a day; a full plane = seats × fare; the model's suggested services and extra profit a day |
 | 15 | Buy or rent | After the sums | Buy, Rent or Finance (gated by the Finance sheet's dates and the £1,000 reserve) |

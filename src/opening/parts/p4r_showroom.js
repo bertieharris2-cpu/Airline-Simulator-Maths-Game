@@ -17,9 +17,9 @@ function statMax(){ const all = PLANES.filter(p => p.wb !== false); const m = {}
 function statBars(p){ const M = statMax(); return `<div class="sc-bars">${STAT_KEYS.map(([k, l, get, fmt]) => { const v = get(p), w = Math.max(3, Math.round(100 * v / M[k])); return `<div class="sb"><span class="sb-l">${l}</span><span class="sb-bar"><i style="width:${w}%"></i></span><b class="sb-v">${fmt(v)}</b></div>`; }).join('')}</div>`; }
 function offerHtml(o){ const rows = [['Buy', money(o.price), o.canBuy], ['Rent', o.lease ? `${money(o.lease)} a day` : '—', o.canLease], ['Finance', o.deposit ? `${money(o.deposit)} down + ${money(o.pay)} a ${o.unit} × ${o.n}` : '—', o.canFinance]];
   return `<div class="as-offer">${rows.map(([l, v, ok]) => `<span class="${ok ? '' : 'off'}"><span>${l}</span><b class="mono">${v}</b></span>`).join('')}</div>`; }
-function showCard(p, o, picked, owned, flipped){
+function showCard(p, o, picked, owned, flipped, soonFrom){
   return `<button class="show-card ${picked ? 'on' : ''} ${owned ? 'owned' : ''} ${flipped ? 'flip' : ''}" data-pick="${p.id}" aria-pressed="${picked}" title="Tap to turn the card over"><div class="sc-inner">
-    <div class="sc-front">${pictureHtml(p, null, 'pic')}<div class="sc-name"><b>${esc(p.name)}</b><span class="muted">${esc(p.tier || '')}${owned ? ` · you fly ${owned}` : ''}</span></div><div class="sc-price"><span>From</span><b class="mono">${money(o.lease && o.canLease ? o.lease : o.price)}</b><small>${o.lease && o.canLease ? 'a day to rent' : 'to buy'}</small></div><span class="sc-turn">Tap for the facts ↻</span></div>
+    <div class="sc-front">${pictureHtml(p, null, 'pic')}<div class="sc-name"><b>${esc(p.name)}</b><span class="muted">${esc(p.tier || '')}${owned ? ` · you fly ${owned}` : ''}</span></div>${soonFrom ? `<div class="sc-price soon"><span>In the shop</span><b>from ${esc(soonFrom)}</b></div>` : `<div class="sc-price"><span>From</span><b class="mono">${money(o.lease && o.canLease ? o.lease : o.price)}</b><small>${o.lease && o.canLease ? 'a day to rent' : 'to buy'}</small></div>`}<span class="sc-turn">Tap for the facts ↻</span></div>
     <div class="sc-back"><div class="sc-name"><b>${esc(p.name)}</b></div><div class="sc-facts"><span>Seats <b>${p.seats}</b></span><span>Speed <b>${num(p.speed)} km/h</b></span><span>Range <b>${num(p.range)} km</b></span><span>Fuel <b>${p.fuelUse} L</b> per 100 km</span><span>Flying cost <b>${money(p.hourCost)}</b> an hour</span><span>Day cost <b>${money(p.dayCost)}</b></span></div>
       <p class="sc-id">${esc(p.fact || '')}</p>${statBars(p)}${offerHtml(o)}<span class="sc-turn">Tap to turn back ↻</span></div></div></button>`;
 }
@@ -27,7 +27,8 @@ function showCard(p, o, picked, owned, flipped){
 function comingSoon(){ const day = S.day, live = PLANES.filter(p => p.wb !== false && (p.shopFromDay || 1) > day && (p.status === undefined || p.status === 'live')).map(p => ({ id:p.id, name:p.name, tier:p.tier, shopFromDay:p.shopFromDay, photoFile:p.photoFile, photoCredit:p.photoCredit, photoLicence:p.photoLicence, photoSource:p.photoSource, live:true }));
   const later = ((WB && WB.aircraftPreview) || []).filter(a => !PLANES.some(p => p.id === a.id)).map(a => Object.assign({ live:false }, a));
   return live.concat(later).sort((a, b) => (a.shopFromDay || 9999) - (b.shopFromDay || 9999)); }
-function soonCard(a){ const when = a.shopFromDay ? dateShort(a.shopFromDay) + (calDate(a.shopFromDay).getUTCFullYear() !== calDate(S.day).getUTCFullYear() ? ' ' + calDate(a.shopFromDay).getUTCFullYear() : '') : 'later';
+function fromWhen(day){ return day ? dateShort(day) + (calDate(day).getUTCFullYear() !== calDate(S.day).getUTCFullYear() ? ' ' + calDate(day).getUTCFullYear() : '') : 'later'; }
+function soonCard(a){ const when = fromWhen(a.shopFromDay);
   return `<div class="soon-card" title="${esc(a.name)}: arrives ${esc(when)}">${pictureHtml(a, a.live ? null : 'narrowbody', 'pic')}<div class="soon-lock">${ICON.lock}</div><b>${esc(a.name)}</b><small>${a.shopFromDay ? 'From ' + esc(when) : 'Later in the game'}</small></div>`; }
 R.shop2 = st => {
   const list = shopPlanes(), picked = S.rnd.shopPick || null, owned = id => S.fleet.filter(f => f.planeId === id).length, flips = UI.flip || (UI.flip = {});
@@ -44,6 +45,17 @@ R.shop2 = st => {
   on('skipShop', () => { strip(); delete S.rnd.shopPick; UI.justDone = null; advance(); });
   on('nx', () => { strip(); const k = S.steps.findIndex(x => x.t === 'shop2'); S.steps.splice(k + 1, 0, { t:'fleetSums' }, { t:'acquire' }); UI.justDone = null; advance(); });
 };
+/* the Plane shop on the left rail: every aircraft on any day, to look at. Cards flip for the facts; a plane not yet for sale says
+   when it arrives. Buying, renting and finance stay with the air show step in Today's Plan (day 8, day 15, then every week). */
+function shopBrowseHtml(){
+  const flips = UI.flipBrowse || (UI.flipBrowse = {}), owned = id => S.fleet.filter(f => f.planeId === id).length;
+  const all = PLANES.filter(p => p.wb !== false && (p.status === undefined || p.status === 'live')).slice().sort((a, b) => (a.shopFromDay || 1) - (b.shopFromDay || 1) || (a.price || 0) - (b.price || 0));
+  const later = ((WB && WB.aircraftPreview) || []).filter(a => !PLANES.some(p => p.id === a.id)).map(a => Object.assign({ live:false }, a)).sort((a, b) => (a.shopFromDay || 9999) - (b.shopFromDay || 9999));
+  return `<div class="showroom"><p class="sr-note">Look all you like: tap a card for the facts. Buying, renting and finance happen at the air show in Today's Plan, on day 8, day 15 and then every week.</p>
+    <div class="show-cards">${all.map(p => showCard(p, shopOffer(p), false, owned(p.id), !!flips[p.id], (p.shopFromDay || 1) > S.day ? fromWhen(p.shopFromDay) : null)).join('')}</div>
+    ${later.length ? `<div class="show-soon"><div class="ss-h"><b>Later in the game</b><span class="muted small">The aircraft you can aim for. Their day will come.</span></div><div class="soon-row">${later.map(soonCard).join('')}</div></div>` : ''}</div>`;
+}
+function bindShopBrowse(){ screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-pick'); UI.flipBrowse[id] = !UI.flipBrowse[id]; render(); }); }
 /* every new plane gets its paint, name, registration and a short reveal */
 function acquirePlane(p, kind){
   const o = shopOffer(p), uid = S.nextUid++; let terms;
