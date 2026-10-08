@@ -56,21 +56,21 @@ Livery sheet: 12 colours, 4 stripes, 7 tail symbols, 4 logo shapes, 8 name sugge
 
 | Aircraft | Status | Artwork | Photo | Credit and licence |
 | --- | --- | --- | --- | --- |
-| dhc6 | live | dhc6 | none yet | — |
-| saab340 | live | sf34 | none yet | — |
-| atr72 | live | at72 | none yet | — |
-| e190 | live | e190 | none yet | — |
-| a220 | live | narrowbody | none yet | — |
-| a320 | live | narrowbody | none yet | — |
-| b737 | live | narrowbody | none yet | — |
-| b787 | later |  | none yet | — |
-| a350 | later |  | none yet | — |
-| b747 | later |  | none yet | — |
-| a380 | later |  | none yet | — |
-| e175 | live | e175 | none yet | — |
-| b757 | placeholder |  | none yet | — |
-| a340 | later |  | none yet | — |
-| b777 | later |  | none yet | — |
+| dhc6 | live | dhc6 | `dhc6.jpg` 69 KB | Paneuropean · CC BY-SA 3.0 |
+| saab340 | live | sf34 | `saab340.jpg` 103 KB | SDASM Archives · Public domain |
+| atr72 | live | at72 | `atr72.jpg` 37 KB | Laurent ERRERA · CC BY-SA 2.0 |
+| e190 | live | e190 | `e190.jpg` 70 KB | Bob Adams · CC BY-SA 2.0 |
+| a220 | live | narrowbody | `a220.jpg` 38 KB | Eric Salard · CC BY-SA 2.0 |
+| a320 | live | narrowbody | `a320.jpg` 38 KB | Gyrostat · CC BY-SA 4.0 |
+| b737 | live | narrowbody | `b737.jpg` 114 KB | John Crowley · CC BY-SA 2.0 |
+| b787 | later |  | `b787.jpg` 65 KB | Maksim Sidorov · CC BY 3.0 |
+| a350 | later |  | `a350.jpg` 58 KB | Gyrostat · CC BY-SA 4.0 |
+| b747 | later |  | `b747.jpg` 44 KB | Boeing Dreamscape · CC BY 2.0 |
+| a380 | later |  | `a380.jpg` 37 KB | Anna Zvereva · CC BY-SA 2.0 |
+| e175 | live | e175 | `e175.jpg` 46 KB | AVA Navigate · CC BY 4.0 |
+| b757 | placeholder |  | `b757.jpg` 69 KB | Aeroprints.com · CC BY-SA 3.0 |
+| a340 | later |  | `a340.jpg` 45 KB | Ken Fielding · CC BY-SA 3.0 |
+| b777 | later |  | `b777.jpg` 43 KB | Mztourist · CC BY-SA 4.0 |
 | Prices from the A220 up are tuned to the cash curve (F5, replacing D16's three-tenths rule): on the Steady path each plane is a few lessons of saving away when it is meant to arrive. Tutorial planes (Twin Otter to E190, E175) keep launch-deal prices. Real prices are on the plane card for interest only. | None |  | none yet | — |
 | v4.3 draft (CR5): artworkId names the painted side-view drawing (narrowbody is a stand-in until the A220, A320 and 737 are drawn); photo* record the showroom photo: file name under src/opening/assets/photos, author, licence, source URL. Openly licensed only, plain or maker colours. | None |  | none yet | — |
 

@@ -41,7 +41,8 @@ function shareWords(x){ return x >= 0.999 ? 'Everyone' : x === 0.5 ? 'Half of pa
     PLANES.push(Object.assign({}, o, { id:a.id, name:a.name, wb:true, seats:a.seats, speed:a.speedKmh, range:a.rangeKm, fuelUse:a.fuelPer100Km, hourCost:a.hourlyCost, dayCost:a.dayCost,
       price: a.launchDealPrice || (fin && fin.cashPrice) || a.listPrice, listPrice:a.listPrice, launchDealPrice:a.launchDealPrice || null, shopFromDay:a.shopFromDay || 1,
       tier: a.tier ? capFirst(a.tier) : (o.tier || ''), fact:a.identity || o.fact || '', icon:o.icon || 'jet', maker:o.maker || makerOf(a.name), tankAdd:o.tankAdd || 0,
-      runCost:o.runCost || 0, typicalProfit:o.typicalProfit || 0, minReputation:null, status:a.status }));
+      runCost:o.runCost || 0, typicalProfit:o.typicalProfit || 0, minReputation:null, status:a.status,
+      artworkId:a.artworkId || o.artworkId || null, photoFile:a.photoFile || null, photoCredit:a.photoCredit || null, photoLicence:a.photoLicence || null, photoSource:a.photoSource || null }));   // CR5: the drawing and the showroom photo
     if(fin) FINANCE[a.id] = fin;
   });
   /* home: fixed at Heathrow Terminal 5 (workbook Settings homeAirport) */

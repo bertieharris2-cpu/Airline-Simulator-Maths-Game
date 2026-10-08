@@ -72,6 +72,7 @@ def title_of(src):
 
 def short_author(artist):
     a = re.sub(r'\s*\(talk\)|\s*/\s*Wikimedia Commons|^\s*Photo(graph)?\s*(by|:)\s*', '', artist, flags=re.I).strip()
+    a = re.sub(r'\s+from\s+.*$', '', a)        # Flickr imports read "Name from Town, Country"; the card has room for the name
     a = re.split(r'\s*[,;]\s*', a)[0] if len(a) > 40 else a
     return a[:48] or 'Wikimedia Commons'
 

@@ -125,7 +125,7 @@
 | data-tools | Maths tools and their default levels; `rentOrBuy`, `seatsFare`, `flightTime` added | Yes |
 | data-tables | Calculation tables; `rentbuy1`, `seatfare1`, `time1` added; the cost sheet and the chapter accounts build their own rows | Yes |
 | data-artwork | The painted side views from `src/opening/assets/aircraft/*.svg` (dhc6, sf34, at72, e175, e190, narrowbody) | Yes |
-| data-photos | Showroom photos from `src/opening/assets/photos/`, by the Aircraft sheet's `photoFile` (none yet) | Yes, when present |
+| data-photos | Showroom photos from `src/opening/assets/photos/`, by the Aircraft sheet's `photoFile` (15, all aircraft, fetched by `tools/fetch_photos.py`) | Yes |
 | data-reviews, data-fins, data-text | As before (`data-fins` is superseded by the logo) | Partly |
 | data-jobs, data-phases, data-challenges | The old round flow | Legacy |
 
@@ -139,7 +139,7 @@
 | The fault's options | Events sheet (text only) | Built from the text: fix (50% of yesterday's profit, +½★), fly (−1★), wait (the aircraft misses a day) |
 | Red Kite's own fares in the price war | Events sheet | 80% of your fare on every route that week |
 | Finance for the tutorial tier (`financeFrom` n/a) | Finance sheet | Offered from the aircraft's `buyFrom` day |
-| Showroom photos | Aircraft sheet photo columns (empty) | The card front shows the painted drawing in plain colours until a licensed photo is recorded |
+| Showroom photos | Aircraft sheet photo columns, filled by `tools/fetch_photos.py` from Commons | Every card front shows a credited, openly licensed photo (maker or plain colours; the E175 is a Republic Airways one); the painted drawing is the fallback |
 | The coming-soon aircraft (787, A350, 747, A380, A340, 777, 757) | Aircraft sheet, not live | Name, date and picture only (`aircraftPreview`); no figures are read |
 
 ### Hard-coded in the code, not read from data
