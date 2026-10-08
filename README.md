@@ -32,8 +32,12 @@ The opening is being made excellent before the later campaign continues. `airlin
   - Each one lights up with a short system notice (*Finance online*). Older saves unlock whatever their history implies.
 - **The workspace: plan rail · task · dock,** with an action bar across the bottom (a one-line hint and the main button).
   - **The plan rail is the day in stages.**
-    - Launch Day: *Airline ready* (aircraft, first market) → *Build the service* (demand, one service, timetable) → *Prepare to fly* (fares and forecast, fuel) → *Launch* (Start operations).
-    - Days 1–3: *Plan the day* → *Prepare to fly* → *Launch*.
+    - Launch Day: *Airline ready* (aircraft, first market) → *Plan* (demand, one service, **Work it out**) → *Test* → *Operate* → *Review*.
+    - Every day of chapter 1: *Plan* (What's new, the decision, **Work it out**) → *Test* → *Operate* → *Review*. Weeks keep the planner and the cost sheet.
+  - **Work it out** (week-1 review, 8 Oct 2026) is one page: the plan on the left (services, fares, snacks), the day's figures on the right as a sheet with one column per option (launch day: three fares; snacks day: the snack options; otherwise the plan), the sum being worked out under the sheet with **squared paper** to work on, and the choice buttons beneath. On launch day the tickets at every fare are worked out before the fare is chosen, then the profit of the chosen fare. Every day of week 1 asks for at least one multiplication.
+  - **Practice questions:** wherever a skill is introduced (the ready-again time, cabin sales, the decimal fuel price, empty seats, the new route's tickets, the weekend fractions) the *Your turn* page is three questions with fresh numbers each time, typed, with a calm hint on a wrong answer and *Show me* after three goes; all three before Continue; each round goes into the teacher's *By hand so far* log.
+  - **Every screen says what to do:** a *Do this* line under the question (`STEP_TODO`, or `todo:` on the screen), on the identity screens too.
+  - **Crew duty waits for chapter 2** (`crewFromDate` in Settings): no briefing, no £250, no crews line before it.
     - A finished stage folds into one resolved line with a green edge and a summary (*✓ Service built · Paris ×3 · 57 seats*). Click it to open its steps; any step can be reopened with **Edit**.
   - **The dock (right):** the context for the current activity:
     - *Home base*, *Market comparison*, *Aircraft and market*, *Flight timing*;
@@ -41,7 +45,7 @@ The opening is being made excellent before the later campaign continues. `airlin
     - *Aircraft & Market Context*, *Today's forecast*, *Fuel status*.
     - **Help and guidance** rows sit underneath. Help, the working space and calculations dock here for a moment, and closing them (✕) brings the context back. The step underneath never changes. The dock can be folded away (›).
 - **Never ask twice.** A setting stays set until it is edited.
-  - **No fare is decided before it is costed.** The timetable and extras are set first; fares are chosen only on the costing screen (see *Fares are decided by modelling* below).
+  - **No fare is decided before it is costed.** On launch day the tickets at three fares are worked out by hand on *Work it out* before the fare is chosen; on later days the plan's fare is costed on the same page and tested on the next.
   - Editing anything from later in the day shows **Back to …** and returns straight to where you were.
   - The morning *Today's Plan* card lists the standing timetable, fares, on-board offer, departure time and fuel, each with Edit.
 - **Launch:** a final *Ready for launch* step lists the operating plan (timetable, fare, extras, fuel, forecast). Each item has Edit, and a warning if it needs updating, for example if the plan changed after the forecast. Then the big **START OPERATIONS**. Fuel orders are paid at this point.
@@ -72,12 +76,12 @@ The opening is being made excellent before the later campaign continues. `airlin
 
 | When | What happens | The maths |
 | --- | --- | --- |
-| Launch Day, Mon 2 Sep (day 1) | Name the airline, paint the planes, the chapter banner, then the Twin Otter, the first market (Dublin or Paris), the demand, one service, the timetable (with its fare and the scheduling questions), Cost, Test, Ready, the live wall, results. Fuel is free (launch deal, days 1–2). | **ticket revenue** = passengers × fare; **profit** = revenue − costs |
-| Day 2 | Snacks: the Catering sheet's menu (none / £3 / £5 / free). | **cabin sales** = buyers × price, once (rule 5); profit **built** |
-| Day 3 | Fuel at £1.30: the tank, 500 L lots. | **fuel cost** = litres × price |
-| Day 4 | Red Kite Air sells Dublin at £50 (days 4–7); the other route opens; departure times and time-of-day demand; the first **event** (match / hold / advertise £300) between Plan and Cost. | revenue on the new route (**built**); fuel again if the litres jumped (rule 2) |
-| Day 5 | The storm (fly / wait £200 / cancel and refund); crew duty and the second crew. | |
-| Days 6–7 | The weekend: business travellers × 0.7 (Sat) / 0.6 (Sun), leisure × 1.2, by each route's business share. | |
+| Launch Day, Mon 2 Sep (day 1) | Name the airline, the flight code, the logo, the paint shop, the reveal, the certificate, the chapter banner (one line at a time, the arriving mechanics as a list), then the Twin Otter, the first market (Dublin or Paris), the demand, one service (with three ready-again practice questions), **Work it out** (services ×1–×4 with the reason a service won't fit; the tickets at three fares, then the profit of the chosen fare; squared paper), Test, Ready, the first take-off, the live wall, results. Fuel is free (launch deal, days 1–2). | **ticket revenue** = passengers × fare, three times; **profit** = revenue − costs; ready-again times |
+| Day 2 | Snacks: the Catering sheet's menu; the briefing's three practice sums; Work it out costs the £3 and £5 options side by side (free snacks as a third if asked), then the choice. | **cabin sales** = buyers × price (each option); **profit** (each option) |
+| Day 3 | Fuel at £1.30: the decimal worked as pounds then pence, three practice sums, the fuel cost by hand, the order bill typed on the fuel screen (with the pounds-then-pence hint), and the CEO's advice on buying ahead. | **fuel cost** = litres × price; the order bill |
+| Day 4 | Red Kite Air sells Dublin at £50 (days 4–7), with a hold-or-match comparison on the event screen; the other route opens; departure times and time-of-day demand; the first **event** before Work it out. | revenue on the new route (**built**); empty seats and the new route's tickets as practice |
+| Day 5 | The storm (fly / wait £200 / cancel and refund). The main route's tickets by hand (week 1 always asks for one multiplication). | tickets |
+| Days 6–7 | The weekend: business travellers × 0.7 (Sat) / 0.6 (Sun), leisure × 1.2, by each route's business share; three practice questions on tenths. | 7 in 10, 6 in 10, 2 in 10 more; tickets |
 | Day 8 | **The shop**: a second Twin Otter, the Saab 340 and the ATR 72, each to buy, rent by the day or finance (deposit + daily payments) from the Finance sheet. Amsterdam, Frankfurt, Geneva and Barcelona open with £5 fare steps. | **rent or buy** = price ÷ rent a day; **a full plane** = seats × fare (rule 4, once per aircraft type) |
 | Days 9–14 | Two aircraft, each with its own services and departure times (tabs on the planner); fares shared per route. Day 11: crew sickness. Day 12: the season card (Geneva ×0.5 now, ×1.4 in December). | fuel again when the planned litres change by a quarter or the price by 50p |
 | Day 15 | The E175 and E190 join the shop; **Madrid** opens (1,350 km): only an aircraft with the range can fly it. | **flight time** = distance ÷ speed |
@@ -88,9 +92,9 @@ The opening is being made excellent before the later campaign continues. `airlin
 | 28 December | **The chapter review**: each month's revenue and costs shown, the totals, the profit and projected − actual by hand (rule 3); the chapter in figures; the long-haul decision as the hook for chapter 2 (opens 6 January 2031, not built). | **totals**, **profit**, **difference** |
 
 - **Hand sums follow HandSumRules 1–6** (`p4l_handsums.js`, `p4m_fleet.js`): the first time a relationship appears it is by hand; fuel again when the price moves ≥ £0.50 or the planned litres change ≥ 25%; revenue again on a new route; a new aircraft brings price ÷ rent and seats × fare; snacks once; totals at the review; never in the Test plan. `S.skills` remembers; the teacher panel lists *By hand so far*; the teacher's Calculate / Build / Model override still wins.
-- **Events** are a step between Plan and Cost. A cash option joins the day's costs (the Cost sheet shows the line, so projected = actual). Cancelling a service removes it from the day. Stars are banked until `reputationFromDate`. From day 22 an option's cost is `costShare` × yesterday's profit.
+- **Events** are a step before Work it out (on weeks, between Plan and Cost). A cash option joins the day's costs (the Cost sheet shows the line, so projected = actual). Cancelling a service removes it from the day. Stars are banked until `reputationFromDate`. From day 22 an option's cost is `costShare` × yesterday's profit.
 - **The plan carries every aircraft** (`plan.fleet`): services and departure times per aircraft, fares per route, one snack choice. Rent and finance payments are cost lines in *Aircraft's day*. A route out of range is greyed with the reason. Ready blocks a plan that would take cash below the £1,000 reserve and warns on a losing projection.
-- **What's new** introductions (three pages and a sum) are keyed to the Calendar's mechanics: snacks (day 2), fuel (3), departure times and the second route (4), crew (5), the weekend (6), the fleet (8), the seasons (12), medium haul (15), the week (22), buying fuel ahead (December).
+- **What's new** introductions (three pages: what's new, the maths, your turn) are keyed to the Calendar's mechanics: snacks (day 2), fuel (3), departure times and the second route (4), the weekend (6), the fleet (8), the seasons (12), medium haul (15), the week (22), buying fuel ahead (December). Crew duty's briefing waits for `crewFromDate`. In week 1 *your turn* is three practice questions (`p4s_practice.js`); later briefings keep the "which sum?" question.
 - **The teacher's skip** (teacher panel, weeks only): 1, 4 or 8 weeks run on the standing plan by themselves; the review that follows says so.
 - **Chapters 2–6** are read for their dates only: the shop's lease/buy/finance dates, reputation from January 2031, the quarterly task, the Captain's challenges and the hunts are listed in the teacher panel (*Chapters 2–6: the gates*); none of it fires in chapter 1.
 - **Reputation is hidden** until `reputationFromDate` (a placeholder in v4.2): star effects are banked in `S.repBank` and revealed at the level earned.

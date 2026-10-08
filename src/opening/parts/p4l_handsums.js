@@ -116,11 +116,20 @@ R.event = st => {
   const F = featuredFlight(), picked = S.rnd.eventChoice !== undefined ? S.rnd.eventChoice : st.pick, decided = S.rnd.eventChoice !== undefined;
   const flightLine = F ? `${fmtTime(F.dep)} to ${routeById(F.route).city}` : '';
   const costOf = o => o.effects && o.effects.cash ? money(-o.effects.cash) : null;
-  screen().innerHTML = taskFrame({ question:esc(ev.title), work:false,
+  // a rival undercut: show what holding and matching would each do today (week-1 review: "it felt like a random guess")
+  const cmp = (() => { const o = ev.options.find(x => x.effects && x.effects.setPrice); if(!o) return ''; const rid = Object.keys(o.effects.setPrice).find(id => routeById(id)); if(!rid) return '';
+    const r = routeById(rid), f = fleetOne(), p = ourPlane(), rival = competitorPrice(r), cur = S.rnd.pricesBefore && S.rnd.pricesBefore[rid] !== undefined ? S.rnd.pricesBefore[rid] : fareOf(rid); if(rival === undefined || rival === cur) return '';
+    const n = f ? schedOf(f).filter(id => id === rid).length : 0, seats = n * p.seats, col = fare => { const want = paxWant(r, fare), sold = Math.min(want, seats); return { fare, want, sold, rev:sold * fare }; }, A = col(cur), B = col(rival);
+    const adv = ev.options.find(x => x.effects && x.effects.cash), row = (l, f) => `<tr><th>${l}</th><td class="mono">${f(A)}</td><td class="mono">${f(B)}</td></tr>`;
+    return `<section class="pnl ev-cmp"><div class="pnl-h"><h3>What the model says about ${esc(r.city)} today</h3><span class="muted">${n ? `${n} service${n > 1 ? 's' : ''}, ${seats} seats` : 'no services planned'}</span></div>
+      <table class="ev-t"><thead><tr><th></th><th>Hold at ${money(cur)}</th><th>Match at ${money(rival)}</th></tr></thead><tbody>
+      ${row('Want to fly with you', x => x.want)}${row('Seats you fly', () => seats)}${row('Tickets sold', x => x.sold)}${row('Ticket revenue', x => `<b>${money(x.rev)}</b> <small>(${x.sold} × ${money(x.fare)})</small>`)}</tbody></table>
+      <p class="muted small">${!n ? `You are not flying ${esc(r.city)} today, so the fare only matters if you add a ${esc(r.city)} service.` : B.rev > A.rev ? `Matching sells more tickets and brings in ${money(B.rev - A.rev)} more.` : B.rev < A.rev ? `Holding your fare still brings in ${money(A.rev - B.rev)} more, even with fewer passengers.` : 'Both bring in the same today.'}${adv ? ` Advertising costs ${money(-adv.effects.cash)} and brings people back over the next days.` : ''}</p></section>`; })();
+  screen().innerHTML = taskFrame({ question:esc(ev.title), work:false, todo:decided ? 'Press Check the numbers.' : 'Look at the choices, press one, then press Decide.',
     story:[ev.text].concat(F && ev.options.some(o => o.effects && (o.effects.status || o.effects.refund)) ? [`The flight in question is the ${flightLine}.`] : []),
     say:`${ev.title}. ${ev.text} ${ev.options.map((o, i) => `Option ${i + 1}: ${o.label}.`).join(' ')}`,
-    context:{ title:'Your airline', html: cxSec('Cash', `<p class="cx-plan mono">${money(S.cash)}</p>`) + (ev.costShare ? cxSec('What it costs', `<p class="small muted">${esc(String(ev.costShare))}</p>`) : '') },
-    main:`<div class="ev"><div class="options ev-opts">${ev.options.map((o, i) => `<button class="opt ${picked === i ? 'on' : ''}" data-o="${i}" aria-pressed="${picked === i}" ${decided ? 'disabled' : ''}><span class="big">${esc(o.label)}</span><span class="sub">${esc(o.sub || '')}</span>${costOf(o) ? `<span class="ev-cost mono">${costOf(o)}</span>` : ''}</button>`).join('')}</div>
+    context:{ title:'Your airline', html: cxSec('Cash', `<p class="cx-plan mono">${money(S.cash)}</p>`) + cxSec('What it costs', `<p class="small muted">${ev.options.map(o => costOf(o) ? `${esc(o.label)}: ${costOf(o)}` : `${esc(o.label)}: nothing today`).join('. ')}.</p>`) },
+    main:`<div class="ev">${cmp}<div class="options ev-opts">${ev.options.map((o, i) => `<button class="opt ${picked === i ? 'on' : ''}" data-o="${i}" aria-pressed="${picked === i}" ${decided ? 'disabled' : ''}><span class="big">${esc(o.label)}</span><span class="sub">${esc(o.sub || '')}</span>${costOf(o) ? `<span class="ev-cost mono">${costOf(o)}</span>` : ''}</button>`).join('')}</div>
       ${decided ? `<div class="ev-why"><b>Decided.</b> ${esc(S.rnd.eventWhy || '')}${S.rnd.eventCost ? ` It costs ${money(S.rnd.eventCost)} today.` : ''} <button class="btn small" id="evUndo">Change your mind</button></div>` : ''}</div>`,
     foot:`<button class="btn primary big" id="nx" ${picked === undefined ? 'disabled' : ''}>${decided ? goLabel('Check the numbers') : 'Decide'} &#9654;</button>` });
   screen().querySelectorAll('[data-o]').forEach(b => b.onclick = () => { st.pick = +b.getAttribute('data-o'); render(); });
@@ -185,13 +194,14 @@ Object.assign(INTRO, {
     think:['Is the evening service worth a second crew?', 'The Plan screen shows how long the aircraft is busy. The Cost sheet shows the second crew when it is needed.'] },
   weekend:{ kicker:'New today · The weekend', title:'Who flies at the weekend?', before:'planner', words:[['Business traveller', 'Someone flying for work. Most of them fly on weekdays.'], ['Leisure traveller', 'Someone flying for a holiday or to see people. More of them fly at the weekend.']],
     what:() => { const ST = WORLD.settings || {}, r = routeById(S.market), bs = r.arch ? Math.round((r.arch.businessShare || 0) * 100) : 50;
-      return [['Weekends are different. Offices are closed, so fewer business travellers fly. More people fly for leisure.'],
-        `<div class="ni-cards four"><div class="ni-card"><em>×${ST.weekendBusinessMultSat || 0.7}</em><b>Business, Saturday</b><span>7 in 10 of the weekday business travellers fly.</span></div><div class="ni-card"><em>×${ST.weekendBusinessMultSun || 0.6}</em><b>Business, Sunday</b><span>6 in 10 fly.</span></div><div class="ni-card"><em>×${ST.weekendLeisureMult || 1.2}</em><b>Leisure, weekend</b><span>2 in 10 more than on a weekday.</span></div><div class="ni-card"><em>${bs}%</em><b>${esc(r.city)}</b><span>${bs}% of ${esc(r.city)}'s passengers travel for business.</span></div></div>`,
-        ['A route full of business travellers is quieter at the weekend. A holiday route is busier.', 'The Plan screen already counts this: look at how many want to fly today.']]; },
+      return [['As the CEO you will be given statistics like these. Use them to make the best decision you can.', 'Weekends are different. Offices are closed, so fewer business travellers fly. More people fly for leisure.'],
+        `<div class="ni-cards two"><div class="ni-card"><em>${Math.round((ST.weekendBusinessMultSat || 0.7) * 10)} in 10</em><b>Business travellers</b><span>On Saturday ${Math.round((ST.weekendBusinessMultSat || 0.7) * 10)} in 10 of the weekday business travellers fly; on Sunday ${Math.round((ST.weekendBusinessMultSun || 0.6) * 10)} in 10.</span></div><div class="ni-card"><em>${Math.round((ST.weekendLeisureMult || 1.2) * 10) - 10} in 10 more</em><b>Leisure travellers</b><span>At the weekend ${Math.round((ST.weekendLeisureMult || 1.2) * 10) - 10} in 10 more want to fly than on a weekday.</span></div></div>`,
+        [`${bs}% of ${esc(r.city)}'s passengers travel for business, so ${esc(r.city)} is ${bs >= 50 ? 'quieter' : 'busier'} at the weekend.`, 'The plan already counts this: look at how many want to fly today.']]; },
     maths:() => [niRule('weekday business travellers', '×', '0.7', 'Saturday business travellers'),
-      `<div class="ni-eg"><p>On a weekday <b>40</b> business travellers want to fly. On Saturday 7 in 10 of them fly: ${niSum('40 × 0.7 = 28')}</p>
-        <p>Leisure travellers go the other way: <b>20</b> on a weekday, 2 in 10 more on Saturday: ${niSum('20 × 1.2 = 24')}</p>
-        <p class="ni-tip">7 in 10 is the same as 70%, or 0.7. To find 7 in 10 of 40: one tenth of 40 is 4, and 7 of them make 28.</p></div>`],
+      `<div class="ni-eg"><p>On a weekday <b>40</b> business travellers want to fly. On Saturday 7 in 10 of them fly. 7 in 10 is the same as 70%, or 0.7.</p>
+        <div class="ni-col"><span class="r">one tenth of 40</span><span class="eq">=</span><span class="a">4</span><span class="note"></span><span class="r">7 tenths: 7 × 4</span><span class="eq">=</span><span class="a">28</span><span class="note">so 40 × 0.7 = 28 business travellers</span></div>
+        <p>Leisure travellers go the other way: 2 in 10 more, so a tenth is added twice.</p></div>`],
+    practice:'weekend',
     check:{ q:'On a weekday 40 business travellers fly. On Saturday 7 in 10 of them fly. How many is that?', opts:[['28', ''], ['33', '33 is more than 7 in 10 of 40. One tenth of 40 is 4, so 7 tenths is 7 × 4.'], ['47', '47 is more than 40: fewer business travellers fly on Saturday, not more.']], ok:0, done:'7 in 10 of 40 is 28 business travellers.' },
     think:['Will the same timetable fill the aircraft today?', 'Try a lower fare or fewer services in the Test step and see what the model says.'] } });
-MECH_INTRO.push(['crew duty', 'crew']);
+if(!MECH_INTRO.some(x => x[1] === 'crew') && !(WB && WB.settings && WB.settings.crewFromDate)) MECH_INTRO.push(['crew duty', 'crew']);

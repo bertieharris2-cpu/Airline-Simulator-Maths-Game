@@ -296,11 +296,13 @@ function taskFrameBase(o){
   const title = o.title || (S.overlay ? ({planeTable:'Buy a plane', newPlane:'New route'})[S.overlay.type] : FRAME_TITLES[step().t]) || '';
   return `<div class="tf"><div class="phead tf-bar" data-status="${esc(o.status || frameStatus())}">${esc(title)}</div>
     <div class="tf-top">${o.back ? '<button class="btn" id="tBackBtn">&#9664; Back</button>' : ''}${o.stepMark ? `<span class="step-mark">${o.stepMark}</span>` : ''}<h1 class="tq">${o.question}</h1>${o.say ? sayBtn(o.say) : ''}${o.work === false ? '' : workBtn()}</div>
-    ${o.story && o.story.length ? `<div class="tf-story">${o.story.map(l => `<p>${l}</p>`).join('')}</div>` : ''}
+    ${todoLine(o)}${o.story && o.story.length ? `<div class="tf-story">${o.story.map(l => `<p>${l}</p>`).join('')}</div>` : ''}
     <div class="tf-body ${o.side ? 'with-side' : ''}"><div class="tf-main">${o.main || ''}</div>${o.side ? `<div class="tf-side">${o.side}</div>` : ''}</div>
     ${o.foot ? `<div class="tf-foot">${o.foot}</div>` : ''}
   </div>`;
 }
+/* the "Do this" line under the question (week-1 review): what to press on this screen, from o.todo or the STEP_TODO table */
+function todoLine(o){ const t = o.todo !== undefined ? o.todo : (typeof STEP_TODO !== 'undefined' && !S.overlay ? STEP_TODO[step().t] : ''); return t ? `<p class="tf-todo">${t}</p>` : ''; }
 function bindFrame(onBack){ on('tBackBtn', onBack); bindWork(); }
 /* Back from a decision screen returns to "What will you do?" until something has been changed. */
 function backToChoice(){ const ci = S.steps.findIndex(s => s.t === 'choice'); S.steps = S.steps.slice(0, ci+1).concat(S.steps.slice(ci+1).filter(s => !['fare','trips','day','fuel','cabin','quick','plane','newRoute'].includes(s.t))); S.si = ci; resetEntry(); UI.explain = null; render(); }

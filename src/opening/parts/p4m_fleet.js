@@ -129,7 +129,7 @@ function planEditor(i, pl, L, o){
     services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">Services and departure times${o.big ? newTag(3.3) : ''}</span>${multi ? '' : '<span class="muted small">Out, a turnaround, back, then a turnaround at home.</span>'}</div>${tabs}${services}</div>`;
   }
   const strips = per && !o.compact && !multi ? `<div class="pe-demand">${shown.filter(id => inPlan.includes(id)).slice(0, 3).map(demandStrip).join('')}${miniBar(L.D)}</div>` : '';
-  const sum = `<div class="pe-sum"><span><b class="mono">${L.pax}</b> fly</span><span class="${L.empty ? '' : 'muted'}"><b class="mono">${L.empty}</b> empty seat${L.empty === 1 ? '' : 's'}</span><span class="${L.nos ? 'orange' : ''}"><b class="mono">${L.nos}</b> without a seat</span>${L.end ? `<span>busy until <b class="mono">${fmtTime(L.end)}</b></span>` : ''}${fuelPaid() && L.fuelL ? `<span>burns <b class="mono">${num(L.fuelL)} L</b> of fuel${o.big ? newTag(3.2) : ''}</span>` : ''}${opened(3.1) ? `<span class="${L.crews > 1 ? 'orange' : ''}">${L.crews} crew${L.crews > 1 ? 's' : ''}</span>` : ''}${L.fits ? '' : '<span class="red">Doesn\'t fit in the day</span>'}</div>`;
+  const sum = `<div class="pe-sum"><span><b class="mono">${L.pax}</b> fly</span><span class="${L.empty ? '' : 'muted'}"><b class="mono">${L.empty}</b> empty seat${L.empty === 1 ? '' : 's'}</span><span class="${L.nos ? 'orange' : ''}"><b class="mono">${L.nos}</b> without a seat</span>${L.end ? `<span>busy until <b class="mono">${fmtTime(L.end)}</b></span>` : ''}${fuelPaid() && L.fuelL ? `<span>burns <b class="mono">${num(L.fuelL)} L</b> of fuel${o.big ? newTag(3.2) : ''}</span>` : ''}${opened(3.1) && (typeof crewOn !== 'function' || crewOn()) ? `<span class="${L.crews > 1 ? 'orange' : ''}">${L.crews} crew${L.crews > 1 ? 's' : ''}</span>` : ''}${L.fits ? '' : '<span class="red">Doesn\'t fit in the day</span>'}</div>`;
   return `<div class="pe ${o.big ? 'big' : ''} ${o.compact ? 'compact' : ''}">${strips}<div class="pe-routes n${Math.min(3, shown.length)}">${shown.map(routeBlock).join('')}</div>${moreRow}${snacks}${services}${sum}</div>`;
 }
 /* Everything a plan would do today, as spreadsheet lines: one ticket line per route, every aircraft's costs. */
@@ -217,8 +217,10 @@ function decideHandSums(L, pl){
   if(fuelPaid()){ const fs = sk.fuelCost, price = fuelPrice(), litres = plannedLitres(pl), step = ST.fuelHandSumPriceStep || 0.5, share = ST.fuelHandSumLitresShare || 0.25;
     if(!fs) out.fuelCost = 'calc';
     else if(Math.abs(price - fs.last.price) >= step - 1e-9 || (fs.last.litres > 0 && Math.abs(litres - fs.last.litres) / fs.last.litres >= share - 1e-9)) out.fuelCost = 'calc'; }
-  if(first('profit')) out.profit = 'calc'; else if(out.snacks) out.profit = 'build';
+  if(first('profit')) out.profit = 'calc'; else if(out.snacks) out.profit = 'calc';   // week-1 review: the snack options are costed by hand, Build waits for the new route
   const g = gatedToday();
+  // week 1 is for practising: a day with nothing new to work out still asks for the main route's tickets (week-1 review: "it is a maths game")
+  if(S.phase === 'round' && S.day < (WORLD.weekFrom || 22) && !Object.keys(out).length && L.routes.some(x => x.id === S.market)) out.revenue = { level:'calc', routes:[S.market] };
   if(g.includes('emptySeats') && first('emptySeats')) out.emptySeats = 'calc';
   const ft = sk.flightTime || { routes:[] }, newRoutes = L.routes.map(x => x.id).filter(id => !ft.routes.includes(id) && (routeById(id).openDay || 1) > 1);
   if(g.includes('flightTime') || (S.day >= (WORLD.weekFrom || 22) && newRoutes.length)){ const rid = flightTimeRoute(pl, newRoutes); if(rid && !ft.routes.includes(rid)) out.flightTime = { level:'calc', route:rid }; }
@@ -285,7 +287,7 @@ function acquirePlane(p, kind){
   refreshPlan(); return uid;
 }
 WS_STEPS.push('shop2', 'fleetSums', 'acquire'); SHELL_STEPS.push('shop2', 'fleetSums', 'acquire');
-STAGES.day[0].steps = ['shop2', 'fleetSums', 'acquire', 'planner', 'event'];
+STAGES.day[0].steps = ['shop2', 'fleetSums', 'acquire', 'planner', 'event', 'workout'];
 Object.assign(RAIL_LABEL, { shop2:'Aircraft for sale', fleetSums:'The sums', acquire:'Buy or rent' });
 Object.assign(SUB_DESC, { shop2:'A bigger airline?', fleetSums:'Rent or buy, a full plane', acquire:'Sign for the aircraft' });
 Object.assign(STEP_HINT, { shop2:'Aircraft are for sale. Look closely at one, or carry on with the aircraft you have.', fleetSums:'Two sums about the aircraft you chose: how many days of rent equal its price, and what a full plane brings in.', acquire:'Buy with cash, rent by the day, or pay a deposit and daily payments. Then give the aircraft its services.' });
@@ -296,7 +298,7 @@ function startProtoDay(n){
   S.period = newPeriod('day', S.day);
   if(depsOn() && !Array.isArray(S.deps)) S.deps = TIME.day(ourPlane(), schedOf(f), undefined, null).trips.map(t => t.dep);
   const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
-  S.steps = withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat([{ t:'planner' }]).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'costPlan' }, { t:'testIdeas' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
+  S.steps = withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'workout' }, { t:'testIdeas' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
   S.rnd.cashStart = S.cash; UI.view = null;
   S.si = 0; S.newRoutes = []; if(typeof revealReputation === 'function') revealReputation();
   refreshPlan();

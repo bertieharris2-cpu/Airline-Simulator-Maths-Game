@@ -28,7 +28,7 @@ const path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../
     for(const [name, sched, prices, deps] of plans){
       const pl = { sched, prices:Object.assign({}, S.prices, prices), firstDep:T(deps[0]), onboard:'none', deps:deps.map(T) };
       const g = planOutcome(pl), fuel = fuelPrice(7);
-      const e = WE.day(WB, { plane:'dhc6', fuel, home:{ code:'LHR', terminal:'T5' }, services: sched.map((r, k) => ({ route:r, dep:deps[k], fare:pl.prices[r] })) });
+      const e = WE.day(WB, { plane:'dhc6', fuel, date:((WB.calendar || []).find(c => c.day === S.day) || {}).date, home:{ code:'LHR', terminal:'T5' }, services: sched.map((r, k) => ({ route:r, dep:deps[k], fare:pl.prices[r] })) });
       out.push({ name, fuel, game:{ pax:g.pax, rev:g.revenue, cost:Math.round(g.costs), profit:Math.round(g.profit) }, engine:{ pax:e.trips.reduce((a, t) => a + t.pax, 0), rev:e.revenue, cost:Math.round(e.costs), profit:Math.round(e.profit) } });
     }
     return out;

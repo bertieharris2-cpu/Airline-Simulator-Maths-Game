@@ -267,6 +267,7 @@ function railValue(t, i){
   if(t === 'fareTry') return passed && S.market ? `${money(fareOf(S.market))} · ${wantOf(S.market)} people` : '';
   if(t === 'fuelPlan'){ const o = S.rnd.fuelOrder; if(o) return `${num(o.litres)} L ordered · ${money(o.total)}`; return passed ? `tank covers it (${num(S.fuel)} L)` : ''; }
   if(t === 'costPlan') return S.rnd.costed ? `profit ${money(S.rnd.costed.v.profit)}` : '';
+  if(t === 'workout'){ const f0 = fleetOne(), sx = f0 ? schedOf(f0) : []; return sx.length ? planLabel(currentPlan()) + (S.rnd.costed && S.rnd.costed.key === planKey(currentPlan()) ? ` · profit ${money(S.rnd.costed.v.profit)}` : '') : ''; }
   if(t === 'testIdeas') return S.rnd.myForecast ? `${S.rnd.myForecast.plan} · ${money(S.rnd.myForecast.profit)}` : '';
   if(t === 'intro'){ const I = introNow(); return I ? niVal(I.title) : ''; }
   return '';
@@ -275,7 +276,7 @@ function editStep(what){
   const k = railKind();
   if(k === 'month' || k === 'year') return what === 'forecast' && k === 'year' ? 'yearPlan' : 'plans';
   if(what === 'forecast') return 'testIdeas';
-  if(S.phase === 'setup') return what === 'fare' ? 'fareTry' : 'timetable';
+  if(S.phase === 'setup' || periodType() === 'day') return 'workout';   // the one Work it out page (week-1 review)
   return 'planner';
 }
 

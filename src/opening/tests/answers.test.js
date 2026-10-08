@@ -18,11 +18,14 @@ const TAG = `${HOME}-${MK}-${W}`;
   const typedLog = {};
   const solve = async tag => { const seen = [];
     for(let i = 0; i < 20; i++){ const c = await p.$('[data-cell]'); if(!c) break; const id = await c.getAttribute('data-cell'); seen.push(id); await c.click();
-      if(await p.$('.dock [data-pk]')){ const row = id.split('|')[1], pr = PAIR[row] || (row.startsWith('tk_') ? ['pax_' + row.slice(3), 'fare_' + row.slice(3), '×'] : null); seen[seen.length - 1] += ':build'; if(!pr){ ok('build pair known for ' + row, false); break; }
-        for(const k of pr.slice(0, 2)) await p.click(`.dock [data-pk="${k}"]`); await p.click(`.dock [data-op="${pr[2]}"]`); await p.click('#trySum'); await p.waitForTimeout(100); continue; }
+      if(await p.$('[data-pk]')){ const row = id.split('|')[1], pr = PAIR[row] || (row.startsWith('tk_') ? ['pax_' + row.slice(3), 'fare_' + row.slice(3), '×'] : null); seen[seen.length - 1] += ':build'; if(!pr){ ok('build pair known for ' + row, false); break; }
+        for(const k of pr.slice(0, 2)) await p.click(`[data-pk="${k}"]`); await p.click(`[data-op="${pr[2]}"]`); await p.click('#trySum'); await p.waitForTimeout(100); continue; }
       await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); }
     typedLog[tag] = seen; return seen; };
   const vis = sel => p.evaluate(s => !!document.querySelector(s), sel);
+  const practice = async () => { for(let i = 0; i < 3; i++){ const a = await p.evaluate(() => window.__sim.practiceAnswer()); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } };
+  const fuelBill = async () => { if(await p.$('#fbIn')){ const v = await p.evaluate(() => String(window.__sim.S().rnd.fuelOrder.total)); await p.fill('#fbIn', v); await p.click('#fbCheck'); await p.waitForTimeout(120); } };
+  const pickOption = async tag => { if(!(await p.$('[data-wpick]')) || await p.$('[data-wpick].on')) return []; const b = await p.$('[data-wpick]:not([disabled])'); if(!b) return []; await b.click(); await p.waitForTimeout(120); return solve(tag + ' after pick'); };
   // launch-day identity (CR5): the flight code, the logo, the paint shop, the reveal, the certificate
   const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
@@ -33,13 +36,13 @@ const TAG = `${HOME}-${MK}-${W}`;
   await identity();
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
   await p.click('#nx'); await p.click(`[data-mk="${MK}"]`); await p.click('#nx'); await p.click('#nx');
-  for(let k = 0; k < 4; k++) await p.click('#nx'); const rq = await p.$$eval('[data-rq]', e => e.map(x => x.getAttribute('data-rq'))); await p.click(`[data-rq="${rq[1]}"]`); await p.click('#nx');
-  await p.click(`[data-svc="${MK}|2"]`); await p.click('#nx');
+  for(let k = 0; k < 4; k++) await p.click('#nx'); await practice(); await p.click('#nx'); await p.click('#nx');
+  await p.click(`[data-svc="${MK}|2"]`);
 
   const probe = async () => {
-    const TK = await p.evaluate(() => { const t = window.__sim.currentTable(), r = t && (t.rows || []).find(x => x.tool === 'revenue'); return r ? r.id : 'tk1'; });
+    const TK = await p.evaluate(() => { const t = window.__sim.currentTable(), r = t && (t.rows || []).find(x => x.tool === 'revenue'); return r ? r.id : 'tk1'; }), C0 = await p.evaluate(() => window.__sim.currentTable().cols[0].id);
     const diag = () => p.evaluate(() => (window.__sim.S().diag || []).map(d => d.kind));
-    const dockAns = async () => { const v = await p.$$eval('.dock .cs:not(.ans)', e => e.map(x => [x.querySelector('.cs-op').textContent.trim(), x.querySelector('.cs-v').textContent])); let a = null;
+    const dockAns = async () => { const v = await p.$$eval('.cs:not(.ans)', e => e.map(x => [x.querySelector('.cs-op').textContent.trim(), x.querySelector('.cs-v').textContent])); let a = null;
       v.forEach(([op, t]) => { const n = +t.replace(/[−–]/g, '-').replace(/[^0-9.\-]/g, ''); a = a === null ? n : op === '+' ? a + n : op === '−' ? a - n : op === '×' ? a * n : a / n; }); return Math.round(a * 100) / 100; };
     const accepted = () => p.evaluate(() => !!document.querySelector('.calc.done'));
     const open1 = async () => { const c = await p.$('[data-cell]'); if(!c) return false; await c.click(); await p.waitForTimeout(120); return true; };
@@ -53,12 +56,12 @@ const TAG = `${HOME}-${MK}-${W}`;
     ok('working on screen accepted when the model disagrees', await accepted()); ok('the disagreement is recorded', (await diag()).some(k => /differs/.test(k)), await diag());
     // 3. a loss: the minus-sign hint, then accepted with −  (re-open the profit figure on a fresh table)
     await p.evaluate(() => { const t = window.__sim.currentTable(); t.done = {}; t.active = null; }); await p.click('[data-cell]').catch(() => {}); await p.waitForTimeout(100);
-    await p.evaluate(TK0 => { const t = window.__sim.currentTable(); t.done = {}; const c = t.cols[0]; [TK0].forEach(r => { t.done['a|' + r] = true; }); t.active = { col:'a', row:'profit' }; c.values.rev = c.values.cost - 150; c.values.profit = -150; }, TK);
+    await p.evaluate(([TK0, C]) => { const t = window.__sim.currentTable(); t.done = {}; const c = t.cols[0]; if(t.rowIds && !t.rowIds.includes('profit')) t.rowIds.push('profit'); [TK0].forEach(r => { t.done[C + '|' + r] = true; }); t.active = { col:C, row:'profit' }; c.values.rev = c.values.cost - 150; c.values.profit = -150; }, [TK, C0]);
     await p.fill('#cellAns', '150'); await p.click('#cellCheck'); await p.waitForTimeout(150);
     const msg = await p.evaluate(() => (document.getElementById('ftMsg') || {}).textContent); ok('a loss typed without the minus gets the minus-sign hint', /minus/.test(msg), msg);
     await p.fill('#cellAns', '−150'); await p.click('#cellCheck'); await p.waitForTimeout(150); ok('a loss typed with − is accepted', await accepted());
     // 4. three wrong tries: Show me the answer
-    await p.evaluate(TK0 => { const t = window.__sim.currentTable(); t.done = {}; t.active = { col:'a', row:TK0 }; }, TK); await p.click('[data-cell]').catch(() => {}); await p.waitForTimeout(120);
+    await p.evaluate(([TK0, C]) => { const t = window.__sim.currentTable(); t.done = {}; t.active = { col:C, row:TK0 }; }, [TK, C0]); await p.click('[data-cell]').catch(() => {}); await p.waitForTimeout(120);
     if(!await p.$('#cellAns')){ await open1(); }
     for(let k = 0; k < 3; k++){ ok('Show me hidden before 3 tries ' + k, !await p.$('#calcShow')); await p.fill('#cellAns', '1'); await p.click('#cellCheck'); await p.waitForTimeout(120); }
     ok('Show me appears after 3 wrong tries', !!await p.$('#calcShow')); await p.click('#calcShow'); await p.waitForTimeout(150);
@@ -71,8 +74,7 @@ const TAG = `${HOME}-${MK}-${W}`;
     const t = await T(), s = await S(); if(s.round >= UPTO || t === 'protoEnd') break;
     const where = `${t}@${s.round}@${s.si}`; if(where === last) await p.waitForTimeout(250); last = where;
     const R = s.round, setup = s.phase === 'setup', day = setup ? 0 : R;
-    if(t === 'fareTry'){ await fits('fareTry'); await shot('d0-fare'); await p.click('#nx'); continue; }
-    if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) await p.click('#niNext'); for(let k = 0; k < 3 && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
+    if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) await p.click('#niNext'); await practice(); for(let k = 0; k < 3 && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
     if(t === 'chapter'){ await fits('chapter'); await shot('chapter'); await p.click('#chGo'); continue; }
     if(t === 'chapterReview'){ await fits('chapterReview'); const typed = await solve('chapterReview'); checks.push('info chapterReview typed ' + JSON.stringify(typed)); if(await p.$('#calcDone')) await p.click('#calcDone'); await shot('chapterReview'); ok('chapter review: totals by hand', typed.length >= 3, typed); ok('chapter review: continue enabled', await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'shop2'){ await fits('shop ' + R); await shot('shop-' + R); if(R === 7){ await p.click('[data-pick="sf34"]'); ok('shop: the Saab can be looked at', !(await p.$eval('#nx', e => e.disabled))); await p.click('#nx'); } else await p.click('#skipShop'); continue; }
@@ -84,7 +86,11 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(t === 'hq'){ await fits('hq ' + R); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ await fits('milestone ' + R); await shot('ms-' + R); await p.click('#msGo'); continue; }
     if(t === 'review'){ await solve('review ' + R); await p.click('#nx'); continue; }
-    if(t === 'planner'){
+    if(t === 'workout' && day === +(process.env.PDAY || 0)){ if(day === 0) await p.click(`[data-svc="${MK}|2"]`); await probe(); break; }
+    if(t === 'planner'){   // weeks keep the planner and the cost sheet
+      if(s.fleet.length > 1 && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); } }
+      await fits('planner ' + R); if(R === 21 || R === 28) await shot(`plan-${R}`); await p.click('#nx'); continue; }
+    if(t === 'workout'){
       if(R <= 4 && s.period.type === 'day'){
         ok(`Day ${R + 1}: snacks only from Day 2`, (await vis('[data-pe^="0|ob|"]')) === (R >= 1));
         ok(`Day ${R + 1}: departure times only from Day 4`, (await vis('[data-pe^="0|dep|"]')) === (R >= 3));
@@ -94,8 +100,11 @@ const TAG = `${HOME}-${MK}-${W}`;
         if(R === 3 && POL !== 'weak') await p.click(`[data-pe="0|add|${OTHER}|0"]`).catch(() => {});
       }
       if(s.fleet.length > 1 && s.period.type === 'day' && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); } }
-      await fits('planner ' + R); if(R <= 4) await shot(`d${day}-plan`); await p.click('#nx'); continue; }
-    if(t === 'costPlan' && day === +(process.env.PDAY || 0)){ await probe(); break; }
+      await fits('planner ' + R); if(R <= 4) await shot(`d${day}-plan`);
+      await fits('cost ' + R); if(R <= 6) await shot(`d${day}-cost`); const typed = await solve(`cost ${day}`); typed.push(...await pickOption(`work ${day}`));
+      checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`);
+      if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(150);
+      ok(`cost ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'costPlan'){
       await fits('cost ' + R); if(R <= 6) await shot(`d${day}-cost`); const typed = await solve(`cost ${day}`);
       checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`);
@@ -112,7 +121,7 @@ const TAG = `${HOME}-${MK}-${W}`;
       const better = m.d && m.d.trim().startsWith('+');
       if(POL === 'typical' && better && await vis('[data-ftest]:not([disabled])')) await p.click('[data-ftest]'); else await p.click('[data-fmine]');
       const fc = (await S()).rnd.myForecast; checks.push(`info test ${day} flew ${fc && fc.plan} projected ${fc && fc.profit}`); continue; }
-    if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); await fits('fuel ' + R); if(R === 2) await shot('d2-fuel'); await p.click('#nx'); continue; }
+    if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); await fuelBill(); await fits('fuel ' + R); if(R === 2) await shot('d2-fuel'); await p.click('#nx'); continue; }
     if(t === 'paint'){ await fits('paint ' + R); await shot('paint-' + R); const a = await S(); ok(`paint ${R}: the new plane has its own registration`, new Set(a.fleet.map(f => f.registration)).size === a.fleet.length, a.fleet.map(f => f.registration)); await p.click('#roll'); continue; }
     if(t === 'reveal'){ await p.click('#skipReveal'); for(let i = 0; i < 50 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); await shot('reveal-' + R); await p.click('#nx'); continue; }
     if(t === 'takeoff'){ await fits('takeoff'); await shot('d0-takeoff'); await p.click('#toGo'); for(let i = 0; i < 200 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); ok('take-off: continue appears', !(await p.$eval('#nx', e => e.hidden))); await shot('d0-takeoff-done'); await p.click('#nx'); continue; }

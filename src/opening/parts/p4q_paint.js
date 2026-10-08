@@ -188,7 +188,7 @@ function firstFlightInfo(){ const f = S.fleet[0] || {}, p = planeById(f.planeId 
   return { f, p, r, dep, code: flightCode(0, 0) }; }
 R.takeoff = st => {
   const I = firstFlightInfo(), T = S.rnd.takeoff, running = T && !S.rnd.takeoffDone, done = !!S.rnd.takeoffDone;
-  screen().innerHTML = `<div class="card stack id-card takeoff-card">${header('Take-off', 'Your first flight is leaving. Watch the whiteboard.', 'Launch day')}
+  screen().innerHTML = `<div class="card stack id-card takeoff-card">${header('Take-off', 'Your first flight is leaving. Watch the whiteboard.', 'Launch day')}<p class="id-todo">${done ? 'Press Continue: your airline is flying.' : running ? 'Watch the whiteboard: your first flight is taking off.' : 'Press Start the take-off and watch the whiteboard.'}</p>
     <div class="pnl stage-pnl big"><div class="runway" id="runway">${done || running ? '' : ''}${runwayHtml(I)}</div></div>
     <div class="actions id-act"><span class="muted grow">${I.r ? `<b>${esc(I.code)}</b> to ${esc(I.r.city)} at <b class="mono">${fmtTime(I.dep)}</b>` : 'Your first flight'}${!IS_DISPLAY && iwbConnected() ? ' · shown on the whiteboard' : ''}</span>
       ${done ? '' : `<button class="btn big" id="skipTo" ${running ? '' : 'hidden'}>Skip</button>`}<button class="btn primary big" id="toGo" ${running || done ? 'hidden' : ''}>Start the take-off &#9654;</button><button class="btn primary big" id="nx" ${done ? '' : 'hidden'}>Continue &#9654;</button></div></div>`;

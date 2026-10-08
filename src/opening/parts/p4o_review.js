@@ -66,9 +66,12 @@ function nextChapterLine(){ const c2 = CHAPTERS[1]; return c2 ? `Chapter ${c2.ch
 /* ---------- the chapter banner at the chapter's start (chapter 1 on Launch Day; later chapters are read, not shown) ---------- */
 R.chapter = st => {
   const ch = chapterOf(S.day || 1) || CHAPTERS[0] || { chapter:1, name:'Starting out' };
-  screen().innerHTML = shell(`<div class="hp milestone chap">${hqHead(`Chapter ${ch.chapter}`, 'CHAPTER')}<div class="ms-in"><span class="label">${esc(dateLong(dayOfDate(ch.start)))} – ${esc(dateLong(dayOfDate(ch.end)))}</span><h1>${esc(ch.name)}</h1>
-    <p>${esc(ch.newIdea || '')}</p>${ch.mechanicsArriving ? `<p class="muted">Arriving this chapter: ${esc(ch.mechanicsArriving)}.</p>` : ''}${ch.mathsFront ? `<p class="muted">The maths: ${esc(ch.mathsFront)}.</p>` : ''}
-    <button class="btn primary big" id="chGo">Begin &#9654;</button></div></div>`);
+  /* week-1 review: centred, one line at a time, the arriving mechanics as a list, the maths line kept for the teacher's notes only */
+  const arriving = String(ch.mechanicsArriving || '').split(/;\s*/).map(x => x.trim()).filter(Boolean).filter(x => !/crew/i.test(x) || typeof crewOn !== 'function' || crewOn());   // crew duty waits for chapter 2
+  const lines = [`<span class="label">${esc(dateLong(dayOfDate(ch.start)))} – ${esc(dateLong(dayOfDate(ch.end)))}</span>`, `<h1>${esc(ch.name)}</h1>`, `<p>${esc(ch.newIdea || '')}</p>`]
+    .concat(arriving.length ? [`<span class="ms-kl">Arriving this chapter</span>`, `<ul class="ms-list ${arriving.length > 6 ? 'cols' : ''}">${arriving.map(x => `<li>${esc(x.charAt(0).toUpperCase() + x.slice(1))}</li>`).join('')}</ul>`] : [])
+    .concat([`<button class="btn primary big" id="chGo">Begin &#9654;</button>`]);
+  screen().innerHTML = shell(`<div class="hp milestone chap">${hqHead(`Chapter ${ch.chapter}`, 'CHAPTER')}<div class="ms-in">${lines.map((l, i) => l.replace(/^<(\w+)/, `<$1 style="--i:${i}"`)).join('')}</div></div>`);
   on('chGo', () => { UI.view = null; next(); });
 };
 

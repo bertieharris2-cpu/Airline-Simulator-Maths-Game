@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 07 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 08 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **0 to fix, 2 to check, 8 notes.**
 
@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 44 | 44 live, 7 placeholder |
+| Settings | 45 | 45 live, 7 placeholder |
 | Archetypes | 4 | 2 later, 4 live |
 | Routes | 18 | 2 later, 18 live |
 | RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
@@ -111,7 +111,7 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | Boeing 737 price | £600,000 | £400,000 |
 | Boeing 737 running costs | £— an hour, £7150 a day | £1300 an hour, £3500 a day |
 | Boeing 737 fuel | 62 L per 100 km | 90 L per 100 km |
-| Second crew | £300 | £250 when duty is over 12 h |
+| Second crew | £300 | £250 when duty is over 12 h, from 2031-01-06 |
 | Starting cash | £5,000 | £5,000 |
 | Start date | Sun 12 May 2030 | Mon 02 Sep 2030 |
 

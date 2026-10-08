@@ -23,7 +23,7 @@
     const bands = E.bands || { early:[6, 9], midmorning:[9, 12], midday:[12, 15], afternoon:[15, 18], evening:[18, 22] };
     const open = S.airportOpen ? [hm(S.airportOpen), hm(S.airportClose)] : (E.airportOpen || [6, 22]).map(h => h * H);
     return { bands, open, crew: +(S.secondCrewCost ?? E.secondCrewCost ?? 250), maxDuty: +(S.maxDutyHours ?? E.maxDutyHours ?? 12) * H,
-             pad: +(E.dutyPaddingMinutes ?? 30) };
+             pad: +(E.dutyPaddingMinutes ?? 30), crewFrom: S.crewFromDate || null };   // crew duty is off before Settings crewFromDate (the airline-type choice)
   }
   const byId = (xs, id) => xs.find(x => x.id === id);
   function home(W, code, terminal){
@@ -89,7 +89,7 @@
       rev += t.revenue; cost += t.costs;
     });
     const duty = trips.length ? (trips[trips.length - 1].arrHome + R.pad) - (trips[0].dep - R.pad) : 0;
-    const crew = duty > R.maxDuty ? R.crew : 0;
+    const crew = duty > R.maxDuty && !(R.crewFrom && o.date && String(o.date) < String(R.crewFrom)) ? R.crew : 0;
     cost += plane.dayCost + crew;
     return { ok:!T.problems.length, problems:T.problems, trips, routes, dutyMin:duty, crew, dayCost:plane.dayCost,
              revenue:r2(rev), costs:r2(cost), profit:r2(rev - cost) };

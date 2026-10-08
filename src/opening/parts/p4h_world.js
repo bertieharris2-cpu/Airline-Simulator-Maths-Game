@@ -36,7 +36,9 @@ function flightParts(sched){
 
 /* ---------- crew: a second crew when the duty day is over the limit ---------- */
 function dutyMin(plane, sched){ const D = TIME.day(plane, sched); if(!D.trips.length) return 0; const pad = WORLD.crewPadMin || 0; return (D.end + pad) - (D.trips[0].dep - pad); }
-function crewNeeded(sched){ const f = S.fleet[0]; if(!f) return 1; const s = sched || schedOf(f); if(!s.length) return 1; return dutyMin(planeById(f.planeId), s) > (WORLD.crewDutyMin || 720) ? 2 : 1; }
+/* Crew duty is a chapter-2 mechanic (week-1 review: "not a mechanic we need until you decide what sort of airline you're going to be"): off before Settings crewFromDate. */
+function crewOn(){ const d = (WORLD.settings || {}).crewFromDate; if(!d) return true; try{ return (S ? S.day : 1) >= dayOfDate(d); }catch(e){ return true; } }
+function crewNeeded(sched){ if(!crewOn()) return 1; const f = S.fleet[0]; if(!f) return 1; const s = sched || schedOf(f); if(!s.length) return 1; return dutyMin(planeById(f.planeId), s) > (WORLD.crewDutyMin || 720) ? 2 : 1; }
 function dayExtras(fl){
   const flown = fl.filter(f => !f.grounded && !f.noFuel), ob = onboardOf(), by = {};
   let term = 0, obRev = 0, obCost = 0, buyers = 0;
@@ -44,7 +46,7 @@ function dayExtras(fl){
   Object.keys(by).forEach(id => { const x = by[id]; x.buyers = ob.share ? Math.floor(x.pax * ob.share) : 0; x.obRev = x.buyers * (ob.price || 0); x.obCost = ob.free ? x.pax * ob.costPax : x.buyers * (ob.costItem || 0); obRev += x.obRev; obCost += x.obCost; buyers += x.buyers; });
   const crews = flown.length ? crewNeeded() : 1;
   // each aircraft that flies a long day pays for its own second crew
-  const long = S.fleet.filter(f => flown.some(x => x.uid === f.uid) && dutyMin(planeById(f.planeId), schedOf(f)) > (WORLD.crewDutyMin || 720)).length;
+  const long = !crewOn() ? 0 : S.fleet.filter(f => flown.some(x => x.uid === f.uid) && dutyMin(planeById(f.planeId), schedOf(f)) > (WORLD.crewDutyMin || 720)).length;
   return { term, obRev, obCost, buyers, crews, crew: long * (WORLD.crewCost || 250), byRoute: by, free: !!ob.free };
 }
 
@@ -136,6 +138,7 @@ function demandStrip(id){
 
 /* ---------- fares are the workbook's, whatever the home airport ---------- */
 function syncRoutesToHome(){
+  if(typeof migrateWorkout === 'function') migrateWorkout();
   if(S && S.steps){ const fi = S.steps.findIndex(x => x.t === 'fareTry'); if(fi >= 0 && S.si !== fi){ S.steps.splice(fi, 1); if(S.si > fi) S.si--; if(S.rnd && S.rnd.returnTo > fi) S.rnd.returnTo--; } }
   if(S && S.steps && !S.steps.some(x => x.t === 'ready')){ const i = S.steps.findIndex(x => x.t === 'fuelPlan'); if(i >= 0 && S.si <= i) S.steps.splice(i + 1, 0, { t:'ready' }); }
   if(!S || !S.home) return;

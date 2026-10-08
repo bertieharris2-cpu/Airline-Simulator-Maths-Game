@@ -38,7 +38,9 @@ function mechanicsBy(day){ const out = []; CAL.forEach(c => { if(c.day <= day) (
 function mechanicOn(name, day){ return mechanicsBy(day === undefined ? (S ? S.day : 1) : day).some(m => m.includes(name)); }
 /* The toolkit's progress numbers (data-tools levels) from the mechanics: snacks 3.1, fuel 3.2, time of day 3.3, second route 3.4; weeks 4+; months 5. */
 const MECH_PROG = [['snacks', 3.1], ['fuel', 3.2], ['time-of-day', 3.3], ['second route', 3.4]];
-const MECH_INTRO = [['snacks', 'snacks'], ['fuel', 'fuel'], ['time-of-day', 'times'], ['second route', 'route'], ['crew duty', 'crew'], ['finance', 'fleet'], ['season forecast card', 'season'], ['range check', 'jets']];
+const MECH_INTRO = [['snacks', 'snacks'], ['fuel', 'fuel'], ['time-of-day', 'times'], ['second route', 'route'], ['finance', 'fleet'], ['season forecast card', 'season'], ['range check', 'jets']];
+/* crew duty's briefing waits for the airline-type choice (Settings crewFromDate); the Calendar row can keep the mechanic until Fable moves it */
+if(!(WB && WB.settings && WB.settings.crewFromDate)) MECH_INTRO.push(['crew duty', 'crew']);
 function progOn(day){ let p = 2; mechanicsBy(day).forEach(m => MECH_PROG.forEach(([k, v]) => { if(m.includes(k)) p = Math.max(p, v); })); return p; }
 
 function buildBeats(){
@@ -114,7 +116,7 @@ function stepsFor(b){
 function protoBrief(n){
   const w = roundData(n), h = lastDay(), fp = fuelPrice(n), fy = fuelPrice(Math.max(0, n - 1)), L = [];
   if(h) L.push(`${h.type === 'setup' ? 'Launch Day' : 'Yesterday'}: ${h.pax} passengers flew, ${h.profit >= 0 ? 'profit' : 'loss'} ${money(Math.round(Math.abs(h.profit)))}.`);
-  const mech = ((w.unlocks || {}).mechanics || []).filter(m => !/^(fare|services|timetable)$/.test(m));
+  const mech = ((w.unlocks || {}).mechanics || []).filter(m => !/^(fare|services|timetable)$/.test(m)).filter(m => !/crew/.test(m) || typeof crewOn !== 'function' || crewOn());
   if(mech.length) L.push(`New today: ${mech.slice(0, 2).join(', ')}.`);
   const opening = routesOpening(w.day);
   if(opening.some(r => WORLD.setupRoutes.includes(r.id))) L.push(`${routeById(otherRoute()).city} is now open: one aircraft, two markets.`);

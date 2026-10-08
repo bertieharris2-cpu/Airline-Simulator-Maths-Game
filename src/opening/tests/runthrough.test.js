@@ -19,10 +19,10 @@ const UPTO = +(process.env.UPTO || 9);
   const PAIR = { profit:['rev', 'cost', '−'], tk1:['pax1', 'fare1', '×'], tk2:['pax2', 'fare2', '×'], snack:['buyers', 'snackP', '×'], fuel:['fuelL', 'ppl', '×'], empty:['seats', 'flown', '−'], wproj:['profitDay', 'days', '×'], profitDay:['revDay', 'costDay', '−'] };
   // complete every open figure, recording the dock's question and working first
   const solve = async () => { for(let i = 0; i < 20; i++){ const c = await p.$('[data-cell]'); if(!c) break; const id = await c.getAttribute('data-cell'); await c.click(); await p.waitForTimeout(80);
-      const row = id.split('|')[1], dock = await txt('.dock .dk-b');
+      const row = id.split('|')[1], dock = await txt('.dock .dk-b, .wo-calc');
       const val = await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); return c.values[t.active.row]; });
-      if(await p.$('.dock [data-pk]')){ const pr = PAIR[row]; q('**Build**', dock.split('\n')[0], `chooses the two figures and the sign (${pr ? pr.join(' ') : '?'}); the model works it out`, typeof val === 'number' ? money(val) : String(val));
-        for(const k of pr.slice(0, 2)) await p.click(`.dock [data-pk="${k}"]`); await p.click(`.dock [data-op="${pr[2]}"]`); await p.click('#trySum'); await p.waitForTimeout(100); continue; }
+      if(await p.$('[data-pk]')){ const pr = PAIR[row]; q('**Build**', dock.split('\n')[0], `chooses the two figures and the sign (${pr ? pr.join(' ') : '?'}); the model works it out`, typeof val === 'number' ? money(val) : String(val));
+        for(const k of pr.slice(0, 2)) await p.click(`[data-pk="${k}"]`); await p.click(`[data-op="${pr[2]}"]`); await p.click('#trySum'); await p.waitForTimeout(100); continue; }
       q('**Typed**', dock.split('\n')[0], dock.split('\n').slice(1).filter(l => !/Type the figure|Confirm figure|Show me/.test(l)).join(' '), typeof val === 'number' && Math.abs(val) >= 10 ? money(val) : String(val));
       await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(80); } };
   const sheet = () => p.evaluate(() => [...document.querySelectorAll('.ws-main table.fx tr')].map(r => [...r.children].map(c => c.innerText.replace(/\s+/g, ' ').replace(/ƒ model/g, '').trim()).filter(Boolean).join(': ')).filter(x => x && !/^Your plan/.test(x)));
@@ -40,21 +40,17 @@ const UPTO = +(process.env.UPTO || 9);
   await p.click('#nx'); await p.click('[data-mk="par"]'); await p.click('#nx');
   q('Model', 'Market demand', (await txt('.ws-main .tf-story')) || 'people who want to fly, in aircraft-sized groups', '—'); await p.click('#nx');
   for(let k = 0; k < 4; k++) await p.click('#nx');
-  const rq = await p.$$eval('[data-rq]', e => e.map(x => x.textContent.trim())); const rqNote = await txt('.rot-note');
-  q('**Chosen**', 'One service: when is it ready to fly again?', rqNote.split('\n').slice(1).join(' ') + ` · options ${rq.join(' / ')}`, rq[1]);
-  await p.click('[data-rq]:nth-child(2)'); await p.click('#nx');
+  const practiceQ = async title => { const qs = []; for(let i = 0; i < 3; i++){ const a = await p.evaluate(() => window.__sim.practiceAnswer()); if(!a || !(await p.$('#pqIn'))) break; qs.push((await txt('.pq-q')) + ' → ' + a.text); await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } q('**Typed**', title, qs.join(' · '), '—'); };
+  await practiceQ('One service: when is it ready to fly again? (three practice questions)');
+  await p.click('#nx'); await p.click('#nx');
   await p.click('[data-svc="par|2"]');
-  const sq1 = await p.$$eval('[data-sq1]', e => e.map(x => x.textContent.trim())), sq1q = await txt('.pnl.sq .sq-q');
-  await p.click('[data-sq1]:nth-child(2)'); q('**Chosen**', 'Scheduling: when can service 2 leave?', `${sq1q} · options ${sq1.join(' / ')}`, (await txt('.pnl.sq .sq-yes')).replace('✓ ', ''));
-  const sq2q = await txt('.pnl.sq .sq-q'); for(const a of ['1', '0']) if(await p.$('[data-sq2]')) await p.click(`[data-sq2="${a}"]`);
-  q('**Chosen**', 'Scheduling: could another service fit?', sq2q + ' · options Yes / No', await p.evaluate(() => { const e = [...document.querySelectorAll('.pnl.sq .sq-yes')].pop(); return e ? e.innerText.replace('✓ ', '').trim() : ''; }));
-  await p.click('#nx');
   let guard = 0, last = '';
   while(guard++ < 400){
     const t = await T(), s = await S(); if(s.round >= UPTO || t === 'protoEnd') break;
     const where = `${t}@${s.round}@${s.si}`; if(where === last) await p.waitForTimeout(250); last = where;
     const R = s.round, setup = s.phase === 'setup';
     if(t === 'intro'){ const key = s.steps[s.si].key; for(let pg = 0; pg < 2; pg++) await p.click('#niNext');
+      if(await p.$('#pqIn')){ await practiceQ(`What's new (${key}): three practice questions`); await p.click('#nx'); continue; }
       const qq = await txt('.ni-q'), opts = await p.$$eval('[data-ni]', e => e.map(x => x.textContent.trim()));
       for(let k = 0; k < opts.length && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`);
       q('**Chosen**', `What's new (${key}): which sum?`, `${qq} · options ${opts.join(' / ')}`, (await txt('.ni-yes')).replace('✓ ', '') + ' (the game shows the answer; nothing is worked out)'); await p.click('#nx'); continue; }
@@ -65,16 +61,16 @@ const UPTO = +(process.env.UPTO || 9);
     if(t === 'hq'){ head(await p.evaluate(() => { const S = window.__sim.S(); return (S.period.type === 'day' ? `Day ${S.round} · ` : '') + window.__sim.periodLabel(); })); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ head((await txt('.ms-in h1')) + ' (milestone)'); q('Model', 'Read the milestone', (await txt('.ms-in')).split('\n').slice(2, 4).join(' '), '—'); await p.click('#msGo'); continue; }
     if(t === 'review'){ const before = L.length; await solve(); if(L.length === before) q('Model', 'Review last week', 'no figure is asked', '—'); await p.click('#nx'); continue; }
-    if(t === 'planner'){
+    if(t === 'workout'){
       if(R === 1) await p.click('[data-pe="0|ob|low|0"]');
       if(R === 3) for(let k = 0; k < 4; k++) await p.click('[data-pe="0|dep|0|-1"]');   // 09:00 → 07:00
       if(R === 4) await p.click('[data-pe="0|add|dub|0"]').catch(() => {});
-      q('Model', 'Plan', (await txt('.pe-sum')) + ' · ' + (await p.evaluate(() => window.__sim.S().deps ? 'departures ' + window.__sim.S().deps.map(m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0')).join(', ') : '')), '—');
-      await p.click('#nx'); continue; }
-    if(t === 'costPlan'){ await solve(); if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(120); const rows = await sheet();
-      q('Model', 'The rest of the cost sheet', rows.filter(r => !/Complete figure/.test(r)).join(' · '), '—'); await p.click('#nx'); continue; }
+      q('Model', 'Plan', (await txt('.pe-sum, .svcs')) + ' · ' + (await p.evaluate(() => window.__sim.S().deps ? 'departures ' + window.__sim.S().deps.map(m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0')).join(', ') : '')), '—');
+      await solve(); if(await p.$('[data-wpick]:not([disabled])') && !(await p.$('[data-wpick].on'))){ const w = await p.$$eval('[data-wpick]', e => e.map(x => x.textContent.trim())); q('**Chosen**', 'Which option?', `options ${w.join(' / ')}`, w[1] || w[0]); await p.click('[data-wpick]:nth-child(2), [data-wpick]'); await p.waitForTimeout(120); await solve(); }
+      if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(120); const rows = await sheet();
+      q('Model', 'The rest of the sheet', rows.filter(r => !/Complete figure/.test(r)).join(' · '), '—'); await p.click('#nx'); continue; }
     if(t === 'testIdeas'){ q('Model', 'Test other ideas (optional; the model costs them)', 'flies the plan as planned', '—'); await p.click('[data-fmine]'); continue; }
-    if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)');
+    if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); if(await p.$('#fbIn')){ const v = await p.evaluate(() => String(window.__sim.S().rnd.fuelOrder.total)); q('**Typed**', 'Fuel order cost: litres × price per litre', await txt('.ff-bill'), '£' + v); await p.fill('#fbIn', v); await p.click('#fbCheck'); await p.waitForTimeout(120); }
       q('Model', 'Fuel order', (await txt('.ff-parts')) + ' · ' + (await txt('.ff-bill')), '—'); await p.click('#nx'); continue; }
     if(t === 'paint'){ await p.click('#roll'); continue; }
     if(t === 'reveal'){ await p.click('#skipReveal'); for(let i = 0; i < 50 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); await p.click('#nx'); continue; }

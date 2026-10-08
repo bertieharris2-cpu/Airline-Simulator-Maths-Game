@@ -81,9 +81,13 @@ R.starter = () => {
     foot:`<span class="muted grow">${owned ? 'Delivered to ' + esc(homeData().code) : `Price <b class="mono gold">${money(p.price)}</b>${p.listPrice > p.price ? ` <span class="muted">launch deal (normally ${money(p.listPrice)})</span>` : ''}`}</span><button class="btn primary big" id="nx">${owned ? goLabel('Next') : 'Take delivery'} &#9654;</button>` });
   on('nx', () => { if(!S.fleet.length) buyPlane(p); advance(); });
 };
+/* STEP_TODO: the one line under each question that says what to do here; parts add their own steps (later entries win) */
+const STEP_TODO = { starter:'Read about your aircraft, then press Take delivery.', market:'Press one market to choose it, then press Open.', demand:'Look at the groups, then press the button to follow one service.',
+  rotation:'Press Next to follow the service, stage by stage.', timetable:'Press the × buttons to add services, then press Next.', costPlan:'Press each Complete figure and type the answer.', testIdeas:'Change the test plan with − and +, then press a Fly button.',
+  fuelPlan:'Press + until the tank covers today, then press Next.', ready:'Check the plan. Press Start operations when it is right.', planner:"Set today's services and extras, then press Cost this plan." };
 R.market = () => {
   const p = ourPlane(), ids = WORLD.setupRoutes.slice().sort((a, b) => routeKm(routeById(b)) - routeKm(routeById(a)));
-  screen().innerHTML = taskFrame({ question:'Choose your first market', work:false, story:['Where will your airline fly first?'], context: ctxMarkets(),
+  screen().innerHTML = taskFrame({ question:'Choose your first market', work:false, story:['Where will your airline fly first?', 'You open one market today. The other one opens later in the week, and you will fly both.'], context: ctxMarkets(),
     say:'Choose your first market. ' + ids.map(id => { const r = routeById(id); return `${r.city}: ${paxFor(r, r.basePrice)} people a day at ${money(r.basePrice)}, ${fmtDur(TIME.leg(p, r))} each way.`; }).join(' '),
     main:`<div class="mkts">${ids.map(id => { const r = routeById(id);
       return `<button class="mkt ${S.market === id ? 'on' : ''}" data-mk="${id}" aria-pressed="${S.market === id}"><span class="row">${flagSvg(r.flag, 40)}<b class="mk-city">${esc(r.city)}</b></span>
@@ -101,7 +105,7 @@ R.market = () => {
 R.demand = () => {
   const r = routeById(S.market), p = ourPlane(), want = wantOf(r.id), groups = []; for(let left = want; left > 0; left -= p.seats) groups.push(Math.min(p.seats, left));
   screen().innerHTML = taskFrame({ question:`${want} people want to fly to ${esc(r.city)} today`, work:false, context: ctxDemand(),
-    story:[`Your aircraft has ${p.seats} seats. One flight can't carry everyone.`, 'But your aircraft can return and fly again. Airlines often run several services to the same place each day.'],
+    story:[`Your aircraft has ${p.seats} seats. One flight can't carry everyone.`, 'But your aircraft can return and fly again. Airlines often run several services to the same place each day.', 'Part of the game is deciding: is it worth flying a service for 12 people, or does it cost more than it earns?'],
     say:`${want} people want to fly to ${r.city} today. Your aircraft has ${p.seats} seats. In aircraft-sized groups that is ${groups.join(', ')}. Your aircraft can return and fly again.`,
     main:`<div class="dm"><div class="dm-top"><div class="dm-big"><span class="label">${flagSvg(r.flag, 22)} ${esc(r.city)}</span><b class="mono">${want}</b><span>people want to travel today</span></div>
       <div class="dm-big ac"><span class="label">Your aircraft</span><b class="mono">${p.seats}</b><span>seats</span></div>
@@ -130,32 +134,34 @@ R.rotation = st => {
   const notes = [
     [`${fmtTime(t.dep)} · Depart ${homeData().city}`, [`Passengers are on board. The aircraft takes off for ${r.city}.`]],
     [`${fmtTime(t.arriveAway)} · Arrive ${r.city}`, [`${num(routeKm(r))} km at ${num(p.speed)} km/h takes ${fmtDur(t.arriveAway - t.dep)}.`]],
-    [`Turnaround in ${r.city} · ${fmtDur(turnA)}`, ['Passengers get off. New passengers board.', 'Bags are unloaded and loaded.', 'The aircraft is checked and prepared.', 'Then it can fly again.']],
+    [`Turnaround in ${r.city} · ${fmtDur(turnA)}`, ['Passengers get off. New passengers board.', 'Bags are unloaded and loaded.', 'The aircraft is checked and prepared.', 'Then it can fly again.',
+      `<span class="muted">Turnarounds are not the same everywhere. A big airport has further to tow the bags and more passengers to board; some airports have fewer staff or stricter checks; small aircraft turn round faster than jets. ${esc(r.city)}: ${fmtDur(turnA)}. ${esc(terminalData().name || homeData().city)}: ${fmtDur(turnH)}.</span>`]],
     [`${fmtTime(t.leaveAway)} · Leave ${r.city} · ${fmtTime(t.arr)} · Back in ${homeData().city}`, [`Another ${fmtDur(t.arr - t.leaveAway)} in the air.`]],
-    ['When is it ready to fly again?', [`It lands at ${fmtTime(t.arr)}. At ${esc(terminalData().name || homeData().city)} the turnaround takes ${fmtDur(turnH)}${turnH !== turnA ? ` (in ${esc(r.city)} it took ${fmtDur(turnA)})` : `, the same as in ${esc(r.city)}`}.`]],
+    ['When is it ready to fly again?', [`It lands at ${fmtTime(t.arr)}. At ${esc(terminalData().name || homeData().city)} the turnaround takes ${fmtDur(turnH)}${turnH !== turnA ? ` (in ${esc(r.city)} it took ${fmtDur(turnA)})` : `, the same as in ${esc(r.city)}`}. Three questions to practise the skill.`]],
     [`${fmtTime(ready)} · Ready again`, [`In the air: <b>${fmtDur(flying)}</b>. Aircraft busy: <b>${fmtDur(ready - t.dep)}</b>, from ${fmtTime(t.dep)} until ${fmtTime(ready)}.`, 'Flight time is not the same as the time the aircraft is used.']]];
-  const n = notes[k], q = k === 4, fin = k === 5, opts = [ready - 15, ready, ready + 15];
+  const n = notes[k], q = k === 4, fin = k === 5;
   const stage = fin ? 4 : k <= 1 ? 0 : k === 2 ? 1 : k === 3 ? 2 : 3;
   const stages = ['Outbound', 'Turnaround', 'Return', 'Ready again'].map((l, i) => `<li class="${i < stage ? 'done' : i === stage ? 'on' : ''}"><i>${i < stage ? '✓' : i === stage ? '●' : ''}</i>${l}</li>`).join('');
   const strip = `<div class="rstrip"><b class="mono rs-t">${fmtTime(t.dep)}</b><span class="rs-a mono">${H}</span><i class="rs-l ${k >= 1 ? 'on' : 'go'}"></i><span class="rs-a mono ${k >= 1 ? 'lit' : ''}">${A}</span><i class="rs-l ${k >= 3 ? 'on' : k === 2 ? 'wait' : ''}"></i><span class="rs-a mono ${k >= 3 ? 'lit' : ''}">${H}</span><span class="rs-ready mono ${fin ? 'on' : ''}">● READY ${fin ? fmtTime(ready) : '--:--'}</span></div>`;
   const body = fin ? `<div class="ready-big"><span class="label">Ready again</span><b class="mono">${fmtTime(ready)}</b><p>The ${esc(p.name.replace(/^DHC-6 /, ''))} can begin another service from ${esc(homeData().city)} at ${fmtTime(ready)}.</p><p class="muted">${n[1].join(' ')}</p></div>`
     : `<div class="rot-note ${k === 2 ? 'turn' : ''}"><h3>${esc(n[0])}</h3>${n[1].map(l => `<p>${l}</p>`).join('')}
-      ${q ? `<div class="rot-q">${opts.map(m => `<button class="btn big mono" data-rq="${m}">${fmtTime(m)}</button>`).join('')}</div><p class="msg" id="rqMsg">${esc(st.msg || '')}</p>` : ''}</div>`;
+      ${q ? practiceHtml(st, 'readyAgain') : ''}</div>`;
   screen().innerHTML = taskFrame({ question:`One ${esc(r.city)} service, start to finish`, work:false,
     say: n[0] + '. ' + n[1].join(' ').replace(/<[^>]+>/g, ''),
     context: ctxTiming(k),
     main: `${strip}<ol class="rot-stages">${stages}</ol>` + rotationBar(D, q ? 3 : k, r) + body,
-    foot:`${k > 0 ? '<button class="btn big" id="rBack">&#9664; Back</button>' : ''}<span class="grow"></span>${q ? '' : `<button class="btn primary big" id="nx">${fin ? goLabel('Build the day') : 'Next'} &#9654;</button>`}` });
+    todo: q ? 'Answer the three questions: type each time and press Check.' : fin ? 'Press Work it out to plan the day.' : 'Read this stage, then press Next.',
+    foot:`${k > 0 ? '<button class="btn big" id="rBack">&#9664; Back</button>' : ''}<span class="grow"></span>${q && !pqDone(st, 'readyAgain') ? '' : `<button class="btn primary big" id="nx">${fin ? goLabel('Work it out') : 'Next'} &#9654;</button>`}` });
   on('rBack', () => { st.k = k - 1; st.msg = ''; render(); });
   on('nx', () => { if(k < notes.length - 1){ st.k = k + 1; render(); } else advance(); });
-  screen().querySelectorAll('[data-rq]').forEach(b => b.onclick = () => { if(+b.getAttribute('data-rq') === ready){ st.k = 5; st.msg = ''; } else st.msg = `That time doesn't match. Start at ${fmtTime(t.arr)} and add the ${fmtDur(turnH)} turnaround.`; render(); });
+  if(q) bindPractice(st, 'readyAgain');
 };
 /* Service buttons for one route: ×1, ×2, ×3… with when the day would end. */
 function serviceButtons(rid, sched){
   const p = ourPlane(), r = routeById(rid), counts = serviceCounts(sched), others = sched.filter(id => id !== rid), out = [];
   for(let k = 1; k <= (WORLD.maxTrips || 4); k++){
     const c = Object.assign({}, counts, { [rid]:k }), s = schedFrom(c), fits = schedFits(s), end = TIME.day(p, s).end;
-    out.push(`<button class="svc ${counts[rid] === k ? 'on' : ''}" data-svc="${rid}|${k}" aria-pressed="${counts[rid] === k}" ${fits ? '' : 'disabled'}><b>${esc(r.city)} ×${k}</b><span class="mono">${k * p.seats} seats</span><small>${fits ? `day ends ${fmtTime(end)}` : `won't fit: ends ${fmtTime(end % 1440)}${end >= 1440 ? ' next day' : ''}`}</small></button>`);
+    out.push(`<button class="svc ${counts[rid] === k ? 'on' : ''}" data-svc="${rid}|${k}" aria-pressed="${counts[rid] === k}" ${fits ? '' : 'disabled'}><b>${esc(r.city)} ×${k}</b><span class="mono">${k * p.seats} seats</span><small>${fits ? `day ends ${fmtTime(end)}` : `won't fit: ${k} services end at ${fmtTime(end % 1440)}${end >= 1440 ? ' next day' : ''}, the airport closes at ${WORLD.dayEnd}`}</small></button>`);
     if(!fits && others.length === 0) break;
   }
   return `<div class="svcs">${out.join('')}</div>`;
@@ -629,6 +635,7 @@ function planRail(){
 function wsWrap(frame, o){
   o = o || {}; const t = step().t, hint = o.hint || STEP_HINT[t] || '';
   const bar = `<footer class="actbar"><span class="ab-i" aria-hidden="true">i</span><p class="ab-hint">${hint}</p><div class="ab-act">${backBtn()}${o.foot || ''}</div></footer>`;
+  if(o.wide){ UI.dockAt = S.si + ':' + S.day; return shell(`<div class="ws ws-${t} wide">${planRail()}<div class="ws-main">${frame}</div></div>`, bar); }   // Work it out: the whole width, the sums inline
   return shell(`<div class="ws ws-${t} ${UI.dockShut ? 'dock-shut' : ''}">${planRail()}<div class="ws-main">${frame}</div>${dockHtml(o)}</div>`, bar);
 }
 
@@ -699,7 +706,7 @@ function workPadHtml(t){
 }
 function padDraw(cv){
   const g = cv.getContext('2d'), d = window.devicePixelRatio || 1; g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); g.setTransform(d, 0, 0, d, 0, 0);
-  UI.pad.strokes.concat(UI.pad.cur ? [UI.pad.cur] : []).forEach(s => { g.globalCompositeOperation = s.erase ? 'destination-out' : 'source-over'; g.strokeStyle = '#eaf6ff'; g.lineWidth = s.erase ? 18 : 3; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); s.pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); if(s.pts.length === 1) g.lineTo(s.pts[0][0] + 0.1, s.pts[0][1]); g.stroke(); });
+  UI.pad.strokes.concat(UI.pad.cur ? [UI.pad.cur] : []).forEach(s => { g.globalCompositeOperation = s.erase ? 'destination-out' : 'source-over'; g.strokeStyle = cv.closest && cv.closest('.wo-pad') ? '#1b2a4a' : '#eaf6ff'; g.lineWidth = s.erase ? 18 : 3; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); s.pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); if(s.pts.length === 1) g.lineTo(s.pts[0][0] + 0.1, s.pts[0][1]); g.stroke(); });
   g.globalCompositeOperation = 'source-over';
 }
 function bindDock(){
@@ -714,6 +721,10 @@ function bindDock(){
   clearTimeout(calcTimer);
   if(kind === 'calc' && UI.justDone && !screen().querySelector('#calcNext')){ const j = UI.justDone; calcTimer = setTimeout(() => { if(UI.justDone === j){ UI.justDone = null; render(); } }, 1600); }
   if(UI.justDone){ const c = screen().querySelector(`td[data-cellv="${UI.justDone.cell}"]`); if(c) c.classList.add('flash'); }
+  bindPad();
+}
+/* the working pad (in the dock, or inline on Work it out): pen, eraser, undo, clear, show on the board */
+function bindPad(){
   const cv = $('padCv');
   if(cv){
     const fit = () => { const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1; cv.width = Math.max(1, Math.round(r.width * d)); cv.height = Math.max(1, Math.round(r.height * d)); padDraw(cv); };
@@ -1055,6 +1066,22 @@ function tankSvg(need, order){
   return `<svg class="tank-svg" viewBox="0 0 ${W} ${H + 2}" aria-hidden="true"><defs><pattern id="burnHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="rgba(255,159,67,.10)"/><line x1="0" y1="0" x2="0" y2="8" stroke="rgba(255,159,67,.55)" stroke-width="3"/></pattern></defs>
     <rect x="1" y="1" width="${W - 2}" height="${H}" rx="3" fill="rgba(255,255,255,.03)" stroke="rgba(150,190,255,.45)" stroke-width="2"/>${g}</svg>`;
 }
+/* The order bill, typed on screen: litres × a decimal price. A wrong go shows the pounds-then-pence method; after three, Show me. */
+function fuelBillHtml(order, price, FB){
+  const tries = FB ? FB.tries || 0 : 0, msg = FB ? FB.msg || '' : '';
+  return `<span class="fb"><span class="answer"><span class="unit">£</span><input id="fbIn" class="mono" inputmode="decimal" autocomplete="off" value="${esc(FB && FB.entry || '')}" aria-label="Order cost"></span><button class="btn primary" id="fbCheck">Check</button>${tries >= 3 ? '<button class="link" id="fbShow">Show me</button>' : ''}</span>${msg ? `<span class="fb-msg">${msg}</span>` : ''}`;
+}
+function bindFuelBill(order, price){
+  const FB = S.rnd.fuelBill && S.rnd.fuelBill.litres === order && Math.abs(S.rnd.fuelBill.price - price) < 0.001 ? S.rnd.fuelBill : (S.rnd.fuelBill = { litres:order, price, tries:0, msg:'', entry:'' });
+  const inp = $('fbIn'); if(!inp) return; const want = r2(order * price), W = pqDecimalWorking(order, price);
+  inp.oninput = () => { FB.entry = inp.value; }; inp.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); check(); } };
+  function check(){ const got = pqParse('£', inp.value); if(got === null){ FB.msg = 'Type the cost first.'; render(); return; }
+    if(Math.abs(got - want) < 0.005){ FB.ok = true; FB.flash = true; FB.msg = ''; countTyped(); (S.handSumLog = S.handSumLog || []).push({ day:S.day, date:dateShort(S.day), tools:[`Fuel order: ${num(order)} L × ${priceL(price)} (Calculate)`] }); render(); return; }
+    FB.tries++; FB.msg = FB.tries === 1 ? `Not quite. ${priceL(price)} is £${Math.floor(price)} and ${Math.round(price * 100) % 100}p: work out ${W[0].split(' = ')[0]}, then ${W[1].split(' = ')[0]}, and add them.` : FB.tries === 2 ? `Have another go: ${W[0]}, then ${W[1].split(' = ')[0]} …` : 'Nearly there. Press Show me to see the working, or try once more.'; render(); }
+  on('fbCheck', check);
+  on('fbShow', () => { FB.ok = true; FB.msg = ''; if(typeof diagNote === 'function') diagNote({ kind:'answer shown to pupil', table:'fuelbill', cell:'bill', stored:want, typed:FB.entry, tries:FB.tries }); toast(W.join(' · ')); render(); });
+  setTimeout(() => { try{ inp.focus(); }catch(e){} }, 30);
+}
 R.fuelPlan = st => {
   const sc = scaffold(), f = fleetOne(), sched = schedOf(f), need = periodNeed(), have = S.fuel, price = fuelPrice(), lot = WORLD.fuelLot, W = PW(), per = W.span !== 'day';
   const space = Math.floor(tankSpace() / lot) * lot, afford = Math.floor(Math.max(0, S.cash) / (lot * price)) * lot, maxL = Math.max(0, Math.min(space, afford));
@@ -1062,14 +1089,9 @@ R.fuelPlan = st => {
   const parts = fifoCursor(order ? { litres:order, price } : null).parts(need), burnCost = r2(parts.reduce((t, x) => t + x.L * x.p, 0));
   const setOrder = L => { L = clamp(L, 0, maxL); S.rnd.fuelOrder = L ? { litres:L, price, total:r2(L * price) } : null; UI.justDone = null; resetEntry(); render(); };
   const prices = []; for(let i = Math.max(0, S.round - 5); i <= S.round; i++) prices.push([beatLabel(i), fuelPrice(i)]);
-  // on launch day and Day 2 the order cost is a figure to complete (in the dock); the screen never changes
-  let t = null, billDone = true;
-  if(order && false){   // the fuel cost is worked out once, on the COST screen; the order bill is the model's
-    const tid = 'fuelbill:' + S.day + ':' + order, fresh = !S.rnd.tables[tid];
-    t = ensureTable(tid, 'fuel', buildFuelCols(order).slice(0, 1), { context:'round' }); if(fresh) t.active = null;
-    billDone = tableComplete(t);
-  }
-  const bill = t && !billDone ? `<button class="cellbtn" data-cell="s0|bill">${t.active ? (UI.entry ? esc(UI.entry) : 'Completing…') : 'Complete figure'}</button>` : `<b class="mono gold ${t && UI.justDone && UI.justDone.table === t.id ? 'flash' : ''}">${money(r2(order * price))}</b>`;
+  // the order bill is typed on the days (week-1 review: guided through the decimal, then done on screen); a week or month order is the model's
+  const t = null, FB = S.rnd.fuelBill && S.rnd.fuelBill.litres === order && Math.abs(S.rnd.fuelBill.price - price) < 0.001 ? S.rnd.fuelBill : null, billDone = per || !order || !!(FB && FB.ok);
+  const bill = order && !per && !billDone ? fuelBillHtml(order, price, FB) : `<b class="mono gold ${FB && FB.flash ? 'flash' : ''}">${money(r2(order * price))}</b>`;
   screen().innerHTML = taskFrame({ question: sc === 0 ? 'Fuel for your timetable' : per ? `Fuel for ${W.now}` : 'Fuel', work: !!t, calc:t,
     story: sc <= 2 ? ['Buying fuel moves money from your cash into your tank. It only becomes a cost when your flights burn it.'].concat(sc === 0 ? ['The tank keeps each batch you buy. Flights burn the oldest fuel first.'] : []) : [],
     say:`Your tank has ${num(have)} litres. ${W.poss} flights burn ${num(need)} litres. Fuel costs ${priceL(price)} a litre today.`,
@@ -1082,12 +1104,14 @@ R.fuelPlan = st => {
         <p class="ff-parts">Oldest fuel first: ${parts.map(x => `<b class="mono">${num(Math.round(x.L))} L</b> × <span class="mono">${priceL(x.p)}</span>${x.missing ? ' <span class="orange">(not in the tank yet)</span>' : ''}`).join(' + ')} = <b class="mono">${money(burnCost)}</b> of fuel used today</p>
         <div class="ff-order"><span class="kl">Fuel order</span><div class="ff-step"><button class="btn small" id="oDown" ${order ? '' : 'disabled'}>− ${num(lot)} L</button><b class="mono">${num(order)} L</b><button class="btn small" id="oUp" ${order + lot <= maxL ? '' : 'disabled'}>+ ${num(lot)} L</button></div>
           <div class="ff-quick"><button class="btn small" data-oq="0">No order</button>${enough ? `<button class="btn small" data-oq="${Math.min(enough, maxL)}">Just enough for ${W.now} (${num(Math.min(enough, maxL))} L)</button>` : ''}<button class="btn small" data-oq="${maxL}">As much as I can (${num(maxL)} L)</button></div>
-          ${order ? `<div class="ff-bill"><span class="kl">Order cost</span><span class="mono">${num(order)} L × ${priceL(price)}</span><span>=</span>${bill}</div>` : ''}
+          ${order ? `<div class="ff-bill ${billDone ? '' : 'typing'}"><span class="kl">Order cost</span><span class="mono">${num(order)} L × ${priceL(price)}</span><span>=</span>${bill}</div>` : ''}
           <p class="ff-after">Tank after the order: <b class="mono">${num(after)} L</b> · enough for about <b class="mono">${need ? (Math.floor(10 * after / need) / 10) : '—'}</b> days of ${W.the} timetable${after < need ? (per ? ` · <span class="orange">${num(need - after)} L more will be delivered automatically at ${priceL(r2(price + (WORLD.fuelTopUp || 0)))} a litre</span>` : ' · <span class="red">not enough for today</span>') : ''}</p></div>
         <p class="ff-prices"><span class="kl">Fuel price so far</span> ${prices.map(([l, v], i) => `<span class="${i === prices.length - 1 ? 'now' : ''}">${esc(l)} <span class="mono">${priceL(v)}</span></span>`).join(' · ')}</p>
+        ${per ? '' : `<div class="ff-advice"><span class="kl">Think like a CEO</span><p>Fuel bought today stays in the tank for another day. When the price is low, buying more than you need is an <b>investment</b>: you will not have to buy it at a higher price later.</p><p>Later in the game you will get market data about fuel prices, and you will need to predict where the price is going.</p></div>`}
       </div></div>`,
+    todo: order && !billDone ? 'Work out the order cost: type it and press Check.' : after < need && !per ? 'Press + ' + num(lot) + ' L until the tank covers today, then press Next.' : 'Choose how much fuel to order, then press Next.',
     foot:`<span class="muted grow">${after < need && !per ? 'Order enough fuel for today\'s flights.' : !billDone ? 'Complete the order cost to confirm the order.' : ''}</span><button class="btn primary big" id="nx" ${(after >= need || per) && billDone ? '' : 'disabled'}>${goLabel(order ? 'Confirm the fuel order' : 'Fuel checked')} &#9654;</button>` });
-  if(t) bindTable(t);
+  if(order && !per && !billDone) bindFuelBill(order, price);
   on('oDown', () => setOrder(order - lot)); on('oUp', () => setOrder(order + lot));
   screen().querySelectorAll('[data-oq]').forEach(b => b.onclick = () => setOrder(+b.getAttribute('data-oq')));
   on('nx', () => { resetEntry(); UI.justDone = null; advance(); });

@@ -87,7 +87,7 @@ function newState(){
     airline:{ name:'', code:'', flightCode:'', logo:null, c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'code'},{t:'logo'},{t:'paint'},{t:'reveal'},{t:'cert'},{t:'boot'},{t:'chapter'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'timetable'},{t:'fareTry'},{t:'costPlan'},{t:'testIdeas'},{t:'ready'},{t:'takeoff'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'code'},{t:'logo'},{t:'paint'},{t:'reveal'},{t:'cert'},{t:'boot'},{t:'chapter'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'workout'},{t:'testIdeas'},{t:'ready'},{t:'takeoff'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };

@@ -81,7 +81,8 @@ ws = wb['Settings']
 keys = {r[0].value for r in ws.iter_rows(min_row=2)}
 for k, v, note in (('blockedFlightCodes', 'BA, EZ, FR, VS, LH, AF, KL, U2', 'CR5. Real airline codes the pupil cannot pick; refused calmly ("That code belongs to a real airline, try another").'),
                    ('soundDefault', 'FALSE', 'CR5. Sound (take-off, airport chimes, announcements) is off until the teacher turns it on; a mute control sits in the top bar.'),
-                   ('revealSeconds', 6, 'CR5. The hangar reveal on launch day: doors close, open, the plane rolls in. Later planes get about half.')):
+                   ('revealSeconds', 6, 'CR5. The hangar reveal on launch day: doors close, open, the plane rolls in. Later planes get about half.'),
+                   ('crewFromDate', '2031-01-06', 'Week-1 review (8 Oct). Crew duty (the 12-hour day and the second crew) is switched off before this date: no briefing, no cost, no crews line. Set to the day the airline type is chosen (chapter 2). The Calendar day-5 mechanic "crew duty" is ignored before it.')):
     if k not in keys: live_row(ws, [k, v, note, 'live']); changed.append('Settings ' + k)
 
 # ---------- README ----------
@@ -89,6 +90,9 @@ ws = wb['README']
 texts = [str(r[0].value or '') for r in ws.iter_rows(min_row=1)]
 for i, t in enumerate(texts):
     if t.startswith('SHEETS:') and 'Livery' not in t: ws.cell(row=i + 1, column=1, value=t + ' · Livery'); changed.append('README sheets line')
+if not any('Week-1 review' in t for t in texts):
+    ws.cell(row=ws.max_row + 1, column=1, value='v4.3 draft (8 Oct, Claude Code, for Fable to adopt): Week-1 review. Settings crewFromDate (crew duty waits for the airline-type choice; the Calendar day-5 "crew duty" mechanic is ignored before it, so the row can stay until it is moved).')
+    changed.append('README week-1 review line')
 if not any(t.startswith('v4.3 draft') for t in texts):
     ws.cell(row=ws.max_row + 1, column=1, value='v4.3 draft (7 Oct, Claude Code, for Fable to adopt): Change Request 5. New sheet Livery (palette, stripes, tail symbols, logo shapes, plane-name suggestions); Aircraft columns artworkId and photoFile/Credit/Licence/Source; Settings blockedFlightCodes, soundDefault, revealSeconds. Everything the pupil chooses (airline name, flight code, logo, each plane\'s registration, name and livery) lives in the save state, not here.')
     changed.append('README v4.3 line')

@@ -7,9 +7,12 @@
    entry {registration, name, livery}. Fixed choices (palette, shapes, blocked codes) come from the workbook.
    ================================================================== */
 const ID_STEPS = ['name', 'code', 'logo', 'paint', 'reveal', 'cert'];
-function idHeader(title, say){
-  const i = Math.max(0, ID_STEPS.indexOf(step().t === 'fin' ? 'paint' : step().t));
-  return `<div class="screen-title id-title" data-status="Launch day · Step ${i + 1} of ${ID_STEPS.length}"><h2>${title}</h2>${say ? sayBtn(say) : ''}<span class="id-steps" aria-hidden="true">${ID_STEPS.map((t, k) => `<i class="${k < i ? 'done' : k === i ? 'now' : ''}"></i>`).join('')}</span></div>`;
+/* every identity screen says what to do on it (week-1 review: "it's not always clear what the purpose of the slide is") */
+const ID_TODO = { name:'Type a name for your airline, then press Next.', code:'Keep the two letters suggested or type your own, then press Next.', logo:'Pick a shape, a symbol and two colours, then press Next.',
+  paint:'Choose the colours, stripe and tail symbol, give the plane its letters and a name, then press Roll it out.', reveal:'Watch your plane roll out (or press Skip).', cert:'Read your certificate. Print it if you like, then press Continue.' };
+function idHeader(title, say, todo){
+  const t = step().t === 'fin' ? 'paint' : step().t, i = Math.max(0, ID_STEPS.indexOf(t)); todo = todo === undefined ? ID_TODO[t] : todo;
+  return `<div class="screen-title id-title" data-status="Launch day · Step ${i + 1} of ${ID_STEPS.length}"><h2>${title}</h2>${say ? sayBtn(say) : ''}<span class="id-steps" aria-hidden="true">${ID_STEPS.map((t, k) => `<i class="${k < i ? 'done' : k === i ? 'now' : ''}"></i>`).join('')}</span></div>${todo ? `<p class="id-todo">${esc(todo)}</p>` : ''}`;
 }
 /* the flight code: two capital letters, suggested from the name; a short list of real codes is refused calmly */
 function blockedCodes(){ const b = SET.blockedFlightCodes; return Array.isArray(b) ? b : (b ? String(b).split(/[,\s]+/) : []).map(x => x.toUpperCase()).filter(Boolean); }
@@ -21,7 +24,7 @@ function suggestCode(name){ const w = String(name || '').replace(/[^A-Za-z ]/g, 
   return tries.map(x => x.toUpperCase()).find(x => codeCheck(x).ok) || 'AS'; }
 /* the name: typing shows on the whiteboard's departure board as he goes */
 R.name = () => {
-  screen().innerHTML = `<div class="card stack id-card">${idHeader('Name your airline', 'Name your airline.')}
+  screen().innerHTML = `<div class="card stack id-card centre">${idHeader('Name your airline', 'Name your airline.')}
     <input class="name-input" id="nm" maxlength="20" placeholder="e.g. Dragon Air" value="${esc(S.airline.name)}" autocomplete="off" aria-label="Airline name">
     <p class="muted">The name goes on every plane, ticket and departure board. Up to 20 letters.</p><p class="hint calm" id="nmMsg"></p>
     <div class="actions"><button class="btn primary big" id="nx" ${nameOk(S.airline.name) ? '' : 'disabled'}>Next &#9654;</button></div></div>`;
@@ -36,7 +39,7 @@ function nameOk(v){ v = String(v || '').trim(); return v.length >= 1 && v.length
 R.code = () => {
   const sug = suggestCode(S.airline.name), cur = S.airline.flightCode || sug, r0 = routeById((WORLD.setupRoutes || [])[0]) || { city:'Dublin' };
   const prev = v => `<b class="mono">${esc(v)}101</b> · ${esc(r0.city)} · <span class="mono">${fmtTime(firstDep())}</span>`;
-  screen().innerHTML = `<div class="card stack id-card">${idHeader('Pick a flight code', 'Pick a flight code: two letters that go in front of every flight number.')}
+  screen().innerHTML = `<div class="card stack id-card centre">${idHeader('Pick a flight code', 'Pick a flight code: two letters that go in front of every flight number.')}
     <p class="lede">Two letters go in front of every flight number. ${esc(S.airline.name)} → <b>${esc(sug)}</b>, or choose your own.</p>
     <div class="code-row"><input class="name-input code-input" id="fcode" maxlength="2" value="${esc(cur)}" autocomplete="off" spellcheck="false" aria-label="Flight code"><div class="code-prev"><small>Your first flight</small><span id="codePrev">${prev(cur)}</span></div></div>
     <p class="hint calm" id="codeMsg">${esc(codeCheck(cur).msg)}</p>

@@ -18,11 +18,14 @@ const TAG = `${HOME}-${MK}-${W}`;
   const typedLog = {};
   const solve = async tag => { const seen = [];
     for(let i = 0; i < 20; i++){ const c = await p.$('[data-cell]'); if(!c) break; const id = await c.getAttribute('data-cell'); seen.push(id); await c.click();
-      if(await p.$('.dock [data-pk]')){ const row = id.split('|')[1], pr = PAIR[row] || (row.startsWith('tk_') ? ['pax_' + row.slice(3), 'fare_' + row.slice(3), '×'] : null); seen[seen.length - 1] += ':build'; if(!pr){ ok('build pair known for ' + row, false); break; }
-        for(const k of pr.slice(0, 2)) await p.click(`.dock [data-pk="${k}"]`); await p.click(`.dock [data-op="${pr[2]}"]`); await p.click('#trySum'); await p.waitForTimeout(100); continue; }
+      if(await p.$('[data-pk]')){ const row = id.split('|')[1], pr = PAIR[row] || (row.startsWith('tk_') ? ['pax_' + row.slice(3), 'fare_' + row.slice(3), '×'] : null); seen[seen.length - 1] += ':build'; if(!pr){ ok('build pair known for ' + row, false); break; }
+        for(const k of pr.slice(0, 2)) await p.click(`[data-pk="${k}"]`); await p.click(`[data-op="${pr[2]}"]`); await p.click('#trySum'); await p.waitForTimeout(100); continue; }
       await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); }
     typedLog[tag] = seen; return seen; };
   const vis = sel => p.evaluate(s => !!document.querySelector(s), sel);
+  const practice = async () => { for(let i = 0; i < 3; i++){ const a = await p.evaluate(() => window.__sim.practiceAnswer()); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } };
+  const fuelBill = async () => { if(await p.$('#fbIn')){ const v = await p.evaluate(() => String(window.__sim.S().rnd.fuelOrder.total)); await p.fill('#fbIn', v); await p.click('#fbCheck'); await p.waitForTimeout(120); } };
+  const pickOption = async tag => { if(!(await p.$('[data-wpick]')) || await p.$('[data-wpick].on')) return []; const b = await p.$('[data-wpick]:not([disabled])'); if(!b) return []; await b.click(); await p.waitForTimeout(120); return solve(tag + ' after pick'); };
   // launch-day identity (CR5): the flight code, the logo, the paint shop, the reveal, the certificate
   const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
@@ -34,24 +37,21 @@ const TAG = `${HOME}-${MK}-${W}`;
   await identity();
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
   await p.click('#nx'); await p.click(`[data-mk="${MK}"]`); await p.click('#nx'); await p.click('#nx');
-  for(let k = 0; k < 4; k++) await p.click('#nx'); const rq = await p.$$eval('[data-rq]', e => e.map(x => x.getAttribute('data-rq'))); await p.click(`[data-rq="${rq[1]}"]`); await p.click('#nx');
+  for(let k = 0; k < 4; k++) await p.click('#nx'); await practice(); await p.click('#nx'); await p.click('#nx');
+  ok('launch day: Work it out follows the service', await T() === 'workout', await T());
   await p.click(`[data-svc="${MK}|2"]`);
-  { // scheduling, worked through: a wrong departure first, then the right one; then whether another service fits
-    const sq = await p.$$eval('[data-sq1]', e => e.map(x => x.getAttribute('data-sq1'))); ok('timetable: the scheduling question appears with two services', sq.length === 3, sq);
-    await p.click(`[data-sq1="${sq[0]}"]`); ok('timetable: a wrong departure time explains why', await vis('.sq-no'));
-    await p.click(`[data-sq1="${sq[1]}"]`); ok('timetable: the right departure time is accepted', await vis('.sq-yes'));
-    for(const a of ['1', '0']){ if(await p.$('[data-sq2]')) await p.click(`[data-sq2="${a}"]`); }
-    ok('timetable: whether another service fits is answered', !(await p.$('[data-sq2]'))); await fits('timetable'); await shot('d0-timetable'); }
-  await p.click('#nx');
+  ok('launch day: three fares to work out', (await p.$$('[data-wpick]')).length === 3); ok('launch day: the fare waits for the tickets', !(await p.$('[data-wpick]:not([disabled])')));
+  { const no = await p.evaluate(() => [...document.querySelectorAll('.svc[disabled] small')].map(e => e.textContent).join(' ')); if(no) ok('launch day: a service that will not fit says why', /airport closes/.test(no), no); }
   let guard = 0, last = '', saves = 0, strategySeen = false; const calib = {};
   while(guard++ < 600){
     const t = await T(), s = await S(); if(s.round >= UPTO || t === 'protoEnd') break;
     const where = `${t}@${s.round}@${s.si}`; if(where === last) await p.waitForTimeout(250); last = where;
     const R = s.round, setup = s.phase === 'setup', day = setup ? 0 : R;
-    if(t === 'fareTry'){ await fits('fareTry'); await shot('d0-fare'); await p.click('#nx'); continue; }
     if(t === 'intro'){ const key = s.steps[s.si].key;
       for(let pg = 0; pg < 3; pg++){ await fits(`intro ${key} p${pg}`); await shot(`in-${key}-p${pg}`); if(pg < 2) await p.click('#niNext'); }
       ok(`intro ${key}: continue waits for the sum`, await p.$eval('#nx', e => e.disabled));
+      if(await p.$('#pqIn')){ await p.fill('#pqIn', '999999'); await p.click('#pqCheck'); await p.waitForTimeout(80); ok(`intro ${key}: a wrong practice answer gets a hint`, /Not quite/.test(await p.$eval('.pq-msg', e => e.textContent)));
+        await practice(); ok(`intro ${key}: three practice answers open the plan`, !(await p.$eval('#nx', e => e.disabled)) && await vis('.pq.all')); await fits(`intro ${key} done`); await shot(`in-${key}-done`); await p.click('#nx'); continue; }
       const n = (await p.$$('[data-ni]')).length; let wrong = 0;
       for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++){ await p.click(`[data-ni="${k}"]`); if(await p.$eval('#nx', e => e.disabled)){ wrong++; ok(`intro ${key}: a wrong sum explains why`, await vis('.ni-no')); } }
       ok(`intro ${key}: the right sum opens the plan`, !(await p.$eval('#nx', e => e.disabled)), { wrong }); await fits(`intro ${key} done`); await shot(`in-${key}-done`); await p.click('#nx'); continue; }
@@ -66,7 +66,10 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(t === 'hq'){ await fits('hq ' + R); if(R === 7 || R === 8 || R === 21) await shot('hq-' + R); ok('no Back on the morning HQ', !(await vis('#wsBack'))); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ await fits('milestone ' + R); await shot('ms-' + R); await p.click('#msGo'); continue; }
     if(t === 'review'){ await solve('review ' + R); await p.click('#nx'); continue; }
-    if(t === 'planner'){
+    if(t === 'planner'){   // weeks keep the planner and the cost sheet
+      if(s.fleet.length > 1 && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); } }
+      await fits('planner ' + R); if(R === 21 || R === 28) await shot(`plan-${R}`); await p.click('#nx'); continue; }
+    if(t === 'workout'){
       if(R <= 4 && s.period.type === 'day'){
         ok(`Day ${R + 1}: snacks only from Day 2`, (await vis('[data-pe^="0|ob|"]')) === (R >= 1));
         ok(`Day ${R + 1}: departure times only from Day 4`, (await vis('[data-pe^="0|dep|"]')) === (R >= 3));
@@ -77,14 +80,15 @@ const TAG = `${HOME}-${MK}-${W}`;
       }
       if(s.fleet.length > 1 && s.period.type === 'day' && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); ok(`Day ${R + 1}: the second aircraft gets Amsterdam services`, (await S()).fleet[1].schedule.length > 0); } }
       if(R === 7 || R === 14 || R === 21) await shot(`plan-${R}`);
-      await fits('planner ' + R); if(R <= 4) await shot(`d${day}-plan`); await p.click('#nx'); continue; }
-    if(t === 'costPlan'){
-      if(R === 2 && !s.rnd.backTried){ await p.evaluate(() => { window.__sim.S().rnd.backTried = true; }); ok('Day 2: Back on Cost', await vis('#wsBack')); await p.click('#wsBack'); ok('Day 2: Back from Cost goes to the plan', await T() === 'planner', await T()); await p.click('#nx'); ok('Day 2: forward again returns to Cost', await T() === 'costPlan', await T()); }
-      await fits('cost ' + R); if(R <= 6) await shot(`d${day}-cost`); const typed = await solve(`cost ${day}`);
+      if(R === 2 && !s.rnd.backTried){ await p.evaluate(() => { window.__sim.S().rnd.backTried = true; }); ok('Day 2: Back on Work it out', await vis('#wsBack')); await p.click('#wsBack'); ok('Day 2: Back from Work it out leaves it', await T() !== 'workout', await T()); await p.click('#nx'); ok('Day 2: forward again returns to Work it out', await T() === 'workout', await T()); }
+      await fits('workout ' + R); if(R <= 6) await shot(`d${day}-work`); const typed = await solve(`work ${day}`); typed.push(...await pickOption(`work ${day}`));
+      if(R === 1){ ok('Day 2: two snack options to work out', (await p.$$('[data-wpick]')).length >= 2); }
+      if(R === 1 && await p.$('#woThird')){ await p.click('#woThird'); typed.push(...await solve(`work ${day} third`)); ok('Day 2: a third snack option can be compared', (await p.$$('[data-wpick]')).length === 3); }
       checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`);
       if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(150);
-      const fx = await p.$('button.mdl'); if(fx && R <= 4){ await fx.click(); ok(`Day ${day}: the ƒ inspector shows the rule`, await vis('.dock .calc.fx')); await shot(`d${day}-fx`); await p.click('#dkClose').catch(() => {}); }
-      ok(`cost ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
+      const fx = await p.$('button.mdl'); if(fx && R <= 4){ await fx.click(); ok(`Day ${day}: the ƒ inspector shows the rule`, await vis('.calc.fx')); await shot(`d${day}-fx`); await p.click('#dkClose').catch(() => {}); }
+      if(await p.$('#woPad')){ await p.click('#woPad'); ok(`Day ${day}: squared paper opens`, await vis('.wo-pad #padCv')); if(R <= 1) await shot(`d${day}-paper`); await p.click('#woPad'); }
+      ok(`work ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.textContent('.wo-sheet .pnl-h')); await p.click('#nx'); continue; }
     if(t === 'testIdeas'){
       await fits('test ' + R); ok(`test ${day}: no typed figures`, !(await vis('[data-cell]')));
       const keys = await p.$$eval('[data-pe^="9|fare|"]:not([disabled])', e => e.map(x => x.getAttribute('data-pe'))); const up = keys.find(k => k.endsWith('|1')) || keys[0];
@@ -95,7 +99,7 @@ const TAG = `${HOME}-${MK}-${W}`;
       const better = m.d && m.d.trim().startsWith('+');
       if(POL === 'typical' && better && await vis('[data-ftest]:not([disabled])')) await p.click('[data-ftest]'); else await p.click('[data-fmine]');
       const fc = (await S()).rnd.myForecast; checks.push(`info test ${day} flew ${fc && fc.plan} projected ${fc && fc.profit}`); continue; }
-    if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); await fits('fuel ' + R); if(R === 2) await shot('d2-fuel'); await p.click('#nx'); continue; }
+    if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); if(R === 2 && await p.$('#fbIn')){ await p.fill('#fbIn', '1'); await p.click('#fbCheck'); ok('Day 3: a wrong fuel bill shows the pounds-then-pence method', /£1/.test(await p.$eval('.fb-msg', e => e.textContent))); } await fuelBill(); ok(`fuel ${R}: the order bill is typed before Next`, !(await p.$('#fbIn')) && await p.$eval('#nx', e => !e.disabled)); await fits('fuel ' + R); if(R === 2) await shot('d2-fuel'); await p.click('#nx'); continue; }
     if(t === 'paint'){ await fits('paint ' + R); await shot('paint-' + R); const a = await S(); ok(`paint ${R}: the new plane has its own registration`, new Set(a.fleet.map(f => f.registration)).size === a.fleet.length, a.fleet.map(f => f.registration)); await p.click('#roll'); continue; }
     if(t === 'reveal'){ await p.click('#skipReveal'); for(let i = 0; i < 50 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); await shot('reveal-' + R); await p.click('#nx'); continue; }
     if(t === 'takeoff'){ await fits('takeoff'); await shot('d0-takeoff'); await p.click('#toGo'); for(let i = 0; i < 200 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); ok('take-off: continue appears', !(await p.$eval('#nx', e => e.hidden))); await shot('d0-takeoff-done'); await p.click('#nx'); continue; }

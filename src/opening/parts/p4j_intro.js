@@ -18,7 +18,7 @@ STAGES.week[0].steps = ['intro'].concat(STAGES.week[0].steps);
 function withIntro(steps, w){
   const keys = !w || !w.intro ? [] : Array.isArray(w.intro) ? w.intro : [w.intro];
   keys.forEach(key => { const I = INTRO[key]; if(!I) return;
-    const at = steps.findIndex(s => s.t === (I.before || 'planner')); if(at < 0) return;
+    let at = steps.findIndex(s => s.t === (I.before || 'planner')); if(at < 0 && (!I.before || I.before === 'planner')) at = steps.findIndex(s => s.t === 'event' || s.t === 'workout'); if(at < 0) return;
     steps = steps.slice(0, at).concat([{ t:'intro', key, page:0 }], steps.slice(at)); });
   return steps;
 }
@@ -46,8 +46,10 @@ const INTRO = {
       return [niRule('number buying', '×', 'price', 'Cabin sales'),
         `<div class="ni-eg"><p>One full ${esc(ourPlane().name.replace(/^DHC-6 /, ''))}: <b>${n} passengers</b>. At ${money(o.price)}, about half of them buy a snack.</p>${niDots(n, b, 'buy')}
           <p>Half of ${n} is ${n / 2}. You can't sell half a snack, so <b>${b}</b> people buy.</p>
-          <p>Cabin sales: ${niSum(`${b} × ${money(o.price)} = ${money(b * o.price)}`)}</p>
-          <p class="ni-cost">The stock is a cost: ${niSum(`${b} × ${money(o.costItem)} = ${money(b * o.costItem)}`)}</p></div>`]; },
+          <p>Cabin sales, and the stock they cost:</p>
+          <div class="ni-col"><span class="r">${b} × ${money(o.price)}</span><span class="eq">=</span><span class="a">${money(b * o.price)}</span><span class="note">cabin sales</span>
+            <span class="r">${b} × ${money(o.costItem)}</span><span class="eq">=</span><span class="a">${money(b * o.costItem)}</span><span class="note">the stock, a cost</span></div></div>`]; },
+    practice:'snackSales',
     check:{ q:'On one flight, 10 passengers buy a snack at £5. Which sum works out the cabin sales?', opts:[['10 + £5', 'Adding gives £15, but every one of the 10 passengers pays £5.'], ['10 × £5', ''], ['10 ÷ £5', 'Dividing shares something out. Here each of the 10 passengers pays £5.']], ok:1, done:'10 × £5 = £50 of cabin sales.' },
     think:['Which brings in more money: more people buying at £3, or fewer people at £5?', 'Remember the stock costs money too. You can try each choice in the Test step.'] },
 
@@ -58,22 +60,24 @@ const INTRO = {
         ['You buy fuel before you fly. It goes into your tank, and your flights burn it.', `The price changes from day to day. Today it is <b class="mono">${priceL(fuelPrice())}</b> a litre.`],
         niPrices(0, S.round)]; },
     maths:() => [niRule('litres', '×', 'price per litre', 'Cost'),
-      `<div class="ni-eg"><p>Buying <b>500 L</b> at <b>£1.30</b> a litre: ${niSum('500 × £1.30 = £650')}</p>
-        <p class="ni-tip">One way to work it out: ${niSum('500 × £1 = £500')} and ${niSum('500 × 30p = £150')}, then ${niSum('£500 + £150 = £650')}</p>
-        <p>The same sum works out the <b>fuel cost</b> of a day's flying: the litres your flights burn × the price per litre. You will work out today's on the Cost step.</p></div>`],
+      `<div class="ni-eg"><p>Buying <b>1,000 L</b> at <b>£1.30</b> a litre. The price has a decimal point: £1.30 is <b>£1 and 30p</b>, so do the pounds, then the pence, then add.</p>
+        <div class="ni-col total"><span class="r">1,000 × £1</span><span class="eq">=</span><span class="a">£1,000</span><span class="note">the pounds</span>
+          <span class="r">1,000 × 30p</span><span class="eq">=</span><span class="a">£300</span><span class="note">the pence</span>
+          <span class="r">£1,000 + £300</span><span class="eq">=</span><span class="a">£1,300</span><span class="note">so 1,000 × £1.30 = £1,300</span></div>
+        <p>The same sum works out the <b>fuel cost</b> of a day's flying: the litres your flights burn × the price per litre. You will work out today's on the next screen.</p></div>`],
+    practice:'fuelPrice',
     check:{ q:'You want to buy 1,000 L of fuel at £1.30 a litre. Which sum works out the cost?', opts:[['1,000 + £1.30', 'Adding gives £1,001.30, but every one of the 1,000 litres costs £1.30.'], ['1,000 × £1.30', ''], ['1,000 ÷ £1.30', 'Dividing shares something out. Here each of the 1,000 litres costs £1.30.']], ok:1, done:'1,000 × £1.30 = £1,300.' },
     think:['Fuel prices go up and down, like in the real world. Keep an eye on the price and the news.', () => `Your tank holds ${num(tankCapacity())} L. Why might an airline buy more fuel than it needs today?`] },
 
-  times:{ kicker:'New today · Times of day', title:'Departure times', words:[['Departure time', 'When a service leaves your home airport.'], ['Empty seats', 'Seats with nobody in them.'], ['Crew', `The pilots who fly the aircraft. A crew can work ${fmtDur(WORLD.crewDutyMin || 720)} a day.`]],
+  times:{ kicker:'New today · Times of day', title:'Departure times', practice:'emptySeats', words:[['Departure time', 'When a service leaves your home airport.'], ['Empty seats', 'Seats with nobody in them.']],
     what:() => { const r = routeById(S.market), fare = fareOf(S.market), P = demandPools(r, fare), mx = Math.max(1, ...BANDS.map(b => P[b] || 0), P.flex || 0);
       const col = (n, l, s, cls) => `<div class="${cls || ''}"><b class="mono">${n}</b><i style="--h:${Math.round(8 + 92 * n / mx)}"></i><span>${l}</span><small>${s}</small></div>`;
       return [['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.'],
         `<div class="ni-bands"><p class="kl">${flagSvg(r.flag, 14)} The ${P.W} people who want to fly to ${esc(r.city)} at ${money(fare)}</p><div class="nb-cols">${BANDS.map(b => col(P[b] || 0, BAND_SHORT[b], bandSpan(b))).join('')}${col(P.flex || 0, 'Any time', 'will take any service', 'flex')}</div></div>`,
-        [`Now you choose a <b>departure time</b> for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 720)}: from half an hour before the first departure to half an hour after the last landing. A longer day needs a second crew (${money(WORLD.crewCost || 250)}).`]]; },
+        ['Now you choose a <b>departure time</b> for each service. Put the services where the people are.']]; },
     maths:() => { const n = ourPlane().seats;
       return [niRule('seats', '−', 'passengers', 'Empty seats'),
-        `<div class="ni-eg"><p>A ${n}-seat service with <b>8 passengers</b>:</p>${niDots(n, 8)}<p>${niSum(`${n} − 8 = ${n - 8}`)} empty seats.</p>
-          <p class="ni-tip">The crew's day: first departure <b class="mono">07:00</b>, last landing <b class="mono">18:45</b>. The crew works from <b class="mono">06:30</b> to <b class="mono">19:15</b>: ${niSum('12 h 45 min')}. That is more than ${fmtDur(WORLD.crewDutyMin || 720)}, so a second crew is needed.</p></div>`]; },
+        `<div class="ni-eg"><p>A ${n}-seat service with <b>8 passengers</b>:</p>${niDots(n, 8)}<div class="ni-col"><span class="r">${n} − 8</span><span class="eq">=</span><span class="a">${n - 8}</span><span class="note">empty seats</span></div></div>`]; },
     check:{ q:() => `A service has ${ourPlane().seats} seats and 12 passengers. Which sum works out the empty seats?`, opts:() => { const n = ourPlane().seats; return [[`${n} + 12`, `Adding gives ${n + 12}: more than the seats on the aircraft.`], [`${n} − 12`, ''], [`${n} × 12`, 'Multiplying makes it much bigger. The empty seats are the ones left over.']]; }, ok:1, done:() => `${ourPlane().seats} − 12 = ${ourPlane().seats - 12} empty seats.` },
     think:['When do most of your passengers want to fly?', 'Which departure times would fill your seats?'] },
 
@@ -85,9 +89,10 @@ const INTRO = {
         ['One aircraft can\'t be in two places at once, so you share its day between the two routes.']]; },
     maths:() => { const a = routeById(S.market).city, b = routeById(otherRoute()).city;
       return [niRule('passengers', '×', 'fare', 'Ticket revenue'),
-        `<div class="ni-eg"><p>Each route has its own tickets. If <b>12 people</b> fly to ${esc(b)} at <b>£70</b>: ${niSum('12 × £70 = £840')}</p>
-          <p class="ni-tip">One way to work it out: ${niSum('10 × £70 = £700')} and ${niSum('2 × £70 = £140')}, then ${niSum('£700 + £140 = £840')}</p>
+        `<div class="ni-eg"><p>Each route has its own tickets. If <b>12 people</b> fly to ${esc(b)} at <b>£70</b>, split the 12 into 10 and 2:</p>
+          <div class="ni-col total"><span class="r">10 × £70</span><span class="eq">=</span><span class="a">£700</span><span class="note"></span><span class="r">2 × £70</span><span class="eq">=</span><span class="a">£140</span><span class="note"></span><span class="r">£700 + £140</span><span class="eq">=</span><span class="a">£840</span><span class="note">so 12 × £70 = £840</span></div>
           <p>Then add the routes together: ${niSum(`${esc(a)} tickets + ${esc(b)} tickets = ticket revenue`)}</p></div>`]; },
+    practice:'tickets',
     check:{ q:() => `16 passengers fly to ${routeById(otherRoute()).city} at £90 each. Which sum works out the ticket revenue?`, opts:[['16 + £90', 'Adding gives £106, but every one of the 16 passengers pays £90.'], ['16 × £90', ''], ['£90 − 16', 'Taking away makes it smaller. Each of the 16 passengers pays £90.']], ok:1, done:'16 × £90 = £1,440.' },
     think:[() => `How will you share the aircraft's day between ${routeById(S.market).city} and ${routeById(otherRoute()).city}?`, 'Where are more people waiting for a seat?'] },
 
@@ -142,25 +147,28 @@ const niVal = v => typeof v === 'function' ? v() : v;
 const NI_PAGES = ["What's new", 'The maths', 'Your turn'];
 R.intro = st => {
   const I = INTRO[st.key]; if(!I){ next(); return; }
-  const page = clamp(st.page || 0, 0, 2), C = I.check, opts = niVal(C.opts), picked = st.pick, right = st.done;
+  const page = clamp(st.page || 0, 0, 2), C = I.check || { opts:[] }, opts = niVal(C.opts), picked = st.pick, right = st.done;
   st.seen = Math.max(st.seen || 0, page);
   const para = a => a.map(l => `<p>${l}</p>`).join(''), block = x => Array.isArray(x) ? `<div class="ni-text">${para(x)}</div>` : x;
   let body = '';
   if(page === 0) body = I.what().map(block).join('');
   else if(page === 1) body = I.maths().map(block).join('');
+  else if(I.practice) body = practiceHtml(st, I.practice) + (right ? `<div class="ni-think"><span class="kl">Think about it as you plan</span>${I.think.map(l => `<p>${esc(niVal(l))}</p>`).join('')}</div>` : '');
   else body = `<p class="ni-q">${esc(niVal(C.q))}</p><div class="ni-opts">${opts.map(([t], k) => `<button class="ni-opt ${picked === k ? (k === C.ok ? 'right' : 'wrong') : ''} ${right && k === C.ok ? 'right' : ''}" data-ni="${k}" ${right ? 'disabled' : ''}><span class="mono">${esc(t)}</span></button>`).join('')}</div>
     <div class="ni-fb" aria-live="polite">${right ? `<p class="ni-yes">&#10003; ${esc(niVal(C.done))}</p>` : picked !== undefined && picked !== C.ok ? `<p class="ni-no">${esc(opts[picked][1])} Have another go.</p>` : ''}</div>
     ${right ? `<div class="ni-think"><span class="kl">Think about it as you plan</span>${I.think.map(l => `<p>${esc(niVal(l))}</p>`).join('')}</div>` : ''}`;
   const tabs = `<ol class="ni-tabs">${NI_PAGES.map((l, k) => `<li><button class="${k === page ? 'on' : ''} ${k < page || (k <= st.seen) ? 'seen' : ''}" data-nip="${k}" ${k <= (st.seen || 0) ? '' : 'disabled'}><i>${k < page || (k === 2 && right) ? '&#10003;' : k + 1}</i>${l}</button></li>`).join('')}</ol>`;
-  const sayText = (page === 2 ? [niVal(C.q)].concat(opts.map(o => o[0])) : (page === 0 ? I.what() : I.maths()).filter(Array.isArray).flat()).join(' ').replace(/<[^>]+>/g, '').replace(/×/g, 'times').replace(/−/g, 'minus');
+  const sayText = (page === 2 ? (I.practice ? [PRACTICE[I.practice].render(pqState(st, I.practice).qs[Math.min(pqState(st, I.practice).i, PQ_N - 1)]).q] : [niVal(C.q)].concat(opts.map(o => o[0]))) : (page === 0 ? I.what() : I.maths()).filter(Array.isArray).flat()).join(' ').replace(/<[^>]+>/g, '').replace(/×/g, 'times').replace(/−/g, 'minus');
   const W = PW(), go = I.go || (W.span === 'day' ? "Plan today's flying" : I.before === 'fuelPlan' ? 'Buy fuel' : `Plan the ${W.span}`);
   screen().innerHTML = taskFrame({ question:`<span class="ni-kick">${esc(I.kicker)}</span>${esc(niVal(I.title))}`, work:false, say:sayText,
     context:{ title:'Key words', html:cxSec('New words', `<dl class="ni-words">${I.words.map(([w, m]) => `<dt>${esc(w)}</dt><dd>${esc(niVal(m))}</dd>`).join('')}</dl>`) },
     main:`<div class="ni p${page}">${tabs}<div class="ni-page">${body}</div></div>`,
-    foot:`${page ? '<button class="btn big" id="niBack">&#9664; Back</button>' : ''}<span class="grow"></span>${page < 2 ? `<button class="btn primary big" id="niNext">${NI_PAGES[page + 1]} &#9654;</button>` : `<button class="btn primary big" id="nx" ${right ? '' : 'disabled'}>${right ? goLabel(go) : 'Choose a sum first'} &#9654;</button>`}` });
+    foot:`${page ? '<button class="btn big" id="niBack">&#9664; Back</button>' : ''}<span class="grow"></span>${page < 2 ? `<button class="btn primary big" id="niNext">${NI_PAGES[page + 1]} &#9654;</button>` : `<button class="btn primary big" id="nx" ${right ? '' : 'disabled'}>${right ? goLabel(go) : I.practice ? 'Answer the three questions first' : 'Choose a sum first'} &#9654;</button>`}`,
+    todo: page === 0 ? 'Read what is new, then press The maths.' : page === 1 ? 'Look at the rule and the example, then press Your turn.' : I.practice ? 'Answer the three questions: type each answer and press Check.' : 'Press the sum that works it out.' });
   const go2 = k => { st.page = k; render(); };
   on('niBack', () => go2(page - 1)); on('niNext', () => go2(page + 1));
   screen().querySelectorAll('[data-nip]').forEach(b => b.onclick = () => go2(+b.getAttribute('data-nip')));
   screen().querySelectorAll('[data-ni]').forEach(b => b.onclick = () => { const k = +b.getAttribute('data-ni'); st.pick = k; if(k === C.ok) st.done = true; render(); });
+  if(page === 2 && I.practice) bindPractice(st, I.practice);
   on('nx', () => { UI.justDone = null; advance(); });
 };
