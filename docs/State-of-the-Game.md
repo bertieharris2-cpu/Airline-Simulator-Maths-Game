@@ -29,18 +29,19 @@
 | 7 | Choose your first market | Launch Day | Dublin or Paris |
 | 8 | Market demand | Launch Day | People who want to fly, in aircraft-sized groups |
 | 9 | One service, start to finish | Launch Day | 6 pages: out, turnaround (why turnarounds differ), back, ready again with three practice questions (typed times) |
-| 10 | Work it out | Launch Day and every day | One page: the plan (services ×1–×4 with the reason one won't fit, or the planner) on the left; the sheet on the right with a column per option (three fares on launch day, the snack options on day 2, the plan otherwise), the sum inline, squared paper, the choice buttons; Test is the next screen |
-| 11 | What's new (3 pages) | Days 2, 3, 4 (two), 6, 8, 12, 15; week 4; December | What's new, the maths (worked in a column), your turn: three practice questions in week 1, "which sum?" later; key words in the dock |
+| 10 | Plan the day | Launch Day and every day | The HQ planning page: services ×1–×4 with the reason one won't fit (the planner from day 2), the fare chips with people at each fare, expected passengers, *Try an idea* (the modelling tool: a test plan the model costs); *Cost your plan* |
+| 10a | Work it out | Launch Day and every day with a sum | Full screen on squared paper: one sum at a time in the written method (columns, carry row, working rows, the answer typed, a number pad), Check / Show me; the fare (launch) or the snack option (day 2) chosen after their sums; the fuel worked example on day 3; a summary; optional practice (teacher setting); Back to HQ. Skipped when nothing is typed |
+| 11 | What's new (3 pages) | Days 2, 3, 4 (two), 6, 8, 12, 15; week 4; December | What's new, the maths (worked in a column), your turn ("which sum?"); key words in the dock |
 | 12 | Today's Plan (morning HQ) | Every day, week and month | Headline from the Calendar or Market; the brief (yesterday, what's new, routes opening, the rival, fuel); the standing plan |
 | 13 | The air show (aircraft for sale) | Days 8 and 15, every week | Flip cards: photo or plain drawing, facts, four bars on one scale, Buy / Rent / Finance from the Finance sheet; a locked *Coming soon* row; Look closer or Not today |
 | 13a | Paint your new plane · Roll it out | After buying | The paint shop for the new aircraft (its own registration), then a short reveal |
 | 14 | The sums (fleet) | After choosing an aircraft | Rent or buy = price ÷ rent a day; a full plane = seats × fare; the model's suggested services and extra profit a day |
 | 15 | Buy or rent | After the sums | Buy, Rent or Finance (gated by the Finance sheet's dates and the £1,000 reserve) |
-| 16 | Plan | Weeks (on days it is the left half of Work it out) | Fares per route, open-route chips, snacks, one tab per aircraft with its services and departure times (range checked) |
-| 17 | Decision (event) | Days 4, 5, 11; the week of the fault | The Calendar's or the week's event: options with their cost; Change your mind |
-| 18 | Cost | Weeks (on days it is the right half of Work it out) | The cost sheet with a ticket line per route; the figures the hand-sum rules choose are typed, the rest are the model's (ƒ); empty seats (day 19) and flight time (day 15, new routes) as side tables; in weeks, "one day of the plan" only when a rule fires |
-| 19 | Test | Every day and week | Change a test plan; the model costs it; save ideas; Fly my plan / the test plan |
-| 20 | Fuel | Days 3–21, December | Order fuel in 500 L lots; tank batches, oldest burned first; on the days the order bill is typed (pounds-then-pence hint, Show me after three); the CEO's advice on buying ahead |
+| 16 | Plan | Weeks (on days the planning page carries it) | Fares per route, open-route chips, snacks, one tab per aircraft with its services and departure times (range checked) |
+| 17 | Decision (event) | Days 4, 5, 11; the week of the fault | The Calendar's or the week's event: options with their cost; Change your mind; a rival undercut shows who stays and the profit for each option (D50) |
+| 18 | Cost | Weeks (on days the workings page carries its sums) | The cost sheet with a ticket line per route; the figures the hand-sum rules choose are typed, the rest are the model's (ƒ); empty seats (day 19) and flight time (day 15, new routes) as side tables; in weeks, "one day of the plan" only when a rule fires |
+| 19 | Test | Weeks (on days it is the planning page's *Try an idea* panel) | Change a test plan; the model costs it; save ideas; Fly my plan / the test plan |
+| 20 | Fuel | Days 3–21, December | Order fuel in 500 L lots; tank batches, oldest burned first; the order bill is the model's; the CEO's advice on buying ahead |
 | 21 | Ready | Every period | Each aircraft's timetable, fares, on board, fuel, the decision, the projection; blocked below the cash reserve; warned on a loss |
 | 21a | Take-off | Launch day, before live operations | The first take-off on the wall (taxi, roll, climb-out) with sound if on; Skip, Continue |
 | 22 | Operations (live) | Days 1–21 | Live show on the HQ and the wall; the featured aircraft is the one flying |
@@ -67,7 +68,7 @@
 
 | Screens | Why |
 |---|---|
-| timetable, fareTry, costPlan (days), planner (days), dayForecast, options, route, setupFuel, setupPrice, setupDone, home | Removed from the day step lists (timetable, planner and the day's cost sheet became Work it out on 8 Oct 2026; an older save's steps are migrated); the home is fixed at Heathrow T5 |
+| timetable, fareTry, costPlan (days), planner (days), testIdeas (days), workout, dayForecast, options, route, setupFuel, setupPrice, setupDone, home | Removed from the day step lists (timetable, planner, the day's cost sheet and Test became the planning page and the workings page on 8 Oct 2026; an older save's steps are migrated); the home is fixed at Heathrow T5 |
 | yearPlan, afford, yearReview, strategy, shop, invest, purchase, delivery, milestone | The old year and purchase flow: chapter 1 ends at the review; no beat reaches them |
 | Old strategy, review, hq, planner, ready, fly, results, sim, protoEnd, event | Replaced by later renderers of the same name |
 | choice, fare, quick, trips, day, fuel, cabin, plane, newRoute, stage, forecast, summary, challenge | The old round flow (`startRound`): the teacher's "Skip to the next story beat" only |
@@ -85,7 +86,8 @@
 | Departure times | Working (from day 4) | ±30 min per service, per aircraft; not before the aircraft is ready again |
 | Several aircraft | Working | `plan.fleet`: services and departure times per aircraft (tabs), fares per route, one snack choice; `S.deps` mirrors the first aircraft |
 | Range | Working | A route out of range is greyed with the reason; the add fails with a toast |
-| Crew duty | Working from `crewFromDate` (chapter 2) | Over 12 h (with half-hour padding) adds a second crew, £250, per aircraft; off in chapter 1 (no briefing, no cost, no crews line) since the week-1 review |
+| Crew duty | Working from `crewMechanicFromDate` (D51, chapter 2) | Over 12 h (with half-hour padding) adds a second crew, £250, per aircraft; off in chapter 1 (no briefing, no cost, no crews line) |
+| Rival switch rule | Working (D50) | 1 in 10 of the passengers switch per £10 the fare is above the rival's, cap 6 in 10, advertising halves it for the event's duration (`rivalSwitch*`, Events `rivalFare/durationDays/advertiseCost/affectsRoutes`); the world engine agrees |
 | Routes | Working | All 18 live routes, opening by `unlockDay`; the other of Dublin/Paris opens on day 4 (Calendar) |
 | On-board sales | Working (from day 2) | The Catering sheet: none, £3 (half buy), £5 (3 in 10), free (£2 a passenger); £1 stock |
 | Costs | Working | Flying hours × £/h + landing fees at both ends + fuel + passenger charge; each aircraft's day cost plus rent or finance payments |
@@ -102,8 +104,8 @@
 | Chapter review | Working | Chapter accounts (totals by hand), summary, the long-haul hook |
 | Reputation | Gated | Hidden until `reputationFromDate` (placeholder in v4.2); event stars banked in `S.repBank`; revealed at the level earned |
 | Chapters 2–6 | Read only | Lease/buy/finance dates, reputation, the quarterly task, challenges and hunts listed in the teacher panel; nothing fires in chapter 1 |
-| Maths toolkit | Working | Calculate / Build / Model per tool; the rules decide the day's levels; the teacher overrides; in week 1 profit stays typed and a day with nothing new asks for the main route's tickets |
-| Practice questions | Working | `PRACTICE` specs (ready-again, fuel price, weekend tenths, cabin sales, tickets, empty seats): three fresh questions, typed, calm retry, Show me after three; logged with the hand sums (`S.practice`, `S.handSumLog`) |
+| Maths toolkit | Working | Calculate / Build / Model per tool; the rules decide the day's levels (the daily budget: one spotlight sum, at most two plan sums, never more than three multiplications; Build waits for day 22); the teacher overrides |
+| Practice questions | Working (teacher setting, default 0) | `PRACTICE` specs (ready-again, fuel price, weekend tenths, tenths, cabin sales, tickets, empty seats) with the pupil's own numbers on the workings page; typed, calm retry, Show me after three; logged with the hand sums. The ready-again questions on the one-service screen are always on |
 | Answer checking | Working | Accepts the model's figure or the working on screen; sign hint; Show me after 3 tries |
 | Live operations | Working | Show built from the model's flights; the featured aircraft is the one flying; weeks compressed; months plain |
 | Saves | Working | Version 5 (`ASIM5.`); older saves start again |

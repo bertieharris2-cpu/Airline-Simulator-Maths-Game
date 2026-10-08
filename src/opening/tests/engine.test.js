@@ -36,6 +36,10 @@ const path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../
   let fails = 0;
   for(const r of res){ const same = ['pax', 'rev', 'cost', 'profit'].every(k => r.game[k] === r.engine[k]); if(!same) fails++;
     console.log(`${same ? 'ok  ' : 'FAIL'} ${r.name} (fuel £${r.fuel.toFixed(2)}): game £${r.game.profit} · engine £${r.engine.profit}${same ? '' : '  ' + JSON.stringify(r)}`); }
+  // D50: Red Kite at £50 on Dublin; the addendum's table: hold £90 → 62 × 6⁄10 = 37 stay; advertise → 62 × 8⁄10 = 50; match £50 → 96
+  const rk = await p.evaluate(() => { const { WB, WE } = window.__world, run = (fare, ad) => WE.day(WB, { plane:'dhc6', fuel:1.3, date:'2030-09-06', rival:{ fare:50, routes:['dub'], advertise:ad }, home:{ code:'LHR', terminal:'T5' }, services:[{ route:'dub', dep:'07:00', fare }, { route:'dub', dep:'11:20', fare }] }).routes.dub.demand; return { hold:run(90, false), ad:run(90, true), match:run(50, false), cut80:run(80, false) }; });
+  const rkOk = rk.hold === 37 && rk.ad === 50 && rk.match === 96 && rk.cut80 === 50; if(!rkOk) fails++;
+  console.log(`${rkOk ? 'ok  ' : 'FAIL'} Red Kite rule (D50): hold £90 → ${rk.hold} stay, advertise → ${rk.ad}, match → ${rk.match}, cut to £80 → ${rk.cut80}`);
   console.log(errors.length ? 'ERRORS ' + errors.join(' | ') : 'ERRORS none');
   console.log(fails ? `${fails} FAILED` : 'The game prices every plan exactly as the world engine does.');
   await b.close(); process.exit(fails || errors.length ? 1 : 0);

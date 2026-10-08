@@ -26,6 +26,16 @@ const TAG = `${HOME}-${MK}-${W}`;
   const practice = async () => { for(let i = 0; i < 3; i++){ const a = await p.evaluate(() => window.__sim.practiceAnswer()); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } };
   const fuelBill = async () => { if(await p.$('#fbIn')){ const v = await p.evaluate(() => String(window.__sim.S().rnd.fuelOrder.total)); await p.fill('#fbIn', v); await p.click('#fbCheck'); await p.waitForTimeout(120); } };
   const pickOption = async tag => { if(!(await p.$('[data-wpick]')) || await p.$('[data-wpick].on')) return []; const b = await p.$('[data-wpick]:not([disabled])'); if(!b) return []; await b.click(); await p.waitForTimeout(120); return solve(tag + ' after pick'); };
+  // the workings page: one sum at a time; the tutorial, the option choice and the practice questions along the way
+  const solveW = async tag => { const seen = []; for(let g = 0; g < 60; g++){ if(await T() !== 'workings') break;
+      if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ seen.push('tutorial'); await p.click('#wkTutGo'); continue; }
+      if(await p.$('#cellAns')){ const id = await p.evaluate(() => { const t = window.__sim.currentTable(); return t.id + ':' + t.active.col + '|' + t.active.row; }); seen.push(id);
+        await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(80); continue; }
+      if(await p.$('#wkNext')){ await p.click('#wkNext'); continue; }
+      if(await p.$('[data-wpick]')){ const ws = await p.$$('[data-wpick]'); seen.push('pick' + ws.length); await (ws[1] || ws[0]).click(); await p.waitForTimeout(80); continue; }
+      if(await p.$('#pqIn')){ await practice(); seen.push('practice'); continue; }
+      if(await p.$('#nx')) break; await p.waitForTimeout(80); }
+    typedLog[tag] = seen; return seen; };
   // launch-day identity (CR5): the flight code, the logo, the paint shop, the reveal, the certificate
   const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
@@ -42,10 +52,11 @@ const TAG = `${HOME}-${MK}-${W}`;
   const probe = async () => {
     const TK = await p.evaluate(() => { const t = window.__sim.currentTable(), r = t && (t.rows || []).find(x => x.tool === 'revenue'); return r ? r.id : 'tk1'; }), C0 = await p.evaluate(() => window.__sim.currentTable().cols[0].id);
     const diag = () => p.evaluate(() => (window.__sim.S().diag || []).map(d => d.kind));
-    const dockAns = async () => { const v = await p.$$eval('.cs:not(.ans)', e => e.map(x => [x.querySelector('.cs-op').textContent.trim(), x.querySelector('.cs-v').textContent])); let a = null;
-      v.forEach(([op, t]) => { const n = +t.replace(/[−–]/g, '-').replace(/[^0-9.\-]/g, ''); a = a === null ? n : op === '+' ? a + n : op === '−' ? a - n : op === '×' ? a * n : a / n; }); return Math.round(a * 100) / 100; };
-    const accepted = () => p.evaluate(() => !!document.querySelector('.calc.done'));
-    const open1 = async () => { const c = await p.$('[data-cell]'); if(!c) return false; await c.click(); await p.waitForTimeout(120); return true; };
+    // the figures on the workings page, re-read from the digits shown: the operands and the sign
+      const dockAns = async () => { const v = await p.$$eval('.wk-grid .wk-row:not(.carry):not(.work):not(.ans)', e => e.map(x => [x.querySelector('.wk-op').textContent.trim(), [...x.querySelectorAll('i')].map(i => i.textContent).join('')])); let a = null;
+      v.forEach(([op, t]) => { const n = +t; a = a === null ? n : op === '+' ? a + n : op === '−' ? a - n : op === '×' ? a * n : a / n; }); return Math.round(a * 100) / 100; };
+    const accepted = () => p.evaluate(() => !!document.querySelector('.calc.done, .wk-row.ans.done'));
+    const open1 = async () => { if(await p.$('#wkNext')) await p.click('#wkNext'); const c = await p.$('[data-cell]'); if(c){ await c.click(); await p.waitForTimeout(120); } return !!(await p.$('#cellAns')); };
     // 1. the first figure, answered from the dock with a click
     await open1(); let a = await dockAns(); await p.fill('#cellAns', String(a)); await p.click('#cellCheck'); await p.waitForTimeout(150);
     ok('the figure worked out from the dock is accepted', await accepted(), a); if(await p.$('#calcDone')) await p.click('#calcDone');
@@ -86,25 +97,22 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(t === 'hq'){ await fits('hq ' + R); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ await fits('milestone ' + R); await shot('ms-' + R); await p.click('#msGo'); continue; }
     if(t === 'review'){ await solve('review ' + R); await p.click('#nx'); continue; }
-    if(t === 'workout' && day === +(process.env.PDAY || 0)){ if(day === 0) await p.click(`[data-svc="${MK}|2"]`); await probe(); break; }
+    if(t === 'workings' && day === +(process.env.PDAY || 0)){ await probe(); break; }
     if(t === 'planner'){   // weeks keep the planner and the cost sheet
       if(s.fleet.length > 1 && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); } }
       await fits('planner ' + R); if(R === 21 || R === 28) await shot(`plan-${R}`); await p.click('#nx'); continue; }
-    if(t === 'workout'){
+    if(t === 'plan'){
       if(R <= 4 && s.period.type === 'day'){
         ok(`Day ${R + 1}: snacks only from Day 2`, (await vis('[data-pe^="0|ob|"]')) === (R >= 1));
         ok(`Day ${R + 1}: departure times only from Day 4`, (await vis('[data-pe^="0|dep|"]')) === (R >= 3));
         ok(`Day ${R + 1}: the second market only from Day 4`, (await vis(`[data-pe="0|fare|${OTHER}|1"]`)) === (R >= 3));
         if(R === 1 && POL !== 'weak') await p.click('[data-pe="0|ob|low|0"]');
         if(R === 3){ const before = await p.evaluate(() => window.__sim.S().deps); await p.click('[data-pe="0|dep|0|-1"]'); await p.click('[data-pe="0|dep|0|-1"]'); const after = await p.evaluate(() => window.__sim.S().deps); ok('Day 3: a departure time can be moved', after && before && after[0] === before[0] - 60, [before, after]); }
-        if(R === 3 && POL !== 'weak') await p.click(`[data-pe="0|add|${OTHER}|0"]`).catch(() => {});
+        if(R === 3 && POL !== 'weak') { const add = await p.$(`[data-pe="0|add|${OTHER}|0|0"], [data-pe="0|add|${OTHER}|0"]`); if(add) await add.click(); }
       }
       if(s.fleet.length > 1 && s.period.type === 'day' && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); } }
-      await fits('planner ' + R); if(R <= 4) await shot(`d${day}-plan`);
-      await fits('cost ' + R); if(R <= 6) await shot(`d${day}-cost`); const typed = await solve(`cost ${day}`); typed.push(...await pickOption(`work ${day}`));
-      checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`);
-      if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(150);
-      ok(`cost ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
+      await fits('planner ' + R); if(R <= 4) await shot(`d${day}-plan`); await p.click('#nx'); continue; }
+    if(t === 'workings'){ await fits('workings ' + R); const typed = await solveW(`work ${day}`); checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`); ok(`work ${day}: back to HQ enabled`, !!(await p.$('#nx')) && await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'costPlan'){
       await fits('cost ' + R); if(R <= 6) await shot(`d${day}-cost`); const typed = await solve(`cost ${day}`);
       checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`);

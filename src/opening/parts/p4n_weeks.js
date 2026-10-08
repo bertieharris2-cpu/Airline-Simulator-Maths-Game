@@ -17,7 +17,7 @@ function stepsFor(b){
   if(w.period === 'week') return L(['hq', 'review', 'shop2', 'planner'].concat(w.events && w.events.some(e => e.options && e.options.length) ? ['event'] : []).concat(['costPlan', 'testIdeas', 'ready', 'sim', 'results']));
   if(w.period === 'month') return L(['hq', 'review', 'shop2', 'fuelPlan', 'plans', 'ready', 'sim', 'results']);
   if(w.period === 'review') return L(['hq', 'review', 'chapterReview', 'protoEnd']);
-  return L(['hq', 'workout', 'testIdeas', 'ready', 'fly', 'results']);
+  return L(['hq', 'plan', 'workings', 'ready', 'fly', 'results']);
 }
 /* The effects text of an event without choices: "demand mad+40 par+10 dub+10", "gva demand +20", "businessMult 0.7, leisureMult 1.3", "cuts every fare by 20%". */
 function infoEffects(ev){

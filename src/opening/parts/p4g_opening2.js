@@ -275,17 +275,17 @@ function railValue(t, i){
 function editStep(what){
   const k = railKind();
   if(k === 'month' || k === 'year') return what === 'forecast' && k === 'year' ? 'yearPlan' : 'plans';
+  if(S.phase === 'setup' || periodType() === 'day') return 'plan';   // the planning page carries the modelling tool; Cost your plan opens the workings page
   if(what === 'forecast') return 'testIdeas';
-  if(S.phase === 'setup' || periodType() === 'day') return 'workout';   // the one Work it out page (week-1 review)
   return 'planner';
 }
 
 /* ---------- PLAN ---------- */
 const PLAN_STORY = {
   3.1:['Snacks are new today. Choose what happens on board: each card gives its rule.'],
-  3.2:['The launch deal is over. From today your airline buys its own fuel.', 'Does yesterday\'s plan still make sense now that fuel costs money?'],
-  3.3:['Yesterday some flights were full and others had empty seats. People want to fly at different times of day.', `You can now choose a departure time for each service. A crew can work ${fmtDur(WORLD.crewDutyMin || 720)}, from half an hour before the first departure to half an hour after the last landing. A longer day needs a second crew (${money(WORLD.crewCost || 250)}).`],
-  3.4:['A second market is open. Your one aircraft can now fly to two places.', 'How should its day be shared between them? Add a service, or change a service\'s route with ⇄.'] };
+  3.2:['The launch deal is over: from today your airline buys its own fuel. Does yesterday\'s plan still make sense?'],
+  3.3:['People want to fly at different times of day. You can now choose a departure time for each service.'],
+  3.4:['A second market is open: one aircraft, two places. Add a service, or change a service\'s route with ⇄.'] };
 R.planner = () => {
   const p = ourPlane(), pl = currentPlan(), L = planLines(pl), W = PW(), per = W.span !== 'day', st = progress();
   const story = !per && (S.round === 0 || roundData(S.round).prog !== roundData(S.round - 1).prog) ? (PLAN_STORY[st] || []) : [];   // the stage's story on the day it arrives

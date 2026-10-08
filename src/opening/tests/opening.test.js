@@ -26,6 +26,16 @@ const TAG = `${HOME}-${MK}-${W}`;
   const practice = async () => { for(let i = 0; i < 3; i++){ const a = await p.evaluate(() => window.__sim.practiceAnswer()); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } };
   const fuelBill = async () => { if(await p.$('#fbIn')){ const v = await p.evaluate(() => String(window.__sim.S().rnd.fuelOrder.total)); await p.fill('#fbIn', v); await p.click('#fbCheck'); await p.waitForTimeout(120); } };
   const pickOption = async tag => { if(!(await p.$('[data-wpick]')) || await p.$('[data-wpick].on')) return []; const b = await p.$('[data-wpick]:not([disabled])'); if(!b) return []; await b.click(); await p.waitForTimeout(120); return solve(tag + ' after pick'); };
+  // the workings page: one sum at a time; the tutorial, the option choice and the practice questions along the way
+  const solveW = async tag => { const seen = []; for(let g = 0; g < 60; g++){ if(await T() !== 'workings') break;
+      if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ seen.push('tutorial'); await p.click('#wkTutGo'); continue; }
+      if(await p.$('#cellAns')){ const id = await p.evaluate(() => { const t = window.__sim.currentTable(); return t.id + ':' + t.active.col + '|' + t.active.row; }); seen.push(id);
+        await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(80); continue; }
+      if(await p.$('#wkNext')){ await p.click('#wkNext'); continue; }
+      if(await p.$('[data-wpick]')){ const ws = await p.$$('[data-wpick]'); seen.push('pick' + ws.length); await (ws[1] || ws[0]).click(); await p.waitForTimeout(80); continue; }
+      if(await p.$('#pqIn')){ await practice(); seen.push('practice'); continue; }
+      if(await p.$('#nx')) break; await p.waitForTimeout(80); }
+    typedLog[tag] = seen; return seen; };
   // launch-day identity (CR5): the flight code, the logo, the paint shop, the reveal, the certificate
   const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
@@ -38,11 +48,11 @@ const TAG = `${HOME}-${MK}-${W}`;
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
   await p.click('#nx'); await p.click(`[data-mk="${MK}"]`); await p.click('#nx'); await p.click('#nx');
   for(let k = 0; k < 4; k++) await p.click('#nx'); await practice(); await p.click('#nx'); await p.click('#nx');
-  ok('launch day: Work it out follows the service', await T() === 'workout', await T());
+  ok('launch day: the planning page follows the service', await T() === 'plan', await T());
   await p.click(`[data-svc="${MK}|2"]`);
-  ok('launch day: three fares to work out', (await p.$$('[data-wpick]')).length === 3); ok('launch day: the fare waits for the tickets', !(await p.$('[data-wpick]:not([disabled])')));
+  ok('launch day: the fare chips show the people at each fare', (await p.$$('.fchip')).length >= 3); ok('launch day: no sum is typed on the planning page', !(await p.$('[data-cell], #cellAns')));
   { const no = await p.evaluate(() => [...document.querySelectorAll('.svc[disabled] small')].map(e => e.textContent).join(' ')); if(no) ok('launch day: a service that will not fit says why', /airport closes/.test(no), no); }
-  let guard = 0, last = '', saves = 0, strategySeen = false; const calib = {};
+  let guard = 0, last = '', saves = 0, strategySeen = false; const calib = {}, workCount = {};
   while(guard++ < 600){
     const t = await T(), s = await S(); if(s.round >= UPTO || t === 'protoEnd') break;
     const where = `${t}@${s.round}@${s.si}`; if(where === last) await p.waitForTimeout(250); last = where;
@@ -61,6 +71,7 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(t === 'fleetSums'){ await fits('fleetSums ' + R); const typed = await solve('fleetSums'); checks.push('info fleetSums ' + JSON.stringify(typed)); if(await p.$('#calcDone')) await p.click('#calcDone'); await shot('fleetSums-' + R); ok('fleet sums: continue enabled', await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'acquire'){ await fits('acquire ' + R); await shot('acquire-' + R); const before = (await S()).cash; await p.click('[data-terms="lease"]'); await p.click('#nx'); const a = await S(); ok('acquire: renting adds an aircraft without spending cash', a.fleet.length === 2 && Math.abs(a.cash - before) < 0.01, [a.fleet.length, before, a.cash]); continue; }
     if(t === 'event'){ await fits('event ' + R); await shot('ev-' + R); const opts = (await p.$$('[data-o]')).length; ok(`event ${R}: options offered`, opts >= 2, opts);
+      if(R === 3){ const rows = await p.$$eval('.ev-cmp tbody tr', e => e.map(x => x.textContent.replace(/\s+/g, ' ').trim())); ok('Red Kite: the card shows who stays and the profit for each option', rows.length >= 3 && rows.some(r => /in 10|in 100/.test(r)), rows); }
       ok(`event ${R}: decide waits for a choice`, await p.$eval('#nx', e => e.disabled)); await p.click(`[data-o="${R === 4 ? 2 : 1}"]`); await p.click('#nx');
       ok(`event ${R}: the choice is recorded`, (await S()).rnd.eventChoice !== undefined); await fits('event decided ' + R); await shot('ev-' + R + '-done'); await p.click('#nx'); continue; }
     if(t === 'hq'){ await fits('hq ' + R); if(R === 7 || R === 8 || R === 21) await shot('hq-' + R); ok('no Back on the morning HQ', !(await vis('#wsBack'))); await p.click('#startDay'); continue; }
@@ -69,32 +80,37 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(t === 'planner'){   // weeks keep the planner and the cost sheet
       if(s.fleet.length > 1 && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); } }
       await fits('planner ' + R); if(R === 21 || R === 28) await shot(`plan-${R}`); await p.click('#nx'); continue; }
-    if(t === 'workout'){
+    if(t === 'plan'){
       if(R <= 4 && s.period.type === 'day'){
         ok(`Day ${R + 1}: snacks only from Day 2`, (await vis('[data-pe^="0|ob|"]')) === (R >= 1));
         ok(`Day ${R + 1}: departure times only from Day 4`, (await vis('[data-pe^="0|dep|"]')) === (R >= 3));
         ok(`Day ${R + 1}: the second market only from Day 4`, (await vis(`[data-pe="0|fare|${OTHER}|1"]`)) === (R >= 3));
         if(R === 1 && POL !== 'weak') await p.click('[data-pe="0|ob|low|0"]');
         if(R === 3){ const before = await p.evaluate(() => window.__sim.S().deps); await p.click('[data-pe="0|dep|0|-1"]'); await p.click('[data-pe="0|dep|0|-1"]'); const after = await p.evaluate(() => window.__sim.S().deps); ok('Day 3: a departure time can be moved', after && before && after[0] === before[0] - 60, [before, after]); }
-        if(R === 3 && POL !== 'weak') await p.click(`[data-pe="0|add|${OTHER}|0"]`).catch(() => {});
+        if(R === 3 && POL !== 'weak') { const add = await p.$(`[data-pe="0|add|${OTHER}|0|0"], [data-pe="0|add|${OTHER}|0"]`); if(add) await add.click(); }
       }
       if(s.fleet.length > 1 && s.period.type === 'day' && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); ok(`Day ${R + 1}: the second aircraft gets Amsterdam services`, (await S()).fleet[1].schedule.length > 0); } }
       if(R === 7 || R === 14 || R === 21) await shot(`plan-${R}`);
-      if(R === 2 && !s.rnd.backTried){ await p.evaluate(() => { window.__sim.S().rnd.backTried = true; }); ok('Day 2: Back on Work it out', await vis('#wsBack')); await p.click('#wsBack'); ok('Day 2: Back from Work it out leaves it', await T() !== 'workout', await T()); await p.click('#nx'); ok('Day 2: forward again returns to Work it out', await T() === 'workout', await T()); }
-      await fits('workout ' + R); if(R <= 6) await shot(`d${day}-work`); const typed = await solve(`work ${day}`); typed.push(...await pickOption(`work ${day}`));
-      if(R === 1){ ok('Day 2: two snack options to work out', (await p.$$('[data-wpick]')).length >= 2); }
-      if(R === 1 && await p.$('#woThird')){ await p.click('#woThird'); typed.push(...await solve(`work ${day} third`)); ok('Day 2: a third snack option can be compared', (await p.$$('[data-wpick]')).length === 3); }
+      if(R === 2 && !s.rnd.backTried){ await p.evaluate(() => { window.__sim.S().rnd.backTried = true; }); ok('Day 2: Back on Work it out', await vis('#wsBack')); await p.click('#wsBack'); ok('Day 2: Back from Work it out leaves it', await T() !== 'workout', await T()); await p.click('#nx'); ok('Day 2: forward again returns to the planning page', await T() === 'plan', await T()); }
+      await fits('plan ' + R); if(R <= 6) await shot(`d${day}-plan`); ok(`plan ${day}: no sum typed on the planning page`, !(await p.$('[data-cell], #cellAns'))); ok(`plan ${day}: the modelling tool is on the page`, setup ? true : await vis('.pl-idea'));
+      ok(`plan ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
+    if(t === 'workings'){
+      await fits('workings ' + R); if(R <= 6) await shot(`d${day}-workings`); const typed = await solveW(`work ${day}`);
       checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`);
-      if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(150);
-      const fx = await p.$('button.mdl'); if(fx && R <= 4){ await fx.click(); ok(`Day ${day}: the ƒ inspector shows the rule`, await vis('.calc.fx')); await shot(`d${day}-fx`); await p.click('#dkClose').catch(() => {}); }
-      if(await p.$('#woPad')){ await p.click('#woPad'); ok(`Day ${day}: squared paper opens`, await vis('.wo-pad #padCv')); if(R <= 1) await shot(`d${day}-paper`); await p.click('#woPad'); }
-      ok(`work ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.textContent('.wo-sheet .pnl-h')); await p.click('#nx'); continue; }
+      const cells = typed.filter(x => /\|/.test(x)), mult = cells.filter(x => /\|(tk_|tk1|snack|fuel$|stay)/.test(x)).length; ok(`work ${day}: at most three multiplications`, mult <= 3, cells); workCount[day] = cells.length;
+      if(R === 0) ok('launch day: tickets at three fares, then the fare, then its profit', typed.filter(x => /\|tk_/.test(x)).length === 3 && typed.includes('pick3') && typed.filter(x => /\|profit/.test(x)).length === 1, typed);
+      if(R === 1) ok('day 2: cabin sales for two options, the choice, then one profit', typed.filter(x => /\|snack/.test(x)).length === 2 && typed.includes('pick2') && typed.filter(x => /\|profit/.test(x)).length === 1, typed);
+      if(R === 2) ok('day 3: the worked example comes before the fuel sum', typed[0] === 'tutorial' && typed.some(x => /\|fuel$/.test(x)), typed);
+      if(R === 4) ok('day 5: the Red Kite tenths sum', typed.some(x => /tenths.*rival/.test(x)), typed);
+      if(R === 5) ok('day 6: the weekend tenths sum', typed.some(x => /tenths.*weekend/.test(x)), typed);
+      ok(`work ${day}: back to HQ enabled`, !!(await p.$('#nx')) && await p.$eval('#nx', e => !e.disabled)); if(R <= 6) await shot(`d${day}-summary`); await p.click('#nx'); continue; }
     if(t === 'costPlan'){   // weeks
       await fits('cost ' + R); const typed = await solve(`cost ${day}`);
       checks.push(`info ${s.period.type} ${day} typed ${JSON.stringify(typed)}`);
       if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(150);
       ok(`cost ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'testIdeas'){
+      ok(`test ${day}: the Test screen is a weekly screen only`, s.period.type !== 'day', s.period.type);
       await fits('test ' + R); ok(`test ${day}: no typed figures`, !(await vis('[data-cell]')));
       const keys = await p.$$eval('[data-pe^="9|fare|"]:not([disabled])', e => e.map(x => x.getAttribute('data-pe'))); const up = keys.find(k => k.endsWith('|1')) || keys[0];
       if(up){ await p.click(`[data-pe="${up}"]`); await p.waitForTimeout(150); }
@@ -104,7 +120,7 @@ const TAG = `${HOME}-${MK}-${W}`;
       const better = m.d && m.d.trim().startsWith('+');
       if(POL === 'typical' && better && await vis('[data-ftest]:not([disabled])')) await p.click('[data-ftest]'); else await p.click('[data-fmine]');
       const fc = (await S()).rnd.myForecast; checks.push(`info test ${day} flew ${fc && fc.plan} projected ${fc && fc.profit}`); continue; }
-    if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); if(R === 2 && await p.$('#fbIn')){ await p.fill('#fbIn', '1'); await p.click('#fbCheck'); ok('Day 3: a wrong fuel bill shows the pounds-then-pence method', /£1/.test(await p.$eval('.fb-msg', e => e.textContent))); } await fuelBill(); ok(`fuel ${R}: the order bill is typed before Next`, !(await p.$('#fbIn')) && await p.$eval('#nx', e => !e.disabled)); await fits('fuel ' + R); if(R === 2) await shot('d2-fuel'); await p.click('#nx'); continue; }
+    if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); ok(`fuel ${R}: the order bill is the model's`, !(await p.$('#fbIn')) && await p.$eval('#nx', e => !e.disabled)); await fits('fuel ' + R); if(R === 2) await shot('d2-fuel'); await p.click('#nx'); continue; }
     if(t === 'paint'){ await fits('paint ' + R); await shot('paint-' + R); const a = await S(); ok(`paint ${R}: the new plane has its own registration`, new Set(a.fleet.map(f => f.registration)).size === a.fleet.length, a.fleet.map(f => f.registration)); await p.click('#roll'); continue; }
     if(t === 'reveal'){ await p.click('#skipReveal'); for(let i = 0; i < 50 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); await shot('reveal-' + R); await p.click('#nx'); continue; }
     if(t === 'takeoff'){ await fits('takeoff'); await shot('d0-takeoff'); await p.click('#toGo'); for(let i = 0; i < 200 && await p.$eval('#nx', e => e.hidden); i++) await p.waitForTimeout(100); ok('take-off: continue appears', !(await p.$eval('#nx', e => e.hidden))); await shot('d0-takeoff-done'); await p.click('#nx'); continue; }
@@ -136,6 +152,7 @@ const TAG = `${HOME}-${MK}-${W}`;
     checks.push('stopped at ' + t + ' round ' + R); await shot('stop'); break;
   }
   if(UPTO > 19) console.log(`CALIB ${POL} ${HOME} ${MK} ${JSON.stringify(calib)}`);
+  { const wk = [0, 1, 2, 3, 4, 5, 6].map(d => workCount[d] || 0), total = wk.reduce((a, b) => a + b, 0); checks.push('info week 1 sums by day ' + JSON.stringify(wk) + ' total ' + total); if(UPTO >= 8) ok('week 1: about 13 hand sums with practice off', total >= 9 && total <= 15, total); }
   // the archive
   await p.click('[data-nav="finance"]', { force:true }).catch(() => {}); await p.click('[data-tab="fin2|plans"]').catch(() => {}); await p.waitForTimeout(200);
   const arch = await p.evaluate(() => [...document.querySelectorAll('.arch tbody tr')].length); if((await S()).round >= 2) ok('Finance → Plans lists the days', arch >= 3, arch); await shot('archive');

@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 45 | 45 live, 7 placeholder |
+| Settings | 48 | 48 live, 8 placeholder |
 | Archetypes | 4 | 2 later, 4 live |
 | Routes | 18 | 2 later, 18 live |
 | RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
@@ -47,6 +47,7 @@
 Rows dated on or before 28 Dec 2030 (chapter 1's review) that the game would read but are not `live`, and values the chapter-1 flow needs that the workbook lacks. The game reports these; it never invents a value.
 
 - **Routes:** ist opens on day 50 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
+- **Settings:** `secondCrewCost` is `placeholder`: not loaded.
 - **Settings:** `timeSkip` is `placeholder`: not loaded (the game builds teacher skips of 0 / 1 / 4 / 8 weeks from the brief and reports it here).
 - **Settings:** `reputationFromDate` is `placeholder`: not loaded (a date gate only in chapter 1).
 
@@ -111,7 +112,8 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | Boeing 737 price | £600,000 | £400,000 |
 | Boeing 737 running costs | £— an hour, £7150 a day | £1300 an hour, £3500 a day |
 | Boeing 737 fuel | 62 L per 100 km | 90 L per 100 km |
-| Second crew | £300 | £250 when duty is over 12 h, from 2031-01-06 |
+| Second crew | £300 | £None when duty is over 12 h, from 2031-01-06 (D51) |
+| Rival switch rule (D50) | 1 in 5 switch when undercut | 0.1 per £10 dearer, cap 0.6, advertising × 0.5 |
 | Starting cash | £5,000 | £5,000 |
 | Start date | Sun 12 May 2030 | Mon 02 Sep 2030 |
 

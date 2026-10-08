@@ -12,7 +12,7 @@
 function fmtVal(unit, v){
   if(v === null || v === undefined) return '—';
   if(unit === '£') return money(v); if(unit === 'L') return num(v) + ' L'; if(unit === 'ppl') return priceL(v); if(unit === 'dur') return fmtDur(v);
-  if(unit === 'yesno') return v ? 'Yes' : 'No'; if(unit === 'km') return num(v) + ' km'; if(unit === 'kmh') return num(v) + ' km/h'; if(unit === 'h') return num(v) + ' h'; if(unit === 'days') return (Math.round(v * 10) / 10) + ' days';
+  if(unit === 'dec') return String(Math.round(v * 100) / 100); if(unit === 'yesno') return v ? 'Yes' : 'No'; if(unit === 'km') return num(v) + ' km'; if(unit === 'kmh') return num(v) + ' km/h'; if(unit === 'h') return num(v) + ' h'; if(unit === 'days') return (Math.round(v * 10) / 10) + ' days';
   return num(v);
 }
 
@@ -212,15 +212,17 @@ function toolLevel(id){
 function decideHandSums(L, pl){
   pl = normPlan(pl); const out = {}, sk = skills(), ST = WORLD.settings || {}, first = id => !sk[id], seen = sk.revenue || { routes:[] };
   const ask = L.routes.map(x => x.id).filter(id => !seen.routes.includes(id));
-  if(ask.length) out.revenue = { level: first('revenue') ? 'calc' : 'build', routes:ask };
+  const opening = S.phase === 'setup' || (S.day || 1) < (WORLD.weekFrom || 22);   // Build waits for week play (design note, 8 Oct)
+  if(ask.length) out.revenue = { level: first('revenue') || opening ? 'calc' : 'build', routes:ask };
   if(snacksOn() && (pl.onboard || 'none') !== 'none' && first('snacks')) out.snacks = 'calc';
   if(fuelPaid()){ const fs = sk.fuelCost, price = fuelPrice(), litres = plannedLitres(pl), step = ST.fuelHandSumPriceStep || 0.5, share = ST.fuelHandSumLitresShare || 0.25;
     if(!fs) out.fuelCost = 'calc';
     else if(Math.abs(price - fs.last.price) >= step - 1e-9 || (fs.last.litres > 0 && Math.abs(litres - fs.last.litres) / fs.last.litres >= share - 1e-9)) out.fuelCost = 'calc'; }
   if(first('profit')) out.profit = 'calc'; else if(out.snacks) out.profit = 'calc';   // week-1 review: the snack options are costed by hand, Build waits for the new route
   const g = gatedToday();
-  // week 1 is for practising: a day with nothing new to work out still asks for the main route's tickets (week-1 review: "it is a maths game")
-  if(S.phase === 'round' && S.day < (WORLD.weekFrom || 22) && !Object.keys(out).length && L.routes.some(x => x.id === S.market)) out.revenue = { level:'calc', routes:[S.market] };
+  // D50: the first full day of a rival undercut, the passengers who stay (people × tenths); the first Saturday, the weekend tenths (one question each)
+  if(opening && S.phase === 'round' && !(S.rnd.event && S.rnd.event.rivalFare) && first('rivalStay') && typeof rivalShare === 'function'){ const rid = [S.market, otherRoute()].find(id => id && routeById(id) && rivalShare(routeById(id), fareOf(id)) > 0); if(rid) out.rivalStay = { level:'calc', route:rid }; }
+  if(opening && S.phase === 'round' && first('weekendDemand') && calDate(S.day).getUTCDay() === 6) out.weekendDemand = { level:'calc', route:S.market };
   if(g.includes('emptySeats') && first('emptySeats')) out.emptySeats = 'calc';
   const ft = sk.flightTime || { routes:[] }, newRoutes = L.routes.map(x => x.id).filter(id => !ft.routes.includes(id) && (routeById(id).openDay || 1) > 1);
   if(g.includes('flightTime') || (S.day >= (WORLD.weekFrom || 22) && newRoutes.length)){ const rid = flightTimeRoute(pl, newRoutes); if(rid && !ft.routes.includes(rid)) out.flightTime = { level:'calc', route:rid }; }
@@ -239,7 +241,7 @@ function recordHandSums(L){
   const H = S.rnd.handSums || {}, sk = skills(), day = S.day, byHand = Object.keys(H).filter(k => H[k] && H[k] !== 'model');
   const touch = (id, extra) => { const x = sk[id] || (sk[id] = { first:day, count:0, routes:[], planes:[] }); x.count++; x.lastDay = day; Object.assign(x, extra || {}); return x; };
   if(H.revenue){ const x = touch('revenue'); H.revenue.routes.forEach(id => { if(!x.routes.includes(id)) x.routes.push(id); }); }
-  if(H.snacks) touch('snacks'); if(H.profit) touch('profit'); if(H.emptySeats) touch('emptySeats');
+  if(H.snacks) touch('snacks'); if(H.profit) touch('profit'); if(H.emptySeats) touch('emptySeats'); if(H.rivalStay) touch('rivalStay'); if(H.weekendDemand) touch('weekendDemand');
   if(H.flightTime){ const x = touch('flightTime'); if(!x.routes.includes(H.flightTime.route)) x.routes.push(H.flightTime.route); }
   if(H.fuelCost) touch('fuelCost', { last:{ price:fuelPrice(), litres:plannedLitres(currentPlan()) } });
   if(byHand.length) (S.handSumLog = S.handSumLog || []).push({ day, date:dateShort(day), tools:byHand.map(k => `${TOOL[k] ? TOOL[k].name : k}${k === 'revenue' ? ' (' + H.revenue.routes.map(id => routeById(id).city).join(', ') + ')' : k === 'flightTime' ? ' (' + routeById(H.flightTime.route).city + ')' : ''} (${LVL[typeof H[k] === 'string' ? H[k] : H[k].level] || ''})`) });
@@ -298,7 +300,7 @@ function startProtoDay(n){
   S.period = newPeriod('day', S.day);
   if(depsOn() && !Array.isArray(S.deps)) S.deps = TIME.day(ourPlane(), schedOf(f), undefined, null).trips.map(t => t.dep);
   const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
-  S.steps = withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'workout' }, { t:'testIdeas' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
+  S.steps = withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
   S.rnd.cashStart = S.cash; UI.view = null;
   S.si = 0; S.newRoutes = []; if(typeof revealReputation === 'function') revealReputation();
   refreshPlan();

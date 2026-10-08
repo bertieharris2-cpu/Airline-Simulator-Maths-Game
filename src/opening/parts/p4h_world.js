@@ -37,7 +37,7 @@ function flightParts(sched){
 /* ---------- crew: a second crew when the duty day is over the limit ---------- */
 function dutyMin(plane, sched){ const D = TIME.day(plane, sched); if(!D.trips.length) return 0; const pad = WORLD.crewPadMin || 0; return (D.end + pad) - (D.trips[0].dep - pad); }
 /* Crew duty is a chapter-2 mechanic (week-1 review: "not a mechanic we need until you decide what sort of airline you're going to be"): off before Settings crewFromDate. */
-function crewOn(){ const d = (WORLD.settings || {}).crewFromDate; if(!d) return true; try{ return (S ? S.day : 1) >= dayOfDate(d); }catch(e){ return true; } }
+function crewOn(){ const ST = WORLD.settings || {}, d = ST.crewMechanicFromDate || ST.crewFromDate; if(!d) return true; try{ return (S ? S.day : 1) >= dayOfDate(d); }catch(e){ return true; } }
 function crewNeeded(sched){ if(!crewOn()) return 1; const f = S.fleet[0]; if(!f) return 1; const s = sched || schedOf(f); if(!s.length) return 1; return dutyMin(planeById(f.planeId), s) > (WORLD.crewDutyMin || 720) ? 2 : 1; }
 function dayExtras(fl){
   const flown = fl.filter(f => !f.grounded && !f.noFuel), ob = onboardOf(), by = {};
@@ -73,7 +73,18 @@ function demandAt(route, price, n){
   return Math.max(0, roundSchool((tableAt(route, price) * growthOf(route, n0) * seasonMult(route, n0) + mod) * homeScale()));
 }
 /* People who will actually fly with us at this fare: if the rival is cheaper, the route's competition share goes to them. */
-function paxFor(route, fare){ let pax = roundSchool(demandAt(route, fare) * repFactor()); const c = competitorPrice(route); if(c !== undefined && c < fare) pax = roundSchool(pax * (1 - (route.competition !== undefined ? route.competition : 0.2))); return pax; }
+/* D50: for every £10 the pupil's fare is above the rival's, 1 in 10 of his passengers switch (cap 6 in 10); advertising halves it for the event's duration. An older workbook without the rule keeps the route's flat share. */
+function rivalShare(route, fare){
+  const c = competitorPrice(route); if(c === undefined || c >= fare) return 0; const ST = WORLD.settings || {};
+  if(ST.rivalSwitchPerTenPounds === undefined) return route.competition !== undefined ? route.competition : 0.2;
+  let s = Math.min(ST.rivalSwitchCap === undefined ? 0.6 : ST.rivalSwitchCap, ST.rivalSwitchPerTenPounds * (fare - c) / 10);
+  const ad = S && S.rivalAd; if(ad && (ad.routes || []).includes(route.id) && (S.day || 1) <= ad.untilDay) s *= ST.rivalAdvertiseFactor === undefined ? 0.5 : ST.rivalAdvertiseFactor;
+  return Math.round(s * 100) / 100;
+}
+function rivalTenths(route, fare){ return Math.round(10 * (1 - rivalShare(route, fare))); }   // "6 in 10 stay"
+function stayShare(route, fare){ return Math.round((1 - rivalShare(route, fare)) * 100) / 100; }
+function inTenths(share){ const h = Math.round(share * 100); return h % 10 === 0 ? `${h / 10} in 10` : `${h} in 100`; }
+function paxFor(route, fare){ let pax = roundSchool(demandAt(route, fare) * repFactor()); const s = rivalShare(route, fare); if(s) pax = roundSchool(pax * (1 - s)); return pax; }
 function demandRule(r){
   if(!r.wb) return [`At ${money(r.basePrice)}, ${demandAt(r, r.basePrice)} people want to fly.`, `Each ${money(r.step)} more, ${r.drop} fewer people want to fly.`, `Each ${money(r.step)} less, ${r.drop} more.`];
   return [`At ${money(r.basePrice)}, ${demandAt(r, r.basePrice)} people want to fly.`, 'The higher the fare, the fewer people want to fly.'];

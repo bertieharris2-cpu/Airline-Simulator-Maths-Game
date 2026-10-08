@@ -1,59 +1,57 @@
-# Week-1 review (8 October 2026): report back
+# Week-1 review: report back (second round, 8 October 2026)
 
-*Claude Code, 8 October 2026. Your dictated notes on the week-1 screens, note by note, with what changed. For the game's state see `docs/State-of-the-Game.md`. Screenshots are in `docs/screenshots/week1-review/`.*
+*Claude Code, 8 October 2026, evening. The first round (the morning) answered your dictated notes screen by screen; this round carries Fable's design note (*The balance of maths, and a workings page*) and Workbook v4.3 with its addendum, after you felt the amount of maths was still wrong. For the game's state see `docs/State-of-the-Game.md`; screenshots are in `docs/screenshots/week1-review/`.*
 
-## Decisions you took (8 Oct)
-- The one-page **Work it out** is used on launch day and every day of week 1 (and, since it is the same mechanism, every *day* period in chapter 1); weeks keep the planner and the cost sheet. The model's comparison you liked (*Try other ideas*) is the next screen.
-- **Crew duty is removed from chapter 1.** It is gated on a new Settings key `crewFromDate` (draft value 2031-01-06, the start of chapter 2, when the airline type is chosen).
-- The "which sum?" problem was the briefings' *Your turn* page: it is now three practice calculations. "Which sum?" stays on the later briefings (the fleet, the seasons, the week, the year).
-- Practice is three questions each, all answered, calm retry.
+## Decisions you took (8 Oct, second round)
+- **Fable's daily budget**, but the launch-day **ready-again practice stays** (three typed times on the one-service screen: "I liked that practice").
+- **Practice elsewhere is a teacher setting**, default 0 (`practiceQuestionsPerDay`: none, one or three a day), with the pupil's own numbers, after the day's sums, marked optional.
+- **Fable's layout:** a planning page (HQ) and a separate full-screen workings page.
+- **Workbook v4.3 as the base**, with my CR5 draft rows re-added (Fable's copy did not carry them).
 
-## Your notes, one by one
+## What is built
 
-| Screen | Your note | What changed |
+**The planning page** (`mode: planning`): the services (×1–×4 on launch day, a locked slot saying when it would end and that the airport closes at 22:00; the planner from day 2), the fare chips with the people at each fare, the expected passengers, and **Try an idea**: the modelling tool you liked, folded into a button on the plan so the page fits; open, it shows a test plan beside yours with the model's comparison and *Make the test plan my plan*. No scheduling tick-list, no operating-day timeline. The footer is **Cost your plan**.
+
+**The workings page**: full screen on squared paper. One sum at a time in the formal written method: the figures in columns (a price per litre as pence, a share as tenths or hundredths), a carry row, working rows the pupil may fill in, the answer typed; *Check* with the calm retry, *Show me* after three goes, which writes the method on the working rows (short × then × 10 for £10 fares; pounds then pence for fuel; tenths for the rival and the weekend). A number pad for the whiteboard. The launch day's fare and the snack day's option are chosen there once their sums are done, then that option's profit. Day 3 opens with the worked example stepped through on the paper (1,000 × £1.30 as £1 then 30p then add; 130p × 1,000 = 130,000p). Then a summary of the day's workings and **Back to HQ**. A day with nothing to work out skips the page.
+
+**The budget** (in `decideHandSums`): Build is withdrawn before day 22; profit is typed only for the chosen option; the fuel bill on the ordering screen is the model's again; a day with nothing new asks for nothing.
+
+| Day | By hand (Calculate) | Model does |
 | --- | --- | --- |
-| 01 Name | Box central | Centred, with a *Do this* line ("Type a name for your airline, then press Next"). |
-| 02 Flight code | Central | Centred. |
-| 15 Chapter banner | Central, line by line, bullets, no maths | Centred; each line fades in after the last (instant under reduced motion); *Arriving this chapter* is a bullet list; the maths line is no longer shown (it stays in the workbook for you). |
-| 16 (and throughout) | Not always clear what to press | Every screen has a one-line **Do this** under its question: the HQ steps from a `STEP_TODO` table, the identity screens, the briefings (per page), the event, the fuel screen, Work it out. |
-| 18 Market | Say both can be chosen later | Added: "You open one market today. The other one opens later in the week, and you will fly both." |
-| 19 Demand | Is flying 12 people efficient? | Added: "Part of the game is deciding: is it worth flying a service for 12 people, or does it cost more than it earns?" |
-| 22 Turnaround | Turnarounds differ; a couple of factors | Added: bigger airports have further to tow bags and more passengers to board; some have fewer staff or stricter checks; small aircraft turn round faster than jets; Dublin 45 min, Heathrow T5 35 min. |
-| 23 Ready again | Centralise; two more questions | The middle-button question is gone. Three typed questions, centred: today's service; "what if the first flight left at 08:00" (lands at …, add the turnaround); the next service on a busy evening with a longer turnaround. New numbers each time; a hint on a wrong answer; *Show me* after three goes. |
-| 24–37 Timetable → Fare → Cost → Test | Repetitive; scheduling ticks wasted; ×4 not open for Dublin; one page; squared paper; three multiplications; £100 is too easy; the model on the next screen | **Work it out** replaces timetable, fare and cost. Left: the ×1–×4 buttons (a button that won't fit now says *4 services end at 01:45 next day, the airport closes at 22:00*) and the expected passengers. Right: a sheet with a column for each of three fares around the normal fare (Dublin £70 / £80 / £90, Paris £80 / £90 / £100: at most one round hundred), the tickets at each fare typed, then the fare is chosen, then the profit of that fare typed. The sum opens under the sheet with squared paper (a cream grid, pen and eraser) on a button. The scheduling questions are gone (the turnaround skill is practised on screen 23). *Try other ideas* follows as before. |
-| 38 Take-off | OK | Unchanged. |
-| 39 Take-off | The plane goes backwards | The runway animation now runs right to left with the nose lifting, on the laptop and the wall. |
-| 41 Snacks briefing | Centralise, line up the sums, don't squish | All briefings are centred; worked examples are laid out as a column with the `=` signs aligned; the four snack cards are two per row. |
-| 42 | Central | Centred. |
-| 44–45 Plan and Cost | Merge; more room for the snacks; no operating day; expected passengers can stay; the +/− confusion; two or three options | One page: the planner (snack cards, fares, expected passengers; no operating-day timeline) on the left, the £3 and £5 options as two columns on the right (cabin sales and profit typed for each), *+ Compare free snacks too* adds a third column, then *Sell at £3 / Sell at £5 / Give free snacks*. The Services and Fare controls share one −/+ control. |
-| 52–55 Fuel briefing | A clearer worked example; guide through the decimal; then do it themselves | The maths page works 1,000 × £1.30 as £1 then 30p then add, in a column; *Your turn* is three typed questions (litres × a decimal price, never today's own price), and a wrong answer gets the pounds-then-pence method. |
-| 63 Buy fuel | Confusing; centralise; suggest investing; market data later | The screen is centred; the order bill is typed on the screen (hint, then *Show me*); a *Think like a CEO* panel says fuel bought today stays in the tank, buying when the price is low is an investment, and that market data for predicting prices comes later. |
-| 84–87 Crew | Not a mechanic we need yet | Removed from chapter 1 (see decisions). The day-4 briefing no longer mentions the crew; day 5 keeps the storm and asks for the tickets by hand. |
-| Build scaffold | Comes in too early; not clear what to do | The *Your turn* page no longer asks "which sum?" in week 1 (practice instead). Profit stays typed on the snacks day; Build first appears with the new route on day 8 (Amsterdam), where the sum is familiar. |
-| 75–76 Red Kite | Couldn't compare | The event screen shows *What the model says about Dublin today*: hold at £80 vs match at £50 → want to fly with you, seats you fly, tickets sold, ticket revenue (as people × fare), and which brings in more; the advertising cost is written as a sentence. |
-| 97–100 Weekend | Centralise; overwhelming; the CEO line; the example repeated the question; three questions | Centred; opens "As the CEO you will be given statistics like these. Use them to make the best decision you can."; two cards instead of four; the example is 40 × 0.7 worked in tenths; *Your turn* is three typed questions on 7 in 10, 6 in 10 and 2 in 10 more with numbers that are never 40. |
+| Launch | tickets at £80, £90, £100 (Paris) or £70, £80, £90 (Dublin); the chosen fare's profit | costs, totals; ready-again times shown (the three practice questions stay) |
+| 2 | cabin sales at £3 and at £5; the chosen option's profit (free snacks as a third on request) | tickets |
+| 3 | the fuel cost after the worked example | the order bill, tickets, profit |
+| 4 | the new route's tickets (Calculate); fuel again only if the litres jumped by a quarter (HandSumRules 2) | the rest |
+| 5 | passengers who stay with you: people × the tenths who stay (the Red Kite rule) | the rest of the card |
+| 6 | the weekend tenths: the route's weekday business travellers × 7⁄10 | the rest |
+| 7 | nothing | all |
+
+The test walk counts **12 hand sums in week 1** with practice off (4, 3, 1, 2, 1, 1, 0), at most three multiplications on any day, and no sum typed anywhere but the workings page.
+
+**Red Kite (D50)**: `rivalSwitchPerTenPounds`, `rivalSwitchCap`, `rivalAdvertiseFactor` and the Events columns are read; for every £10 the pupil's fare is above the rival's, 1 in 10 of his passengers switch (cap 6 in 10), halved while his advertising runs (`durationDays`). The card shows, for Match / Hold / Advertise, the fare, who wants to fly, who stays ("7 in 10"), the tickets and the day's projected profit, and *Fly Paris instead* as a note row. The world engine implements the same rule; `engine.test.js` checks the addendum's figures (hold £90 → 37 stay, advertise → 50, match → 96, cut to £80 → 50). The old flat 20 % cut is gone (an older workbook without the rule falls back to the route's `competitionSensitivity`).
+
+**Crew (D51)**: read from `crewMechanicFromDate` (2031-01-06); no briefing, no £250, no crews line before it; the chapter list drops the crew line too.
+
+**Practice**: the teacher panel's *Maths tools* section has the setting. When on, the questions follow the summary on the workings page with the pupil's own numbers: his route at its neighbouring fares, his litres at the other prices seen, his buyers at the other snack price, his weekday passengers in tenths. Skip is allowed. Each round is logged in *By hand so far* as practice.
 
 ## What I assumed, and what to check
-1. **Three fares on launch day** are the normal fare and its neighbours (the workbook's `fareOptions`); for Paris that is £80 / £90 / £100, so one easy hundred remains. Say if you would rather have £70 / £80 / £90 everywhere.
-2. **Profit on launch day** is typed for the chosen fare only (the other two are filled by the model once the fare is chosen), so launch day asks four sums: three multiplications and one subtraction.
-3. **Every day of week 1 asks for at least one multiplication:** when the hand-sum rules have nothing new (days 5–7) the main route's tickets are typed. The rules sheet (HandSumRules) says "the first time by hand, then the model"; this is a deliberate week-1 exception and is noted for Fable.
-4. **Crew duty** is off before `crewFromDate` (v4.3 draft, Settings). The Calendar's day-5 mechanic "crew duty" is ignored before that date, so Fable can move or delete the row at leisure. The world engine (`src/opening/engine/world-engine.js`) follows the same date.
-5. **Practice numbers** are random within small sets (fuel 500–2,500 L at £1.20–£1.50; weekend 20–90 by tens; cabin sales 7–19 buyers at £3–£5; tickets 11–19 at £65–£95), never the briefing's own example. Each round is logged in *By hand so far* as "3 of 3 right first time" (and how many were shown).
-6. **Squared paper** is 24 px squares on cream; the pupil's strokes are not saved between screens (as before with the dark pad).
-7. **Weeks and months** are untouched: the planner, the cost sheet and the dock still run from day 22.
-8. **Older saves** mid-day are migrated to the new step list when they load.
+1. **The Red Kite sum is on day 5**, the storm day (the first full day of the undercut; Fable's table lists "5 Red Kite" and leaves the storm out). The storm event stays on that day.
+2. **The weekend sum** is the route's weekday *business* travellers × 7⁄10 (the share from the archetype), so it is a clean tenths sum; the model's weekend demand blends business and leisure.
+3. **Advertising halves the share**, which can give a share that is not whole tenths (e.g. 0.85): the workings page then shows "85 in 100" and divides by 100.
+4. **Fuel on day 4** may be asked again if adding the second route moves the litres by a quarter (the workbook's rule 2 has both the price and the litres thresholds); the note mentions the price only. Two sums on day 4 is within the budget.
+5. **The modelling tool is folded** into a button on the plan panel (open, it replaces the expected-passengers panel) so the HQ page fits a 1366 × 768 laptop.
+6. **Workbook**: Fable's v4.3 is now the repo's workbook, with the Livery sheet, the five Aircraft columns, `blockedFlightCodes`, `soundDefault`, `revealSeconds` and `practiceQuestionsPerDay` re-added by the draft tool; `crewFromDate` is dropped. The README sheet lists them for Fable.
+7. **Weeks and months** keep the planner, the cost sheet and the Test screen.
+8. **The written method's partial rows** are the pupil's own (not checked); Show me fills them in.
 
-## Notes for Fable (workbook v4.3 draft)
-- Settings `crewFromDate` (draft 2031-01-06): crew duty, its briefing and its £250 wait for this date. Calendar day 5's mechanic `crew duty` is ignored before it.
-- HandSumRules: in week 1 a day with nothing new still asks for the main route's tickets (the teacher's request for daily practice); profit on the snacks day is Calculate, not Build.
-- The chapter banner no longer shows `mathsFront`; `mechanicsArriving` is shown as a list, split on `;` (chapter 1's list is long: "load factor % (day 22)" and "scaled event costs (day 22)" read as designer notes).
+## Notes for Fable
+- Re-added rows (above). `practiceQuestionsPerDay` is new in Settings (default 0).
+- "Match their price" no longer has `setPrice dub=match` in `otherEffects` (v4.3 writes the rule as prose): the game derives it from `rivalFare` and the option's label. A `setPrice` effect still works if you add one back.
+- The Red Kite tenths sum uses the pupil's own fare on the affected route; if he is not flying it that day the sum still asks "if you flew Dublin at your fare".
 
 ## Checks
 | Check | Result |
 | --- | --- |
-| Full chapter 1 at 1366 × 768 | 360 checks, no failures, no errors; the overflow list (the showroom on days 14/21/22 and the weeks from day 23) is the same as the committed build before this change. To day 9 at 1915 × 891: 149 checks, no overflow |
-| Live operations to week 1, answers, run-through, engine | pass (the engine test now passes the day's date so the crew date applies) |
-| Launch day | Work it out follows the service; three fares; the fare waits for the tickets; the ×4 reason shows for Dublin |
-| Day 2 | two snack options, a third on request |
-| Day 3 | a wrong order bill shows the pounds-then-pence method; Next waits for the bill |
-| Briefings | a wrong practice answer gets a hint; three right answers open the plan |
+| Full chapter 1 at 1366 × 768 | see the test lines in the commit; no errors |
+| To day 9 at 1915 × 891; live operations; answers; run-through; engine (with the Red Kite figures) | pass |
+| Week 1 | 12 Calculate steps with practice off; ≤ 3 multiplications a day; no sum typed outside the workings page; Build absent before day 22 |

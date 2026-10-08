@@ -130,7 +130,8 @@ settings = {r['key']: r['value'] for r in live('Settings', settings_rows)}
 settings_status = {r['key']: (r.get('status') or 'note row') for r in settings_rows if r.get('key')}
 start = date(settings['startDate'])
 if 'blockedFlightCodes' in settings: settings['blockedFlightCodes'] = [w.upper() for w in words(settings['blockedFlightCodes'])]
-if 'crewFromDate' in settings: settings['crewFromDate'] = date(settings['crewFromDate']).isoformat()   # crew duty waits for the airline-type choice (week-1 review)
+for k in ('crewMechanicFromDate', 'crewFromDate'):   # crew duty waits for the airline-type choice (D51)
+    if settings.get(k): settings[k] = date(settings[k]).isoformat()
 CH1_END = dt.date(2030, 12, 28)   # chapter 1's review date; rows dated on or before it must be live (see "Chapter 1 touches")
 
 arche = live('Archetypes', sheet(wb, 'Archetypes'))
@@ -205,7 +206,9 @@ for e in ev_rows:
     x = by_id.get(e['eventId'])
     if not x:
         x = by_id[e['eventId']] = {'id': e['eventId'], 'date': e['date'], 'title': e['title'], 'text': e['text'],
-                                   'options': [], 'effects': None, 'costShare': e.get('costShare'), 'status': e['status']}
+                                   'options': [], 'effects': None, 'costShare': e.get('costShare'), 'status': e['status'],
+                                   # D50: a rival's fare (or a cut as a share of the pupil's), how long it lasts, the advertising cost, the routes it touches
+                                   'rivalFare': e.get('rivalFare'), 'rivalFareCut': e.get('rivalFareCut'), 'durationDays': e.get('durationDays'), 'advertiseCost': e.get('advertiseCost'), 'affectsRoutes': words(e.get('affectsRoutes') or '')}
         events.append(x)
     if e['option'] is not None:
         x['options'].append({'n': e['option'], 'label': e['label'], 'sub': e['subLabel'], 'cash': e['cash'],
@@ -433,7 +436,8 @@ for a in aircraft:
     if g.get('hourCost') or g.get('dayCost'):
         rows.append(f'| {a["name"]} running costs | £{g.get("hourCost", "—")} an hour, £{g.get("dayCost", "—")} a day | £{a["hourlyCost"]} an hour, £{a["dayCost"]} a day |')
     rows.append(f'| {a["name"]} fuel | {g["fuelUse"]} L per 100 km | {a["fuelPer100Km"]} L per 100 km |')
-rows.append(f'| Second crew | £{GW.get("crewCost", "—")} | £{settings.get("secondCrewCost")} when duty is over {settings.get("maxDutyHours")} h, from {settings.get("crewFromDate", "the start")} |')
+rows.append(f'| Second crew | £{GW.get("crewCost", "—")} | £{settings.get("secondCrewCost")} when duty is over {settings.get("maxDutyHours")} h, from {settings.get("crewMechanicFromDate", settings.get("crewFromDate", "the start"))} (D51) |')
+rows.append(f'| Rival switch rule (D50) | 1 in 5 switch when undercut | {settings.get("rivalSwitchPerTenPounds")} per £10 dearer, cap {settings.get("rivalSwitchCap")}, advertising × {settings.get("rivalAdvertiseFactor")} |')
 rows.append(f'| Starting cash | £{GW.get("startingCash", "—"):,} | £{settings.get("startingCash"):,} |')
 rows.append(f'| Start date | {GW.get("startDate", "Sun 12 May 2030")} | {start:%a %d %b %Y} |')
 
@@ -480,7 +484,7 @@ NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurna
           'weekendBusinessMultSat', 'weekendBusinessMultSun', 'weekendLeisureMult', 'cashReserve', 'negativeProjectionWarning', 'eventCostScaleFromDay',
           'loadFactorPercentFromDay', 'fuelHandSumPriceStep', 'fuelHandSumLitresShare', 'snacksHandSumOnce', 'timeSkip', 'leaseFromDate', 'buyFromDate',
           'financeFromDate', 'reputationFromDate', 'quarterlyTaskFromDate', 'huntPerReview', 'captainsChallengeCadence', 'fareStepWeek2', 'reportCadence',
-          'blockedFlightCodes', 'soundDefault', 'revealSeconds', 'crewFromDate']
+          'blockedFlightCodes', 'soundDefault', 'revealSeconds', 'crewMechanicFromDate', 'rivalSwitchPerTenPounds', 'rivalSwitchCap', 'rivalAdvertiseFactor', 'practiceQuestionsPerDay']
 for k in NEEDED:
     st_ = settings_status.get(k)
     if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')

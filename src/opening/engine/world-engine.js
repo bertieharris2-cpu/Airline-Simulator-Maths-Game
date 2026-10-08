@@ -23,7 +23,8 @@
     const bands = E.bands || { early:[6, 9], midmorning:[9, 12], midday:[12, 15], afternoon:[15, 18], evening:[18, 22] };
     const open = S.airportOpen ? [hm(S.airportOpen), hm(S.airportClose)] : (E.airportOpen || [6, 22]).map(h => h * H);
     return { bands, open, crew: +(S.secondCrewCost ?? E.secondCrewCost ?? 250), maxDuty: +(S.maxDutyHours ?? E.maxDutyHours ?? 12) * H,
-             pad: +(E.dutyPaddingMinutes ?? 30), crewFrom: S.crewFromDate || null };   // crew duty is off before Settings crewFromDate (the airline-type choice)
+             pad: +(E.dutyPaddingMinutes ?? 30), crewFrom: S.crewMechanicFromDate || S.crewFromDate || null,   // crew duty is off before this date (D51)
+             rivalPer: S.rivalSwitchPerTenPounds, rivalCap: S.rivalSwitchCap ?? 0.6, rivalAd: S.rivalAdvertiseFactor ?? 0.5 };   // D50
   }
   const byId = (xs, id) => xs.find(x => x.id === id);
   function home(W, code, terminal){
@@ -68,7 +69,10 @@
       if(x.trips.some(t => t.fare !== fare)) T.problems.push(`${route.city}: one fare a day`);
       const base = route.demandAtFare[String(fare)];
       if(base === undefined) T.problems.push(`${route.city}: no demand figure at £${fare}`);
-      const demand = roundSchool((base || 0) * ((o.mult || {})[id] ?? 1));
+      let demand = roundSchool((base || 0) * ((o.mult || {})[id] ?? 1));
+      // D50: a rival's cheaper fare on this route: 1 in 10 switch per £10 dearer (cap), halved by advertising
+      const rv = o.rival && (o.rival.routes || [id]).includes(id) && o.rival.fare < fare ? o.rival : null;
+      if(rv){ let share = R.rivalPer === undefined ? 0.2 : Math.min(R.rivalCap, R.rivalPer * (fare - rv.fare) / 10); if(rv.advertise) share *= R.rivalAd; share = Math.round(share * 100) / 100; demand = roundSchool(demand * (1 - share)); }
       // the time-sensitive total is rounded first, then shared between the bands (Balance Report v3 §1); the rest are flexible
       const ts = roundSchool(demand * arch.timeSensitiveShare), locked = {};
       Object.keys(R.bands).forEach(b => { locked[b] = roundSchool(ts * (arch.bands[b] || 0)); });

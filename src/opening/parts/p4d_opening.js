@@ -1090,8 +1090,7 @@ R.fuelPlan = st => {
   const setOrder = L => { L = clamp(L, 0, maxL); S.rnd.fuelOrder = L ? { litres:L, price, total:r2(L * price) } : null; UI.justDone = null; resetEntry(); render(); };
   const prices = []; for(let i = Math.max(0, S.round - 5); i <= S.round; i++) prices.push([beatLabel(i), fuelPrice(i)]);
   // the order bill is typed on the days (week-1 review: guided through the decimal, then done on screen); a week or month order is the model's
-  const t = null, FB = S.rnd.fuelBill && S.rnd.fuelBill.litres === order && Math.abs(S.rnd.fuelBill.price - price) < 0.001 ? S.rnd.fuelBill : null, billDone = per || !order || !!(FB && FB.ok);
-  const bill = order && !per && !billDone ? fuelBillHtml(order, price, FB) : `<b class="mono gold ${FB && FB.flash ? 'flash' : ''}">${money(r2(order * price))}</b>`;
+  const t = null, billDone = true, bill = `<b class="mono gold">${money(r2(order * price))}</b>`;   // the order bill is the model's (design note: fuel's hand sum is the day's fuel cost)
   screen().innerHTML = taskFrame({ question: sc === 0 ? 'Fuel for your timetable' : per ? `Fuel for ${W.now}` : 'Fuel', work: !!t, calc:t,
     story: sc <= 2 ? ['Buying fuel moves money from your cash into your tank. It only becomes a cost when your flights burn it.'].concat(sc === 0 ? ['The tank keeps each batch you buy. Flights burn the oldest fuel first.'] : []) : [],
     say:`Your tank has ${num(have)} litres. ${W.poss} flights burn ${num(need)} litres. Fuel costs ${priceL(price)} a litre today.`,
@@ -1111,7 +1110,6 @@ R.fuelPlan = st => {
       </div></div>`,
     todo: order && !billDone ? 'Work out the order cost: type it and press Check.' : after < need && !per ? 'Press + ' + num(lot) + ' L until the tank covers today, then press Next.' : 'Choose how much fuel to order, then press Next.',
     foot:`<span class="muted grow">${after < need && !per ? 'Order enough fuel for today\'s flights.' : !billDone ? 'Complete the order cost to confirm the order.' : ''}</span><button class="btn primary big" id="nx" ${(after >= need || per) && billDone ? '' : 'disabled'}>${goLabel(order ? 'Confirm the fuel order' : 'Fuel checked')} &#9654;</button>` });
-  if(order && !per && !billDone) bindFuelBill(order, price);
   on('oDown', () => setOrder(order - lot)); on('oUp', () => setOrder(order + lot));
   screen().querySelectorAll('[data-oq]').forEach(b => b.onclick = () => setOrder(+b.getAttribute('data-oq')));
   on('nx', () => { resetEntry(); UI.justDone = null; advance(); });

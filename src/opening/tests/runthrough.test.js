@@ -61,14 +61,20 @@ const UPTO = +(process.env.UPTO || 9);
     if(t === 'hq'){ head(await p.evaluate(() => { const S = window.__sim.S(); return (S.period.type === 'day' ? `Day ${S.round} · ` : '') + window.__sim.periodLabel(); })); await p.click('#startDay'); continue; }
     if(t === 'milestone'){ head((await txt('.ms-in h1')) + ' (milestone)'); q('Model', 'Read the milestone', (await txt('.ms-in')).split('\n').slice(2, 4).join(' '), '—'); await p.click('#msGo'); continue; }
     if(t === 'review'){ const before = L.length; await solve(); if(L.length === before) q('Model', 'Review last week', 'no figure is asked', '—'); await p.click('#nx'); continue; }
-    if(t === 'workout'){
+    if(t === 'plan'){
       if(R === 1) await p.click('[data-pe="0|ob|low|0"]');
       if(R === 3) for(let k = 0; k < 4; k++) await p.click('[data-pe="0|dep|0|-1"]');   // 09:00 → 07:00
       if(R === 4) await p.click('[data-pe="0|add|dub|0"]').catch(() => {});
       q('Model', 'Plan', (await txt('.pe-sum, .svcs')) + ' · ' + (await p.evaluate(() => window.__sim.S().deps ? 'departures ' + window.__sim.S().deps.map(m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0')).join(', ') : '')), '—');
-      await solve(); if(await p.$('[data-wpick]:not([disabled])') && !(await p.$('[data-wpick].on'))){ const w = await p.$$eval('[data-wpick]', e => e.map(x => x.textContent.trim())); q('**Chosen**', 'Which option?', `options ${w.join(' / ')}`, w[1] || w[0]); await p.click('[data-wpick]:nth-child(2), [data-wpick]'); await p.waitForTimeout(120); await solve(); }
-      if(await p.$('#calcDone')) await p.click('#calcDone'); await p.waitForTimeout(120); const rows = await sheet();
-      q('Model', 'The rest of the sheet', rows.filter(r => !/Complete figure/.test(r)).join(' · '), '—'); await p.click('#nx'); continue; }
+      await p.click('#nx'); continue; }
+    if(t === 'workings'){ for(let g = 0; g < 60 && await T() === 'workings'; g++){
+        if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ q('Model', 'A worked example on the paper', (await txt('.wk-tut-lines')).replace(/\n/g, ' · '), '—'); await p.click('#wkTutGo'); continue; }
+        if(await p.$('#cellAns')){ const val = await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); return c.values[t.active.row]; }); q('**Typed**', (await txt('.wk-head')).replace(/\n/g, ' · '), (await txt('.wk-grid')).replace(/\n/g, ' ').replace(/your working/g, '').trim(), typeof val === 'number' && Math.abs(val) >= 10 ? money(val) : String(val));
+          await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(80); continue; }
+        if(await p.$('#wkNext')){ await p.click('#wkNext'); continue; }
+        if(await p.$('[data-wpick]')){ const w = await p.$$eval('[data-wpick]', e => e.map(x => x.textContent.trim())); q('**Chosen**', 'Which option?', `options ${w.join(' / ')}`, w[1] || w[0]); const ws = await p.$$('[data-wpick]'); await (ws[1] || ws[0]).click(); await p.waitForTimeout(80); continue; }
+        if(await p.$('#nx')){ q('Model', 'Your workings today', (await txt('.wk-list')).replace(/\n/g, ' · '), '—'); await p.click('#nx'); break; } await p.waitForTimeout(80); }
+      continue; }
     if(t === 'testIdeas'){ q('Model', 'Test other ideas (optional; the model costs them)', 'flies the plan as planned', '—'); await p.click('[data-fmine]'); continue; }
     if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); if(await p.$('#fbIn')){ const v = await p.evaluate(() => String(window.__sim.S().rnd.fuelOrder.total)); q('**Typed**', 'Fuel order cost: litres × price per litre', await txt('.ff-bill'), '£' + v); await p.fill('#fbIn', v); await p.click('#fbCheck'); await p.waitForTimeout(120); }
       q('Model', 'Fuel order', (await txt('.ff-parts')) + ' · ' + (await txt('.ff-bill')), '—'); await p.click('#nx'); continue; }

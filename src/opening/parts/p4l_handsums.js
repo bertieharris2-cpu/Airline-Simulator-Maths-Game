@@ -12,7 +12,10 @@
    override (S.tools) always wins. The Calendar's gatedCalc column names the sums the rules cannot infer
    (empty seats on day 19, flight time on day 15).
    ================================================================== */
-const HAND_TOOLS = ['revenue', 'routeRevenue', 'snacks', 'fuelCost', 'profit', 'emptySeats', 'flightTime'];
+const HAND_TOOLS = ['revenue', 'routeRevenue', 'snacks', 'fuelCost', 'profit', 'emptySeats', 'flightTime', 'rivalStay', 'weekendDemand'];
+/* two sums in tenths that the workbook's tool table does not list: defined here, logged like the others */
+[{ id:'rivalStay', name:'Passengers who stay', what:'people × the tenths who stay (a rival undercut)', phase:3.4, def:[[2, 'model']] }, { id:'weekendDemand', name:'Weekend travellers', what:'weekday people × the tenths who fly', phase:3.4, def:[[2, 'model']] }].forEach(T => { if(!TOOL[T.id]){ TOOLS.push(T); TOOL[T.id] = T; } });
+TABLES.tenths1 = { title:'In tenths', rows:[{ id:'people', label:'People', type:'given', unit:'n' }, { id:'share', label:'Tenths', type:'given', unit:'dec' }, { id:'stay', label:'Stay', type:'calc', unit:'n', op:'×', from:['people', 'share'], sentence:'{people} × {share} = {?stay}', tol:0.5, tool:'rivalStay' }] };
 function skills(){ return S.skills || (S.skills = {}); }
 function gatedToday(){ const w = roundData(S.round); return String(w.gatedCalc || '').split(',').map(s => s.trim()).filter(Boolean); }
 /* The litres the timetable needs (a cancelled service still counts: the rule is about the plan, not today's weather). */
@@ -58,7 +61,7 @@ function recordHandSums(L){
   const H = S.rnd.handSums || {}, sk = skills(), f = fleetOne(), planeId = f ? f.planeId : 'dhc6', day = S.day, byHand = Object.keys(H).filter(k => H[k] && H[k] !== 'model');
   const touch = (id, extra) => { const x = sk[id] || (sk[id] = { first:day, count:0, routes:[], planes:[] }); x.count++; x.lastDay = day; Object.assign(x, extra || {}); return x; };
   if(H.revenue || H.routeRevenue){ const x = touch('revenue'); (H.revenue ? [S.market] : []).concat(H.routeRevenue ? [otherRoute()] : []).forEach(id => { if(!x.routes.includes(id)) x.routes.push(id); }); if(!x.planes.includes(planeId)) x.planes.push(planeId); }
-  if(H.snacks) touch('snacks'); if(H.profit) touch('profit'); if(H.emptySeats) touch('emptySeats'); if(H.flightTime) touch('flightTime');
+  ['snacks', 'profit', 'emptySeats', 'flightTime', 'rivalStay', 'weekendDemand'].forEach(k => { if(H[k]) touch(k); });
   if(H.fuelCost) touch('fuelCost', { last:{ price:fuelPrice(), litres:plannedLitres(currentPlan()) } });
   if(byHand.length) (S.handSumLog = S.handSumLog || []).push({ day, date:dateShort(day), tools:byHand.map(k => `${TOOL[k] ? TOOL[k].name : k} (${LVL[H[k]] || H[k]})`) });
 }
@@ -97,6 +100,8 @@ function applyEventNow(choice){
   if((e.refund || e.status === 'CANCELLED') && F){ S.rnd.cancelled = F.key; S.rnd.cancelReason = ev.title; S.rnd.status[F.key] = 'CANCELLED'; }
   if(e.setPrice) Object.keys(e.setPrice).forEach(id => { if(!routeById(id)) return; const v = e.setPrice[id]; S.prices[id] = v === 'match' ? (competitorPrice(routeById(id)) || S.prices[id]) : v; });
   (S.flags = S.flags || {})[ev.id] = choice;
+  // D50: advertising halves the share who switch to the rival for the event's duration
+  if(ev.advertiseCost && e.cash && Math.abs(e.cash) === ev.advertiseCost) S.rivalAd = { event:ev.id, routes:(ev.affectsRoutes && ev.affectsRoutes.length ? ev.affectsRoutes : [S.market]), untilDay:S.day + ((ev.durationDays || 1) - 1) };
   S.rnd.why.push({ ic:'⚠️', text:`${ev.title}: ${opt.label}. ${S.rnd.eventWhy}`.trim() });
   addNews([{ tag:'EVENT', text:`${ev.title}: ${opt.label}.`, cls:'warn' }]);
   refreshPlan();
@@ -104,7 +109,7 @@ function applyEventNow(choice){
 function undoEvent(){
   const ev = S.rnd.event; if(!ev || S.rnd.eventChoice === undefined) return;
   const opt = ev.options[S.rnd.eventChoice], e = opt.effects || {}, F = S.rnd.cancelled ? S.rnd.flights.find(f => f.key === S.rnd.cancelled) : null;
-  bankStars(-(e.rep || 0)); S.rnd.eventCost = 0;
+  bankStars(-(e.rep || 0)); S.rnd.eventCost = 0; if(S.rivalAd && S.rivalAd.event === ev.id) delete S.rivalAd;
   if(S.rnd.cancelled){ delete S.rnd.status[S.rnd.cancelled]; delete S.rnd.cancelled; delete S.rnd.cancelReason; }
   else if(e.status && F) delete S.rnd.status[F.key];
   if(e.setPrice) Object.keys(e.setPrice).forEach(id => { if(routeById(id)) S.prices[id] = S.rnd.pricesBefore && S.rnd.pricesBefore[id] !== undefined ? S.rnd.pricesBefore[id] : routeById(id).basePrice; });
@@ -116,15 +121,18 @@ R.event = st => {
   const F = featuredFlight(), picked = S.rnd.eventChoice !== undefined ? S.rnd.eventChoice : st.pick, decided = S.rnd.eventChoice !== undefined;
   const flightLine = F ? `${fmtTime(F.dep)} to ${routeById(F.route).city}` : '';
   const costOf = o => o.effects && o.effects.cash ? money(-o.effects.cash) : null;
-  // a rival undercut: show what holding and matching would each do today (week-1 review: "it felt like a random guess")
-  const cmp = (() => { const o = ev.options.find(x => x.effects && x.effects.setPrice); if(!o) return ''; const rid = Object.keys(o.effects.setPrice).find(id => routeById(id)); if(!rid) return '';
-    const r = routeById(rid), f = fleetOne(), p = ourPlane(), rival = competitorPrice(r), cur = S.rnd.pricesBefore && S.rnd.pricesBefore[rid] !== undefined ? S.rnd.pricesBefore[rid] : fareOf(rid); if(rival === undefined || rival === cur) return '';
-    const n = f ? schedOf(f).filter(id => id === rid).length : 0, seats = n * p.seats, col = fare => { const want = paxWant(r, fare), sold = Math.min(want, seats); return { fare, want, sold, rev:sold * fare }; }, A = col(cur), B = col(rival);
-    const adv = ev.options.find(x => x.effects && x.effects.cash), row = (l, f) => `<tr><th>${l}</th><td class="mono">${f(A)}</td><td class="mono">${f(B)}</td></tr>`;
-    return `<section class="pnl ev-cmp"><div class="pnl-h"><h3>What the model says about ${esc(r.city)} today</h3><span class="muted">${n ? `${n} service${n > 1 ? 's' : ''}, ${seats} seats` : 'no services planned'}</span></div>
-      <table class="ev-t"><thead><tr><th></th><th>Hold at ${money(cur)}</th><th>Match at ${money(rival)}</th></tr></thead><tbody>
-      ${row('Want to fly with you', x => x.want)}${row('Seats you fly', () => seats)}${row('Tickets sold', x => x.sold)}${row('Ticket revenue', x => `<b>${money(x.rev)}</b> <small>(${x.sold} × ${money(x.fare)})</small>`)}</tbody></table>
-      <p class="muted small">${!n ? `You are not flying ${esc(r.city)} today, so the fare only matters if you add a ${esc(r.city)} service.` : B.rev > A.rev ? `Matching sells more tickets and brings in ${money(B.rev - A.rev)} more.` : B.rev < A.rev ? `Holding your fare still brings in ${money(A.rev - B.rev)} more, even with fewer passengers.` : 'Both bring in the same today.'}${adv ? ` Advertising costs ${money(-adv.effects.cash)} and brings people back over the next days.` : ''}</p></section>`; })();
+  // a rival undercut (D50): for every option, who still flies with him and the day's projected profit, from the engine
+  const cmp = (() => { const rid = (ev.affectsRoutes || []).find(id => routeById(id)) || (() => { const o = ev.options.find(x => x.effects && x.effects.setPrice); return o ? Object.keys(o.effects.setPrice).find(id => routeById(id)) : null; })(); if(!rid) return '';
+    const r = routeById(rid), rival = competitorPrice(r), cur = S.rnd.pricesBefore && S.rnd.pricesBefore[rid] !== undefined ? S.rnd.pricesBefore[rid] : fareOf(rid); if(rival === undefined || rival >= cur) return '';
+    const pl0 = normPlan(currentPlan()), inPlan = pl0.fleet.some(x => x.sched.includes(rid)), other = otherRoute(), otherOpen = other && typeof routeOpen === 'function' && routeOpen(routeById(other));
+    const tryOpt = (fare, ad) => { const pl = normPlan(JSON.parse(JSON.stringify(pl0))); pl.prices[rid] = fare; if(!inPlan) pl.fleet[0].sched = pl.fleet[0].sched.map(() => rid).concat(pl.fleet[0].sched.length ? [] : [rid, rid]);
+      const keep = S.rivalAd; if(ad) S.rivalAd = { event:ev.id, routes:[rid], untilDay:S.day + ((ev.durationDays || 1) - 1) }; try{ const L = planLines(pl); return { want:demandAt(r, fare), tenths:inTenths(stayShare(r, fare)), stay:paxWant(r, fare), tk:L.v['tk_' + rid] || 0, profit:L.v.profit - (ad ? (ev.advertiseCost || 0) : 0) }; } finally { S.rivalAd = keep; } };
+    const rows = ev.options.map(o => { const e = o.effects || {}, fare = e.setPrice && e.setPrice[rid] !== undefined ? (e.setPrice[rid] === 'match' ? rival : e.setPrice[rid]) : cur, ad = !!(ev.advertiseCost && e.cash && Math.abs(e.cash) === ev.advertiseCost); return Object.assign({ label:o.label, fare }, tryOpt(fare, ad)); });
+    let paris = ''; if(otherOpen){ const pl = normPlan(JSON.parse(JSON.stringify(pl0))); pl.fleet[0].sched = (pl.fleet[0].sched.length ? pl.fleet[0].sched : [rid, rid]).map(() => other); const L = planLines(pl); paris = `<tr class="alt"><th>Fly ${esc(routeById(other).city)} instead</th><td colspan="4" class="muted">change the plan on the next screen</td><td class="mono"><b>${money(L.v.profit)}</b></td></tr>`; }
+    return `<section class="pnl ev-cmp"><div class="pnl-h"><h3>What the model says about ${esc(r.city)} today</h3><span class="muted">${WORLD.rival} at ${money(rival)}: for every £10 you charge above them, 1 in 10 of your passengers switch${inPlan ? '' : ` · if you flew ${esc(r.city)}`}</span></div>
+      <table class="ev-t"><thead><tr><th></th><th>Your fare</th><th>Want to fly</th><th>Stay with you</th><th>Tickets</th><th>Profit today</th></tr></thead><tbody>
+      ${rows.map(x => `<tr><th>${esc(x.label)}</th><td class="mono">${money(x.fare)}</td><td class="mono">${x.want}</td><td class="mono"><b>${x.stay}</b> <small>(${x.tenths})</small></td><td class="mono">${money(x.tk)}</td><td class="mono"><b>${money(x.profit)}</b></td></tr>`).join('')}${paris}</tbody></table>
+      <p class="muted small">Tomorrow you will work out one of these by hand: your passengers × the tenths who stay.</p></section>`; })();
   screen().innerHTML = taskFrame({ question:esc(ev.title), work:false, todo:decided ? 'Press Check the numbers.' : 'Look at the choices, press one, then press Decide.',
     story:[ev.text].concat(F && ev.options.some(o => o.effects && (o.effects.status || o.effects.refund)) ? [`The flight in question is the ${flightLine}.`] : []),
     say:`${ev.title}. ${ev.text} ${ev.options.map((o, i) => `Option ${i + 1}: ${o.label}.`).join(' ')}`,
@@ -204,4 +212,4 @@ Object.assign(INTRO, {
     practice:'weekend',
     check:{ q:'On a weekday 40 business travellers fly. On Saturday 7 in 10 of them fly. How many is that?', opts:[['28', ''], ['33', '33 is more than 7 in 10 of 40. One tenth of 40 is 4, so 7 tenths is 7 × 4.'], ['47', '47 is more than 40: fewer business travellers fly on Saturday, not more.']], ok:0, done:'7 in 10 of 40 is 28 business travellers.' },
     think:['Will the same timetable fill the aircraft today?', 'Try a lower fare or fewer services in the Test step and see what the model says.'] } });
-if(!MECH_INTRO.some(x => x[1] === 'crew') && !(WB && WB.settings && WB.settings.crewFromDate)) MECH_INTRO.push(['crew duty', 'crew']);
+if(!MECH_INTRO.some(x => x[1] === 'crew') && !(WB && WB.settings && (WB.settings.crewMechanicFromDate || WB.settings.crewFromDate))) MECH_INTRO.push(['crew duty', 'crew']);

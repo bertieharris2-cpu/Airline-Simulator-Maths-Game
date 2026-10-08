@@ -74,7 +74,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
 
 
 /* ---------- teacher settings (persist across runs) ---------- */
-const defaultSettings = () => ({ nudge:false, auto:true, flightSecs:7, startingCash: WORLD.startingCash, tableMode:'shown', liveTables:'script' });
+const defaultSettings = () => ({ nudge:false, auto:true, flightSecs:7, startingCash: WORLD.startingCash, tableMode:'shown', liveTables:'script', practiceQuestionsPerDay:null });   // practice: null = the workbook's setting
 let settings = defaultSettings();
 try{ const s = JSON.parse(localStorage.getItem(SET_KEY)||'null'); if(s) settings = Object.assign(defaultSettings(), s); }catch(e){}
 function saveSettings(){ try{ localStorage.setItem(SET_KEY, JSON.stringify(settings)); }catch(e){} }
@@ -87,7 +87,7 @@ function newState(){
     airline:{ name:'', code:'', flightCode:'', logo:null, c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
     fleet:[], prices:{}, nextUid:1,
-    steps:[{t:'welcome'},{t:'name'},{t:'code'},{t:'logo'},{t:'paint'},{t:'reveal'},{t:'cert'},{t:'boot'},{t:'chapter'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'workout'},{t:'testIdeas'},{t:'ready'},{t:'takeoff'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
+    steps:[{t:'welcome'},{t:'name'},{t:'code'},{t:'logo'},{t:'paint'},{t:'reveal'},{t:'cert'},{t:'boot'},{t:'chapter'},{t:'starter'},{t:'market'},{t:'demand'},{t:'rotation'},{t:'plan'},{t:'workings'},{t:'ready'},{t:'takeoff'},{t:'fly'},{t:'results'}], si:0, textSize:0, typed:0,
     rnd: emptyRnd(), log:[], history:[], newRoutes:[], dec:{ fuelBuys:[], planeBought:null, held:null, loan:null },
     teacherQueue:{add:[],remove:[]}, nextMods:{ground:[], event:null},
     fuelDiscount:0, overlay:null, finished:false, startedAt:Date.now() };

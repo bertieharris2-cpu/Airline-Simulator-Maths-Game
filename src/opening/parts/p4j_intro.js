@@ -18,7 +18,7 @@ STAGES.week[0].steps = ['intro'].concat(STAGES.week[0].steps);
 function withIntro(steps, w){
   const keys = !w || !w.intro ? [] : Array.isArray(w.intro) ? w.intro : [w.intro];
   keys.forEach(key => { const I = INTRO[key]; if(!I) return;
-    let at = steps.findIndex(s => s.t === (I.before || 'planner')); if(at < 0 && (!I.before || I.before === 'planner')) at = steps.findIndex(s => s.t === 'event' || s.t === 'workout'); if(at < 0) return;
+    let at = steps.findIndex(s => s.t === (I.before || 'planner')); if(at < 0 && (!I.before || I.before === 'planner')) at = steps.findIndex(s => s.t === 'event' || s.t === 'plan' || s.t === 'workout'); if(at < 0) return;
     steps = steps.slice(0, at).concat([{ t:'intro', key, page:0 }], steps.slice(at)); });
   return steps;
 }
@@ -153,22 +153,20 @@ R.intro = st => {
   let body = '';
   if(page === 0) body = I.what().map(block).join('');
   else if(page === 1) body = I.maths().map(block).join('');
-  else if(I.practice) body = practiceHtml(st, I.practice) + (right ? `<div class="ni-think"><span class="kl">Think about it as you plan</span>${I.think.map(l => `<p>${esc(niVal(l))}</p>`).join('')}</div>` : '');
   else body = `<p class="ni-q">${esc(niVal(C.q))}</p><div class="ni-opts">${opts.map(([t], k) => `<button class="ni-opt ${picked === k ? (k === C.ok ? 'right' : 'wrong') : ''} ${right && k === C.ok ? 'right' : ''}" data-ni="${k}" ${right ? 'disabled' : ''}><span class="mono">${esc(t)}</span></button>`).join('')}</div>
     <div class="ni-fb" aria-live="polite">${right ? `<p class="ni-yes">&#10003; ${esc(niVal(C.done))}</p>` : picked !== undefined && picked !== C.ok ? `<p class="ni-no">${esc(opts[picked][1])} Have another go.</p>` : ''}</div>
     ${right ? `<div class="ni-think"><span class="kl">Think about it as you plan</span>${I.think.map(l => `<p>${esc(niVal(l))}</p>`).join('')}</div>` : ''}`;
   const tabs = `<ol class="ni-tabs">${NI_PAGES.map((l, k) => `<li><button class="${k === page ? 'on' : ''} ${k < page || (k <= st.seen) ? 'seen' : ''}" data-nip="${k}" ${k <= (st.seen || 0) ? '' : 'disabled'}><i>${k < page || (k === 2 && right) ? '&#10003;' : k + 1}</i>${l}</button></li>`).join('')}</ol>`;
-  const sayText = (page === 2 ? (I.practice ? [PRACTICE[I.practice].render(pqState(st, I.practice).qs[Math.min(pqState(st, I.practice).i, PQ_N - 1)]).q] : [niVal(C.q)].concat(opts.map(o => o[0]))) : (page === 0 ? I.what() : I.maths()).filter(Array.isArray).flat()).join(' ').replace(/<[^>]+>/g, '').replace(/×/g, 'times').replace(/−/g, 'minus');
+  const sayText = (page === 2 ? [niVal(C.q)].concat(opts.map(o => o[0])) : (page === 0 ? I.what() : I.maths()).filter(Array.isArray).flat()).join(' ').replace(/<[^>]+>/g, '').replace(/×/g, 'times').replace(/−/g, 'minus');
   const W = PW(), go = I.go || (W.span === 'day' ? "Plan today's flying" : I.before === 'fuelPlan' ? 'Buy fuel' : `Plan the ${W.span}`);
   screen().innerHTML = taskFrame({ question:`<span class="ni-kick">${esc(I.kicker)}</span>${esc(niVal(I.title))}`, work:false, say:sayText,
     context:{ title:'Key words', html:cxSec('New words', `<dl class="ni-words">${I.words.map(([w, m]) => `<dt>${esc(w)}</dt><dd>${esc(niVal(m))}</dd>`).join('')}</dl>`) },
     main:`<div class="ni p${page}">${tabs}<div class="ni-page">${body}</div></div>`,
-    foot:`${page ? '<button class="btn big" id="niBack">&#9664; Back</button>' : ''}<span class="grow"></span>${page < 2 ? `<button class="btn primary big" id="niNext">${NI_PAGES[page + 1]} &#9654;</button>` : `<button class="btn primary big" id="nx" ${right ? '' : 'disabled'}>${right ? goLabel(go) : I.practice ? 'Answer the three questions first' : 'Choose a sum first'} &#9654;</button>`}`,
-    todo: page === 0 ? 'Read what is new, then press The maths.' : page === 1 ? 'Look at the rule and the example, then press Your turn.' : I.practice ? 'Answer the three questions: type each answer and press Check.' : 'Press the sum that works it out.' });
+    foot:`${page ? '<button class="btn big" id="niBack">&#9664; Back</button>' : ''}<span class="grow"></span>${page < 2 ? `<button class="btn primary big" id="niNext">${NI_PAGES[page + 1]} &#9654;</button>` : `<button class="btn primary big" id="nx" ${right ? '' : 'disabled'}>${right ? goLabel(go) : 'Choose a sum first'} &#9654;</button>`}`,
+    todo: page === 0 ? 'Read what is new, then press The maths.' : page === 1 ? 'Look at the rule and the example, then press Your turn.' : 'Press the sum that works it out.' + (typeof practiceN === 'function' && practiceN() ? ' Practice questions follow on the workings page.' : '') });
   const go2 = k => { st.page = k; render(); };
   on('niBack', () => go2(page - 1)); on('niNext', () => go2(page + 1));
   screen().querySelectorAll('[data-nip]').forEach(b => b.onclick = () => go2(+b.getAttribute('data-nip')));
   screen().querySelectorAll('[data-ni]').forEach(b => b.onclick = () => { const k = +b.getAttribute('data-ni'); st.pick = k; if(k === C.ok) st.done = true; render(); });
-  if(page === 2 && I.practice) bindPractice(st, I.practice);
   on('nx', () => { UI.justDone = null; advance(); });
 };

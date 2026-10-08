@@ -30,7 +30,8 @@ function parseEffects(o){
 }
 function gameEvent(id){
   const ev = eventById(id); if(!ev || !ev.options || !ev.options.length) return null;
-  return { id:ev.id, date:ev.date, title:ev.title, text:ev.text, costShare:ev.costShare, options: ev.options.map(o => ({ label:o.label, sub:o.sub || '', why:o.why || '', effects:parseEffects(o) })) };
+  return { id:ev.id, date:ev.date, title:ev.title, text:ev.text, costShare:ev.costShare, rivalFare:ev.rivalFare, rivalFareCut:ev.rivalFareCut, durationDays:ev.durationDays, advertiseCost:ev.advertiseCost, affectsRoutes:ev.affectsRoutes || [],
+    options: ev.options.map(o => { const e = parseEffects(o); if(ev.rivalFare && !e.setPrice && /match/i.test(o.label || '')) e.setPrice = Object.fromEntries((ev.affectsRoutes && ev.affectsRoutes.length ? ev.affectsRoutes : []).map(id => [id, 'match'])); return { label:o.label, sub:o.sub || '', why:o.why || '', effects:e }; }) };
 }
 function modOf(changes){ const out = {}; if(!changes) return out; Object.keys(changes).forEach(k => { const c = changes[k]; if(c && c.add !== undefined && routeById(k)) out[k] = c.add; }); return out; }
 /* Which mechanics the Calendar has introduced by a day: "snacks", "fuel", "time-of-day demand", "second route", "crew duty"… */
@@ -40,7 +41,7 @@ function mechanicOn(name, day){ return mechanicsBy(day === undefined ? (S ? S.da
 const MECH_PROG = [['snacks', 3.1], ['fuel', 3.2], ['time-of-day', 3.3], ['second route', 3.4]];
 const MECH_INTRO = [['snacks', 'snacks'], ['fuel', 'fuel'], ['time-of-day', 'times'], ['second route', 'route'], ['finance', 'fleet'], ['season forecast card', 'season'], ['range check', 'jets']];
 /* crew duty's briefing waits for the airline-type choice (Settings crewFromDate); the Calendar row can keep the mechanic until Fable moves it */
-if(!(WB && WB.settings && WB.settings.crewFromDate)) MECH_INTRO.push(['crew duty', 'crew']);
+if(!(WB && WB.settings && (WB.settings.crewMechanicFromDate || WB.settings.crewFromDate))) MECH_INTRO.push(['crew duty', 'crew']);
 function progOn(day){ let p = 2; mechanicsBy(day).forEach(m => MECH_PROG.forEach(([k, v]) => { if(m.includes(k)) p = Math.max(p, v); })); return p; }
 
 function buildBeats(){
