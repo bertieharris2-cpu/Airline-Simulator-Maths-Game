@@ -51,7 +51,7 @@
 ## Checks
 | Check | Result |
 | --- | --- |
-| Full chapter 1 at 1366 × 768 | see the commit message: no errors, no new overflow |
+| Full chapter 1 at 1366 × 768 | 360 checks, no failures, no errors; the overflow list (the showroom on days 14/21/22 and the weeks from day 23) is the same as the committed build before this change. To day 9 at 1915 × 891: 149 checks, no overflow |
 | Live operations to week 1, answers, run-through, engine | pass (the engine test now passes the day's date so the crew date applies) |
 | Launch day | Work it out follows the service; three fares; the fare waits for the tickets; the ×4 reason shows for Dublin |
 | Day 2 | two snack options, a third on request |
