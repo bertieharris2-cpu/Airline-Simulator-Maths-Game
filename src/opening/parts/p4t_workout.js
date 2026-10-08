@@ -106,7 +106,7 @@ R.plan = st => {
    ================================================================== */
 /* the first open cell, row by row then column by column */
 function wkNext(tables){ for(const t of tables){ const rows = tRows(t); for(let ri = 0; ri < rows.length; ri++) for(const c of t.cols) if(cellState(t, c, ri) === 'enter') return { t, cell:{ col:c.id, row:rows[ri].id } }; } return null; }
-function wkCells(tables){ const out = [], auto = S.rnd.autoDone || []; tables.forEach(t => { const rows = tRows(t); rows.forEach((r, ri) => t.cols.forEach(c => { const s = cellState(t, c, ri); if(['enter', 'done', 'wait'].includes(s) && !auto.includes(t.id + '|' + cellId(c.id, r.id))) out.push({ t, c, r, s }); })); }); return out; }
+function wkCells(tables){ const out = [], auto = S.rnd.autoDone || []; tables.forEach(t => { const rows = tRows(t); rows.forEach((r, ri) => t.cols.forEach(c => { const s = cellState(t, c, ri); if(rowTyped(t, r) && ['enter', 'done', 'wait'].includes(s) && !auto.includes(t.id + '|' + cellId(c.id, r.id))) out.push({ t, c, r, s }); })); }); return out; }
 /* a figure as it is written down: pounds as whole pounds, litres as a number, a price per litre in pence */
 function wkFig(unit, v){ if(unit === 'ppl') return { s:String(Math.round(v * 100)), note:`${priceL(v)} = ${Math.round(v * 100)}p` }; if(unit === 'dec'){ const h = Math.round(v * 100); return h % 10 === 0 ? { s:String(h / 10), note:`${h / 10} in 10`, tenths:true, div:10 } : { s:String(h), note:`${h} in 100`, tenths:true, div:100 }; } if(unit === '£') return { s:String(Math.round(v)) }; return { s:String(Math.round(v)) }; }
 /* the method, line by line, for Show me and the working rows */
@@ -165,8 +165,8 @@ R.workings = st => {
   else if(justDone){ const jt = justDone, [cid, rid] = UI.justDone.cell.split('|'), jc = jt.cols.find(c => c.id === cid), jr = tRows(jt).find(r => r.id === rid);
     body = `<div class="wk-sum"><div class="wk-head"><span class="kl">${esc(jc.label)}</span><h2>&#10003; ${esc(rowLabel(jt, jr))}: ${fmtVal(jr.unit, jc.values[rid])}</h2></div>${wkGrid(jt, jc, jr, { done:true, show:true })}
       <div class="wk-act"><button class="btn primary big" id="wkNext">${wkNext(tables) ? 'Next sum' : needPick || (multi && !picked) ? 'Choose' : 'Finished'} &#9654;</button></div></div>`; }
-  else if(nx){ const q = TOOL[row.tool] ? TOOL[row.tool].name : rowLabel(act, row);
-    body = `<div class="wk-sum"><div class="wk-head"><span class="kl">${esc(col.label)}${col.sub ? ' · ' + esc(col.sub) : ''}</span><h2>${esc(q)}: ${esc(rowLabel(act, row).toLowerCase())}</h2></div>${wkGrid(act, col, row, {})}
+  else if(nx){ const q = TOOL[row.tool] ? TOOL[row.tool].name : rowLabel(act, row), rl = rowLabel(act, row), head = q.toLowerCase() === rl.toLowerCase() ? q : `${q}: ${rl.toLowerCase()}`;
+    body = `<div class="wk-sum"><div class="wk-head"><span class="kl">${esc(col.label)}${col.sub ? ' · ' + esc(col.sub) : ''}</span><h2>${esc(head)}</h2></div>${wkGrid(act, col, row, {})}
       <div class="wk-act"><button class="btn primary big" id="cellCheck">Check &#10003;</button><button class="btn big" id="wkPad" aria-pressed="${!!st.pad}">${st.pad ? 'Hide the number pad' : 'Number pad'}</button>${(UI.tries || 0) >= 3 ? '<button class="link" id="calcShow">Show me</button>' : ''}</div>
       <div class="msg wk-msg ${UI.ok ? 'ok' : ''}" id="ftMsg" role="status">${esc(UI.msg || '')}</div>
       ${st.pad ? `<div class="wk-pad">${['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0', '−'].map(x => `<button data-k="${x === '−' ? '-' : x}">${x}</button>`).join('')}<button data-k="back">&#9003;</button></div>` : ''}</div>`; }
