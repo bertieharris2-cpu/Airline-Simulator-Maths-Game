@@ -92,7 +92,7 @@ const TAG = `${HOME}-${MK}-${W}`;
       if(s.fleet.length > 1 && s.period.type === 'day' && !s.fleet[1].schedule.length){ if(await p.$('[data-petab="1"]')) await p.click('[data-petab="1"]'); const add = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add){ await add.click(); const add2 = await p.$('[data-pe="0|add|ams|0|1"]:not([disabled])'); if(add2) await add2.click(); ok(`Day ${R + 1}: the second aircraft gets Amsterdam services`, (await S()).fleet[1].schedule.length > 0); } }
       if(R === 7 || R === 14 || R === 21) await shot(`plan-${R}`);
       if(R === 2 && !s.rnd.backTried){ await p.evaluate(() => { window.__sim.S().rnd.backTried = true; }); ok('Day 2: Back on Work it out', await vis('#wsBack')); await p.click('#wsBack'); ok('Day 2: Back from Work it out leaves it', await T() !== 'workout', await T()); await p.click('#nx'); ok('Day 2: forward again returns to the planning page', await T() === 'plan', await T()); }
-      await fits('plan ' + R); if(R <= 6) await shot(`d${day}-plan`); ok(`plan ${day}: no sum typed on the planning page`, !(await p.$('[data-cell], #cellAns'))); ok(`plan ${day}: the modelling tool is on the page`, setup ? true : await vis('.pl-idea'));
+      await fits('plan ' + R); if(R <= 6) await shot(`d${day}-plan`); ok(`plan ${day}: no sum typed on the planning page`, !(await p.$('[data-cell], #cellAns'))); ok(`plan ${day}: the modelling tool is on the page`, setup ? true : await vis('#ideaOpen, .pl-idea'));
       ok(`plan ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'workings'){
       await fits('workings ' + R); if(R <= 6) await shot(`d${day}-workings`); const typed = await solveW(`work ${day}`);

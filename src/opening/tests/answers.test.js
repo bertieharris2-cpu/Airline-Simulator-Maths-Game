@@ -67,12 +67,12 @@ const TAG = `${HOME}-${MK}-${W}`;
     ok('working on screen accepted when the model disagrees', await accepted()); ok('the disagreement is recorded', (await diag()).some(k => /differs/.test(k)), await diag());
     // 3. a loss: the minus-sign hint, then accepted with −  (re-open the profit figure on a fresh table)
     await p.evaluate(() => { const t = window.__sim.currentTable(); t.done = {}; t.active = null; }); await p.click('[data-cell]').catch(() => {}); await p.waitForTimeout(100);
-    await p.evaluate(([TK0, C]) => { const t = window.__sim.currentTable(); t.done = {}; const c = t.cols[0]; if(t.rowIds && !t.rowIds.includes('profit')) t.rowIds.push('profit'); [TK0].forEach(r => { t.done[C + '|' + r] = true; }); t.active = { col:C, row:'profit' }; c.values.rev = c.values.cost - 150; c.values.profit = -150; }, [TK, C0]);
+    await p.evaluate(([TK0, C]) => { const t = window.__sim.currentTable(); t.done = {}; const c = t.cols[0]; if(t.rowIds && !t.rowIds.includes('profit')) t.rowIds.push('profit'); [TK0].forEach(r => { t.done[C + '|' + r] = true; }); t.active = { col:C, row:'profit' }; c.values.rev = c.values.cost - 150; c.values.profit = -150; }, [TK, C0]); await p.evaluate(() => { const b = document.getElementById('wkNext'); if(b) b.click(); else window.__sim.render(); }); await p.waitForTimeout(120);
     await p.fill('#cellAns', '150'); await p.click('#cellCheck'); await p.waitForTimeout(150);
     const msg = await p.evaluate(() => (document.getElementById('ftMsg') || {}).textContent); ok('a loss typed without the minus gets the minus-sign hint', /minus/.test(msg), msg);
     await p.fill('#cellAns', '−150'); await p.click('#cellCheck'); await p.waitForTimeout(150); ok('a loss typed with − is accepted', await accepted());
     // 4. three wrong tries: Show me the answer
-    await p.evaluate(([TK0, C]) => { const t = window.__sim.currentTable(); t.done = {}; t.active = { col:C, row:TK0 }; }, [TK, C0]); await p.click('[data-cell]').catch(() => {}); await p.waitForTimeout(120);
+    await p.evaluate(([TK0, C]) => { const t = window.__sim.currentTable(); t.done = {}; t.active = { col:C, row:TK0 }; }, [TK, C0]); await p.evaluate(() => { const b = document.getElementById('wkNext'); if(b) b.click(); else window.__sim.render(); }); await p.waitForTimeout(120); await p.click('[data-cell]').catch(() => {}); await p.waitForTimeout(120);
     if(!await p.$('#cellAns')){ await open1(); }
     for(let k = 0; k < 3; k++){ ok('Show me hidden before 3 tries ' + k, !await p.$('#calcShow')); await p.fill('#cellAns', '1'); await p.click('#cellCheck'); await p.waitForTimeout(120); }
     ok('Show me appears after 3 wrong tries', !!await p.$('#calcShow')); await p.click('#calcShow'); await p.waitForTimeout(150);
