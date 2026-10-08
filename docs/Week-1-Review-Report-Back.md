@@ -52,6 +52,6 @@ The test walk counts **12 hand sums in week 1** with practice off (4, 3, 1, 2, 1
 ## Checks
 | Check | Result |
 | --- | --- |
-| Full chapter 1 at 1366 × 768 | 361 checks, no failures, no errors; the overflow list is the showroom on days 14/21/22 and the weeks from day 22 (as before), plus the two-aircraft planning page on days 15–21 by 8 px |
+| Full chapter 1 at 1366 × 768 | 361 checks, no failures, no errors; the overflow list is the showroom on days 14/21/22 and the weeks from day 22 (as before), |
 | To day 9 at 1915 × 891 (152 checks, no overflow); live operations to day 8 (103); answers (14); run-through; engine (9, with the Red Kite figures) | pass |
 | Week 1 | 12 Calculate steps with practice off; ≤ 3 multiplications a day; no sum typed outside the workings page; Build absent before day 22 |
