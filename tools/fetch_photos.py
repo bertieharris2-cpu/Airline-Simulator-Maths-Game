@@ -46,20 +46,22 @@ def get(url, tries=60):
         except urllib.error.HTTPError as e:
             if e.code not in (429, 502, 503) or i == tries - 1: raise
         except (urllib.error.URLError, TimeoutError):
-            if i == tries - 1: raise
+            if i >= 3: raise            # a blocked host or a dead connection does not mend with patience
         time.sleep(delay); delay = min(delay + 2, 12)
 
 
 def info(title):
     q = urllib.parse.urlencode({'action': 'query', 'format': 'json', 'formatversion': 2, 'titles': title, 'prop': 'imageinfo',
-                                'iiprop': 'url|size|extmetadata', 'iiurlwidth': 1600,
+                                'iiprop': 'url|size|extmetadata', 'iiurlwidth': 1280,            # Commons only renders a fixed list of widths (500, 960, 1280...)
                                 'iiextmetadatafilter': 'Artist|LicenseShortName|LicenseUrl|Credit|Attribution'})
     d = json.loads(get(API + '?' + q))
     page = d['query']['pages'][0]
     if page.get('missing') or not page.get('imageinfo'): raise LookupError(f'{title} is not on Commons')
     ii = page['imageinfo'][0]; em = ii.get('extmetadata', {})
     v = lambda k: re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', em.get(k, {}).get('value', ''))).strip()
-    return {'thumb': ii.get('thumburl') or ii['url'], 'url': ii['url'], 'w': ii['width'], 'h': ii['height'],
+    # the API names thumbnails on thumb.wikimedia.org, which some networks block; upload.wikimedia.org serves the same paths
+    thumb = (ii.get('thumburl') or ii['url']).replace('https://thumb.wikimedia.org/', 'https://upload.wikimedia.org/')
+    return {'thumb': thumb, 'url': ii['url'], 'w': ii['width'], 'h': ii['height'],
             'artist': v('Artist'), 'licence': v('LicenseShortName'), 'licenceUrl': v('LicenseUrl'), 'credit': v('Credit')}
 
 
@@ -100,7 +102,9 @@ for r in range(2, ws.max_row + 1):
     line = f'{pid}: {title} ({i["w"]}x{i["h"]}) · {author} · {i["licence"]}'
     if CHECK:
         done.append(line + ' · would fetch'); continue
-    raw = get(i['thumb'])
+    try: raw = get(i['thumb'])
+    except Exception as e:
+        print(f'{pid}: thumbnail failed ({e}); fetching the original', flush=True); raw = get(i['url'])
     im = ImageOps.exif_transpose(Image.open(io.BytesIO(raw))).convert('RGB')
     im = ImageOps.fit(im, SIZE, Image.LANCZOS, centering=(0.5, 0.5))
     fname = f'{pid}.jpg'
