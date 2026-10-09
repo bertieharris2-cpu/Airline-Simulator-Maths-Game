@@ -2603,6 +2603,17 @@ body.rm .ms-in > *{animation:none}
 .ws-planner .pe-svcs .pe-svc,.ws-plan .pe-svcs .pe-svc{min-height:0}.ws-plan .pe.big{gap:8px}.ws-plan .pe-ac{padding-bottom:4px}
 .ws-plan .pnl{padding-top:8px;padding-bottom:8px}.ws-plan .pnl-h{margin-bottom:4px}.ws-plan .pe-sh{margin-bottom:2px}.ws-plan .pe-sum{padding-top:4px}.ws-plan .pe-svcs{gap:4px}.ws-plan .pe-tabs{margin-bottom:4px}.ws-plan .pe-tab{padding-top:4px;padding-bottom:4px}.ws-plan .pe-route{padding-top:8px;padding-bottom:8px}.ws-plan .pe-svc{padding-top:3px;padding-bottom:3px}.pl2 .pnl-h .btn.small{margin-left:auto}
 .pl-idea .pl-choose{display:flex;gap:8px;margin-top:8px}
+/* two aircraft: the planning page is the timetable; bigger rows and controls, fares in one row underneath */
+.pe.sched{gap:10px}.pe.sched .pe-svcs{gap:6px}.pe.sched .pe-sh .label{font-size:15px;color:#fff;letter-spacing:.02em}
+.pe.sched .pe-tabs{gap:8px}.pe.sched .pe-tab{padding:7px 14px;gap:10px}.pe.sched .pe-tab b{font-size:17px}.pe.sched .pe-tab .mono{font-size:13px}.pe.sched .pe-tab small{font-size:13px}.pe.sched .pe-tab .pe-pic{width:56px;height:22px}
+.pe.sched .pe-ac{padding:10px 12px;gap:7px}.pe.sched .pe-acn b{font-size:18px}.pe.sched .pe-add .btn.small{min-height:42px;font-size:16px;padding:6px 14px}
+.pe.sched .pe-svc{grid-template-columns:96px 176px auto 92px 1fr 36px;padding:6px 10px;gap:10px;font-size:16px}.pe.sched .pe-n{font-size:16px}.pe.sched .pe-rt{font-size:16px;padding:6px 10px}.pe.sched .pe-fill b{font-size:17px}
+.pe.sched .pe-svc .pe-step.sm .pe-b{width:40px;height:40px;font-size:22px}.pe.sched .pe-svc .pe-step.sm .pe-v{min-width:72px;font-size:20px}.pe.sched .pe-x{width:32px;height:32px;font-size:18px}
+.pe-fares{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:6px 8px;align-items:stretch}.pe-fares > .label{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.pe-fr{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;padding:4px 8px;border:1px solid var(--hair);background:rgba(6,20,38,.3)}.pe-fr.on{border-color:rgba(127,214,255,.45)}
+.pe-fr .pe-step{gap:3px;flex-wrap:wrap}.pe-fr .pe-step .pe-b{width:30px;height:30px;font-size:17px}.pe-fr .pe-step .pe-v{min-width:50px;font-size:17px}.pe-fr .pe-step small{margin-left:2px;font-size:12.5px;white-space:nowrap}
+.pe-frn{display:flex;align-items:center;gap:6px}.pe-frn b{color:#fff;font-size:15px}.pe-frn .pe-rival{font-size:11.5px}
+.ws-plan .pe.sched .pe-svc{padding-top:5px;padding-bottom:5px}.ws-plan .pe.sched .pe-ac{padding:8px 10px;gap:5px}.ws-plan .pe.sched .pe-add .btn.small{min-height:38px}.ws-plan .pe.sched{gap:8px}
 @media (max-width:1200px){.pl-idea-g{grid-template-columns:minmax(0,1fr)}}
 /* the workings page: full screen, squared paper, one sum at a time in the written method */
 .wk{position:relative;width:100%;height:100%;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:18px;padding:14px 28px 24px;overflow:auto;color:#1b2a4a;background-color:#FBF7EA;background-image:linear-gradient(rgba(96,150,210,.38) 1px,transparent 1px),linear-gradient(90deg,rgba(96,150,210,.38) 1px,transparent 1px);background-size:24px 24px}

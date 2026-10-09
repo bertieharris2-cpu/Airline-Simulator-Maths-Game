@@ -160,7 +160,7 @@ function testPlan(){ if(!S.rnd.test) S.rnd.test = JSON.parse(JSON.stringify(curr
 function newTag(stage){ return progress() === stage && S.phase === 'round' && periodType() === 'day' ? '<span class="new-tag">NEW</span>' : ''; }
 function stepper(i, key, val, sub, o){
   o = o || {};
-  return `<div class="pe-step ${o.cls || ''}"><button class="pe-b" data-pe="${i}|${key}|-1" aria-label="less" ${o.noLess ? 'disabled' : ''}>−</button><b class="pe-v mono">${val}</b><button class="pe-b" data-pe="${i}|${key}|1" aria-label="more" ${o.noMore ? 'disabled' : ''}>+</button>${sub ? `<small>${sub}</small>` : ''}</div>`;
+  return `<div class="pe-step ${o.cls || ''}"><button class="pe-b" data-pe="${i}|${key}|-1${o.j !== undefined ? '|' + o.j : ''}" aria-label="less" ${o.noLess ? 'disabled' : ''}>−</button><b class="pe-v mono">${val}</b><button class="pe-b" data-pe="${i}|${key}|1${o.j !== undefined ? '|' + o.j : ''}" aria-label="more" ${o.noMore ? 'disabled' : ''}>+</button>${sub ? `<small>${sub}</small>` : ''}</div>`;
 }
 function demandStrip(id){
   const r = routeById(id), pr = profileOf(r), s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(2);

@@ -91,7 +91,7 @@ R.plan = st => {
     idea = `<section class="pnl pl-idea"><div class="pnl-h"><h3>Try an idea</h3><span class="muted">The model costs a test plan: no sums</span>${same ? '' : '<button class="link" data-treset>Start again from your plan</button>'}<button class="btn small" id="ideaShut">Close</button></div>
       <div class="pl-idea-g"><div>${planEditor(9, test, Lt, { compact:true })}</div><div>${chip}${modelRows(L, Lt, 'day')}<div class="pl-choose">${same ? '' : `<button class="btn ${d >= 0 ? 'primary' : ''}" data-ftest>Make the test plan my plan</button>`}</div></div></div></section>`; } }
   screen().innerHTML = taskFrame({ question: setup ? 'Build the day' : 'What will your airline do today?', work:false, story, help:['timing', 'demand'], context: ctxAircraft(), todo: depsOn() ? '' : undefined,
-    say: setup ? `Build the day. ${wantOf(r.id)} people want to fly to ${r.city}. Choose how many services, then cost your plan.` : `Plan what your airline will do today, then cost your plan.`,
+    say: setup ? `Build the day. ${wantOf(r.id)} people want to fly to ${r.city}. Choose how many services, then cost your plan.` : S.fleet.length > 1 ? `Give each aircraft its services and departure times, then cost your plan.` : `Plan what your airline will do today, then cost your plan.`,
     main:`<div class="planner2 pl2 ${UI.ideaOpen ? 'idea-open' : ''}">${planPane}${idea}</div>`,
     foot:`<button class="btn primary big" id="nx" ${sched.length && L.fits ? '' : 'disabled'}>${!sched.length ? 'Choose some services' : costed ? goLabel('Ready to fly') : goLabel('Cost your plan')} &#9654;</button>` });
   if(setup) bindServices(); else bindPlanEditor();
