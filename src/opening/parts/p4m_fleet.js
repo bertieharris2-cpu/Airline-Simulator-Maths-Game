@@ -293,14 +293,16 @@ STAGES.day[0].steps = ['shop2', 'fleetSums', 'acquire', 'planner', 'event', 'wor
 Object.assign(RAIL_LABEL, { shop2:'Aircraft for sale', fleetSums:'The sums', acquire:'Buy or rent' });
 Object.assign(SUB_DESC, { shop2:'A bigger airline?', fleetSums:'Rent or buy, a full plane', acquire:'Sign for the aircraft' });
 Object.assign(STEP_HINT, { shop2:'Aircraft are for sale. Look closely at one, or carry on with the aircraft you have.', fleetSums:'Two sums about the aircraft you chose: how many days of rent equal its price, and what a full plane brings in.', acquire:'Buy with cash, rent by the day, or pay a deposit and daily payments. Then give the aircraft its services.' });
+/* the day's steps (also used to bring an older save's day into this flow, p4u) */
+function daySteps(n, w){ w = w || roundData(n); const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
+  return withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w); }
 function startProtoDay(n){
   S.round = n; S.phase = 'round'; S.day = beatDay(n); delete S.needsRestart;
   const f = fleetOne(), w = roundData(n);
   S.rnd = Object.assign(emptyRnd(), { featured:f.uid, focusRoute:schedOf(f)[0] || S.market, headline:w.headline || '', brief:protoBrief(n), event: w.event ? JSON.parse(JSON.stringify(w.event)) : null });
   S.period = newPeriod('day', S.day);
   if(depsOn() && !Array.isArray(S.deps)) S.deps = TIME.day(ourPlane(), schedOf(f), undefined, null).trips.map(t => t.dep);
-  const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
-  S.steps = withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
+  S.steps = daySteps(n, w);
   S.rnd.cashStart = S.cash; UI.view = null;
   S.si = 0; S.newRoutes = []; if(typeof revealReputation === 'function') revealReputation();
   refreshPlan();

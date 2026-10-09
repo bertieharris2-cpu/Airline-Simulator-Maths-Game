@@ -738,9 +738,9 @@ function renderOverlay(){
     const runs = loadRuns();
     screen().innerHTML = `<div class="hero"><h1 class="biglogo"><span class="a">AIRLINE</span><span class="b">SIM</span></h1></div><div class="card stack" style="align-items:center;text-align:center;padding:36px">${header('Home', null, 'HOME')}
       ${S.airline.name ? `<p class="lede">Saved game: <b>${esc(S.airline.name)}</b> ${strategyBadge()} · ${esc(S.phase === 'setup' ? 'Launch day' : periodLabel())} · <b class="amber mono">${money(S.cash)}</b></p>` : ''}
-      ${S.migratedFrom ? '<p class="small muted">Saved before the calendar update: it carries on from the nearest point in the story.</p>' : ''}
+      ${S.migrated && S.migrated.fresh ? `<p class="small muted">${esc(migratedLine())}</p>` : ''}
       <div class="row" style="justify-content:center"><button class="btn primary big" id="cont">${S.airline.name ? 'Continue: ' + esc(S.airline.name) : 'Continue'}</button><button class="btn primary big" id="newg">New game</button>${runs.length?'<button class="btn big" id="best">Best runs</button>':''}${S.airline.name ? '<button class="btn big" id="yourAir">Your airline</button>' : ''}<button class="btn big" id="code">Save code</button><button class="btn big" id="iwb2">Open the wall in a window</button><button class="btn big" id="present2">Present on two screens</button></div></div>`;
-    on('cont', () => { delete S.migratedFrom; closeOverlay(); }); on('yourAir', () => { S.overlay = { type:'yourAirline' }; render(); }); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); on('present2', () => { closeOverlay(); presentBoth(); }); return;
+    on('cont', () => { delete S.migratedFrom; if(S.migrated) delete S.migrated.fresh; closeOverlay(); }); on('yourAir', () => { S.overlay = { type:'yourAirline' }; render(); }); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); on('present2', () => { closeOverlay(); presentBoth(); }); return;
   }
   if(o.type==='alerts'){
     const it = intelItems();

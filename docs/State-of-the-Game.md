@@ -108,7 +108,7 @@
 | Practice questions | Working (teacher setting, default 0) | `PRACTICE` specs (ready-again, fuel price, weekend tenths, tenths, cabin sales, tickets, empty seats) with the pupil's own numbers on the workings page; typed, calm retry, Show me after three; logged with the hand sums. The ready-again questions on the one-service screen are always on |
 | Answer checking | Working | Accepts the model's figure or the working on screen; sign hint; Show me after 3 tries |
 | Live operations | Working | Show built from the model's flights; the featured aircraft is the one flying; weeks compressed; months plain |
-| Saves | Working | Version 5 (`ASIM5.`); older saves start again |
+| Saves | Working | Version 5 (`ASIM5.`); older codes (the 7–8 Oct build, the 5–6 Oct build's `ASIM4.`, the full game) are carried into the current flow, see §Old save codes |
 | Captain's challenges, hunts | Not in chapter 1 | Readers only (from 6 Jan 2031; the Hunts sheet is placeholder) |
 | Airline type | Absent | The old strategy step is out of the flow (the brief's `airlineTypeChoiceDate` is placeholder) |
 | Fluency engine | Absent | Rules 1–6 replace it |
@@ -208,6 +208,18 @@ FG = full game (frozen); Proto = opening prototype. CR1, CR2 Stages A–B and CR
 | §7 News-led rounds, standing choices | Yes | Differently | Standing plan, headline, What's new, events as decisions |
 | §8 Captain's challenge optional | Yes | Gated | From 6 Jan 2031 (Challenges sheet) |
 | §10 Stopping point | Yes | Partly | Autosave; save code via Home or the teacher panel |
+
+### Old save codes (9 Oct)
+
+Pupils' codes from before the 8 October changes load from the teacher panel's *Load code from box* (`p4u_migrate.js` replaces `migrate`):
+
+| Code | What happens | Where the pupil lands |
+| --- | --- | --- |
+| 7–8 Oct build (`ASIM5.`, steps `planner / costPlan / testIdeas`) | Repaired in place: the day's steps become `plan / workings`, the old cost sheet, forecast and fuel order are cleared (a paid fuel order is refunded), fares not on offer move to the nearest fare, a missing logo is made from the old colours, a Red Kite advertising choice still counts while the event lasts | The same step if the pupil had not reached the plan (HQ, briefing, showroom, event card); the planning page if they were anywhere from the planner to the flight; the results if the day had flown. Weeks and months keep their steps |
+| 5–6 Oct build (`ASIM4.`, May 2030 calendar) | The airline, cash, fleet, fares, snacks (`sell3 → low`, `sell5 → high`), departure times, history and ledger are carried into a fresh state; days shift by one (launch day was day 0, it is day 1 now); the old news log is replaced by one line; no sums record, so the first-time sums are asked | The matching day starts again from HQ (`needsRestart` → `landSave()` → `startProtoDay`) |
+| Full game (`ASIM4.`, home `cwl/sws/brs`) | As above, plus the home airport becomes Heathrow, aircraft and routes not in this version are replaced or taken off the timetable, each with a note | As above |
+
+The notes are listed in the teacher panel under the save code and kept in `S.migrated`; the Home screen says "Saved on an earlier version of the game: it carries on from …" until *Continue*. A current save passes through unchanged. `tests/migrate.test.js` runs Bertie's two real codes (`tests/fixtures/`), a mid-day variant, a synthesised full-game code and the no-change check.
 
 ## 5. Known bugs and assumptions
 

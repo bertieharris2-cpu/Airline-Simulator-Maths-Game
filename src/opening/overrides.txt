@@ -45,6 +45,7 @@ fmtVal: p4a_core.js -> p4m_fleet.js
 forecastCols: p4b_control.js -> p4d_opening.js
 goWord: p4d_opening.js -> p4f_campaign.js
 legMinutes: p4a_core.js -> p4h_world.js
+migrate: p4a_core.js -> p4u_migrate.js
 monthNo: p4a_core.js -> p4k_chapter.js
 operandUnit: p4a_core.js -> p4g_opening2.js
 opsSoundOn: p4i_liveops.js -> p4p_identity.js

@@ -2958,6 +2958,8 @@ body.rm .ms-in > *{animation:none}
       <div class="tsec" style="grid-column:1/-1"><h3>Save code (backup)</h3>
         <textarea class="code" id="tCode" spellcheck="false"></textarea>
         <div class="row"><button class="btn small" id="tCodeCopy">Copy code</button><button class="btn small" id="tCodeLoad">Load code from box</button><span class="small muted" id="tCodeMsg"></span></div>
+        <p class="small muted">Codes from earlier versions of the game load too: the pupil lands at the nearest point in the current flow and anything that had to change is listed here.</p>
+        <div id="tMigrated"></div>
       </div>
     </div>
   </div>
@@ -4837,9 +4839,9 @@ function renderOverlay(){
     const runs = loadRuns();
     screen().innerHTML = `<div class="hero"><h1 class="biglogo"><span class="a">AIRLINE</span><span class="b">SIM</span></h1></div><div class="card stack" style="align-items:center;text-align:center;padding:36px">${header('Home', null, 'HOME')}
       ${S.airline.name ? `<p class="lede">Saved game: <b>${esc(S.airline.name)}</b> ${strategyBadge()} · ${esc(S.phase === 'setup' ? 'Launch day' : periodLabel())} · <b class="amber mono">${money(S.cash)}</b></p>` : ''}
-      ${S.migratedFrom ? '<p class="small muted">Saved before the calendar update: it carries on from the nearest point in the story.</p>' : ''}
+      ${S.migrated && S.migrated.fresh ? `<p class="small muted">${esc(migratedLine())}</p>` : ''}
       <div class="row" style="justify-content:center"><button class="btn primary big" id="cont">${S.airline.name ? 'Continue: ' + esc(S.airline.name) : 'Continue'}</button><button class="btn primary big" id="newg">New game</button>${runs.length?'<button class="btn big" id="best">Best runs</button>':''}${S.airline.name ? '<button class="btn big" id="yourAir">Your airline</button>' : ''}<button class="btn big" id="code">Save code</button><button class="btn big" id="iwb2">Open the wall in a window</button><button class="btn big" id="present2">Present on two screens</button></div></div>`;
-    on('cont', () => { delete S.migratedFrom; closeOverlay(); }); on('yourAir', () => { S.overlay = { type:'yourAirline' }; render(); }); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); on('present2', () => { closeOverlay(); presentBoth(); }); return;
+    on('cont', () => { delete S.migratedFrom; if(S.migrated) delete S.migrated.fresh; closeOverlay(); }); on('yourAir', () => { S.overlay = { type:'yourAirline' }; render(); }); on('newg', () => { S.overlay = null; newGame(); }); on('best', showRuns); on('code', () => showCode()); on('iwb2', () => { closeOverlay(); openDisplay(); }); on('present2', () => { closeOverlay(); presentBoth(); }); return;
   }
   if(o.type==='alerts'){
     const it = intelItems();
@@ -9120,14 +9122,16 @@ STAGES.day[0].steps = ['shop2', 'fleetSums', 'acquire', 'planner', 'event', 'wor
 Object.assign(RAIL_LABEL, { shop2:'Aircraft for sale', fleetSums:'The sums', acquire:'Buy or rent' });
 Object.assign(SUB_DESC, { shop2:'A bigger airline?', fleetSums:'Rent or buy, a full plane', acquire:'Sign for the aircraft' });
 Object.assign(STEP_HINT, { shop2:'Aircraft are for sale. Look closely at one, or carry on with the aircraft you have.', fleetSums:'Two sums about the aircraft you chose: how many days of rent equal its price, and what a full plane brings in.', acquire:'Buy with cash, rent by the day, or pay a deposit and daily payments. Then give the aircraft its services.' });
+/* the day's steps (also used to bring an older save's day into this flow, p4u) */
+function daySteps(n, w){ w = w || roundData(n); const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
+  return withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w); }
 function startProtoDay(n){
   S.round = n; S.phase = 'round'; S.day = beatDay(n); delete S.needsRestart;
   const f = fleetOne(), w = roundData(n);
   S.rnd = Object.assign(emptyRnd(), { featured:f.uid, focusRoute:schedOf(f)[0] || S.market, headline:w.headline || '', brief:protoBrief(n), event: w.event ? JSON.parse(JSON.stringify(w.event)) : null });
   S.period = newPeriod('day', S.day);
   if(depsOn() && !Array.isArray(S.deps)) S.deps = TIME.day(ourPlane(), schedOf(f), undefined, null).trips.map(t => t.dep);
-  const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
-  S.steps = withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w);
+  S.steps = daySteps(n, w);
   S.rnd.cashStart = S.cash; UI.view = null;
   S.si = 0; S.newRoutes = []; if(typeof revealReputation === 'function') revealReputation();
   refreshPlan();
@@ -10309,6 +10313,119 @@ R.workings = st => {
 /* the practice topic for the day (with the pupil's own numbers): the day's new idea, or the tickets */
 function practiceKeyToday(){ if(S.phase === 'setup') return null; const H = S.rnd.handSums || {}; if(H.snacks) return 'snackSales'; if(H.fuelCost) return 'fuelPrice'; if(H.weekendDemand || H.rivalStay) return 'tenths'; return 'tickets'; }
 /* ==================================================================
+   OLD SAVE CODES
+   A pupil's code from an earlier version loads and lands at the nearest point in the current flow:
+   - the 7–8 Oct prototype (v5, planner / cost sheet / Test steps): repaired in place, landing at the day's planning page
+   - the 5–6 Oct prototype (v4, the May 2030 calendar) and the full game (v4): the airline, cash, fleet, prices and
+     history are carried into a fresh state and the matching day starts again (needsRestart → landSave)
+   Everything changed is listed in S.migrated.notes for the teacher panel; the Home screen says where the pupil carries on.
+   ================================================================== */
+const MIG_STEP_WORDS = { hq:'HQ', intro:'briefing', shop2:'showroom', event:'event card', plan:'planning page', workings:'workings page', fuelPlan:'fuel order', ready:'Ready to fly', fly:'flight', results:'results', code:'flight-code screen', logo:'logo screen', paint:'paint shop', planner:'planner', costPlan:'cost sheet', testIdeas:'Test screen', review:'review', sim:'week', plans:'plans' };
+function migNote(s, text){ s.migrated = s.migrated || { notes:[] }; (s.migrated.notes = s.migrated.notes || []).push(text); }
+function migFind(a, t){ return a.findIndex(x => x.t === t); }
+function withState(s, fn){ const S0 = S; S = s; try{ return fn(); } finally{ S = S0; } }
+/* colours: an old hex colour becomes the nearest palette colour */
+function hexRgb(h){ const m = /^#?([0-9a-f]{6})$/i.exec(String(h || '').trim()); if(!m) return null; const n = parseInt(m[1], 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function nearestColour(hex, not){ const c = hexRgb(hex); if(!c || !PAL.length) return null; let best = null, bd = Infinity;
+  PAL.forEach(p => { if(p.id === not) return; const q = hexRgb(p.hex); if(!q) return; const d = (c[0]-q[0])**2 + (c[1]-q[1])**2 + (c[2]-q[2])**2; if(d < bd){ bd = d; best = p.id; } }); return best; }
+function colourId(v, not){ if(!v) return null; if(PAL.some(c => c.id === v)) return v === not ? null : v; return nearestColour(v, not); }
+function nearestFare(r, fare){ const fs = (r && r.fares) || []; if(!fs.length || fs.includes(fare)) return fare; return fs.reduce((b, f) => Math.abs(f - fare) < Math.abs(b - fare) ? f : b, fs[0]); }
+function fixPrices(s){ Object.keys(s.prices || {}).forEach(id => { const r = routeById(id); if(!r){ delete s.prices[id]; return; } const v = nearestFare(r, +s.prices[id]);
+  if(v !== +s.prices[id]){ migNote(s, `${r.city} fare ${money(+s.prices[id])} is not one of the fares on offer now: set to ${money(v)}.`); s.prices[id] = v; } }); }
+function fixIdentity(s){ const A = s.airline; if(!A) return; if(!A.flightCode) A.flightCode = A.code || '';
+  if(A.logo) return; const g = defaultLogo(), c1 = colourId(A.c1), c2 = colourId(A.c2, c1 || g.c1);   // two different colours, the nearest to the old ones
+  if(c1) g.c1 = c1; if(c2) g.c2 = c2; if(g.c1 === g.c2) g.c2 = g.c1 === 'navy' ? 'yellow' : 'navy';
+  if(A.fin && LIV.tails.some(t => t.id === A.fin)) g.symbol = A.fin;
+  A.logo = g; migNote(s, `The logo and livery were made from the old colours (${g.c1} and ${g.c2}); they can be changed in Your airline → the paint shop.`); }
+/* the day's typed work is done again on the workings page, so the old cost sheet and its results go */
+function clearDayWork(s){ const R = s.rnd; if(!R) return; Object.keys(R.tables || {}).forEach(k => { if(/^(cost|empty|time|fuelbill|work|tenths):/.test(k)) delete R.tables[k]; });
+  ['activeTable', 'costed', 'costedTools', 'myForecast', 'archive', 'archived', 'ideas', 'test', 'returnTo', 'handSums', 'autoDone', 'pick', 'forecast', 'fuelOrder'].forEach(k => { delete R[k]; }); R.activeTable = null;
+  if(R.fuelBought){ const fb = R.fuelBought; s.cash = r2(s.cash + (fb.total || 0)); s.fuel = Math.max(0, r2((s.fuel || 0) - (fb.litres || 0))); s.fuelValue = Math.max(0, r2((s.fuelValue || 0) - (fb.total || 0)));
+    if(Array.isArray(s.fuelLots) && s.fuelLots.length) s.fuelLots.pop(); delete R.fuelBought; delete R.fuelOrder; migNote(s, `The day's fuel order (${money(fb.total || 0)}) was refunded; it is ordered again on the way to Ready.`); } }
+/* the Red Kite advertising choice from an older save still halves the switching share while the event lasts */
+function carryRivalAd(s){ if(s.rivalAd || !s.flags) return;
+  Object.keys(s.flags).forEach(id => { for(let k = 1; k < WORLD.rounds.length; k++){ const ev = (WORLD.rounds[k] || {}).event; if(!ev || ev.id !== id || !ev.advertiseCost) continue;
+    const opt = (ev.options || [])[s.flags[id]], e = opt && opt.effects || {}; if(!(e.cash && Math.abs(e.cash) === ev.advertiseCost)) return;
+    const until = beatDay(k) + ((ev.durationDays || 1) - 1); if(s.day <= until){ s.rivalAd = { event:ev.id, routes:(ev.affectsRoutes && ev.affectsRoutes.length ? ev.affectsRoutes : [s.market]), untilDay:until }; migNote(s, `${ev.title}: the advertising still counts until ${dateShort(until)}.`); } return; } }); }
+const OLD_DAY_STEPS = ['timetable', 'fareTry', 'costPlan', 'testIdeas', 'workout', 'fin', 'options', 'dayForecast'];
+function oldStepList(s){ return (s.steps || []).some(x => OLD_DAY_STEPS.includes(x.t) || (x.t === 'planner' && s.phase === 'round' && s.period && s.period.type === 'day')); }
+/* ---- v5: the 7–8 Oct prototype ---- */
+function repairV5(s){
+  if(!oldStepList(s) || !s.airline) return s;
+  const cur = s.steps[s.si] ? s.steps[s.si].t : null, hadLogo = !!s.airline.logo;
+  s.migrated = { from:'proto-v5', savedDay:s.day, savedStep:cur, notes:[], fresh:true };
+  s.overlay = null; fixPrices(s); fixIdentity(s); s.rnd = s.rnd || emptyRnd(); if(s.rnd.cashStart === undefined) s.rnd.cashStart = s.cash;
+  const MAP = { fin:'paint', timetable:'plan', fareTry:'plan', planner:'plan', testIdeas:'plan', workout:'plan', costPlan:'workings', options:'plan', dayForecast:'plan', sim:'fly' };
+  if(s.phase === 'setup'){
+    let steps = newState().steps, to = MAP[cur] || cur; if(migFind(steps, to) < 0) to = 'plan';
+    const ID = ['code', 'logo', 'paint', 'reveal', 'cert'];
+    if(!hadLogo && migFind(steps, 'name') < migFind(steps, to) && !ID.includes(to)){ const id = steps.filter(x => ID.includes(x.t)); steps = steps.filter(x => !ID.includes(x.t)); steps.splice(migFind(steps, to), 0, ...id); migNote(s, 'The flight code, logo and paint shop come next, then the day carries on where it was.'); to = 'code'; }
+    clearDayWork(s); s.steps = steps; s.si = Math.max(0, migFind(steps, to)); s.migrated.landedStep = to; s.migrated.landedDay = s.day; return s;
+  }
+  if(s.period && s.period.type === 'day'){
+    const w = roundData(s.round); if(s.rnd.event && s.rnd.eventChoice === undefined && w.event) s.rnd.event = JSON.parse(JSON.stringify(w.event));   // the card gets today's numbers
+    let to = ['hq', 'intro', 'shop2', 'event'].includes(cur) ? cur : (cur === 'results' && s.rnd.applied ? 'results' : 'plan');
+    if(to !== 'results') clearDayWork(s);
+    const steps = withState(s, () => daySteps(s.round, w)); s.steps = steps; let i = migFind(steps, to); if(i < 0) i = migFind(steps, 'plan'); s.si = Math.max(0, i);
+    carryRivalAd(s); withState(s, refreshPlan); s.migrated.landedStep = steps[s.si].t; s.migrated.landedDay = s.day; return s;
+  }
+  s.migrated.landedStep = cur; s.migrated.landedDay = s.day; return s;   // weeks and months kept their steps
+}
+/* ---- v2–v4: the 5–6 Oct prototype (May 2030 calendar) or the full game ---- */
+function isFullGame(s){ return ['cwl', 'sws', 'brs'].includes(s.home) || (s.market === undefined && s.toolSeen === undefined && s.deps === undefined); }
+function convertOld(s, from){
+  const t = newState(); t.migrated = { from, savedDay:s.day, savedStep:s.steps && s.steps[s.si] ? s.steps[s.si].t : null, notes:[], fresh:true };
+  const A = s.airline || {}; Object.assign(t.airline, { name:A.name || '', code:A.code || airlineCode(A.name || 'AS'), flightCode:A.flightCode || A.code || '', strategy:A.strategy || null, c1:A.c1 || t.airline.c1, c2:A.c2 || t.airline.c2, fin:A.fin || 'stripe', logo:A.logo || null });
+  fixIdentity(t); t.textSize = s.textSize || 0; t.startedAt = s.startedAt || t.startedAt; t.teacherQueue = s.teacherQueue || t.teacherQueue;
+  if(s.phase === 'setup' || !(s.fleet && s.fleet.length)){ t.si = t.airline.name ? migFind(t.steps, 'code') : 0; t.migrated.landedStep = t.steps[t.si].t; t.migrated.landedDay = 1; migNote(t, 'The airline had not flown yet: launch day starts again with its name kept.'); return t; }
+  // the calendar: launch day was day 0, it is day 1 now
+  const oldDay = s.period && s.period.from !== undefined && s.period.from !== null ? s.period.from : (s.day || 0), lastDay = beatDay(WORLD.rounds.length - 1), D = Math.max(2, Math.min(oldDay + 1, lastDay));
+  let b = beatStartingOn(D); if(b === null){ b = 0; for(let k = 1; k < WORLD.rounds.length; k++) if(beatDay(k) <= D) b = k; }
+  t.cash = r2(s.cash || 0); t.rep = s.rep === undefined ? t.rep : s.rep; t.fuel = r2(s.fuel || 0); t.fuelValue = r2(s.fuelValue || 0); t.fuelLots = Array.isArray(s.fuelLots) ? s.fuelLots : []; t.fuelDiscount = 0;
+  t.home = WORLD.homes.some(h => h.id === s.home) ? s.home : WORLD.homes[0].id; if(t.home !== s.home) migNote(t, `Home airport ${String(s.home || '').toUpperCase()} is not in this version: the airline flies from ${(WORLD.homes[0].name || 'London Heathrow')}.`);
+  t.terminal = s.terminal || 't5';
+  const openOn = id => { const r = routeById(id); return !!r && (r.openDay || 1) <= D && !!(r.demandAtFare || !r.wb); };
+  const seen = new Set(); t.fleet = (s.fleet || []).map(f => { const p = planeById(f.planeId), planeId = p ? f.planeId : 'dhc6'; if(!p) migNote(t, `Aircraft ${f.planeId} is not in this version: a Twin Otter takes its place.`);
+    const all = Array.isArray(f.schedule) && f.schedule.length ? f.schedule : (f.route ? [f.route] : []), sched = all.filter(openOn), dropped = all.filter(id => !openOn(id));
+    if(dropped.length) migNote(t, `Services to ${[...new Set(dropped)].map(id => routeById(id) ? routeById(id).city : id.toUpperCase()).join(', ')} are not open yet in this version: taken off the timetable.`);
+    const keep = { uid:f.uid, planeId, route:sched[0] || null, schedule:sched, layout:f.layout || 'standard', grounded:false }; if(f.livery) keep.livery = f.livery; if(f.registration) keep.registration = f.registration; if(f.name !== undefined) keep.name = f.name; if(Array.isArray(f.deps)) keep.deps = f.deps; if(f.terms) keep.terms = f.terms; return keep; })
+    .filter(f => { if(seen.has(f.uid)) return false; seen.add(f.uid); return true; });
+  t.nextUid = Math.max(s.nextUid || 1, ...t.fleet.map(f => f.uid + 1));
+  t.market = s.market && routeById(s.market) && WORLD.setupRoutes.includes(s.market) ? s.market : (t.fleet[0] && t.fleet[0].schedule[0] && WORLD.setupRoutes.includes(t.fleet[0].schedule[0]) ? t.fleet[0].schedule[0] : WORLD.setupRoutes[0]);
+  t.fleet.forEach(f => { if(!f.schedule.length){ f.schedule = [t.market]; f.route = t.market; migNote(t, 'An aircraft had no services left: it flies the first route once.'); } });
+  Object.keys(s.prices || {}).forEach(id => { if(routeById(id)) t.prices[id] = +s.prices[id]; }); fixPrices(t);
+  const OB = { none:'none', low:'low', high:'high', free:'free', sell3:'low', sell5:'high' }; t.onboard = OB[s.onboard] || 'none'; if(s.onboard && !ONBOARD[t.onboard]) t.onboard = 'none';
+  if(s.firstDep !== undefined) t.firstDep = s.firstDep; if(Array.isArray(s.deps)) t.deps = s.deps;
+  const shift = h => { const o = Object.assign({}, h); const f0 = h.from !== undefined ? h.from : (h.round || 0); o.from = f0 + 1; o.to = (h.to !== undefined ? h.to : f0) + 1; o.type = h.type || (h.round ? 'day' : 'setup'); return o; };
+  t.history = (s.history || []).map(shift);
+  ['rev', 'cost', 'pax', 'seats'].forEach(k => { const a = (s.ledger || {})[k] || []; a.forEach((v, i) => { if(v !== null && v !== undefined) t.ledger[k][i + 1] = v; }); });
+  if(!(s.ledger && s.ledger.rev && s.ledger.rev.length)) t.history.forEach(h => { t.ledger.rev[h.from] = h.revenue || 0; t.ledger.cost[h.from] = h.costs || 0; t.ledger.pax[h.from] = h.pax || 0; t.ledger.seats[h.from] = h.seats || 0; });
+  if(s.dec){ t.dec = JSON.parse(JSON.stringify(s.dec)); if(t.dec.planeBought) t.dec.planeBought.day = (t.dec.planeBought.day || 0) + 1; if(t.dec.held) t.dec.held = null; }
+  if(s.rop) t.rop = Object.assign({}, s.rop, { approved:(s.rop.approved || 0) + 1, onboard:OB[s.rop.onboard] || 'none', prices:Object.fromEntries(Object.entries(s.rop.prices || {}).filter(([id]) => routeById(id))) });
+  ['milestones', 'seenModules', 'toolSeen', 'flags', 'repBank', 'skills', 'handSumLog', 'practice', 'tools', 'stages'].forEach(k => { if(s[k] !== undefined) t[k] = s[k]; });
+  t.log = [{ round:b, tag:'NEWS', text:`${t.airline.name} carries on from the earlier version of the game on ${dateShort(D)}.` }];
+  t.phase = 'round'; t.round = b; t.day = D; t.period = newPeriod('day', D - 1); t.steps = [{ t:'hq' }]; t.si = 0; t.needsRestart = { beat:b };
+  t.migrated.landedStep = 'hq'; t.migrated.landedDay = D;
+  migNote(t, `The ${from === 'full-game' ? 'full game' : 'earlier version'} counted launch day as day 0 and this version as day 1, so ${from === 'full-game' ? 'round' : 'day'} ${oldDay} became ${dateShort(D)} (day ${D}); the day starts again from HQ with the airline, cash, fleet, fares and history kept.`);
+  if(!s.skills) migNote(t, 'No record of sums done by hand came with the code, so the first-time sums are asked on this day.');
+  return t;
+}
+function migrate(s){
+  if(!s || !s.steps) return null;
+  if(s.v === 5) return repairV5(s);
+  if(s.v >= 2 && s.v <= 4) return convertOld(s, isFullGame(s) ? 'full-game' : 'proto-v4');
+  return null;
+}
+/* a converted save starts its landing day on the live S (from boot and the teacher panel) */
+function landSave(){ const r = S && S.needsRestart; if(!r) return false; delete S.needsRestart; const b = r && typeof r === 'object' && r.beat !== undefined ? r.beat : S.round, w = WORLD.rounds[b]; if(!w) return false;
+  if(w.period === 'day') startProtoDay(b); else if(w.period !== 'setup') startBeat(b); return true; }
+function migratedLine(s){ s = s || S; const m = s && s.migrated; if(!m) return '';
+  const from = m.from === 'full-game' ? 'the full game' : m.from === 'proto-v4' ? 'the game as it was on 5–6 October' : 'an earlier version of the game';
+  const where = m.landedStep ? (MIG_STEP_WORDS[m.landedStep] || m.landedStep) : 'HQ', day = m.landedDay ? (m.landedDay === 1 ? 'Launch Day' : dateShort(m.landedDay)) : '';
+  return `Saved on ${from}: it carries on from ${day ? day + "'s " : 'the '}${where}.`; }
+function migratedHtml(s){ s = s || S; const m = s && s.migrated; if(!m) return '<p class="small muted">This game was not carried over from an older code.</p>';
+  return `<p class="small"><b>${esc(migratedLine(s))}</b></p>${(m.notes || []).length ? `<ul class="small">${m.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : '<p class="small muted">Nothing else had to change.</p>'}`; }
+/* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).
    ================================================================== */
@@ -10694,7 +10811,7 @@ function teacherOpen(){
   $('tText').querySelectorAll('[data-tz]').forEach(b => b.onclick = () => { S.textSize = parseInt(b.getAttribute('data-tz'),10); applyTextSize(); publish(); teacherOpen(); });
   $('tTest').checked = !!settings.testMode; $('tAutoAns').checked = !!settings.autoAnswer;
   renderTeacherTools(); $('tTime').innerHTML = '';
-  $('tCode').value = saveCode(); $('tCodeMsg').textContent = '';
+  $('tCode').value = saveCode(); $('tCodeMsg').textContent = ''; if($('tMigrated')) $('tMigrated').innerHTML = migratedHtml();
 }
 function teacherClose(){ $('teacher').hidden = true; render(); }
 function skipScreen(){ if(!$('teacher').hidden) teacherClose(); if(S.overlay){ closeOverlay(); return; } const st = step(); if(st.t==='summary') startRound(S.round+1); else if(st.t==='setupDone') startRound(1); else next(); }
@@ -10741,7 +10858,7 @@ function initTeacher(){
   $('tOpenIwb').onclick = openDisplay;
   $('tSpeak').onclick = () => { if(document.body.classList.contains('tts')) speak('Cleared for take-off. Read aloud is working.'); else alert('Read-aloud is not available on this machine (no speech voices found). The speaker buttons stay hidden.'); };
   $('tCodeCopy').onclick = () => { $('tCode').select(); try{ navigator.clipboard.writeText($('tCode').value).then(()=>{ $('tCodeMsg').textContent='Copied.'; }); }catch(e){ document.execCommand('copy'); $('tCodeMsg').textContent='Copied.'; } };
-  $('tCodeLoad').onclick = () => { try{ const s = loadCode($('tCode').value); if(confirm('Replace the current game with this save code?')){ S = s; $('tCodeMsg').textContent = 'Loaded.'; teacherClose(); } }catch(e){ $('tCodeMsg').textContent = 'That code did not work: '+e.message; } };
+  $('tCodeLoad').onclick = () => { try{ const s = loadCode($('tCode').value); if(confirm('Replace the current game with this save code?')){ S = s; UI.view = null; landSave(); const line = migratedLine(S); $('tCodeMsg').textContent = line ? 'Loaded. ' + line : 'Loaded.'; teacherClose(); if(line) toast(line); } }catch(e){ $('tCodeMsg').textContent = 'That code did not work: '+e.message; } };
   document.addEventListener('keydown', e => { if(e.ctrlKey && e.shiftKey && (e.key==='T'||e.key==='t')){ e.preventDefault(); $('teacher').hidden ? teacherOpen() : teacherClose(); } if(e.key==='Escape' && !$('teacher').hidden) teacherClose(); });
   let taps = [];
   $('corner').addEventListener('click', () => { const now = Date.now(); taps = taps.filter(t => now-t < 1500); taps.push(now); if(taps.length>=3){ taps=[]; teacherOpen(); } });
@@ -10786,7 +10903,7 @@ function boot(){
     if(e.key === 'w' || e.key === 'W'){ if(!step() || ['welcome','name'].includes(step().t)) return; e.preventDefault(); setWallView(!wallView); }
     else if(e.key === 'Escape' && wallView){ e.preventDefault(); setWallView(false); } });
   setInterval(() => { if(wallView) renderDisplay(); }, 8000);
-  if(S.needsRestart) startRound(S.round);
+  if(S.needsRestart && !landSave()) startRound(S.round);
   // if the page was refreshed mid-flight, finish the flight
   if(step().t==='fly' && !S.rnd.live && S.rnd.anim && Date.now()-S.rnd.anim.start > S.rnd.anim.dur) next();
   setInterval(() => { send({type:'ping'}); updateStrip(); }, 4000);
@@ -10796,7 +10913,7 @@ function boot(){
   $('homeFab').onclick = openMenu;
   render();
 }
-window.__sim = { S:()=>S, step, next, practiceAnswer:(k) => { const st = S.steps[S.si], P = st && st.pq; if(!P) return null; const q = PRACTICE[P.key].render(P.qs[Math.min(P.i, P.qs.length - 1)]); return { kind:q.kind, answer:q.answer, text: q.kind === 'time' ? fmtTime(q.answer) : String(q.answer) }; }, startRound, advance, paxFor, periodLabel, simulateRun, monthlyProfit, investable, settings:()=>settings, render, planFlights, questionBank, schedOf, TIME, timeSelfTest, tableComplete, nextOpenCell, cellState, currentTable, routeById, planeById, fillTable };
+window.__sim = { S:()=>S, step, next, loadCode, saveCode, migrate, landSave:()=>landSave(), setS:(v)=>{ S = v; }, practiceAnswer:(k) => { const st = S.steps[S.si], P = st && st.pq; if(!P) return null; const q = PRACTICE[P.key].render(P.qs[Math.min(P.i, P.qs.length - 1)]); return { kind:q.kind, answer:q.answer, text: q.kind === 'time' ? fmtTime(q.answer) : String(q.answer) }; }, startRound, advance, paxFor, periodLabel, simulateRun, monthlyProfit, investable, settings:()=>settings, render, planFlights, questionBank, schedOf, TIME, timeSelfTest, tableComplete, nextOpenCell, cellState, currentTable, routeById, planeById, fillTable };
 document.addEventListener('DOMContentLoaded', boot);
 })();
 </script>

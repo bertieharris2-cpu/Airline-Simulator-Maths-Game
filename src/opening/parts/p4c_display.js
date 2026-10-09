@@ -384,7 +384,7 @@ function teacherOpen(){
   $('tText').querySelectorAll('[data-tz]').forEach(b => b.onclick = () => { S.textSize = parseInt(b.getAttribute('data-tz'),10); applyTextSize(); publish(); teacherOpen(); });
   $('tTest').checked = !!settings.testMode; $('tAutoAns').checked = !!settings.autoAnswer;
   renderTeacherTools(); $('tTime').innerHTML = '';
-  $('tCode').value = saveCode(); $('tCodeMsg').textContent = '';
+  $('tCode').value = saveCode(); $('tCodeMsg').textContent = ''; if($('tMigrated')) $('tMigrated').innerHTML = migratedHtml();
 }
 function teacherClose(){ $('teacher').hidden = true; render(); }
 function skipScreen(){ if(!$('teacher').hidden) teacherClose(); if(S.overlay){ closeOverlay(); return; } const st = step(); if(st.t==='summary') startRound(S.round+1); else if(st.t==='setupDone') startRound(1); else next(); }
@@ -431,7 +431,7 @@ function initTeacher(){
   $('tOpenIwb').onclick = openDisplay;
   $('tSpeak').onclick = () => { if(document.body.classList.contains('tts')) speak('Cleared for take-off. Read aloud is working.'); else alert('Read-aloud is not available on this machine (no speech voices found). The speaker buttons stay hidden.'); };
   $('tCodeCopy').onclick = () => { $('tCode').select(); try{ navigator.clipboard.writeText($('tCode').value).then(()=>{ $('tCodeMsg').textContent='Copied.'; }); }catch(e){ document.execCommand('copy'); $('tCodeMsg').textContent='Copied.'; } };
-  $('tCodeLoad').onclick = () => { try{ const s = loadCode($('tCode').value); if(confirm('Replace the current game with this save code?')){ S = s; $('tCodeMsg').textContent = 'Loaded.'; teacherClose(); } }catch(e){ $('tCodeMsg').textContent = 'That code did not work: '+e.message; } };
+  $('tCodeLoad').onclick = () => { try{ const s = loadCode($('tCode').value); if(confirm('Replace the current game with this save code?')){ S = s; UI.view = null; landSave(); const line = migratedLine(S); $('tCodeMsg').textContent = line ? 'Loaded. ' + line : 'Loaded.'; teacherClose(); if(line) toast(line); } }catch(e){ $('tCodeMsg').textContent = 'That code did not work: '+e.message; } };
   document.addEventListener('keydown', e => { if(e.ctrlKey && e.shiftKey && (e.key==='T'||e.key==='t')){ e.preventDefault(); $('teacher').hidden ? teacherOpen() : teacherClose(); } if(e.key==='Escape' && !$('teacher').hidden) teacherClose(); });
   let taps = [];
   $('corner').addEventListener('click', () => { const now = Date.now(); taps = taps.filter(t => now-t < 1500); taps.push(now); if(taps.length>=3){ taps=[]; teacherOpen(); } });
@@ -476,7 +476,7 @@ function boot(){
     if(e.key === 'w' || e.key === 'W'){ if(!step() || ['welcome','name'].includes(step().t)) return; e.preventDefault(); setWallView(!wallView); }
     else if(e.key === 'Escape' && wallView){ e.preventDefault(); setWallView(false); } });
   setInterval(() => { if(wallView) renderDisplay(); }, 8000);
-  if(S.needsRestart) startRound(S.round);
+  if(S.needsRestart && !landSave()) startRound(S.round);
   // if the page was refreshed mid-flight, finish the flight
   if(step().t==='fly' && !S.rnd.live && S.rnd.anim && Date.now()-S.rnd.anim.start > S.rnd.anim.dur) next();
   setInterval(() => { send({type:'ping'}); updateStrip(); }, 4000);
@@ -486,7 +486,7 @@ function boot(){
   $('homeFab').onclick = openMenu;
   render();
 }
-window.__sim = { S:()=>S, step, next, practiceAnswer:(k) => { const st = S.steps[S.si], P = st && st.pq; if(!P) return null; const q = PRACTICE[P.key].render(P.qs[Math.min(P.i, P.qs.length - 1)]); return { kind:q.kind, answer:q.answer, text: q.kind === 'time' ? fmtTime(q.answer) : String(q.answer) }; }, startRound, advance, paxFor, periodLabel, simulateRun, monthlyProfit, investable, settings:()=>settings, render, planFlights, questionBank, schedOf, TIME, timeSelfTest, tableComplete, nextOpenCell, cellState, currentTable, routeById, planeById, fillTable };
+window.__sim = { S:()=>S, step, next, loadCode, saveCode, migrate, landSave:()=>landSave(), setS:(v)=>{ S = v; }, practiceAnswer:(k) => { const st = S.steps[S.si], P = st && st.pq; if(!P) return null; const q = PRACTICE[P.key].render(P.qs[Math.min(P.i, P.qs.length - 1)]); return { kind:q.kind, answer:q.answer, text: q.kind === 'time' ? fmtTime(q.answer) : String(q.answer) }; }, startRound, advance, paxFor, periodLabel, simulateRun, monthlyProfit, investable, settings:()=>settings, render, planFlights, questionBank, schedOf, TIME, timeSelfTest, tableComplete, nextOpenCell, cellState, currentTable, routeById, planeById, fillTable };
 document.addEventListener('DOMContentLoaded', boot);
 })();
 </script>
