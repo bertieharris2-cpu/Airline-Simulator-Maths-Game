@@ -22,6 +22,13 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
+**Workbook v4.10 (13 Oct 2026): the Operating Plan Studio.** The Monday plan page rebuilt from Bertie's mock-ups and Fable's data appendix (D66; `src/opening/parts/p4zd_studio.js`).
+- **Four steps** across the top (Choose routes · Set fares · Place services · Review seat fill), ticked as they are done, with *How it works*.
+- **Route cards** in one row: distance, flying time on the selected aircraft, the fares as bars with the people a day at each (the Routes sheet through the engine), the chosen fare and *Add to schedule*.
+- **Live seat fill and trade-offs:** passengers / seats, ticket revenue, profit and turned away, with at most two tips from the new **PlanTips** sheet, always true of the plan on screen.
+- **The timetable** is the largest zone: one row per aircraft; each flight block shows seats filled / that plane's seats in green, amber or red (`seatFillGood` 80%, `seatFillMedium` 50%). The strip above shows when people want to fly: the selected or hovered route's own five bands (must fly then, solid; any time, hatched), else every open route. Day and Table views; drag, the arrow keys and Earlier / Later / Swap / Remove as before.
+- The Sunday and period reviews show the same three figures as actuals (**Seat fill**) with the same tips. Report: `docs/Operating-Plan-Studio-Report-Back.md`. Screenshots: `docs/screenshots/v410/`.
+
 **Workbook v4.9 (13 Oct 2026): fewer, better hand sums.** Fable's brief *the cap, the decay and the floor* (D63–D64, HandSumRules 9–11; `src/opening/parts/p4zc_signoffs.js`).
 - **The cap.** From week 2 a week asks at most three Calculate sign-offs (the teacher can set 1, 2 or 3): a relationship never met first, then a changed input (a fuel price jump), then the one with the most money in it, one of each relationship before a second of any. Over the cap, a relationship the pupil has met is Build; one never met waits for the next week it is relevant. Launch Day, the week-1 tenths and every review Build step are outside the cap.
 - **The decay.** From week 2 each relationship (tickets, fuel for a service, flight time, rent-or-buy, a full plane) is Calculate twice; a new instance after that is **Build**: tap the two figures and the operation, the game works it out. Fuel is Calculate again when the price has moved 50p from the last fuel line worked by hand. The teacher can hold a relationship at Calculate.

@@ -10,6 +10,15 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0d. Workbook v4.10 (13 Oct 2026): the Operating Plan Studio
+
+`p4zd_studio.js`, after `p4zc_signoffs.js`:
+- **Entry.** `renderPlanner(st, summing)` sends the plan step (not the sums, not *Test an idea*) to `renderStudio`; the old planner is `renderPlannerBase`. The page is a desk page (`deskPage` + `deskBar`) whose body keeps the hooks the wrappers use: `.plw` (the board's hold), `.plw-tools` (World report), `#ideaOpen` (the Operations Model), `.ad`, `.ad-lane`, `.ad-blk` with `data-tl` (`bindTimeline`: drag, keys, select), `data-pe` on the fare bars and *Add to schedule* (`bindPlanEditor`), `data-addsel` on each row's *+ Add flight…*.
+- **Pieces.** `studioCard` (fares from `paxWant`), `stripData`/`stripHtml` (`demandPools` per band: locked solid, flexible hatched by the archetype's band shares), `studioLanes` (blocks coloured by `fillCls` from `seatFillGood`/`seatFillMedium`), `studioTable`, `studioLive`, `studioStepState`.
+- **Tips.** `planTipsFor(pl, L, opts)` checks every PlanTips condition (`WORLD.planTips`, with defaults in `PLAN_TIPS_DEFAULT`) and returns two at most, lowest priority first; `opts.actual` with the week's averages a day is the review's version. `addService` records an out-of-range attempt (`S.rnd.stRange`) for `range_fail`; `S.rnd.fareWas` keeps the week's starting fares for `fare_too_low`.
+- **Reviews.** `seatFillReviewHtml(h)` is inserted in `renderWeekReviewBuild` and `renderPeriodReviewBuild`.
+- **Tests.** `studioReport()` returns the panel's figures, the tips, the blocks and the cards; `week.test.js` compares them with the page on Launch Day, day 8 and day 22.
+
 ## 0c. Workbook v4.9 (13 Oct 2026): the cap, the decay and the floor
 
 `p4zc_signoffs.js`, after `p4zb_decisions.js`:
