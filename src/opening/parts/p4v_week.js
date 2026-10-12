@@ -236,7 +236,7 @@ R.weekReview = st => {
 };
 
 /* ---------- closing a day in the week loop ---------- */
-function closeDay(){
+function closeDayWeek(){
   UI.view = null; UI.fbI = 0; if(typeof attachArchive === 'function') attachArchive();
   if(weekMode() && (S.phase === 'setup' || (periodType() === 'day' && weekPhaseOf(S.round)))){
     const ph = S.phase === 'setup' ? 'plan' : weekPhaseOf(S.round), nb = S.round + 1, nxt = WORLD.rounds[nb];

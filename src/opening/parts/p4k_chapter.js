@@ -108,7 +108,7 @@ function periodLabel(P){
   return monthStart(P.from) === monthStart(P.to) ? `${MONTH[A.getUTCMonth()]} ${A.getUTCFullYear()}` : `${MONTH[A.getUTCMonth()]}${A.getUTCFullYear() !== B.getUTCFullYear() ? ' ' + A.getUTCFullYear() : ''} – ${MONTH[B.getUTCMonth()]} ${B.getUTCFullYear()}`;
 }
 function periodTag(P){ P = P || S.period; if(!P || P.type === 'setup' || S.phase === 'setup') return 'Launch Day'; if(P.type === 'day') return 'Day ' + P.from; if(P.type === 'review') return 'Chapter review'; if(P.type === 'week' || P.type === 'gap') return 'Week ' + weekNo(P.from); return 'Month ' + monthNo(P.from); }
-function periodShort(h){ if(!h || h.type === 'setup') return 'Launch Day'; if(h.type === 'day') return dateShort(h.from); if(h.type === 'review') return 'the chapter review'; if(h.type === 'week') return 'Week ' + weekNo(h.from); if(h.type === 'gap') return `${fmtRange(h.from, h.to)}`; return isMonthSpan(h.from, h.to) && monthStart(h.from) === monthStart(h.to) ? monthName(h.from) : `${monthName(h.from, true)}–${monthName(h.to, true)}`; }
+function periodShort(h){ if(!h || h.type === 'setup') return 'Launch Day'; if(h.type === 'day') return dateShort(h.from); if(h.type === 'review') return 'the chapter review'; if(h.type === 'week') return 'Week ' + weekNo(h.from); if(h.type === 'gap') return `${fmtRange(h.from, h.to)}`; return monthStart(h.from) === monthStart(h.to) ? monthName(h.from) : `${monthName(h.from, true)}–${monthName(h.to, true)}`; }   // 9–27 Dec is "December", not "Dec–Dec"
 function stepsFor(b){
   const w = roundData(b), st = w.stage ? [{ t:'milestone', stage:w.stage }] : [], L = a => withIntro(st.concat(a.map(t => ({ t }))), w);
   if(w.period === 'gap') return L(['sim', 'results']);

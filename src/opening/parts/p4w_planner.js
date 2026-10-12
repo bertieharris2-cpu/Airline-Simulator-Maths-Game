@@ -431,7 +431,7 @@ function bindWkBoxes(){
 }
 
 /* ---------- the Maths Dock: the sums one at a time beside the plan ---------- */
-function dockHtml(o){ if(o && o.sum) return sumDockHtml(o.sum); return dockHtmlBase(o); }
+function dockHtmlPlanner(o){ if(o && o.sum) return sumDockHtml(o.sum); return dockHtmlBase(o); }
 function sumState(W, st){
   const { tables, opts, multi, picked } = W, H = S.rnd.handSums || {}, setup = S.phase === 'setup', cells = wkCells(tables);
   const tut = !!(H.fuelCost && !skills().fuelCost && !st.tut && (!W.stage || W.stage.id === 'fuel'));

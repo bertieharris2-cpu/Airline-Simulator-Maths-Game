@@ -179,7 +179,7 @@ R.shop2 = st => { if(acCompareOn()) return renderAcCompare(); return shopDesk0(s
    Part C: Screen 2, "How should we get it?" for the chosen aircraft: rent, finance or buy. The first time, the rent-or-buy
    sum (price ÷ rent a day) is a Calculate sign-off: short division, or make the sum smaller.
    ================================================================== */
-function acRbDue(pid){ const sk = skills().rentOrBuy; return !(sk && (sk.planes || []).includes(pid)); }
+function acRbDueBase(pid){ const sk = skills().rentOrBuy; return !(sk && (sk.planes || []).includes(pid)); }
 function renderAcPay(st){
   const ch = S.rnd.acChoice, p = planeById(ch.pid), o = acOffer(ch.pid), cash = Math.round(S.cash), res = WORLD.cashReserve || 0, pick = st.pick, due = st.rbDue !== undefined ? st.rbDue : (st.rbDue = !!(acRbDue(p.id) && o.lease && o.price)), ok = !due || st.rbOk;
   const days = o.lease ? o.price / o.lease : null, d30 = Math.min(30, o.n || 30);

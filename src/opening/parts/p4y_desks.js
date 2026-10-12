@@ -94,7 +94,7 @@ function demandMultNews(route, day){
 function surprisesIn(from, to){ const a = isoOf(from), b = isoOf(to); return (WORLD.routeNews || []).filter(n => !n.announced && n.start <= b && n.end >= a); }
 function announcedFor(day){ const iso = isoOf(day), wkEnd = isoOf(day + 13); return (WORLD.routeNews || []).filter(n => n.announced && n.announce <= iso && n.end >= iso && n.start <= wkEnd); }
 
-function startBeat(b){ startBeatBase(b); tankUpgradeNotice(); }
+function startBeatDesk(b){ startBeatBase(b); tankUpgradeNotice(); }
 
 /* ==================================================================
    Part 2: the aircraft performance card ("Service Cost Breakdown") and the per-service fuel sign-off (Desks v2 §3, §7).
@@ -117,7 +117,7 @@ function fuelCardsDue(pl){
   moved.sort((a, b) => litres(b) - litres(a));
   return first.concat(moved.slice(0, 1));
 }
-function decideHandSums(L, pl){
+function decideHandSumsDesk(L, pl){
   const out = decideHandSumsPlanner(L, pl); if(!weekMode()) return out;
   if(S.phase !== 'setup' && !fuelPaid()){ delete out.fuelCost; S.rnd.fuelCards = []; return out; }
   delete out.fuelCost; S.rnd.fuelCards = fuelCardsDue(pl || currentPlan()); return out;

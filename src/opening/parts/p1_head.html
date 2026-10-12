@@ -3677,5 +3677,35 @@ body.desk .sc-n,body.desk .om-tag,body.desk .dk-ib sup{font-weight:600}
 body.desk .stamp{font-weight:700}
 body.desk .actbar .btn.big,body.desk .actbar .btn.primary.big{font-weight:600;letter-spacing:.02em}
 .rbw{grid-template-columns:27fr 38fr 35fr}.rbw-s .rv-routes{overflow:auto}.rbw-s .rv-routes table{font-size:13px}.rbw-s .dk-pnl-h h2{font-size:16px}
+
+/* ---------- fewer, better hand sums (v4.9): the Sign-offs page, Build and Calculate cards, the audit and the board ---------- */
+.so-page .dk-body{display:flex;flex-direction:column;gap:14px}
+.so-ledger{display:flex;gap:22px;align-items:baseline;padding:8px 14px;border:1px solid var(--dk-line);border-radius:4px;background:rgba(10,26,53,.7);font-size:14px;color:var(--dk-ink2)}
+.so-ledger small{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--dk-ink3);margin-right:8px;font-weight:500}
+.so-ledger b{color:#fff;font-weight:600;margin-right:4px}
+.so-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.so-grid.one{grid-template-columns:minmax(0,760px)}
+.so-card{padding:14px 16px}
+.so-card .sc-h{display:flex;align-items:flex-start;gap:12px}
+.so-card .sc-h h2{font-size:18px;font-weight:600;margin:0 0 3px}.so-card .sc-h p{margin:0;font-size:14px;color:var(--dk-ink2)}
+.so-card .sc-h > div{flex:1}
+.so-lv{flex:none;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid #2b5c9e;border-radius:3px;padding:2px 7px;color:var(--dk-cyan)}
+.so-lv.build{color:var(--dk-amber);border-color:#7a5a1e}.so-lv.model{color:var(--dk-ink3);border-color:#2b4a74}
+.so-card.ok{box-shadow:inset 0 0 0 1px rgba(60,227,148,.45)}
+.so-card .sc-note{margin:10px 0 8px;font-size:13.5px;color:var(--dk-ink2)}
+.so-card .acq-in{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.so-card .acq-in .sc-in{width:170px}.so-card .sc-in .pre{position:absolute;left:9px;font-style:normal;color:var(--dk-ink3)}.so-card .sc-in .pre + input{padding-left:22px}
+.so-card .acq-ans{margin:8px 0 0;font-size:17px}
+.so-card.model{opacity:.85}.so-sum{margin:10px 0 4px;font-size:16px}.so-why{margin:0;font-size:13px;color:var(--dk-ink3)}
+.so-sum .fx{display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid var(--dk-line2);border-radius:3px;font-style:italic;color:var(--dk-cyan);margin-left:6px;font-size:13px}
+.so-card .rb-chips{margin-top:10px}
+.so-audit{display:grid;grid-template-columns:360px minmax(0,1fr);gap:16px;align-items:start}
+.so-letter{padding:16px 18px}.so-letter p{margin:8px 0 0;font-size:15px;line-height:1.5;color:var(--dk-ink)}
+.so-letter.board{border-color:var(--dk-amber);box-shadow:inset 3px 0 0 var(--dk-amber)}
+.so-letter .so-miss{color:var(--dk-ink2);font-size:14px}
+.so-board-note{display:flex;gap:10px;align-items:center;margin:0 0 10px;padding:10px 14px;border:1px solid var(--dk-amber);border-radius:4px;background:rgba(255,181,71,.08);color:var(--dk-ink);font-size:15px}
+.so-board-note svg{flex:none;width:20px;height:20px;color:var(--dk-amber)}
+.so-log{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}.so-log th,.so-log td{border-bottom:1px solid rgba(0,0,0,.12);padding:4px 6px;text-align:left;vertical-align:top}
+.so-holds{flex-wrap:wrap;gap:12px}.so-holds label{display:inline-flex;gap:6px;align-items:center}
 </style>
 </head>

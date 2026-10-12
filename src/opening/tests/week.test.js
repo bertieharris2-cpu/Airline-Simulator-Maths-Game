@@ -3,9 +3,10 @@
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), FILE = 'file://' + path.resolve(__dirname, '../../../airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-week') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 15);
+const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
-  const errors = [], checks = [], overflow = [], sums = {};
+  const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
@@ -40,6 +41,18 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
       if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); }
       else { await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
       await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push(P.id + (P.div ? '÷' + P.div : '')); } return done; };
+  // v4.9 sign-off cards: Build (tap the figures and the operation) and Calculate (type the answer); the first of each kind is answered wrong once
+  let soWrongB = false, soWrongC = false;
+  const signs = async tag => { const done = []; for(let g = 0; g < 14; g++){ const P = await p.evaluate(() => window.__sim.evalIn('soPlan()')); checks.push('info soPlan ' + tag + ' ' + JSON.stringify(P)); if(!P) break;
+      if(P.rb){ await p.click(`[data-rbop="${P.rb.id}|${P.rb.op}"]`); await p.fill(`[data-rbdiv="${P.rb.id}"]`, String(P.rb.div)); await p.click(`[data-rbchk="${P.rb.id}"]`); await p.waitForTimeout(80); done.push('rb:' + P.rb.id + '÷' + P.rb.div); continue; }
+      const k = P.key.replace(/"/g, '\\"');
+      if(P.level === 'build'){
+        if(!soWrongB){ soWrongB = true; await p.click(`[data-sofig="${k}|${P.seq[0]}"]`); await p.click(`[data-soop="${k}|+"]`); await p.click(`[data-sofig="${k}|${P.seq[2]}"]`); await p.click(`[data-sochk="${k}"]`); await p.waitForTimeout(60);
+          ok(`${tag}: a Build card with the wrong operation is a Query with a hint`, await vis(`[data-socard="${k}"] .stamp.q`) && (await p.$eval(`[data-socard="${k}"] .rb-msg`, e => e.textContent)).length > 10, await p.$eval(`[data-socard="${k}"] .rb-msg`, e => e.textContent).catch(() => '')); await shot('so-build-query'); await p.click(`[data-soclr="${k}"]`); }
+        for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-soop="${k}|${x}"]` : `[data-sofig="${k}|${x}"]`); }
+      else { if(!soWrongC){ soWrongC = true; await p.fill(`[data-soin="${k}"]`, String(+P.answer + 7)); await p.click(`[data-sochk="${k}"]`); await p.waitForTimeout(60); ok(`${tag}: a wrong Calculate answer is a Query`, await vis(`[data-socard="${k}"] .stamp.q`), await p.$eval(`[data-socard="${k}"] .sc-msg`, e => e.textContent).catch(() => '')); }
+        await p.fill(`[data-soin="${k}"]`, P.answer); }
+      await p.click(`[data-sochk="${k}"]`); await p.waitForTimeout(80); const okd = await vis(`[data-socard="${k}"] .stamp.ok`); if(!okd){ ok(`${tag}: ${P.key} signed`, false, P); break; } done.push(P.level + ':' + P.key); } sums['signs ' + tag] = (sums['signs ' + tag] || []).concat(done); return done; };
   const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
     if(await T() === 'reveal'){ await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); } if(await T() === 'cert') await p.click('#nx'); };
@@ -49,8 +62,11 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
   ok('launch day: the intro explains the job and the starting position (no market gate)', await T() === 'brief1' && /Your first week in charge/.test(await p.textContent('#screen')) && (await p.$$('.br1-c')).length === 4, await T());
   await fits('brief'); await shot('d1-brief'); await p.click('#nx');
   ok('launch day: the planner follows the intro', await T() === 'plan', await T());
+  if(CAP) await p.evaluate(c => window.__sim.evalIn(`soS().cap = ${c}`), CAP);
+  if(BOARD_SHARE !== null) await p.evaluate(v => window.__sim.evalIn(`WORLD.settings.boardNudgeMissedShare = ${v}`), BOARD_SHARE);
   // the chapter
   let lastDay = 0;
+  try{
   for(let i = 0; i < 400; i++){ const t = await T(), s = await S(), day = s.day;
     if(day >= UPTO && t === 'hq') break; if(t === 'chapterReview' && await vis('.rbw')){ await shot('chapter-accounts'); const built = await builds('chapter'); ok('chapter accounts: total revenue, total costs, profit and projected − actual are Build steps', ['rev', 'cost', 'profit', 'vs'].every(k => built.includes(k)), built); await shot('chapter-accounts-built'); checks.push('reached chapterReview day ' + day); break; }
     if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); break; }
@@ -65,6 +81,7 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
       await p.click('[data-actab="grow"]'); await p.waitForTimeout(100); await p.$eval('#acGrowIn', e => { e.value = '2'; e.dispatchEvent(new Event('change')); }); await p.waitForTimeout(200);
       ok(`day ${day}: If Dublin grows recomputes the three planes at ×2.0`, (await p.$$('.acx-gb')).length === 3 && /×2\.0/.test(await p.textContent('.acx-grow')), await p.$eval('.acx-grow', e => e.textContent.replace(/\s+/g, ' ').slice(0, 200)));
       await shot(`d${day}-compare-grow`); await p.click('[data-actab="where"]'); await p.click('[data-acc="sf34"]'); await p.waitForTimeout(150); continue; }
+    if(t === 'acquire' && await vis('.so-page')){ await shot(`d${day}-acquire-build`); await signs('acquire ' + day); await p.click('#nx'); continue; }
     if(t === 'acquire' && await vis('.acq')){ await shot(`d${day}-pay`); const buy = await p.$eval('[data-terms="buy"]', e => e.disabled), cash = (await S()).cash, reserve = await p.evaluate(() => window.__sim.evalIn('WORLD.cashReserve || 0'));
       ok(`day ${day}: How should we get it: Buy is greyed with the shortfall when cash is below price + reserve`, buy === (cash < 22000 + reserve) && /still to save/.test(await p.textContent('.acq-cols')), await p.$eval('.acq-n', e => e.textContent).catch(() => ''));
       if(await p.$('#rbIn')){ await p.fill('#rbIn', '50'); await p.click('#rbChk'); await p.waitForTimeout(60); ok(`day ${day}: the rent-or-buy sign-off queries a wrong answer`, await vis('.acq-rb .stamp.q'));
@@ -72,6 +89,7 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
       await shot(`d${day}-pay-signed`); await p.click('[data-terms="lease"]'); await p.click('#nx'); await p.waitForTimeout(100);
       ok(`day ${day}: the Saab starts on Dublin as compared (two services at £80)`, await p.evaluate(() => JSON.stringify(window.__sim.currentPlan().fleet.map(x => x.sched))) === '[["par","par"],["dub","dub"]]', await p.evaluate(() => JSON.stringify(window.__sim.currentPlan().fleet.map(x => x.sched)))); continue; }
     if(t === 'shop2'){ await fits('shop ' + day); await shot(`d${day}-shop`); const want = day === 8 ? 'sf34' : day === 22 ? 'at72' : null, card = want && await p.$(`[data-pick="${want}"]`); if(card){ await card.click(); await p.click('#nx'); } else await p.click('#skipShop'); continue; }
+    if(t === 'fleetSums' && await vis('.so-page')){ await fits('fleetSums ' + day); await shot(`d${day}-fleetsums`); sums['fleetSums ' + day] = await signs('fleetSums ' + day); await p.click('#nx'); continue; }
     if(t === 'fleetSums'){ const typed = await solve('fleetSums'); sums['fleetSums ' + day] = typed; if(await p.$('#calcDone')) await p.click('#calcDone'); await p.click('#nx'); continue; }
     if(t === 'acquire'){ await shot(`d${day}-acquire`); const buy = await p.$eval('[data-terms="buy"]', e => e.disabled), txt = await p.$eval('[data-terms="buy"]', e => e.textContent.replace(/\s+/g, ' ')), cash = (await S()).cash, price = +((/£([\d,]+)/.exec(txt) || [])[1] || '0').replace(/,/g, ''), reserve = await p.evaluate(() => window.__sim.evalIn('WORLD.cashReserve || 0'));
       ok(`day ${day}: Buy is greyed until affordable (cash ${cash} against ${price} + the ${reserve} reserve)`, buy === (cash < price + reserve), txt); await p.click('[data-terms="lease"]'); await p.click('#nx'); continue; }
@@ -123,7 +141,12 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
       if(day === 15 && s.fleet.length > 1) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 });
       if(day === 22 && s.fleet.length > 2) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 });
       if(day >= 3){ const q = await p.$('.fw-quick [data-fo]:nth-child(2)'); if(q) await q.click(); }
+      if(await vis('.so-board-note')){ await shot(`d${day}-plan-board`); ok(`plan ${day}: the board holds the plan until something changes`, await p.$eval('#nx', e => e.disabled), await p.textContent('.so-board-note'));
+        const f = (await S()).prices.par === 100 ? 90 : 100; await p.click(`[data-pe="0|fareTo|par|${f}"]`); await p.waitForTimeout(80); boards.push(day);
+        ok(`plan ${day}: a changed fare releases the plan`, !(await vis('.so-board-note')) && await p.$eval('#nx', e => !e.disabled)); }
+      else if(day >= 29 && !COAST && (await p.evaluate(d => window.__sim.evalIn(`calDate(${d}).getUTCDate()`), day)) <= 7){ const f = (await S()).prices.par === 100 ? 90 : 100; await p.click(`[data-pe="0|fareTo|par|${f}"]`); await p.waitForTimeout(80); changes.push(day + ':par ' + f); }   // Steady: one change at the start of each month
       await shot(`d${day}-plan`); ok(`plan ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.evaluate(() => window.__sim.currentPlan().fleet.map(x => x.sched.join('/') + ' ' + (x.deps || []).join(',')))); await p.click('#nx'); continue; }
+    if(t === 'workings' && await vis('.so-page')){ await fits('signoffs ' + day); await shot(`d${day}-signoffs`); await signs('work ' + day); await shot(`d${day}-signoffs-done`); await p.click('#nx'); await p.waitForTimeout(80); continue; }
     if(t === 'workings'){ await fits('workings ' + day); const typed = await solveW(`work ${day}`); await shot(`d${day}-workings`);
       if(s.phase === 'setup') ok('launch: tickets ×3 then the fare, the other route\'s tickets, a fuel sign-off for each route (Paris 120 L, Dublin 180 L at £1.30), profit, snacks ×2', typed.filter(x => /\|tk_par/.test(x)).length === 3 && typed.some(x => /\|tk_dub/.test(x)) && typed.filter(x => /\|profit/.test(x)).length === 1 && typed.filter(x => /\|snack$/.test(x)).length === 2 && !typed.includes('tutorial') && typed.includes('card:dhc6|par=156.00') && typed.includes('card:dhc6|dub=234.00'), typed);
       if(s.phase === 'setup') ok('launch: the sums were done in the dock beside the plan', await vis('.dock-sum') && await vis('.ad'));
@@ -141,6 +164,10 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
         const f0 = (await S()).fuel; await p.click('#fdBuy'); await p.waitForTimeout(80); const f1 = (await S()).fuel;
         ok(`day ${day}: the order of ${n} × 1,000 L goes into the tank`, Math.round(f1 - f0) === n * 1000, [f0, f1]); await shot(`d${day}-fueldesk-bought`); }
       await p.click('#nx'); continue; }
+    if(t === 'audit'){ await fits('audit ' + day); await shot(`d${day}-audit`); const D = await p.evaluate(() => window.__sim.evalIn('step().data')), txt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
+      audits.push({ day, me:D.me, board:D.board, share:D.share, idleWeeks:D.idleWeeks, lines:D.lines.map(l => l.route + ' ' + l.pax + '×' + l.fare), missed:D.missed, best:D.best, actual:D.actual });
+      ok(`day ${day}: the month-end ${D.board ? 'board review' : 'audit'} re-checks ${D.board ? 'two lines and the average day' : 'one line'}`, (await p.$$('[data-socard]')).length === (D.board ? 2 : 1) && (!D.board || await vis('[data-rbcard="mday"]')) && (D.board ? /We'd like to see a plan that tests a different fare or route/.test(txt) : /before the accounts close/.test(txt)), D.lines);
+      await signs('audit ' + day); await shot(`d${day}-audit-signed`); await p.click('#nx'); continue; }
     if(t === 'rop'){ await fits('rop'); await shot(`d${day}-rop`); ok('day 28: the regular plan says the tank carries on', /The tank carries on/.test(await p.textContent('#screen'))); await p.click('#ropGo'); continue; }
     if(t === 'milestone'){ await shot(`d${day}-milestone`); await p.click('#msGo'); continue; }
     if(t === 'review'){ await fits('review ' + day); await shot(`d${day}-wkreview`); sums['wreview ' + day] = (await vis('.rbw')) ? await builds('wreview ' + day) : await solve('wreview'); if(await p.$('#calcDone')) await p.click('#calcDone'); await p.click('#nx'); continue; }
@@ -165,10 +192,23 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
       await shot(`d${day}-review-done`); await p.click('#nx'); continue; }
     if(t === 'paint'){ await shot(`d${day}-paint`); const a = await S(); ok(`paint ${day}: the new plane has its own registration`, new Set(a.fleet.map(f => f.registration)).size === a.fleet.length, a.fleet.map(f => f.registration)); await p.click('#roll'); continue; } if(t === 'reveal'){ await p.click('#skipReveal'); for(let k = 0; k < 50 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     checks.push('stopped at ' + t + ' day ' + day); await shot('stop'); break; }
+  }catch(e){ checks.push('FAIL exception ' + e.message.split('\n')[0]); await shot('exception'); }
   const s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
   if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t) && !/\(Build\)|^Build:/.test(t));   // Build steps (the reviews, the model's formulas) are not Calculate
     const count = calc.reduce((n, t) => { const m = /^Ticket revenue \(([^)]*)\)/.exec(t); return n + (m ? m[1].split(',').length : 1); }, 0) + 2;   // launch day's three fares count as three
-    ok('weeks 1–4: about 26 Calculate steps with practice off (Fable\'s target; the launch tickets at three fares count three)', count >= 22 && count <= 34, { count, calc }); }
+    ok('weeks 1–4: about 18 Calculate steps (Launch Day 7, the week-1 tenths 2, then three a week: Fable\'s §4)', count >= 15 && count <= 21, { count, calc });
+    ok('the range check is the model\'s now (not logged as a sum)', !(s.handSumLog || []).some(h => h.tools.some(t => /^Range check/.test(t)))); }
+  const rows = await p.evaluate(() => window.__sim.evalIn('soLogRows()')), cap = CAP || 3;
+  if(rows.length){ ok(`from week 2, no week asks more than ${cap} Calculate sign-offs`, rows.every(r => r.asked.length <= cap), rows.map(r => [r.wk, r.asked.length]));
+    const w = n => rows.find(r => r.wk === n) || { asked:[], build:[], model:[] };
+    if(s.day >= 22 && !CAP){ ok('week 2: rent-or-buy, the Saab\'s Dublin fuel and the first fuel order', w(2).asked.length === 3 && w(2).asked.some(x => /Rent or buy/.test(x)) && w(2).asked.some(x => /Fuel: Saab 340 Dublin/.test(x)) && w(2).asked.some(x => /first fuel order/.test(x)), w(2).asked);
+      ok('week 3: Amsterdam tickets, Amsterdam flight time and the Saab\'s Amsterdam fuel', w(3).asked.length === 3 && w(3).asked.some(x => /Tickets: Amsterdam/.test(x)) && w(3).asked.some(x => /Flight time: Amsterdam/.test(x)) && w(3).asked.some(x => /Fuel: Saab 340 Amsterdam/.test(x)), w(3).asked);
+      ok('week 4: three Calculate; the ATR\'s Madrid fuel is Build (the third fuel line from week 2)', w(4).asked.length === 3 && w(4).build.some(x => /Fuel: ATR 72 Madrid/.test(x)), w(4)); } }
+  if(s.day >= 92 && !CAP) ok('month ends: an audit at the start of the 4 Nov and 2 Dec weeks', audits.some(a => a.day === 64) && audits.some(a => a.day === 92), audits);
+  if(COAST && s.day >= 64) ok('COAST: the plan unchanged all October brings a board review, and the plan waits for a change', audits.some(a => a.board) && boards.length > 0, { audits, boards });
+  if(!COAST && s.day >= 92) ok('Steady: the plan changes each month, so no board review', !audits.some(a => a.board), { audits, changes });
+  checks.push('info audits ' + JSON.stringify(audits)); checks.push('info changes ' + JSON.stringify(changes) + ' boards ' + JSON.stringify(boards));
+  checks.push('info week log\n' + rows.map(r => `  wk ${String(r.wk).padStart(2)}  q ${r.qualified}  calc [${r.asked.join('; ')}]  build [${r.build.join('; ')}]  model [${r.model.join('; ')}]${r.carried.length ? '  carried [' + r.carried.join('; ') + ']' : ''}${r.audit ? '  ' + r.audit : ''}`).join('\n'));
   checks.push('info sums ' + JSON.stringify(sums)); checks.push('info handSumLog ' + JSON.stringify(s.handSumLog)); checks.push('info ledger profit ' + JSON.stringify((s.ledger.rev || []).map((v, i) => v == null ? null : Math.round(v - s.ledger.cost[i]))));
   console.log(checks.join('\n')); console.log('OVERFLOW', overflow.length ? overflow : 'none'); console.log('ERRORS', errors.length ? errors : 'none');
   await b.close();

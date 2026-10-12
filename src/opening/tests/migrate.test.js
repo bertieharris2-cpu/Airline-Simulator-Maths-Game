@@ -32,6 +32,9 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
       if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); }
       else { await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
       await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push('build|' + P.id); } return done; };
+  const signs = async () => { const done = []; for(let g = 0; g < 12; g++){ const P = await p.evaluate(() => window.__sim.evalIn('soPlan()')); if(!P || P.rb) break; const k = P.key;
+      if(P.level === 'build'){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-soop="${k}|${x}"]` : `[data-sofig="${k}|${x}"]`); } else await p.fill(`[data-soin="${k}"]`, P.answer);
+      await p.click(`[data-sochk="${k}"]`); await p.waitForTimeout(80); done.push('so|' + P.level + '|' + k); } return done; };
   // play from wherever the save landed to the next day's HQ; returns the typed sums and the steps seen
   const playDay = async (tag, toHq) => { const seen = [], startDay = (await S()).day; let typed = [];
     for(let i = 0; i < 60; i++){ const t = await T(), s = await S(); if(s.day !== startDay && (t === 'hq' || (t === 'weekRun' && !toHq))){ seen.push(t === 'hq' ? 'next-day hq' : 'next-day board'); break; } seen.push(t);
@@ -42,7 +45,8 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
       if(t === 'shop2'){ await p.click('#skipShop'); continue; }
       if(t === 'event'){ await shot(`${tag}-event`); await p.click('[data-o="1"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
       if(t === 'plan'){ await shot(`${tag}-plan`); await p.click('#nx'); continue; }
-      if(t === 'workings'){ typed = await solveW(); await shot(`${tag}-workings`); await p.click('#nx'); continue; }
+      if(t === 'workings' && await p.$('.so-page')){ await shot(`${tag}-signoffs`); typed = typed.concat(await signs()); await p.click('#nx'); await p.waitForTimeout(80); continue; }   // v4.9: the week's Build cards and flight-time sums before the sheet
+      if(t === 'workings'){ typed = typed.concat(await solveW()); await shot(`${tag}-workings`); await p.click('#nx'); continue; }
       if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); await p.click('#nx'); continue; }
       if(t === 'fuelDesk'){ await shot(`${tag}-fueldesk`); await p.click('#nx'); continue; }
       if(t === 'ready'){ const en = await p.$eval('#startOps', e => !e.disabled); ok(`${tag}: ready to fly`, en); if(!en) break; await p.click('#startOps'); continue; }

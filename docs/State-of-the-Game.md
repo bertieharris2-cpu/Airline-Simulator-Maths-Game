@@ -10,6 +10,17 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0c. Workbook v4.9 (13 Oct 2026): the cap, the decay and the floor
+
+`p4zc_signoffs.js`, after `p4zb_decisions.js`:
+- **The ledger.** `S.so.weeks[week]` holds each sign-off the week considered: `{key, rel, label, cls (new | changed | repeat), money, level (calc | build | model), why (asked | cap | decay), point, done}`. `S.so.rel` counts Calculate completions from week 2 (the decay); `S.so.cap` and `S.so.hold` are the teacher's.
+- **Deciding.** `soDecideList(cands, point, commit)` ranks and caps the candidates at each point of the week: the audit, `acquire` (`acRbDue`), `fleetSums`, `workings` (the `decideHandSums` wrapper filters tickets, removes flight time and the range check, and sets `S.rnd.fuelCards` from `soFuelCands`) and the fuel desk (the first order keeps a reserved slot). Decisions freeze on the workings step. `soSync` marks a Calculate done when its skill's count rises.
+- **Cards.** `soCardHtml`/`soBindCards`: Build (`soBuildCheck`: a figure, the operation, a figure; × either way, ÷ the right way; hints for a wrong figure or operation) and Calculate (`soCalcCheck`, with an estimate in the Query). `soSpec` gives each relationship's figures; `soFinish` records the skill and the log. `R.workings` shows a *Sign-offs* page first when the week has Build cards or a flight time; `R.fleetSums` and `R.acquire` use the same cards.
+- **The floor.** `startBeat` inserts `{t:'audit'}` after the review when the last period held a month end after day 29. `soAuditData` uses `bestPlanSweep` on the month's last week as a daily rate, each route's takings against the best plan's, and `S.planChange` (kept by the `closeDay` wrapper) for the idle weeks. `R.audit` is the Finance audit or the board review; `S.board` holds the plan's Next (`R.plan` wrapper) until `planKey` changes. The `closeDay` wrapper also runs `neglectUpdate` for week and month periods.
+- **Small fixes.** `periodShort` names 9–27 December "December"; the ƒ inspector opens on the week planner (`dockHtml`).
+
+Tests: `week.test.js` checks the cap each week, the week 2–4 sign-offs against Fable's §4, the Build and Calculate cards (a Query first), the audits, and with `COAST=1` the board review and the held plan; `CAP=1` runs the dial. `migrate.test.js` signs the cards on a migrated day. Report: `docs/Cap-Decay-Floor-Report-Back.md`.
+
 ## 0. Workbook v4.7 (12 Oct 2026): the second-aircraft decision and Build reviews
 
 `p4zb_decisions.js`, after `p4z_model.js`:

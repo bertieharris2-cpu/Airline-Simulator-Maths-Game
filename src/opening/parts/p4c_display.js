@@ -383,7 +383,7 @@ function teacherOpen(){
   $('tText').innerHTML = ['Standard','Large','Extra large'].map((l, i) => `<button class="btn small" data-tz="${i}" aria-pressed="${tz===i}">${l}</button>`).join('');
   $('tText').querySelectorAll('[data-tz]').forEach(b => b.onclick = () => { S.textSize = parseInt(b.getAttribute('data-tz'),10); applyTextSize(); publish(); teacherOpen(); });
   $('tTest').checked = !!settings.testMode; $('tAutoAns').checked = !!settings.autoAnswer;
-  renderTeacherTools(); $('tTime').innerHTML = '';
+  renderTeacherTools(); if(typeof soTeacherRender === 'function') soTeacherRender(); $('tTime').innerHTML = '';
   $('tCode').value = saveCode(); $('tCodeMsg').textContent = ''; if($('tMigrated')) $('tMigrated').innerHTML = migratedHtml();
 }
 function teacherClose(){ $('teacher').hidden = true; render(); }
