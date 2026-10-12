@@ -18,9 +18,9 @@ function statBars(p){ const M = statMax(); return `<div class="sc-bars">${STAT_K
 function offerHtml(o){ const rows = [['Buy', money(o.price) + (o.buyOffered && !o.canBuy ? ` <small>${esc(saveUpText(o.saveUp))}</small>` : ''), o.canBuy], ['Rent', o.lease ? `${money(o.lease)} a day` : '—', o.canLease], ['Finance', o.deposit ? `${money(o.deposit)} down + ${money(o.pay)} a ${o.unit} × ${o.n}` : '—', o.canFinance]];
   return `<div class="as-offer">${rows.map(([l, v, ok]) => `<span class="${ok ? '' : 'off'}"><span>${l}</span><b class="mono">${v}</b></span>`).join('')}</div>`; }
 function showCard(p, o, picked, owned, flipped){
-  return `<button class="show-card ${picked ? 'on' : ''} ${owned ? 'owned' : ''} ${flipped ? 'flip' : ''}" data-pick="${p.id}" aria-pressed="${picked}" title="Tap to turn the card over"><div class="sc-inner">
+  return `<button class="show-card ${picked ? 'on' : ''} ${owned ? 'owned' : ''} ${flipped ? 'flip' : ''} ${UI.flipTurn === p.id && !settings.reduceMotion ? 'turn' : ''}" data-pick="${p.id}" aria-pressed="${picked}" title="Tap to turn the card over"><div class="sc-inner">
     <div class="sc-front">${pictureHtml(p, null, 'pic')}<div class="sc-name"><b>${esc(p.name)}</b><span class="muted">${esc(p.tier || '')}${owned ? ` · you fly ${owned}` : ''}</span></div><div class="sc-price"><span>From</span><b class="mono">${money(o.lease && o.canLease ? o.lease : o.price)}</b><small>${o.lease && o.canLease ? 'a day to rent' : 'to buy'}</small></div><span class="sc-turn">Tap for the facts ↻</span></div>
-    <div class="sc-back"><div class="sc-name"><b>${esc(p.name)}</b></div><div class="sc-facts"><span>Seats <b>${p.seats}</b></span><span>Speed <b>${num(p.speed)} km/h</b></span><span>Range <b>${num(p.range)} km</b></span><span>Fuel <b>${p.fuelUse} L</b> per 100 km</span><span>Flying cost <b>${money(p.hourCost)}</b> an hour</span><span>Day cost <b>${money(p.dayCost)}</b></span></div>
+    <div class="sc-back"><div class="sc-name"><b>${esc(p.name)}</b></div><div class="sc-facts"><span>Flying <b>${money(p.hourCost)}</b> an hour</span><span>Day cost <b>${money(p.dayCost)}</b></span></div>
       <p class="sc-id">${esc(p.fact || '')}</p>${statBars(p)}${offerHtml(o)}<span class="sc-turn">Tap to turn back ↻</span></div></div></button>`;
 }
 /* the locked row: live aircraft not yet in the shop, then the aircraft the workbook only names (no figures are read) */
@@ -39,7 +39,7 @@ R.shop2 = st => {
     main:`<div class="showroom ${list.length > 3 ? 'many' : ''}"><div class="show-cards">${list.map(p => showCard(p, shopOffer(p), picked === p.id, owned(p.id), !!flips[p.id])).join('')}</div>
       ${soon.length ? `<div class="show-soon"><div class="ss-h"><b>Coming soon</b><span class="muted small">The aircraft you can aim for. Their day will come.</span></div><div class="soon-row">${soon.map(soonCard).join('')}</div></div>` : ''}</div>`,
     foot:`<button class="btn big" id="skipShop">Not today</button><span class="grow"></span><button class="btn primary big" id="nx" ${picked ? '' : 'disabled'}>${picked ? goLabel(`Look closer at the ${planeById(picked).name.replace(/^DHC-6 /, '')}`) : 'Choose an aircraft, or not today'} &#9654;</button>` });
-  screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-pick'); if(S.rnd.shopPick === id) flips[id] = !flips[id]; else { S.rnd.shopPick = id; flips[id] = true; } render(); });
+  screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-pick'); if(S.rnd.shopPick === id) flips[id] = !flips[id]; else { S.rnd.shopPick = id; flips[id] = true; } UI.flipTurn = id; render(); UI.flipTurn = null; });
   const strip = () => { S.steps = S.steps.filter(x => !['fleetSums', 'acquire'].includes(x.t)); };
   on('skipShop', () => { strip(); delete S.rnd.shopPick; UI.justDone = null; advance(); });
   on('nx', () => { strip(); const k = S.steps.findIndex(x => x.t === 'shop2'); S.steps.splice(k + 1, 0, { t:'fleetSums' }, { t:'acquire' }); UI.justDone = null; advance(); });

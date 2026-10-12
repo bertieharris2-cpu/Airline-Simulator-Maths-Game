@@ -2362,7 +2362,7 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
 }
 
 /* events before flying (p4l), the rival's fare on the planner, the teacher's hand-sum log */
-.ev{display:grid;gap:14px;max-width:980px}.ev-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.ev-opts .opt{display:flex;flex-direction:column;gap:6px;min-height:120px;border:1px solid var(--line);border-left:4px solid var(--amber,#ffc83d)}
+div.ev{display:grid;gap:14px;max-width:980px}.ev-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.ev-opts .opt{display:flex;flex-direction:column;gap:6px;min-height:120px;border:1px solid var(--line);border-left:4px solid var(--amber,#ffc83d)}
 .ev-opts .opt.on{border-color:var(--amber,#ffc83d);background:rgba(255,200,61,.12)}.ev-opts .opt[disabled]{opacity:.75}.ev-cost{margin-top:auto;color:var(--amber,#ffc83d);font-weight:700}
 .ev-why{padding:12px 14px;border:1px solid var(--line);border-left:4px solid var(--amber,#ffc83d);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .pe-rival{margin-left:auto;font-size:12px;padding:2px 8px;border:1px solid var(--line);color:var(--amber,#ffc83d);white-space:nowrap}
@@ -2475,11 +2475,14 @@ body.rm .art .blade,body.rm .art .fan,body.rm .art .glint.go,body.rm .hangar .ro
 /* the showroom (CR5 pass 2): an air show of flip cards, the same bar scale on every card, a locked "coming soon" row */
 .showroom{display:flex;flex-direction:column;gap:12px;min-height:0}
 .show-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;align-items:stretch}
-.show-card{position:relative;perspective:1400px;border:0;background:none;padding:0;color:inherit;font:inherit;text-align:left;cursor:pointer;min-height:300px}
-.show-card .sc-inner{position:relative;width:100%;height:100%;min-height:300px;transition:transform .55s cubic-bezier(.4,.1,.2,1);transform-style:preserve-3d}
-.show-card.flip .sc-inner{transform:rotateY(180deg)}
-.show-card .sc-front,.show-card .sc-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);background:rgba(6,20,38,.55);padding:10px 12px;overflow:hidden}
-.show-card .sc-back{transform:rotateY(180deg)}
+.show-card{position:relative;border:0;background:none;padding:0;color:inherit;font:inherit;text-align:left;cursor:pointer;min-height:300px}
+/* the turned card is drawn flat: a 3D-rotated face is rasterised and goes soft when the canvas is scaled to the window */
+.show-card .sc-inner{position:relative;width:100%;height:100%;min-height:300px}
+.show-card:not(.flip) .sc-back,.show-card.flip .sc-front{display:none}
+.show-card.turn .sc-front,.show-card.turn .sc-back{animation:cardTurn .32s cubic-bezier(.3,.1,.2,1)}
+@keyframes cardTurn{from{transform:scaleX(.04);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.show-card.turn .sc-front,.show-card.turn .sc-back{animation:none}}
+.show-card .sc-front,.show-card .sc-back{position:absolute;inset:0;display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);background:rgba(6,20,38,.55);padding:10px 12px;overflow:hidden}
 .show-card.on .sc-front,.show-card.on .sc-back{border-color:var(--amber);box-shadow:0 0 0 1px rgba(243,199,84,.35), 0 0 18px rgba(243,199,84,.14)}
 .show-card.owned .sc-front{border-color:rgba(86,230,166,.5)}
 .sc-photo{margin:0;position:relative;aspect-ratio:3/2;background:#0A2244;border:1px solid var(--hair);overflow:hidden;flex:none}.sc-photo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -3676,7 +3679,7 @@ body.desk .acx-r.key > b,body.desk .sc-profit b,body.desk .fd-tot > b,body.desk 
 body.desk .sc-n,body.desk .om-tag,body.desk .dk-ib sup{font-weight:600}
 body.desk .stamp{font-weight:700}
 body.desk .actbar .btn.big,body.desk .actbar .btn.primary.big{font-weight:600;letter-spacing:.02em}
-.rbw{grid-template-columns:27fr 38fr 35fr}.rbw-s .rv-routes{overflow:auto}.rbw-s .rv-routes table{font-size:13px}.rbw-s .dk-pnl-h h2{font-size:16px}
+.rbw{grid-template-columns:24fr 36fr 40fr}.rbw-s .rv-routes{overflow:auto}.rbw-s .rv-routes table{font-size:13px}.rbw-s .dk-pnl-h h2{font-size:16px}
 
 /* ---------- fewer, better hand sums (v4.9): the Sign-offs page, Build and Calculate cards, the audit and the board ---------- */
 .so-page .dk-body{display:flex;flex-direction:column;gap:14px}
@@ -3707,6 +3710,19 @@ body.desk .actbar .btn.big,body.desk .actbar .btn.primary.big{font-weight:600;le
 .so-board-note svg{flex:none;width:20px;height:20px;color:var(--dk-amber)}
 .so-log{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}.so-log th,.so-log td{border-bottom:1px solid rgba(0,0,0,.12);padding:4px 6px;text-align:left;vertical-align:top}
 .so-holds{flex-wrap:wrap;gap:12px}.so-holds label{display:inline-flex;gap:6px;align-items:center}
+
+/* the route performance table: headings over their figures, and it fits a review's side panel */
+table.hq-t.ev{display:table}
+.hq-t th.num{text-align:right}
+.rv-routes .hq-t{width:100%;font-variant-numeric:tabular-nums}
+.rv-routes .hq-t th{text-transform:none;letter-spacing:0;font-size:12px;white-space:normal;vertical-align:bottom;line-height:1.15;padding:4px 5px}
+.rv-routes .hq-t,.rv-routes .hq-t td,.rv-routes .hq-t .num{font-size:12.5px}
+.rv-routes .hq-t td{padding:5px 4px;white-space:nowrap}.rv-routes .hq-t th{padding-left:4px;padding-right:4px}.rv-routes .hq-t th:first-child,.rv-routes .hq-t td:first-child{padding-left:6px}.rv-routes .hq-t th:last-child,.rv-routes .hq-t td:last-child{padding-right:8px}
+.rv-routes .hq-t td:first-child svg{vertical-align:-3px;margin-right:4px}
+
+/* the turned showroom card: the bar values stay on one line */
+.show-card .sb{grid-template-columns:auto 1fr auto}.show-card .sb-l{white-space:nowrap}
+.show-card .sc-back{gap:3px;padding-bottom:6px}.show-card .sc-back .as-offer{padding-top:4px}.show-card .sc-back .sc-turn{font-size:11.5px}.show-card .sb > :last-child{white-space:nowrap;text-align:right}
 </style>
 </head>
 <body>
@@ -6479,7 +6495,7 @@ function evidenceHtml(h, ids){
     const r = routeById(id), x = h && h.routes && h.routes[id];
     if(!x) return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td colspan="7" class="muted">New today: no results yet</td></tr>`;
     const miss = Math.max(0, (x.want || x.pax) - x.pax);
-    return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td class="num">${x.want || '—'}</td><td class="num">${x.seats}</td><td class="num">${x.pax}</td><td class="num ${miss ? 'orange' : ''}">${miss}</td><td class="num">${money(x.fare)}</td><td class="num">${money(x.rev)}</td><td class="num ${x.profit >= 0 ? 'green' : 'red'}">${money(x.profit)}</td></tr>`; }).join('')}</tbody></table></div>`;
+    return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td class="num">${x.want || '—'}</td><td class="num">${x.seats}</td><td class="num">${x.pax}</td><td class="num ${miss ? 'orange' : ''}">${miss}</td><td class="num">${money(x.fare)}</td><td class="num">${money(Math.round(x.rev))}</td><td class="num ${x.profit >= 0 ? 'green' : 'red'}">${money(Math.round(x.profit))}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
 /* One screen: the day bar, each route's fare and services, on-board sales (Day 1 on), the first departure (Day 2 on), the crew. */
 const DEP_MIN = 360, DEP_MAX = 600;
@@ -11040,9 +11056,9 @@ function statBars(p){ const M = statMax(); return `<div class="sc-bars">${STAT_K
 function offerHtml(o){ const rows = [['Buy', money(o.price) + (o.buyOffered && !o.canBuy ? ` <small>${esc(saveUpText(o.saveUp))}</small>` : ''), o.canBuy], ['Rent', o.lease ? `${money(o.lease)} a day` : '—', o.canLease], ['Finance', o.deposit ? `${money(o.deposit)} down + ${money(o.pay)} a ${o.unit} × ${o.n}` : '—', o.canFinance]];
   return `<div class="as-offer">${rows.map(([l, v, ok]) => `<span class="${ok ? '' : 'off'}"><span>${l}</span><b class="mono">${v}</b></span>`).join('')}</div>`; }
 function showCard(p, o, picked, owned, flipped){
-  return `<button class="show-card ${picked ? 'on' : ''} ${owned ? 'owned' : ''} ${flipped ? 'flip' : ''}" data-pick="${p.id}" aria-pressed="${picked}" title="Tap to turn the card over"><div class="sc-inner">
+  return `<button class="show-card ${picked ? 'on' : ''} ${owned ? 'owned' : ''} ${flipped ? 'flip' : ''} ${UI.flipTurn === p.id && !settings.reduceMotion ? 'turn' : ''}" data-pick="${p.id}" aria-pressed="${picked}" title="Tap to turn the card over"><div class="sc-inner">
     <div class="sc-front">${pictureHtml(p, null, 'pic')}<div class="sc-name"><b>${esc(p.name)}</b><span class="muted">${esc(p.tier || '')}${owned ? ` · you fly ${owned}` : ''}</span></div><div class="sc-price"><span>From</span><b class="mono">${money(o.lease && o.canLease ? o.lease : o.price)}</b><small>${o.lease && o.canLease ? 'a day to rent' : 'to buy'}</small></div><span class="sc-turn">Tap for the facts ↻</span></div>
-    <div class="sc-back"><div class="sc-name"><b>${esc(p.name)}</b></div><div class="sc-facts"><span>Seats <b>${p.seats}</b></span><span>Speed <b>${num(p.speed)} km/h</b></span><span>Range <b>${num(p.range)} km</b></span><span>Fuel <b>${p.fuelUse} L</b> per 100 km</span><span>Flying cost <b>${money(p.hourCost)}</b> an hour</span><span>Day cost <b>${money(p.dayCost)}</b></span></div>
+    <div class="sc-back"><div class="sc-name"><b>${esc(p.name)}</b></div><div class="sc-facts"><span>Flying <b>${money(p.hourCost)}</b> an hour</span><span>Day cost <b>${money(p.dayCost)}</b></span></div>
       <p class="sc-id">${esc(p.fact || '')}</p>${statBars(p)}${offerHtml(o)}<span class="sc-turn">Tap to turn back ↻</span></div></div></button>`;
 }
 /* the locked row: live aircraft not yet in the shop, then the aircraft the workbook only names (no figures are read) */
@@ -11061,7 +11077,7 @@ R.shop2 = st => {
     main:`<div class="showroom ${list.length > 3 ? 'many' : ''}"><div class="show-cards">${list.map(p => showCard(p, shopOffer(p), picked === p.id, owned(p.id), !!flips[p.id])).join('')}</div>
       ${soon.length ? `<div class="show-soon"><div class="ss-h"><b>Coming soon</b><span class="muted small">The aircraft you can aim for. Their day will come.</span></div><div class="soon-row">${soon.map(soonCard).join('')}</div></div>` : ''}</div>`,
     foot:`<button class="btn big" id="skipShop">Not today</button><span class="grow"></span><button class="btn primary big" id="nx" ${picked ? '' : 'disabled'}>${picked ? goLabel(`Look closer at the ${planeById(picked).name.replace(/^DHC-6 /, '')}`) : 'Choose an aircraft, or not today'} &#9654;</button>` });
-  screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-pick'); if(S.rnd.shopPick === id) flips[id] = !flips[id]; else { S.rnd.shopPick = id; flips[id] = true; } render(); });
+  screen().querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-pick'); if(S.rnd.shopPick === id) flips[id] = !flips[id]; else { S.rnd.shopPick = id; flips[id] = true; } UI.flipTurn = id; render(); UI.flipTurn = null; });
   const strip = () => { S.steps = S.steps.filter(x => !['fleetSums', 'acquire'].includes(x.t)); };
   on('skipShop', () => { strip(); delete S.rnd.shopPick; UI.justDone = null; advance(); });
   on('nx', () => { strip(); const k = S.steps.findIndex(x => x.t === 'shop2'); S.steps.splice(k + 1, 0, { t:'fleetSums' }, { t:'acquire' }); UI.justDone = null; advance(); });

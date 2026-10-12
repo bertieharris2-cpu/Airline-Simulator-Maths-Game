@@ -309,7 +309,7 @@ function evidenceHtml(h, ids){
     const r = routeById(id), x = h && h.routes && h.routes[id];
     if(!x) return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td colspan="7" class="muted">New today: no results yet</td></tr>`;
     const miss = Math.max(0, (x.want || x.pax) - x.pax);
-    return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td class="num">${x.want || '—'}</td><td class="num">${x.seats}</td><td class="num">${x.pax}</td><td class="num ${miss ? 'orange' : ''}">${miss}</td><td class="num">${money(x.fare)}</td><td class="num">${money(x.rev)}</td><td class="num ${x.profit >= 0 ? 'green' : 'red'}">${money(x.profit)}</td></tr>`; }).join('')}</tbody></table></div>`;
+    return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td class="num">${x.want || '—'}</td><td class="num">${x.seats}</td><td class="num">${x.pax}</td><td class="num ${miss ? 'orange' : ''}">${miss}</td><td class="num">${money(x.fare)}</td><td class="num">${money(Math.round(x.rev))}</td><td class="num ${x.profit >= 0 ? 'green' : 'red'}">${money(Math.round(x.profit))}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
 /* One screen: the day bar, each route's fare and services, on-board sales (Day 1 on), the first departure (Day 2 on), the crew. */
 const DEP_MIN = 360, DEP_MAX = 600;
