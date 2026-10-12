@@ -2641,5 +2641,230 @@ body.rm .ms-in > *{animation:none}
 .wk-list{border-collapse:collapse;font-size:19px;min-width:620px}.wk-list th{text-align:left;font-weight:600;padding:8px 14px;border-bottom:1px solid #c9bda0}.wk-list td{padding:8px 14px;border-bottom:1px solid #c9bda0;text-align:right}.wk-list tr.tot th,.wk-list tr.tot td{border-top:3px double #1b2a4a;border-bottom:0;font-weight:800}
 .wk-practice{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}.wk .pq{background:rgba(255,255,255,.6);border-color:#c9bda0}.wk .pq-q,.wk .pq-work span.mono{color:#1b2a4a}.wk .pq-q b,.wk .pq-work b{color:#1f5fbf}.wk .pq-ans input{background:#fff;color:#1b2a4a;border-color:#1b2a4a}.wk .pq-msg{color:#b85c00}.wk .pq-msg.ok{color:#1a7f4b}.wk .pq-hint{color:#4a5a7a}
 @media (max-height:800px){.wk{gap:10px;padding:8px 20px 14px}.wk-row,.wk-row > i{height:42px}.wk-row > i{width:42px;font-size:30px}.wk-row.ans{height:56px}.wk-row.ans input{height:48px;font-size:32px;width:calc(var(--w) * 42px + 20px)}.wk-free{width:calc(var(--w) * 42px + 240px)}.wk-head h2{font-size:26px}.wk-grid{padding:10px 18px}}
+
+/* ============================================================
+   DRAGON AIR LOOK (Workbook v4.4, 12 Oct 2026): the mock-ups Bertie sent. One mid-blue page, lighter blue
+   rounded panels, white headings, a numbered checklist with green ticks, tiles for reputation and cash,
+   a bright blue primary and a green "go" button, the Plan Impact panel on the right. Every rule here
+   overrides the Dark Premium block above; nothing structural changes.
+   ============================================================ */
+:root{
+  --bg:#071d45; --navy:#0c2d63; --panel:#17417f; --panel-solid:#17417f; --top:#123a75;
+  --sf1:#163f7d; --sf2:#1d4c92; --sf3:#2559a6; --sf4:#2f67bd;
+  --cy:#8fd3ff; --cyrgb:143,211,255; --sel:#8fd3ff; --sel-rgb:143,211,255; --act:#2d7ff5;
+  --white:#ffffff; --muted:#c7dcf7; --faint:#9fbde6; --grey:#9fbde6;
+  --line:rgba(150,200,255,.32); --hair:rgba(150,200,255,.18); --edge:rgba(150,200,255,.42);
+  --amber:#ffc93c; --amber2:#ffe08a; --gold:#ffd54a; --green:#6ff09a; --ok:#5fe08f; --orange:#ffb15c; --red:#ff7b7b; --blue:#6fb4ff;
+  --land:#1d4a8c; --ocean:#071d45;
+  --r:12px; --rb:10px;
+  --surface:linear-gradient(170deg,#1a4786 0%,#163f7d 55%,#133a74 100%);
+  --lift:0 10px 26px rgba(2,12,36,.35), inset 0 1px 0 rgba(200,230,255,.08);
+  --go:#34c45f; --go2:#27a94e;
+}
+body{background:radial-gradient(1400px 700px at 14% -10%, rgba(60,140,235,.28), transparent 60%), radial-gradient(900px 500px at 100% 100%, rgba(40,110,210,.22), transparent 60%), linear-gradient(180deg,#0a2a5f,#071d45 60%,#061a3e)}
+.card,.tf,.hp,.overlay .box{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--lift)}
+.ws-main > .tf{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.strat,.mkt,.spec,.dm-big,.rot-note,.plan-route,.rcp-b,.pe-grid > div,.ff-box,.cmp,.apt,.term{background:var(--sf2);border:1px solid var(--line);border-radius:10px}
+.pnl{background:var(--sf2);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.pnl .pnl{background:var(--sf3)}
+.pnl-h h3{color:#fff;font-weight:700;font-size:19px}
+.pnl-h .muted{color:var(--muted)}
+.cx{background:var(--sf2);border:1px solid var(--hair);border-radius:10px}
+.cx h4{color:#fff}
+.phead,.hp .phead{color:#fff;border-bottom:1px solid var(--hair)}
+.ws-main .tf-bar{color:var(--muted)}
+.ws-main h1.tq{font-size:calc(34px * var(--tz));font-weight:800;color:#fff;letter-spacing:-.01em}
+.ws-main .tf-story p{font-size:calc(17px * var(--tz));color:var(--muted)}
+.label,.kl{color:var(--muted)}
+.gold{color:var(--gold)}.cy{color:var(--cy)}
+/* buttons: rounded, a bright blue primary; the action bar's primary is the green "go" */
+.btn{border-radius:10px;background:var(--sf3);border:1px solid var(--line);color:#fff;font-weight:600}
+.btn:hover:not(:disabled){border-color:rgba(160,210,255,.7);background:var(--sf4)}
+.btn.primary,.btn.huge,.btn.act{background:linear-gradient(180deg,#3a8cf8,#2270df);border:1px solid rgba(160,210,255,.65);color:#fff;box-shadow:0 6px 16px rgba(20,90,220,.35), inset 0 1px 0 rgba(255,255,255,.25);border-radius:10px}
+.btn.primary:hover:not(:disabled),.btn.huge:hover:not(:disabled),.btn.act:hover:not(:disabled){background:linear-gradient(180deg,#4d9bff,#2a7cec)}
+.btn.primary:disabled,.btn.huge:disabled{background:#1b4280;color:rgba(210,228,250,.5);border-color:var(--hair);box-shadow:none}
+.actbar .btn.primary.big:not(:disabled),.wk .btn.primary:not(:disabled),.launch .btn.huge.go:not(:disabled){background:linear-gradient(180deg,var(--go),var(--go2));border-color:rgba(160,255,190,.55);box-shadow:0 6px 18px rgba(30,170,80,.38), inset 0 1px 0 rgba(255,255,255,.28)}
+.actbar .btn.primary.big:hover:not(:disabled),.launch .btn.huge.go:hover:not(:disabled){background:linear-gradient(180deg,#43d16c,#2fb858)}
+.choice,.opt,.svc,.fare,.cap-row,.opt-chip,.mkt,.strat,.apt,.term,.nv,.kpi2 .ki,.ri,.dr-rcp > div,.fb-card,.fl-specs > div,.ii,.td-brief,.cashbal,.live-bar,.chip,.cops,.hchip,.ri-k{border-radius:10px}
+.choice.on,.opt.on,.svc.on,.fare.on,.cap-row.on,.strat.on,.mkt.on,.apt.on,.term.on,.opt-chip.on{border:1px solid rgba(160,215,255,.9);background:linear-gradient(160deg,rgba(58,140,248,.42),rgba(29,76,146,.7) 65%);box-shadow:0 0 0 1px rgba(160,215,255,.35), 0 8px 20px rgba(10,50,140,.35)}
+/* ---------- the top bar: brand · date · status · reputation tile · cash tile · menu buttons ---------- */
+.cbar{min-height:72px;padding:0 10px;background:linear-gradient(180deg,#0f3570,#0b2a5c);border-bottom:1px solid var(--line);box-shadow:0 2px 14px rgba(2,10,30,.45)}
+.cbar .brand{max-width:340px;gap:12px}
+.cbar .brand .fin{width:46px;height:46px;flex:none}
+#cName{font-size:26px;font-weight:800;letter-spacing:.05em}
+#cStrat{font-size:11.5px;letter-spacing:.22em;color:#bfe0ff}
+.cdate b{font-size:19px;font-weight:700}.cdate i{font-size:13.5px}
+.cops{border-radius:999px;padding:5px 14px;font-size:12px;border-color:rgba(143,211,255,.55);background:rgba(143,211,255,.1)}
+.s-rep{border:1px solid var(--line);border-radius:12px;background:var(--sf1);padding:5px 16px!important;margin-right:8px;min-width:150px}
+.s-rep .label{font-size:12.5px;color:var(--muted)}
+.s-rep .stars{font-size:21px;color:var(--amber);display:flex;align-items:center;gap:8px}
+.s-rep .stars .off{color:rgba(255,255,255,.28)}
+#cRepN{font-size:17px;font-weight:700;color:#fff;letter-spacing:0}
+.cashbal{border:1px solid var(--line);border-radius:12px;background:var(--sf1);padding:5px 18px;align-items:flex-start;min-width:150px}
+.cashbal b{font-size:24px;font-weight:800;color:var(--gold);order:2}.cashbal span{font-size:12.5px;color:var(--muted);order:1}
+.cbar .btn.small{min-height:48px;border-radius:10px;background:var(--sf1)}
+.cbar .btn.small:hover:not(:disabled){background:var(--sf3)}
+/* ---------- the shell: wider nav tiles with a tagline underneath ---------- */
+.shell{grid-template-columns:108px minmax(0,1fr);gap:12px}
+.lnav{gap:8px;padding:8px;background:#0e3068;border:1px solid var(--hair);border-radius:14px}
+.nv,.nv:hover:not(:disabled){border-radius:12px;padding:12px 2px 10px;font-size:13px;color:#dbe9fb}
+.nv svg{width:28px;height:28px}
+.nv.on,.nv.on:hover{background:linear-gradient(180deg,#3b8df8,#2468d4)!important;border-color:rgba(160,215,255,.7);box-shadow:0 6px 16px rgba(20,90,220,.4), inset 0 1px 0 rgba(255,255,255,.25)}
+.nv-tag{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 6px 10px;border-top:1px solid var(--hair);text-align:center}
+.nv-tag .art.mini{width:92px;height:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
+.nv-tag span{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#bfe0ff;line-height:1.5}
+@media (min-width:1600px){ .shell{grid-template-columns:124px minmax(0,1fr)} .nv-tag .art.mini{width:104px} }
+.actbar{border-radius:14px;background:linear-gradient(180deg,#143b76,#0f3068);border:1px solid var(--line);min-height:62px}
+.ab-hint{color:#e6f0fc}
+.actbar .btn.primary.big{min-width:250px;font-size:18px;font-weight:700}
+/* ---------- the rail: a numbered checklist with green ticks ---------- */
+.ws{gap:12px}
+.ws-rail{background:#0e3068;border:1px solid var(--hair);border-radius:14px}
+.ws-rail .ws-h{font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#fff}
+.ws-rail .ws-h small{text-transform:none;letter-spacing:0;font-weight:400;font-size:13.5px}
+.stages{gap:8px;padding:10px}
+.stg{border:1px solid var(--hair);border-radius:12px;background:var(--sf1)}
+.stg-h{align-items:center;padding:10px 10px}
+.stg-k{width:28px;height:28px;border-radius:9px;background:#2559a6;border:1px solid rgba(160,215,255,.45);color:#fff;font-size:14px}
+.stg-t b{font-size:15.5px}
+.stg.done{border-left:1px solid var(--hair);background:var(--sf1)}
+.stg.done .stg-k{background:#2559a6;border-color:rgba(160,215,255,.45)}
+.stg-h::after{content:'';flex:none;width:22px;height:22px;border-radius:50%;border:2px solid rgba(200,225,255,.55);margin-left:auto;align-self:center}
+.stg.done .stg-h::after{content:'\2713';border:0;background:#2ec267;color:#fff;font-size:14px;font-weight:800;display:grid;place-items:center}
+.stg.cur .stg-h::after{border-color:#8fd3ff;box-shadow:0 0 0 3px rgba(143,211,255,.2)}
+.stg.cur{background:linear-gradient(160deg,rgba(58,140,248,.35),rgba(29,76,146,.55) 70%);border-color:rgba(160,215,255,.6);box-shadow:none}
+.stg.cur .stg-k{background:#3b8df8;border-color:#bfe0ff}
+.stg-chev,.stg-lock{display:none}
+.subs{margin:0 10px 10px 24px;border-left:1px solid rgba(160,215,255,.3)}
+.subs .ri{border-radius:8px}
+.subs .ri.on{background:rgba(143,211,255,.12)}
+.ri-d{background:#0e3068;border-color:rgba(160,215,255,.8)}
+/* ---------- the dock: Plan Impact / Work it out ---------- */
+.dock{background:linear-gradient(170deg,#1a4786,#143b76 60%,#113570);border:1px solid var(--line);border-radius:14px;box-shadow:var(--lift)}
+.dk-h{padding:14px 14px 10px 16px;border-bottom:1px solid var(--hair)}
+.dk-t{font-size:22px;font-weight:800;color:#fff}
+.dock:not(.dock-context) .dk-kind{background:#3b8df8;color:#fff;border-radius:6px}
+.dk-x{border-radius:9px;background:var(--sf2)}
+.dk-b{padding:12px 14px}
+.dk-sub{margin:-6px 0 2px;font-size:13.5px;color:var(--muted)}
+.pi{display:flex;flex-direction:column;gap:0}
+.pi-r{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--hair)}
+.pi-r:last-child{border-bottom:0}
+.pi-r svg{width:22px;height:22px;fill:#bfe0ff}
+.pi-r .pi-l{font-size:14px;color:#fff;line-height:1.2}
+.pi-r .pi-l small{display:block;font-size:12px;color:var(--muted)}
+.pi-r .pi-v{font-size:17px;font-weight:700;color:#fff;text-align:right;white-space:nowrap}
+.pi-r .pi-v small{display:block;font-size:12px;font-weight:400;color:var(--muted)}
+.pi-r .pi-v.todo{font-size:13px;font-weight:600;color:var(--cy)}
+.pi-r.tot{background:var(--sf2);border-radius:10px;padding:9px 10px;margin-top:6px;border-bottom:0}
+.pi-r.tot .pi-v{font-size:19px}
+.pi-r.profit{background:linear-gradient(160deg,rgba(52,196,95,.35),rgba(39,169,78,.2));border:1px solid rgba(110,240,150,.5);border-radius:12px;padding:12px 12px;margin-top:8px}
+.pi-r.profit svg{fill:var(--green)}
+.pi-r.profit .pi-v{font-size:26px;font-weight:800;color:var(--green)}
+.pi-r.profit .pi-v.neg{color:var(--orange)}
+.pi-r.profit .pi-v.todo{font-size:14px;color:#fff}
+.kvs dt{color:var(--muted)}.kvs dd{color:#fff}
+.dk-help{border-radius:10px;background:var(--sf2)}
+.dk-help i{background:#3b8df8}
+/* ---------- tables: striped rows, dark total rows, a green profit line ---------- */
+table.fx thead th b{color:#fff;text-shadow:none}
+table.fx tbody tr:nth-child(even) > th,table.fx tbody tr:nth-child(even) > td{background:rgba(255,255,255,.035)}
+table.fx tr.tot > th,table.fx tr.tot > td{background:rgba(10,36,80,.55);border-bottom:1px solid rgba(160,215,255,.45)}
+table.fx tr:not(.tot) + tr.tot > th,table.fx tr:not(.tot) + tr.tot > td,table.fx tbody tr.tot:first-child > *{border-top:1px solid rgba(160,215,255,.45)}
+table.fx td.c.done{color:#fff;text-shadow:none}
+table.fx td.c.on{outline-color:var(--cy);border-radius:6px}
+td.c.enter button,.cellbtn{border-radius:8px;background:rgba(143,211,255,.12);border-color:rgba(143,211,255,.75)}
+.sheet1 table.fx tbody tr.row-profit > th,.sheet1 table.fx tbody tr.row-profit > td{background:linear-gradient(160deg,rgba(52,196,95,.3),rgba(39,169,78,.18));color:var(--green)}
+/* ---------- the planning page: the demand chart, the services, the fare chips ---------- */
+.dstrip{grid-template-columns:200px 1fr;gap:12px}
+.ds-l{font-size:13.5px;color:#fff;font-weight:600;white-space:normal;line-height:1.25}
+.ds-bar{height:52px;border-bottom:1px solid rgba(160,215,255,.4)}
+.ds-b{border-radius:6px 6px 0 0;border-right:2px solid var(--sf2);background:linear-gradient(180deg,rgba(111,180,255,.85),rgba(111,180,255,.35))}
+.ds-b.early,.ds-b.evening{background:linear-gradient(180deg,rgba(90,160,255,.95),rgba(90,160,255,.45))}
+.ds-b.midday{background:linear-gradient(180deg,rgba(160,200,255,.6),rgba(160,200,255,.25))}
+.ds-b span{font-size:11.5px;font-weight:600;left:8px;bottom:4px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.pe-ac,.pe-route,.pe-fr,.pe-tab,.pe-svc,.fchip,.pl-fares .fchip{border-radius:10px}
+.pe-svc{background:var(--sf2)}
+.pe-tab.on{background:linear-gradient(180deg,#3b8df8,#2468d4);border-color:rgba(160,215,255,.7)}
+.pe-step .pe-b{border-radius:8px;background:var(--sf3);border:1px solid var(--line);color:#fff}
+.pe-step .pe-b:hover:not(:disabled){background:var(--sf4)}
+.fchip.on{border-color:var(--amber);box-shadow:inset 0 -3px 0 var(--amber);background:rgba(255,201,60,.08)}
+/* the week's fuel order on the plan page */
+.pe-fuelwk .fw-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-top:4px}
+.pe-fuelwk .fw-row .kl{font-size:13px}
+.pe-fuelwk .fw-row > b.mono{font-size:18px;color:#fff}
+.fw-quick{display:flex;flex-wrap:wrap;gap:6px}.fw-quick .btn.small{min-height:38px;font-size:14px;padding:4px 12px}
+.fw-bill{font-size:15px;color:#fff}.fw-bill .gold{color:var(--gold)}
+.pe-fuelwk > p.small{margin:6px 0 0}
+/* the operations board (Tuesday–Saturday run straight through) */
+.wboard{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px;align-items:start}
+.wb-week,.wb-fl{width:100%;border-collapse:separate;border-spacing:0;font-size:15.5px}
+.wb-week th,.wb-week td,.wb-fl th,.wb-fl td{padding:8px 10px;border-bottom:1px solid var(--hair);text-align:left}
+.wb-week thead th,.wb-fl thead th{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.wb-week thead th:first-child{font-size:20px;text-transform:none;letter-spacing:0;color:#fff}
+.wb-week tbody th{font-weight:600;color:#fff}
+.wb-week .num,.wb-fl .num{text-align:right;font-variant-numeric:tabular-nums}
+.wb-week tr.done > *{background:rgba(255,255,255,.03)}
+.wb-week tr.now > *{background:rgba(143,211,255,.14)}
+.wb-week tfoot th,.wb-week tfoot td{background:rgba(10,36,80,.55);border-top:1px solid rgba(160,215,255,.45);font-weight:700;color:#fff}
+.wb-live{font-size:12px;color:var(--green);font-weight:700;letter-spacing:.06em;text-transform:uppercase;animation:wbPulse 1.2s ease-in-out infinite}
+@keyframes wbPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.wb-day{background:var(--sf2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.wb-day .pnl-h h3{font-size:18px}
+.wb-notes{margin:10px 0 0;padding-left:18px;font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.chip.ok{color:var(--green);border-color:rgba(111,240,154,.5)}.chip.bad{color:var(--red);border-color:rgba(255,123,123,.5)}.chip.idle{color:var(--muted)}
+/* the Sunday review: the table left, the verdicts right */
+.ws-weekReview .rv{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:12px;align-items:start}
+.ws-weekReview .rv > .pnl:first-child{grid-row:span 2}
+.rv-side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.wk-missed{background:var(--sf2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.wk-missed.warn{border-color:rgba(255,177,92,.55)}.wk-missed.ok{border-color:rgba(111,240,154,.5)}
+.wk-missed .kl{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.wm-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.wm-row > span{display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--muted);padding:8px 10px;background:rgba(10,36,80,.4);border-radius:10px}
+.wm-row > span b{font-size:20px;color:#fff}
+.wm-row > span b.orange{color:var(--orange)}.wm-row > span b.green{color:var(--green)}
+.wk-missed p.small{margin:0;font-size:14px;line-height:1.4}
+.wk-neglect{display:flex;flex-direction:column;gap:6px;padding:10px 14px;background:var(--sf2);border:1px solid rgba(255,177,92,.45);border-radius:12px}
+.wk-neglect p{margin:0;font-size:15px;line-height:1.35}
+/* the workings page: rounded cards on the squared paper */
+.wk-top,.wk-grid,.wk-tut,.wk-opt,.wk .pq{border-radius:12px}
+.wk .btn{border-radius:10px}.wk .btn.primary{background:#2d7ff5;border-color:#2d7ff5}
+.wk-head .kl,.wk-tut .kl,.wk-pick .kl,.wk-practice .kl{color:#2d7ff5}
+/* fixes after the first screenshots: the nav never overflows, the brand fits, the rail is tighter, the demand strips sit side by side, the review table fits its column */
+.lnav{min-height:0;overflow:hidden}
+.nv,.nv:hover:not(:disabled){padding:9px 2px 8px}
+.nv-tag{padding:8px 4px 6px;gap:6px}
+@media (max-height:820px){ .nv-tag span{display:none} .nv-tag .art.mini{width:80px} }
+#cName{font-size:22px}
+.cbar .brand{max-width:330px}
+.cdate b{font-size:17px}
+.stg-h{padding:8px 10px}
+.subs .ri{padding:4px 6px}
+.subs{margin:0 10px 8px 24px}
+.pe-demand .dstrip{grid-template-columns:200px 1fr;gap:10px}
+.pe-demand .ds-bar{height:36px}
+.cbar .brand{flex:none}
+#cName{font-size:20px}
+.dk-tools{padding:6px 10px 8px;gap:4px}
+.dk-tools h4{display:none}
+.dk-help{padding:5px 8px}
+.dk-help small{display:none}
+.dk-help i{width:22px;height:22px;font-size:12px}
+.pi-r{padding:5px 0}
+.pi-r.profit{padding:9px 12px}
+.ws-weekReview .rv{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"table side" "routes routes"}
+.ws-weekReview .rv > .pnl:first-child{grid-area:table;grid-row:auto}
+.ws-weekReview .rv-side{grid-area:side}
+.ws-weekReview .rv-routes{grid-area:routes}
+.ws-weekReview table.fx.one{width:100%;min-width:0}
+.ws-weekReview table.fx.one thead th:first-child{min-width:0;width:58%}
+.ws-weekReview table.fx.one td.c{min-width:0}
+.ws-weekReview table.fx th,.ws-weekReview table.fx td{height:auto;padding-top:5px;padding-bottom:5px}
+/* the launch and ready steps */
+.opplan{border-radius:12px}
+.op-row{border-radius:10px}
+/* choices on event cards */
+.card.exec .opt{border-radius:12px}
 </style>
 </head>

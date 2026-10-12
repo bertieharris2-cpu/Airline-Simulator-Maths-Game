@@ -459,7 +459,7 @@ function updateTopBar(){
   const sx = strategyOf(), cs = $('cStrat'); if(cs){ cs.textContent = sx ? sx.badge : ''; cs.className = sx ? 'sb-' + sx.id : ''; }
   $('cDate').textContent = S.phase === 'setup' ? dateLong(1) : periodLabel();
   $('cDay').textContent = S.phase === 'setup' ? 'First day of operations' : S.phase === 'round' && periodType() === 'day' ? `Day ${S.day} of operations` : periodTag(); const chip = document.querySelector('.cdate i.chip'); if(chip) chip.textContent = PERIOD_CHIP[S.phase === 'setup' ? 'setup' : periodType()] || '';
-  $('cCash').textContent = money(S.cash); $('cStars').innerHTML = starsHtml(S.rep); $('cFuel').textContent = num(S.fuel)+' L';
+  $('cCash').textContent = money(S.cash); $('cStars').innerHTML = starsHtml(S.rep) + `<span id="cRepN">${(Math.round(S.rep * 2) / 2).toFixed(1)}</span>`; $('cFuel').textContent = num(S.fuel)+' L';
   $('cFleet').textContent = S.fleet.length ? `${activeFleet().length}/${S.fleet.length}` : '0';
   const o = opsStatus(); $('cOps').className = 'cops ' + o.k; $('cOps').textContent = (o.k === 'run' ? '▶ ' : o.k === 'alert' || o.k === 'hold' ? '■ ' : '● ') + o.t;
   const n = S.phase === 'round' ? intelSituations().length : 0; $('cBell').hidden = !n; $('cBell').textContent = n;

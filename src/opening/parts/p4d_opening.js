@@ -512,8 +512,9 @@ function navActive(){ return UI.view || (WS_STEPS.includes(step().t) ? 'plan' : 
 function shell(inner, bar){
   const act = navActive();
   return `<div class="shell ${bar ? 'has-bar' : ''}"><nav class="lnav" aria-label="HQ">${NAV.map(([id, l]) => { const locked = !!MODULES[id] && !moduleOn(id), off = locked || (id === 'plan' && !planReachable());
-    return `<button class="nv ${act === id ? 'on' : ''} ${locked ? 'locked' : ''}" data-nav="${id}" title="${esc(locked ? `${l}: ${MODULES[id].note}` : l)}" aria-disabled="${off}">${ICON[id]}<span>${l}</span>${locked ? `<small class="nv-note">${ICON.lock}${MODULES[id].short}</small>` : ''}</button>`; }).join('')}</nav><div class="shell-main">${inner}</div>${bar || ''}</div>`;
+    return `<button class="nv ${act === id ? 'on' : ''} ${locked ? 'locked' : ''}" data-nav="${id}" title="${esc(locked ? `${l}: ${MODULES[id].note}` : l)}" aria-disabled="${off}">${ICON[id]}<span>${l}</span>${locked ? `<small class="nv-note">${ICON.lock}${MODULES[id].short}</small>` : ''}</button>`; }).join('')}${navTag()}</nav><div class="shell-main">${inner}</div>${bar || ''}</div>`;
 }
+function navTag(){ const f = S.fleet && S.fleet[0]; return `<div class="nv-tag" aria-hidden="true">${f && typeof planeMini === 'function' ? planeMini(f) : ''}<span>A great journey starts with a good plan</span></div>`; }
 /* Overview, Network, Fleet or Finance while a step is open: the step waits underneath. */
 function shellView(st){
   if(!SHELL_STEPS.includes(st.t)){ UI.view = null; return false; }

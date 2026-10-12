@@ -221,8 +221,7 @@ R.weekReview = st => {
     say:`Seven days flown. Add up the week, then compare it with Monday's projection.`,
     context:{ title:'The week', html: cxSec('Passengers', `<p class="cx-plan mono">${num(h.pax)} <span class="small muted">of ${num(h.seats)} seats</span></p>`) + cxSec('Cash', `<p class="cx-plan mono">${money(Math.round(S.cash))}</p>`) },
     main:`<div class="rv"><section class="pnl"><div class="pnl-h"><h3>The week, day by day</h3><span class="muted">${fmtRange(W.from, W.from + 6)}</span></div><div class="sheet1">${tableHtml(t)}</div></section>
-      ${miss}${neg}
-      <section class="pnl"><div class="pnl-h"><h3>Route performance</h3></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div>`,
+      <div class="rv-side">${miss}${neg}</div><section class="pnl rv-routes"><div class="pnl-h"><h3>Route performance</h3></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${goLabel(done ? 'On to next week' : 'Add up the week first')} &#9654;</button>` });
   bindTable(t);
   on('nx', () => { resetEntry(); UI.justDone = null; S.rnd.applied = true; closeDay(); });
@@ -331,3 +330,31 @@ function fuelPanelHtml(){
     <p class="small muted">Tank after the order <b class="mono">${num(after)} L</b> · the week needs about <b class="mono">${num(need)} L</b>${after < need ? ` · <span class="orange">${num(need - after)} L short: delivered when needed at ${priceL(r2(price + (WORLD.fuelTopUp || 0)))}</span>` : ' · enough for the week'}</p></section>`;
 }
 function bindFuelPanel(){ const lot = WORLD.fuelLot || 500, price = weekFuelPrice(S.day || 1); screen().querySelectorAll('[data-fo]').forEach(b => b.onclick = e => { e.stopPropagation(); let L = +b.getAttribute('data-fo'); L = Math.max(0, Math.round(L / lot) * lot); S.rnd.fuelOrder = L ? { litres:L, price, total:r2(L * price) } : null; UI.justDone = null; resetEntry(); render(); }); }
+
+/* ---------- Plan Impact (the Dragon Air mock-ups): the standing plan's figures for one day, on the plan page's right-hand panel.
+   The figures the day's hand sums ask for stay hidden ("work it out") until the workings page is complete, so the sums stay sums. ---------- */
+function ctxPlanImpact(pl, L){
+  pl = pl || currentPlan(); L = L || planLines(pl); const v = L.v, H = Object.assign({}, decideHandSums(L, pl) || {}, S.rnd.handSums || {}), done = !!(S.rnd.costed && S.rnd.costed.key === planKey(pl));
+  const seats = pl.fleet.reduce((t, x) => t + x.sched.length * (planeById(x.planeId).seats || 0), 0), pax = Object.keys(v).filter(k => /^pax_/.test(k)).reduce((t, k) => t + (v[k] || 0), 0);
+  const empty = Math.max(0, seats - pax), pct = seats ? Math.round(100 * pax / seats) : 0, paid = fuelPaid(), litres = v.fuelL || 0, ppl = paid ? (v.ppl || fuelPrice()) : 0;
+  const hide = k => !done && H[k] && (H[k] === 'calc' || H[k].level === 'calc' || typeof H[k] === 'object');
+  const todo = '<span class="pi-v todo">work it out &rarr;</span>';
+  const row = (ic, label, sub, val, cls) => `<div class="pi-r ${cls || ''}">${ICON[ic] || ''}<span class="pi-l">${label}${sub ? `<small>${sub}</small>` : ''}</span>${val}</div>`;
+  const val = (main, sub, cls) => `<span class="pi-v ${cls || ''}">${main}${sub ? `<small>${sub}</small>` : ''}</span>`;
+  const dayCost = pl.fleet.reduce((t, x) => { const f = S.fleet.find(z => z.uid === x.uid); return t + (f ? dayCostOf(f) : 0); }, 0);
+  const html = `<p class="dk-sub">Projected results for this plan (per day)</p><div class="pi">
+    ${row('pax', 'Projected passengers', '', val(num(pax), seats ? `${pct}% of seats` : ''))}
+    ${row('seat', 'Seats available', '', val(num(seats), pl.fleet.filter(x => x.sched.length).map(x => `${x.sched.length} × ${planeById(x.planeId).seats}`).join(' + ')))}
+    ${row('seat', 'Empty seats', '', val(num(empty), seats ? `${100 - pct}%` : ''))}
+    ${row('cash', 'Ticket revenue', '', hide('revenue') ? todo : val(money(v.rev || 0), pax ? `${num(pax)} × fares` : ''))}
+    ${snacksOn() ? row('cash', 'Cabin sales', '', hide('snacks') ? todo : val(money(v.snack || 0), v.buyers ? `${num(v.buyers)} × ${money(v.snackP)}` : '')) : ''}
+    ${row('fuel', 'Fuel litres needed', '', val(`${num(litres)} L`, pl.fleet.filter(x => x.sched.length).length ? `${num(Math.round(litres / Math.max(1, pl.fleet.reduce((t, x) => t + x.sched.length, 0))))} L per service` : ''))}
+    ${paid ? row('fuel', 'Fuel cost', '', hide('fuelCost') ? todo : val(money(v.fuel || 0), `${num(litres)} L × ${priceL(ppl)}`)) : row('fuel', 'Fuel', '', val('free', 'the launch deal'))}
+    ${row('fleet', 'Aircraft and airport', 'day costs + per service', val(money((v.run || 0) + (v.term || 0) + dayCost), `${money(dayCost)} a day`))}
+    ${row('cash', 'Total revenue', 'tickets + cabin sales', hide('revenue') || hide('snacks') ? todo : val(money((v.rev || 0) + (v.snack || 0))), 'tot')}
+    ${row('cash', 'Total costs', 'fuel + aircraft + airport', hide('fuelCost') ? todo : val(money(v.cost || 0)), 'tot')}
+    ${row('profit', 'Projected profit', 'per day', hide('profit') || hide('revenue') || hide('fuelCost') ? todo : val(money(v.profit || 0), '', v.profit < 0 ? 'neg' : ''), 'profit')}
+  </div>`;
+  const ac = ctxAircraft();
+  return { title:'Plan Impact', html: html + ac.html.replace(/^[\s\S]*?(<section class="cx deps">)/, '$1') };
+}
