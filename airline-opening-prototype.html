@@ -3558,6 +3558,9 @@ body.desk .btn.fd-buy .di{width:20px;height:20px}
 .wr-sur{grid-template-columns:1fr}.wr-sur span{font-size:14px;color:#d6e6ff}.fuel-adv.wr-sur span b{font-size:15px;font-weight:600;color:var(--dk-amber)}
 .wr .dk-t{height:auto}.wr .dk-pnl > .dk-t{flex:none}
 .wr-ann p.muted{display:block}
+
+.ad-addsel{font:inherit;font-size:13.5px;font-weight:600;color:#cfe6ff;background:#0a1c3a;border:1px solid #2b5c9e;border-radius:3px;padding:4px 6px;height:30px}
+.ad-addsel:focus{outline:2px solid var(--dk-cyan)}
 </style>
 </head>
 <body>
@@ -6515,7 +6518,8 @@ function checkModules(){
   if(!S.seenModules){ S.seenModules = on; return; }
   const fresh = on.filter(id => !S.seenModules.includes(id)); if(!fresh.length) return;
   S.seenModules = S.seenModules.concat(fresh); save();
-  sysNotice(fresh.map(id => MODULES[id].name + ' online').join(' · '));
+  if(fresh.some(id => MODULES[id].online)) fresh.forEach(id => sysNotice(MODULES[id].online || MODULES[id].name + ' online'));
+  else sysNotice(fresh.map(id => MODULES[id].name + ' online').join(' · '));
   fresh.forEach(id => { const b = screen().querySelector(`[data-nav="${id}"]`); if(b) b.classList.add('lit'); });
 }
 /* System notices queue up, so "Finance online" and "Ticket revenue model online" never cover each other. */
@@ -11974,7 +11978,9 @@ function timelineHtml(i, pl, L, o){
   const lanes = pl.fleet.map((x, j) => { const p = planeById(x.planeId), f = S.fleet.find(z => z.uid === x.uid), home = TIME.home(p), D = x.sched.length ? withPlan(pl, () => TIME.day(p, x.sched, undefined, x.deps || null)) : null;
     const blocks = D ? D.trips.map((t, k) => { const r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === k) || {}, over = t.arr > e0, on = sel && sel.j === j && sel.k === k, ready = t.arr + home, full = s.seats && s.sold >= s.seats;
       return `<i class="ad-ready" style="left:${X(t.arr)}%;width:${X(ready) - X(t.arr)}%" title="Ready again at ${fmtTime(ready)}"></i><button class="ad-blk ${on ? 'on' : ''} ${over ? 'over' : ''} ${full ? 'full' : ''}" data-tl="${i}|${j}|${k}" data-rc="${Math.max(0, plannerRoutes().indexOf(t.route)) % 4}" data-dep="${t.dep}" data-arr="${t.arr}" data-ready="${ready}" style="left:${X(t.dep)}%;width:${(X(t.arr) - X(t.dep)).toFixed(2)}%" ${o.locked ? 'disabled' : ''} aria-label="${esc(r.city)} ${fmtTime(t.dep)} to ${fmtTime(t.arr)}, ${s.sold || 0} of ${s.seats || p.seats} seats${over ? ', lands after the airport closes' : ''}" aria-pressed="${!!on}"><b>${fmtTime(t.dep)}</b><small>${tlCode(r)}${s.sold === undefined ? '' : ` · ${s.sold}/${s.seats}`}</small></button>`; }).join('') : '';
-    const adds = plannerOrder().map(id => { const r = routeById(id), can = planeCanFly(p, r); return `<button class="btn small ad-add" data-pe="${i}|add|${id}|0|${j}" ${can && x.sched.length < maxT && !o.locked ? '' : 'disabled'} title="${can ? `Add a ${r.city} service` : `${p.name}: range ${num(p.range)} km, ${r.city} is ${num(routeKm(r))} km away`}">+ ${esc(r.city)}</button>`; }).join('');
+    const order = plannerOrder(), flownIds = new Set(pl.fleet.flatMap(z => z.sched)), many = order.length > 6, quick = many ? order.filter(id => flownIds.has(id)) : order, rest = many ? order.filter(id => !flownIds.has(id) && planeCanFly(p, routeById(id))) : [];   // many routes open: the flown ones as buttons, the rest in one menu
+    const adds = quick.map(id => { const r = routeById(id), can = planeCanFly(p, r); return `<button class="btn small ad-add" data-pe="${i}|add|${id}|0|${j}" ${can && x.sched.length < maxT && !o.locked ? '' : 'disabled'} title="${can ? `Add a ${r.city} service` : `${p.name}: range ${num(p.range)} km, ${r.city} is ${num(routeKm(r))} km away`}">+ ${esc(r.city)}</button>`; }).join('')
+      + (rest.length ? `<select class="ad-addsel" data-addsel="${i}|${j}" ${x.sched.length < maxT && !o.locked ? '' : 'disabled'} aria-label="Add a service on another route"><option value="">+ Add a route…</option>${rest.map(id => `<option value="${id}">${esc(routeById(id).city)} · ${num(routeKm(routeById(id)))} km</option>`).join('')}</select>` : '');
     return `<div class="ad-ac"><div class="ad-lab ad-plane">${planeMini(f || p, 'ad-pic')}<span><b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><small>${esc(regOf(x.uid))} · ${p.seats} seats${f && f.terms ? ' · ' + termsWord(f.terms) : ''}</small></span></div>
       <div class="ad-lane ${o.locked ? 'locked' : ''}" data-lane="${i}|${j}" data-s0="${s0}" data-span="${span}">${blocks || `<span class="ad-none muted">No services yet. Add one below.</span>`}</div>
       <div class="ad-adds">${x.sched.length >= maxT ? `<span class="muted small">${maxT} services is the most one aircraft can fly in a day</span>` : adds}${!o.locked && sel && sel.j === j && x.sched[sel.k] ? tlSelHtml(i, pl, L, j, sel.k) : ''}</div></div>`; }).join('');
@@ -12272,6 +12278,9 @@ function bindSumDock(W, st){
   if(Z.allDone && practiceN() && practiceKeyToday() && !st.noPractice) bindPractice(st, practiceKeyToday(), () => {}, practiceN(), true);
   on('wkSkipP', () => { st.noPractice = true; render(); });
 }
+
+/* the add-a-route menu on a lane (many routes open) */
+document.addEventListener('change', e => { const t = e.target; if(!t || !t.matches || !t.matches('[data-addsel]') || !t.value) return; const [i, j] = t.getAttribute('data-addsel').split('|').map(Number); editPlan(i, 'add', t.value, 0, j); });
 /* ==================================================================
    THE DESK SHELL (Bertie's three reference screens, 12 Oct 2026): a dark aviation interface on a 1680 × 940 canvas
    scaled to fit the window. A 94 px header (the airline's mark and name, a banner of an airliner over a dark world map,
@@ -12494,7 +12503,7 @@ function deskStars(rep){ const r = Math.round((rep || 0) * 2) / 2; let h = ''; f
 /* ---------- the nav: eight desks ---------- */
 const DESK_NAV = [['overview', 'Home', 'Overview', 'home'], ['plan', 'Operating Plan', 'Routes & Schedule', 'route'], ['network', 'Network', 'Destinations', 'globe'], ['fleet', 'Fleet', 'Aircraft', 'plane'],
   ['fuel', 'Fuel', 'Prices & Supply', 'fuel'], ['finance', 'Finance', 'Costs & Revenue', 'pound'], ['reputation', 'Reputation', 'Customer Feedback', 'medal'], ['reports', 'Reports', 'Performance', 'bars']];
-Object.assign(MODULES, { fuel:{ name:'Fuel desk', note:'Opens in week 2', short:'Week 2' }, model:{ name:'Operations Model', note:'Opens in week 2', short:'Week 2' } });
+Object.assign(MODULES, { fuel:{ name:'Fuel desk', note:'Opens in week 2', short:'Week 2', online:'Fuel desk online · Buy fuel in 1,000 L blocks and store it for the weeks ahead.' }, model:{ name:'Operations Model', note:'Opens in week 2', short:'Week 2', online:'Analytics online · You have enough operating data to test decisions before you make them.' } });
 const DESK_STEP_NAV = { fuelDesk:'fuel', svcCard:'plan', model:'model' };
 function navActive(){ const t = step().t; if(UI.view) return UI.view; if(DESK_STEP_NAV[t]) return DESK_STEP_NAV[t]; return WS_STEPS.includes(t) ? 'plan' : 'overview'; }
 function shell(inner, bar){

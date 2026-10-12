@@ -496,7 +496,8 @@ function checkModules(){
   if(!S.seenModules){ S.seenModules = on; return; }
   const fresh = on.filter(id => !S.seenModules.includes(id)); if(!fresh.length) return;
   S.seenModules = S.seenModules.concat(fresh); save();
-  sysNotice(fresh.map(id => MODULES[id].name + ' online').join(' · '));
+  if(fresh.some(id => MODULES[id].online)) fresh.forEach(id => sysNotice(MODULES[id].online || MODULES[id].name + ' online'));
+  else sysNotice(fresh.map(id => MODULES[id].name + ' online').join(' · '));
   fresh.forEach(id => { const b = screen().querySelector(`[data-nav="${id}"]`); if(b) b.classList.add('lit'); });
 }
 /* System notices queue up, so "Finance online" and "Ticket revenue model online" never cover each other. */

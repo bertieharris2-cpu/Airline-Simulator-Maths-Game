@@ -43,6 +43,10 @@ const path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../
   const rk = await p.evaluate(() => { const { WB, WE } = window.__world, run = (fare, ad) => WE.day(WB, { plane:'dhc6', fuel:1.3, date:'2030-09-06', rival:{ fare:50, routes:['dub'], advertise:ad }, home:{ code:'LHR', terminal:'T5' }, services:[{ route:'dub', dep:'07:00', fare }, { route:'dub', dep:'11:20', fare }] }).routes.dub.demand; return { hold:run(90, false), ad:run(90, true), match:run(50, false), cut80:run(80, false) }; });
   const rkOk = rk.hold === 37 && rk.ad === 50 && rk.match === 96 && rk.cut80 === 50; if(!rkOk) fails++;
   console.log(`${rkOk ? 'ok  ' : 'FAIL'} Red Kite rule (D50): hold £90 → ${rk.hold} stay, advertise → ${rk.ad}, match → ${rk.match}, cut to £80 → ${rk.cut80}`);
+  // RouteNews (workbook v4.6): the Dublin rugby weekend doubles Dublin's demand on 5–6 October and nowhere else
+  const rn = await p.evaluate(() => window.__sim.evalIn(`(() => { const d = dayOfDate('2030-10-05'), dub = routeById('dub'), par = routeById('par'), x = (r, n) => Math.round(100 * demandMult(r, n) / demandMult0(r, n)) / 100; return { sat:x(dub, d), sun:x(dub, d + 1), fri:x(dub, d - 1), par:x(par, d) }; })()`));
+  const rnOk = rn.sat === 2 && rn.sun === 2 && rn.fri === 1 && rn.par === 1; if(!rnOk) fails++;
+  console.log(`${rnOk ? 'ok  ' : 'FAIL'} RouteNews: Dublin rugby ×${rn.sat} on Sat 5 Oct and ×${rn.sun} on Sun 6 Oct; ×${rn.fri} the day before; Paris ×${rn.par}`);
   console.log(errors.length ? 'ERRORS ' + errors.join(' | ') : 'ERRORS none');
   console.log(fails ? `${fails} FAILED` : 'The game prices every plan exactly as the world engine does.');
   await b.close(); process.exit(fails || errors.length ? 1 : 0);

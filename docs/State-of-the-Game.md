@@ -10,7 +10,31 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
-## 0. Workbook v4.4 (12 Oct 2026)
+## 0. The desks v2 and Workbook v4.6 (12 Oct 2026)
+
+Fable's *Design Note: The desks, v2* and Bertie's three reference screens (Operations Model, Fuel Procurement, Service Cost Breakdown), built in week mode on three new parts after `p4w_planner.js`:
+- **`p4x_shell.js`, the shell.** The 1,680 × 940 canvas (`deskScale`; `canvasMedia` evaluates every media rule against the canvas), the dark header (`deskHeader`, `updateTopBar`), the nav (`DESK_NAV`, `navActive`, `shell`), the page frame (`deskPage`, `deskBar`), the drawn art (`artBanner`, `artDusk`, `artCity` with a landmark per city, `artRefinery`, `artWeather`, `artShip`, `artTank`, `artEurope`, `artCoins`), and the Reputation and Reports desks (`renderDeskView`).
+- **`p4y_desks.js`, the desks.**
+  - The fuel model: `fuelContract` for week 1; `burnFuel` with the emergency top-up at +10p; `fuelWeeks` and `fuelAdvantage`; `tankCapacity` at 8,000 L, then 20,000 L from day 29 with `tankUpgradeNotice`.
+  - RouteNews: `demandMult`, `newsOn`, `surprisesIn` and `announcedFor`.
+  - The performance card: `fuelCardsDue` (the `fuelHandSum` rule), `servicePlan`, `cardStage`, `serviceFigures`, `svcCardHtml`/`renderSvcCard`, the methods from WorkingMethods (`scRows`), and the stamps.
+  - The sign-off documents (`docListHtml`) and the one-line fuel strip.
+  - Fuel Procurement: `fuelDeskHtml`/`renderFuelDesk`, `fuelChartSvg`, and the `fuelDesk` Monday step in `daySteps`.
+  - The week and month beats on the desks (`stepsFor`; `dayLike` now covers them).
+  - The World report (`worldReportHtml`), the Network destinations (`renderView`), and the surprises line.
+- **`p4z_model.js`, the Operations Model.** The Build step (`omBuildHtml`, `S.analyst`), `omWeek` (seven days in one dry run), `omPlanTable`, `omResults`, `planDiff` pills and saved tests (`S.savedTests`).
+
+Data: `tools/merge_workbook.py` installs a Fable workbook, keeping the CR5 parts. `import_world.py` reads the Market forecast columns, WorkingMethods and RouteNews.
+
+Tests:
+- `week.test.js` plays to day 60 (`UPTO=100` reaches the chapter review day, 28 December, with no errors): the cards, Query/Checked, the strip, the fuel desk and its first-order sign-off, the model's Build step, the World report, Network, and the 20,000 L tank.
+- `engine.test.js` adds Dublin ×2 for RouteNews.
+- `migrate.test.js` handles the card and the fuel desk.
+- `opening.test.js` (day at a time) is stale since v4.4: it waits for the removed market screen.
+
+Report: `docs/Desks-v2-Report-Back.md`.
+
+## 0a. Workbook v4.4 (12 Oct 2026)
 
 Chapter 1 is played a week at a time (D52): the Calendar's `weekPhase` (plan / run / review) drives `p4v_week.js`. Monday: HQ → (showroom, the fleet sums, buy or rent, the paint shop) → (event) → the planning page with Plan Impact → the workings page → Ready → fly → results. Tuesday–Saturday: `weekRun`, one day per step on the operations board (`S.wk` holds the week's rows and Monday's projection), an event card or a sum stops it. Sunday: fly, then `weekReview` (the week7 table, the missed-profit sweep `bestPlanSweep`, `neglectUpdate`). `closeDay` moves to the next Monday, the regular-plan approval after day 28, then the weeks. Money per D53/D55: day costs, list prices, Finance in days, `saveUp` greys Buy. The look is the Dragon Air block at the end of `p1_head.html`. Tests: `week.test.js` (weeks 1–4), `migrate.test.js` (old codes land in the week), `balance.test.js` (re-based). Decisions and the report-back items: `docs/Workbook-v4.4-Report-Back.md`. The day-by-day screens below remain for `teacherDayByDay` and the weeks.
 

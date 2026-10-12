@@ -220,7 +220,7 @@ function deskStars(rep){ const r = Math.round((rep || 0) * 2) / 2; let h = ''; f
 /* ---------- the nav: eight desks ---------- */
 const DESK_NAV = [['overview', 'Home', 'Overview', 'home'], ['plan', 'Operating Plan', 'Routes & Schedule', 'route'], ['network', 'Network', 'Destinations', 'globe'], ['fleet', 'Fleet', 'Aircraft', 'plane'],
   ['fuel', 'Fuel', 'Prices & Supply', 'fuel'], ['finance', 'Finance', 'Costs & Revenue', 'pound'], ['reputation', 'Reputation', 'Customer Feedback', 'medal'], ['reports', 'Reports', 'Performance', 'bars']];
-Object.assign(MODULES, { fuel:{ name:'Fuel desk', note:'Opens in week 2', short:'Week 2' }, model:{ name:'Operations Model', note:'Opens in week 2', short:'Week 2' } });
+Object.assign(MODULES, { fuel:{ name:'Fuel desk', note:'Opens in week 2', short:'Week 2', online:'Fuel desk online · Buy fuel in 1,000 L blocks and store it for the weeks ahead.' }, model:{ name:'Operations Model', note:'Opens in week 2', short:'Week 2', online:'Analytics online · You have enough operating data to test decisions before you make them.' } });
 const DESK_STEP_NAV = { fuelDesk:'fuel', svcCard:'plan', model:'model' };
 function navActive(){ const t = step().t; if(UI.view) return UI.view; if(DESK_STEP_NAV[t]) return DESK_STEP_NAV[t]; return WS_STEPS.includes(t) ? 'plan' : 'overview'; }
 function shell(inner, bar){
