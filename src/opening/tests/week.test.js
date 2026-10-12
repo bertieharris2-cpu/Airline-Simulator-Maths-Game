@@ -79,9 +79,16 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
         ok('launch: both routes on the plan page', await vis('[data-pe^="0|add|dub|0"]') && await vis('[data-pe^="0|add|par|0"]')); }
       if(day === 8 && s.fleet.length > 1){ await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
         ok('day 8: two aircraft, two lanes on the timeline', (await p.$$('.ad-lane')).length === 2 && (await p.$$('.ad-blk')).length === 4);
-        if(await p.$('#ideaOpen')){ await p.click('#ideaOpen'); await p.waitForTimeout(80); const chip = await p.$('[data-pe="9|fareTo|dub|90"]'); if(chip) await chip.click(); await p.waitForTimeout(80);
-          ok('day 8: Test an idea compares the current plan with the test plan, with the cause', await vis('.cmp2-t') && /Dublin fare/.test(await p.$eval('.cmp2-cause', e => e.textContent).catch(() => '')) && (await p.$$('.cmp2-t td.chg')).length >= 5, await p.$eval('.cmp2-cause', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
-          await shot(`d${day}-compare`); await p.click('[data-treset]'); await p.click('#ideaShut'); }
+        if(await p.$('#ideaOpen')){ ok('day 8: the planner offers Try different options', /Try different options/.test(await p.textContent('#ideaOpen'))); await p.click('#ideaOpen'); await p.waitForTimeout(150);
+          ok('day 8: the Operations Model asks for the Build step first', await vis('.om-build') && !(await vis('.om-rt'))); await shot(`d${day}-model-build`);
+          for(const x of ['Passengers', '+', 'Fare']) await p.click(`[data-omp="${x}"]`);
+          ok('day 8: a wrong formula shows an error in the cell', /#ERROR/.test(await p.textContent('.om-build')), await p.$eval('.om-e', e => e.textContent).catch(() => ''));
+          for(const x of ['Passengers', '×', 'Fare', 'Revenue', '−', 'Costs']) await p.click(`[data-omp="${x}"]`); await p.waitForTimeout(150);
+          ok('day 8: with both formulas built the model projects the week', await vis('.om-rt') && !!((await S()).analyst || {}).built, (await S()).analyst);
+          await p.click('[data-mo="fare|dub|1"]'); await p.waitForTimeout(150);
+          ok('day 8: the test plan changes, What changed names it and the results show the change', /Dublin fare £80 → £90/.test(await p.textContent('.om-what')) && (await p.$$('.om-rt td.good, .om-rt td.bad')).length >= 2, await p.$eval('.om-what', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
+          await p.click('#omSave'); await p.waitForTimeout(80); ok('day 8: the test plan can be saved', (await p.$$('.om-sv')).length === 1); await shot(`d${day}-model`);
+          await p.click('#omReset'); await p.click('#omClose'); await p.waitForTimeout(100); ok('day 8: Back returns to the planner', await vis('.ad'), await T()); }
         ok('day 8: the fuel strip shows the stored fuel and the week it covers, with the fuel desk a press away', /L stored · \d+% of this week covered/.test(await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => '')) && await vis('.fstrip [data-nav="fuel"]'), await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
         await p.click('[data-tl="0|0|0"]'); const sb = await p.$('[data-svccard="0|0|0"]');
         if(sb){ await sb.click(); await p.waitForTimeout(120); const tot = await p.$eval('.sc-total .sc-v', e => e.textContent).catch(() => '');

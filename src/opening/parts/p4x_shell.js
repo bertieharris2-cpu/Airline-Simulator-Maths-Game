@@ -228,7 +228,7 @@ function shell(inner, bar){
   const rows = DESK_NAV.map(([id, l, sub, ic]) => {
     const isModel = id === 'plan' && act === 'model', on = act === id || isModel, locked = !!MODULES[id] && !moduleOn(id), off = locked || (id === 'plan' && !planReachable() && !isModel);
     const label = isModel ? 'Operations Model' : l, small = isModel ? 'Compare Plans' : sub;
-    return `<button class="nv ${on ? 'on' : ''} ${locked ? 'locked' : ''}" data-nav="${isModel ? 'model' : id}" title="${esc(locked ? `${label}: ${MODULES[id].note}` : label)}" aria-disabled="${off}" aria-current="${on ? 'page' : 'false'}">${ICO2[isModel ? 'model' : ic]}<span class="nv-t"><b>${label}</b><small>${small}</small></span>${locked ? ICO2.lock : ''}</button>`; }).join('');
+    return `<button class="nv ${on ? 'on' : ''} ${locked ? 'locked' : ''} ${isModel ? 'nv-long' : ''}" data-nav="${isModel ? 'model' : id}" title="${esc(locked ? `${label}: ${MODULES[id].note}` : label)}" aria-disabled="${off}" aria-current="${on ? 'page' : 'false'}">${ICO2[isModel ? 'model' : ic]}<span class="nv-t"><b>${label}</b><small>${small}</small></span>${locked ? ICO2.lock : ''}</button>`; }).join('');
   return `<div class="shell dshell ${bar ? 'has-bar' : ''}"><nav class="lnav dnav" aria-label="HQ desks">${rows}<div class="nv-art">${artDusk()}</div></nav><div class="shell-main">${inner}</div>${bar || ''}</div>`;
 }
 /* a desk page: the title block with up to two info cards, then the desk's own body */
