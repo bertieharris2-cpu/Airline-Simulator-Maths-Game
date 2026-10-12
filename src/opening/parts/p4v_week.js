@@ -110,7 +110,7 @@ function weekFuelPrice(from){ from = from || (S.day || 1); for(let d = from; d <
 function paidDaysThisWeek(from){ from = from || (S.day || 1); let n = 0; for(let d = from; d < from + 7; d++) if(!fuelFreeDay(d)) n++; return n; }
 
 /* ---------- Monday's step list ---------- */
-function daySteps(n, w){
+function dayStepsWeek(n, w){
   w = w || roundData(n);
   if(!weekMode() || !w.weekPhase) return dayStepsBase(n, w);
   if(S.oneOffDay === beatDay(n) && w.weekPhase !== 'plan') return withIntro([{ t:'hq' }].concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }, { t:'ready' }, { t:'fly' }, { t:'results' }]), w);   // an old save with no sums record: one planning day with its sums, then the board

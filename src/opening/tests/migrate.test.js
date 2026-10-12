@@ -40,6 +40,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
       if(t === 'plan'){ await shot(`${tag}-plan`); await p.click('#nx'); continue; }
       if(t === 'workings'){ typed = await solveW(); await shot(`${tag}-workings`); await p.click('#nx'); continue; }
       if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); await p.click('#nx'); continue; }
+      if(t === 'fuelDesk'){ await shot(`${tag}-fueldesk`); await p.click('#nx'); continue; }
       if(t === 'ready'){ const en = await p.$eval('#startOps', e => !e.disabled); ok(`${tag}: ready to fly`, en); if(!en) break; await p.click('#startOps'); continue; }
       if(t === 'fly'){ for(let k = 0; k < 80 && await T() === 'fly'; k++) await p.waitForTimeout(250); continue; }
       if(t === 'results'){ await shot(`${tag}-results`); await p.click('#nx'); continue; }
@@ -71,7 +72,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
   await fresh(); const v4 = FIX('wind-dragon-ASIM4.txt'); await loadViaPanel(v4);
   { const s = await S(), m = s.migrated || {};
     ok('v4: loads as the old prototype', m.from === 'proto-v4' && s.airline.name === 'wind dragon airways', m.from);
-    ok('v4: lands on day 16 at HQ, a one-off planning day (no sums record)', s.day === 16 && s.round === 15 && await T() === 'hq' && s.period.type === 'day' && s.oneOffDay === 16 && s.steps.map(x => x.t).join() === 'hq,plan,workings,ready,fly,results', [s.day, s.round, await T(), s.oneOffDay, s.steps.map(x => x.t)]);
+    ok('v4: lands on day 16 at HQ, a one-off planning day (no sums record), with the fuel desk before Ready', s.day === 16 && s.round === 15 && await T() === 'hq' && s.period.type === 'day' && s.oneOffDay === 16 && s.steps.map(x => x.t).join() === 'hq,plan,workings,fuelDesk,ready,fly,results', [s.day, s.round, await T(), s.oneOffDay, s.steps.map(x => x.t)]);
     ok('v4: airline, cash, fleet and fares kept', s.cash === 27936 && s.fleet.length === 1 && s.fleet[0].schedule.join() === 'dub,dub,par' && s.prices.dub === 90 && s.prices.par === 100 && s.onboard === 'low', [s.cash, s.fleet[0].schedule, s.prices, s.onboard]);
     ok('v4: history shifted onto the new calendar', s.history.length === 7 && s.history[0].from === 1 && s.history[6].to === 15 && s.ledger.rev[1] === 4560, [s.history[0].from, s.history[6].to, s.ledger.rev.slice(0, 3)]);
     ok('v4: a logo from the old colours (coral → orange, amber → yellow)', s.airline.logo && s.airline.logo.c1 === 'orange' && s.airline.logo.c2 === 'yellow', s.airline.logo);

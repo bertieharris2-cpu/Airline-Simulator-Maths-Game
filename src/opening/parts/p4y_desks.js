@@ -42,7 +42,7 @@ function fuelAdvantage(week){ const w = (S.fuelWeeks || {})[week]; return w ? Ma
 function fuelAdvantageLine(week){
   const w = (S.fuelWeeks || {})[week]; if(!w || !w.burnL || !deskModeAt((week - 1) * 7 + 1)) return '';
   const a = fuelAdvantage(week), em = w.emL ? ` ${num(w.emL)} L had to be bought when the tank ran dry, at the day's price + ${Math.round((WORLD.fuelTopUp || 0.1) * 100)}p (${money(w.emCost)}).` : '';
-  return `<div class="fuel-adv ${a > 0 ? 'good' : a < 0 ? 'bad' : ''}"><span class="kl">Fuel purchasing advantage</span><b class="mono">${a > 0 ? '+' : a < 0 ? '−' : ''}${money(Math.abs(a))}</b><span>${a > 0 ? 'saved compared with buying the fuel on the day it was used' : a < 0 ? 'more than buying the fuel on the day it was used' : 'the same as buying the fuel on the day it was used'}.${em}</span></div>`;
+  return `<div class="fuel-adv ${a > 0 ? 'good' : a < 0 ? 'bad' : ''}"><span class="kl">Fuel purchasing advantage</span><b class="mono">${a > 0 ? '+' : a < 0 ? '−' : ''}${money(Math.abs(a))}</b><span>${a > 0 ? esc(fdAdvWord()) + ' (on the day each litre was used)' : a < 0 ? 'more than buying later (on the day each litre was used)' : 'the same as buying later'}.${em}</span></div>`;
 }
 
 /* ---------- the days flown in week mode ---------- */
@@ -322,3 +322,126 @@ function fuelWidgetHtml(pl, L, o){
     <span class="fs-n">${num(need)} L a day · ${num(week)} L this week · tank ${num(tankCapacity())} L</span>
     <span class="fs-x">${hid ? sumBtn('fuelCost') : ''}${moduleOn('fuel') ? `<button class="dk-link" data-nav="fuel">Fuel desk ${ICO2.chev}</button>` : ''}</span></section>`;
 }
+
+/* ==================================================================
+   Part 3: Fuel Procurement (Desks v2 §4, Bertie's reference screen). From day 8, a Monday step after the sums and the
+   Fuel nav row at any time. The market chart (the game's own prices since launch, then next week's forecast band), the
+   week's news, your position (the tank, this week's need, what is secured), a purchase order in 1,000 L blocks (the
+   first purchase is a sign-off) and the scenario table: buy now against buying next week at the forecast prices.
+   ================================================================== */
+function daySteps(n, w){
+  const st = dayStepsWeek(n, w); w = w || roundData(n);
+  if(!weekMode() || !w.weekPhase || !deskModeAt(beatDay(n))) return st;
+  const at = st.findIndex(x => x.t === 'ready'); if(at > 0 && st[at - 1].t === 'workings') st.splice(at, 0, { t:'fuelDesk' });
+  return st;
+}
+UI.fd = UI.fd || { range:'1M', sel:null, signed:false, vals:{}, q:{} };
+const FD_RANGES = [['1W', 7], ['1M', 30], ['3M', 91], ['6M', 182]];
+function fdMarket(day){ return marketWeekOf(day) || {}; }
+function fdNeed(day){ const L = planLines(currentPlan()), left = 7 - ((day - 1) % 7); return { perDay:L.fuelL || 0, days:left, week:(L.fuelL || 0) * left }; }
+function fdLayers(){ const by = {}; fuelLots().forEach(x => { const k = x.p.toFixed(2); by[k] = (by[k] || 0) + x.L; }); return Object.keys(by).map(k => ({ p:+k, L:Math.round(by[k]) })); }
+function fdMaxBlocks(price){ const blk = fuelBlock(), space = Math.floor(tankSpace() / blk + 1e-9), cash = Math.floor(Math.max(0, S.cash - (WORLD.cashReserve || 0)) / (blk * price) + 1e-9); return Math.max(0, Math.min(space, cash)); }
+function fdAdvWord(){ return WBS().fuelAdvantageWording || 'saved compared with buying later'; }
+/* the chart: the price each day since launch (or the window), this week's price to Sunday, next week's band */
+function fuelChartSvg(day, range){
+  const span = (FD_RANGES.find(x => x[0] === range) || FD_RANGES[1])[1], a = Math.max(1, day - span + 1), m = fdMarket(day), wkEnd = day + (7 - ((day - 1) % 7)) - 1, nxA = wkEnd + 1, nxB = wkEnd + 7;
+  const hist = []; for(let d = a; d <= day; d++) hist.push([d, fuelOn(d)]);
+  const P0 = fuelOn(day), lo = m.forecastLow, hi = m.forecastHigh, band = lo !== undefined && lo !== null && hi !== undefined && hi !== null;
+  const ys = hist.map(x => x[1]).concat(band ? [lo, hi] : []), y0 = Math.floor((Math.min(...ys) - 0.04) * 10) / 10, y1 = Math.ceil((Math.max(...ys) + 0.04) * 10) / 10;
+  const W = 760, H = 250, l = 50, r = 128, t = 14, b = 30, X = d => l + (W - l - r) * (d - a) / Math.max(1, (band ? nxB : wkEnd) - a), Y = v => t + (H - t - b) * (y1 - v) / Math.max(0.01, y1 - y0);
+  const step = (y1 - y0) > 0.8 ? 0.2 : 0.1, yt = []; for(let v = y0; v <= y1 + 1e-9; v = Math.round((v + step) * 100) / 100) yt.push(v);
+  const g = artId('fc'), line = hist.map(([d, v], i) => `${i ? 'L' : 'M'}${X(d).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ');
+  const area = `${line} L${X(day).toFixed(1)} ${H - b} L${X(a).toFixed(1)} ${H - b} Z`;
+  const xt = []; const every = span <= 7 ? 1 : span <= 30 ? 7 : span <= 91 ? 14 : 28; for(let d = a; d <= (band ? nxB : wkEnd); d += every) xt.push(d);
+  const fmtD = d => { const c = calDate(d); return `${c.getUTCDate()} ${MONTH[c.getUTCMonth()].slice(0, 3)}`; };
+  return `<svg class="fd-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Jet fuel price: ${priceL(P0)} a litre today${band ? `, next week forecast ${priceL(lo)} to ${priceL(hi)}` : ''}"><defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#36c6ff" stop-opacity=".38"/><stop offset="1" stop-color="#36c6ff" stop-opacity="0"/></linearGradient></defs>
+    ${yt.map(v => `<line x1="${l}" x2="${W - r}" y1="${Y(v)}" y2="${Y(v)}" class="gl"/><text x="${l - 8}" y="${Y(v) + 4}" text-anchor="end" class="ax">£${v.toFixed(2)}</text>`).join('')}
+    ${xt.map(d => `<text x="${X(d)}" y="${H - 9}" text-anchor="middle" class="ax">${fmtD(d)}</text>`).join('')}
+    ${band ? `<rect x="${X(nxA - 0.5)}" y="${t}" width="${X(nxB) - X(nxA - 0.5)}" height="${H - t - b}" class="nxw"/><path d="M${X(wkEnd)} ${Y(P0)} L${X(nxA)} ${Y(hi)} L${X(nxB)} ${Y(hi)} L${X(nxB)} ${Y(lo)} L${X(nxA)} ${Y(lo)} Z" class="band"/><text x="${(X(nxA) + X(nxB)) / 2}" y="${Y(hi) - 8}" text-anchor="middle" class="bl">Next week ${priceL(lo)}–${priceL(hi)}</text>` : ''}
+    <path d="${area}" fill="url(#${g})"/><path d="${line}" class="ln"/>
+    <path d="M${X(day)} ${Y(P0)} H${X(wkEnd)}" class="wk"/><line x1="${l}" x2="${W - r}" y1="${Y(P0)}" y2="${Y(P0)}" class="now"/>
+    <line x1="${X(day)}" x2="${X(day)}" y1="${t}" y2="${H - b}" class="today"/><circle cx="${X(day)}" cy="${Y(P0)}" r="6" class="pt"/>
+    <g transform="translate(${W - r + 12} ${clamp(Y(P0) - 26, t, H - b - 52)})"><rect width="${r - 18}" height="52" rx="4" class="co"/><text x="12" y="23" class="co1">${priceL(P0)} / L</text><text x="12" y="41" class="co2">Current price</text></g></svg>`;
+}
+function fuelDeskHtml(asView){
+  const day = S.day || 1, P0 = fuelOn(day), m = fdMarket(day), lo = m.forecastLow, hi = m.forecastHigh, conf = String(m.forecastConfidence || '').toLowerCase(), blk = fuelBlock(), cap = tankCapacity();
+  const need = fdNeed(day), inTank = Math.round(S.fuel), pct = Math.round(100 * inTank / cap), short = need.week - inTank, cover = need.week ? Math.min(100, Math.round(100 * inTank / need.week)) : 100;
+  const max = fdMaxBlocks(P0), selB = clamp(UI.fd.sel === null ? Math.min(max, Math.max(0, Math.ceil(Math.max(0, short) / blk))) : UI.fd.sel, 0, max), L = selB * blk, cost = Math.round(L * P0 * 100) / 100;
+  UI.fd.selNow = selB;
+  const firstBuy = !S.fuelBuySigned && selB > 0, signOk = !firstBuy || UI.fd.signed, levels = WBS().forecastConfidenceLevels || ['high', 'medium', 'low'];
+  const ranges = `<div class="fd-rng" role="tablist">${FD_RANGES.map(([k]) => `<button role="tab" data-fdr="${k}" class="${UI.fd.range === k ? 'on' : ''}" aria-selected="${UI.fd.range === k}">${k}</button>`).join('')}</div>`;
+  const chart = `<section class="dk-pnl fd-mk"><div class="dk-pnl-h">${ICO2.bars}<h2>Jet fuel market price <small>(£ per litre)</small></h2><span class="grow"></span>${ranges}</div><div class="fd-cw">${fuelChartSvg(day, UI.fd.range)}</div>
+    <p class="fd-foot">${ICO2.info}<span>The price you pay today is ${priceL(P0)} a litre all week. ${lo !== undefined && lo !== null ? `Analysts expect ${priceL(lo)} to ${priceL(hi)} next week.` : ''}</span></p></section>`;
+  const h2 = m.fuelHeadline2 || (m.weather && m.weather !== 'Clear' ? `Weather: ${m.weather}.` : m.headline) || 'No other news this week.';
+  const confN = Math.max(1, levels.length - Math.max(0, levels.indexOf(conf)));
+  const news = `<div class="fd-news">
+    <article class="fd-nc">${artRefinery()}<div><span class="kl">Market news</span><p>${esc(m.fuelHeadline || 'Prices are steady.')}</p></div></article>
+    <article class="fd-nc">${m.weather && m.weather !== 'Clear' ? artWeather() : artShip()}<div><span class="kl">Second signal</span><p>${esc(h2)}</p></div></article>
+    <article class="fd-nc fd-fc">${ICO2.arrowUp}<div><span class="kl">Next week's forecast</span>${lo !== undefined && lo !== null ? `<b>${priceL(lo)} – ${priceL(hi)}</b><p>per litre, ${hi < P0 ? 'below' : lo > P0 ? 'above' : 'around'} today's ${priceL(P0)}</p>` : '<p>No forecast yet.</p>'}</div></article>
+    <article class="fd-nc fd-cf">${ICO2.gauge}<div><span class="kl">Price forecast confidence</span><b>${esc(capFirst(conf || 'unknown'))}</b><span class="fd-seg">${levels.map((_, i) => `<i class="${i < confN ? 'on' : ''}"></i>`).join('')}</span></div></article></div>`;
+  const layers = fdLayers(), row = (l, v, cls) => `<div class="fd-r ${cls || ''}"><span>${l}</span><b>${v}</b></div>`;
+  const pos = `<section class="dk-pnl fd-pos"><div class="dk-pnl-h">${ICO2.fuel}<h2>Your position</h2><span class="grow"></span><span class="sub">this week: ${fmtRange(day, day + need.days - 1)}</span></div><div class="fd-pg">
+    <div class="fd-tank">${artTank(pct, num(inTank) + ' L', pct + '% full')}</div>
+    <div class="fd-rows">${row('Storage capacity', num(cap) + ' L')}${row('Currently in tank', num(inTank) + ' L')}${row(`This week's requirement <small>${num(need.perDay)} L a day × ${need.days} days</small>`, num(need.week) + ' L')}
+      ${row('Already secured', layers.length ? layers.map(x => `${num(x.L)} L at ${priceL(x.p)}`).join(', ') : 'nothing yet')}
+      ${row(short > 0 ? 'Projected shortfall' : 'Projected surplus', num(Math.abs(short)) + ' L', short > 0 ? 'bad' : 'good')}
+      <div class="fd-cov"><div class="fd-bar"><i style="width:${cover}%"></i></div><span><b class="good">${cover}% covered</b> · <b class="${cover < 100 ? 'bad' : ''}">${100 - cover}% exposed</b></span></div>
+      <p class="fd-em">Fuel not in the tank is bought on the day at the day's price + ${Math.round(100 * (WORLD.fuelTopUp !== undefined ? WORLD.fuelTopUp : 0.1))}p.</p></div></div></section>`;
+  const blocks = [0, 1, 2, 3, 4].map(n => `<button class="fd-b ${selB === n ? 'on' : ''}" data-fdb="${n}" ${n > max ? 'disabled' : ''}>${num(n * blk)} L</button>`).join('');
+  const signBox = firstBuy ? (() => { const q = UI.fd.q || {}, v = UI.fd.vals || {}, inp = (k, lab) => `<div class="fd-sr ${q[k] ? 'qy' : ''}"><span>${lab}</span><span class="sc-in"><i class="pre">£</i><input data-fds="${k}" inputmode="decimal" autocomplete="off" value="${esc(v[k] || '')}" aria-label="${esc(lab)}"></span></div>`;
+      return UI.fd.signed ? `<div class="fd-sign ok one"><p><b>First order:</b> ${num(blk)} L × ${priceL(P0)} = ${twoDp(blk * P0)}${selB > 1 ? `; ${selB} × ${twoDp(blk * P0)} = ${twoDp(cost)}` : ''}</p>${cardStampHtml('ok')}</div>` : `<div class="fd-sign"><div class="fd-sh"><b>Sign off your first order</b>${UI.fd.queried ? cardStampHtml('q') : ''}</div>${`${inp('one', `${num(blk)} L × ${priceL(P0)} =`)}${selB > 1 ? inp('all', `${selB} × the cost of ${num(blk)} L =`) : ''}<div class="fd-sa"><button class="btn primary" id="fdSignChk">Check ✓</button><span class="sc-msg" role="status">${esc(UI.fd.msg || '')}</span></div>`}</div>`; })() : '';
+  const order = `<section class="dk-pnl fd-ord"><div class="dk-pnl-h">${ICO2.cart}<h2>Place a purchase order</h2><span class="grow"></span><span class="sub">Market price today <b class="gold">${priceL(P0)} / L</b></span></div>
+    <div class="fd-ob"><div class="fd-blocks">${blocks}<span class="fd-more"><button class="fd-st" data-fdm="-1" ${selB <= 0 ? 'disabled' : ''}>−</button><span>More</span><button class="fd-st" data-fdm="1" ${selB >= max ? 'disabled' : ''}>+</button></span></div>
+    ${signBox ? '' : `<p class="fd-lim">Blocks of ${num(blk)} L · room in the tank for ${num(Math.floor(tankSpace() / blk) * blk)} L; cash above the reserve buys ${num(Math.floor(Math.max(0, S.cash - (WORLD.cashReserve || 0)) / (blk * P0)) * blk)} L.</p>`}
+    ${signBox}
+    <div class="fd-tot"><span>Today's order cost <small>${num(L)} L × ${priceL(P0)} / L</small></span><b>${firstBuy && !UI.fd.signed ? '?' : twoDp(cost)}</b><button class="btn fd-buy" id="fdBuy" ${selB > 0 && signOk ? '' : 'disabled'}>${ICO2.check}<span>Confirm purchase</span></button></div>
+    ${UI.fd.done ? `<p class="fd-done good" role="status">${esc(UI.fd.done)}</p>` : ''}</div></section>`;
+  const SL = L || blk, rows = [['Forecast low', lo], ["Today's price", P0], ['Mid-forecast', lo !== undefined && hi !== undefined && lo !== null ? Math.round((lo + hi) * 50) / 100 : null], ['Forecast high', hi]].concat(UI.fd.custom ? [['Your assumption', UI.fd.custom]] : []).filter(x => x[1] !== null && x[1] !== undefined);
+  const scen = `<section class="dk-pnl fd-sc"><div class="dk-pnl-h">${ICO2.sliders}<h2>Scenario modelling</h2><span class="grow"></span><span class="sub">for ${num(SL)} L</span><button class="dk-link" id="fdAdj">${UI.fd.adj ? 'Done' : 'Adjust assumptions'}</button></div>
+    ${UI.fd.adj ? `<div class="fd-adj"><label>If next week's price is <span class="sc-in"><i class="pre">£</i><input id="fdCustom" inputmode="decimal" value="${UI.fd.custom ? UI.fd.custom.toFixed(2) : ''}" aria-label="Your price for next week"></span> a litre</label><button class="btn" id="fdAdjGo">Add to the table</button></div>` : ''}
+    <table class="dk-t fd-t"><thead><tr><th>Next week's price</th><th class="num">If you wait</th><th class="num">If you buy now</th><th class="num" title="${esc(capFirst(fdAdvWord()))}">Fuel purchasing advantage</th></tr></thead><tbody>${rows.map(([lab, p]) => { const wait = Math.round(SL * p * 100) / 100, now = Math.round(SL * P0 * 100) / 100, adv = Math.round((wait - now) * 100) / 100;
+      return `<tr><td>${lab} <small>${priceL(p)}</small></td><td class="num">${twoDp(wait)}</td><td class="num">${twoDp(now)}</td><td class="num ${adv > 0 ? 'good' : adv < 0 ? 'bad' : ''}">${adv > 0 ? `+${twoDp(adv)} <small>saved</small>` : adv < 0 ? `−${twoDp(-adv)} <small>extra</small>` : '£0.00 <small>no difference</small>'}</td></tr>`; }).join('')}</tbody></table></section>`;
+  const learn = UI.fd.learn ? `<div class="fd-learn" role="dialog" aria-label="How the fuel market works"><h3>How the fuel market works</h3><ul>
+    <li>The price is set each week. Everything you buy this week costs ${priceL(P0)} a litre.</li><li>Fuel in the tank is used oldest first, at the price you paid for it.</li>
+    <li>If the tank runs short, the airport sells you fuel on the day at the day's price + 10p.</li><li>Analysts forecast a band for next week. High confidence means the price is likely to land inside it.</li>
+    <li>Buying now is worth it when next week's price will be higher than today's: the difference is your fuel purchasing advantage.</li></ul><button class="btn" id="fdLearnX">Close</button></div>` : '';
+  return `<div class="fd">${learn}<div class="fd-l">${chart}${news}</div><div class="fd-rc">${pos}${order}${scen}</div></div>`;
+}
+function renderFuelDesk(asView){
+  const day = S.day || 1, m = fdMarket(day);
+  const bar = asView ? deskBar('Buy in 1,000 L blocks when the price is right. What you buy is used oldest first.', '<button class="btn primary big" id="fdClose">&#9664; Back</button>')
+    : deskBar('Buy fuel for the week in 1,000 L blocks, or buy none and pay the day\'s price + 10p as you fly.', `${backBtn()}<button class="btn primary big" id="nx">Continue &#9654;</button>`);
+  screen().innerHTML = shell(deskPage({ title:'Fuel Procurement', sub:'Watch the market, secure fuel and manage your storage.', cls:'fd-page',
+    cards:[{ ic:'bulb', t:'Learn more', s:'How the fuel market works and what moves the price.', id:'fdLearn' }, { ic:'bars', t:'Fuel outlook', s:m.forecastLow !== undefined && m.forecastLow !== null ? `Next week ${priceL(m.forecastLow)}–${priceL(m.forecastHigh)} · ${String(m.forecastConfidence || '').toLowerCase()} confidence` : 'No forecast this week.', id:'fdOutlook' }],
+    body:fuelDeskHtml(asView) }), bar);
+  bindFuelDesk(asView);
+}
+function bindFuelDesk(asView){
+  const root = screen(), P0 = fuelOn(S.day || 1), blk = fuelBlock();
+  root.querySelectorAll('[data-fdr]').forEach(b => b.onclick = () => { UI.fd.range = b.getAttribute('data-fdr'); render(); });
+  root.querySelectorAll('[data-fdb]').forEach(b => b.onclick = () => { UI.fd.sel = +b.getAttribute('data-fdb'); UI.fd.signed = false; UI.fd.vals = {}; UI.fd.q = {}; UI.fd.msg = ''; UI.fd.done = ''; render(); });
+  root.querySelectorAll('[data-fdm]').forEach(b => b.onclick = () => { UI.fd.sel = Math.max(0, (UI.fd.selNow || 0) + +b.getAttribute('data-fdm')); UI.fd.signed = false; UI.fd.vals = {}; UI.fd.q = {}; UI.fd.msg = ''; UI.fd.done = ''; render(); });
+  root.querySelectorAll('[data-fds]').forEach(inp => { inp.oninput = () => { UI.fd.vals[inp.getAttribute('data-fds')] = inp.value; }; inp.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); const c = $('fdSignChk'); if(c) c.click(); } }; });
+  on('fdSignChk', () => { const n = UI.fd.selNow || 0, one = Math.round(blk * P0 * 100), q = {}; let blank = false;
+    const v1 = scParse('£', UI.fd.vals.one); if(v1 === null) blank = true; else if(v1 !== one) q.one = true;
+    if(n > 1){ const v2 = scParse('£', UI.fd.vals.all); if(v2 === null) blank = true; else if(v2 !== one * n) q.all = true; }
+    UI.fd.q = q; if(Object.keys(q).length){ UI.fd.queried = true; UI.fd.msg = 'Query: look at the highlighted line again.'; render(); return; }
+    if(blank){ UI.fd.msg = 'Fill in each box first.'; render(); return; }
+    UI.fd.signed = true; UI.fd.queried = false; UI.fd.msg = ''; render(); });
+  on('fdBuy', () => { const n = UI.fd.selNow || 0; if(!n || n > fdMaxBlocks(P0)) return; if(!S.fuelBuySigned && !UI.fd.signed) return;
+    const L = n * blk; buyFuel(L, P0); fuelWeek(S.day || 1).bought.push({ day:S.day, L, p:P0 });
+    if(!S.fuelBuySigned){ S.fuelBuySigned = { day:S.day, L, p:P0 }; const sk = skills(), x = sk.fuelOrder || (sk.fuelOrder = { first:S.day, count:0 }); x.count++; x.lastDay = S.day;
+      const log = S.handSumLog || (S.handSumLog = []), e = log.find(z => z.day === S.day) || (log.push({ day:S.day, date:dateShort(S.day), tools:[] }), log[log.length - 1]); e.tools.push(`Fuel order: ${n} × ${num(blk)} L (Calculate)`); }
+    UI.fd.done = `Bought ${num(L)} L at ${priceL(P0)}: ${twoDp(L * P0)}. The tank now holds ${num(Math.round(S.fuel))} L.`; UI.fd.sel = 0; UI.fd.signed = false; UI.fd.vals = {}; UI.fd.q = {};
+    if(typeof liveChime === 'function' && typeof opsSoundOn === 'function' && opsSoundOn()) liveChime('ding'); save(); render(); });
+  on('fdAdj', () => { UI.fd.adj = !UI.fd.adj; render(); });
+  on('fdAdjGo', () => { const v = parseFloat(String(($('fdCustom') || {}).value || '').replace(/[£\s]/g, '')); if(v > 0 && v < 10){ UI.fd.custom = Math.round(v * 100) / 100; UI.fd.adj = false; render(); } });
+  on('fdLearn', () => { UI.fd.learn = true; render(); }); on('fdLearnX', () => { UI.fd.learn = false; render(); });
+  on('fdOutlook', () => { UI.fd.range = '1W'; render(); });
+  on('fdClose', () => { UI.view = null; render(); });
+  if(!asView) on('nx', () => { UI.fd = { range:UI.fd.range, sel:null, signed:false, vals:{}, q:{} }; advance(); });
+}
+R.fuelDesk = () => renderFuelDesk(false);
+WS_STEPS.push('fuelDesk'); SHELL_STEPS.push('fuelDesk');   // the desk sits in the Monday workspace: the plan is a press away
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-nav="plan"]'); if(!b || !S || step().t !== 'fuelDesk' || UI.view) return;
+  const i = S.steps.findIndex(x => x.t === 'plan'); if(i >= 0){ e.stopPropagation(); e.preventDefault(); jumpTo(i); } }, true);

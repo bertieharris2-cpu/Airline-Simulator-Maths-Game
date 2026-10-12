@@ -97,6 +97,19 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
       if(s.phase === 'setup') ok('launch: tickets ×3 then the fare, the other route\'s tickets, a fuel sign-off for each route (Paris 120 L, Dublin 180 L at £1.30), profit, snacks ×2', typed.filter(x => /\|tk_par/.test(x)).length === 3 && typed.some(x => /\|tk_dub/.test(x)) && typed.filter(x => /\|profit/.test(x)).length === 1 && typed.filter(x => /\|snack$/.test(x)).length === 2 && !typed.includes('tutorial') && typed.includes('card:dhc6|par=156.00') && typed.includes('card:dhc6|dub=234.00'), typed);
       if(s.phase === 'setup') ok('launch: the sums were done in the dock beside the plan', await vis('.dock-sum') && await vis('.ad'));
       ok(`work ${day}: back enabled`, !!(await p.$('#nx')) && await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
+    if(t === 'fuelDesk'){ await fits('fuelDesk ' + day); await shot(`d${day}-fueldesk`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
+      if(day === 8){ ok('day 8: the fuel desk shows next week\'s band £1.60–£1.76 at high confidence, and today\'s £1.47', /£1\.60 – £1\.76/.test(txt) && /High/.test(txt) && /£1\.47 \/ L/.test(txt), (txt.match(/Next week's forecast.{0,60}/) || [''])[0]);
+        ok('day 8: the scenario table has a row for each point of the band', (await p.$$('.fd-t tbody tr')).length >= 4, (await p.$$('.fd-t tbody tr')).length);
+        ok('day 8: the desk says what an empty tank costs (the day\'s price + 10p)', /day's price \+ 10p/.test(txt)); }
+      const n = day === 8 ? 3 : 2, bn = await p.$(`[data-fdb="${n}"]:not([disabled])`);
+      if(bn){ await bn.click(); await p.waitForTimeout(60);
+        if(await p.$('#fdSignChk')){ const one = await p.evaluate(() => window.__sim.evalIn('(fuelBlock() * fuelOn(S.day)).toFixed(2)'));
+          await p.fill('[data-fds="one"]', '1'); await p.click('#fdSignChk'); await p.waitForTimeout(60); ok(`day ${day}: the first fuel order is a sign-off; a wrong line is stamped Query`, await vis('.fd-sign .stamp.q'));
+          await p.fill('[data-fds="one"]', one); if(await p.$('[data-fds="all"]')) await p.fill('[data-fds="all"]', (one * n).toFixed(2)); await p.click('#fdSignChk'); await p.waitForTimeout(60);
+          ok(`day ${day}: the order is Checked, then Confirm opens`, await vis('.fd-sign .stamp.ok') && await p.$eval('#fdBuy', e => !e.disabled)); await shot(`d${day}-fueldesk-signed`); }
+        const f0 = (await S()).fuel; await p.click('#fdBuy'); await p.waitForTimeout(80); const f1 = (await S()).fuel;
+        ok(`day ${day}: the order of ${n} × 1,000 L goes into the tank`, Math.round(f1 - f0) === n * 1000, [f0, f1]); await shot(`d${day}-fueldesk-bought`); }
+      await p.click('#nx'); continue; }
     if(t === 'ready'){ await fits('ready ' + day); const en = await p.$eval('#startOps', e => !e.disabled); ok('ready ' + day, en, await p.textContent('.opplan')); if(!en){ await shot(`d${day}-ready-stuck`); break; } await p.click('#startOps'); continue; }
     if(t === 'takeoff'){ await p.click('#toGo'); for(let k = 0; k < 200 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     if(t === 'fly'){ for(let k = 0; k < 80 && await T() === 'fly'; k++) await p.waitForTimeout(250); continue; }

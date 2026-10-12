@@ -3381,6 +3381,93 @@ body.desk .sd-written{color:#9fd0ff}
 .fs-x{display:flex;align-items:center;gap:10px;font-size:13.5px;color:#9fc0e8}.fs-x b{font-size:16px;color:var(--dk-gold)}
 
 .dnav .nv:hover:not(:disabled),.dnav .nv.on:hover{padding:0 10px 0 16px;border-radius:0}
+
+/* ---- Fuel Procurement ---- */
+.fd-page .dp-card{min-height:78px;padding:10px 14px}.fd-page .dp-tt h1{font-size:34px;margin-bottom:4px}.fd-page .dp-tt p{font-size:16px}
+.fd{position:relative;display:grid;grid-template-columns:51fr 49fr;gap:12px;flex:1;min-height:0}
+.fd h2,.fd h3{text-transform:none;letter-spacing:0}
+.fd-l,.fd-rc{display:flex;flex-direction:column;gap:12px;min-height:0}
+.fd-mk{flex:none}
+.fd-cw{padding:6px 12px 0}
+.fd-chart{width:100%;height:auto;display:block}
+.fd-chart .gl{stroke:#1a3a68;stroke-width:1}
+.fd-chart .ax{fill:#8fb0da;font-size:12px}
+.fd-chart .ln{fill:none;stroke:#36c6ff;stroke-width:2.6;stroke-linejoin:round}
+.fd-chart .wk{stroke:#36c6ff;stroke-width:2.2;stroke-dasharray:5 4;fill:none}
+.fd-chart .now{stroke:#ffc53d;stroke-width:1.2;stroke-dasharray:3 4}
+.fd-chart .today{stroke:#7fa6d6;stroke-width:1;stroke-dasharray:2 3}
+.fd-chart .pt{fill:#fff;stroke:#36c6ff;stroke-width:3}
+.fd-chart .band{fill:rgba(54,198,255,.16);stroke:rgba(54,198,255,.55);stroke-dasharray:4 3}
+.fd-chart .nxw{fill:rgba(255,255,255,.03)}
+.fd-chart .bl{fill:#9fd8ff;font-size:12.5px}
+.fd-chart .co{fill:#0d2a58;stroke:#36c6ff}
+.fd-chart .co1{fill:#fff;font-size:17px;font-weight:600}
+.fd-chart .co2{fill:#9fc0e8;font-size:12px}
+.fd-rng{display:flex;gap:3px}.fd-rng button{font:inherit;font-size:13px;padding:4px 10px;border:1px solid #1f467e;background:#0a1c3a;color:#b9d4f5;border-radius:3px;cursor:pointer}.fd-rng button.on{background:#123a74;color:#fff;border-color:var(--dk-cyan)}
+.fd-foot{display:flex;gap:8px;align-items:center;margin:0;padding:4px 16px 10px;font-size:13.5px;color:#a9c4e8}.fd-foot .di{width:18px;height:18px;color:#7cc4ff;flex:none}
+.fd-news{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:12px;flex:1;min-height:0}
+.fd-nc{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:stretch;border:1px solid #1f467e;border-radius:6px;background:linear-gradient(180deg,#0b1d3c,#08162f);overflow:hidden;min-height:0}
+.fd-nc > svg.art{width:88px;height:100%}
+.fd-nc > .di{width:40px;height:40px;align-self:center;justify-self:center;color:var(--dk-cyan)}
+.fd-nc > div{padding:10px 12px 10px 0;display:flex;flex-direction:column;gap:4px;min-width:0}
+.fd-nc .kl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#7fb6ee}
+.fd-nc p{margin:0;font-size:14.5px;line-height:1.35;color:#e2ecfb}
+.fd-nc b{font-size:22px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+.fd-seg{display:flex;gap:4px;margin-top:4px}.fd-seg i{width:40px;height:8px;border-radius:2px;background:#1a3a68}.fd-seg i.on{background:var(--dk-mint)}
+.fd-pg{display:grid;grid-template-columns:136px minmax(0,1fr);gap:12px;padding:6px 14px 10px;align-items:center}
+.fd-tank svg{width:136px;height:auto;display:block}
+.art-tank .tk-big{fill:#fff;font-size:24px;font-weight:700}.art-tank .tk-small{fill:#d6e6ff;font-size:16px}
+.fd-rows{display:flex;flex-direction:column;gap:1px}
+.fd-r{display:flex;justify-content:space-between;gap:10px;font-size:14px;line-height:22px;color:#cfe0f7;border-bottom:1px solid #15335f}
+.fd-r small{color:#8fb0da;margin-left:4px;font-size:12px}.fd-r b{color:#fff;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.fd-r.bad b{color:var(--dk-red)}.fd-r.good b{color:var(--dk-mint)}
+.fd-cov{display:flex;flex-direction:column;gap:3px;margin-top:6px;font-size:13px;color:#a9c4e8}
+.fd-bar{height:10px;border-radius:5px;background:rgba(255,95,95,.35);overflow:hidden}.fd-bar i{display:block;height:100%;background:linear-gradient(90deg,#1fb46e,#3ce394)}
+.fd-em{margin:4px 0 0;font-size:12.5px;color:var(--dk-amber)}
+.fd-ob{padding:8px 14px 10px;display:flex;flex-direction:column;gap:7px}
+.fd-blocks{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.fd-b{font:inherit;font-size:14px;font-weight:600;padding:7px 8px;min-width:74px;border:1px solid #2b5c9e;background:#0a1c3a;color:#d6e6ff;border-radius:4px;cursor:pointer;font-variant-numeric:tabular-nums}
+.fd-b.on{background:#1a5fd6;border-color:var(--dk-cyan);color:#fff;box-shadow:0 0 12px rgba(40,160,255,.35)}
+.fd-b:disabled{opacity:.35;cursor:default}
+.fd-more{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#a9c4e8;margin-left:4px}
+.fd-st{width:30px;height:30px;font:inherit;font-size:18px;border:1px solid #2b5c9e;background:#0a1c3a;color:#fff;border-radius:4px;cursor:pointer}.fd-st:disabled{opacity:.35}
+.fd-lim{margin:0;font-size:12.5px;color:#8fb0da}
+.fd-tot{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:7px 12px;border-radius:4px;background:#0a1c3a;border:1px solid #1f467e}
+.fd-tot span{font-size:15px;color:#fff;display:flex;flex-direction:column}.fd-tot small{font-size:12.5px;color:#a9c4e8}
+.fd-tot > b{font-size:22px;color:var(--dk-gold);font-variant-numeric:tabular-nums}
+body.desk .btn.fd-buy{display:inline-flex;align-items:center;gap:8px;height:42px;background:linear-gradient(180deg,#1fb46e,#148f57);border:1px solid #3ce394;color:#fff;font-weight:600;font-size:15.5px}
+body.desk .btn.fd-buy:disabled{opacity:.4}
+body.desk .btn.fd-buy .di{width:20px;height:20px}
+.fd-done{margin:0;font-size:13.5px}
+.fd-sign{border:1px solid #2f7fe0;border-radius:4px;padding:7px 10px;background:#0b2147;display:flex;flex-direction:column;gap:6px}
+.fd-sign.ok{border-color:rgba(60,227,148,.5)}
+.fd-sh{display:flex;justify-content:space-between;align-items:center;font-size:14.5px;color:#fff}.fd-sh b{font-weight:600}
+.fd-sign p{margin:0;font-size:14px;color:#cfe0f7}
+.fd-sr{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:10px;align-items:center;font-size:14.5px;color:#eaf3ff}
+.fd-sr.qy{background:rgba(255,95,95,.1);box-shadow:inset 0 0 0 1px var(--dk-red);border-radius:4px;padding:2px 6px}
+.fd-sr .sc-in input{height:32px}
+.fd-sa{display:flex;gap:10px;align-items:center}body.desk .fd-sa .btn{height:34px;padding:0 14px}
+.fd-sc{flex:1;min-height:0;overflow:hidden}
+.fd-t th,.fd-t td{padding:6px 12px}.fd-t td{font-size:14px}.fd-t td small{color:#8fb0da;font-size:12px;margin-left:4px}
+.fd-t td.good small,.fd-t td.bad small{color:inherit;opacity:.85}
+.fd-adj{display:flex;gap:10px;align-items:center;padding:6px 14px;font-size:14px;color:#cfe0f7}.fd-adj label{display:flex;gap:8px;align-items:center}.fd-adj .sc-in{width:110px}
+.fd-learn{position:absolute;z-index:5;left:0;top:0;width:51%;padding:18px 22px;background:#0b2147;border:1px solid var(--dk-cyan);border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.fd-learn h3{margin:0 0 8px;font-size:19px;color:#fff;font-weight:600}.fd-learn ul{margin:0 0 12px;padding-left:20px;color:#d6e6ff;font-size:15px;line-height:1.5}
+.gold{color:var(--dk-gold)}
+
+.fd .dk-pnl-h{padding:7px 14px}.fd .dk-pnl-h h2{font-size:19px}.fd .dk-pnl-h .di{width:22px;height:22px}
+.fd-pg{grid-template-columns:112px minmax(0,1fr);padding:4px 14px 8px}.fd-tank svg{width:112px}
+.fd-r{line-height:21px;font-size:13.5px}
+.fd-cov{margin-top:4px}.fd-em{margin-top:2px;font-size:12px}
+.fd-ob{gap:6px;padding:7px 14px 8px}
+.fd-b{padding:6px 8px}
+.fd-tot{padding:5px 12px}body.desk .btn.fd-buy{height:38px}
+.fd-t th{padding:5px 12px;white-space:nowrap}.fd-t td{padding:5px 12px}
+.fd-sc{flex:none}
+.fd-l .fd-news{flex:1}
+
+.fd-sign.one{flex-direction:row;align-items:center;justify-content:space-between;gap:10px;padding:5px 10px}.fd-sign.one p b{font-weight:600;color:#fff}
+.fd-sc{flex:1 1 auto;min-height:0;overflow:auto}
 </style>
 </head>
 <body>
@@ -11342,7 +11429,7 @@ function weekFuelPrice(from){ from = from || (S.day || 1); for(let d = from; d <
 function paidDaysThisWeek(from){ from = from || (S.day || 1); let n = 0; for(let d = from; d < from + 7; d++) if(!fuelFreeDay(d)) n++; return n; }
 
 /* ---------- Monday's step list ---------- */
-function daySteps(n, w){
+function dayStepsWeek(n, w){
   w = w || roundData(n);
   if(!weekMode() || !w.weekPhase) return dayStepsBase(n, w);
   if(S.oneOffDay === beatDay(n) && w.weekPhase !== 'plan') return withIntro([{ t:'hq' }].concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }, { t:'ready' }, { t:'fly' }, { t:'results' }]), w);   // an old save with no sums record: one planning day with its sums, then the board
@@ -12405,7 +12492,7 @@ function fuelAdvantage(week){ const w = (S.fuelWeeks || {})[week]; return w ? Ma
 function fuelAdvantageLine(week){
   const w = (S.fuelWeeks || {})[week]; if(!w || !w.burnL || !deskModeAt((week - 1) * 7 + 1)) return '';
   const a = fuelAdvantage(week), em = w.emL ? ` ${num(w.emL)} L had to be bought when the tank ran dry, at the day's price + ${Math.round((WORLD.fuelTopUp || 0.1) * 100)}p (${money(w.emCost)}).` : '';
-  return `<div class="fuel-adv ${a > 0 ? 'good' : a < 0 ? 'bad' : ''}"><span class="kl">Fuel purchasing advantage</span><b class="mono">${a > 0 ? '+' : a < 0 ? '−' : ''}${money(Math.abs(a))}</b><span>${a > 0 ? 'saved compared with buying the fuel on the day it was used' : a < 0 ? 'more than buying the fuel on the day it was used' : 'the same as buying the fuel on the day it was used'}.${em}</span></div>`;
+  return `<div class="fuel-adv ${a > 0 ? 'good' : a < 0 ? 'bad' : ''}"><span class="kl">Fuel purchasing advantage</span><b class="mono">${a > 0 ? '+' : a < 0 ? '−' : ''}${money(Math.abs(a))}</b><span>${a > 0 ? esc(fdAdvWord()) + ' (on the day each litre was used)' : a < 0 ? 'more than buying later (on the day each litre was used)' : 'the same as buying later'}.${em}</span></div>`;
 }
 
 /* ---------- the days flown in week mode ---------- */
@@ -12685,6 +12772,129 @@ function fuelWidgetHtml(pl, L, o){
     <span class="fs-n">${num(need)} L a day · ${num(week)} L this week · tank ${num(tankCapacity())} L</span>
     <span class="fs-x">${hid ? sumBtn('fuelCost') : ''}${moduleOn('fuel') ? `<button class="dk-link" data-nav="fuel">Fuel desk ${ICO2.chev}</button>` : ''}</span></section>`;
 }
+
+/* ==================================================================
+   Part 3: Fuel Procurement (Desks v2 §4, Bertie's reference screen). From day 8, a Monday step after the sums and the
+   Fuel nav row at any time. The market chart (the game's own prices since launch, then next week's forecast band), the
+   week's news, your position (the tank, this week's need, what is secured), a purchase order in 1,000 L blocks (the
+   first purchase is a sign-off) and the scenario table: buy now against buying next week at the forecast prices.
+   ================================================================== */
+function daySteps(n, w){
+  const st = dayStepsWeek(n, w); w = w || roundData(n);
+  if(!weekMode() || !w.weekPhase || !deskModeAt(beatDay(n))) return st;
+  const at = st.findIndex(x => x.t === 'ready'); if(at > 0 && st[at - 1].t === 'workings') st.splice(at, 0, { t:'fuelDesk' });
+  return st;
+}
+UI.fd = UI.fd || { range:'1M', sel:null, signed:false, vals:{}, q:{} };
+const FD_RANGES = [['1W', 7], ['1M', 30], ['3M', 91], ['6M', 182]];
+function fdMarket(day){ return marketWeekOf(day) || {}; }
+function fdNeed(day){ const L = planLines(currentPlan()), left = 7 - ((day - 1) % 7); return { perDay:L.fuelL || 0, days:left, week:(L.fuelL || 0) * left }; }
+function fdLayers(){ const by = {}; fuelLots().forEach(x => { const k = x.p.toFixed(2); by[k] = (by[k] || 0) + x.L; }); return Object.keys(by).map(k => ({ p:+k, L:Math.round(by[k]) })); }
+function fdMaxBlocks(price){ const blk = fuelBlock(), space = Math.floor(tankSpace() / blk + 1e-9), cash = Math.floor(Math.max(0, S.cash - (WORLD.cashReserve || 0)) / (blk * price) + 1e-9); return Math.max(0, Math.min(space, cash)); }
+function fdAdvWord(){ return WBS().fuelAdvantageWording || 'saved compared with buying later'; }
+/* the chart: the price each day since launch (or the window), this week's price to Sunday, next week's band */
+function fuelChartSvg(day, range){
+  const span = (FD_RANGES.find(x => x[0] === range) || FD_RANGES[1])[1], a = Math.max(1, day - span + 1), m = fdMarket(day), wkEnd = day + (7 - ((day - 1) % 7)) - 1, nxA = wkEnd + 1, nxB = wkEnd + 7;
+  const hist = []; for(let d = a; d <= day; d++) hist.push([d, fuelOn(d)]);
+  const P0 = fuelOn(day), lo = m.forecastLow, hi = m.forecastHigh, band = lo !== undefined && lo !== null && hi !== undefined && hi !== null;
+  const ys = hist.map(x => x[1]).concat(band ? [lo, hi] : []), y0 = Math.floor((Math.min(...ys) - 0.04) * 10) / 10, y1 = Math.ceil((Math.max(...ys) + 0.04) * 10) / 10;
+  const W = 760, H = 250, l = 50, r = 128, t = 14, b = 30, X = d => l + (W - l - r) * (d - a) / Math.max(1, (band ? nxB : wkEnd) - a), Y = v => t + (H - t - b) * (y1 - v) / Math.max(0.01, y1 - y0);
+  const step = (y1 - y0) > 0.8 ? 0.2 : 0.1, yt = []; for(let v = y0; v <= y1 + 1e-9; v = Math.round((v + step) * 100) / 100) yt.push(v);
+  const g = artId('fc'), line = hist.map(([d, v], i) => `${i ? 'L' : 'M'}${X(d).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ');
+  const area = `${line} L${X(day).toFixed(1)} ${H - b} L${X(a).toFixed(1)} ${H - b} Z`;
+  const xt = []; const every = span <= 7 ? 1 : span <= 30 ? 7 : span <= 91 ? 14 : 28; for(let d = a; d <= (band ? nxB : wkEnd); d += every) xt.push(d);
+  const fmtD = d => { const c = calDate(d); return `${c.getUTCDate()} ${MONTH[c.getUTCMonth()].slice(0, 3)}`; };
+  return `<svg class="fd-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Jet fuel price: ${priceL(P0)} a litre today${band ? `, next week forecast ${priceL(lo)} to ${priceL(hi)}` : ''}"><defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#36c6ff" stop-opacity=".38"/><stop offset="1" stop-color="#36c6ff" stop-opacity="0"/></linearGradient></defs>
+    ${yt.map(v => `<line x1="${l}" x2="${W - r}" y1="${Y(v)}" y2="${Y(v)}" class="gl"/><text x="${l - 8}" y="${Y(v) + 4}" text-anchor="end" class="ax">£${v.toFixed(2)}</text>`).join('')}
+    ${xt.map(d => `<text x="${X(d)}" y="${H - 9}" text-anchor="middle" class="ax">${fmtD(d)}</text>`).join('')}
+    ${band ? `<rect x="${X(nxA - 0.5)}" y="${t}" width="${X(nxB) - X(nxA - 0.5)}" height="${H - t - b}" class="nxw"/><path d="M${X(wkEnd)} ${Y(P0)} L${X(nxA)} ${Y(hi)} L${X(nxB)} ${Y(hi)} L${X(nxB)} ${Y(lo)} L${X(nxA)} ${Y(lo)} Z" class="band"/><text x="${(X(nxA) + X(nxB)) / 2}" y="${Y(hi) - 8}" text-anchor="middle" class="bl">Next week ${priceL(lo)}–${priceL(hi)}</text>` : ''}
+    <path d="${area}" fill="url(#${g})"/><path d="${line}" class="ln"/>
+    <path d="M${X(day)} ${Y(P0)} H${X(wkEnd)}" class="wk"/><line x1="${l}" x2="${W - r}" y1="${Y(P0)}" y2="${Y(P0)}" class="now"/>
+    <line x1="${X(day)}" x2="${X(day)}" y1="${t}" y2="${H - b}" class="today"/><circle cx="${X(day)}" cy="${Y(P0)}" r="6" class="pt"/>
+    <g transform="translate(${W - r + 12} ${clamp(Y(P0) - 26, t, H - b - 52)})"><rect width="${r - 18}" height="52" rx="4" class="co"/><text x="12" y="23" class="co1">${priceL(P0)} / L</text><text x="12" y="41" class="co2">Current price</text></g></svg>`;
+}
+function fuelDeskHtml(asView){
+  const day = S.day || 1, P0 = fuelOn(day), m = fdMarket(day), lo = m.forecastLow, hi = m.forecastHigh, conf = String(m.forecastConfidence || '').toLowerCase(), blk = fuelBlock(), cap = tankCapacity();
+  const need = fdNeed(day), inTank = Math.round(S.fuel), pct = Math.round(100 * inTank / cap), short = need.week - inTank, cover = need.week ? Math.min(100, Math.round(100 * inTank / need.week)) : 100;
+  const max = fdMaxBlocks(P0), selB = clamp(UI.fd.sel === null ? Math.min(max, Math.max(0, Math.ceil(Math.max(0, short) / blk))) : UI.fd.sel, 0, max), L = selB * blk, cost = Math.round(L * P0 * 100) / 100;
+  UI.fd.selNow = selB;
+  const firstBuy = !S.fuelBuySigned && selB > 0, signOk = !firstBuy || UI.fd.signed, levels = WBS().forecastConfidenceLevels || ['high', 'medium', 'low'];
+  const ranges = `<div class="fd-rng" role="tablist">${FD_RANGES.map(([k]) => `<button role="tab" data-fdr="${k}" class="${UI.fd.range === k ? 'on' : ''}" aria-selected="${UI.fd.range === k}">${k}</button>`).join('')}</div>`;
+  const chart = `<section class="dk-pnl fd-mk"><div class="dk-pnl-h">${ICO2.bars}<h2>Jet fuel market price <small>(£ per litre)</small></h2><span class="grow"></span>${ranges}</div><div class="fd-cw">${fuelChartSvg(day, UI.fd.range)}</div>
+    <p class="fd-foot">${ICO2.info}<span>The price you pay today is ${priceL(P0)} a litre all week. ${lo !== undefined && lo !== null ? `Analysts expect ${priceL(lo)} to ${priceL(hi)} next week.` : ''}</span></p></section>`;
+  const h2 = m.fuelHeadline2 || (m.weather && m.weather !== 'Clear' ? `Weather: ${m.weather}.` : m.headline) || 'No other news this week.';
+  const confN = Math.max(1, levels.length - Math.max(0, levels.indexOf(conf)));
+  const news = `<div class="fd-news">
+    <article class="fd-nc">${artRefinery()}<div><span class="kl">Market news</span><p>${esc(m.fuelHeadline || 'Prices are steady.')}</p></div></article>
+    <article class="fd-nc">${m.weather && m.weather !== 'Clear' ? artWeather() : artShip()}<div><span class="kl">Second signal</span><p>${esc(h2)}</p></div></article>
+    <article class="fd-nc fd-fc">${ICO2.arrowUp}<div><span class="kl">Next week's forecast</span>${lo !== undefined && lo !== null ? `<b>${priceL(lo)} – ${priceL(hi)}</b><p>per litre, ${hi < P0 ? 'below' : lo > P0 ? 'above' : 'around'} today's ${priceL(P0)}</p>` : '<p>No forecast yet.</p>'}</div></article>
+    <article class="fd-nc fd-cf">${ICO2.gauge}<div><span class="kl">Price forecast confidence</span><b>${esc(capFirst(conf || 'unknown'))}</b><span class="fd-seg">${levels.map((_, i) => `<i class="${i < confN ? 'on' : ''}"></i>`).join('')}</span></div></article></div>`;
+  const layers = fdLayers(), row = (l, v, cls) => `<div class="fd-r ${cls || ''}"><span>${l}</span><b>${v}</b></div>`;
+  const pos = `<section class="dk-pnl fd-pos"><div class="dk-pnl-h">${ICO2.fuel}<h2>Your position</h2><span class="grow"></span><span class="sub">this week: ${fmtRange(day, day + need.days - 1)}</span></div><div class="fd-pg">
+    <div class="fd-tank">${artTank(pct, num(inTank) + ' L', pct + '% full')}</div>
+    <div class="fd-rows">${row('Storage capacity', num(cap) + ' L')}${row('Currently in tank', num(inTank) + ' L')}${row(`This week's requirement <small>${num(need.perDay)} L a day × ${need.days} days</small>`, num(need.week) + ' L')}
+      ${row('Already secured', layers.length ? layers.map(x => `${num(x.L)} L at ${priceL(x.p)}`).join(', ') : 'nothing yet')}
+      ${row(short > 0 ? 'Projected shortfall' : 'Projected surplus', num(Math.abs(short)) + ' L', short > 0 ? 'bad' : 'good')}
+      <div class="fd-cov"><div class="fd-bar"><i style="width:${cover}%"></i></div><span><b class="good">${cover}% covered</b> · <b class="${cover < 100 ? 'bad' : ''}">${100 - cover}% exposed</b></span></div>
+      <p class="fd-em">Fuel not in the tank is bought on the day at the day's price + ${Math.round(100 * (WORLD.fuelTopUp !== undefined ? WORLD.fuelTopUp : 0.1))}p.</p></div></div></section>`;
+  const blocks = [0, 1, 2, 3, 4].map(n => `<button class="fd-b ${selB === n ? 'on' : ''}" data-fdb="${n}" ${n > max ? 'disabled' : ''}>${num(n * blk)} L</button>`).join('');
+  const signBox = firstBuy ? (() => { const q = UI.fd.q || {}, v = UI.fd.vals || {}, inp = (k, lab) => `<div class="fd-sr ${q[k] ? 'qy' : ''}"><span>${lab}</span><span class="sc-in"><i class="pre">£</i><input data-fds="${k}" inputmode="decimal" autocomplete="off" value="${esc(v[k] || '')}" aria-label="${esc(lab)}"></span></div>`;
+      return UI.fd.signed ? `<div class="fd-sign ok one"><p><b>First order:</b> ${num(blk)} L × ${priceL(P0)} = ${twoDp(blk * P0)}${selB > 1 ? `; ${selB} × ${twoDp(blk * P0)} = ${twoDp(cost)}` : ''}</p>${cardStampHtml('ok')}</div>` : `<div class="fd-sign"><div class="fd-sh"><b>Sign off your first order</b>${UI.fd.queried ? cardStampHtml('q') : ''}</div>${`${inp('one', `${num(blk)} L × ${priceL(P0)} =`)}${selB > 1 ? inp('all', `${selB} × the cost of ${num(blk)} L =`) : ''}<div class="fd-sa"><button class="btn primary" id="fdSignChk">Check ✓</button><span class="sc-msg" role="status">${esc(UI.fd.msg || '')}</span></div>`}</div>`; })() : '';
+  const order = `<section class="dk-pnl fd-ord"><div class="dk-pnl-h">${ICO2.cart}<h2>Place a purchase order</h2><span class="grow"></span><span class="sub">Market price today <b class="gold">${priceL(P0)} / L</b></span></div>
+    <div class="fd-ob"><div class="fd-blocks">${blocks}<span class="fd-more"><button class="fd-st" data-fdm="-1" ${selB <= 0 ? 'disabled' : ''}>−</button><span>More</span><button class="fd-st" data-fdm="1" ${selB >= max ? 'disabled' : ''}>+</button></span></div>
+    ${signBox ? '' : `<p class="fd-lim">Blocks of ${num(blk)} L · room in the tank for ${num(Math.floor(tankSpace() / blk) * blk)} L; cash above the reserve buys ${num(Math.floor(Math.max(0, S.cash - (WORLD.cashReserve || 0)) / (blk * P0)) * blk)} L.</p>`}
+    ${signBox}
+    <div class="fd-tot"><span>Today's order cost <small>${num(L)} L × ${priceL(P0)} / L</small></span><b>${firstBuy && !UI.fd.signed ? '?' : twoDp(cost)}</b><button class="btn fd-buy" id="fdBuy" ${selB > 0 && signOk ? '' : 'disabled'}>${ICO2.check}<span>Confirm purchase</span></button></div>
+    ${UI.fd.done ? `<p class="fd-done good" role="status">${esc(UI.fd.done)}</p>` : ''}</div></section>`;
+  const SL = L || blk, rows = [['Forecast low', lo], ["Today's price", P0], ['Mid-forecast', lo !== undefined && hi !== undefined && lo !== null ? Math.round((lo + hi) * 50) / 100 : null], ['Forecast high', hi]].concat(UI.fd.custom ? [['Your assumption', UI.fd.custom]] : []).filter(x => x[1] !== null && x[1] !== undefined);
+  const scen = `<section class="dk-pnl fd-sc"><div class="dk-pnl-h">${ICO2.sliders}<h2>Scenario modelling</h2><span class="grow"></span><span class="sub">for ${num(SL)} L</span><button class="dk-link" id="fdAdj">${UI.fd.adj ? 'Done' : 'Adjust assumptions'}</button></div>
+    ${UI.fd.adj ? `<div class="fd-adj"><label>If next week's price is <span class="sc-in"><i class="pre">£</i><input id="fdCustom" inputmode="decimal" value="${UI.fd.custom ? UI.fd.custom.toFixed(2) : ''}" aria-label="Your price for next week"></span> a litre</label><button class="btn" id="fdAdjGo">Add to the table</button></div>` : ''}
+    <table class="dk-t fd-t"><thead><tr><th>Next week's price</th><th class="num">If you wait</th><th class="num">If you buy now</th><th class="num" title="${esc(capFirst(fdAdvWord()))}">Fuel purchasing advantage</th></tr></thead><tbody>${rows.map(([lab, p]) => { const wait = Math.round(SL * p * 100) / 100, now = Math.round(SL * P0 * 100) / 100, adv = Math.round((wait - now) * 100) / 100;
+      return `<tr><td>${lab} <small>${priceL(p)}</small></td><td class="num">${twoDp(wait)}</td><td class="num">${twoDp(now)}</td><td class="num ${adv > 0 ? 'good' : adv < 0 ? 'bad' : ''}">${adv > 0 ? `+${twoDp(adv)} <small>saved</small>` : adv < 0 ? `−${twoDp(-adv)} <small>extra</small>` : '£0.00 <small>no difference</small>'}</td></tr>`; }).join('')}</tbody></table></section>`;
+  const learn = UI.fd.learn ? `<div class="fd-learn" role="dialog" aria-label="How the fuel market works"><h3>How the fuel market works</h3><ul>
+    <li>The price is set each week. Everything you buy this week costs ${priceL(P0)} a litre.</li><li>Fuel in the tank is used oldest first, at the price you paid for it.</li>
+    <li>If the tank runs short, the airport sells you fuel on the day at the day's price + 10p.</li><li>Analysts forecast a band for next week. High confidence means the price is likely to land inside it.</li>
+    <li>Buying now is worth it when next week's price will be higher than today's: the difference is your fuel purchasing advantage.</li></ul><button class="btn" id="fdLearnX">Close</button></div>` : '';
+  return `<div class="fd">${learn}<div class="fd-l">${chart}${news}</div><div class="fd-rc">${pos}${order}${scen}</div></div>`;
+}
+function renderFuelDesk(asView){
+  const day = S.day || 1, m = fdMarket(day);
+  const bar = asView ? deskBar('Buy in 1,000 L blocks when the price is right. What you buy is used oldest first.', '<button class="btn primary big" id="fdClose">&#9664; Back</button>')
+    : deskBar('Buy fuel for the week in 1,000 L blocks, or buy none and pay the day\'s price + 10p as you fly.', `${backBtn()}<button class="btn primary big" id="nx">Continue &#9654;</button>`);
+  screen().innerHTML = shell(deskPage({ title:'Fuel Procurement', sub:'Watch the market, secure fuel and manage your storage.', cls:'fd-page',
+    cards:[{ ic:'bulb', t:'Learn more', s:'How the fuel market works and what moves the price.', id:'fdLearn' }, { ic:'bars', t:'Fuel outlook', s:m.forecastLow !== undefined && m.forecastLow !== null ? `Next week ${priceL(m.forecastLow)}–${priceL(m.forecastHigh)} · ${String(m.forecastConfidence || '').toLowerCase()} confidence` : 'No forecast this week.', id:'fdOutlook' }],
+    body:fuelDeskHtml(asView) }), bar);
+  bindFuelDesk(asView);
+}
+function bindFuelDesk(asView){
+  const root = screen(), P0 = fuelOn(S.day || 1), blk = fuelBlock();
+  root.querySelectorAll('[data-fdr]').forEach(b => b.onclick = () => { UI.fd.range = b.getAttribute('data-fdr'); render(); });
+  root.querySelectorAll('[data-fdb]').forEach(b => b.onclick = () => { UI.fd.sel = +b.getAttribute('data-fdb'); UI.fd.signed = false; UI.fd.vals = {}; UI.fd.q = {}; UI.fd.msg = ''; UI.fd.done = ''; render(); });
+  root.querySelectorAll('[data-fdm]').forEach(b => b.onclick = () => { UI.fd.sel = Math.max(0, (UI.fd.selNow || 0) + +b.getAttribute('data-fdm')); UI.fd.signed = false; UI.fd.vals = {}; UI.fd.q = {}; UI.fd.msg = ''; UI.fd.done = ''; render(); });
+  root.querySelectorAll('[data-fds]').forEach(inp => { inp.oninput = () => { UI.fd.vals[inp.getAttribute('data-fds')] = inp.value; }; inp.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); const c = $('fdSignChk'); if(c) c.click(); } }; });
+  on('fdSignChk', () => { const n = UI.fd.selNow || 0, one = Math.round(blk * P0 * 100), q = {}; let blank = false;
+    const v1 = scParse('£', UI.fd.vals.one); if(v1 === null) blank = true; else if(v1 !== one) q.one = true;
+    if(n > 1){ const v2 = scParse('£', UI.fd.vals.all); if(v2 === null) blank = true; else if(v2 !== one * n) q.all = true; }
+    UI.fd.q = q; if(Object.keys(q).length){ UI.fd.queried = true; UI.fd.msg = 'Query: look at the highlighted line again.'; render(); return; }
+    if(blank){ UI.fd.msg = 'Fill in each box first.'; render(); return; }
+    UI.fd.signed = true; UI.fd.queried = false; UI.fd.msg = ''; render(); });
+  on('fdBuy', () => { const n = UI.fd.selNow || 0; if(!n || n > fdMaxBlocks(P0)) return; if(!S.fuelBuySigned && !UI.fd.signed) return;
+    const L = n * blk; buyFuel(L, P0); fuelWeek(S.day || 1).bought.push({ day:S.day, L, p:P0 });
+    if(!S.fuelBuySigned){ S.fuelBuySigned = { day:S.day, L, p:P0 }; const sk = skills(), x = sk.fuelOrder || (sk.fuelOrder = { first:S.day, count:0 }); x.count++; x.lastDay = S.day;
+      const log = S.handSumLog || (S.handSumLog = []), e = log.find(z => z.day === S.day) || (log.push({ day:S.day, date:dateShort(S.day), tools:[] }), log[log.length - 1]); e.tools.push(`Fuel order: ${n} × ${num(blk)} L (Calculate)`); }
+    UI.fd.done = `Bought ${num(L)} L at ${priceL(P0)}: ${twoDp(L * P0)}. The tank now holds ${num(Math.round(S.fuel))} L.`; UI.fd.sel = 0; UI.fd.signed = false; UI.fd.vals = {}; UI.fd.q = {};
+    if(typeof liveChime === 'function' && typeof opsSoundOn === 'function' && opsSoundOn()) liveChime('ding'); save(); render(); });
+  on('fdAdj', () => { UI.fd.adj = !UI.fd.adj; render(); });
+  on('fdAdjGo', () => { const v = parseFloat(String(($('fdCustom') || {}).value || '').replace(/[£\s]/g, '')); if(v > 0 && v < 10){ UI.fd.custom = Math.round(v * 100) / 100; UI.fd.adj = false; render(); } });
+  on('fdLearn', () => { UI.fd.learn = true; render(); }); on('fdLearnX', () => { UI.fd.learn = false; render(); });
+  on('fdOutlook', () => { UI.fd.range = '1W'; render(); });
+  on('fdClose', () => { UI.view = null; render(); });
+  if(!asView) on('nx', () => { UI.fd = { range:UI.fd.range, sel:null, signed:false, vals:{}, q:{} }; advance(); });
+}
+R.fuelDesk = () => renderFuelDesk(false);
+WS_STEPS.push('fuelDesk'); SHELL_STEPS.push('fuelDesk');   // the desk sits in the Monday workspace: the plan is a press away
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-nav="plan"]'); if(!b || !S || step().t !== 'fuelDesk' || UI.view) return;
+  const i = S.steps.findIndex(x => x.t === 'plan'); if(i >= 0){ e.stopPropagation(); e.preventDefault(); jumpTo(i); } }, true);
 /* the Operations Model (Design Note "The desks" v2 §6, Bertie's reference screen): filled in by Stage F */
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
