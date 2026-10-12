@@ -3073,5 +3073,25 @@ td.c.enter button,.cellbtn{border-radius:8px;background:rgba(143,211,255,.12);bo
 .wkb-op{display:flex;align-items:center;justify-content:center;font:700 22px var(--mono);color:var(--pblue);background:transparent}.wkb-op.ans{font-size:24px}
 .wkb-hid{position:absolute!important;width:1px;height:1px;opacity:0;border:0;padding:0;margin:0}
 .wkb-cap{margin:6px 0 0;font-size:13px;color:var(--ink2);text-align:center}.wkb-cap b{color:var(--ink)}
+/* the written method: pounds and pence on the answer row */
+.wkb.pence{grid-template-columns:28px repeat(var(--w),minmax(0,1fr)) 14px repeat(2,minmax(0,1fr));max-width:calc(42px + (var(--w) + 2) * 56px)}
+.wkb-pt{display:flex;align-items:flex-end;justify-content:center;font:700 26px var(--mono);color:#0f2a52;padding-bottom:4px;border-bottom:1px solid #2a4a7a;margin:0 -1px -1px 0}
+.wkb-c.blank,.wkb-h.blank{background:transparent;border-color:transparent}
+/* the sheet beside the sums: a navy spreadsheet that fills in as the figures are done */
+.sheetp{padding:8px 14px}.sheetp .pnl-h{margin-bottom:6px}
+.sh-navy{margin-bottom:8px;border:1px solid #2a4a7a;background:#071d3f}.sh-navy:not(.now){opacity:.85}
+.sh-navy table.fx th,.sh-navy table.fx td{height:34px;padding:3px 10px;border-bottom:1px solid rgba(143,176,216,.25);border-right:1px solid rgba(143,176,216,.18);font-size:13.5px}
+.sh-navy table.fx thead th{font-size:12px;padding-bottom:4px;border-bottom:2px solid rgba(143,176,216,.45);background:#0b2a58}
+.sh-navy table.fx thead th b{font-size:15px;font-weight:600;text-shadow:none;color:#ffd84d}.sh-navy table.fx thead th small{font-size:11.5px}
+.sh-navy table.fx thead th:first-child{width:34%}
+.sh-navy table.fx tbody th{font-size:13px;color:#dbe9ff;font-weight:400}
+.sh-navy table.fx td.c{font-size:15px;font-weight:600;text-shadow:none}.sh-navy table.fx td.c.done{color:#ffd84d}
+.sh-navy table.fx td.c.enter button{min-height:28px;padding:2px 10px;font-size:12.5px}
+.sh-navy table.fx td .mdl{display:none}
+/* a professional weight: lighter headings */
+.ws .ws-main h1.tq{font-weight:500;font-size:27px;letter-spacing:-.01em}
+.dock-sum .dk-t,.dock .dk-t,.pnl-h h3,.mk-h b,.ob-h h3,.cmp2-t th b,.br1-hero h1,.ws-rail .ws-h{font-weight:600}
+.br1-hero h1{font-weight:500}
+.wk-head h2,.wk-summary h2{font-weight:600;font-size:22px}
 </style>
 </head>

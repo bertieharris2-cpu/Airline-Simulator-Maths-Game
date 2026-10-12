@@ -343,7 +343,8 @@ function renderPlanner(st, summing){
   const strip = locked ? `<div class="plw-strip pale"><span><small>On board</small><b>${esc(ONBOARD[pl.onboard || 'none'] ? ONBOARD[pl.onboard || 'none'].label : 'Nothing on board')}</b></span><span><small>Fuel a day</small><b>${num(L.fuelL || 0)} L</b></span><span><small>Price a litre</small><b>${priceL(weekFuelPrice(S.day || 1))}</b></span><span><small>Aircraft a day</small><b>${money(pl.fleet.reduce((t, x) => { const f = S.fleet.find(z => z.uid === x.uid); return t + (f ? dayCostOf(f) : 0); }, 0))}</b></span></div>` : '';
   const head = test ? `<div class="plw-idea pale"><span class="kl">Test an idea</span><b>Change the test plan below. The model costs it straight away: no sums.</b><span class="muted small">Your current plan is kept until you press Use test plan.</span></div>` : '';
   const tools = !test && !locked ? `<span class="plw-tools">${!setup || costed ? '<button class="btn small" id="ideaOpen" title="A test plan the model costs: no sums">Test an idea</button>' : ''}<button class="btn small" id="mapOpen" title="The network map: where the routes go">Network map &rsaquo;</button></span>` : '';
-  const main = `<div class="plw ${locked ? 'locked' : ''} ${test ? 'testing' : ''}">${head}${markets}
+  const sheet = summing && W ? `<section class="pnl sheetp"><div class="pnl-h"><h3>Your figures</h3><span class="muted">the sheet fills in as each figure is worked out</span></div>${[W.t].concat(W.tables.filter(x => x !== W.t)).map(x => `<div class="sheet1 sh-navy ${x === W.t ? 'now' : ''}">${tableHtml(x)}</div>`).join('')}</section>` : '';
+  const main = `<div class="plw ${locked ? 'locked' : ''} ${test ? 'testing' : ''}">${head}${sheet}${markets}
     ${test ? compareHtml(pl, L, test, Lt) : ''}
     <section class="pnl pale plw-tl"><div class="pnl-h"><h3>Aircraft day and timetable</h3><span class="muted tl-hint">${locked ? `${WORLD.dayStart}–${WORLD.dayEnd} · each block is one service` : 'press a block to move, swap or remove it'}</span>${tools}</div>${timelineHtml(i, P, LL, { locked })}</section>
     ${locked ? (pickNow && pickNow.kind === 'snack' ? onboardTiles(i, P, { pick: pickNow.opts, locked }) : strip) : onboardTiles(i, P, { lock: test ? false : lockOb, locked }) + fuelWidgetHtml(P, LL, { hidden: test ? new Set() : hid, test:!!test })}</div>`;
@@ -381,29 +382,32 @@ function wkGrid(t, col, row, o){
   o = o || {}; if(!wkPlanner() || o.done || o.show) return wkGridBase(t, col, row, o);
   const ops = stackRows(t, col, row), A = ops[0], B = ops[1], ua = operandUnit(t, A.id), ub = operandUnit(t, B.id), a = operandValue(t, col, A.id), b = operandValue(t, col, B.id);
   const fa = wkFig(ua, a), fb = wkFig(ub, b), op = B.op || row.op || '×', ans = col.values[row.id], fAns = wkFig(row.unit, ans), tenths = fb.tenths;
-  const prod = op === '−' ? 0 : String(Math.round((+fa.s) * (+fb.s)));   // the working is done in the written figures (pence, tenths): room for that product and a carry
-  const W = Math.min(PLACES.length, Math.max(fa.s.length, fb.s.length, String(fAns.s).length, prod.length) + 1);
-  const given = (s, cy) => { const d = s.padStart(W, ' ').split(''); return d.map((ch, c) => `<span class="wkb-c g">${cy ? `<small class="cy"><input maxlength="1" inputmode="numeric" aria-label="carry"></small>` : ''}<b>${ch === ' ' ? '' : ch}</b></span>`).join(''); };
-  const boxes = (r, cls, cy) => Array.from({ length:W }, (_, c) => `<span class="wkb-c ${cls}">${cy ? `<small class="cy"><input maxlength="1" inputmode="numeric" data-cy="${r}|${c}" aria-label="carry"></small>` : ''}<input maxlength="1" inputmode="numeric" data-r="${r}" data-c="${c}" aria-label="${cls === 'ans' ? 'answer' : 'working'} column ${PLACES[W - 1 - c]}"></span>`).join('');
-  const head = `<span class="wkb-op"></span>${Array.from({ length:W }, (_, c) => `<span class="wkb-h">${PLACES[W - 1 - c]}</span>`).join('')}`;
+  const prod = op === '−' ? '' : String(Math.round((+fa.s) * (+fb.s)));   // the working is done in the written figures (pence, tenths): room for that product and a carry
+  const pence = row.unit === '£' && (ub === 'ppl' || Math.abs(ans - Math.round(ans)) > 0.004), pounds = pence ? String(Math.floor(ans)) : String(fAns.s);
+  const W = Math.min(PLACES.length, Math.max(fa.s.length, fb.s.length, pounds.length, prod.length) + 1);
+  const tail = (ansRow, r) => !pence ? '' : ansRow ? `<span class="wkb-pt">.</span>${[0, 1].map(k => `<span class="wkb-c ans"><input maxlength="1" inputmode="numeric" data-r="${r}" data-c="${W + k}" aria-label="pence ${k ? '1p' : '10p'}"></span>`).join('')}` : '<span class="wkb-c blank"></span><span class="wkb-c blank"></span><span class="wkb-c blank"></span>';
+  const given = (s, cy) => { const d = s.padStart(W, ' ').split(''); return d.map((ch, c) => `<span class="wkb-c g">${cy ? `<small class="cy"><input maxlength="1" inputmode="numeric" aria-label="carry"></small>` : ''}<b>${ch === ' ' ? '' : ch}</b></span>`).join('') + tail(false); };
+  const boxes = (r, cls, cy) => Array.from({ length:W }, (_, c) => `<span class="wkb-c ${cls}">${cy ? `<small class="cy"><input maxlength="1" inputmode="numeric" data-cy="${r}|${c}" aria-label="carry"></small>` : ''}<input maxlength="1" inputmode="numeric" data-r="${r}" data-c="${c}" aria-label="${cls === 'ans' ? 'answer' : 'working'} column ${PLACES[W - 1 - c]}"></span>`).join('') + tail(cls === 'ans', r);
+  const head = `<span class="wkb-op"></span>${Array.from({ length:W }, (_, c) => `<span class="wkb-h">${PLACES[W - 1 - c]}</span>`).join('')}${pence ? '<span class="wkb-h blank"></span><span class="wkb-h">10p</span><span class="wkb-h">1p</span>' : ''}`;
   const workRows = op === '−' ? 0 : (tenths || ub === 'ppl' || (b >= 10 && b % 10 !== 0)) ? 3 : 2;
   let r = 0; const work = Array.from({ length:workRows }, () => `<span class="wkb-op"></span>${boxes(r++, 'work', true)}`).join('');
   const unit = row.unit === '£' ? '£' : '';
-  return `<div class="wkb" style="--w:${W}">${head}
+  return `<div class="wkb ${pence ? 'pence' : ''}" style="--w:${W}">${head}
     <span class="wkb-op"></span>${given(fa.s, true)}
     <span class="wkb-op">${esc(op)}</span>${given(fb.s, false)}
     ${tenths ? `<span class="wkb-op">÷</span>${given(String(fb.div), false)}` : ''}
     ${work}
     <span class="wkb-op ans">=</span>${boxes(r, 'ans', true)}
     <input id="cellAns" class="wkb-hid" inputmode="decimal" autocomplete="off" value="${esc(UI.entry)}" aria-label="${esc(rowLabel(t, row))}"></div>
-    <p class="wkb-cap">${esc(A.label)} ${fa.note ? `(${esc(fa.note)}) ` : ''}${esc(op)} ${esc(B.label)}${fb.note ? ` (${esc(fb.note)})` : ''}${tenths ? ` ÷ ${fb.div}` : ''} = <b>${esc(rowLabel(t, row))}${unit ? ' in £' : ''}</b></p>`;
+    <p class="wkb-cap">${esc(A.label)} ${fa.note ? `(${esc(fa.note)}) ` : ''}${esc(op)} ${esc(B.label)}${fb.note ? ` (${esc(fb.note)})` : ''}${tenths ? ` ÷ ${fb.div}` : ''} = <b>${esc(rowLabel(t, row))}${unit ? (pence ? ' in £ and pence' : ' in £') : ''}</b></p>`;
 }
 /* typing in the boxes: a digit fills the box and moves one box to the left, as on paper; Enter checks; the number pad types into the focused box */
 function bindWkBoxes(){
   const root = screen(), grid = root.querySelector('.wkb'); if(!grid) return;
   const ans = $('cellAns'); const all = [...grid.querySelectorAll('input[data-r]')], row = r => all.filter(b => +b.dataset.r === r), ansRow = row(Math.max(...all.map(b => +b.dataset.r)));
   let last = null;
-  const sync = () => { if(!ans) return; ans.value = ansRow.map(b => b.value).join(''); ans.dispatchEvent(new Event('input')); };
+  const W = +grid.style.getPropertyValue('--w') || ansRow.length, pen = ansRow.filter(b => +b.dataset.c >= W).map(b => b.value).join('');
+  const sync = () => { if(!ans) return; const pence = ansRow.filter(b => +b.dataset.c >= W).map(b => b.value).join(''); ans.value = ansRow.filter(b => +b.dataset.c < W).map(b => b.value).join('') + (pence ? '.' + pence : ''); ans.dispatchEvent(new Event('input')); };
   const go = (b, d) => { const n = row(+b.dataset.r).find(x => +x.dataset.c === +b.dataset.c + d); if(n){ n.focus(); n.select && n.select(); } };
   all.forEach(b => {
     b.onfocus = () => { last = b; };
