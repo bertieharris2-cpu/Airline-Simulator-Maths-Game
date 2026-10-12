@@ -146,7 +146,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         ok(`plan ${day}: a changed fare releases the plan`, !(await vis('.so-board-note')) && await p.$eval('#nx', e => !e.disabled)); }
       else if(day >= 29 && !COAST && (await p.evaluate(d => window.__sim.evalIn(`calDate(${d}).getUTCDate()`), day)) <= 7){ const f = (await S()).prices.par === 100 ? 90 : 100; await p.click(`[data-pe="0|fareTo|par|${f}"]`); await p.waitForTimeout(80); changes.push(day + ':par ' + f); }   // Steady: one change at the start of each month
       await shot(`d${day}-plan`); ok(`plan ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.evaluate(() => window.__sim.currentPlan().fleet.map(x => x.sched.join('/') + ' ' + (x.deps || []).join(',')))); await p.click('#nx'); continue; }
-    if(t === 'workings' && await vis('.so-page')){ await fits('signoffs ' + day); await shot(`d${day}-signoffs`); await signs('work ' + day); await shot(`d${day}-signoffs-done`); await p.click('#nx'); await p.waitForTimeout(80); continue; }
+    if(t === 'workings' && await vis('.so-page')){ await fits('signoffs ' + day); await shot(`d${day}-signoffs`); await signs('work ' + day); await p.waitForTimeout(700); await shot(`d${day}-signoffs-done`); await p.click('#nx'); await p.waitForTimeout(80); continue; }
     if(t === 'workings'){ await fits('workings ' + day); const typed = await solveW(`work ${day}`); await shot(`d${day}-workings`);
       if(s.phase === 'setup') ok('launch: tickets ×3 then the fare, the other route\'s tickets, a fuel sign-off for each route (Paris 120 L, Dublin 180 L at £1.30), profit, snacks ×2', typed.filter(x => /\|tk_par/.test(x)).length === 3 && typed.some(x => /\|tk_dub/.test(x)) && typed.filter(x => /\|profit/.test(x)).length === 1 && typed.filter(x => /\|snack$/.test(x)).length === 2 && !typed.includes('tutorial') && typed.includes('card:dhc6|par=156.00') && typed.includes('card:dhc6|dub=234.00'), typed);
       if(s.phase === 'setup') ok('launch: the sums were done in the dock beside the plan', await vis('.dock-sum') && await vis('.ad'));
@@ -196,7 +196,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   const s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
   if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t) && !/\(Build\)|^Build:/.test(t));   // Build steps (the reviews, the model's formulas) are not Calculate
     const count = calc.reduce((n, t) => { const m = /^Ticket revenue \(([^)]*)\)/.exec(t); return n + (m ? m[1].split(',').length : 1); }, 0) + 2;   // launch day's three fares count as three
-    ok('weeks 1–4: about 18 Calculate steps (Launch Day 7, the week-1 tenths 2, then three a week: Fable\'s §4)', count >= 15 && count <= 21, { count, calc });
+    if(!CAP) ok('weeks 1–4: about 18 Calculate steps (Launch Day 7, the week-1 tenths 2, then three a week: Fable\'s §4)', count >= 15 && count <= 21, { count, calc });
     ok('the range check is the model\'s now (not logged as a sum)', !(s.handSumLog || []).some(h => h.tools.some(t => /^Range check/.test(t)))); }
   const rows = await p.evaluate(() => window.__sim.evalIn('soLogRows()')), cap = CAP || 3;
   if(rows.length){ ok(`from week 2, no week asks more than ${cap} Calculate sign-offs`, rows.every(r => r.asked.length <= cap), rows.map(r => [r.wk, r.asked.length]));
