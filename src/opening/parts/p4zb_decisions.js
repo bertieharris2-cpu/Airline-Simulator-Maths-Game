@@ -318,7 +318,7 @@ function renderWeekReviewBuild(st){
   const neg = W.neglect && W.neglect.length ? `<div class="wk-neglect">${W.neglect.map(n => `<p class="${n.bad ? 'orange' : 'green'}">${esc(n.text)}</p>`).join('')}</div>` : '';
   const body = `<div class="rbw"><section class="dk-pnl rbw-t"><div class="dk-pnl-h">${ICO2.calendar}<h2>The week, day by day</h2><span class="grow"></span><span class="sub">${fmtRange(W.from, W.from + 6)}</span></div><table class="dk-t">${rows}</table>${changed}</section>
     <div class="rbw-b">${items.map(it => rbCardHtml(it, rbState(store, it.id), store)).join('')}</div>
-    <div class="rbw-s">${miss}${fuelAdvantageLine(wk)}${surprisesLine(W.from, W.from + 6)}${neg}<section class="dk-pnl rv-routes"><div class="dk-pnl-h">${ICO2.route}<h2>Route performance</h2></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div></div>`;
+    <div class="rbw-s">${miss}${fuelAdvantageLine(wk)}${surprisesLine(W.from, W.from + 6)}${neg}${typeof seatFillReviewHtml === 'function' ? seatFillReviewHtml(h) : ''}<section class="dk-pnl rv-routes"><div class="dk-pnl-h">${ICO2.route}<h2>Route performance</h2></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div></div>`;
   screen().innerHTML = shell(deskPage({ title:`How did week ${wk} go?`, sub:`Seven days flown. Show the finance team what to do with the figures; the game does the arithmetic. Passengers ${num(h.pax)} of ${num(h.seats)} seats · cash ${money(Math.round(S.cash))}.`, cls:'rbw-page', body }),
     deskBar(allOk ? 'Signed off. On to next week.' : 'Build each line: tap the figures and the operation, then Check.', `<button class="btn primary big" id="nx" ${allOk ? '' : 'disabled'}>${goLabel(allOk ? 'On to next week' : 'Sign off the accounts first')} &#9654;</button>`));
   rbBind(items, store, () => {});
@@ -351,7 +351,7 @@ function renderPeriodReviewBuild(){
   const extra = (h.to - h.from >= 6 ? fuelAdvantageLine(weekNo(h.from)) : '') + surprisesLine(h.from, h.to);
   const body = `<div class="rbw"><section class="dk-pnl rbw-t"><div class="dk-pnl-h">${ICO2.bars}<h2>Profit by period</h2></div><div class="rbw-trend">${trendHtml()}</div></section>
     <div class="rbw-b">${items.map(it => rbCardHtml(it, rbState(store, it.id), store)).join('')}</div>
-    <div class="rbw-s">${extra}<section class="dk-pnl rv-routes"><div class="dk-pnl-h">${ICO2.route}<h2>Route performance · ${esc(periodShort(h))}</h2><span class="grow"></span><span class="sub">${fmtRange(h.from, h.to)}</span></div>${evidenceHtml(h, ownedRoutes())}</section></div></div>`;
+    <div class="rbw-s">${extra}${typeof seatFillReviewHtml === 'function' ? seatFillReviewHtml(h) : ''}<section class="dk-pnl rv-routes"><div class="dk-pnl-h">${ICO2.route}<h2>Route performance · ${esc(periodShort(h))}</h2><span class="grow"></span><span class="sub">${fmtRange(h.from, h.to)}</span></div>${evidenceHtml(h, ownedRoutes())}</section></div></div>`;
   screen().innerHTML = shell(deskPage({ title:`How did ${esc(periodShort(h))} go?`, sub:`Profit ${money(Math.round(h.profit))} · passengers ${num(h.pax || 0)} of ${num(h.seats || 0)} seats. Show the finance team what to do; the game does the arithmetic.`, cls:'rbw-page', body }),
     deskBar(allOk ? 'Signed off. Carry on.' : 'Build each line: choose the figures and the operation, then Check.', `<button class="btn primary big" id="nx" ${allOk ? '' : 'disabled'}>${goLabel(allOk ? 'Continue' : 'Sign off first')} &#9654;</button>`));
   rbBind(items, store, () => {});

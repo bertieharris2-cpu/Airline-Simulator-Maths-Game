@@ -247,6 +247,10 @@ workingMethods = [{'relationship': r['relationship'], 'level': r['level'], 'wher
                    'methods': [m.strip() for m in str(r.get('methodsOffered') or '').split('|') if m.strip()], 'example': r.get('example'), 'notes': r.get('notes')}
                   for r in opt_sheet('WorkingMethods') if r.get('relationship') and r.get('level')]
 if 'WorkingMethods' not in wb.sheetnames: issue('error', 'WorkingMethods', 'no WorkingMethods sheet: the workbench has no methods to offer.')
+# v4.10 (D66): the Operating Plan Studio's live tips, each a condition the game checks on the projected plan
+planTips = [{'id': r['tipId'], 'condition': r.get('condition'), 'threshold': r.get('threshold'), 'message': r.get('message (route, band, numbers filled by the engine)') or r.get('message'),
+             'priority': r.get('priority'), 'status': r.get('status')} for r in live('PlanTips', opt_sheet('PlanTips')) if r.get('tipId')]
+if 'PlanTips' not in wb.sheetnames: issue('check', 'PlanTips', 'no PlanTips sheet: the Operating Plan Studio uses its own copy of the tips.')
 # v4.5 (D56): route news, a demand multiplier on named routes between two dates (announced the week before, or a surprise)
 routeNews = [{'id': r['newsId'], 'announce': r['announceDate'], 'start': r['startDate'], 'end': r['endDate'], 'kind': r.get('kind'),
               'routes': words(r.get('routes') or ''), 'mult': r['demandMultiplier'], 'segment': r.get('segment') or 'all', 'announced': bool(r.get('announced')),
@@ -295,7 +299,7 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'aircraft': aircraft, 'finance': finance, 'airports': airports, 'calendar': calendar, 'market': market,
          'events': events, 'challenges': challenges, 'mechanics': mechanics,
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
-         'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews}
+         'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips}
 
 
 # ---------- checks ----------
@@ -517,7 +521,8 @@ NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurna
           'fuelLotSize', 'tankCapacity', 'fuelUseOrder', 'fuelBuyWhen', 'emergencyFuelPremium', 'fuelForecastFromWeek', 'fuelHandSum', 'planningSpreadsheetFromDay', 'worldReport',
           'fuelWeek1', 'fuelDeskFromDay', 'tankUpgradeDay', 'tankCapacityUpgraded', 'fuelAdvantageWording', 'fuelCoverage', 'forecastConfidenceLevels',
           'reviewTotalsMode', 'meanFromDay', 'secondAircraftCompare', 'whereCouldItFly',
-          'signOffCapPerWeek', 'signOffDecayAfter', 'auditFloor', 'boardNudgeIdleWeeks', 'boardNudgeMissedShare', 'boardReviewSignOffs']
+          'signOffCapPerWeek', 'signOffDecayAfter', 'auditFloor', 'boardNudgeIdleWeeks', 'boardNudgeMissedShare', 'boardReviewSignOffs',
+          'seatFillGood', 'seatFillMedium', 'demandStripMode', 'planStudioSteps']
 for k in NEEDED:
     st_ = settings_status.get(k)
     if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')

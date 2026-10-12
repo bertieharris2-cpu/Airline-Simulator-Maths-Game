@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 83 | 83 live, 8 placeholder |
+| Settings | 87 | 87 live, 8 placeholder |
 | Archetypes | 4 | 2 later, 4 live |
 | Routes | 18 | 2 later, 18 live |
 | RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
@@ -23,6 +23,7 @@
 | Chapters | 1 | 3 later, 1 live, 1 note row, 2 placeholder |
 | HandSumRules | 11 | 11 live, 1 note row |
 | Catering | 4 | 4 live, 1 note row |
+| PlanTips | 10 | 10 live, 1 note row |
 | RouteNews | 13 | 13 live, 1 note row |
 | Livery | 35 | 35 live, 1 note row |
 | Hunts | 0 | 1 note row, 7 placeholder |

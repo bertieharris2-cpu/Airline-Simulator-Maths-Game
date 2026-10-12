@@ -6,14 +6,14 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
 const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
-  const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [];
+  const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S());
   const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };
-  const fits = async tag => { const r = await p.evaluate(() => { const bad = []; document.querySelectorAll('.tf-main,.tf-body,#screen,.ws-rail,.sheet1,.wk').forEach(e => { if(e.scrollHeight > e.clientHeight + 2) bad.push((e.className || e.id).split(' ')[0] + ' ' + e.scrollHeight + '>' + e.clientHeight); }); return bad; }); if(r.length) overflow.push(tag + ': ' + r.join(', ')); };
+  const fits = async tag => { const r = await p.evaluate(() => { const bad = []; document.querySelectorAll('.tf-main,.tf-body,#screen,.ws-rail,.sheet1,.wk,.st-tt,.st-top').forEach(e => { if(e.scrollHeight > e.clientHeight + 2) bad.push((e.className || e.id).split(' ')[0] + ' ' + e.scrollHeight + '>' + e.clientHeight); }); return bad; }); if(r.length) overflow.push(tag + ': ' + r.join(', ')); };
   const vis = sel => p.evaluate(s => !!document.querySelector(s), sel);
   const setPlan = (fleet, prices) => p.evaluate(([fleet, prices]) => { const S = window.__sim.S(); fleet.forEach((x, j) => { const f = S.fleet[j]; if(!f) return; f.schedule = x.sched.slice(); f.route = x.sched[0] || null; f.deps = x.deps.slice(); if(j === 0) S.deps = x.deps.slice(); }); Object.assign(S.prices, prices); window.__sim.refreshPlan(); window.__sim.render(); }, [fleet, prices]);
   const practice = async () => { for(let i = 0; i < 3; i++){ const a = await p.evaluate(() => window.__sim.practiceAnswer()); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } };
@@ -53,6 +53,19 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       else { if(!soWrongC){ soWrongC = true; await p.fill(`[data-soin="${k}"]`, String(+P.answer + 7)); await p.click(`[data-sochk="${k}"]`); await p.waitForTimeout(60); ok(`${tag}: a wrong Calculate answer is a Query`, await vis(`[data-socard="${k}"] .stamp.q`), await p.$eval(`[data-socard="${k}"] .sc-msg`, e => e.textContent).catch(() => '')); }
         await p.fill(`[data-soin="${k}"]`, P.answer); }
       await p.click(`[data-sochk="${k}"]`); await p.waitForTimeout(80); const okd = await vis(`[data-socard="${k}"] .stamp.ok`); if(!okd){ ok(`${tag}: ${P.key} signed`, false, P); break; } done.push(P.level + ':' + P.key); } sums['signs ' + tag] = (sums['signs ' + tag] || []).concat(done); return done; };
+  // D66: the Operating Plan Studio, checked against the engine (Fable's report-back list)
+  const studioChecks = async tag => { const R = await p.evaluate(() => window.__sim.evalIn('studioReport()'));
+    const dom = await p.$$eval('.st-card', cs => cs.map(c => ({ id:c.getAttribute('data-stroute'), n:[...c.querySelectorAll('.fch small')].map(x => +x.textContent) })));
+    ok(`${tag}: the route cards show the people a day at each fare (the Routes sheet's demand, through the engine)`, dom.length > 0 && dom.every(d => { const c = R.cards.find(x => x.id === d.id); return c && JSON.stringify(c.fares.map(f => f[1])) === JSON.stringify(d.n); }), dom.slice(0, 2));
+    const blk = (await p.$$eval('.st-blk', bs => bs.map(b => b.querySelector('.st-bs').textContent + '|' + (b.className.match(/fill-(\w+)/) || [])[1]))).sort(), eng = R.services.map(x => `${x.sold}/${x.seats}|${x.fill}`).sort();
+    ok(`${tag}: each flight block is seats filled / seats on that plane, green, amber or red at 80% and 50%`, blk.length > 0 && JSON.stringify(blk) === JSON.stringify(eng), blk);
+    const c0 = dom[0] && dom[0].id, strip = async () => { await p.mouse.move(5, 5); await p.waitForTimeout(60); return p.$eval('.st-strip', e => e.getAttribute('data-strip')).catch(() => null); };
+    if(c0){ await p.click(`.st-card[data-stroute="${c0}"] .st-cf`); await p.waitForTimeout(80); const a = await strip(); await p.click(`.st-card[data-stroute="${c0}"] .st-cf`); await p.waitForTimeout(80); const z = await strip();
+      await p.hover(`.st-card[data-stroute="${dom[dom.length - 1].id}"] .st-cf`); await p.waitForTimeout(60); const hov = await p.$eval('.st-strip', e => e.getAttribute('data-strip')).catch(() => null);
+      ok(`${tag}: the demand strip switches to the selected route's own bands (and the hovered one), and back to all routes`, [a, z].sort().join('|') === ['', c0].sort().join('|') && hov === dom[dom.length - 1].id, [a, z, hov]); await p.mouse.move(5, 5); }
+    const tips = await p.$$eval('[data-tip]', es => es.map(e => e.getAttribute('data-tip')));
+    ok(`${tag}: the live panel shows the four figures and one or two tips from PlanTips`, (await p.$$('.st-live .st-fig')).length === 4 && tips.length >= 1 && tips.length <= 2 && tips.every(t => R.tips.includes(t)), { tips, figs:{ pax:R.pax, seats:R.seats, revenue:R.revenue, profit:R.profit, away:R.away } });
+    studio.push({ tag, tips, report:{ pax:R.pax, seats:R.seats, revenue:R.revenue, profit:R.profit, away:R.away }, blocks:blk }); };
   const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
     if(await T() === 'reveal'){ await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); } if(await T() === 'cert') await p.click('#nx'); };
@@ -94,6 +107,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     if(t === 'acquire'){ await shot(`d${day}-acquire`); const buy = await p.$eval('[data-terms="buy"]', e => e.disabled), txt = await p.$eval('[data-terms="buy"]', e => e.textContent.replace(/\s+/g, ' ')), cash = (await S()).cash, price = +((/£([\d,]+)/.exec(txt) || [])[1] || '0').replace(/,/g, ''), reserve = await p.evaluate(() => window.__sim.evalIn('WORLD.cashReserve || 0'));
       ok(`day ${day}: Buy is greyed until affordable (cash ${cash} against ${price} + the ${reserve} reserve)`, buy === (cash < price + reserve), txt); await p.click('[data-terms="lease"]'); await p.click('#nx'); continue; }
     if(t === 'event'){ await fits('event ' + day); await shot(`d${day}-event`); await p.click(`[data-o="${day === 5 ? 2 : 1}"]`); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
+    if(t === 'plan' && process.env.DUMP && process.env.DUMP.split(',').includes(String(day)) && !dumped[day]){ dumped[day] = true; fs.writeFileSync(OUT + `state-${day}.json`, await p.evaluate(() => window.__sim.evalIn('JSON.stringify(S)'))); }
     if(t === 'plan'){ await fits('plan ' + day);
       // the plans from Balance Report v4.4: week 1 the mixed day; week 2 the Saab on Dublin; week 3 the Saab to Amsterdam; week 4 the ATR to Madrid
       if(s.phase === 'setup'){
@@ -111,10 +125,10 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         await p.click('[data-tl="0|0|1"]'); await p.click('[data-tlrm="0|0|1"]'); ok('launch: Remove takes the block off', (await p.$$('.ad-blk')).length === 2, (await p.$$('.ad-blk')).length);
         ok('launch: every fare chip on both markets is the pupil\'s to press (none locked)', (await p.$$('.mk .fch[disabled]')).length === 0 && (await p.$$('.mk .fch:not([disabled])')).length >= 10, [(await p.$$('.mk .fch[disabled]')).length, (await p.$$('.mk .fch:not([disabled])')).length]);
         await p.click('[data-pe="0|fareTo|dub|100"]'); await p.waitForTimeout(60); ok('launch: a fare chip changes the fare', (await S()).prices.dub === 100, (await S()).prices); await p.click('[data-pe="0|fareTo|dub|80"]'); await p.waitForTimeout(60);
-        ok('launch: Plan Impact offers ƒ on the figures the sums ask for', (await p.$$('[data-sum]')).length >= 4, await p.$$eval('[data-sum]', es => es.map(e => e.getAttribute('data-sum'))));
+        ok('launch: the live panel offers ƒ on the figures the sums ask for (tickets and profit)', ['revenue', 'profit'].every(async k => true) && (await p.$$eval('[data-sum]', es => es.map(e => e.getAttribute('data-sum')))).filter(k => ['revenue', 'profit'].includes(k)).length === 2, await p.$$eval('[data-sum]', es => es.map(e => e.getAttribute('data-sum'))));
         ok('launch: the fuel strip is one line: week 1 buys fuel as it is used, free on the launch days', /Fuel is bought as it is used.*free Mon–Tue/.test(await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => '')), await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
         await setPlan([{ sched:['par', 'dub', 'par'], deps:[420, 640, 1080] }], { par:90, dub:90 });
-        ok('launch: both routes on the plan page', await vis('[data-pe^="0|add|dub|0"]') && await vis('[data-pe^="0|add|par|0"]')); }
+        ok('launch: both routes on the plan page', await vis('[data-pe^="0|add|dub|0"]') && await vis('[data-pe^="0|add|par|0"]')); await studioChecks('launch'); await shot('d1-studio'); }
       if(day === 8 && s.fleet.length > 1){ await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
         ok('day 8: two aircraft, two lanes on the timeline', (await p.$$('.ad-lane')).length === 2 && (await p.$$('.ad-blk')).length === 4);
         if(await p.$('#worldOpen')){ await p.click('#worldOpen'); await p.waitForTimeout(150); const wt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
@@ -140,6 +154,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       if(day === 29) ok('day 29: the storage upgrade: the tank holds 20,000 L from today', await p.evaluate(() => window.__sim.evalIn('tankCapacity()')) === 20000, await p.evaluate(() => window.__sim.evalIn('tankCapacity()')));
       if(day === 15 && s.fleet.length > 1) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 });
       if(day === 22 && s.fleet.length > 2) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 });
+      if(day === 8 || day === 22){ await studioChecks('day ' + day); await shot(`d${day}-studio`); }
       if(day >= 3){ const q = await p.$('.fw-quick [data-fo]:nth-child(2)'); if(q) await q.click(); }
       if(await vis('.so-board-note')){ await shot(`d${day}-plan-board`); ok(`plan ${day}: the board holds the plan until something changes`, await p.$eval('#nx', e => e.disabled), await p.textContent('.so-board-note'));
         const f = (await S()).prices.par === 100 ? 90 : 100; await p.click(`[data-pe="0|fareTo|par|${f}"]`); await p.waitForTimeout(80); boards.push(day);
@@ -186,6 +201,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       const built = await builds('review ' + day); sums['review ' + day] = built;
       ok(`review ${day}: the week total, the difference and the mean are Build steps (the game calculates)`, built.includes('tot') && built.includes('diff') && built.some(x => /^mean÷7/.test(x)), built);
       if(day === 7){ ok('review 7: the mean asks for the divisor and shows the average day', /Average day:/.test(await p.textContent('.rbw-t'))); await shot(`d${day}-review-built`); }
+      ok(`review ${day}: seat fill shows seats filled, empty seats and turned away as actuals`, await vis('.st-rv') && (await p.$$('.st-rvf > span')).length === 3, await p.$eval('.st-rv', e => e.textContent.replace(/\s+/g, ' ').slice(0, 160)).catch(() => ''));
       ok(`review ${day}: the missed-profit line`, await vis('.wk-missed'), await p.$eval('.wk-missed', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
       const M = (await S()).wk.missed; ok(`review ${day}: the best plan earns at least what the pupil's plan did`, M && M.best >= M.yours - 1, M && [M.yours, M.best, M.bestPlan]);
       if(day >= 15) ok(`review ${day}: use-it-or-lose-it names a route with no service (Dublin)`, /Dublin: \d+ → \d+/.test(await p.$eval('.wk-neglect', e => e.textContent).catch(() => '')), await p.$eval('.wk-neglect', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
@@ -207,6 +223,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   if(s.day >= 92 && !CAP) ok('month ends: an audit at the start of the 4 Nov and 2 Dec weeks', audits.some(a => a.day === 64) && audits.some(a => a.day === 92), audits);
   if(COAST && s.day >= 64) ok('COAST: the plan unchanged all October brings a board review, and the plan waits for a change', audits.some(a => a.board) && boards.length > 0, { audits, boards });
   if(!COAST && s.day >= 92) ok('Steady: the plan changes each month, so no board review', !audits.some(a => a.board), { audits, changes });
+  checks.push('info studio ' + JSON.stringify(studio));
   checks.push('info audits ' + JSON.stringify(audits)); checks.push('info changes ' + JSON.stringify(changes) + ' boards ' + JSON.stringify(boards));
   checks.push('info week log\n' + rows.map(r => `  wk ${String(r.wk).padStart(2)}  q ${r.qualified}  calc [${r.asked.join('; ')}]  build [${r.build.join('; ')}]  model [${r.model.join('; ')}]${r.carried.length ? '  carried [' + r.carried.join('; ') + ']' : ''}${r.audit ? '  ' + r.audit : ''}`).join('\n'));
   checks.push('info sums ' + JSON.stringify(sums)); checks.push('info handSumLog ' + JSON.stringify(s.handSumLog)); checks.push('info ledger profit ' + JSON.stringify((s.ledger.rev || []).map((v, i) => v == null ? null : Math.round(v - s.ledger.cost[i]))));

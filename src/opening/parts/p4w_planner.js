@@ -100,7 +100,7 @@ function freeDep(next, j, id){
   return null;
 }
 /* + Paris on a lane (j) or an open route with no lane named (the first aircraft with room): the block lands in the first gap */
-function addService(i, id, j){
+function addServiceBase(i, id, j){
   const base = i === 9 ? testPlan() : currentPlan(), next = normPlan(JSON.parse(JSON.stringify(base))), maxT = WORLD.maxTrips || 4, r = routeById(id);
   const lanes = (j === null ? next.fleet.map((x, q) => q) : [j]).filter(q => next.fleet[q] && planeCanFly(planeById(next.fleet[q].planeId), r));
   if(!lanes.length){ const p = next.fleet[j || 0] && planeById(next.fleet[j || 0].planeId); toast(p && j !== null ? `The ${p.name} can't reach ${r.city}: its range is ${num(p.range)} km and ${r.city} is ${num(routeKm(r))} km away.` : `No aircraft you own can reach ${r.city} (${num(routeKm(r))} km).`); return; }
@@ -336,7 +336,7 @@ function compareHtml(pl, L, test, Lt){
 /* ---------- the planner page (the plan step) and the same page with the sums open (the workings step) ---------- */
 R.plan = st => { if(!wkPlanner() || !dayLike()) return planW0(st); renderPlanner(st, false); };
 R.workings = st => { if(!wkPlanner() || !dayLike()) return workW0(st); renderPlanner(st, true); };
-function renderPlanner(st, summing){
+function renderPlannerBase(st, summing){
   const setup = S.phase === 'setup', pl = currentPlan(); if(setup) S.market = launchMarket(pl);
   const L = planLines(pl), test = !summing && UI.ideaOpen ? testPlan() : null, Lt = test ? planLines(test) : null, costed = !!(S.rnd.costed && S.rnd.costed.key === planKey(pl));
   let W = null; try{ W = workTables(pl); }catch(e){ W = null; }
