@@ -101,5 +101,5 @@ Workbook v4.10 installed directly with 0 import errors. The importer now reads t
   - the strip for a selected and a hovered route, and back to all routes;
   - the four figures and one or two PlanTips tips.
 
-  It also checks the review's seat fill on each Sunday. The run to day 23 passes all 114 checks.
+  It also checks the review's seat fill on each Sunday. The run through the whole chapter, to the chapter accounts on 28 December, passes 162 checks with no failures.
 - **`migrate.test.js`** passes (27 checks).
