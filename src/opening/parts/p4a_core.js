@@ -74,7 +74,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
 
 
 /* ---------- teacher settings (persist across runs) ---------- */
-const defaultSettings = () => ({ nudge:false, auto:true, flightSecs:7, startingCash: WORLD.startingCash, tableMode:'shown', liveTables:'script', practiceQuestionsPerDay:null });   // practice: null = the workbook's setting
+const defaultSettings = () => ({ nudge:false, auto:true, flightSecs:7, startingCash: WORLD.startingCash, tableMode:'shown', liveTables:'script', practiceQuestionsPerDay:null, teacherDayByDay:null });   // practice: null = the workbook's setting
 let settings = defaultSettings();
 try{ const s = JSON.parse(localStorage.getItem(SET_KEY)||'null'); if(s) settings = Object.assign(defaultSettings(), s); }catch(e){}
 function saveSettings(){ try{ localStorage.setItem(SET_KEY, JSON.stringify(settings)); }catch(e){} }

@@ -109,6 +109,7 @@ function applyEventNow(choice){
   } else if(e.groundNext || e.refund || e.status === 'CANCELLED'){ const ff = featuredFleet() || S.fleet[0]; if(ff) S.disrupt = { uid:ff.uid, ground:true, day:(S.rnd.eventDay || S.period.from) + (e.groundNext ? 1 : 0) }; }
   if(e.setPrice) Object.keys(e.setPrice).forEach(id => { if(!routeById(id)) return; const v = e.setPrice[id]; S.prices[id] = v === 'match' ? (competitorPrice(routeById(id)) || S.prices[id]) : v; });
   (S.flags = S.flags || {})[ev.id] = choice;
+  if(ev.advertiseCost && e.cash && Math.abs(e.cash) === ev.advertiseCost) S.rivalAd = { event:ev.id, routes:(ev.affectsRoutes && ev.affectsRoutes.length ? ev.affectsRoutes : [S.market]), untilDay:S.day + ((ev.durationDays || 1) - 1) };   // D50
   S.rnd.why.push({ ic:'⚠️', text:`${ev.title}: ${opt.label}. ${S.rnd.eventWhy}`.trim() });
   addNews([{ tag:'EVENT', text:`${ev.title}: ${opt.label}.`, cls:'warn' }]);
   refreshPlan();

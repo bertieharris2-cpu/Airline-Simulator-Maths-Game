@@ -1,25 +1,25 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 08 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 12 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 2 to check, 8 notes.**
+**0 to fix, 2 to check, 5 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 48 | 48 live, 8 placeholder |
+| Settings | 57 | 57 live, 8 placeholder |
 | Archetypes | 4 | 2 later, 4 live |
 | Routes | 18 | 2 later, 18 live |
 | RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
 | Aircraft | 8 | 6 later, 8 live, 2 note row, 1 placeholder, 1 removed |
-| Finance | 8 | 6 later, 8 live, 1 note row, 1 placeholder |
+| Finance | 8 | 6 later, 8 live, 2 note row, 1 placeholder |
 | Airports | 1 | 1 later, 1 live, 3 removed |
-| Calendar | 21 | 21 live |
+| Calendar | 28 | 28 live |
 | Market | 17 | 397 later, 17 live, 2 placeholder |
 | Events | 16 rows → 10 events | 6 later, 16 live, 14 placeholder, 2 removed |
 | Challenges | 2 | 2 live, 6 placeholder |
-| Mechanics | 15 | 6 later, 15 live, 4 placeholder |
+| Mechanics | 11 | 5 later, 11 live, 4 placeholder |
 | Chapters | 1 | 3 later, 1 live, 1 note row, 2 placeholder |
 | HandSumRules | 8 | 8 live, 1 note row |
 | Catering | 4 | 4 live, 1 note row |
@@ -33,20 +33,17 @@
 
 ## Notes
 
-- **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 800. The workbook wins.
-- **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1200. The workbook wins.
-- **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900. The workbook wins.
-- **Calendar:** day 3 names challenge 1, but Settings captainsChallengeCadence starts challenges on 2031-01-06 (one a term). The game follows the Challenges sheet dates; the Calendar column is ignored.
-- **Calendar:** day 5 names challenge 2, but Settings captainsChallengeCadence starts challenges on 2031-04-21 (one a term). The game follows the Challenges sheet dates; the Calendar column is ignored.
-- **Calendar:** day 9 names challenge 3, but Settings captainsChallengeCadence starts challenges on 2031-09-02 (one a term). The game follows the Challenges sheet dates; the Calendar column is ignored.
-- **Calendar:** day 11 names challenge 4, but Settings captainsChallengeCadence starts challenges on 2032-01-05 (one a term). The game follows the Challenges sheet dates; the Calendar column is ignored.
+- **Aircraft:** dhc6 differs from Pass 1 (Pass 1 → workbook): dayCost 600 → 900, listPrice 5000 → 12000. The workbook wins.
+- **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 1200, listPrice 9000 → 22000. The workbook wins.
+- **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1800, listPrice 15000 → 36000. The workbook wins.
+- **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900, dayCost 2500 → 3500, listPrice 30000 → 70000. The workbook wins.
 - **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events undercut_dub, storm, crew; challenges 2. Those choices then differ only in cash.
 
 ## Chapter 1 touches
 
 Rows dated on or before 28 Dec 2030 (chapter 1's review) that the game would read but are not `live`, and values the chapter-1 flow needs that the workbook lacks. The game reports these; it never invents a value.
 
-- **Routes:** ist opens on day 50 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
+- **Routes:** ist opens on day 57 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
 - **Settings:** `secondCrewCost` is `placeholder`: not loaded.
 - **Settings:** `timeSkip` is `placeholder`: not loaded (the game builds teacher skips of 0 / 1 / 4 / 8 weeks from the brief and reports it here).
 - **Settings:** `reputationFromDate` is `placeholder`: not loaded (a date gate only in chapter 1).
@@ -91,17 +88,17 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | Marrakech fares | £100, £120, £140, £160 | £220, £230, £240, £250, £260 |
 | Cairo distance | 3600 km | 3600 km |
 | Cairo fares | £125, £150, £175, £200 | £330, £340, £350, £360, £370 |
-| DHC-6 Twin Otter price | £2,500 | £5,000 (launch deal £2,500) |
-| DHC-6 Twin Otter running costs | £192 an hour, £900 a day | £150 an hour, £600 a day |
+| DHC-6 Twin Otter price | £2,500 | £12,000 (launch deal £2,500) |
+| DHC-6 Twin Otter running costs | £192 an hour, £900 a day | £150 an hour, £900 a day |
 | DHC-6 Twin Otter fuel | 20 L per 100 km | 20 L per 100 km |
-| Saab 340 price | £180,000 | £9,000 |
-| Saab 340 running costs | £330 an hour, £1040 a day | £200 an hour, £800 a day |
+| Saab 340 price | £180,000 | £22,000 |
+| Saab 340 running costs | £330 an hour, £1040 a day | £200 an hour, £1200 a day |
 | Saab 340 fuel | 30 L per 100 km | 25 L per 100 km |
-| ATR 72 price | £280,000 | £15,000 |
-| ATR 72 running costs | £520 an hour, £1600 a day | £350 an hour, £1200 a day |
+| ATR 72 price | £280,000 | £36,000 |
+| ATR 72 running costs | £520 an hour, £1600 a day | £350 an hour, £1800 a day |
 | ATR 72 fuel | 40 L per 100 km | 40 L per 100 km |
-| Embraer E190 price | £300,000 | £30,000 |
-| Embraer E190 running costs | £— an hour, £2650 a day | £900 an hour, £2500 a day |
+| Embraer E190 price | £300,000 | £70,000 |
+| Embraer E190 running costs | £— an hour, £2650 a day | £900 an hour, £3500 a day |
 | Embraer E190 fuel | 35 L per 100 km | 70 L per 100 km |
 | Airbus A220 price | £450,000 | £300,000 |
 | Airbus A220 running costs | £— an hour, £6250 a day | £1100 an hour, £3000 a day |

@@ -52,12 +52,13 @@ function fitsFor(x){ const p = planeById(x.planeId); return x.sched.length <= (W
 function actualDeps(pl, j){ pl = normPlan(pl); const x = pl.fleet[j || 0]; return withPlan(pl, () => TIME.day(planeById(x.planeId), x.sched, undefined, x.deps || null).trips.map(t => t.dep)); }
 /* The routes the planner offers: the first market, then the other setup route from day 4, then every open route. */
 function plannerRoutes(){
-  if(!S || S.phase === 'setup' || !S.market) return S && S.market ? [S.market] : [];
+  if(!S || !S.market) return [];
+  if(S.phase === 'setup' && !(typeof weekMode === 'function' && weekMode())) return [S.market];
   const other = otherRoute(), open = openRoutes(S.day).map(r => r.id).filter(id => id !== other || secondRouteOn());
   const first = [S.market].concat(secondRouteOn() ? [other] : []);
   return first.concat(open.filter(id => !first.includes(id)).sort((a, b) => (routeById(a).openDay || 1) - (routeById(b).openDay || 1) || routeKm(routeById(a)) - routeKm(routeById(b))));
 }
-function routeOpen(r, day){ day = day === undefined ? (S ? S.day : 1) : day; if(!r) return false; if(S && S.market && WORLD.setupRoutes.includes(r.id) && r.id !== S.market && !mechanicOn('second route', day)) return false; return (r.openDay || 1) <= day && !!(r.demandAtFare || !r.wb); }
+function routeOpen(r, day){ day = day === undefined ? (S ? S.day : 1) : day; if(!r) return false; if(S && S.market && WORLD.setupRoutes.includes(r.id) && r.id !== S.market && !mechanicOn('second route', day) && !(typeof weekMode === 'function' && weekMode())) return false; return (r.openDay || 1) <= day && !!(r.demandAtFare || !r.wb); }
 function planLabel(pl){
   pl = normPlan(pl); const all = pl.fleet.flatMap(x => x.sched), c = serviceCounts(all), parts = Object.keys(c).map(id => `${routeById(id).city} ×${c[id]} at ${money(pl.prices[id] || routeById(id).basePrice)}`);
   if(snacksOn() && pl.onboard && pl.onboard !== 'none') parts.push(({ low:'snacks £3', high:'snacks £5', sell3:'snacks £3', sell5:'snacks £5', free:'free snacks' })[pl.onboard] || 'snacks');
@@ -264,7 +265,8 @@ function shopOffer(p, day){
   const canBuy = buyFrom !== null && buyFrom <= day, canLease = leaseFrom !== null && leaseFrom <= day && !!fin.leaseDaily;
   const canFinance = !!(fin.financeDeposit && fin.financePayment) && (finFrom !== null ? finFrom <= day : canBuy);   // the tutorial tier's "n/a" means with the cash price
   const daily = fin.paymentUnit === 'week' ? fin.financePayment / 7 : fin.financePayment, left = fin.paymentUnit === 'week' ? (fin.financeCount || 0) * 7 : (fin.financeCount || 0);
-  return { price, lease:fin.leaseDaily || null, deposit:fin.financeDeposit || null, pay:fin.financePayment || null, n:fin.financeCount || null, unit:fin.paymentUnit || 'day', daily, left, canBuy, canLease, canFinance, buyFrom, leaseFrom, finFrom, inShop:(p.shopFromDay || 1) <= day };
+  const su = typeof saveUp === 'function' && S ? saveUp(price) : { afford:true };
+  return { price, lease:fin.leaseDaily || null, deposit:fin.financeDeposit || null, pay:fin.financePayment || null, n:fin.financeCount || null, unit:fin.paymentUnit || 'day', daily, left, canBuy: canBuy && su.afford, buyOffered:canBuy, saveUp:su, canLease, canFinance, buyFrom, leaseFrom, finFrom, inShop:(p.shopFromDay || 1) <= day };
 }
 function shopPlanes(day){ day = day === undefined ? S.day : day; return PLANES.filter(p => p.wb !== false && (p.shopFromDay || 1) <= day && (p.status === undefined || p.status === 'live')); }
 function shopToday(){ const w = roundData(S.round); return S.phase === 'round' && periodType() === 'day' && !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length); }
@@ -363,12 +365,12 @@ R.acquire = st => {
   const p = planeById(S.rnd.shopPick || 'sf34'), o = shopOffer(p), reserve = WORLD.cashReserve || 0, cash = Math.round(S.cash), pick = st.pick;
   const after = k => k === 'buy' ? cash - o.price : k === 'finance' ? cash - o.deposit : cash;
   const safe = k => after(k) >= reserve || cash < reserve;
-  const opts = [['buy', 'Buy', `${money(o.price)} now. Yours for good.`, o.canBuy], ['lease', 'Rent', o.lease ? `${money(o.lease)} a day, every day. Hand it back at a month end.` : 'Not offered', o.canLease], ['finance', 'Finance', o.deposit ? `${money(o.deposit)} now, then ${money(o.pay)} a ${o.unit} for ${o.n} ${o.unit}s.` : 'Not offered', o.canFinance]];
+  const opts = [['buy', 'Buy', o.buyOffered && !o.canBuy ? `${money(o.price)}. ${saveUpText(o.saveUp)}.` : `${money(o.price)} now. Yours for good.`, o.canBuy], ['lease', 'Rent', o.lease ? `${money(o.lease)} a day, every day. Hand it back at a month end.` : 'Not offered', o.canLease], ['finance', 'Finance', o.deposit ? `${money(o.deposit)} now, then ${money(o.pay)} a ${o.unit} for ${o.n} ${o.unit}s.` : 'Not offered', o.canFinance]];
   screen().innerHTML = taskFrame({ question:`How will you pay for the ${esc(p.name.replace(/^DHC-6 /, ''))}?`, work:false,
     story:['Buying costs most now and nothing later. Renting costs nothing now and something every day. Finance is in between.'],
     say:`How will you pay? ${opts.filter(x => x[3]).map(x => `${x[1]}: ${x[2]}`).join(' ')}`,
     context:{ title:'Cash', html: kv([['Cash now', `<span class="mono gold">${money(cash)}</span>`], ['After buying', `<span class="mono ${after('buy') >= reserve ? '' : 'red'}">${money(after('buy'))}</span>`], ['After the deposit', o.deposit ? `<span class="mono ${after('finance') >= reserve ? '' : 'red'}">${money(after('finance'))}</span>` : '—'], ['Kept for emergencies', `<span class="mono">${money(reserve)}</span>`]]) },
-    main:`<div class="terms">${opts.map(([k, l, sub, ok]) => `<button class="opt ${pick === k ? 'on' : ''}" data-terms="${k}" ${ok && safe(k) ? '' : 'disabled'} aria-pressed="${pick === k}"><span class="big">${l}</span><span class="sub">${esc(sub)}</span>${ok && !safe(k) ? `<span class="sub red">Would leave less than ${money(reserve)} in the bank</span>` : ''}${!ok ? `<span class="sub muted">Not available yet</span>` : ''}</button>`).join('')}</div>
+    main:`<div class="terms">${opts.map(([k, l, sub, ok]) => `<button class="opt ${pick === k ? 'on' : ''}" data-terms="${k}" ${ok && safe(k) ? '' : 'disabled'} aria-pressed="${pick === k}"><span class="big">${l}</span><span class="sub">${esc(sub)}</span>${ok && !safe(k) ? `<span class="sub red">Would leave less than ${money(reserve)} in the bank</span>` : ''}${!ok ? `<span class="sub muted">${k === 'buy' && o.buyOffered ? 'Keep the reserve: rent or finance for now' : 'Not available yet'}</span>` : ''}</button>`).join('')}</div>
       <p class="muted" style="margin-top:12px">Whatever you choose, the aircraft's day cost (${money(p.dayCost)}) is paid every day it is yours.</p>`,
     foot:`<button class="btn big" id="noBuy">Not today</button><span class="grow"></span><button class="btn primary big" id="nx" ${pick ? '' : 'disabled'}>${pick ? goLabel(`${pick === 'buy' ? 'Buy' : pick === 'lease' ? 'Rent' : 'Finance'} the ${p.name.replace(/^DHC-6 /, '')}`) : 'Choose how to pay'} &#9654;</button>` });
   screen().querySelectorAll('[data-terms]').forEach(b => b.onclick = () => { st.pick = b.getAttribute('data-terms'); render(); });

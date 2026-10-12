@@ -372,7 +372,7 @@ function syncTools(){ document.querySelectorAll('[data-wcol]').forEach(b => b.se
 function teacherOpen(){
   const T = $('teacher'); T.hidden = false;
   $('tNudge').checked = settings.nudge; $('tAuto').checked = settings.auto; $('tStartCash').value = settings.startingCash; $('tFlightSecs').value = String(settings.flightSecs);
-  $('tOpsSound').checked = opsSoundOn(); $('tMotion').checked = !!settings.reduceMotion; if($('tPractice')) $('tPractice').value = settings.practiceQuestionsPerDay === null || settings.practiceQuestionsPerDay === undefined ? '' : String(settings.practiceQuestionsPerDay); $('tAutoWall').checked = settings.autoWall !== false;
+  $('tOpsSound').checked = opsSoundOn(); $('tMotion').checked = !!settings.reduceMotion; if($('tDayByDay')) $('tDayByDay').checked = typeof weekMode === 'function' ? !weekMode() && (WORLD.settings || {}).openingPlayMode === 'week' : false; if($('tPractice')) $('tPractice').value = settings.practiceQuestionsPerDay === null || settings.practiceQuestionsPerDay === undefined ? '' : String(settings.practiceQuestionsPerDay); $('tAutoWall').checked = settings.autoWall !== false;
   const evs = []; WORLD.rounds.forEach((r,i)=>{ if(r.event) evs.push([i, r.event]); });
   $('tEventPick').innerHTML = evs.length ? evs.map(([i,e]) => `<option value="${i}">${esc(e.title)} (${esc(WORLD.rounds[i].date ? dateShort(beatDay(i)) + ' ' + calDate(beatDay(i)).getUTCFullYear() : 'day ' + i)})</option>`).join('') : '<option value="">No events in this story yet</option>';
   ['tEventPick', 'tEventNow', 'tEventDelay', 'tEventSkip'].forEach(id => { $(id).disabled = !evs.length; });   // events come back when the story has some
@@ -408,6 +408,7 @@ function initTeacher(){
   $('tFlightSecs').onchange = e => { settings.flightSecs = parseInt(e.target.value,10); saveSettings(); };
   $('tOpsSound').onchange = e => { settings.opsSound = e.target.checked; saveSettings(); syncSoundBtn(); };
   $('tAutoWall').onchange = e => { settings.autoWall = e.target.checked; saveSettings(); };
+  if($('tDayByDay')) $('tDayByDay').onchange = e => { settings.teacherDayByDay = e.target.checked; saveSettings(); };
   $('tEventNow').onclick = () => { const i = parseInt($('tEventPick').value,10); if(!(WORLD.rounds[i] && WORLD.rounds[i].event)){ toast('No events in this story yet'); return; } S.rnd.event = WORLD.rounds[i].event; S.rnd.eventChoice = null; const at = Math.max(S.si+1, S.steps.findIndex(s=>s.t==='summary')); S.steps.splice(S.steps.findIndex(s=>s.t==='summary'), 0, {t:'event'}, {t:'eventOutcome'}); teacherClose(); toast('Event queued for after this screen'); };
   $('tEventDelay').onclick = () => { if(!S.rnd.event){ toast('No event today'); return; } S.nextMods.event = S.rnd.event; S.rnd.event = null; S.steps = S.steps.filter(s => s.t!=='event' && s.t!=='eventOutcome'); teacherClose(); toast('Event moved to tomorrow'); };
   $('tEventSkip').onclick = () => { S.rnd.event = null; S.steps = S.steps.filter(s => s.t!=='event' && s.t!=='eventOutcome'); teacherClose(); toast('Event skipped'); };

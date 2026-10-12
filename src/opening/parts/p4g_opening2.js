@@ -16,7 +16,7 @@ SHELL_STEPS.push('costPlan', 'testIdeas', 'strategy', 'rop');
 ['strategy'].forEach(t => { const i = FOCUS_STEPS.indexOf(t); if(i >= 0) FOCUS_STEPS.splice(i, 1); });
 
 /* ---------- which ideas have been introduced ---------- */
-function opened(stage){ return S && S.phase !== 'setup' && progress() >= stage; }
+function opened(stage){ if(!S) return false; if(S.phase === 'setup') return typeof weekMode === 'function' && weekMode() && launchProg() >= stage; return progress() >= stage; }
 function snacksOn(){ return opened(3.1); }
 function fuelPaid(){ return opened(3.2); }
 function timeDemandOn(){ return opened(3.3); }

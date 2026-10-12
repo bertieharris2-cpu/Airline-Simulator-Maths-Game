@@ -84,7 +84,7 @@ function rivalShare(route, fare){
 function rivalTenths(route, fare){ return Math.round(10 * (1 - rivalShare(route, fare))); }   // "6 in 10 stay"
 function stayShare(route, fare){ return Math.round((1 - rivalShare(route, fare)) * 100) / 100; }
 function inTenths(share){ const h = Math.round(share * 100); return h % 10 === 0 ? `${h / 10} in 10` : `${h} in 100`; }
-function paxFor(route, fare){ let pax = roundSchool(demandAt(route, fare) * repFactor()); const s = rivalShare(route, fare); if(s) pax = roundSchool(pax * (1 - s)); return pax; }
+function paxFor(route, fare){ let pax = roundSchool(demandAt(route, fare) * repFactor()); const s = rivalShare(route, fare); if(s) pax = roundSchool(pax * (1 - s)); const n = typeof neglectShare === 'function' ? neglectShare(route) : 0; if(n) pax = roundSchool(pax * (1 - n)); return pax; }
 function demandRule(r){
   if(!r.wb) return [`At ${money(r.basePrice)}, ${demandAt(r, r.basePrice)} people want to fly.`, `Each ${money(r.step)} more, ${r.drop} fewer people want to fly.`, `Each ${money(r.step)} less, ${r.drop} more.`];
   return [`At ${money(r.basePrice)}, ${demandAt(r, r.basePrice)} people want to fly.`, 'The higher the fare, the fewer people want to fly.'];

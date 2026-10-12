@@ -38,19 +38,22 @@ function modOf(changes){ const out = {}; if(!changes) return out; Object.keys(ch
 function mechanicsBy(day){ const out = []; CAL.forEach(c => { if(c.day <= day) ((c.unlocks || {}).mechanics || []).forEach(m => out.push(m)); }); return out; }
 function mechanicOn(name, day){ return mechanicsBy(day === undefined ? (S ? S.day : 1) : day).some(m => m.includes(name)); }
 /* The toolkit's progress numbers (data-tools levels) from the mechanics: snacks 3.1, fuel 3.2, time of day 3.3, second route 3.4; weeks 4+; months 5. */
-const MECH_PROG = [['snacks', 3.1], ['fuel', 3.2], ['time-of-day', 3.3], ['second route', 3.4]];
+const MECH_PROG = [['snacks', 3.1], ['fuel', 3.2], ['time-of-day', 3.3], ['timetable with demand curve', 3.3], ['second route', 3.4]];
 const MECH_INTRO = [['snacks', 'snacks'], ['fuel', 'fuel'], ['time-of-day', 'times'], ['second route', 'route'], ['finance', 'fleet'], ['season forecast card', 'season'], ['range check', 'jets']];
 /* crew duty's briefing waits for the airline-type choice (Settings crewFromDate); the Calendar row can keep the mechanic until Fable moves it */
 if(!(WB && WB.settings && (WB.settings.crewMechanicFromDate || WB.settings.crewFromDate))) MECH_INTRO.push(['crew duty', 'crew']);
-function progOn(day){ let p = 2; mechanicsBy(day).forEach(m => MECH_PROG.forEach(([k, v]) => { if(m.includes(k)) p = Math.max(p, v); })); return p; }
+function progOn(day){ let p = 2; mechanicsBy(day).forEach(m => MECH_PROG.forEach(([k, v]) => { if(m.includes(k)) p = Math.max(p, v); }));
+  if(WORLD.setupRoutes && WORLD.setupRoutes.length > 1 && WORLD.setupRoutes.every(id => { const r = routeById(id); return r && (r.openDay || 1) <= day; })) p = Math.max(p, 3.4);   // v4.4: both routes from Launch Day
+  return p; }
 
 function buildBeats(){
   const ch = CHAPTERS[0]; if(!WB || !ch) return;
   const startDay = dayOfDate(ch.start), reviewDay = dayOfDate(ch.reviewDate || ch.end);
-  const wk = /week \(from day (\d+)\)/.exec(ch.runCadence || ''), weekFrom = wk ? +wk[1] : CAL.length + 1;
-  const mo = /month \(from (\w+)/.exec(ch.runCadence || '');
+  const wk = /week \(from day (\d+)\)/.exec(ch.runCadence || '') || /week-skips from day (\d+)/.exec(ch.runCadence || ''), weekFrom = wk ? +wk[1] : CAL.length + 1;
+  const mo = /month \(from (\w+)/.exec(ch.runCadence || ''), moIso = /months? from (\d{4}-\d{2}-\d{2})/.exec(ch.runCadence || '');
   let monthFrom = reviewDay;
-  if(mo){ const mi = MONTH.findIndex(m => m.toLowerCase().startsWith(mo[1].toLowerCase().slice(0, 3))); for(let d = startDay; d <= reviewDay; d++){ if(calDate(d).getUTCMonth() === mi && calDate(d).getUTCDate() === 1){ monthFrom = d; break; } } }
+  if(moIso) monthFrom = dayOfDate(moIso[1]);
+  else if(mo){ const mi = MONTH.findIndex(m => m.toLowerCase().startsWith(mo[1].toLowerCase().slice(0, 3))); for(let d = startDay; d <= reviewDay; d++){ if(calDate(d).getUTCMonth() === mi && calDate(d).getUTCDate() === 1){ monthFrom = d; break; } } }
   const R = [];
   for(let d = startDay; d < weekFrom && d <= reviewDay; d++){
     const c = calRow(d) || {}, first = d === startDay, mechs = (c.unlocks || {}).mechanics || [], intro = [];
@@ -59,7 +62,8 @@ function buildBeats(){
     R.push({ date:c.date || isoOf(d), day:d, period: first ? 'setup' : 'day', fuel:fuelOn(d), prog:progOn(d), title: first ? (c.title || 'Launch Day') : (c.title || 'Day ' + d),
       headline:(c.headlines || [])[0] || '', news:(c.headlines || []).slice(), intro: intro.length ? (intro.length === 1 ? intro[0] : intro) : undefined,
       eventId:c.event || null, event:gameEvent(c.event), competitor:c.rivalFares || null, demandMod:modOf(c.demandChanges), demandChanges:c.demandChanges || null,
-      unlocks:c.unlocks || null, jobs:c.jobs || [], gatedCalc:c.gatedCalc || null, phase:c.phase || 'day', weekend: c.phase === 'weekend' || calDate(d).getUTCDay() % 6 === 0, cal:c });
+      unlocks:c.unlocks || null, jobs:c.jobs || [], gatedCalc:c.gatedCalc || null, phase:c.phase || 'day', weekend: c.phase === 'weekend' || calDate(d).getUTCDay() % 6 === 0, cal:c,
+      weekPhase: c.weekPhase || null, week: c.week || weekNo(d) });
   }
   let d = weekFrom, k = 0;
   while(d <= monthFrom && d < reviewDay){

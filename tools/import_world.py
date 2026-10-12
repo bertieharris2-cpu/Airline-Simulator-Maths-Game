@@ -189,7 +189,7 @@ calendar = [{'day': c['day'], 'date': c['date'], 'weekday': c['weekday'], 'week'
              'fuel': c['fuel'], 'title': c['title'], 'headlines': [h for h in (c['headline1'], c['headline2']) if h],
              'event': c['eventId'], 'unlocks': unlocks(c['unlocks']), 'demandChanges': changes(c['demandChanges']),
              'rivalFares': fares(c['rivalFares']), 'jobs': words(c['jobs']), 'gatedCalc': c['gatedCalc'],
-             'challenge': c['challenge'], 'status': c['status']}
+             'challenge': c['challenge'], 'status': c['status'], 'weekPhase': c.get('weekPhase')}
             for c in live('Calendar', all_cal)]
 
 all_market = sheet(wb, 'Market')
@@ -484,7 +484,8 @@ NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurna
           'weekendBusinessMultSat', 'weekendBusinessMultSun', 'weekendLeisureMult', 'cashReserve', 'negativeProjectionWarning', 'eventCostScaleFromDay',
           'loadFactorPercentFromDay', 'fuelHandSumPriceStep', 'fuelHandSumLitresShare', 'snacksHandSumOnce', 'timeSkip', 'leaseFromDate', 'buyFromDate',
           'financeFromDate', 'reputationFromDate', 'quarterlyTaskFromDate', 'huntPerReview', 'captainsChallengeCadence', 'fareStepWeek2', 'reportCadence',
-          'blockedFlightCodes', 'soundDefault', 'revealSeconds', 'crewMechanicFromDate', 'rivalSwitchPerTenPounds', 'rivalSwitchCap', 'rivalAdvertiseFactor', 'practiceQuestionsPerDay']
+          'blockedFlightCodes', 'soundDefault', 'revealSeconds', 'crewMechanicFromDate', 'rivalSwitchPerTenPounds', 'rivalSwitchCap', 'rivalAdvertiseFactor', 'practiceQuestionsPerDay',
+          'openingPlayMode', 'teacherDayByDay', 'weeklyReviewFromDay', 'missedProfitLine', 'neglectFromDay', 'neglectLoadFactor', 'neglectLossShare', 'neglectRecoverShare', 'launchDaySums']
 for k in NEEDED:
     st_ = settings_status.get(k)
     if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')
