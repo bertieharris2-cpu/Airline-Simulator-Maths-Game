@@ -272,7 +272,7 @@ function railValue(t, i){
   if(t === 'intro'){ const I = introNow(); return I ? niVal(I.title) : ''; }
   return '';
 }
-function editStep(what){
+function editStepBase(what){
   const k = railKind();
   if(k === 'month' || k === 'year') return what === 'forecast' && k === 'year' ? 'yearPlan' : 'plans';
   if(S.phase === 'setup' || periodType() === 'day') return 'plan';   // the planning page carries the modelling tool; Cost your plan opens the workings page

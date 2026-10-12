@@ -2748,12 +2748,12 @@ body{background:radial-gradient(1400px 700px at 14% -10%, rgba(60,140,235,.28), 
 .dk-b{padding:12px 14px}
 .dk-sub{margin:-6px 0 2px;font-size:13.5px;color:var(--muted)}
 .pi{display:flex;flex-direction:column;gap:0}
-.pi-r{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--hair)}
+.pi-r{display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--hair)}
 .pi-r:last-child{border-bottom:0}
-.pi-r svg{width:22px;height:22px;fill:#bfe0ff}
-.pi-r .pi-l{font-size:14px;color:#fff;line-height:1.2}
+.pi-r svg{width:18px;height:18px;fill:#bfe0ff}
+.pi-r .pi-l{font-size:13px;color:#fff;line-height:1.15}
 .pi-r .pi-l small{display:block;font-size:12px;color:var(--muted)}
-.pi-r .pi-v{font-size:17px;font-weight:700;color:#fff;text-align:right;white-space:nowrap}
+.pi-r .pi-v{font-size:16px;font-weight:700;color:#fff;text-align:right;white-space:nowrap;padding:0 3px}
 .pi-r .pi-v small{display:block;font-size:12px;font-weight:400;color:var(--muted)}
 .pi-r .pi-v.todo{font-size:13px;font-weight:600;color:var(--cy)}
 .pi-r.tot{background:var(--sf2);border-radius:10px;padding:9px 10px;margin-top:6px;border-bottom:0}
@@ -2853,10 +2853,10 @@ td.c.enter button,.cellbtn{border-radius:8px;background:rgba(143,211,255,.12);bo
 .dk-help i{width:22px;height:22px;font-size:12px}
 .pi-r{padding:5px 0}
 .pi-r.profit{padding:9px 12px}
-.ws-weekReview .rv{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"table side" "routes routes"}
+.ws-weekReview .rv{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"table side" "table routes";grid-template-rows:auto minmax(0,1fr)}
 .ws-weekReview .rv > .pnl:first-child{grid-area:table;grid-row:auto}
 .ws-weekReview .rv-side{grid-area:side}
-.ws-weekReview .rv-routes{grid-area:routes}
+.ws-weekReview .rv-routes{grid-area:routes;min-width:0}.ws-weekReview .rv-routes .pnl-h{margin-bottom:4px}.ws-weekReview .rv-routes .pb{overflow-x:auto}.ws-weekReview .rv-routes .hq-t{font-size:12.5px}.ws-weekReview .rv-routes .hq-t th,.ws-weekReview .rv-routes .hq-t td{padding:4px 5px}
 .ws-weekReview table.fx.one{width:100%;min-width:0}
 .ws-weekReview table.fx.one thead th:first-child{min-width:0;width:58%}
 .ws-weekReview table.fx.one td.c{min-width:0}
@@ -2866,6 +2866,201 @@ td.c.enter button,.cellbtn{border-radius:8px;background:rgba(143,211,255,.12);bo
 .op-row{border-radius:10px}
 /* choices on event cards */
 .card.exec .opt{border-radius:12px}
+
+/* ============================================================
+   THE WEEK 1 PLANNER (UI Widget Design Brief v4.4, 12 Oct 2026): square geometry; pale work surfaces for the
+   pupil's decisions and sums, dark panels for context and results; the intro, the markets, the timeline editor,
+   the fuel widget, Plan Impact's ƒ, the Maths Dock and the comparison.
+   ============================================================ */
+:root{ --r:0; --rb:0; --pale:#eef5fd; --pale2:#e2edfa; --ink:#0f2a52; --ink2:#3d5478; --ink3:#6a7f9f; --pline:#b7cde8; --pline2:#8fb0d8; --pok:#1a7f4b; --pbad:#c0392b; --pwarn:#b85c00; --pblue:#1f6fe0 }
+.card,.tf,.hp,.overlay .box,.ws-main > .tf,.strat,.mkt,.spec,.dm-big,.rot-note,.plan-route,.rcp-b,.pe-grid > div,.ff-box,.cmp,.apt,.term,.pnl,.cx,.btn,.btn.primary,.btn.huge,.btn.act,.choice,.opt,.svc,.fare,.cap-row,.opt-chip,.nv,.kpi2 .ki,.ri,.dr-rcp > div,.fb-card,.fl-specs > div,.ii,.td-brief,.cashbal,.live-bar,.chip,.cops,.hchip,.ri-k,.s-rep,.cbar .btn.small,.lnav,.nv.on,.actbar,.ws-rail,.stg,.stg-k,.subs .ri,.dock,.dk-x,.dock:not(.dock-context) .dk-kind,.pi-r.tot,.pi-r.profit,.dk-help,td.c.enter button,.cellbtn,.pe-ac,.pe-route,.pe-fr,.pe-tab,.pe-svc,.fchip,.pe-step .pe-b,.pe-b,.pe-rt,.pe-x,.wb-day,.wk-missed,.wm-row > span,.wk-neglect,.wk-top,.wk-grid,.wk-tut,.wk-opt,.wk .pq,.wk .btn,.opplan,.op-row,.card.exec .opt,.ds-b,.obc,.fw-quick .btn,button.mdl,.ni-tabs button,.dk-open,.toast,.sysnote,.tsec input[type=number],.tsec select,textarea.code,.name-input,.answer,.dock .answer,.hb-in,.milestone,.ms-in,.pq,.pq-ans input,.wk-row.ans input{border-radius:0!important}
+/* pale work surfaces */
+.pale{background:var(--pale);color:var(--ink);border:1px solid var(--pline)}
+.pale .muted,.pale small.muted,.pale .small.muted,.pale p.muted{color:var(--ink3)}
+.pale .label,.pale .kl{color:var(--ink2)}
+.pale b,.pale h3{color:var(--ink)}
+.pale .orange{color:var(--pwarn)}.pale .green{color:var(--pok)}.pale .red{color:var(--pbad)}.pale .gold{color:#8a5a00}
+.pale .btn{background:#fff;color:var(--ink);border:1px solid var(--pline2);box-shadow:none}
+.pale .btn:hover:not(:disabled){background:#f4f9ff;border-color:var(--pblue)}
+.pale .btn:disabled{opacity:.45}
+.pale .btn.primary,.pale .btn.primary:hover:not(:disabled){background:var(--pblue);color:#fff;border-color:var(--pblue)}
+.pale .btn.danger{color:var(--pbad);border-color:#e3a19a}
+.pnl.pale{background:var(--pale)}.pnl.pale .pnl-h h3{color:var(--ink)}.pnl.pale .pnl-h .muted{color:var(--ink3)}
+.pale .link{color:var(--pblue)}
+/* the intro */
+.br1{height:100%;overflow:auto;padding:22px 28px;display:flex;flex-direction:column;gap:16px}
+.br1-hero{display:flex;align-items:center;gap:24px;justify-content:space-between}
+.br1-hero h1{margin:4px 0 8px;font-size:40px;font-weight:800;color:#fff;letter-spacing:-.01em}
+.br1-hero p{margin:0;max-width:820px;font-size:18px;line-height:1.45;color:var(--muted)}
+.br1 .kl{font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#bfe0ff}
+.br1-sit{display:flex;flex-direction:column;gap:8px}
+.br1-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.br1-c{position:relative;display:flex;flex-direction:column;gap:3px;padding:12px 14px;background:var(--sf1);border:1px solid var(--line);min-height:96px;overflow:hidden}
+.br1-c small{font-size:12px;color:var(--muted)}.br1-c b{font-size:18px;color:#fff}.br1-c span{font-size:13.5px;color:var(--muted);line-height:1.35}
+.br1-c.ac .art,.br1-c.ac .plane-svg{position:absolute;right:8px;bottom:4px;width:150px;height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4))}
+.br1-c.ac b,.br1-c.ac span{max-width:58%}
+.br1-steps{display:flex;flex-direction:column;gap:8px}
+.br1-steps ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.br1-steps li{display:flex;flex-direction:column;gap:6px;padding:12px 14px;background:var(--pale);color:var(--ink);border:1px solid var(--pline)}
+.br1-steps li i{display:grid;place-items:center;width:30px;height:30px;background:var(--pblue);color:#fff;font-style:normal;font-weight:800;font-size:16px}
+.br1-steps li b{font-size:16px}.br1-steps li span{font-size:13px;line-height:1.35;color:var(--ink2)}
+.br1-foot{margin:auto 0 0;font-size:15px;color:var(--muted)}
+@media (max-height:800px){ .br1{gap:10px;padding:14px 22px} .br1-hero h1{font-size:32px;margin:2px 0 4px} .br1-hero p{font-size:16px} .br1-c{min-height:80px;padding:9px 12px} .br1-steps li{padding:9px 11px;gap:4px} .br1-steps li span{font-size:12.5px} .br1-c.ac .art,.br1-c.ac .plane-svg{width:120px} }
+/* the planner */
+.plw{display:flex;flex-direction:column;gap:8px}
+.plw-mk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.plw-mk.n3{grid-template-columns:repeat(3,minmax(0,1fr))}.plw-mk.n1{grid-template-columns:minmax(0,1fr)}
+.mk{display:flex;flex-direction:column;gap:4px;padding:8px 10px}
+.plw-mk.compact .mk-facts,.plw-mk.compact .mk-fares .label{display:none}.plw-mk.compact .mk{gap:3px;padding:6px 10px}
+.mk.on{border-color:var(--pblue);box-shadow:inset 3px 0 0 var(--pblue)}
+.mk-h{display:flex;align-items:center;gap:8px}.mk-h b{font-size:19px}.mk-code{font-size:12.5px;font-weight:700;letter-spacing:.08em;color:var(--ink3)}.mk-n{margin-left:auto;font-size:13px;font-weight:600;color:var(--pblue)}
+.mk-facts{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--ink2)}.mk-rival{color:var(--pwarn);font-weight:600}
+.mk-fares{display:flex;flex-direction:column;gap:3px}.mk-fares .label{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-chips{display:flex;flex-wrap:wrap;gap:5px}
+.fch{display:flex;flex-direction:column;align-items:center;min-width:54px;min-height:38px;padding:1px 7px;background:#fff;border:1px solid var(--pline2);color:var(--ink);font:inherit;cursor:pointer;line-height:1.15}
+.fch b{font-size:15px}.fch small{font-size:11px;color:var(--ink3)}
+.fch:hover:not(:disabled){border-color:var(--pblue)}.fch:disabled{opacity:.5;cursor:default}
+.fch.on{background:var(--pblue);border-color:var(--pblue);color:#fff}.fch.on b{color:#fff}.fch.on small{color:#dbe9ff}
+.fch.pick{border:2px solid var(--pwarn);opacity:1;cursor:pointer;animation:fchPick 1.2s ease-in-out infinite}
+@keyframes fchPick{0%,100%{box-shadow:0 0 0 0 rgba(184,92,0,.3)}50%{box-shadow:0 0 0 4px rgba(184,92,0,.15)}}
+.mk-more{display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:5px 10px}.mk-more .label{font-size:11.5px;margin-right:4px}.mk-more .btn.small{min-height:30px;padding:2px 9px;font-size:12.5px}.mk-more .btn.small small{font-weight:400;color:var(--ink3)}
+.plw-idea{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;padding:8px 12px;border-left:4px solid var(--pblue)}.plw-idea b{font-size:15px}
+.plw-tools{margin-left:auto;display:flex;gap:6px;flex:none}.plw-tools .btn.small{white-space:nowrap;min-height:32px;padding:2px 10px}
+.plw-tl .pnl-h{margin-bottom:4px;flex-wrap:nowrap}.plw-tl .pnl-h h3{white-space:nowrap}.plw-tl .pnl-h .tl-hint{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plw-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:10px;align-items:start}
+.plw-strip{display:flex;flex-wrap:wrap;gap:6px 22px;padding:8px 12px}.plw-strip span{display:flex;flex-direction:column}.plw-strip small{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}.plw-strip b{font-size:15px}
+.ws-plan .pnl.pale,.ws-workings .pnl.pale{padding-top:10px;padding-bottom:10px}
+/* the aircraft day */
+.ad{--tlw:136px;display:flex;flex-direction:column;gap:3px;margin-top:2px}
+@media (min-width:1600px){ .ad{--tlw:160px} }
+.ad-lab{display:flex;align-items:center;gap:6px;width:var(--tlw);flex:none;font-size:13px;color:var(--ink2);min-width:0}
+.ad-lab > span{display:flex;flex-direction:column;min-width:0}.ad-lab b{color:var(--ink);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ad-lab small{display:block;font-size:11px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-dem{display:grid;grid-template-columns:var(--tlw) 1fr;gap:10px;align-items:end}
+.ad-dem .ad-lab{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:6px}.ad-dem .ad-lab small{grid-column:2;display:none}
+@media (min-width:1600px){ .ad-dem .ad-lab small{display:block} }
+.ad-dem .ds-bar{height:18px;border-bottom:1px solid var(--pline2);background-image:repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),rgba(143,176,216,.35) calc(12.5% - 1px) 12.5%)}
+.ad-dem .ds-b{background:linear-gradient(180deg,rgba(63,133,232,.85),rgba(63,133,232,.4));border-right:2px solid var(--pale)}
+.ad-dem .ds-b.midday{background:linear-gradient(180deg,rgba(150,180,230,.75),rgba(150,180,230,.3))}
+.ad-dem .ds-b.midmorning,.ad-dem .ds-b.afternoon{background:linear-gradient(180deg,rgba(100,160,240,.8),rgba(100,160,240,.35))}
+.ad-dem .ds-b span{color:#fff;font-size:10.5px;text-shadow:0 1px 2px rgba(0,0,0,.45)}
+.ad-axis{display:grid;grid-template-columns:var(--tlw) 1fr;gap:10px}
+.ad-ticks{position:relative;height:16px;font-size:11px;color:var(--ink3)}
+.ad-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.ad-ac{display:grid;grid-template-columns:var(--tlw) 1fr;gap:4px 10px;align-items:center}
+.ad-ac .ad-adds{grid-column:2;display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-bottom:2px}.ad-add.btn.small{min-height:28px;padding:2px 10px;font-size:13px}.ad-adds .muted.small{font-size:12.5px}
+.ad-plane .ad-pic{width:56px;height:auto;flex:none}
+.ad-lane{position:relative;height:40px;background:#fff;border:1px solid var(--pline2);background-image:repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),rgba(143,176,216,.35) calc(12.5% - 1px) 12.5%);overflow:hidden}
+.ad-none{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px}
+.ad-ready{position:absolute;top:7px;bottom:7px;background:repeating-linear-gradient(135deg,rgba(143,176,216,.45) 0 4px,transparent 4px 8px);border-right:1px dashed var(--pline2)}
+.ad-blk{position:absolute;top:3px;bottom:3px;display:flex;flex-direction:column;justify-content:center;gap:0;padding:1px 6px;min-width:0;overflow:hidden;background:#2f7ff5;border:1px solid #1b5fc4;color:#fff;font:inherit;text-align:left;cursor:grab;touch-action:none;box-shadow:0 2px 6px rgba(10,40,100,.25)}
+.ad-blk[data-rc="1"]{background:#6f5bc4;border-color:#4f3f9a}.ad-blk[data-rc="2"]{background:#1f9e8a;border-color:#167564}.ad-blk[data-rc="3"]{background:#d9822b;border-color:#a8611a}
+.ad-blk b{font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ad-blk small{font-size:10.5px;color:#dbe9ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-blk.full small{color:#c8ffd8}
+.ad-blk:hover:not(:disabled){filter:brightness(1.08)}
+.ad-blk.on{outline:3px solid var(--amber);outline-offset:-1px;z-index:2}
+.ad-blk:focus-visible{outline:3px solid var(--amber);outline-offset:1px}
+.ad-blk.over,.ad-blk.clash{background:#d64545!important;border-color:#a32d2d!important}
+.ad-blk.dragging{opacity:.92;z-index:3;cursor:grabbing;box-shadow:0 6px 16px rgba(10,40,100,.4)}
+.ad-blk.ghost{opacity:.35;border-style:dashed;pointer-events:none;outline:0;z-index:1}
+.ad-blk:disabled{cursor:default;opacity:.85}
+.ad-selin{display:flex;align-items:center;gap:6px;margin-left:auto;padding-left:10px;border-left:2px solid var(--pline2)}
+.ad-sel-t{display:flex;flex-direction:column;min-width:0;margin-right:4px;line-height:1.1}.ad-sel-t .kl{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}.ad-sel-t b{font-size:14px;color:var(--ink);white-space:nowrap}.ad-sel-t small{font-size:10.5px;color:var(--ink3);white-space:nowrap}
+.ad-selin .btn{min-height:34px;padding:2px 12px;font-size:13.5px;white-space:nowrap}
+/* on board: one strip, the heading beside the four tiles */
+.plw-ob{display:grid;grid-template-columns:118px minmax(0,1fr);gap:10px;align-items:center;padding:7px 14px}
+.ob-h{display:flex;flex-direction:column;gap:2px;min-width:0}.ob-h h3{margin:0;font-size:16px;font-weight:700;color:var(--ink);text-transform:none;letter-spacing:0}.ob-h .muted{font-size:11.5px;line-height:1.25}
+.plw-ob .obc-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.pale .obc{background:#fff;border:1px solid var(--pline2);color:var(--ink);min-height:38px;padding:3px 8px;gap:0;justify-content:center}
+.pale .obc b{color:var(--ink);font-size:12.5px}.pale .obc small{color:var(--ink3);font-size:10.5px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pale .obc.on{border-color:var(--pblue);background:#e6f0ff;box-shadow:inset 4px 0 0 var(--pblue)}.pale .obc.on small{color:var(--ink2)}
+.pale .obc:disabled{opacity:.5;cursor:default}
+.pale .obc.pick{border:2px solid var(--pwarn);opacity:1;cursor:pointer;animation:fchPick 1.2s ease-in-out infinite}
+/* fuel: one strip across the page: the gauge, where the fuel goes (by route), cost it, the week */
+.fw2{padding:8px 14px}
+.fw2-g{display:grid;grid-template-columns:96px minmax(0,.8fr) minmax(0,1.1fr) minmax(0,1fr);gap:10px;align-items:start}
+.fw2 .kl{max-width:100%;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fw2 .fx-sum{padding:3px 7px;gap:4px;font-size:12px}.fw2-row.tot > span{font-size:12px}
+.fw2-gauge{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;min-width:0}.fw2-gauge > b{font-size:18px;color:var(--ink);line-height:1.1}.fw2-gauge small{font-size:10.5px;color:var(--ink3);line-height:1.2}
+.fw2-tankw{position:relative;height:56px;width:88px;margin-top:2px}
+.fw2-tank{position:absolute;left:0;top:0;bottom:0;width:34px;border:2px solid var(--ink);background:#fff;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.fw2-tank i{display:block;background:linear-gradient(180deg,#6ddc9a,#3fbf72);width:100%;transition:height .3s}
+.fw2-ticks{position:absolute;left:40px;top:0;bottom:0;font-size:10px;color:var(--ink3);text-align:left}.fw2-ticks span{position:absolute;left:0;transform:translateY(50%);white-space:nowrap}
+.fw2-svcs,.fw2-cost{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fw2-s{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;font-size:12.5px;padding:2px 6px;background:#fff;border:1px solid var(--pline)}
+.fw2-s > span{display:flex;flex-direction:column;line-height:1.15;min-width:0}.fw2-s small{font-size:10.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fw2-s b{text-align:right;font-size:12.5px;color:var(--ink)}
+.fw2-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 8px;padding:3px 8px;background:#fff;border:1px solid var(--pline);font-size:12.5px}
+.fw2-row > span{display:flex;flex-direction:column;line-height:1.15}.fw2-row small{font-size:10.5px;color:var(--ink3)}
+.fw2-row.tot{font-weight:700}.fw2-row b{font-size:15px}
+.fw2-week{display:flex;flex-direction:column;gap:1px;padding:6px 8px;background:var(--navy);color:#fff;border:1px solid var(--line);min-width:0}
+.fw2-week .kl{color:#bfe0ff}.fw2-week .fw2-row{background:transparent;border:0;padding:2px 0;color:#fff}.fw2-week .fw2-row b{color:#fff}.fw2-week .gold{color:var(--gold)!important}
+.fw2-week p.small{color:#cfe0f5;font-size:11.5px;margin-top:2px}
+.fw2 p.small,.fw2 .muted.small{margin:0;font-size:11.5px;line-height:1.3}
+/* Plan Impact: ƒ, and figures that just changed */
+.fx-sum{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;min-height:30px;background:var(--amber);color:#1b2a4a;border:1px solid #d9a92a;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.fx-sum i{display:grid;place-items:center;width:20px;height:20px;background:#1b2a4a;color:var(--amber);font-style:italic;font-family:Georgia,serif;font-size:14px}
+.fx-sum:hover{filter:brightness(1.06)}
+.pi-v.chg{animation:piFlash 1.4s ease-out}
+@keyframes piFlash{0%{background:rgba(255,201,60,.6);color:#1b2a4a}100%{background:transparent}}
+.pi-v.warn{color:var(--orange)}
+.pi-r .pi-v.todo{font-size:12.5px;color:var(--muted);font-weight:500}
+/* the Maths Dock */
+.ws.ws-workings{grid-template-columns:200px minmax(0,1fr) 440px}
+@media (min-width:1600px){ .ws.ws-workings{grid-template-columns:260px minmax(0,1fr) 520px} }
+/* no plan rail: the planner and the dock share the width */
+.ws.norail{grid-template-columns:minmax(0,1fr) 320px}.ws.norail.dock-shut{grid-template-columns:minmax(0,1fr) 44px}.ws.norail.wide{grid-template-columns:minmax(0,1fr)}.ws.norail.ws-workings{grid-template-columns:minmax(0,1fr) 440px}
+@media (min-width:1600px){ .ws.norail{grid-template-columns:minmax(0,1fr) 360px} .ws.norail.ws-workings{grid-template-columns:minmax(0,1fr) 540px} .ws.norail.dock-shut{grid-template-columns:minmax(0,1fr) 44px} }
+.dock-sum{background:var(--pale);color:var(--ink);border:1px solid var(--pline);box-shadow:var(--lift)}
+.dock-sum .dk-h{border-bottom:1px solid var(--pline);align-items:center;gap:10px}
+.dock-sum .dk-kind{display:inline-block;background:var(--pblue);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 6px}
+.dock-sum .dk-t{color:var(--ink);font-size:17px}
+.sd-prog{font-size:12.5px;font-weight:700;color:var(--pblue);white-space:nowrap}
+.sd-tabs{display:flex;border-bottom:1px solid var(--pline);flex:none}
+.sd-tabs button{flex:1;padding:8px 6px;background:transparent;border:0;border-bottom:3px solid transparent;color:var(--ink2);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.sd-tabs button.on{color:var(--pblue);border-bottom-color:var(--pblue);background:#fff}
+.dock-sum .dk-b{padding:10px 12px;gap:10px;background-color:#FBF7EA;background-image:linear-gradient(rgba(96,150,210,.38) 1px,transparent 1px),linear-gradient(90deg,rgba(96,150,210,.38) 1px,transparent 1px);background-size:22px 22px;color:#1b2a4a}
+.dock-sum .wk-sum{align-items:stretch;gap:10px;max-width:none;width:100%}
+.dock-sum .wk-head{text-align:left}.dock-sum .wk-head .kl{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1f5fbf}.dock-sum .wk-head h2{font-size:20px;margin:2px 0 0;color:#1b2a4a;text-transform:none;letter-spacing:0}
+.dock-sum .wk-grid{padding:10px 12px;background:rgba(255,255,255,.65);border:1px solid #c9bda0;overflow-x:auto}
+.dock-sum .wk-row,.dock-sum .wk-row > i{height:36px}.dock-sum .wk-row > i{width:36px;font-size:26px}.dock-sum .wk-row.carry,.dock-sum .wk-row.carry > i{height:22px}.dock-sum .wk-row.carry input{width:24px;height:20px;font-size:13px}
+.dock-sum .wk-op{width:30px;font-size:24px}
+.dock-sum .wk-note{margin-left:8px;font-size:11.5px;white-space:normal;line-height:1.15;max-width:150px;color:#4a5a7a}
+.dock-sum .wk-rule{margin-left:30px}
+.dock-sum .wk-row.work{height:32px}.dock-sum .wk-free{width:calc(100% - 30px);height:28px;font-size:16px}
+.dock-sum .wk-row.ans{height:54px;padding-top:6px}.dock-sum .wk-row.ans input{width:calc(var(--w) * 36px + 16px);min-width:140px;height:46px;font-size:28px}.dock-sum .wk-row.ans .unit{font-size:24px}.dock-sum .wk-row.ans.done b{font-size:28px}
+.dock-sum .wk-act{justify-content:flex-start;gap:8px}.dock-sum .wk-act .btn.big{min-height:46px;font-size:17px;padding:0 18px}
+.dock-sum .btn{color:#1b2a4a;background:#fff;border:2px solid #1b2a4a;box-shadow:none}.dock-sum .btn.primary{background:#1f7aff;color:#fff;border-color:#1f7aff}
+.dock-sum .wk-msg{text-align:left;font-size:15px;color:#b85c00}.dock-sum .wk-msg.ok{color:#1a7f4b}
+.dock-sum .wk-pad{grid-template-columns:repeat(3,64px)}.dock-sum .wk-pad button{height:48px;font-size:22px}
+.dock-sum .wk-tut{max-width:none;padding:12px 14px;align-items:stretch}.dock-sum .wk-tut h2{font-size:20px;text-transform:none;letter-spacing:0;color:#1b2a4a}.dock-sum .wk-tut .kl{color:#1f5fbf;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.dock-sum .wk-tl{grid-template-columns:1fr;gap:4px;padding:6px 8px}.dock-sum .wk-tl b{font-size:20px}.dock-sum .wk-tl span{font-size:14px}
+.dock-sum .wk-pick{align-items:stretch}.dock-sum .wk-pick .kl{color:#1f5fbf;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.dock-sum .wk-opts{flex-direction:column;gap:8px}.dock-sum .wk-opt{min-width:0;align-items:flex-start;padding:10px 14px;background:#fff;border:2px solid #1b2a4a;color:#1b2a4a}.dock-sum .wk-opt b{font-size:18px}.dock-sum .wk-opt span{color:#4a5a7a}
+.dock-sum .wk-list{min-width:0;width:100%;font-size:14px}.dock-sum .wk-list th,.dock-sum .wk-list td{padding:5px 6px}.dock-sum .wk-list td{white-space:nowrap}
+.dock-sum .wk-summary .kl{color:#1f5fbf;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.sd-written{margin:0;font-size:14px;color:#1a7f4b;font-weight:700}
+.sd-ans{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}.sd-ans .answer{display:inline-flex;align-items:center;gap:4px;background:#fff;border:2px solid #1b2a4a;padding:4px 8px}.sd-ans .answer input{width:150px;height:40px;font:700 26px var(--mono);text-align:right;border:0;outline:0;background:transparent;color:#1b2a4a}.sd-ans .answer .unit{font:700 24px var(--mono);color:#1b2a4a}
+.dock-sum .wo-pad{margin-top:0}.dock-sum .wo-pad #padCv{min-height:200px;height:220px}
+.dock-sum .wp-pins{background:rgba(255,255,255,.65);border:1px solid #c9bda0;color:#1b2a4a}.dock-sum .wp-pins > b{color:#1f5fbf}.dock-sum .wp-pins small{color:#4a5a7a}.dock-sum .wp-pins span b{color:#1b2a4a}
+.dock-sum .wp-tools .btn{min-height:34px;border-width:1px}
+.sd-fx{display:flex;flex-direction:column;gap:8px}.sd-q{margin:0;font-size:15px;color:#1b2a4a}.sd-big{margin:0;font-size:26px;font-weight:700;color:#1b2a4a}.sd-steps{margin:0;padding-left:22px;font-size:17px;line-height:1.6;color:#1b2a4a}.sd-fx .kl{font-size:12px;color:#1f5fbf;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.dock-sum .wk-practice .kl{color:#1f5fbf}.dock-sum .pq{background:rgba(255,255,255,.6);border-color:#c9bda0}.dock-sum .pq-q,.dock-sum .pq-work span.mono{color:#1b2a4a}.dock-sum .pq-ans input{background:#fff;color:#1b2a4a;border-color:#1b2a4a}
+.dock-sum .link{color:#1f5fbf;background:none;border:0;font:inherit;text-decoration:underline;cursor:pointer}
+.plw.locked .mk,.plw.locked .plw-ob,.plw.locked .fw2{opacity:.92}
+/* compare plan impacts */
+.cmp2-cause{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:8px 12px;margin-bottom:10px}.cmp2-cause .kl{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}.cmp2-cause > span:not(.kl):not(.muted){font-size:15px;font-weight:700}
+.cmp2-t{width:100%;max-width:820px;border-collapse:separate;border-spacing:0 6px;font-size:16px}
+.cmp2-t thead th{padding:8px 12px;background:#0c2d63;color:#fff;font-size:13px;letter-spacing:.08em;text-transform:uppercase;text-align:left;border:1px solid var(--line)}.cmp2-t thead th.chg{text-align:center;color:var(--amber);background:#061a3e}
+.cmp2-t tbody th{padding:8px 12px;background:var(--pale);color:var(--ink);border:1px solid var(--pline);font-weight:600;text-align:left;width:46%}.cmp2-t tbody th b{float:right;font-size:18px;color:var(--ink)}
+.cmp2-t tbody td{padding:8px 12px;background:var(--pale);color:var(--ink);border:1px solid var(--pline);text-align:right}.cmp2-t tbody td b{font-size:18px;color:var(--ink)}
+.cmp2-t tbody td.chg{background:#061a3e;color:#fff;text-align:center;font-weight:800;font-size:17px;border-color:var(--line);width:120px}
+.cmp2-t td.chg.good{color:var(--green)}.cmp2-t td.chg.bad{color:var(--red)}
+.cmp2-t tr.pr th,.cmp2-t tr.pr td:not(.chg){background:#e3f7e9;border-color:#9fd9b1}
+.cmp2-act{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+.cmp2 p.small{margin:6px 0 0}
+/* the plan rail: five sub-steps fit a 768 screen */
+.stages{gap:6px;padding:8px}.subs .ri{padding:3px 6px}.subs .ri-t small{font-size:12px;line-height:1.2}.subs{margin:0 8px 8px 24px}
+/* Plan Impact beside the planner: every row in view at 768, the help as one row of three */
+.ws-plan .pi-r,.ws-workings .pi-r{padding:3px 0}.ws-plan .pi-r.tot,.ws-workings .pi-r.tot{padding:5px 8px;margin-top:3px}.ws-plan .pi-r.profit,.ws-workings .pi-r.profit{padding:7px 10px;margin-top:5px}
+.dk-tools.dk-row{flex-direction:row;gap:4px;padding:6px 10px}.dk-row .dk-help{flex:1;min-width:0;padding:5px 6px;gap:5px;justify-content:center}.dk-row .dk-help i{width:20px;height:20px;font-size:12px}.dk-row .dk-help span{flex:none}.dk-row .dk-help b{font-size:12.5px;white-space:nowrap}
+.ws-plan .pi-r .pi-l,.ws-workings .pi-r .pi-l{font-size:12.5px}.ws-plan .pi-r .pi-l small,.ws-workings .pi-r .pi-l small{font-size:11px}.ws-plan .pi-r .pi-v,.ws-workings .pi-r .pi-v{font-size:15px}.ws-plan .pi-r .pi-v small,.ws-workings .pi-r .pi-v small{font-size:11px}
 </style>
 </head>
 <body>
@@ -3293,7 +3488,7 @@ function saveSettings(){ try{ localStorage.setItem(SET_KEY, JSON.stringify(setti
 /* ---------- state ---------- */
 let S = null;
 function emptyRnd(){ return { flights:[], status:{}, why:[], reviews:[], tasks:[], open:null, brief:[], tables:{}, activeTable:null }; }
-function newState(){
+function newStateBase(){
   return { v:5, world:WORLD.id, phase:'setup', round:0, day:1, period:{ type:'setup', from:1, to:1, run:{kind:'one'} }, ledger:{ rev:[], cost:[], pax:[], seats:[] }, home: WORLD.homes[0].id, terminal:'t5',
     airline:{ name:'', code:'', flightCode:'', logo:null, c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
@@ -5806,7 +6001,7 @@ const NAV = [['overview', 'Overview'], ['plan', "Today's Plan"], ['network', 'Ne
 
 /* HQ modules come online as the airline grows; until then they are visible but locked. */
 const MODULES = { finance:{ name:'Finance', note:'Available after the first flight', short:'After first flight' }, network:{ name:'Network', note:'Available once a regular timetable is running (Day 1)', short:'From Day 1' }, fleet:{ name:'Fleet', note:'Available after the first full day of operations', short:'After Day 1' } };
-function moduleOn(id){
+function moduleOnBase(id){
   if(!MODULES[id]) return true;
   const h = S.history || [];
   if(id === 'finance') return h.length >= 1;
@@ -5945,7 +6140,7 @@ function stageSummary(id){
   if(id === 'prep'){ const fc = S.rnd.myForecast; return fc ? `${Object.keys(serviceCounts(sched)).map(x => money(fareOf(x))).join(' / ')} fare · profit ${money(fc.profit)}` : 'Fuel checked · Forecast complete'; }
   return '';
 }
-function planRail(){
+function planRailBase(){
   const idx = t => S.steps.findIndex(s => s.t === t), R0 = reach();
   const list = railStages().map(g => Object.assign({ ii: g.steps.map(idx).filter(i => i >= 0) }, g)).filter(g => g.ii.length);
   return `<aside class="ws-rail"><div class="ws-h">${railTitle()[0]}<small>${railTitle()[1]}</small></div><ol class="stages">${list.map((g, k) => {
@@ -5959,14 +6154,15 @@ function planRail(){
 function wsWrap(frame, o){
   o = o || {}; const t = step().t, hint = o.hint || STEP_HINT[t] || '';
   const bar = `<footer class="actbar"><span class="ab-i" aria-hidden="true">i</span><p class="ab-hint">${hint}</p><div class="ab-act">${backBtn()}${o.foot || ''}</div></footer>`;
-  if(o.wide){ UI.dockAt = S.si + ':' + S.day; return shell(`<div class="ws ws-${t} wide">${planRail()}<div class="ws-main">${frame}</div></div>`, bar); }   // Work it out: the whole width, the sums inline
-  return shell(`<div class="ws ws-${t} ${UI.dockShut ? 'dock-shut' : ''}">${planRail()}<div class="ws-main">${frame}</div>${dockHtml(o)}</div>`, bar);
+  const rail = planRail(), nr = rail ? '' : 'norail';   // no plan rail in week mode (p4w): the planner has the width
+  if(o.wide){ UI.dockAt = S.si + ':' + S.day; return shell(`<div class="ws ws-${t} wide ${nr}">${rail}<div class="ws-main">${frame}</div></div>`, bar); }   // Work it out: the whole width, the sums inline
+  return shell(`<div class="ws ws-${t} ${UI.dockShut ? 'dock-shut' : ''} ${nr}">${rail}<div class="ws-main">${frame}</div>${dockHtml(o)}</div>`, bar);
 }
 
 /* ---------- the dock ---------- */
 UI.dock = { mode:null, topic:null }; UI.dockShut = false; UI.railOpen = null; UI.justDone = null; UI.pad = { strokes:[], cur:null, erase:false }; UI.dockAt = -1;
 const DOCK_KIND = { context:'Context', calc:'Calculation', help:'Help', work:'Working space', archive:'Archive', fx:'Model' };
-function dockHtml(o){
+function dockHtmlBase(o){
   if(UI.dockAt !== S.si + ':' + S.day){ UI.dockAt = S.si + ':' + S.day; UI.dock = { mode:null, topic:null }; UI.railOpen = null; if(!o.calc) UI.justDone = null; }
   const t = o.calc || null, m = UI.dock.mode, c = o.context || {}; tidyActive(t);
   let kind = 'context', title = c.title || 'Context', body = c.html || '';
@@ -5981,7 +6177,7 @@ function dockHtml(o){
   return `<aside class="dock dock-${kind}" data-dock="${kind}" aria-label="${esc(DOCK_KIND[kind])}"><div class="dk-h"><span class="dk-tt"><span class="dk-kind">${DOCK_KIND[kind]}</span><b class="dk-t">${esc(title)}</b></span>${kind === 'context' ? '<button class="dk-x" id="dkShut" title="Hide the side panel" aria-label="Hide the side panel">›</button>' : '<button class="dk-x" id="dkClose" title="Close" aria-label="Close">✕</button>'}</div><div class="dk-b">${body}</div>${tools}</aside>`;
 }
 const HELP_SUB = { timing:'How turnaround times work', demand:'How ticket prices affect demand', fuel:'How the tank and fuel prices work', money:'Revenue, costs and profit', forecast:'What a forecast is' };
-function dockTools(o){
+function dockToolsBase(o){
   const row = (attr, ic, t, sub) => `<button class="dk-help" ${attr}><i>${ic}</i><span><b>${esc(t)}</b><small>${esc(sub)}</small></span><em>›</em></button>`;
   const b = (o.help || []).map(k => row(`data-help="${k}"`, '?', HELP[k], HELP_SUB[k] || ''));
   if(o.work) b.push(row('data-dkwork', '&#9998;', 'Working space', 'Pinned figures and a pad to work on'));
@@ -7458,7 +7654,7 @@ function railValue(t, i){
   if(t === 'intro'){ const I = introNow(); return I ? niVal(I.title) : ''; }
   return '';
 }
-function editStep(what){
+function editStepBase(what){
   const k = railKind();
   if(k === 'month' || k === 'year') return what === 'forecast' && k === 'year' ? 'yearPlan' : 'plans';
   if(S.phase === 'setup' || periodType() === 'day') return 'plan';   // the planning page carries the modelling tool; Cost your plan opens the workings page
@@ -9146,7 +9342,7 @@ function planLabel(pl){
 }
 function schedFrom2(c){ const out = []; plannerRoutes().forEach(id => { for(let k = 0; k < (c[id] || 0); k++) out.push(id); }); return out; }
 /* Change plan i (0 = the airline's plan, 9 = the test plan) for aircraft j. */
-function editPlan(i, what, a, d, j){
+function editPlanBase(i, what, a, d, j){
   j = j || 0; const base = i === 9 ? testPlan() : currentPlan(), next = normPlan(JSON.parse(JSON.stringify(base))), maxT = WORLD.maxTrips || 4;
   const x = next.fleet[j] || next.fleet[0], p = planeById(x.planeId), canFly = id => planeCanFly(p, routeById(id));
   const fare0 = id => routeById(id).basePrice;
@@ -10966,7 +11162,7 @@ function closeDay(){
 /* ---------- the sums (D54): Launch Day in one sitting, later Mondays what the rules ask, the Calendar's gatedCalc ---------- */
 TOOLS.push({ id:'range', name:'Range check', phase:2, def:[[2, 'calc']], build:false }); TOOL.range = TOOLS[TOOLS.length - 1]; HAND_TOOLS.push('range');
 TABLES.range1 = { title:'Range', rows:[{ id:'range', label:'Aircraft range', type:'given', unit:'km' }, { id:'km', label:'Route distance', type:'given', unit:'km' }, { id:'spare', label:'Spare range', type:'calc', unit:'km', op:'−', from:['range', 'km'], sentence:'{range} − {km} = {?spare}', tool:'range' }] };
-function decideHandSums(L, pl){
+function decideHandSumsWeek(L, pl){
   const out = decideHandSumsBase(L, pl); if(!weekMode()) return out;
   pl = normPlan(pl); const sk = skills(), first = id => !sk[id], g = gatedToday();
   if(S.phase === 'setup'){   // Launch Day: tickets at three fares (the first market), profit, snacks at £3 and £5, fuel after the guided example
@@ -10985,7 +11181,7 @@ function recordHandSums(L){ const H = S.rnd.handSums || {}; recordHandSumsBase(L
 
 /* the workings page's tables as stages: each stage is a table; the next opens when the one before is complete (and its choice made) */
 function launchFares(){ const r = routeById(S.market), F = r.fares || [r.basePrice], b = Math.max(0, F.indexOf(r.basePrice)), lo = clamp(b - 1, 0, Math.max(0, F.length - 3)); return F.slice(lo, lo + 3); }
-function wkStagesLaunch(pl){
+function wkStagesLaunchWeek(pl){
   const r = routeById(S.market), H = S.rnd.handSums || decideHandSums(planLines(pl), pl), picks = S.rnd.picks || {}, stages = [];
   const fareOpts = launchFares().map(f => ({ id:'f' + f, label:money(f), sub:`${paxWant(r, f)} want to fly`, plan:Object.assign({}, pl, { prices:Object.assign({}, pl.prices, { [r.id]:f }), onboard:'none' }), pick:{ fare:f }, word:`Fly at ${money(f)}`, kind:'fare' }));
   stages.push({ id:'fare', opts:fareOpts, rowIds:['pax_' + r.id, 'fare_' + r.id, 'tk_' + r.id], pick:'fare' });
@@ -11014,7 +11210,7 @@ function workTables(pl){
     done.push(st);
   }
   if(!cur){ const last = stages[stages.length - 1]; cur = last; opts = last.opts; picked = last.pick ? picks[last.pick] : last.opts[0].id; multi = !!last.pick; lines = stageTable(last, L0).lines; }
-  total += (stages.some(s => s.pick) ? stages.filter(s => s.pick).length : 0);
+  total = stages.reduce((t, s) => t + s.opts.length * (s.rowIds ? s.rowIds.filter(id => /^(tk_|snack$|fuel$|profit$)/.test(id)).length : 1), 0) + stages.filter(s => s.pick).length;   // every stage, built or not, plus the choices
   return { L0, opts, lines, picked, t:tables[tables.length - 1], tables, multi, total, pickKind, stage:cur, third: cur && cur.third };
 }
 function workoutPicked(opts, pl){ if(weekMode() && S.phase === 'setup'){ const W = workTables(pl); return W.picked; } if(opts.length > 1) return S.rnd.pick && opts.some(o => o.id === S.rnd.pick) ? S.rnd.pick : null; return opts[0].id; }
@@ -11069,6 +11265,410 @@ function ctxPlanImpact(pl, L){
   </div>`;
   const ac = ctxAircraft();
   return { title:'Plan Impact', html: html + ac.html.replace(/^[\s\S]*?(<section class="cx deps">)/, '$1') };
+}
+/* ==================================================================
+   THE WEEK 1 PLANNER (Airline Simulator UI Widget Design Brief v4.4, 12 Oct 2026): one connected airline workspace.
+   The intro explains the job (Heathrow is the hub, both routes are open: no market gate). The planner shows both markets
+   with their fare chips, the aircraft day as the schedule editor (each service is a block on the 06:00–22:00 timeline:
+   press it, move it with the buttons, the keyboard or a drag, swap its route, remove it; the demand sits directly above),
+   the on-board choice, the fuel widget (the timetable sets the litres; the pupil costs them) and Plan Impact on the
+   right, with ƒ on every figure the day's sums ask for. Work it out is a dock on the same page (structured working,
+   squared paper, the formula); a finished figure is written back to Plan Impact. Test an idea compares the current plan
+   with one test plan (what changed, the change in each measure, Use / Reset). The map is a button away.
+   Square geometry; pale work surfaces for the pupil's decisions and sums, dark panels for context and results.
+   Day-at-a-time play (the teacher's setting) keeps the earlier screens: every function here falls back when
+   weekMode() is off.
+   ================================================================== */
+const wkPlanner = () => typeof weekMode === 'function' && weekMode();
+const dayLike = () => !!S && (S.phase === 'setup' || !!(S.period && S.period.type === 'day'));
+const planW0 = R.plan, workW0 = R.workings;
+const PLW_SNAP = 10;   // minutes: the timeline's grid
+
+/* ---------- steps: the intro replaces the aircraft, market, demand and rotation screens; both routes are open ---------- */
+function newState(){
+  const s = newStateBase(); if(!wkPlanner()) return s;
+  s.steps = s.steps.filter(x => !['starter', 'market', 'demand', 'rotation'].includes(x.t));
+  const ci = s.steps.findIndex(x => x.t === 'chapter'); s.steps.splice(ci + 1, 0, { t:'brief1' });
+  s.market = WORLD.setupRoutes[0]; WORLD.setupRoutes.forEach(id => { const r = routeById(id); if(r) s.prices[id] = r.basePrice; });
+  s.seenModules = ['network'];   // the map is a button away from the start: no "Network online" notice
+  return s;
+}
+SHELL_STEPS.push('brief1'); WS_STEPS.push('workings');   // the sums are a dock on the planner, inside the workspace
+Object.assign(RAIL_LABEL, { brief1:'Your first week' }); Object.assign(SUB_DESC, { brief1:'The job and the starting position', plan:'Timetable, fares, on board and fuel' });
+Object.assign(STEP_HINT, { brief1:'This is your airline. Read the starting position, then open the Week 1 planner.',
+  plan:'Add services to the timeline and move them, choose the fares and what happens on board. Then press Cost your plan.', workings:'Work out each figure in the panel on the right. The plan stays in view; Back changes it.' });
+Object.assign(STEP_TODO, { plan:'' });
+const LAUNCH_WK = [Object.assign(stg('plan', ['brief1', 'plan']), { sub:'Build your first operating plan' }), stg('cost', ['workings']), stg('go', ['ready']), stg('review')];
+function railStages(){ if(wkPlanner() && S.phase === 'setup') return LAUNCH_WK; return STAGES[railKind()] || STAGES.day; }
+/* the map is a button away from the planner, from the first day */
+function moduleOn(id){ if(id === 'network' && wkPlanner() && S && S.fleet && S.fleet.length) return true; return moduleOnBase(id); }
+function editStep(what){ if(wkPlanner() && dayLike()) return what === 'forecast' ? 'workings' : 'plan'; return editStepBase(what); }
+/* no plan rail (the stage list down the left): it took room the planner needs; Back steps through the day's screens */
+function planRail(){ return wkPlanner() ? '' : planRailBase(); }
+/* the help under Plan Impact: one row of short names beside the planner */
+const HELP_SHORT = { timing:'Timing', demand:'Demand', fuel:'Fuel', money:'Money', forecast:'Forecast' };
+function dockTools(o){
+  if(!(wkPlanner() && dayLike() && ['plan', 'workings'].includes(step().t))) return dockToolsBase(o);
+  const b = (o.help || []).map(k => `<button class="dk-help" data-help="${k}" title="${esc(HELP[k] || '')}"><i>?</i><span><b>${esc(HELP_SHORT[k] || HELP[k] || k)}</b></span></button>`);
+  return b.length ? `<div class="dk-tools dk-row">${b.join('')}</div>` : '';
+}
+
+R.brief1 = () => {
+  const p = planeById('dhc6'), h = homeData(), rs = WORLD.setupRoutes.map(routeById), f = S.fleet[0];
+  const art = f ? aircraftArt(ensureIdentity(f), { cls:'pic' }) : planeSvg(p);
+  const steps = [['Build your timetable', 'Choose how many services to fly, where to and when. Make the best use of the aircraft\'s day.'],
+    ['Set fares', 'Choose a ticket price for each route. A higher fare earns more a ticket, but fewer people want to fly.'],
+    ['Choose on-board service', 'Sell snacks at £3 or £5, give them free, or sell none. It changes what the day earns.'],
+    ['Work out the key numbers', 'Tickets, profit, snacks and fuel by hand, on the same page as the plan. The model shows the rest.'],
+    ['Run the week', 'Confirm the plan and watch the airline fly Monday to Sunday. Then the review: what did the week earn?']];
+  screen().innerHTML = shell(`<div class="hp br1"><div class="br1-hero"><div><span class="kl">Launch Day · ${esc(dateLong(1))}</span><h1>Your first week in charge</h1><p>Build the timetable, set the fares, choose the on-board service, work out the key numbers, then run your first week of operations. Every decision changes demand, revenue, costs and profit.</p></div>${logoSvg(72)}</div>
+    <div class="br1-sit"><span class="kl">Your starting position</span><div class="br1-cards">
+      <div class="br1-c"><small>Home airport</small><b>${esc(h.name)} (${esc(h.code)})</b><span>Your airline is based at ${esc(h.code)}. The airport is open ${WORLD.dayStart} to ${WORLD.dayEnd}.</span></div>
+      <div class="br1-c ac"><small>Aircraft</small><b>1 × ${esc(p.name)}</b><span>${p.seats} seats · ${money(p.dayCost)} a day · ready for service</span>${art}</div>
+      ${rs.map(r => `<div class="br1-c"><small>Route · open</small><b>${esc(r.city)}${r.code ? ` (${esc(r.code)})` : ''}</b><span>${num(routeKm(r))} km · ${fmtDur(TIME.leg(p, r))} each way · available from day one</span></div>`).join('')}
+    </div></div>
+    <div class="br1-steps"><span class="kl">Your Week 1 plan: five simple steps</span><ol>${steps.map(([t, d], i) => `<li><i>${i + 1}</i><b>${t}</b><span>${d}</span></li>`).join('')}</ol></div>
+    <p class="br1-foot">Real decisions, real results. Cash to start: <b class="mono gold">${money(S.cash)}</b>, with ${money(WORLD.cashReserve || 0)} always kept back for emergencies.</p></div>`,
+    `<footer class="actbar"><span class="ab-i" aria-hidden="true">i</span><p class="ab-hint">${STEP_HINT.brief1}</p><div class="ab-act"><button class="btn primary big" id="nx">Open Week 1 Planner &#9654;</button></div></footer>`);
+  on('nx', () => { if(!S.fleet.length) buyPlane(planeById('dhc6')); const f0 = fleetOne(); S.rnd.featured = f0.uid; S.rnd.focusRoute = S.market; advance(); });
+};
+
+/* ---------- the plan: the route with most services is the market the launch sums work on; absolute edits ---------- */
+function launchMarket(pl){ pl = normPlan(pl); const all = pl.fleet.flatMap(x => x.sched); if(!all.length) return S.market || WORLD.setupRoutes[0];
+  const c = serviceCounts(all); let best = all[0]; Object.keys(c).forEach(id => { if(c[id] > c[best]) best = id; }); return WORLD.setupRoutes.includes(best) ? best : (S.market || WORLD.setupRoutes[0]); }
+/* depTo: a service moved to a time (the buttons, the keyboard and a drag all come here); fareTo: a fare chip */
+function editPlan(i, what, a, d, j){
+  if(what !== 'depTo' && what !== 'fareTo') return editPlanBase(i, what, a, d, j);
+  j = j || 0; const base = i === 9 ? testPlan() : currentPlan(), next = normPlan(JSON.parse(JSON.stringify(base))), x = next.fleet[j] || next.fleet[0], p = planeById(x.planeId);
+  if(what === 'fareTo'){ const r = routeById(a), F = r.fares || [r.basePrice]; if(!F.includes(+d)) return; next.prices[a] = +d; setPlan(i, next); return; }
+  const k = +a; if(!x.sched[k]) return;
+  if(!x.deps || x.deps.length !== x.sched.length) x.deps = actualDeps(next, j);
+  const r = routeById(x.sched[k]), trip = TIME.roundTrip(p, r), dep = clamp(Math.round(d / PLW_SNAP) * PLW_SNAP, dayStart(), dayEnd() - trip);
+  x.deps[k] = dep;
+  const order = x.sched.map((id, q) => ({ id, dep:x.deps[q], q })).sort((u, v) => u.dep - v.dep || u.q - v.q);   // the blocks keep time order
+  x.sched = order.map(o => o.id); x.deps = order.map(o => o.dep);
+  const actual = actualDeps(next, j), nk = order.findIndex(o => o.q === k); x.deps = actual;
+  if(!withPlan(next, () => fitsFor(x))){ toast("That timetable won't fit in the operating day."); return; }
+  if(actual[nk] !== dep) toast(`${r.city} leaves at ${fmtTime(actual[nk])}: the aircraft is not back until then.`);
+  UI.tlSel = { i, j, k:nk };
+  setPlan(i, next);
+}
+function moveService(i, j, k, dep){ editPlan(i, 'depTo', k, dep, j); }
+
+/* ---------- the day's sums: on Launch Day every route in the plan has its tickets worked out ---------- */
+function decideHandSums(L, pl){
+  const out = decideHandSumsWeek(L, pl); if(!(wkPlanner() && S.phase === 'setup')) return out;
+  const ids = [...new Set(normPlan(pl).fleet.flatMap(x => x.sched))].filter(id => id !== S.market);
+  out.revenue = { level:'calc', routes:[S.market].concat(ids) }; return out;
+}
+function wkStagesLaunch(pl){
+  const st = wkStagesLaunchWeek(pl); if(!wkPlanner()) return st;
+  const ids = [...new Set(normPlan(pl).fleet.flatMap(x => x.sched))].filter(id => id !== S.market);
+  ids.forEach((id, n) => { const r = routeById(id), fare = pl.prices[id] || r.basePrice;
+    st.splice(1 + n, 0, { id:'tk' + id, opts:[{ id:'a', label:`${r.city} at ${money(fare)}`, sub:`${paxWant(r, fare)} want to fly`, plan:Object.assign({}, pl, { onboard:'none' }), pick:null, word:'' }], rowIds:['pax_' + id, 'fare_' + id, 'tk_' + id] }); });
+  return st;
+}
+/* the figures still to work out today, by Plan Impact row: a sum keeps its figure hidden until it is done (and chosen) */
+const SUM_OF_ROW = id => /^tk_|^tk\d/.test(id) ? 'revenue' : id === 'snack' ? 'snacks' : id === 'fuel' ? 'fuelCost' : id === 'profit' ? 'profit' : id === 'stay' ? 'stay' : null;
+function hiddenFigs(pl, W){
+  const out = new Set(); if(!wkPlanner() || !dayLike()) return out;
+  if(S.rnd.costed && S.rnd.costed.key === planKey(pl)) return out;
+  try{ W = W || workTables(pl); }catch(e){ return out; }
+  const picks = S.rnd.picks || {};
+  if(S.phase === 'setup' && W.stage){   // Launch Day: the stages still to come (the tables are built one stage at a time)
+    const stages = wkStagesLaunch(pl), fig = s => s.id === 'fare' || /^tk/.test(s.id) ? 'revenue' : s.id === 'profit' ? 'profit' : s.id === 'snack' ? 'snacks' : s.id === 'fuel' ? 'fuelCost' : null;
+    const cur = W.tables.find(x => x.stage === W.stage.id), past = cur && tableComplete(cur) && (!W.stage.pick || picks[W.stage.pick]);
+    const at = past ? stages.length : Math.max(0, stages.findIndex(x => x.id === W.stage.id));
+    stages.slice(at).forEach(x => { const k = fig(x); if(k) out.add(k); });
+    if(!picks.fare){ out.add('revenue'); out.add('profit'); } if(stages.some(x => x.id === 'snack') && !picks.snack) out.add('snacks');
+    return out; }
+  wkCells(W.tables).forEach(x => { if(x.s === 'done') return; const k = SUM_OF_ROW(x.r.id); if(k) out.add(k); });
+  return out;
+}
+function openSum(kind){ S.rnd.sumWanted = kind; UI.sumMode = 'grid'; if(step().t === 'plan'){ UI.ideaOpen = false; resetEntry(); UI.justDone = null; advance(); } else render(); }
+
+/* ---------- the market widgets: city, facts, the fare chips with the people at each fare ---------- */
+function marketWidget(i, id, pl, L, o){
+  o = o || {}; const r = routeById(id), p = planeById(pl.fleet[0].planeId), fare = pl.prices[id] || r.basePrice, F = r.fares || [r.basePrice], n = serviceCounts(pl.fleet.flatMap(x => x.sched))[id] || 0, rival = competitorPrice(r);
+  const lock = o.lockFare === id && !o.pick, pickIds = o.pick ? Object.fromEntries(o.pick.map(x => [x.pick.fare, x.id])) : null;
+  const chip = f => { const on = f === fare; if(pickIds) return `<button class="fch ${on ? 'on' : ''} ${pickIds[f] !== undefined ? 'pick' : ''}" ${pickIds[f] !== undefined ? `data-wpick="${pickIds[f]}"` : 'disabled'}><b>${money(f)}</b><small>${paxWant(r, f)}</small></button>`;
+    return `<button class="fch ${on ? 'on' : ''}" data-pe="${i}|fareTo|${id}|${f}" ${lock || o.locked ? 'disabled' : ''} aria-pressed="${on}"><b>${money(f)}</b><small>${paxWant(r, f)}</small></button>`; };
+  const note = pickIds ? 'Choose the fare to fly at.' : lock ? 'Chosen after the ticket sums on the right.' : '';
+  return `<div class="mk pale ${n ? 'on' : ''}"><div class="mk-h">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b><span class="mk-code">${esc(r.code || '')}</span><span class="mk-n ${n ? '' : 'muted'}">${n ? plural(n, 'service') : 'no services yet'}</span></div>
+    <div class="mk-facts"><span>${esc(r.country || '')}</span><span>${fmtDur(TIME.leg(p, r))} each way</span><span>${num(routeKm(r))} km</span>${rival !== undefined ? `<span class="mk-rival">${esc(WORLD.rival)} ${money(rival)}</span>` : ''}</div>
+    <div class="mk-fares"><span class="label">Fare (one way) · people who want to fly</span><div class="mk-chips">${F.map(chip).join('')}</div>${note ? `<small class="muted">${note}</small>` : ''}</div></div>`;
+}
+function otherRoutesRow(i, pl, shown){
+  const more = plannerRoutes().filter(id => !shown.includes(id)); if(!more.length) return '';
+  return `<div class="mk-more pale"><span class="label">Other open routes</span>${more.map(id => { const r = routeById(id), can = pl.fleet.some(z => planeCanFly(planeById(z.planeId), r));
+    return `<button class="btn small" data-pe="${i}|open|${id}|0|0" ${can ? '' : 'disabled'} title="${can ? `Add a ${r.city} service` : `No aircraft you own can reach ${r.city} (${num(routeKm(r))} km)`}">${flagSvg(r.flag, 14)} ${esc(r.city)} <small>${money(r.basePrice)} · ${paxWant(r, r.basePrice)} want${can ? '' : ' · out of range'}</small></button>`; }).join('')}</div>`;
+}
+
+/* ---------- the aircraft day: the timeline is the schedule editor ---------- */
+function tlDemandRow(id){
+  const r = routeById(id), a = archOf(r) || {}, bandsOf = a.bands || {}, s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(2);
+  const bands = BANDS.map(b => { const [h0, h1] = bandHours(b); return [b, Math.max(s0, h0 * 60), Math.min(e0, h1 * 60)]; });
+  const dens = bands.map(([b, s, e]) => (bandsOf[b] || 0) / Math.max(1, (e - s) / 60)), mx = Math.max(1e-9, ...dens);
+  return `<div class="ad-dem"><span class="ad-lab">${flagSvg(r.flag, 14)} <b>${esc(r.city)}</b><small>who wants to fly when</small></span><div class="ds-bar">${bands.map(([b, s, e], k) => `<i class="ds-b ${b}" style="left:${X(s)}%;width:${(100 * (e - s) / span).toFixed(2)}%;--h:${Math.max(10, Math.round(100 * dens[k] / mx))}%" title="${esc(BAND_NAMES[b] || b)}"><span>${BAND_SHORT[b] || ''}</span></i>`).join('')}</div></div>`;
+}
+/* the routes in a steady order: the launch routes first (Paris, Dublin), then the others as they open */
+function plannerOrder(){ const all = plannerRoutes(), ord = id => { const k = WORLD.setupRoutes.indexOf(id); return k < 0 ? 99 : k; }; return all.slice().sort((a, b) => ord(a) - ord(b) || all.indexOf(a) - all.indexOf(b)); }
+function tlCode(r){ return String(r.code || r.airport || r.id).toUpperCase().slice(0, 3); }
+function timelineHtml(i, pl, L, o){
+  o = o || {}; pl = normPlan(pl); const s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(2), sel = UI.tlSel && UI.tlSel.i === i ? UI.tlSel : null, maxT = WORLD.maxTrips || 4;
+  const all = plannerOrder(), inPlan = all.filter(id => pl.fleet.some(x => x.sched.includes(id))), dem = inPlan.concat(all.filter(id => !inPlan.includes(id))).slice(0, 3);
+  const ticks = []; for(let h = Math.ceil(s0 / 60); h * 60 <= e0; h += 2) ticks.push(`<span style="left:${X(h * 60)}%">${pad(h)}:00</span>`);
+  const lanes = pl.fleet.map((x, j) => { const p = planeById(x.planeId), f = S.fleet.find(z => z.uid === x.uid), home = TIME.home(p), D = x.sched.length ? withPlan(pl, () => TIME.day(p, x.sched, undefined, x.deps || null)) : null;
+    const blocks = D ? D.trips.map((t, k) => { const r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === k) || {}, over = t.arr > e0, on = sel && sel.j === j && sel.k === k, ready = t.arr + home, full = s.seats && s.sold >= s.seats;
+      return `<i class="ad-ready" style="left:${X(t.arr)}%;width:${X(ready) - X(t.arr)}%" title="Ready again at ${fmtTime(ready)}"></i><button class="ad-blk ${on ? 'on' : ''} ${over ? 'over' : ''} ${full ? 'full' : ''}" data-tl="${i}|${j}|${k}" data-rc="${Math.max(0, plannerRoutes().indexOf(t.route)) % 4}" data-dep="${t.dep}" data-arr="${t.arr}" data-ready="${ready}" style="left:${X(t.dep)}%;width:${(X(t.arr) - X(t.dep)).toFixed(2)}%" ${o.locked ? 'disabled' : ''} aria-label="${esc(r.city)} ${fmtTime(t.dep)} to ${fmtTime(t.arr)}, ${s.sold || 0} of ${s.seats || p.seats} seats${over ? ', lands after the airport closes' : ''}" aria-pressed="${!!on}"><b>${fmtTime(t.dep)}</b><small>${tlCode(r)}${s.sold === undefined ? '' : ` · ${s.sold}/${s.seats}`}</small></button>`; }).join('') : '';
+    const adds = plannerOrder().map(id => { const r = routeById(id), can = planeCanFly(p, r); return `<button class="btn small ad-add" data-pe="${i}|add|${id}|0|${j}" ${can && x.sched.length < maxT && !o.locked ? '' : 'disabled'} title="${can ? `Add a ${r.city} service` : `${p.name}: range ${num(p.range)} km, ${r.city} is ${num(routeKm(r))} km away`}">+ ${esc(r.city)}</button>`; }).join('');
+    return `<div class="ad-ac"><div class="ad-lab ad-plane">${planeMini(f || p, 'ad-pic')}<span><b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><small>${esc(regOf(x.uid))} · ${p.seats} seats${f && f.terms ? ' · ' + termsWord(f.terms) : ''}</small></span></div>
+      <div class="ad-lane ${o.locked ? 'locked' : ''}" data-lane="${i}|${j}" data-s0="${s0}" data-span="${span}">${blocks || `<span class="ad-none muted">No services yet. Add one below.</span>`}</div>
+      <div class="ad-adds">${x.sched.length >= maxT ? `<span class="muted small">${maxT} services is the most one aircraft can fly in a day</span>` : adds}${!o.locked && sel && sel.j === j && x.sched[sel.k] ? tlSelHtml(i, pl, L, j, sel.k) : ''}</div></div>`; }).join('');
+  return `<div class="ad ${o.locked ? 'locked' : ''}">${dem.map(tlDemandRow).join('')}
+    <div class="ad-axis"><span class="ad-lab"></span><div class="ad-ticks">${ticks.join('')}</div></div>${lanes}</div>`;
+}
+function tlSelHtml(i, pl, L, j, k){
+  const x = pl.fleet[j], p = planeById(x.planeId), D = withPlan(pl, () => TIME.day(p, x.sched, undefined, x.deps || null)), t = D.trips[k], r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === k) || {}, many = plannerRoutes().filter(id => planeCanFly(p, routeById(id))).length > 1;
+  const a = `${i}|${j}|${k}`;
+  return `<span class="ad-selin"><span class="ad-sel-t"><span class="kl">Selected</span><b>${esc(r.city)} ${fmtTime(t.dep)}</b><small>back ${fmtTime(t.arr)} · ready ${fmtTime(t.arr + TIME.home(p))} · ${s.sold || 0}/${s.seats || p.seats} seats</small></span>
+    <button class="btn" data-tlm="${a}|-20" aria-label="20 minutes earlier">&#9664; Earlier</button><button class="btn" data-tlm="${a}|20" aria-label="20 minutes later">Later &#9654;</button>
+    <button class="btn" data-tlsw="${a}" ${many ? '' : 'disabled'}>Swap route</button><button class="btn danger" data-tlrm="${a}">Remove</button></span>`;
+}
+function tlControlsHtml(){ return ''; }
+let tlDrag = null;
+function bindTimeline(){
+  const root = screen(); if(!root.querySelector('.ad')) return;
+  root.querySelectorAll('[data-tlm]').forEach(b => b.onclick = () => { const [i, j, k, d] = b.getAttribute('data-tlm').split('|').map(Number), blk = root.querySelector(`[data-tl="${i}|${j}|${k}"]`); if(blk) moveService(i, j, k, +blk.dataset.dep + d); });
+  root.querySelectorAll('[data-tlsw]').forEach(b => b.onclick = () => { const [i, j, k] = b.getAttribute('data-tlsw').split('|').map(Number); editPlan(i, 'route', k, 1, j); });
+  root.querySelectorAll('[data-tlrm]').forEach(b => b.onclick = () => { const [i, j, k] = b.getAttribute('data-tlrm').split('|').map(Number); UI.tlSel = null; editPlan(i, 'del', k, 0, j); });
+  root.querySelectorAll('.ad-blk').forEach(b => {
+    const [i, j, k] = b.getAttribute('data-tl').split('|').map(Number), lane = b.closest('.ad-lane'), s0 = +lane.dataset.s0, span = +lane.dataset.span, locked = lane.classList.contains('locked');
+    b.onclick = e => { if(tlDrag && tlDrag.moved){ e.preventDefault(); return; } UI.tlSel = { i, j, k }; render(); };
+    if(locked) return;
+    b.onkeydown = e => { const dep = +b.dataset.dep;
+      if(e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ e.preventDefault(); UI.tlFocus = true; moveService(i, j, k, dep + (e.key === 'ArrowLeft' ? -1 : 1) * (e.shiftKey ? 60 : PLW_SNAP)); }
+      else if(e.key === 'Delete' || e.key === 'Backspace'){ e.preventDefault(); UI.tlSel = null; editPlan(i, 'del', k, 0, j); } };
+    b.onpointerdown = e => { if(e.button !== 0) return; const r = lane.getBoundingClientRect(), trip = +b.dataset.arr - +b.dataset.dep;
+      const others = [...lane.querySelectorAll('.ad-blk')].filter(x => x !== b).map(x => [+x.dataset.dep, +x.dataset.ready]);
+      tlDrag = { b, x0:e.clientX, w:r.width, dep0:+b.dataset.dep, trip, others, dm:0, moved:false, ghost:null, s0, span };
+      try{ b.setPointerCapture(e.pointerId); }catch(err){} };
+    b.onpointermove = e => { const g = tlDrag; if(!g || g.b !== b) return; const dx = e.clientX - g.x0; if(!g.moved && Math.abs(dx) < 4) return;
+      if(!g.ghost){ g.ghost = b.cloneNode(true); g.ghost.className = 'ad-blk ghost'; g.ghost.removeAttribute('data-tl'); lane.appendChild(g.ghost); }
+      g.moved = true; g.dm = Math.round(dx / g.w * g.span / PLW_SNAP) * PLW_SNAP;
+      const dep = clamp(g.dep0 + g.dm, g.s0, g.s0 + g.span - g.trip), px = (dep - g.dep0) / g.span * g.w, clash = g.others.some(([a, z]) => dep < z && dep + g.trip > a);
+      b.style.transform = `translateX(${px}px)`; b.classList.add('dragging'); b.classList.toggle('clash', clash); b.querySelector('b').textContent = fmtTime(dep); };
+    b.onpointerup = b.onpointercancel = e => { const g = tlDrag; if(!g || g.b !== b) return; try{ b.releasePointerCapture(e.pointerId); }catch(err){}
+      if(g.ghost) g.ghost.remove(); b.style.transform = ''; b.classList.remove('dragging', 'clash');
+      if(g.moved && g.dm){ UI.tlSel = { i, j, k }; moveService(i, j, k, g.dep0 + g.dm); setTimeout(() => { tlDrag = null; }, 0); } else { if(g.moved){ setTimeout(() => { tlDrag = null; }, 0); render(); } else tlDrag = null; } };
+  });
+  if(UI.tlFocus){ UI.tlFocus = false; const el = root.querySelector('.ad-blk.on'); if(el) setTimeout(() => { try{ el.focus(); }catch(e){} }, 20); }
+}
+
+/* ---------- on board ---------- */
+function onboardTiles(i, pl, o){
+  o = o || {}; if(!snacksOn()) return '';
+  const cur = pl.onboard || 'none', pickIds = o.pick ? Object.fromEntries(o.pick.map(x => [x.pick.onboard, x.id])) : null;
+  const tiles = Object.keys(ONBOARD).map(k => { const on = cur === k; if(pickIds) return `<button class="obc ${on ? 'on' : ''} ${pickIds[k] ? 'pick' : ''}" ${pickIds[k] ? `data-wpick="${pickIds[k]}"` : 'disabled'}><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`;
+    return `<button class="obc ${on ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${on}" ${o.lock || o.locked ? 'disabled' : ''} title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`; }).join('');
+  const note = pickIds ? 'Choose what happens on board.' : o.lock ? 'Worked out on the right: snacks are chosen once their sums are done.' : '';
+  return `<section class="pnl pale plw-ob"><div class="ob-h"><h3>On board</h3><span class="muted">${note || 'What the crew sell, or give'}</span></div><div class="obc-grid">${tiles}</div></section>`;
+}
+
+/* ---------- fuel: the timetable sets the litres, the pupil costs them; Monday's order is what the week needs ---------- */
+function autoFuelOrder(pl, L){
+  if(!wkPlanner() || !dayLike() || S.phase === 'round' && S.day >= (WORLD.weekFrom || 22)) return null;
+  const from = S.day || 1, price = weekFuelPrice(from), paidDays = paidDaysThisWeek(from), lot = WORLD.fuelLot || 500;
+  const need = Math.max(0, (L.fuelL || 0) * paidDays - S.fuel), space = Math.floor(tankSpace() / lot) * lot, afford = Math.floor(Math.max(0, S.cash - (WORLD.cashReserve || 0)) / (lot * price)) * lot;
+  const litres = need > 0 ? Math.max(0, Math.min(ceilLot(need), space, afford)) : 0;
+  S.rnd.fuelOrder = litres ? { litres, price, total:r2(litres * price), auto:true } : null; return S.rnd.fuelOrder;
+}
+function fuelWidgetHtml(pl, L, o){
+  o = o || {}; if(!S.fleet.length) return '';
+  pl = normPlan(pl); const from = S.day || 1, paid = fuelPaid(), price = weekFuelPrice(from), paidDays = paidDaysThisWeek(from), need = L.fuelL || 0, cap = tankCapacity(), pct = clamp(100 * need / cap, 0, 100);
+  const order = o.test ? S.rnd.fuelOrder : autoFuelOrder(pl, L);
+  const by = {}; (L.services || []).forEach(s => { const x = pl.fleet.find(z => z.uid === s.uid), l = x ? fuelForTrip(planeById(x.planeId), routeById(s.route)) : 0, key = s.route + '|' + l; if(!by[key]) by[key] = { route:s.route, each:l, n:0 }; by[key].n++; });
+  const rows = Object.values(by).map(x => Object.assign(x, { tot:x.each * x.n }));
+  let firstPaid = from; for(let d = from; d < from + 7; d++){ if(!fuelFreeDay(d)){ firstPaid = d; break; } }
+  const hid = o.hidden && o.hidden.has('fuelCost'), cost = Math.round(need * price);
+  const ticks = [0, .5, 1].map(f => `<span style="bottom:${f * 100}%">${num(Math.round(cap * f))}</span>`).join('');
+  return `<section class="pnl pale fw2"><div class="fw2-g">
+    <div class="fw2-gauge"><span class="kl">Fuel today</span><div class="fw2-tankw"><div class="fw2-tank" role="img" aria-label="${num(need)} litres of a ${num(cap)} litre tank"><i style="height:${pct}%"></i></div><div class="fw2-ticks">${ticks}</div></div><b class="mono">${num(need)} L</b><small>this timetable</small></div>
+    <div class="fw2-svcs"><span class="kl">Where the fuel goes</span>${rows.map(x => `<div class="fw2-s"><span>${esc(routeById(x.route).city)} ×${x.n}<small>${num(x.each)} L a service</small></span><b class="mono">${num(x.tot)} L</b></div>`).join('') || '<p class="muted small">No services yet.</p>'}</div>
+    <div class="fw2-cost"><span class="kl">Cost it</span><div class="fw2-row"><span>Price a litre${paid ? '' : `<small>from ${dateShort(firstPaid)}</small>`}</span><b class="mono">${priceL(price)}</b></div>
+      <div class="fw2-row tot"><span>${num(need)} L × ${priceL(price)}</span>${hid ? sumBtn('fuelCost') : `<b class="mono gold">${money(cost)}</b>`}</div>
+      ${paid ? '' : '<p class="small muted">Today the launch deal supplies the fuel free.</p>'}</div>
+    <div class="fw2-week"><span class="kl">If this plan runs all week</span><div class="fw2-row"><span>Fuel burned, 7 days</span><b class="mono">${num(need * 7)} L</b></div><div class="fw2-row"><span>Fuel cost, ${paidDays} paid day${paidDays === 1 ? '' : 's'}</span><b class="mono gold">${money(Math.round(need * paidDays * price))}</b></div>
+      <p class="small">${order ? `Monday's order: ${num(order.litres)} L at ${priceL(order.price)} = ${money(order.total)}${order.litres < need * paidDays - S.fuel ? ', then day by day' : ''}.` : need ? 'The tank already covers the week.' : ''}</p></div></div></section>`;
+}
+function sumBtn(kind){ return `<button class="fx-sum" data-sum="${kind}" title="Work it out by hand"><i>ƒ</i> work it out</button>`; }
+function fuelPanelHtml(){ return ''; }
+function bindFuelPanel(){}
+
+/* ---------- Plan Impact: the standing plan's figures for one day, live; the sums' figures appear as they are done ---------- */
+function ctxPlanImpact(pl, L, o){
+  o = o || {}; pl = pl || currentPlan(); L = L || planLines(pl); const v = L.v, hid = o.hidden || hiddenFigs(pl);
+  const seats = L.seats || 0, pax = L.pax || 0, empty = L.empty || 0, pct = seats ? Math.round(100 * pax / seats) : 0, paid = fuelPaid(), litres = v.fuelL || 0, ppl = paid ? (v.ppl || fuelPrice()) : 0;
+  const prev = UI.piPrev || {}, cur = {}, flash = !!o.flash;
+  const val = (key, main, sub, cls) => { cur[key] = main; const chg = flash && prev[key] !== undefined && prev[key] !== main; return `<span class="pi-v ${cls || ''} ${chg ? 'chg' : ''}">${main}${sub ? `<small>${sub}</small>` : ''}</span>`; };
+  const row = (ic, label, sub, value, cls) => `<div class="pi-r ${cls || ''}">${ICON[ic] || ''}<span class="pi-l">${label}${sub ? `<small>${sub}</small>` : ''}</span>${value}</div>`;
+  const dayCost = pl.fleet.reduce((t, x) => { const f = S.fleet.find(z => z.uid === x.uid); return t + (f ? dayCostOf(f) : 0); }, 0), other = (v.run || 0) + (v.term || 0) + dayCost + (v.stock || 0) + (v.event || 0);
+  const html = `<p class="dk-sub">Live results for this plan, per day</p><div class="pi">
+    ${row('pax', 'Projected passengers', '', val('pax', num(pax), seats ? `${pct}% of seats` : ''))}
+    ${row('seat', 'Seats available', '', val('seats', num(seats), pl.fleet.filter(x => x.sched.length).map(x => `${x.sched.length} × ${planeById(x.planeId).seats}`).join(' + ')))}
+    ${row('seat', 'Empty seats', '', val('empty', num(empty), seats ? `${100 - pct}%` : ''))}
+    ${row('pax', 'Turned away', 'wanted to fly, no seat', val('nos', num(L.nos || 0), '', L.nos ? 'warn' : ''))}
+    ${row('cash', 'Ticket revenue', '', hid.has('revenue') ? sumBtn('revenue') : val('rev', money((v.rev || 0) - (v.snack || 0)), pax ? `${num(pax)} × fares` : ''))}
+    ${snacksOn() ? row('cash', 'Cabin sales', '', hid.has('snacks') ? sumBtn('snacks') : val('snack', money(v.snack || 0), v.buyers ? `${num(v.buyers)} × ${money(v.snackP)}` : '')) : ''}
+    ${row('cash', 'Total revenue', 'tickets + cabin sales', hid.has('revenue') || hid.has('snacks') ? `<span class="pi-v todo">after the sums</span>` : val('revT', money(v.rev || 0)), 'tot')}
+    ${row('fuel', 'Fuel litres needed', '', val('fuelL', `${num(litres)} L`, L.services && L.services.length ? `${num(Math.round(litres / L.services.length))} L a service` : ''))}
+    ${paid ? row('fuel', 'Fuel cost', `at ${priceL(ppl)}`, hid.has('fuelCost') ? sumBtn('fuelCost') : val('fuel', money(v.fuel || 0), `${num(litres)} L × ${priceL(ppl)}`)) : row('fuel', 'Fuel', '', val('fuel', 'free', 'the launch deal'))}
+    ${row('fleet', 'Other costs', 'aircraft day, flying, airport', val('other', money(other), ''))}
+    ${row('cash', 'Total costs', 'fuel + other costs', hid.has('fuelCost') ? `<span class="pi-v todo">after the sums</span>` : val('cost', money(v.cost || 0)), 'tot')}
+    ${row('profit', 'Projected profit', 'per day', hid.has('profit') ? sumBtn('profit') : hid.has('revenue') || hid.has('fuelCost') ? `<span class="pi-v todo">after the sums</span>` : val('profit', money(v.profit || 0), seats ? `margin ${v.rev ? Math.round(100 * v.profit / v.rev) : 0}%` : '', v.profit < 0 ? 'neg' : ''), 'profit')}
+  </div>`;
+  if(flash) UI.piPrev = cur;
+  return { title:'Plan Impact', html };
+}
+
+/* ---------- test an idea: one test plan against the current plan ---------- */
+function planDiff(a, b){
+  a = normPlan(a); b = normPlan(b); const out = [], ids = [...new Set(a.fleet.flatMap(x => x.sched).concat(b.fleet.flatMap(x => x.sched)))], words = ['', 'one', 'two', 'three', 'four'];
+  ids.forEach(id => { const r = routeById(id), fa = a.prices[id] || r.basePrice, fb = b.prices[id] || r.basePrice; if(fa !== fb && b.fleet.some(x => x.sched.includes(id))) out.push(`${r.city} fare ${money(fa)} → ${money(fb)}`); });
+  ids.forEach(id => { const r = routeById(id), na = a.fleet.flatMap(x => x.sched).filter(x => x === id).length, nb = b.fleet.flatMap(x => x.sched).filter(x => x === id).length;
+    if(nb > na) out.push(`+ ${words[nb - na] || nb - na} ${r.city} service${nb - na === 1 ? '' : 's'}`); else if(nb < na) out.push(`− ${words[na - nb] || na - nb} ${r.city} service${na - nb === 1 ? '' : 's'}`); });
+  a.fleet.forEach((x, j) => { const y = b.fleet[j]; if(!y) return; const da = actualDeps(a, j), db = actualDeps(b, j);
+    ids.forEach(id => { const ta = x.sched.map((s, k) => s === id ? da[k] : null).filter(t => t !== null), tb = y.sched.map((s, k) => s === id ? db[k] : null).filter(t => t !== null);
+      if(ta.length === tb.length) ta.forEach((t, q) => { if(t !== tb[q]) out.push(`${routeById(id).city} ${fmtTime(t)} → ${fmtTime(tb[q])}`); }); }); });
+  if((a.onboard || 'none') !== (b.onboard || 'none')) out.push(`On board: ${ONBOARD[a.onboard || 'none'].label} → ${ONBOARD[b.onboard || 'none'].label}`);
+  return out;
+}
+function compareHtml(pl, L, test, Lt){
+  const fmt = (u, x) => u === '£' ? money(Math.round(x)) : num(Math.round(x));
+  const rows = [['Passengers', L.pax, Lt.pax, 'n', 'up'], ['Empty seats', L.empty, Lt.empty, 'n', 'down'], ['Turned away', L.nos, Lt.nos, 'n', 'down'], ['Ticket revenue', L.v.rev - L.v.snack, Lt.v.rev - Lt.v.snack, '£', 'up']]
+    .concat(snacksOn() ? [['Cabin sales', L.v.snack, Lt.v.snack, '£', 'up']] : []).concat([['Total costs', L.v.cost, Lt.v.cost, '£', 'down'], ['Projected profit', L.v.profit, Lt.v.profit, '£', 'up', 'pr']]);
+  const same = planKey(pl) === planKey(test), causes = planDiff(pl, test);
+  return `<section class="pnl cmp2"><div class="pnl-h"><h3>Compare plan impacts</h3><span class="muted">What changed because of your idea?</span></div>
+    <div class="cmp2-cause pale"><span class="kl">Changed</span>${causes.length ? causes.map(c => `<span>${esc(c)}</span>`).join('') : '<span class="muted">Nothing yet: change the test plan above.</span>'}</div>
+    <table class="cmp2-t"><thead><tr><th>Your current plan</th><th class="chg">Change</th><th>Test plan</th></tr></thead><tbody>${rows.map(([label, a, b, u, good, cls]) => { const d = Math.round(b) - Math.round(a), col = d === 0 ? '' : ((d > 0) === (good === 'up')) ? 'good' : 'bad';
+      return `<tr class="${cls || ''}"><th><span>${label}</span><b class="mono">${fmt(u, a)}</b></th><td class="chg ${col}">${d ? (d > 0 ? '+' : '−') + fmt(u, Math.abs(d)) : '—'}</td><td><b class="mono">${fmt(u, b)}</b></td></tr>`; }).join('')}</tbody></table>
+    <p class="small muted">Colour follows the measure: more passengers, revenue and profit are good; more empty seats, people turned away and costs are bad.</p>
+    <div class="cmp2-act"><button class="btn primary big" data-ftest ${same ? 'disabled' : ''}>Use test plan</button><button class="btn big" data-treset ${same ? 'disabled' : ''}>Reset</button><button class="btn big" id="ideaShut">Close</button></div></section>`;
+}
+
+/* ---------- the planner page (the plan step) and the same page with the sums open (the workings step) ---------- */
+R.plan = st => { if(!wkPlanner() || !dayLike()) return planW0(st); renderPlanner(st, false); };
+R.workings = st => { if(!wkPlanner() || !dayLike()) return workW0(st); renderPlanner(st, true); };
+function renderPlanner(st, summing){
+  const setup = S.phase === 'setup', pl = currentPlan(); if(setup) S.market = launchMarket(pl);
+  const L = planLines(pl), test = !summing && UI.ideaOpen ? testPlan() : null, Lt = test ? planLines(test) : null, costed = !!(S.rnd.costed && S.rnd.costed.key === planKey(pl));
+  let W = null; try{ W = workTables(pl); }catch(e){ W = null; }
+  const hid = hiddenFigs(pl, W), picks = S.rnd.picks || {}, hasSnackStage = !!(W && W.tables.some(t => t.stage === 'snack')), hasFareStage = !!(W && W.tables.some(t => t.stage === 'fare'));
+  const pickNow = summing && W && W.multi && !W.picked && !wkNext(W.tables) && !(UI.justDone && W.tables.find(x => x.id === UI.justDone.table)) ? { kind:W.pickKind, opts:W.opts } : null;
+  const lockFare = setup && hasFareStage && !picks.fare ? S.market : null, lockOb = setup && hasSnackStage && !picks.snack;
+  const i = test ? 9 : 0, P = test || pl, LL = test ? Lt : L, locked = summing, sched = pl.fleet.flatMap(x => x.sched);
+  const shownRoutes = (() => { const all = plannerOrder(), inPlan = all.filter(id => P.fleet.some(x => x.sched.includes(id))); return all.length <= 2 ? all : inPlan.concat(all.filter(id => !inPlan.includes(id))).slice(0, Math.max(2, inPlan.length)); })();
+  const markets = `<div class="plw-mk n${Math.min(3, shownRoutes.length)} ${locked ? 'compact' : ''}">${shownRoutes.map(id => marketWidget(i, id, P, LL, { lockFare: test ? null : lockFare, pick: pickNow && pickNow.kind === 'fare' ? pickNow.opts : null, locked })).join('')}</div>${locked ? '' : otherRoutesRow(i, P, shownRoutes)}`;
+  const strip = locked ? `<div class="plw-strip pale"><span><small>On board</small><b>${esc(ONBOARD[pl.onboard || 'none'] ? ONBOARD[pl.onboard || 'none'].label : 'Nothing on board')}</b></span><span><small>Fuel a day</small><b>${num(L.fuelL || 0)} L</b></span><span><small>Price a litre</small><b>${priceL(weekFuelPrice(S.day || 1))}</b></span><span><small>Aircraft a day</small><b>${money(pl.fleet.reduce((t, x) => { const f = S.fleet.find(z => z.uid === x.uid); return t + (f ? dayCostOf(f) : 0); }, 0))}</b></span></div>` : '';
+  const head = test ? `<div class="plw-idea pale"><span class="kl">Test an idea</span><b>Change the test plan below. The model costs it straight away: no sums.</b><span class="muted small">Your current plan is kept until you press Use test plan.</span></div>` : '';
+  const tools = !test && !locked ? `<span class="plw-tools">${!setup || costed ? '<button class="btn small" id="ideaOpen" title="A test plan the model costs: no sums">Test an idea</button>' : ''}<button class="btn small" id="mapOpen" title="The network map: where the routes go">Network map &rsaquo;</button></span>` : '';
+  const main = `<div class="plw ${locked ? 'locked' : ''} ${test ? 'testing' : ''}">${head}${markets}
+    ${test ? compareHtml(pl, L, test, Lt) : ''}
+    <section class="pnl pale plw-tl"><div class="pnl-h"><h3>Aircraft day and timetable</h3><span class="muted tl-hint">${locked ? `${WORLD.dayStart}–${WORLD.dayEnd} · each block is one service` : 'press a block to move, swap or remove it'}</span>${tools}</div>${timelineHtml(i, P, LL, { locked })}</section>
+    ${locked ? (pickNow && pickNow.kind === 'snack' ? onboardTiles(i, P, { pick: pickNow.opts, locked }) : strip) : onboardTiles(i, P, { lock: test ? false : lockOb, locked }) + fuelWidgetHtml(P, LL, { hidden: test ? new Set() : hid, test:!!test })}</div>`;
+  // the action bar
+  let foot;
+  if(summing){ const allDone = W && !wkNext(W.tables) && (!W.multi || !!W.picked) && !(UI.justDone && W.tables.find(x => x.id === UI.justDone.table)), none = W && !wkCells(W.tables).length;
+    if(none){ finishSums(); return; }
+    foot = allDone ? '<button class="btn primary big" id="nx">Ready to fly &#9654;</button>' : '<button class="btn primary big" disabled>Work out the figures on the right &#9654;</button>'; }
+  else foot = `<button class="btn primary big" id="nx" ${sched.length && L.fits ? '' : 'disabled'}>${!sched.length ? 'Add some services' : !L.fits ? "Doesn't fit in the day" : costed ? goLabel('Ready to fly') : goLabel('Cost your plan')} &#9654;</button>`;
+  screen().innerHTML = taskFrame({ question: setup ? 'Build your first operating plan' : S.fleet.length > 1 ? 'What will your airline do this week?' : 'What will your airline do this week?', work:false,
+    story:[],
+    help:['timing', 'demand', 'fuel'], context: ctxPlanImpact(pl, L, { hidden:hid, flash:true }), todo:'', sum: summing ? { W, st } : null,
+    say: setup ? 'Build your first operating plan. Add services to the timetable, choose the fares, then cost your plan.' : 'Plan the week: the timetable, the fares and what happens on board, then cost your plan.',
+    main, foot });
+  bindPlanEditor(); bindTimeline();
+  screen().querySelectorAll('[data-sum]').forEach(b => b.onclick = () => openSum(b.getAttribute('data-sum')));
+  on('ideaOpen', () => { UI.ideaOpen = true; UI.tlSel = null; render(); }); on('ideaShut', () => { UI.ideaOpen = false; UI.tlSel = null; render(); });
+  on('mapOpen', () => { UI.view = 'network'; render(); });
+  screen().querySelectorAll('[data-treset]').forEach(b => b.onclick = () => { S.rnd.test = null; UI.tlSel = null; render(); });
+  screen().querySelectorAll('[data-ftest]').forEach(b => b.onclick = () => { const t = testPlan(); if(planKey(t) !== planKey(currentPlan())) applyPlan(t); S.rnd.test = null; UI.ideaOpen = false; UI.tlSel = null; render(); });
+  if(summing){ bindSumDock(W, st); on('nx', finishSums); }
+  else on('nx', () => { S.rnd.focusRoute = schedOf(fleetOne())[0] || S.market; UI.ideaOpen = false; UI.tlSel = null; resetEntry(); UI.justDone = null; advance(); });
+}
+function finishSums(){
+  const Lp = planLines(currentPlan()), W = workTables(currentPlan());
+  S.rnd.costed = { label:planLabel(currentPlan()), key:planKey(currentPlan()), v:Object.assign({}, Lp.v) }; S.rnd.costedTools = newIdeas(W.tables);
+  if(typeof recordHandSums === 'function' && S.rnd.handSums) recordHandSums(Lp);
+  S.rnd.myForecast = forecastOf(Lp, 'Your plan', currentPlan()); S.rnd.archive = { costed:{ label:S.rnd.costed.label, profit:Lp.v.profit }, ideas:[], flown:{ name:'Your plan', label:S.rnd.costed.label, profit:Lp.v.profit } }; S.rnd.test = null;
+  resetEntry(); UI.justDone = null; delete S.rnd.sumWanted; advance();
+}
+
+/* ---------- the Maths Dock: the sums one at a time beside the plan ---------- */
+function dockHtml(o){ if(o && o.sum) return sumDockHtml(o.sum); return dockHtmlBase(o); }
+function sumState(W, st){
+  const { tables, opts, multi, picked } = W, H = S.rnd.handSums || {}, setup = S.phase === 'setup', cells = wkCells(tables);
+  const tut = !!(H.fuelCost && !skills().fuelCost && !st.tut && (!W.stage || W.stage.id === 'fuel'));
+  let nx = wkNext(tables);
+  if(nx && S.rnd.sumWanted){ const want = S.rnd.sumWanted, cur = setup && W.stage ? tables.find(t => t.stage === W.stage.id) : nx.t;   // ƒ from a figure: that figure first, within the sums now open
+    if(cur){ const rows = tRows(cur); for(let ri = 0; ri < rows.length && want; ri++) for(const c of cur.cols) if(SUM_OF_ROW(rows[ri].id) === want && cellState(cur, c, ri) === 'enter'){ nx = { t:cur, cell:{ col:c.id, row:rows[ri].id } }; break; } }
+    delete S.rnd.sumWanted; if(nx) nx.t.active = nx.cell; }
+  if(nx){ nx.t.active = nx.t.active && cellState(nx.t, nx.t.cols.find(c => c.id === nx.t.active.col), tRows(nx.t).findIndex(r => r.id === nx.t.active.row)) === 'enter' ? nx.t.active : nx.cell; S.rnd.activeTable = nx.t.id; }
+  tables.forEach(x => { if(x !== (nx && nx.t)) x.active = null; });
+  const act = nx ? nx.t : null, col = act && act.cols.find(c => c.id === act.active.col), row = act && tRows(act).find(r => r.id === act.active.row);
+  const justDone = UI.justDone && tables.find(x => x.id === UI.justDone.table) || null;
+  const needPick = multi && !picked && !wkNext(tables) && !justDone, allDone = !wkNext(tables) && (!multi || !!picked) && !justDone;
+  const n = W.total || (cells.length + (setup && !picked ? 1 : 0)), k = Math.min(n, cells.filter(x => x.s === 'done').length + 1), pickFare = W.pickKind ? W.pickKind === 'fare' : setup;
+  return { tables, opts, multi, picked, cells, tut, act, col, row, justDone, needPick, allDone, n, k, pickFare, setup };
+}
+function sumAnswerLine(act, col, row){ const unit = row.unit === '£' ? '£' : '';
+  return `<div class="sd-ans"><span class="answer"><span class="unit">${unit}</span><input id="cellAns" class="mono" inputmode="decimal" autocomplete="off" value="${esc(UI.entry)}" aria-label="${esc(rowLabel(act, row))}"></span><button class="btn primary" id="cellCheck">Check &#10003;</button></div><div class="msg wk-msg ${UI.ok ? 'ok' : ''}" id="ftMsg" role="status">${esc(UI.msg || '')}</div>`; }
+function sumFormulaHtml(act, col, row){
+  const ops = stackRows(act, col, row), A = ops[0], B = ops[1], op = (B && B.op) || row.op || '×', ua = operandUnit(act, A.id), ub = operandUnit(act, B.id), a = operandValue(act, col, A.id), b = operandValue(act, col, B.id);
+  const method = wkMethod(a, b, op, ua, ub, row.unit), lines = method.map((m, q) => q === method.length - 1 ? m.replace(/=\s*[^=]*$/, '= ?') : m);
+  return `<div class="sd-fx"><p class="sd-q">${esc(rowLabel(act, row))} = ${esc(A.label)} ${esc(op)} ${esc(B.label)}</p><p class="sd-big mono">${A.value} ${esc(op)} ${B.value} = ?</p>
+    <span class="kl">How the model works it out</span><ol class="sd-steps">${lines.map(l => `<li class="mono">${esc(l)}</li>`).join('')}</ol><p class="small muted">The last line is yours. Type the answer below.</p>${sumAnswerLine(act, col, row)}</div>`;
+}
+function sumDockHtml(o){
+  const { W, st } = o, Z = sumState(W, st), { act, col, row, tables, opts } = Z, mode = Z.act && !Z.justDone && !Z.tut ? (UI.sumMode || 'grid') : 'grid';
+  const title = Z.tut ? 'A worked example' : Z.justDone ? 'Figure done' : Z.act ? (TOOL[row.tool] ? TOOL[row.tool].name : rowLabel(act, row)) : Z.needPick ? (Z.pickFare ? 'Choose the fare' : 'Choose what happens on board') : 'Your workings today';
+  const tabs = Z.act && !Z.justDone && !Z.tut ? `<div class="sd-tabs" role="tablist">${[['grid', 'Structured working'], ['pad', 'Squared paper'], ['fx', 'Formula']].map(([m, l]) => `<button role="tab" class="${mode === m ? 'on' : ''}" data-summode="${m}" aria-selected="${mode === m}">${l}</button>`).join('')}</div>` : '';
+  let body = '';
+  if(Z.tut) body = wkTutorial(st);
+  else if(Z.justDone){ const jt = Z.justDone, [cid, rid] = UI.justDone.cell.split('|'), jc = jt.cols.find(c => c.id === cid), jr = tRows(jt).find(r => r.id === rid);
+    body = `<div class="wk-sum"><div class="wk-head"><span class="kl">${esc(jc.label)}</span><h2>&#10003; ${esc(rowLabel(jt, jr))}: ${fmtVal(jr.unit, jc.values[rid])}</h2></div>${wkGrid(jt, jc, jr, { done:true, show:true })}
+      <p class="sd-written">${wkNext(tables) || Z.multi && !Z.picked ? 'Written into Plan Impact.' : 'Written into Plan Impact. That is every figure for today.'}</p><div class="wk-act"><button class="btn primary big" id="wkNext">${wkNext(tables) ? 'Next sum' : Z.multi && !Z.picked ? 'Choose' : 'Finished'} &#9654;</button></div></div>`; }
+  else if(Z.act){ const q = TOOL[row.tool] ? TOOL[row.tool].name : rowLabel(act, row), rl = rowLabel(act, row), head = q.toLowerCase() === rl.toLowerCase() ? q : `${q}: ${rl.toLowerCase()}`;
+    const kick = `<div class="wk-head"><span class="kl">${esc(col.label)}${col.sub ? ' · ' + esc(col.sub) : ''}</span><h2>${esc(head)}</h2></div>`;
+    if(mode === 'pad') body = `<div class="wk-sum">${kick}<div class="wo-pad">${workPadHtml(act)}</div>${sumAnswerLine(act, col, row)}</div>`;
+    else if(mode === 'fx') body = `<div class="wk-sum">${kick}${sumFormulaHtml(act, col, row)}</div>`;
+    else body = `<div class="wk-sum">${kick}${wkGrid(act, col, row, {})}
+      <div class="wk-act"><button class="btn primary big" id="cellCheck">Check &#10003;</button><button class="btn" id="wkPad" aria-pressed="${!!st.pad}">${st.pad ? 'Hide the number pad' : 'Number pad'}</button>${(UI.tries || 0) >= 3 ? '<button class="link" id="calcShow">Show me</button>' : ''}</div>
+      <div class="msg wk-msg ${UI.ok ? 'ok' : ''}" id="ftMsg" role="status">${esc(UI.msg || '')}</div>
+      ${st.pad ? `<div class="wk-pad">${['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0', '−'].map(x => `<button data-k="${x === '−' ? '-' : x}">${x}</button>`).join('')}<button data-k="back">&#9003;</button></div>` : ''}</div>`; }
+  else if(Z.needPick){ body = `<div class="wk-pick"><span class="kl">${Z.pickFare ? 'Choose the fare to fly at' : 'Choose what happens on board'}</span><p class="small muted">${Z.pickFare ? 'Press a fare here, or its chip on the market.' : 'Press an option here, or its tile on the plan.'}</p>
+      <div class="wk-opts">${opts.map((o2, q) => { const v = W.lines[q].v; return `<button class="wk-opt" data-wpick="${o2.id}"><b>${esc(o2.word)}</b><span>${Z.pickFare ? `${v['pax_' + S.market] !== undefined ? v['pax_' + S.market] : v.pax1} passengers · tickets ${money(v['tk_' + S.market] !== undefined ? v['tk_' + S.market] : v.tk1)}` : `cabin sales ${money(v.snack)} · profit ${money(v.profit)}`}</span></button>`; }).join('')}</div>
+      ${!Z.pickFare && !S.rnd.thirdSnack && Object.keys(ONBOARD).some(k => ONBOARD[k].free) ? '<button class="link" id="woThird">Compare free snacks too</button>' : ''}</div>`; }
+  else { const done = Z.cells.filter(x => x.s === 'done'), pN = practiceN(), pkey = practiceKeyToday(), pr = pN && pkey && !st.noPractice ? practiceHtml(st, pkey, pN, true) : '';
+    body = `<div class="wk-sum wk-summary"><div class="wk-head"><span class="kl">${esc(Z.setup ? 'Launch day' : dateShort(S.day))}</span><h2>Your workings today</h2></div>
+      <table class="wk-list">${done.map(x => `<tr><th>${esc(x.c.label)} · ${esc(rowLabel(x.t, x.r))}</th><td class="mono">${wkSentence(x.t, x.c, x.r)}</td></tr>`).join('')}
+      <tr class="tot"><th>${esc(planLabel(currentPlan()))}</th><td class="mono">profit ${money(planLines(currentPlan()).v.profit)}</td></tr></table>
+      <p class="sd-written">Every figure is in Plan Impact. Press Ready to fly when the plan is right.</p>
+      ${pr ? `<div class="wk-practice"><span class="kl">Practice (optional): ${pN === 1 ? 'one question' : pN + ' questions'} with your own numbers</span>${pr}<button class="link" id="wkSkipP">Skip practice</button></div>` : ''}</div>`; }
+  return `<aside class="dock dock-sum pale" data-dock="sum" aria-label="Work it out"><div class="dk-h"><span class="dk-tt"><span class="dk-kind">Work it out</span><b class="dk-t">${esc(title)}</b></span><span class="sd-prog">${Z.allDone ? 'All done' : Z.tut ? 'Worked example' : `Sum ${Z.k} of ${Z.n}`}</span></div>${tabs}<div class="dk-b">${body}</div></aside>`;
+}
+function bindSumDock(W, st){
+  const Z = sumState(W, st);
+  if(Z.act && !Z.justDone && !Z.tut) bindTable(Z.act);
+  on('wkTutNext', () => { st.tutStep = (st.tutStep || 0) + 1; render(); }); on('wkTutGo', () => { st.tut = true; render(); });
+  on('wkNext', () => { UI.justDone = null; resetEntry(); render(); });
+  on('wkPad', () => { st.pad = !st.pad; render(); });
+  on('calcShow', () => { const t = Z.act; if(t && t.active){ const a = t.active, c = t.cols.find(x => x.id === a.col); diagNote({ kind:'answer shown to pupil', table:t.id, cell:cellId(a.col, a.row), stored:c ? c.values[a.row] : null, typed:UI.entry, tries:UI.tries }); cellCorrect(t, true); } render(); });
+  on('woThird', () => { S.rnd.thirdSnack = true; render(); });
+  screen().querySelectorAll('[data-summode]').forEach(b => b.onclick = () => { UI.sumMode = b.getAttribute('data-summode'); render(); });
+  screen().querySelectorAll('[data-wpick]').forEach(b => b.onclick = () => { const o = Z.opts.find(x => x.id === b.getAttribute('data-wpick')); if(o) applyPick(o); });
+  if(Z.allDone && practiceN() && practiceKeyToday() && !st.noPractice) bindPractice(st, practiceKeyToday(), () => {}, practiceN(), true);
+  on('wkSkipP', () => { st.noPractice = true; render(); });
 }
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers

@@ -68,7 +68,7 @@ function planLabel(pl){
 }
 function schedFrom2(c){ const out = []; plannerRoutes().forEach(id => { for(let k = 0; k < (c[id] || 0); k++) out.push(id); }); return out; }
 /* Change plan i (0 = the airline's plan, 9 = the test plan) for aircraft j. */
-function editPlan(i, what, a, d, j){
+function editPlanBase(i, what, a, d, j){
   j = j || 0; const base = i === 9 ? testPlan() : currentPlan(), next = normPlan(JSON.parse(JSON.stringify(base))), maxT = WORLD.maxTrips || 4;
   const x = next.fleet[j] || next.fleet[0], p = planeById(x.planeId), canFly = id => planeCanFly(p, routeById(id));
   const fare0 = id => routeById(id).basePrice;

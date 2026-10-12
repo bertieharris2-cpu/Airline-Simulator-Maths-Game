@@ -39,3 +39,27 @@ The addendum's own figures: the mixed day £1,709 (and £1,751 at Monday's £1.2
 4. **The jet fuel sum on Wednesday.** Rule 2 fires the fuel sum on Monday 23 September (the ATR's litres) and again on Wednesday 25 September; the note's "Wednesday: jet fuel by hand" is met by the Wednesday sum, the Monday one is a bonus of the rule as written.
 5. **Reputation in the top bar** stays hidden until the reputation module opens (`reputationFromDate`), so the mock-ups' stars tile appears later than in the pictures.
 6. **No photos.** Wikimedia hosts are still refused from this session; the drawn aircraft stand in.
+
+## The UI Widget Design Brief v4.4 (12 October)
+
+Built in `src/opening/parts/p4w_planner.js` with the square-geometry block at the end of `src/opening/parts/p1_head.html`; screenshots in `docs/screenshots/v44/` (`d1-brief` the intro, `d1-plan` the launch planner, `planner-selected` a block selected with its controls, `d1-workings` the Maths Dock beside the plan, `d8-compare` the comparison, `d8-map` the network view, `d8-plan` and `d15-plan` the planner with two aircraft). In the brief's build order:
+
+1. **Square shell and the intro.** Heathrow is the hub, both routes are open from Launch Day, there is no market gate. The aircraft, market, demand and one-service screens are replaced by one intro (the job, the starting position, the five steps, *Open Week 1 Planner*). Every structural panel, button, tab, input and overlay is square; the pupil's decisions and sums sit on pale surfaces, context and results on dark navy.
+2. **One connected planner.** The market widgets (city and code, country, flight time, distance, the rival's fare, the fare chips with the people at each fare), the aircraft day, on board, the fuel strip and Plan Impact on one page; the figures the day's sums ask for carry *ƒ work it out*, and a figure that just changed is highlighted for a moment.
+3. **The timeline is the schedule state.** A service is a block as wide as its rotation (out, turnaround, back), with the route, the departure and the seats sold; the hatched tail is the turnaround at home before the aircraft is ready again. Press a block for *Earlier · Later · Swap route · Remove*; drag it (a ghost shows the drop, snapped to 10 minutes, red over another block); the arrow keys move it 10 minutes (an hour with Shift), Delete removes it. The service count is the number of blocks; *+ Paris · + Dublin* add one.
+4. **Live cause and effect.** Every change re-costs the plan: Plan Impact, the fuel strip and the fare chips' people update at once.
+5. **The fuel widget.** The gauge against the tank, the litres by route, the price a litre and the date it starts, the cost (ƒ until the pupil has worked it out), the week's projection (litres burned, cost on the paid days) and Monday's order.
+6. **The Maths Dock.** *Cost your plan* or any ƒ opens the dock beside the plan, which stays in view: *Structured working* (the written method with proper place-value alignment, a carry row and working rows, a number pad), *Squared paper*, *Formula* (the model's lines with the last answer masked). A finished figure is written into Plan Impact; the fare and the snack option are chosen once their sums are done, in the dock or on the plan.
+7. **Current plan against a test plan.** *Test an idea* opens a test plan the model costs straight away; *Compare plan impacts* shows *Your current plan · Change · Test plan* for passengers, empty seats, turned away, revenue, cabin sales, costs and profit, coloured by what is good for each measure, with a strip naming what changed (*Dublin fare £80 → £90*, *+ one Paris service*, *Paris 09:00 → 10:20*); *Use test plan* and *Reset*.
+8. **Network / IWB.** The map is a button away from the planner and comes back with *Today's plan*.
+9. **The Week 1 run and review** are the week loop above.
+
+**Where it differs from the brief, and why**
+
+- **Overlaps are never stored.** The brief allows temporary red overlaps with *Approve* disabled. Here the ghost turns red while it is over another block and the drop lands on the nearest free time (a toast says so); a timetable that cannot fit the operating day is refused with a toast. The plan is always a plan the aircraft can fly, so Plan Impact is never costing an impossible day.
+- **The plan is read-only while the dock is open.** The dock keeps the plan in view, as asked; changing it means *Back*, so the figures being worked out cannot change under the pupil.
+- **Monday's fuel order is automatic**: the litres the week needs at the week's price, capped by the tank and the cash reserve, placed when operations start. The pupil costs the fuel and never chooses an amount.
+- **The second route's tickets on Launch Day.** The launch sums are tickets at the three fares of the route with most services (the market), then one × for each other route in the plan, then profit, snacks and fuel.
+- **No plan rail.** Bertie asked for the stage list down the left to go: it took room the planner needs. The Network map, Test an idea and Back cover what it did.
+- **The crew and rotation lesson** (one service start to finish, the three typed times) is not in the week loop; the intro and the help cards (Timing, Demand, Fuel) carry the ideas. Day-at-a-time play (the teacher's setting) still has it.
+- **Fit.** Everything on the planner is in view at 1366×768 and 1915×891 without scrolling, with a block selected; the dock's sums scroll inside the dock when the written method is tall.

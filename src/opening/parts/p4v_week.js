@@ -263,7 +263,7 @@ function closeDay(){
 /* ---------- the sums (D54): Launch Day in one sitting, later Mondays what the rules ask, the Calendar's gatedCalc ---------- */
 TOOLS.push({ id:'range', name:'Range check', phase:2, def:[[2, 'calc']], build:false }); TOOL.range = TOOLS[TOOLS.length - 1]; HAND_TOOLS.push('range');
 TABLES.range1 = { title:'Range', rows:[{ id:'range', label:'Aircraft range', type:'given', unit:'km' }, { id:'km', label:'Route distance', type:'given', unit:'km' }, { id:'spare', label:'Spare range', type:'calc', unit:'km', op:'−', from:['range', 'km'], sentence:'{range} − {km} = {?spare}', tool:'range' }] };
-function decideHandSums(L, pl){
+function decideHandSumsWeek(L, pl){
   const out = decideHandSumsBase(L, pl); if(!weekMode()) return out;
   pl = normPlan(pl); const sk = skills(), first = id => !sk[id], g = gatedToday();
   if(S.phase === 'setup'){   // Launch Day: tickets at three fares (the first market), profit, snacks at £3 and £5, fuel after the guided example
@@ -282,7 +282,7 @@ function recordHandSums(L){ const H = S.rnd.handSums || {}; recordHandSumsBase(L
 
 /* the workings page's tables as stages: each stage is a table; the next opens when the one before is complete (and its choice made) */
 function launchFares(){ const r = routeById(S.market), F = r.fares || [r.basePrice], b = Math.max(0, F.indexOf(r.basePrice)), lo = clamp(b - 1, 0, Math.max(0, F.length - 3)); return F.slice(lo, lo + 3); }
-function wkStagesLaunch(pl){
+function wkStagesLaunchWeek(pl){
   const r = routeById(S.market), H = S.rnd.handSums || decideHandSums(planLines(pl), pl), picks = S.rnd.picks || {}, stages = [];
   const fareOpts = launchFares().map(f => ({ id:'f' + f, label:money(f), sub:`${paxWant(r, f)} want to fly`, plan:Object.assign({}, pl, { prices:Object.assign({}, pl.prices, { [r.id]:f }), onboard:'none' }), pick:{ fare:f }, word:`Fly at ${money(f)}`, kind:'fare' }));
   stages.push({ id:'fare', opts:fareOpts, rowIds:['pax_' + r.id, 'fare_' + r.id, 'tk_' + r.id], pick:'fare' });
@@ -311,7 +311,7 @@ function workTables(pl){
     done.push(st);
   }
   if(!cur){ const last = stages[stages.length - 1]; cur = last; opts = last.opts; picked = last.pick ? picks[last.pick] : last.opts[0].id; multi = !!last.pick; lines = stageTable(last, L0).lines; }
-  total += (stages.some(s => s.pick) ? stages.filter(s => s.pick).length : 0);
+  total = stages.reduce((t, s) => t + s.opts.length * (s.rowIds ? s.rowIds.filter(id => /^(tk_|snack$|fuel$|profit$)/.test(id)).length : 1), 0) + stages.filter(s => s.pick).length;   // every stage, built or not, plus the choices
   return { L0, opts, lines, picked, t:tables[tables.length - 1], tables, multi, total, pickKind, stage:cur, third: cur && cur.third };
 }
 function workoutPicked(opts, pl){ if(weekMode() && S.phase === 'setup'){ const W = workTables(pl); return W.picked; } if(opts.length > 1) return S.rnd.pick && opts.some(o => o.id === S.rnd.pick) ? S.rnd.pick : null; return opts[0].id; }

@@ -14,6 +14,8 @@
 
 Chapter 1 is played a week at a time (D52): the Calendar's `weekPhase` (plan / run / review) drives `p4v_week.js`. Monday: HQ → (showroom, the fleet sums, buy or rent, the paint shop) → (event) → the planning page with Plan Impact → the workings page → Ready → fly → results. Tuesday–Saturday: `weekRun`, one day per step on the operations board (`S.wk` holds the week's rows and Monday's projection), an event card or a sum stops it. Sunday: fly, then `weekReview` (the week7 table, the missed-profit sweep `bestPlanSweep`, `neglectUpdate`). `closeDay` moves to the next Monday, the regular-plan approval after day 28, then the weeks. Money per D53/D55: day costs, list prices, Finance in days, `saveUp` greys Buy. The look is the Dragon Air block at the end of `p1_head.html`. Tests: `week.test.js` (weeks 1–4), `migrate.test.js` (old codes land in the week), `balance.test.js` (re-based). Decisions and the report-back items: `docs/Workbook-v4.4-Report-Back.md`. The day-by-day screens below remain for `teacherDayByDay` and the weeks.
 
+**The Week 1 planner (UI Widget Design Brief v4.4, 12 Oct 2026; `p4w_planner.js`).** Heathrow is the hub and both routes are open from Launch Day: the aircraft, market, demand and one-service screens are replaced by one intro (`brief1`: the job, the starting position, the five steps, *Open Week 1 Planner*). The planner is one page: the market widgets with the fare chips (`marketWidget`), the aircraft day as the schedule editor (`timelineHtml`, `bindTimeline`: blocks on the 06:00–22:00 timeline, Earlier / Later / Swap route / Remove, drag with a ghost snapped to 10 minutes, arrow keys; `editPlan(i, 'depTo')` moves a service to an absolute time, re-sorts the aircraft's services and lands on the nearest free time), the on-board tiles, the fuel strip (`fuelWidgetHtml`; `autoFuelOrder` places Monday's order) and Plan Impact (`ctxPlanImpact`, ƒ on the figures `hiddenFigs` says are still to do). The sums open in the Maths Dock beside the plan (`sumDockHtml`: structured working, squared paper, formula; `finishSums`), *Test an idea* compares one test plan (`compareHtml`, `planDiff`), the map is `#mapOpen`. No plan rail in week mode (`planRail` returns nothing; the `.ws.norail` grid). Square geometry and the pale surfaces are the block at the end of `p1_head.html`. Everything falls back to the earlier screens when `teacherDayByDay` is on.
+
 ## 1. Screens
 
 ### In play order
@@ -29,12 +31,10 @@ Chapter 1 is played a week at a time (D52): the Calendar's `weekPhase` (plan / r
 | 3b | Your certificate | Step 6 | Air Operator Certificate on screen; Print |
 | 4 | HQ start-up | Setup | Animation; moves on by itself |
 | 5 | Chapter banner | Setup | Chapter 1, *Starting out*, 2 Sep – 28 Dec 2030, from the Chapters sheet; Begin |
-| 6 | Your start-up aircraft | Launch Day (Mon 2 Sep) | Twin Otter specs; Take delivery (£2,500 launch deal) |
-| 7 | Choose your first market | Launch Day | Dublin or Paris |
-| 8 | Market demand | Launch Day | People who want to fly, in aircraft-sized groups |
-| 9 | One service, start to finish | Launch Day | 6 pages: out, turnaround (why turnarounds differ), back, ready again with three practice questions (typed times) |
-| 10 | Plan the day | Launch Day and every day | The HQ planning page: services ×1–×4 with the reason one won't fit (the planner from day 2), the fare chips with people at each fare, expected passengers, *Try an idea* (the modelling tool: a test plan the model costs); *Cost your plan* |
-| 10a | Work it out | Launch Day and every day with a sum | Full screen on squared paper: one sum at a time in the written method (columns, carry row, working rows, the answer typed, a number pad), Check / Show me; the fare (launch) or the snack option (day 2) chosen after their sums; the fuel worked example on day 3; a summary; optional practice (teacher setting); Back to HQ. Skipped when nothing is typed |
+| 6 | Your first week in charge | Launch Day (Mon 2 Sep) | The intro: the job, the starting position (Heathrow, 1 × Twin Otter, Paris and Dublin open from day one), the five steps of the week, the cash to start; *Open Week 1 Planner* |
+| 7–9 | Aircraft · market · demand · one service | Day-at-a-time mode only | The earlier launch screens (Take delivery, Dublin or Paris, demand in aircraft-sized groups, one service start to finish with the three typed times) |
+| 10 | Build your operating plan | Launch Day and every Monday | One planner: the market widgets (city and code, facts, the fare chips with the people at each fare), the aircraft day (each service a block on the 06:00–22:00 timeline: press it for Earlier / Later / Swap route / Remove, drag it with a ghost that snaps to 10 minutes and turns red over another block, or use the arrow keys; the demand directly above; *+ Paris · + Dublin*), the on-board tiles, the fuel strip (gauge, litres by route, price, cost with ƒ, the week's projection and Monday's order), Plan Impact on the right with ƒ on every figure the day's sums ask for; *Test an idea* (Compare plan impacts: your current plan · change · test plan; Use test plan / Reset); *Network map*; *Cost your plan* |
+| 10a | Work it out (the Maths Dock) | Launch Day and every Monday with a sum | The sums one at a time in a pale dock beside the plan, which stays in view (read-only; Back changes it): Structured working (the written method: columns, carry row, working rows, a number pad), Squared paper, Formula (the model's lines with the last answer masked); Check / Show me; a finished figure is written into Plan Impact; the fare and the snack option chosen in the dock or on the plan once their sums are done; the fuel worked example; a summary; optional practice (teacher setting); *Ready to fly*. Skipped when nothing is typed |
 | 11 | What's new (3 pages) | Days 2, 3, 4 (two), 6, 8, 12, 15; week 4; December | What's new, the maths (worked in a column), your turn ("which sum?"); key words in the dock |
 | 12 | Today's Plan (morning HQ) | Every day, week and month | Headline from the Calendar or Market; the brief (yesterday, what's new, routes opening, the rival, fuel); the standing plan |
 | 13 | The air show (aircraft for sale) | Days 8 and 15, every week | Flip cards: photo or plain drawing, facts, four bars on one scale, Buy / Rent / Finance from the Finance sheet; a locked *Coming soon* row; Look closer or Not today |
@@ -60,7 +60,7 @@ Chapter 1 is played a week at a time (D52): the Calendar's `weekPhase` (plan / r
 
 | Area | What it is |
 |---|---|
-| HQ shell | Left nav (Overview, Today's Plan, Network, Fleet, Finance) and a plan rail (Plan → Cost → Test → Operate → Review, with Edit) |
+| HQ shell | Left nav (Overview, Today's Plan, Network, Fleet, Finance). The plan rail (Plan → Cost → Test → Operate → Review, with Edit) shows in day-at-a-time mode only: the week loop has none (12 Oct), Back steps through the day's screens |
 | Dock (right) | Context (aircraft status with a departures board of up to four rows, your airline, the offer, key words); help; working space; ƒ model inspector; calculation dock |
 | Back | ◀ Back on every planning screen; never past operations, a run or a signed order |
 | Operations Wall | Boards, map, strip, news; live handoff, featured aircraft, announcements, focus moments, compressed days; second window via `?display` |
@@ -75,6 +75,7 @@ Chapter 1 is played a week at a time (D52): the Calendar's `weekPhase` (plan / r
 | timetable, fareTry, costPlan (days), planner (days), testIdeas (days), workout, dayForecast, options, route, setupFuel, setupPrice, setupDone, home | Removed from the day step lists (timetable, planner, the day's cost sheet and Test became the planning page and the workings page on 8 Oct 2026; an older save's steps are migrated); the home is fixed at Heathrow T5 |
 | yearPlan, afford, yearReview, strategy, shop, invest, purchase, delivery, milestone | The old year and purchase flow: chapter 1 ends at the review; no beat reaches them |
 | Old strategy, review, hq, planner, ready, fly, results, sim, protoEnd, event | Replaced by later renderers of the same name |
+| starter, market, demand, rotation (the launch screens), the plan rail, the workings page as a full screen, the fuel panel | Week mode (12 Oct) replaces them with the intro, the planner, the Maths Dock and the fuel strip; day-at-a-time mode keeps them |
 | choice, fare, quick, trips, day, fuel, cabin, plane, newRoute, stage, forecast, summary, challenge | The old round flow (`startRound`): the teacher's "Skip to the next story beat" only |
 
 ## 2. Mechanics

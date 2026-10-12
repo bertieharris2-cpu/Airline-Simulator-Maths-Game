@@ -10,7 +10,9 @@ const path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../
   // the setup, as a pupil would do it
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await p.click('#nx'); await p.click('#nx'); await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); await p.click('#nx');
   if(await p.evaluate(() => window.__sim.step().t) === 'boot') await p.click('#enterHq'); if(await p.evaluate(() => window.__sim.step().t) === 'chapter') await p.click('#chGo');
-  await p.click('#nx'); await p.click('[data-mk="par"]'); await p.click('#nx');
+  const T = () => p.evaluate(() => window.__sim.step().t);
+  if(await T() === 'brief1') await p.click('#nx');   // the week loop: the intro, then the planner (both routes open)
+  else { await p.click('#nx'); await p.click('[data-mk="par"]'); await p.click('#nx'); }   // day-at-a-time: the aircraft, the market, the demand
   const res = await p.evaluate(() => {
     const { WB, WE, planOutcome, beatDay, buyPlane, planeById, fuelPrice, toMin } = window.__world, out = [], S = window.__world.getS();
     S.phase = 'round'; S.round = 7; S.day = beatDay(7);   // day 8: time-of-day demand is on and Red Kite's Dublin fares (days 4–7) are over S.onboard = 'none'; S.fuel = 0; S.fuelValue = 0; S.fuelLots = []; S.terminal = 't5';

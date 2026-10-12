@@ -483,7 +483,7 @@ const NAV = [['overview', 'Overview'], ['plan', "Today's Plan"], ['network', 'Ne
 
 /* HQ modules come online as the airline grows; until then they are visible but locked. */
 const MODULES = { finance:{ name:'Finance', note:'Available after the first flight', short:'After first flight' }, network:{ name:'Network', note:'Available once a regular timetable is running (Day 1)', short:'From Day 1' }, fleet:{ name:'Fleet', note:'Available after the first full day of operations', short:'After Day 1' } };
-function moduleOn(id){
+function moduleOnBase(id){
   if(!MODULES[id]) return true;
   const h = S.history || [];
   if(id === 'finance') return h.length >= 1;
@@ -622,7 +622,7 @@ function stageSummary(id){
   if(id === 'prep'){ const fc = S.rnd.myForecast; return fc ? `${Object.keys(serviceCounts(sched)).map(x => money(fareOf(x))).join(' / ')} fare · profit ${money(fc.profit)}` : 'Fuel checked · Forecast complete'; }
   return '';
 }
-function planRail(){
+function planRailBase(){
   const idx = t => S.steps.findIndex(s => s.t === t), R0 = reach();
   const list = railStages().map(g => Object.assign({ ii: g.steps.map(idx).filter(i => i >= 0) }, g)).filter(g => g.ii.length);
   return `<aside class="ws-rail"><div class="ws-h">${railTitle()[0]}<small>${railTitle()[1]}</small></div><ol class="stages">${list.map((g, k) => {
@@ -636,14 +636,15 @@ function planRail(){
 function wsWrap(frame, o){
   o = o || {}; const t = step().t, hint = o.hint || STEP_HINT[t] || '';
   const bar = `<footer class="actbar"><span class="ab-i" aria-hidden="true">i</span><p class="ab-hint">${hint}</p><div class="ab-act">${backBtn()}${o.foot || ''}</div></footer>`;
-  if(o.wide){ UI.dockAt = S.si + ':' + S.day; return shell(`<div class="ws ws-${t} wide">${planRail()}<div class="ws-main">${frame}</div></div>`, bar); }   // Work it out: the whole width, the sums inline
-  return shell(`<div class="ws ws-${t} ${UI.dockShut ? 'dock-shut' : ''}">${planRail()}<div class="ws-main">${frame}</div>${dockHtml(o)}</div>`, bar);
+  const rail = planRail(), nr = rail ? '' : 'norail';   // no plan rail in week mode (p4w): the planner has the width
+  if(o.wide){ UI.dockAt = S.si + ':' + S.day; return shell(`<div class="ws ws-${t} wide ${nr}">${rail}<div class="ws-main">${frame}</div></div>`, bar); }   // Work it out: the whole width, the sums inline
+  return shell(`<div class="ws ws-${t} ${UI.dockShut ? 'dock-shut' : ''} ${nr}">${rail}<div class="ws-main">${frame}</div>${dockHtml(o)}</div>`, bar);
 }
 
 /* ---------- the dock ---------- */
 UI.dock = { mode:null, topic:null }; UI.dockShut = false; UI.railOpen = null; UI.justDone = null; UI.pad = { strokes:[], cur:null, erase:false }; UI.dockAt = -1;
 const DOCK_KIND = { context:'Context', calc:'Calculation', help:'Help', work:'Working space', archive:'Archive', fx:'Model' };
-function dockHtml(o){
+function dockHtmlBase(o){
   if(UI.dockAt !== S.si + ':' + S.day){ UI.dockAt = S.si + ':' + S.day; UI.dock = { mode:null, topic:null }; UI.railOpen = null; if(!o.calc) UI.justDone = null; }
   const t = o.calc || null, m = UI.dock.mode, c = o.context || {}; tidyActive(t);
   let kind = 'context', title = c.title || 'Context', body = c.html || '';
@@ -658,7 +659,7 @@ function dockHtml(o){
   return `<aside class="dock dock-${kind}" data-dock="${kind}" aria-label="${esc(DOCK_KIND[kind])}"><div class="dk-h"><span class="dk-tt"><span class="dk-kind">${DOCK_KIND[kind]}</span><b class="dk-t">${esc(title)}</b></span>${kind === 'context' ? '<button class="dk-x" id="dkShut" title="Hide the side panel" aria-label="Hide the side panel">›</button>' : '<button class="dk-x" id="dkClose" title="Close" aria-label="Close">✕</button>'}</div><div class="dk-b">${body}</div>${tools}</aside>`;
 }
 const HELP_SUB = { timing:'How turnaround times work', demand:'How ticket prices affect demand', fuel:'How the tank and fuel prices work', money:'Revenue, costs and profit', forecast:'What a forecast is' };
-function dockTools(o){
+function dockToolsBase(o){
   const row = (attr, ic, t, sub) => `<button class="dk-help" ${attr}><i>${ic}</i><span><b>${esc(t)}</b><small>${esc(sub)}</small></span><em>›</em></button>`;
   const b = (o.help || []).map(k => row(`data-help="${k}"`, '?', HELP[k], HELP_SUB[k] || ''));
   if(o.work) b.push(row('data-dkwork', '&#9998;', 'Working space', 'Pinned figures and a pad to work on'));

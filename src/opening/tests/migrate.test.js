@@ -56,7 +56,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
     const r = await playDay('vinnies', true); checks.push('info v5 played ' + JSON.stringify(r.seen) + ' typed ' + JSON.stringify(r.typed));
     ok('v5: Saturday asks the weekend tenths sum on the board, then Sunday\'s review adds up the week', r.typed.some(x => /weekend/.test(x)) && !r.typed.some(x => /work:/.test(x)) && r.typed.some(x => /\|total/.test(x)), r.typed);
     ok('v5: the week completes into Monday day 8', r.seen.includes('next-day hq') && (await S()).day === 8, [(await S()).day, r.seen]);
-    await p.evaluate(() => { window.__sim.S().overlay = { type:'menu' }; window.__sim.render(); }); await p.waitForTimeout(100); ok('v5: the Home screen says where it carried on', /carries on from/.test(await p.textContent('#screen'))); await shot('vinnies-home'); }
+    await p.evaluate(() => { window.__sim.S().overlay = { type:'menu' }; window.__sim.render(); }); await p.waitForTimeout(100); ok('v5: the Home screen says where it carried on', /carries on (from|on the operations board)/.test(await p.textContent('#screen'))); await shot('vinnies-home'); }
 
   // 2. the same code saved mid-day: on the old cost sheet with a forecast made → lands on the planning page
   { const s = decode(v5); s.si = s.steps.findIndex(x => x.t === 'costPlan'); s.rnd.tables['cost:6'] = { id:'cost:6', kind:'cost1', cols:[] }; s.rnd.costed = { key:'old', v:{} }; s.rnd.myForecast = { key:'old', profit:1 }; s.rnd.fuelOrder = { litres:500, total:700 };

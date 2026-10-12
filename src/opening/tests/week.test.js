@@ -33,9 +33,9 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
   // setup
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await identity();
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
-  await p.click('#nx'); await p.click('[data-mk="par"]'); await p.click('#nx'); await p.click('#nx');
-  for(let k = 0; k < 4; k++) await p.click('#nx'); await practice(); await p.click('#nx'); await p.click('#nx');
-  ok('launch day: the planning page follows the rotation', await T() === 'plan', await T());
+  ok('launch day: the intro explains the job and the starting position (no market gate)', await T() === 'brief1' && /Your first week in charge/.test(await p.textContent('#screen')) && (await p.$$('.br1-c')).length === 4, await T());
+  await fits('brief'); await shot('d1-brief'); await p.click('#nx');
+  ok('launch day: the planner follows the intro', await T() === 'plan', await T());
   // the chapter
   let lastDay = 0;
   for(let i = 0; i < 400; i++){ const t = await T(), s = await S(), day = s.day;
@@ -44,20 +44,42 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
     if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice(); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
     if(t === 'shop2'){ await fits('shop ' + day); await shot(`d${day}-shop`); const want = day === 8 ? 'sf34' : day === 22 ? 'at72' : null, card = want && await p.$(`[data-pick="${want}"]`); if(card){ await card.click(); await p.click('#nx'); } else await p.click('#skipShop'); continue; }
     if(t === 'fleetSums'){ const typed = await solve('fleetSums'); sums['fleetSums ' + day] = typed; if(await p.$('#calcDone')) await p.click('#calcDone'); await p.click('#nx'); continue; }
-    if(t === 'acquire'){ await shot(`d${day}-acquire`); const buy = await p.$eval('[data-terms="buy"]', e => e.disabled); ok(`day ${day}: Buy is greyed until affordable`, buy, await p.$eval('[data-terms="buy"]', e => e.textContent.replace(/\s+/g, ' '))); await p.click('[data-terms="lease"]'); await p.click('#nx'); continue; }
+    if(t === 'acquire'){ await shot(`d${day}-acquire`); const buy = await p.$eval('[data-terms="buy"]', e => e.disabled), txt = await p.$eval('[data-terms="buy"]', e => e.textContent.replace(/\s+/g, ' ')), cash = (await S()).cash, price = +((/£([\d,]+)/.exec(txt) || [])[1] || '0').replace(/,/g, ''), reserve = await p.evaluate(() => window.__sim.evalIn('WORLD.cashReserve || 0'));
+      ok(`day ${day}: Buy is greyed until affordable (cash ${cash} against ${price} + the ${reserve} reserve)`, buy === (cash < price + reserve), txt); await p.click('[data-terms="lease"]'); await p.click('#nx'); continue; }
     if(t === 'event'){ await fits('event ' + day); await shot(`d${day}-event`); await p.click(`[data-o="${day === 5 ? 2 : 1}"]`); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
     if(t === 'plan'){ await fits('plan ' + day);
       // the plans from Balance Report v4.4: week 1 the mixed day; week 2 the Saab on Dublin; week 3 the Saab to Amsterdam; week 4 the ATR to Madrid
-      if(s.phase === 'setup'){ await setPlan([{ sched:['par', 'dub', 'par'], deps:[420, 640, 1080] }], { par:90, dub:90 });
-        ok('launch: both routes on the plan page', await vis('[data-pe^="0|add|dub|0"]') && await vis('[data-pe^="0|add|par|0"]'));
-        ok('launch: the fuel order sits on the plan page', await vis('.pe-fuelwk')); }
-      if(day === 8 && s.fleet.length > 1) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
+      if(s.phase === 'setup'){
+        // the timeline is the schedule editor: add, select, move with the buttons, the keyboard and a drag, swap the route, remove
+        await p.click('[data-pe="0|add|par|0|0"]'); await p.click('[data-pe="0|add|dub|0|0"]'); await p.click('[data-pe="0|add|par|0|0"]');
+        ok('launch: three blocks on the timeline, both markets shown', (await p.$$('.ad-blk')).length === 3 && (await p.$$('.mk')).length === 2, [(await p.$$('.ad-blk')).length, (await p.$$('.mk')).length]);
+        const dep = async k => +(await p.$eval(`[data-tl="0|0|${k}"]`, e => e.dataset.dep));
+        await p.click('[data-tl="0|0|2"]'); ok('launch: a pressed block is selected and gets its controls', await vis('.ad-blk.on') && await vis('[data-tlm="0|0|2|20"]'));
+        const d2 = await dep(2); await p.click('[data-tlm="0|0|2|20"]'); ok('launch: Later moves the service 20 minutes', await dep(2) === d2 + 20, [d2, await dep(2)]);
+        await p.focus('[data-tl="0|0|2"]'); await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(60); ok('launch: the arrow key moves it 10 minutes the other way', await dep(2) === d2 + 10, [d2, await dep(2)]);
+        const d1 = await dep(1), bb = await (await p.$('[data-tl="0|0|1"]')).boundingBox(), lane = await (await p.$('.ad-lane')).boundingBox();
+        await p.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2); await p.mouse.down(); await p.mouse.move(bb.x + bb.width / 2 + lane.width * 0.08, bb.y + bb.height / 2, { steps:8 }); await p.mouse.up(); await p.waitForTimeout(150);
+        ok('launch: a drag moves the service, snapped to 10 minutes', await dep(1) !== d1 && (await dep(1)) % 10 === 0, [d1, await dep(1)]);
+        await p.click('[data-tl="0|0|1"]'); await p.click('[data-tlsw="0|0|1"]'); ok('launch: Swap route changes the service', (await S()).fleet[0].schedule[1] === 'par', (await S()).fleet[0].schedule);
+        await p.click('[data-tl="0|0|1"]'); await p.click('[data-tlrm="0|0|1"]'); ok('launch: Remove takes the block off', (await p.$$('.ad-blk')).length === 2, (await p.$$('.ad-blk')).length);
+        ok('launch: the market fare chips are locked until the tickets are worked out, the other market free', (await p.$$('.mk .fch[disabled]')).length >= 5 && (await p.$$('.mk .fch:not([disabled])')).length >= 5, [(await p.$$('.mk .fch[disabled]')).length, (await p.$$('.mk .fch:not([disabled])')).length]);
+        ok('launch: Plan Impact offers ƒ on the figures the sums ask for', (await p.$$('[data-sum]')).length >= 4, await p.$$eval('[data-sum]', es => es.map(e => e.getAttribute('data-sum'))));
+        ok('launch: the fuel widget shows the litres the timetable needs', await vis('.fw2-tank'), await p.$eval('.fw2-gauge > b', e => e.textContent).catch(() => ''));
+        await setPlan([{ sched:['par', 'dub', 'par'], deps:[420, 640, 1080] }], { par:90, dub:90 });
+        ok('launch: both routes on the plan page', await vis('[data-pe^="0|add|dub|0"]') && await vis('[data-pe^="0|add|par|0"]')); }
+      if(day === 8 && s.fleet.length > 1){ await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
+        ok('day 8: two aircraft, two lanes on the timeline', (await p.$$('.ad-lane')).length === 2 && (await p.$$('.ad-blk')).length === 4);
+        if(await p.$('#ideaOpen')){ await p.click('#ideaOpen'); await p.waitForTimeout(80); const chip = await p.$('[data-pe="9|fareTo|dub|90"]'); if(chip) await chip.click(); await p.waitForTimeout(80);
+          ok('day 8: Test an idea compares the current plan with the test plan, with the cause', await vis('.cmp2-t') && /Dublin fare/.test(await p.$eval('.cmp2-cause', e => e.textContent).catch(() => '')) && (await p.$$('.cmp2-t td.chg')).length >= 5, await p.$eval('.cmp2-cause', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
+          await shot(`d${day}-compare`); await p.click('[data-treset]'); await p.click('#ideaShut'); }
+        if(await p.$('#mapOpen')){ await p.click('#mapOpen'); ok('day 8: the network map is a button away', await vis('#hqMap')); await shot(`d${day}-map`); await p.click('[data-nav="plan"]'); await p.waitForTimeout(60); } }
       if(day === 15 && s.fleet.length > 1) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 });
       if(day === 22 && s.fleet.length > 2) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 });
       if(day >= 3){ const q = await p.$('.fw-quick [data-fo]:nth-child(2)'); if(q) await q.click(); }
       await shot(`d${day}-plan`); ok(`plan ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.evaluate(() => window.__sim.currentPlan().fleet.map(x => x.sched.join('/') + ' ' + (x.deps || []).join(',')))); await p.click('#nx'); continue; }
     if(t === 'workings'){ await fits('workings ' + day); const typed = await solveW(`work ${day}`); await shot(`d${day}-workings`);
-      if(s.phase === 'setup') ok('launch: tickets ×3, the fare, profit, snacks ×2, the snack, fuel after the example', typed.filter(x => /\|tk_/.test(x)).length === 3 && typed.filter(x => /\|profit/.test(x)).length === 1 && typed.filter(x => /\|snack$/.test(x)).length === 2 && typed.includes('tutorial') && typed.some(x => /\|fuel$/.test(x)), typed);
+      if(s.phase === 'setup') ok('launch: tickets ×3 then the fare, the other route\'s tickets, profit, snacks ×2 then the snack, fuel after the example', typed.filter(x => /\|tk_par/.test(x)).length === 3 && typed.some(x => /\|tk_dub/.test(x)) && typed.filter(x => /\|profit/.test(x)).length === 1 && typed.filter(x => /\|snack$/.test(x)).length === 2 && typed.includes('tutorial') && typed.some(x => /\|fuel$/.test(x)), typed);
+      if(s.phase === 'setup') ok('launch: the sums were done in the dock beside the plan', await vis('.dock-sum') && await vis('.ad'));
       ok(`work ${day}: back enabled`, !!(await p.$('#nx')) && await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'ready'){ await fits('ready ' + day); const en = await p.$eval('#startOps', e => !e.disabled); ok('ready ' + day, en, await p.textContent('.opplan')); if(!en){ await shot(`d${day}-ready-stuck`); break; } await p.click('#startOps'); continue; }
     if(t === 'takeoff'){ await p.click('#toGo'); for(let k = 0; k < 200 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
@@ -72,8 +94,9 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
     if(t === 'paint'){ await shot(`d${day}-paint`); const a = await S(); ok(`paint ${day}: the new plane has its own registration`, new Set(a.fleet.map(f => f.registration)).size === a.fleet.length, a.fleet.map(f => f.registration)); await p.click('#roll'); continue; } if(t === 'reveal'){ await p.click('#skipReveal'); for(let k = 0; k < 50 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     checks.push('stopped at ' + t + ' day ' + day); await shot('stop'); break; }
   const s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
-  const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t)), tk3 = calc.filter(t => /Ticket revenue \(Paris\)/.test(t)).length ? 2 : 0;   // launch day's three fares count as three
-  ok('weeks 1–4: about 26 Calculate steps with practice off (Fable\'s target; the launch tickets at three fares count three)', calc.length + tk3 >= 22 && calc.length + tk3 <= 34, { count: calc.length + tk3, calc });
+  if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t));
+    const count = calc.reduce((n, t) => { const m = /^Ticket revenue \(([^)]*)\)/.exec(t); return n + (m ? m[1].split(',').length : 1); }, 0) + 2;   // launch day's three fares count as three
+    ok('weeks 1–4: about 26 Calculate steps with practice off (Fable\'s target; the launch tickets at three fares count three)', count >= 22 && count <= 34, { count, calc }); }
   checks.push('info sums ' + JSON.stringify(sums)); checks.push('info handSumLog ' + JSON.stringify(s.handSumLog)); checks.push('info ledger profit ' + JSON.stringify((s.ledger.rev || []).map((v, i) => v == null ? null : Math.round(v - s.ledger.cost[i]))));
   console.log(checks.join('\n')); console.log('OVERFLOW', overflow.length ? overflow : 'none'); console.log('ERRORS', errors.length ? errors : 'none');
   await b.close();

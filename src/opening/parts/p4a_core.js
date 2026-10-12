@@ -82,7 +82,7 @@ function saveSettings(){ try{ localStorage.setItem(SET_KEY, JSON.stringify(setti
 /* ---------- state ---------- */
 let S = null;
 function emptyRnd(){ return { flights:[], status:{}, why:[], reviews:[], tasks:[], open:null, brief:[], tables:{}, activeTable:null }; }
-function newState(){
+function newStateBase(){
   return { v:5, world:WORLD.id, phase:'setup', round:0, day:1, period:{ type:'setup', from:1, to:1, run:{kind:'one'} }, ledger:{ rev:[], cost:[], pax:[], seats:[] }, home: WORLD.homes[0].id, terminal:'t5',
     airline:{ name:'', code:'', flightCode:'', logo:null, c1:'#f4f7fb', c2:'#1f7aff', fin:'stripe', strategy:null },
     cash: settings.startingCash, rep: WORLD.startingReputation, fuel:0, fuelValue:0,
