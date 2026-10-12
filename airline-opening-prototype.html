@@ -2447,6 +2447,9 @@ button.link[data-archive]{font-size:15px;margin-top:6px}
 @keyframes artRoll{from{transform:translateX(-115%)}to{transform:translateX(0)}}
 .hangar.fade .roll{animation:none;transform:none}.hangar.fade .doors div{transition:none}
 .art.thumb{width:150px;height:auto}.art.pic{width:100%;height:auto}
+.art.mini{display:inline-block;width:72px;height:auto;vertical-align:middle;flex:none}.ac .art.mini{width:66px}.hqd.compact .ac .art.mini{width:50px}
+.pe-tab .art.mini,.pe-acn .art.mini{width:64px}.pe.sched .pe-tab .art.mini{width:84px}.pe.sched .pe-acn .art.mini{width:72px}.pe.compact .pe-tab .art.mini,.pe.compact .pe-acn .art.mini{width:48px}
+.as-pic .art.mini{width:150px;max-height:58px}.plane-card .art.mini{width:96px}
 /* the first take-off */
 .runway{position:relative;flex:1;min-height:220px;overflow:hidden;background:linear-gradient(180deg,#0E3A66 0%,#1C5C8F 45%,#6FB3D9 72%,#6FB3D9 72%)}
 .rw-sky{position:absolute;inset:0;background:radial-gradient(700px 300px at 70% 20%,rgba(255,255,255,.14),transparent 70%)}
@@ -4080,7 +4083,8 @@ function shareWords(x){ return x >= 0.999 ? 'Everyone' : x === 0.5 ? 'Half of pa
     PLANES.push(Object.assign({}, o, { id:a.id, name:a.name, wb:true, seats:a.seats, speed:a.speedKmh, range:a.rangeKm, fuelUse:a.fuelPer100Km, hourCost:a.hourlyCost, dayCost:a.dayCost,
       price: a.launchDealPrice || (fin && fin.cashPrice) || a.listPrice, listPrice:a.listPrice, launchDealPrice:a.launchDealPrice || null, shopFromDay:a.shopFromDay || 1,
       tier: a.tier ? capFirst(a.tier) : (o.tier || ''), fact:a.identity || o.fact || '', icon:o.icon || 'jet', maker:o.maker || makerOf(a.name), tankAdd:o.tankAdd || 0,
-      runCost:o.runCost || 0, typicalProfit:o.typicalProfit || 0, minReputation:null, status:a.status }));
+      runCost:o.runCost || 0, typicalProfit:o.typicalProfit || 0, minReputation:null, status:a.status,
+      artworkId:a.artworkId || o.artworkId || null, wbId:a.wbId || a.id, photoFile:a.photoFile || o.photoFile || null, photoCredit:a.photoCredit || null, photoLicence:a.photoLicence || null, photoSource:a.photoSource || null }));   // CR5: the Aircraft sheet's drawing and showroom photo
     if(fin) FINANCE[a.id] = fin;
   });
   /* home: fixed at Heathrow Terminal 5 (workbook Settings homeAirport) */
@@ -4225,7 +4229,7 @@ function planeCard(p, opts){
   const afford = S.cash >= p.price, owned = S.fleet.filter(f=>f.planeId===p.id).length;
   return `<div class="plane-card ${afford?'afford':''} ${owned?'owned':''}">
     <span class="tier">${esc(p.tier)}${owned?` &middot; you own ${owned}`:''}</span>
-    <div class="row"><span class="nm grow">${esc(p.name)}</span>${planeSvg(p)}</div>
+    <div class="row"><span class="nm grow">${esc(p.name)}</span>${planeMini(p)}</div>
     <div class="pr ${afford?'':'cant'}">${money(p.price)}</div>
     <div class="specs"><span>Seats <b>${p.seats}</b></span><span>Speed <b>${num(p.speed)} km/h</b></span><span>Range <b>${num(p.range)} km</b></span><span>Cost per flight <b>${money(p.runCost)}</b></span><span>Fuel <b>${p.fuelUse} L</b> per 100 km</span><span>Tank space <b>+${num(p.tankAdd||0)} L</b></span><span>Flies <b>${p.range>=9000?'long':p.range>=4000?'medium':'short'}</b> routes</span></div>
     <p class="small muted">${esc(p.fact)}</p>
@@ -4516,7 +4520,7 @@ function fleetHtml(){
   return `<div class="pb"><table class="hq-t"><thead><tr><th>Aircraft</th><th class="num">Seats</th><th>Today</th><th>In use</th><th>Status</th></tr></thead><tbody>${S.fleet.map(f => {
     const p = planeById(f.planeId), s = schedOf(f), u = s.length ? Math.round(100 * TIME.day(p, s).elapsed / span) : 0;
     const chip = f.grounded ? '<span class="chip bad">Grounded</span>' : s.length ? '<span class="chip ok">Flying today</span>' : '<span class="chip idle">Not flying yet</span>';
-    return `<tr><td><span class="ac">${planeSvg(p)}<b>${esc(p.name)}</b></span></td><td class="num">${seatsOf(f)}</td><td>${s.length ? esc(tripLabel(s)) : '—'}</td><td><span class="ubar"><i style="width:${u}%"></i></span><span class="num">${u}%</span></td><td>${chip}</td></tr>`; }).join('')}${S.onOrder ? (() => { const p = planeById(S.onOrder.planeId); return `<tr class="onorder"><td><span class="ac">${planeSvg(p)}<b>${esc(p.name)}</b></span></td><td class="num">${p.seats}</td><td>—</td><td>—</td><td><span class="chip idle">On order · arrives ${dateShort(S.onOrder.deliveryDay)}</span></td></tr>`; })() : ''}</tbody></table>
+    return `<tr><td><span class="ac">${planeMini(f)}<b>${esc(p.name)}</b></span></td><td class="num">${seatsOf(f)}</td><td>${s.length ? esc(tripLabel(s)) : '—'}</td><td><span class="ubar"><i style="width:${u}%"></i></span><span class="num">${u}%</span></td><td>${chip}</td></tr>`; }).join('')}${S.onOrder ? (() => { const p = planeById(S.onOrder.planeId); return `<tr class="onorder"><td><span class="ac">${planeSvg(p)}<b>${esc(p.name)}</b></span></td><td class="num">${p.seats}</td><td>—</td><td>—</td><td><span class="chip idle">On order · arrives ${dateShort(S.onOrder.deliveryDay)}</span></td></tr>`; })() : ''}</tbody></table>
     </div>`;
 }
 function intelHtml(){ const it = intelItems(); return `<div class="pb intel">${it.length ? it.map(x => `<div class="ii ${x.warn ? 'warn' : x.good ? 'good' : ''}"><span class="tag">${esc(x.tag)}</span><span>${esc(x.text)}</span></div>`).join('') : '<p class="muted">All quiet.</p>'}</div>`; }
@@ -8961,10 +8965,10 @@ function planEditor(i, pl, L, o){
         ${per ? stepper(i, 'dep|' + s.k, fmtTime(s.dep), `back ${fmtTime(s.arr)}`, { cls:'sm', j: j || undefined }) : `<span class="mono">${fmtTime(s.dep)}</span>`}<span class="pe-fill ${s.sold >= s.seats ? 'full' : ''}"><b class="mono">${s.sold}/${s.seats}</b><small>${s.sold >= s.seats ? 'full' : `${s.seats - s.sold} empty`}</small></span><span class="pe-band">${BAND_NAMES[s.band] || ''}</span>
         <button class="pe-x" data-pe="${i}|del|${s.k}|0|${j}" title="Remove this service" aria-label="Remove service ${s.k + 1}">✕</button></div>`; };
     const tab = multi ? clamp(UI.peTab || 0, 0, pl.fleet.length - 1) : 0;
-    const tabs = multi ? `<div class="pe-tabs">${pl.fleet.map((x, j) => { const p = planeById(x.planeId); return `<button class="pe-tab ${j === tab ? 'on' : ''}" data-petab="${j}" aria-pressed="${j === tab}">${planeSvg(p, 'pe-pic')}<b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><span class="mono">${esc(regOf(x.uid))}</span><small>${x.sched.length ? plural(x.sched.length, 'service') : 'no services yet'}</small></button>`; }).join('')}</div>` : '';
+    const tabs = multi ? `<div class="pe-tabs">${pl.fleet.map((x, j) => { const p = planeById(x.planeId); return `<button class="pe-tab ${j === tab ? 'on' : ''}" data-petab="${j}" aria-pressed="${j === tab}">${planeMini(S.fleet.find(f => f.uid === x.uid) || p, 'pe-pic')}<b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><span class="mono">${esc(regOf(x.uid))}</span><small>${x.sched.length ? plural(x.sched.length, 'service') : 'no services yet'}</small></button>`; }).join('')}</div>` : '';
     services = pl.fleet.map((x, j) => { if(multi && j !== tab) return ''; const p = planeById(x.planeId), svcs = (L.services || []).filter(s => s.uid === x.uid), D = x.sched.length ? TIME.day(p, x.sched, undefined, x.deps || null) : null;
       const adds = allRoutes.map(id => { const r = routeById(id), can = planeCanFly(p, r); return `<button class="btn small" data-pe="${i}|add|${id}|0|${j}" ${can && x.sched.length < maxT ? '' : 'disabled'} title="${can ? `Add a ${r.city} service` : `${p.name}: range ${num(p.range)} km, ${r.city} is ${num(routeKm(r))} km away`}">+ ${esc(r.city)}${can ? '' : ' <small>out of range</small>'}</button>`; }).join('');
-      return `<div class="pe-ac"><div class="pe-sh"><span class="pe-acn">${planeSvg(p, 'pe-pic')}<b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><span class="mono">${esc(regOf(x.uid))}</span><span class="muted small">${p.seats} seats${multi && S.fleet.find(f => f.uid === x.uid) && S.fleet.find(f => f.uid === x.uid).terms ? ' · ' + termsWord(S.fleet.find(f => f.uid === x.uid).terms) : ''}</span></span>${D ? `<span class="muted small">busy until ${fmtTime(D.end)}</span>` : ''}<span class="pe-add">${x.sched.length >= maxT ? `<span class="muted small">${maxT} services is the most one aircraft can fly</span>` : adds}</span></div>
+      return `<div class="pe-ac"><div class="pe-sh"><span class="pe-acn">${planeMini(S.fleet.find(f => f.uid === x.uid) || p, 'pe-pic')}<b>${esc(p.name.replace(/^DHC-6 /, ''))}</b><span class="mono">${esc(regOf(x.uid))}</span><span class="muted small">${p.seats} seats${multi && S.fleet.find(f => f.uid === x.uid) && S.fleet.find(f => f.uid === x.uid).terms ? ' · ' + termsWord(S.fleet.find(f => f.uid === x.uid).terms) : ''}</span></span>${D ? `<span class="muted small">busy until ${fmtTime(D.end)}</span>` : ''}<span class="pe-add">${x.sched.length >= maxT ? `<span class="muted small">${maxT} services is the most one aircraft can fly</span>` : adds}</span></div>
         ${svcs.map(s => svcRow(s, j, p)).join('') || `<p class="muted small pe-none">${multi ? 'No services yet: this aircraft costs its day anyway.' : 'Add a service.'}</p>`}</div>`; }).join('');
     services = `<div class="pe-svcs"><div class="pe-sh"><span class="label">${sched ? 'Timetable: give each aircraft its services and departure times' : 'Services and departure times'}${o.big ? newTag(3.3) : ''}</span>${multi ? (sched ? '<span class="muted small">Pick an aircraft, then add the routes it flies.</span>' : '') : '<span class="muted small">Out, a turnaround, back, then a turnaround at home.</span>'}</div>${tabs}${services}</div>`;
   }
@@ -9157,7 +9161,7 @@ function startProtoDay(n){
 function shopCard(p, o, picked, owned){
   const specs = [['Seats', p.seats], ['Range', num(p.range) + ' km'], ['Speed', num(p.speed) + ' km/h'], ['Flying cost', money(p.hourCost) + ' an hour'], ['Day cost', money(p.dayCost)]];
   const offer = [[`Buy`, money(o.price), o.canBuy], [`Rent`, o.lease ? `${money(o.lease)} a day` : '—', o.canLease], [`Finance`, o.deposit ? `${money(o.deposit)} down + ${money(o.pay)} a ${o.unit} × ${o.n}` : '—', o.canFinance]];
-  return `<button class="ac-shop ${picked ? 'on' : ''} ${owned ? 'owned' : ''}" data-pick="${p.id}" aria-pressed="${picked}"><div class="as-pic">${planeSvg(p, '')}</div><b>${esc(p.name)}${owned ? ` <small class="muted">· you fly ${owned}</small>` : ''}</b><span class="muted small">${esc(p.fact || '')}</span>
+  return `<button class="ac-shop ${picked ? 'on' : ''} ${owned ? 'owned' : ''}" data-pick="${p.id}" aria-pressed="${picked}"><div class="as-pic">${planeMini(p, '')}</div><b>${esc(p.name)}${owned ? ` <small class="muted">· you fly ${owned}</small>` : ''}</b><span class="muted small">${esc(p.fact || '')}</span>
     <div class="as-f">${specs.map(([l, v]) => `<span>${l} <b class="mono">${v}</b></span>`).join('')}</div>
     <div class="as-offer">${offer.map(([l, v, ok]) => `<span class="${ok ? '' : 'off'}"><span>${l}</span><b class="mono">${v}</b></span>`).join('')}</div></button>`;
 }
@@ -9718,8 +9722,11 @@ function aircraftArt(f, o){
   h = h.replace('@NAMEFILL', fills.name).replace('@REGFILL', fills.reg).replace('@PNAMEFILL', fills.pname);
   h = h.replace('@NAME', esc(name)).replace('@REG', esc(f.registration || '')).replace('@PNAME', esc(f.name || ''));
   const p = planeById(f.planeId);
-  return `<svg class="art ${o.cls || ''}" viewBox="0 0 1200 440" data-uid="${f.uid || ''}" data-liv="${esc(livKey(f))}" style="--body:${hexOf(L.body)};--belly:${hexOf(L.belly)};--engine:${hexOf(L.engine)};--second:${hexOf(L.second)}" role="img" aria-label="${esc((p ? p.name : 'Aircraft') + (f.registration ? ' ' + f.registration : '') + ' in your colours')}">${h}</svg>`;
+  return `<svg class="art ${o.cls || ''}" viewBox="0 0 1200 440" data-uid="${f.uid || ''}" data-art="${art}" data-liv="${esc(livKey(f))}" style="--body:${hexOf(L.body)};--belly:${hexOf(L.belly)};--engine:${hexOf(L.engine)};--second:${hexOf(L.second)}" role="img" aria-label="${esc((p ? p.name : 'Aircraft') + (f.registration ? ' ' + f.registration : '') + ' in your colours')}">${h}</svg>`;
 }
+/* a small painted picture of this aircraft: the fleet entry's livery, or the showroom's plain silver for one not owned */
+function planeMini(x, cls){ const f = x && x.uid !== undefined ? ensureIdentity(x) : null; if(f) return aircraftArt(f, { cls:'mini ' + (cls || '') });
+  const p = x && x.planeId ? planeById(x.planeId) : x; if(!p) return ''; return typeof plainArt === 'function' ? plainArt(p, undefined, 'mini ' + (cls || '')) : planeSvg(p, cls); }
 function livKey(f){ return JSON.stringify([normLivery(f.livery), f.registration || '', f.name || '', S && S.airline ? [S.airline.name, logoOf()] : null]); }
 /* update a drawn aircraft in place (colours, stripe, tail, wording) so the shine can play; true when something changed */
 function repaintArt(svg, f){
@@ -9926,7 +9933,7 @@ function renderIdentityWall(mode){
    rolled out (p4q_paint.js). The fleet screen shows every plane in its own livery, with a Repaint button; "Your airline" on the
    home menu edits the name, flight code and logo.
    ================================================================== */
-function photoOf(a){ const f = a && a.photoFile; return f && PHOTOS[f] ? { src:PHOTOS[f], credit:[a.photoCredit, a.photoLicence].filter(Boolean).join(' · '), source:a.photoSource || '' } : null; }
+function photoOf(a){ if(!a) return null; const f = [a.photoFile, a.id, a.wbId, a.artworkId].find(k => k && PHOTOS[k]); return f ? { src:PHOTOS[f], credit:[a.photoCredit, a.photoLicence].filter(Boolean).join(' · '), source:a.photoSource || '' } : null; }
 function plainArt(p, art, cls){ const sil = PAL.some(c => c.id === 'silver') ? 'silver' : (PAL[10] || PAL[1] || {}).id, wh = PAL.some(c => c.id === 'white') ? 'white' : (PAL[0] || {}).id;
   return aircraftArt({ planeId:p.id, livery:{ body:wh, belly:sil, engine:sil, second:sil, stripe:'none', tail:'stripe' }, registration:'', name:'' }, { cls:cls || 'pic', art, name:'' }); }
 function pictureHtml(a, art, cls){ const ph = photoOf(a); if(ph) return `<figure class="sc-photo"><img src="${ph.src}" alt="${esc(a.name)}"><figcaption class="sc-credit">${esc(ph.credit)}</figcaption></figure>`; return `<div class="sc-art">${plainArt(a, art, cls)}</div>`; }
@@ -10929,7 +10936,7 @@ function boot(){
   $('homeFab').onclick = openMenu;
   render();
 }
-window.__sim = { S:()=>S, step, next, loadCode, saveCode, migrate, landSave:()=>landSave(), setS:(v)=>{ S = v; }, practiceAnswer:(k) => { const st = S.steps[S.si], P = st && st.pq; if(!P) return null; const q = PRACTICE[P.key].render(P.qs[Math.min(P.i, P.qs.length - 1)]); return { kind:q.kind, answer:q.answer, text: q.kind === 'time' ? fmtTime(q.answer) : String(q.answer) }; }, startRound, advance, paxFor, periodLabel, simulateRun, monthlyProfit, investable, settings:()=>settings, render, planFlights, questionBank, schedOf, TIME, timeSelfTest, tableComplete, nextOpenCell, cellState, currentTable, routeById, planeById, fillTable };
+window.__sim = { S:()=>S, step, next, loadCode, saveCode, migrate, aircraftArt, planeSvg, ensureIdentity, landSave:()=>landSave(), setS:(v)=>{ S = v; }, practiceAnswer:(k) => { const st = S.steps[S.si], P = st && st.pq; if(!P) return null; const q = PRACTICE[P.key].render(P.qs[Math.min(P.i, P.qs.length - 1)]); return { kind:q.kind, answer:q.answer, text: q.kind === 'time' ? fmtTime(q.answer) : String(q.answer) }; }, startRound, advance, paxFor, periodLabel, simulateRun, monthlyProfit, investable, settings:()=>settings, render, planFlights, questionBank, schedOf, TIME, timeSelfTest, tableComplete, nextOpenCell, cellState, currentTable, routeById, planeById, fillTable };
 document.addEventListener('DOMContentLoaded', boot);
 })();
 </script>

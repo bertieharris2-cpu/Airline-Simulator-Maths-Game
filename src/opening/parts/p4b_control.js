@@ -113,7 +113,7 @@ function planeCard(p, opts){
   const afford = S.cash >= p.price, owned = S.fleet.filter(f=>f.planeId===p.id).length;
   return `<div class="plane-card ${afford?'afford':''} ${owned?'owned':''}">
     <span class="tier">${esc(p.tier)}${owned?` &middot; you own ${owned}`:''}</span>
-    <div class="row"><span class="nm grow">${esc(p.name)}</span>${planeSvg(p)}</div>
+    <div class="row"><span class="nm grow">${esc(p.name)}</span>${planeMini(p)}</div>
     <div class="pr ${afford?'':'cant'}">${money(p.price)}</div>
     <div class="specs"><span>Seats <b>${p.seats}</b></span><span>Speed <b>${num(p.speed)} km/h</b></span><span>Range <b>${num(p.range)} km</b></span><span>Cost per flight <b>${money(p.runCost)}</b></span><span>Fuel <b>${p.fuelUse} L</b> per 100 km</span><span>Tank space <b>+${num(p.tankAdd||0)} L</b></span><span>Flies <b>${p.range>=9000?'long':p.range>=4000?'medium':'short'}</b> routes</span></div>
     <p class="small muted">${esc(p.fact)}</p>
@@ -404,7 +404,7 @@ function fleetHtml(){
   return `<div class="pb"><table class="hq-t"><thead><tr><th>Aircraft</th><th class="num">Seats</th><th>Today</th><th>In use</th><th>Status</th></tr></thead><tbody>${S.fleet.map(f => {
     const p = planeById(f.planeId), s = schedOf(f), u = s.length ? Math.round(100 * TIME.day(p, s).elapsed / span) : 0;
     const chip = f.grounded ? '<span class="chip bad">Grounded</span>' : s.length ? '<span class="chip ok">Flying today</span>' : '<span class="chip idle">Not flying yet</span>';
-    return `<tr><td><span class="ac">${planeSvg(p)}<b>${esc(p.name)}</b></span></td><td class="num">${seatsOf(f)}</td><td>${s.length ? esc(tripLabel(s)) : '—'}</td><td><span class="ubar"><i style="width:${u}%"></i></span><span class="num">${u}%</span></td><td>${chip}</td></tr>`; }).join('')}${S.onOrder ? (() => { const p = planeById(S.onOrder.planeId); return `<tr class="onorder"><td><span class="ac">${planeSvg(p)}<b>${esc(p.name)}</b></span></td><td class="num">${p.seats}</td><td>—</td><td>—</td><td><span class="chip idle">On order · arrives ${dateShort(S.onOrder.deliveryDay)}</span></td></tr>`; })() : ''}</tbody></table>
+    return `<tr><td><span class="ac">${planeMini(f)}<b>${esc(p.name)}</b></span></td><td class="num">${seatsOf(f)}</td><td>${s.length ? esc(tripLabel(s)) : '—'}</td><td><span class="ubar"><i style="width:${u}%"></i></span><span class="num">${u}%</span></td><td>${chip}</td></tr>`; }).join('')}${S.onOrder ? (() => { const p = planeById(S.onOrder.planeId); return `<tr class="onorder"><td><span class="ac">${planeSvg(p)}<b>${esc(p.name)}</b></span></td><td class="num">${p.seats}</td><td>—</td><td>—</td><td><span class="chip idle">On order · arrives ${dateShort(S.onOrder.deliveryDay)}</span></td></tr>`; })() : ''}</tbody></table>
     </div>`;
 }
 function intelHtml(){ const it = intelItems(); return `<div class="pb intel">${it.length ? it.map(x => `<div class="ii ${x.warn ? 'warn' : x.good ? 'good' : ''}"><span class="tag">${esc(x.tag)}</span><span>${esc(x.text)}</span></div>`).join('') : '<p class="muted">All quiet.</p>'}</div>`; }

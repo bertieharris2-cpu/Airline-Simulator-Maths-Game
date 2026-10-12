@@ -7,7 +7,7 @@
    rolled out (p4q_paint.js). The fleet screen shows every plane in its own livery, with a Repaint button; "Your airline" on the
    home menu edits the name, flight code and logo.
    ================================================================== */
-function photoOf(a){ const f = a && a.photoFile; return f && PHOTOS[f] ? { src:PHOTOS[f], credit:[a.photoCredit, a.photoLicence].filter(Boolean).join(' · '), source:a.photoSource || '' } : null; }
+function photoOf(a){ if(!a) return null; const f = [a.photoFile, a.id, a.wbId, a.artworkId].find(k => k && PHOTOS[k]); return f ? { src:PHOTOS[f], credit:[a.photoCredit, a.photoLicence].filter(Boolean).join(' · '), source:a.photoSource || '' } : null; }
 function plainArt(p, art, cls){ const sil = PAL.some(c => c.id === 'silver') ? 'silver' : (PAL[10] || PAL[1] || {}).id, wh = PAL.some(c => c.id === 'white') ? 'white' : (PAL[0] || {}).id;
   return aircraftArt({ planeId:p.id, livery:{ body:wh, belly:sil, engine:sil, second:sil, stripe:'none', tail:'stripe' }, registration:'', name:'' }, { cls:cls || 'pic', art, name:'' }); }
 function pictureHtml(a, art, cls){ const ph = photoOf(a); if(ph) return `<figure class="sc-photo"><img src="${ph.src}" alt="${esc(a.name)}"><figcaption class="sc-credit">${esc(ph.credit)}</figcaption></figure>`; return `<div class="sc-art">${plainArt(a, art, cls)}</div>`; }

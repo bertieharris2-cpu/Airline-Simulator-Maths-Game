@@ -29,6 +29,12 @@ if wbm:
         raw = open(fp, 'rb').read(); ext = f.rsplit('.', 1)[-1].lower()
         photos[f] = 'data:image/%s;base64,%s' % ({'jpg': 'jpeg'}.get(ext, ext), base64.b64encode(raw).decode('ascii'))
         if len(raw) > 150 * 1024: big.append('%s (%d KB)' % (f, len(raw) // 1024))
+# a photo dropped into assets/photos and named after the aircraft (sf34.jpg, saab340.jpg, e190.png, ...) is embedded under that stem, no workbook column needed
+for fp in sorted(glob.glob(os.path.join(HERE, 'assets', 'photos', '*'))):
+    f = os.path.basename(fp); stem, _, ext = f.rpartition('.'); ext = ext.lower()
+    if ext not in ('jpg', 'jpeg', 'png', 'webp') or f in photos or stem in photos: continue
+    raw = open(fp, 'rb').read(); photos[stem] = 'data:image/%s;base64,%s' % ({'jpg': 'jpeg'}.get(ext, ext), base64.b64encode(raw).decode('ascii'))
+    if len(raw) > 150 * 1024: big.append('%s (%d KB)' % (f, len(raw) // 1024))
 p2 = p2.replace('<!--PHOTOS-->', '<script type="application/json" id="data-photos">%s</script>' % json.dumps(photos, separators=(',', ':')))
 print(len(art), 'aircraft drawings;', len(photos), 'photos embedded' + ('; over 150 KB: ' + ', '.join(big) if big else ''))
 head = r('parts', 'p1_head.html')

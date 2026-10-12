@@ -58,8 +58,11 @@ function aircraftArt(f, o){
   h = h.replace('@NAMEFILL', fills.name).replace('@REGFILL', fills.reg).replace('@PNAMEFILL', fills.pname);
   h = h.replace('@NAME', esc(name)).replace('@REG', esc(f.registration || '')).replace('@PNAME', esc(f.name || ''));
   const p = planeById(f.planeId);
-  return `<svg class="art ${o.cls || ''}" viewBox="0 0 1200 440" data-uid="${f.uid || ''}" data-liv="${esc(livKey(f))}" style="--body:${hexOf(L.body)};--belly:${hexOf(L.belly)};--engine:${hexOf(L.engine)};--second:${hexOf(L.second)}" role="img" aria-label="${esc((p ? p.name : 'Aircraft') + (f.registration ? ' ' + f.registration : '') + ' in your colours')}">${h}</svg>`;
+  return `<svg class="art ${o.cls || ''}" viewBox="0 0 1200 440" data-uid="${f.uid || ''}" data-art="${art}" data-liv="${esc(livKey(f))}" style="--body:${hexOf(L.body)};--belly:${hexOf(L.belly)};--engine:${hexOf(L.engine)};--second:${hexOf(L.second)}" role="img" aria-label="${esc((p ? p.name : 'Aircraft') + (f.registration ? ' ' + f.registration : '') + ' in your colours')}">${h}</svg>`;
 }
+/* a small painted picture of this aircraft: the fleet entry's livery, or the showroom's plain silver for one not owned */
+function planeMini(x, cls){ const f = x && x.uid !== undefined ? ensureIdentity(x) : null; if(f) return aircraftArt(f, { cls:'mini ' + (cls || '') });
+  const p = x && x.planeId ? planeById(x.planeId) : x; if(!p) return ''; return typeof plainArt === 'function' ? plainArt(p, undefined, 'mini ' + (cls || '')) : planeSvg(p, cls); }
 function livKey(f){ return JSON.stringify([normLivery(f.livery), f.registration || '', f.name || '', S && S.airline ? [S.airline.name, logoOf()] : null]); }
 /* update a drawn aircraft in place (colours, stripe, tail, wording) so the shine can play; true when something changed */
 function repaintArt(svg, f){
