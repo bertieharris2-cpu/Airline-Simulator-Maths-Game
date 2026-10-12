@@ -4,6 +4,7 @@ actualDeps: p4g_opening2.js -> p4m_fleet.js
 advance: p4a_core.js -> p4d_opening.js
 applyEventNow: p4l_handsums.js -> p4n_weeks.js
 applyPeriodResults: p4a_core.js -> p4f_campaign.js
+applyPick: p4t_workout.js -> p4v_week.js
 applyPlanRaw: p4f_campaign.js -> p4m_fleet.js
 aptCode: p4d_opening.js -> p4i_liveops.js
 bandOf: p4g_opening2.js -> p4h_world.js
@@ -17,9 +18,9 @@ cellWrong: p4b_control.js -> p4e_toolkit.js
 changePlan: p4d_opening.js -> p4o_review.js
 checkCell: p4a_core.js -> p4e_toolkit.js
 checkTools: p4e_toolkit.js -> p4g_opening2.js
-closeDay: p4d_opening.js -> p4f_campaign.js -> p4g_opening2.js -> p4k_chapter.js
+closeDay: p4d_opening.js -> p4f_campaign.js -> p4g_opening2.js -> p4k_chapter.js -> p4v_week.js
 closeWord: p4d_opening.js -> p4f_campaign.js
-competitorPrice: p4a_core.js -> p4n_weeks.js
+competitorPrice: p4a_core.js -> p4v_week.js
 costLabels: p4g_opening2.js -> p4m_fleet.js
 costRowIds: p4g_opening2.js -> p4l_handsums.js -> p4m_fleet.js
 crewNeeded: p4a_core.js -> p4h_world.js
@@ -28,7 +29,7 @@ currentPlan: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js
 dayCostOf: p4a_core.js -> p4m_fleet.js
 dayExtras: p4a_core.js -> p4h_world.js
 dayTag: p4a_core.js -> p4k_chapter.js
-decideHandSums: p4l_handsums.js -> p4m_fleet.js
+decideHandSums: p4l_handsums.js -> p4v_week.js
 demandAt: p4a_core.js -> p4h_world.js -> p4l_handsums.js -> p4n_weeks.js
 demandMult: p4l_handsums.js -> p4n_weeks.js
 demandPools: p4g_opening2.js -> p4h_world.js
@@ -43,6 +44,7 @@ fleetHtml: p4b_control.js -> p4r_showroom.js
 flightParts: p4h_world.js -> p4m_fleet.js
 fmtVal: p4a_core.js -> p4m_fleet.js
 forecastCols: p4b_control.js -> p4d_opening.js
+fuelPaid: p4g_opening2.js -> p4v_week.js
 goWord: p4d_opening.js -> p4f_campaign.js
 legMinutes: p4a_core.js -> p4h_world.js
 migrate: p4a_core.js -> p4u_migrate.js
@@ -73,7 +75,7 @@ railValue: p4d_opening.js -> p4g_opening2.js
 readyExtra: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyOk: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyTitle: p4d_opening.js -> p4f_campaign.js
-recordHandSums: p4l_handsums.js -> p4m_fleet.js
+recordHandSums: p4l_handsums.js -> p4v_week.js
 regOf: p4i_liveops.js -> p4p_identity.js
 repLive: p4a_core.js -> p4o_review.js
 reviewSpec: p4f_campaign.js -> p4n_weeks.js
@@ -98,4 +100,5 @@ toolLevel: p4e_toolkit.js -> p4l_handsums.js -> p4m_fleet.js
 undoEvent: p4l_handsums.js -> p4n_weeks.js
 weekProjected: p4g_opening2.js -> p4n_weeks.js
 withPlan: p4g_opening2.js -> p4m_fleet.js
+workoutPicked: p4t_workout.js -> p4v_week.js
 wsStatus: p4d_opening.js -> p4f_campaign.js

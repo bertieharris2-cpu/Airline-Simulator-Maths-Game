@@ -53,7 +53,7 @@ function costPartsOf(v){ return [['Flights', money(v.run)]].concat(fuelPaid() ? 
 function workoutPicked(opts, pl){ if(opts.length > 1) return S.rnd.pick && opts.some(o => o.id === S.rnd.pick) ? S.rnd.pick : null; return opts[0].id; }
 function applyPick(o){ if(o.pick && o.pick.fare !== undefined){ S.prices[S.market] = o.pick.fare; S.rnd.pick = o.id; } else if(o.pick && o.pick.onboard){ S.onboard = o.pick.onboard; S.rnd.pick = o.id; } refreshPlan(); resetEntry(); UI.justDone = null; render(); }
 /* the day's tables: the cost sheet with a column per option, plus the tenths sum when the rules ask for it */
-function workTables(pl){
+function workTablesBase(pl){
   const L0 = planLines(pl), opts = workoutOptions(pl), lines = opts.map(o => planLines(o.plan)), picked = workoutPicked(opts, pl);
   const cols = opts.map((o, i) => ({ id:o.id, label:o.label, sub:o.sub, values:Object.assign({}, lines[i].v), parts:{ run:flightParts(o.plan), day:typeof dayParts === 'function' ? dayParts() : [], cost:costPartsOf(lines[i].v) } }));
   const rows = costRowsFor(L0); let rowIds = costRowIds(L0, pl); const H = S.rnd.handSums || {};
@@ -74,15 +74,16 @@ TABLES.tenths2 = Object.assign({}, TABLES.tenths1, { rows: TABLES.tenths1.rows.m
    THE PLANNING PAGE
    ================================================================== */
 R.plan = st => {
-  const setup = S.phase === 'setup', pl = currentPlan(), L = planLines(pl), p = ourPlane(), r = routeById(S.market), f = fleetOne(), sched = f ? schedOf(f) : [];
-  const costed = !!(S.rnd.costed && S.rnd.costed.key === planKey(pl)), picked = setup && !!S.rnd.pick;
+  const setup = S.phase === 'setup', wk = typeof weekMode === 'function' && weekMode(), pl = currentPlan(), L = planLines(pl), p = ourPlane(), r = routeById(S.market), f = fleetOne(), sched = f ? schedOf(f) : [];
+  const costed = !!(S.rnd.costed && S.rnd.costed.key === planKey(pl)), picked = setup && !!(S.rnd.pick || (S.rnd.picks && S.rnd.picks.fare));
   const story = setup ? [`The airport is open ${WORLD.dayStart} to ${WORLD.dayEnd}. Each service fills more of the aircraft's day, and you don't have to carry everyone.`] : (!(S.round === 0 || roundData(S.round).prog !== roundData(S.round - 1).prog) ? [] : (PLAN_STORY[progress()] || []));
   const ideaBtn = (!setup || costed) && !UI.ideaOpen ? '<button class="btn small" id="ideaOpen" title="A test plan the model costs: no sums">Try an idea</button>' : '';
   const chips = setup ? `<div class="pl-fares"><span class="label">Fare</span>${(r.fares || [r.basePrice]).map(x => `<span class="fchip ${picked && x === fareOf(r.id) ? 'on' : ''}"><b class="mono">${money(x)}</b><small>${paxWant(r, x)} want to fly</small></span>`).join('')}<span class="muted small">${picked ? `You chose ${money(fareOf(r.id))}.` : 'The fare is chosen once the tickets are worked out.'}</span></div>` : '';
-  const planPane = setup
+  const fuelWk = typeof fuelPanelHtml === 'function' ? fuelPanelHtml() : '';
+  const planPane = setup && !wk
     ? `<section class="pnl"><div class="pnl-h"><h3>Services to ${esc(r.city)}</h3><span class="muted">${capLine(wantOf(r.id), sched.length * p.seats)}</span></div>${serviceButtons(r.id, sched)}${chips}</section>
        <section class="pnl"><div class="pnl-h"><h3>Expected passengers per service</h3>${paxKey()}${ideaBtn}</div>${paxGroups(wantOf(r.id), p.seats, sched.length, { times:TIME.day(p, sched).trips.map(x => x.dep), small:true })}</section>`
-    : `<section class="pnl"><div class="pnl-h"><h3>Your plan</h3><span class="muted">${esc(planLabel(pl))}</span>${ideaBtn}</div>${planEditor(0, pl, L, { big:true })}</section>
+    : `<section class="pnl"><div class="pnl-h"><h3>${wk ? (setup ? 'Your standing plan for the week' : 'Your plan for the week') : 'Your plan'}</h3><span class="muted">${esc(planLabel(pl))}</span>${ideaBtn}</div>${planEditor(0, pl, L, { big:true, lockFare: setup && wk ? S.market : null, noSnacks: setup && wk, chips: setup && wk ? chips : '' })}</section>${fuelWk}
        ${depsOn() ? '' : `<section class="pnl"><div class="pnl-h"><h3>Expected passengers per service</h3>${paxKey()}</div>${plannerRoutes().filter(id => pl.sched.includes(id)).map(id => paxGroups(paxWant(routeById(id), fareOf(id)), p.seats, serviceCounts(pl.sched)[id] || 0, { small:true })).join('') || '<p class="muted">No services yet.</p>'}</section>`}`;
   // the modelling tool: a test plan the model costs, beside the plan (on launch day once the tickets have been worked out by hand)
   let idea = '';
@@ -90,11 +91,11 @@ R.plan = st => {
     const chip = same ? '<div class="t2-diff">Change the test plan to try an idea. The model costs it straight away.</div>' : `<div class="t2-diff ${d >= 0 ? 'up' : 'down'}"><b class="mono">${d >= 0 ? '+' : '−'}${money(Math.abs(d))}</b><span>${d >= 0 ? 'more' : 'less'} profit than your plan</span></div>`;
     idea = `<section class="pnl pl-idea"><div class="pnl-h"><h3>Try an idea</h3><span class="muted">The model costs a test plan: no sums</span>${same ? '' : '<button class="link" data-treset>Start again from your plan</button>'}<button class="btn small" id="ideaShut">Close</button></div>
       <div class="pl-idea-g"><div>${planEditor(9, test, Lt, { compact:true })}</div><div>${chip}${modelRows(L, Lt, 'day')}<div class="pl-choose">${same ? '' : `<button class="btn ${d >= 0 ? 'primary' : ''}" data-ftest>Make the test plan my plan</button>`}</div></div></div></section>`; } }
-  screen().innerHTML = taskFrame({ question: setup ? 'Build the day' : 'What will your airline do today?', work:false, story, help:['timing', 'demand'], context: ctxAircraft(), todo: depsOn() ? '' : undefined,
+  screen().innerHTML = taskFrame({ question: setup ? (wk ? 'Build your standing plan' : 'Build the day') : wk ? 'What will your airline do this week?' : 'What will your airline do today?', work:false, story, help:['timing', 'demand'], context: ctxAircraft(), todo: depsOn() ? '' : undefined,
     say: setup ? `Build the day. ${wantOf(r.id)} people want to fly to ${r.city}. Choose how many services, then cost your plan.` : S.fleet.length > 1 ? `Give each aircraft its services and departure times, then cost your plan.` : `Plan what your airline will do today, then cost your plan.`,
     main:`<div class="planner2 pl2 ${UI.ideaOpen ? 'idea-open' : ''}">${planPane}${idea}</div>`,
     foot:`<button class="btn primary big" id="nx" ${sched.length && L.fits ? '' : 'disabled'}>${!sched.length ? 'Choose some services' : costed ? goLabel('Ready to fly') : goLabel('Cost your plan')} &#9654;</button>` });
-  if(setup) bindServices(); else bindPlanEditor();
+  if(setup && !wk) bindServices(); else bindPlanEditor(); if(typeof bindFuelPanel === 'function') bindFuelPanel();
   on('ideaOpen', () => { UI.ideaOpen = true; render(); }); on('ideaShut', () => { UI.ideaOpen = false; render(); });
   screen().querySelectorAll('[data-treset]').forEach(b => b.onclick = () => { S.rnd.test = null; render(); });
   screen().querySelectorAll('[data-ftest]').forEach(b => b.onclick = () => { const test = testPlan(); if(planKey(test) !== planKey(currentPlan())) applyPlan(test); S.rnd.test = null; render(); });
@@ -151,15 +152,15 @@ R.workings = st => {
   // a day with nothing to work out (the model has costed the plan): straight on
   if(!cells.length){ finish(); return; }
   // the fuel day: the tutorial before the first fuel sum
-  const tut = H.fuelCost && !skills().fuelCost && !st.tut;
+  const tut = H.fuelCost && !skills().fuelCost && !st.tut && (!W.stage || W.stage.id === 'fuel');
   // the next sum
   let nx = wkNext(tables); if(nx){ nx.t.active = nx.t.active && cellState(nx.t, nx.t.cols.find(c => c.id === nx.t.active.col), tRows(nx.t).findIndex(r => r.id === nx.t.active.row)) === 'enter' ? nx.t.active : nx.cell; S.rnd.activeTable = nx.t.id; }
   tables.forEach(x => { if(x !== (nx && nx.t)) x.active = null; });
   const act = nx ? nx.t : null, col = act && act.cols.find(c => c.id === act.active.col), row = act && tRows(act).find(r => r.id === act.active.row);
   const justDone = UI.justDone && tables.find(x => x.id === UI.justDone.table);
   const needPick = multi && !picked && !wkNext(tables) && !justDone, allDone = !wkNext(tables) && (!multi || !!picked) && !justDone;
-  const n = cells.length + (setup && !picked ? 1 : 0), k = Math.min(n, cells.filter(x => x.s === 'done').length + 1);
-  const title = setup ? 'Launch day' : `Day ${S.round}`;
+  const n = W.total || (cells.length + (setup && !picked ? 1 : 0)), k = Math.min(n, cells.filter(x => x.s === 'done').length + 1), pickFare = W.pickKind ? W.pickKind === 'fare' : setup;
+  const title = setup ? 'Launch day' : (typeof weekMode === 'function' && weekMode() ? dateShort(S.day) : `Day ${S.round}`);
   let body = '', foot = '';
   if(tut){ body = wkTutorial(st); }
   else if(justDone){ const jt = justDone, [cid, rid] = UI.justDone.cell.split('|'), jc = jt.cols.find(c => c.id === cid), jr = tRows(jt).find(r => r.id === rid);
@@ -170,9 +171,9 @@ R.workings = st => {
       <div class="wk-act"><button class="btn primary big" id="cellCheck">Check &#10003;</button><button class="btn big" id="wkPad" aria-pressed="${!!st.pad}">${st.pad ? 'Hide the number pad' : 'Number pad'}</button>${(UI.tries || 0) >= 3 ? '<button class="link" id="calcShow">Show me</button>' : ''}</div>
       <div class="msg wk-msg ${UI.ok ? 'ok' : ''}" id="ftMsg" role="status">${esc(UI.msg || '')}</div>
       ${st.pad ? `<div class="wk-pad">${['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0', '−'].map(x => `<button data-k="${x === '−' ? '-' : x}">${x}</button>`).join('')}<button data-k="back">&#9003;</button></div>` : ''}</div>`; }
-  else if(needPick){ body = `<div class="wk-pick"><span class="kl">${setup ? 'Choose the fare to fly at' : 'Choose what happens on board'}</span>
-      <div class="wk-opts">${opts.map((o, i) => { const v = W.lines[i].v; return `<button class="wk-opt" data-wpick="${o.id}"><b>${esc(o.word)}</b><span>${setup ? `${v.pax1 || v['pax_' + S.market]} passengers · tickets ${money(v['tk_' + S.market] || v.tk1)}` : `cabin sales ${money(v.snack)} · profit ${money(v.profit)}`}</span></button>`; }).join('')}</div>
-      ${!setup && !S.rnd.thirdSnack && Object.keys(ONBOARD).some(k => ONBOARD[k].free) ? '<button class="link" id="woThird">Compare free snacks too</button>' : ''}</div>`; }
+  else if(needPick){ body = `<div class="wk-pick"><span class="kl">${pickFare ? 'Choose the fare to fly at' : 'Choose what happens on board'}</span>
+      <div class="wk-opts">${opts.map((o, i) => { const v = W.lines[i].v; return `<button class="wk-opt" data-wpick="${o.id}"><b>${esc(o.word)}</b><span>${pickFare ? `${v.pax1 || v['pax_' + S.market]} passengers · tickets ${money(v['tk_' + S.market] || v.tk1)}` : `cabin sales ${money(v.snack)} · profit ${money(v.profit)}`}</span></button>`; }).join('')}</div>
+      ${!pickFare && !S.rnd.thirdSnack && Object.keys(ONBOARD).some(k => ONBOARD[k].free) ? '<button class="link" id="woThird">Compare free snacks too</button>' : ''}</div>`; }
   else if(allDone){ const done = cells.filter(x => x.s === 'done'), pN = practiceN(), pkey = practiceKeyToday(), pr = pN && pkey && !st.noPractice ? practiceHtml(st, pkey, pN, true) : '';
     body = `<div class="wk-sum wk-summary"><div class="wk-head"><span class="kl">${esc(title)}</span><h2>Your workings today</h2></div>
       <table class="wk-list">${done.map(x => `<tr><th>${esc(x.c.label)} · ${esc(rowLabel(x.t, x.r))}</th><td class="mono">${wkSentence(x.t, x.c, x.r)}</td></tr>`).join('')}

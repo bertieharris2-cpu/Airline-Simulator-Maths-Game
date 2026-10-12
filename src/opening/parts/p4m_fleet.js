@@ -104,16 +104,16 @@ function bindPlanEditor(){
 function termsWord(t){ if(!t) return ''; if(t.kind === 'lease') return `rented, ${money(t.daily)} a day`; if(t.kind === 'finance') return t.left > 0 ? `${money(t.daily)} a day, ${t.left} payment${t.left === 1 ? '' : 's'} left` : 'paid off'; return 'owned'; }
 /* The plan editor: fares per route, the snack choice, then each aircraft's services. */
 function planEditor(i, pl, L, o){
-  o = o || {}; pl = normPlan(pl); const per = depsOn(), maxT = WORLD.maxTrips || 4, allRoutes = S.phase === 'setup' ? [S.market] : plannerRoutes(), multi = pl.fleet.length > 1, sched = multi && o.big && !o.compact;   // two aircraft: the page is the timetable
+  o = o || {}; pl = normPlan(pl); const per = depsOn(), maxT = WORLD.maxTrips || 4, allRoutes = S.phase === 'setup' && !(typeof weekMode === 'function' && weekMode()) ? [S.market] : plannerRoutes(), multi = pl.fleet.length > 1, sched = multi && o.big && !o.compact;   // two aircraft: the page is the timetable
   const inPlan = [...new Set(pl.fleet.flatMap(x => x.sched))];
   const shown = allRoutes.filter(id => inPlan.includes(id) || (allRoutes.length <= 2) || (!inPlan.length && id === S.market)), more = allRoutes.filter(id => !shown.includes(id));
   const routeBlock = id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, F = r.fares || [r.basePrice], n = serviceCounts(pl.fleet.flatMap(x => x.sched))[id] || 0, rival = competitorPrice(r);
     const p0 = planeById(pl.fleet[0].planeId);
     return `<div class="pe-route ${n ? 'on' : ''}"><div class="pe-rh">${flagSvg(r.flag, 22)}<b>${esc(r.city)}</b>${o.big && id === otherRoute() ? newTag(3.4) : ''}${rival !== undefined ? `<span class="pe-rival" title="${esc(WORLD.rival)} is selling tickets at this price">${esc(WORLD.rival)} ${money(rival)}</span>` : ''}${per ? `<span class="muted">${n} service${n === 1 ? '' : 's'}</span>` : ''}</div>
       ${per || multi ? '' : `<div class="pe-f"><span class="label">Services</span>${stepper(i, 'svc|' + id, '×' + n, `${n * p0.seats} seats`, { noLess: n === 0, noMore: pl.fleet[0].sched.length >= maxT })}</div>`}
-      <div class="pe-f"><span class="label">Fare</span>${stepper(i, 'fare|' + id, money(fare), `<b class="mono">${paxWant(r, fare)}</b> want to fly`, { noLess: fare <= F[0], noMore: fare >= F[F.length - 1] })}</div></div>`; };
+      ${o.lockFare === id ? (o.chips || `<div class="pe-f"><span class="label">Fare</span><span class="muted small">Chosen on the workings page once the tickets are worked out.</span></div>`) : `<div class="pe-f"><span class="label">Fare</span>${stepper(i, 'fare|' + id, money(fare), `<b class="mono">${paxWant(r, fare)}</b> want to fly`, { noLess: fare <= F[0], noMore: fare >= F[F.length - 1] })}</div>`}</div>`; };
   const moreRow = more.length && !o.compact ? `<div class="pe-more"><span class="label">Open routes</span>${more.map(id => { const r = routeById(id), can = pl.fleet.some(z => planeCanFly(planeById(z.planeId), r)); return `<button class="btn small" data-pe="${i}|open|${id}|0|0" ${can ? '' : 'disabled'} title="${can ? `${num(routeKm(r))} km · ${paxWant(r, r.basePrice)} want to fly at ${money(r.basePrice)}` : `No aircraft you own can reach ${r.city} (${num(routeKm(r))} km)`}">${flagSvg(r.flag, 14)} ${esc(r.city)}${(r.openDay || 1) === S.day ? newTag(progress()) || ' <span class="new-tag">NEW</span>' : ''}${can ? '' : ' <small>out of range</small>'}</button>`; }).join('')}</div>` : '';
-  const snacks = !snacksOn() ? '' : o.big && newTag(3.1) ? `<div class="pe-obc ${newTag(3.1) ? 'fresh' : ''}"><div class="pe-sh"><span class="label">On board${newTag(3.1)}</span><span class="muted small">What happens on board today?</span></div><div class="obc-grid">${Object.keys(ONBOARD).map(k => `<button class="obc ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`).join('')}</div></div>`
+  const snacks = !snacksOn() || o.noSnacks ? '' : o.big && newTag(3.1) ? `<div class="pe-obc ${newTag(3.1) ? 'fresh' : ''}"><div class="pe-sh"><span class="label">On board${newTag(3.1)}</span><span class="muted small">What happens on board today?</span></div><div class="obc-grid">${Object.keys(ONBOARD).map(k => `<button class="obc ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b><small>${esc(ONBOARD[k].sub)}</small></button>`).join('')}</div></div>`
     : `<div class="pe-ob"><span class="label">On board</span>${Object.keys(ONBOARD).map(k => `<button class="opt-chip ${(pl.onboard || 'none') === k ? 'on' : ''}" data-pe="${i}|ob|${k}|0" aria-pressed="${(pl.onboard || 'none') === k}" title="${esc(ONBOARD[k].sub)}"><b>${esc(ONBOARD[k].label)}</b></button>`).join('')}</div>`;
   let services = '';
   if(per || multi){
@@ -215,7 +215,7 @@ function toolLevel(id){
   return toolDefault(id);
 }
 /* Which figures the pupil works out today (HandSumRules 1, 2, 4, 5; the Calendar's gatedCalc for the sums the rules cannot infer). */
-function decideHandSums(L, pl){
+function decideHandSumsBase(L, pl){
   pl = normPlan(pl); const out = {}, sk = skills(), ST = WORLD.settings || {}, first = id => !sk[id], seen = sk.revenue || { routes:[] };
   const ask = L.routes.map(x => x.id).filter(id => !seen.routes.includes(id));
   const opening = S.phase === 'setup' || (S.day || 1) < (WORLD.weekFrom || 22);   // Build waits for week play (design note, 8 Oct)
@@ -231,7 +231,7 @@ function decideHandSums(L, pl){
   if(opening && S.phase === 'round' && first('weekendDemand') && calDate(S.day).getUTCDay() === 6) out.weekendDemand = { level:'calc', route:S.market };
   if(g.includes('emptySeats') && first('emptySeats')) out.emptySeats = 'calc';
   const ft = sk.flightTime || { routes:[] }, newRoutes = L.routes.map(x => x.id).filter(id => !ft.routes.includes(id) && (routeById(id).openDay || 1) > 1);
-  if(g.includes('flightTime') || (S.day >= (WORLD.weekFrom || 22) && newRoutes.length)){ const rid = flightTimeRoute(pl, newRoutes); if(rid && !ft.routes.includes(rid)) out.flightTime = { level:'calc', route:rid }; }
+  if(g.includes('flightTime') || ((S.day >= (WORLD.weekFrom || 22) || (typeof weekMode === 'function' && weekMode())) && newRoutes.length)){ /* HandSumRules 4: every new route brings one ÷ (distance ÷ speed) */ const rid = flightTimeRoute(pl, newRoutes); if(rid && !ft.routes.includes(rid)) out.flightTime = { level:'calc', route:rid }; }
   return out;
 }
 function plannedLitres(pl){ pl = normPlan(pl); return pl.fleet.reduce((t, x) => t + x.sched.reduce((u, id) => u + fuelForTrip(planeById(x.planeId), routeById(id)), 0), 0); }
@@ -243,7 +243,7 @@ function flightTimeRoute(pl, newRoutes){
   return today ? today.id : null;
 }
 function flightTimePlane(pl, rid){ pl = normPlan(pl); const x = pl.fleet.find(z => z.sched.includes(rid)) || pl.fleet.find(z => planeCanFly(planeById(z.planeId), routeById(rid))) || pl.fleet[0]; return planeById(x.planeId); }
-function recordHandSums(L){
+function recordHandSumsBase(L){
   const H = S.rnd.handSums || {}, sk = skills(), day = S.day, byHand = Object.keys(H).filter(k => H[k] && H[k] !== 'model');
   const touch = (id, extra) => { const x = sk[id] || (sk[id] = { first:day, count:0, routes:[], planes:[] }); x.count++; x.lastDay = day; Object.assign(x, extra || {}); return x; };
   if(H.revenue){ const x = touch('revenue'); H.revenue.routes.forEach(id => { if(!x.routes.includes(id)) x.routes.push(id); }); }
@@ -301,7 +301,7 @@ Object.assign(RAIL_LABEL, { shop2:'Aircraft for sale', fleetSums:'The sums', acq
 Object.assign(SUB_DESC, { shop2:'A bigger airline?', fleetSums:'Rent or buy, a full plane', acquire:'Sign for the aircraft' });
 Object.assign(STEP_HINT, { shop2:'Aircraft are for sale. Look closely at one, or carry on with the aircraft you have.', fleetSums:'Two sums about the aircraft you chose: how many days of rent equal its price, and what a full plane brings in.', acquire:'Buy with cash, rent by the day, or pay a deposit and daily payments. Then give the aircraft its services.' });
 /* the day's steps (also used to bring an older save's day into this flow, p4u) */
-function daySteps(n, w){ w = w || roundData(n); const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
+function dayStepsBase(n, w){ w = w || roundData(n); const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
   return withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }]).concat(fuelPaid() ? [{ t:'fuelPlan' }] : []).concat([{ t:'ready' }, { t:'fly' }, { t:'results' }]), w); }
 function startProtoDay(n){
   S.round = n; S.phase = 'round'; S.day = beatDay(n); delete S.needsRestart;

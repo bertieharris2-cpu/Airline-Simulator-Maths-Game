@@ -70,7 +70,7 @@ function periodBrief(){
   return L.slice(0, 4);
 }
 /* The Market's and the week's events shape demand. */
-function competitorPrice(route, n){
+function competitorPriceBase(route, n){
   const w = roundData(n === undefined ? S.round : n), M = S && S.rnd && S.rnd.weekMods;
   if(M && M.rivalCut && ownedRoutes().includes(route.id)) return Math.max(5, Math.round(fareOf(route.id) * (1 - M.rivalCut) / 5) * 5);
   if(!w.competitor) return undefined;
@@ -109,6 +109,7 @@ function applyEventNow(choice){
   } else if(e.groundNext || e.refund || e.status === 'CANCELLED'){ const ff = featuredFleet() || S.fleet[0]; if(ff) S.disrupt = { uid:ff.uid, ground:true, day:(S.rnd.eventDay || S.period.from) + (e.groundNext ? 1 : 0) }; }
   if(e.setPrice) Object.keys(e.setPrice).forEach(id => { if(!routeById(id)) return; const v = e.setPrice[id]; S.prices[id] = v === 'match' ? (competitorPrice(routeById(id)) || S.prices[id]) : v; });
   (S.flags = S.flags || {})[ev.id] = choice;
+  if(ev.rivalFare) S.rivalLive = { event:ev.id, fare:ev.rivalFare, routes:(ev.affectsRoutes && ev.affectsRoutes.length ? ev.affectsRoutes : [S.market]), fromDay:S.day, untilDay:S.day + ((ev.durationDays || 1) - 1) };   // D50: the undercut lasts its duration
   if(ev.advertiseCost && e.cash && Math.abs(e.cash) === ev.advertiseCost) S.rivalAd = { event:ev.id, routes:(ev.affectsRoutes && ev.affectsRoutes.length ? ev.affectsRoutes : [S.market]), untilDay:S.day + ((ev.durationDays || 1) - 1) };   // D50
   S.rnd.why.push({ ic:'⚠️', text:`${ev.title}: ${opt.label}. ${S.rnd.eventWhy}`.trim() });
   addNews([{ tag:'EVENT', text:`${ev.title}: ${opt.label}.`, cls:'warn' }]);

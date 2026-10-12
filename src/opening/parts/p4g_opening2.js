@@ -430,7 +430,8 @@ function checkTools(){ if(!S || !S.steps) return; const now = {}; TOOLS.forEach(
 /* ---------- OPERATE: the operating plan ---------- */
 R.ready = () => {
   const f = fleetOne(), p = ourPlane(), sched = schedOf(f), need = periodNeed(), o = S.rnd.fuelOrder, after = S.fuel + (o ? o.litres : 0), fc = S.rnd.myForecast, setup = S.phase === 'setup', per = PW().span !== 'day', paid = fuelPaid();
-  const fcOk = !!(fc && fc.key === fcKey(currentPlan())), fuelOk = !paid || after >= need || per, ok = sched.length > 0 && fcOk && fuelOk && readyOk();
+  const wkTop = paid && typeof weekMode === 'function' && weekMode() && S.day < (WORLD.weekFrom || 22) && after < need;   // week mode: a short tank is topped up at the supplement price, never a block
+  const fcOk = !!(fc && fc.key === fcKey(currentPlan())), fuelOk = !paid || after >= need || per || wkTop, ok = sched.length > 0 && fcOk && fuelOk && readyOk();
   const D = sched.length ? TIME.day(p, sched) : null, ids = Object.keys(serviceCounts(sched));
   const row = (label, value, edit, good, warn) => `<div class="op-row ${good ? 'ok' : 'warn'}"><span class="op-l">${label}</span><span class="op-v">${value}</span><span class="op-s">${good ? '&#10003;' : esc(warn)}</span>${edit ? `<button class="btn small" data-edit="${edit}">Edit</button>` : '<span></span>'}</div>`;
   const rows = [
@@ -438,14 +439,14 @@ R.ready = () => {
       return row(S.fleet.length > 1 ? `${esc(px.name.replace(/^DHC-6 /, ''))} <span class="mono small">${esc(regOf(x.uid))}</span>` : 'Timetable', sx.length ? `${esc(svcLabel(sx))}${Dx ? ` · <span class="mono">${Dx.trips.map(t => fmtTime(t.dep)).join(', ')}</span>` : ''}` : `No services · costs ${money(dayCostOf(x))} today anyway`, editStep('timetable'), sx.length > 0 || S.fleet.length > 1, 'No services'); }).join(''),
     row(ids.length > 1 ? 'Fares' : 'Fare', ids.map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ') || '—', editStep('fare'), true),
     snacksOn() ? row('On board', esc(onboardOf().label), editStep('extras'), true) : '',
-    fuelContract() ? row('Fuel', `Bought as it is used at <span class="mono">${priceL(fuelPrice())}</span> a litre ${PW().now}`, '', true) : row('Fuel', paid ? `<span class="mono">${num(S.fuel)} L</span> in the tank${o ? ` + <span class="mono">${num(o.litres)} L</span> on order` : ''} · flights burn <span class="mono">${num(need)} L</span>${per && after < need ? ` · <span class="orange">${num(need - after)} L delivered</span>` : ''}` : 'Supplied free by the launch deal', paid ? 'fuelPlan' : '', fuelOk, 'Not enough fuel'),
+    fuelContract() ? row('Fuel', `Bought as it is used at <span class="mono">${priceL(fuelPrice())}</span> a litre ${PW().now}`, '', true) : row('Fuel', paid ? `<span class="mono">${num(S.fuel)} L</span> in the tank${o ? ` + <span class="mono">${num(o.litres)} L</span> on order` : ''} · flights burn <span class="mono">${num(need)} L</span>${(per || wkTop) && after < need ? ` · <span class="orange">${num(need - after)} L short: delivered at ${priceL(r2(fuelPrice() + (WORLD.fuelTopUp || 0)))}</span>` : ''}` : 'Supplied free by the launch deal', paid ? (typeof weekMode === 'function' && weekMode() && S.day < (WORLD.weekFrom || 22) ? editStep('timetable') : 'fuelPlan') : '', fuelOk, 'Not enough fuel'),
     row(fc && fc.projected ? 'Projected profit' : 'Profit (model)', fc ? `${esc(fc.plan || 'Your plan')} · <span class="mono ${fc.profit >= 0 ? 'green' : 'red'}">${money(fc.profit)}</span>` : '—', editStep('forecast'), fcOk, fc ? 'The plan has changed: test it again' : 'Not costed yet'), readyExtra(row)].join('');
   screen().innerHTML = taskFrame({ question: readyTitle(), work:false,
     say: ok ? 'The operating plan is ready. Send it to the Operations Wall when you are ready to watch it fly.' : 'Some items need updating before operations can start.',
     context: ctxForecast(),
     main:`<div class="opplan ${S.fleet.length > 1 ? 'many' : ''}"><div class="op-head"><span class="label">Operating plan</span><b>${setup ? 'Launch Day' : railTitle()[0].replace(/ Plan$/, '')} · ${esc(homeData().code)} ${esc(terminalData().name || '')}</b></div>${rows}</div>
       <div class="launch"><button class="btn primary huge go" id="startOps" ${ok ? '' : 'disabled'}>${goWord()}</button><p class="muted">${ok ? (o ? `Your fuel order (<span class="mono">${money(o.total)}</span>) is paid when operations start.` : paid ? 'The aircraft is fuelled and the plan is costed.' : 'The plan is costed. The launch deal supplies the fuel.') : 'Update the items marked above first.'}</p></div>` });
-  on('startOps', () => { const x = S.rnd.fuelOrder; if(x){ buyFuel(x.litres, x.price); S.rnd.fuelOrder = null; } delete S.rnd.returnTo; resetEntry(); UI.view = null; next(); });
+  on('startOps', () => { const x = S.rnd.fuelOrder; if(x){ buyFuel(x.litres, x.price); S.rnd.fuelOrder = null; } if(typeof weekTopUp === 'function') weekTopUp(periodNeed()); delete S.rnd.returnTo; resetEntry(); UI.view = null; next(); });
 };
 function ctxForecast(){
   const fc = S.rnd.myForecast;

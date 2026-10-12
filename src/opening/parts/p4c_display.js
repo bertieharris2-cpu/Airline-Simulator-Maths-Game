@@ -487,7 +487,7 @@ function boot(){
   $('homeFab').onclick = openMenu;
   render();
 }
-window.__sim = { S:()=>S, step, next, loadCode, saveCode, migrate, aircraftArt, planeSvg, ensureIdentity, landSave:()=>landSave(), setS:(v)=>{ S = v; }, practiceAnswer:(k) => { const st = S.steps[S.si], P = st && st.pq; if(!P) return null; const q = PRACTICE[P.key].render(P.qs[Math.min(P.i, P.qs.length - 1)]); return { kind:q.kind, answer:q.answer, text: q.kind === 'time' ? fmtTime(q.answer) : String(q.answer) }; }, startRound, advance, paxFor, periodLabel, simulateRun, monthlyProfit, investable, settings:()=>settings, render, planFlights, questionBank, schedOf, TIME, timeSelfTest, tableComplete, nextOpenCell, cellState, currentTable, routeById, planeById, fillTable };
+window.__sim = { S:()=>S, step, next, loadCode, saveCode, migrate, aircraftArt, planeSvg, ensureIdentity, fuelPanelHtml, weekMode, launchProg, opened, bestPlanSweep, projectWeek, weekFuelPrice, landSave:()=>landSave(), setS:(v)=>{ S = v; }, refreshPlan, currentPlan, evalIn:(src) => eval(src), practiceAnswer:(k) => { const st = S.steps[S.si], P = st && st.pq; if(!P) return null; const q = PRACTICE[P.key].render(P.qs[Math.min(P.i, P.qs.length - 1)]); return { kind:q.kind, answer:q.answer, text: q.kind === 'time' ? fmtTime(q.answer) : String(q.answer) }; }, startRound, advance, paxFor, periodLabel, simulateRun, monthlyProfit, investable, settings:()=>settings, render, planFlights, questionBank, schedOf, TIME, timeSelfTest, tableComplete, nextOpenCell, cellState, currentTable, routeById, planeById, fillTable };
 document.addEventListener('DOMContentLoaded', boot);
 })();
 </script>
