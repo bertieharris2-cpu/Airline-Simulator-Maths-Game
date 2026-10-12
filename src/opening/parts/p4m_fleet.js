@@ -199,7 +199,7 @@ function costRowIds(L, pl){
   ids.push('cost', 'profit');
   return ids;
 }
-function rowTyped(t, row){
+function rowTypedBase(t, row){
   if(row.type !== 'calc' || !row.tool) return false;
   const o = S && S.tools && S.tools[row.tool]; if(o) return o !== 'model';
   const H = S && S.rnd && S.rnd.handSums;

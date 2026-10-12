@@ -32,7 +32,7 @@ currentPlan: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js
 dayCostOf: p4a_core.js -> p4m_fleet.js
 dayExtras: p4a_core.js -> p4h_world.js
 dayTag: p4a_core.js -> p4k_chapter.js
-decideHandSums: p4l_handsums.js -> p4w_planner.js
+decideHandSums: p4l_handsums.js -> p4y_desks.js
 demandAt: p4a_core.js -> p4h_world.js -> p4l_handsums.js -> p4n_weeks.js
 demandMult: p4l_handsums.js -> p4n_weeks.js -> p4y_desks.js
 demandPools: p4g_opening2.js -> p4h_world.js
@@ -57,7 +57,7 @@ legMinutes: p4a_core.js -> p4h_world.js
 migrate: p4a_core.js -> p4u_migrate.js
 monthNo: p4a_core.js -> p4k_chapter.js
 navActive: p4d_opening.js -> p4x_shell.js
-openSum: p4b_control.js -> p4w_planner.js
+openSum: p4b_control.js -> p4y_desks.js
 operandUnit: p4a_core.js -> p4g_opening2.js
 opsSoundOn: p4i_liveops.js -> p4p_identity.js
 paxFor: p4a_core.js -> p4h_world.js
@@ -85,14 +85,14 @@ railValue: p4d_opening.js -> p4g_opening2.js
 readyExtra: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyOk: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyTitle: p4d_opening.js -> p4f_campaign.js
-recordHandSums: p4l_handsums.js -> p4v_week.js
+recordHandSums: p4l_handsums.js -> p4y_desks.js
 regOf: p4i_liveops.js -> p4p_identity.js
 repLive: p4a_core.js -> p4o_review.js
 reviewSpec: p4f_campaign.js -> p4n_weeks.js
 routeKm: p4a_core.js -> p4h_world.js
 routeOpen: p4a_core.js -> p4k_chapter.js -> p4m_fleet.js
 rowLive: p4a_core.js -> p4e_toolkit.js
-rowTyped: p4e_toolkit.js -> p4m_fleet.js
+rowTyped: p4e_toolkit.js -> p4y_desks.js
 runCostOf: p4a_core.js -> p4h_world.js
 setLivery: p4b_control.js -> p4p_identity.js
 setPlan: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js

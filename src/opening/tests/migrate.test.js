@@ -21,6 +21,8 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
       if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ seen.push('tutorial'); await p.click('#wkTutGo'); continue; }
       if(await p.$('#cellAns')){ const id = await p.evaluate(() => { const t = window.__sim.currentTable(); return t.id + ':' + t.active.col + '|' + t.active.row; }); seen.push(id);
         await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(80); continue; }
+      if(await p.$('.sc-p1.sign #scCheck')){ const A = await p.evaluate(() => window.__sim.evalIn('scAnswers()')); for(const [k, v] of Object.entries(A)) await p.fill(`[data-sc="${k}"]`, v); await p.click('#scCheck'); await p.waitForTimeout(80); seen.push('card=' + A.tot); if(await p.$('#scNext:not([disabled])')) await p.click('#scNext'); continue; }
+      if(await p.$('#scNext:not([disabled])')){ await p.click('#scNext'); continue; }
       if(await p.$('#wkNext')){ await p.click('#wkNext'); continue; }
       if(await p.$('[data-wpick]')){ const ws = await p.$$('[data-wpick]'); seen.push('pick' + ws.length); await (ws[1] || ws[0]).click(); await p.waitForTimeout(80); continue; }
       if(await p.$('#pqIn')){ await practice(); seen.push('practice'); continue; }

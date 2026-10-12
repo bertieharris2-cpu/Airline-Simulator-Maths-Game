@@ -22,6 +22,15 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
       if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ seen.push('tutorial'); await p.click('#wkTutGo'); continue; }
       if(await p.$('#cellAns')){ const id = await p.evaluate(() => { const t = window.__sim.currentTable(); return t.id + ':' + t.active.col + '|' + t.active.row; }); seen.push(id);
         await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(80); continue; }
+      if(await p.$('.sc-p1.sign #scCheck')){   // a fuel sign-off on the service card: the first is answered wrong once (Query), then right (Checked)
+        const key = await p.evaluate(() => window.__sim.evalIn('(UI.sc.F && UI.sc.F.p.id + "|" + UI.sc.F.r.id) || ""')), A = await p.evaluate(() => window.__sim.evalIn('scAnswers()'));
+        if(!seen.some(x => /^card/.test(x))){ await shot('card-' + tag.replace(/\s/g, '')); await p.fill('[data-sc="r0"]', '1'); await p.click('#scCheck'); await p.waitForTimeout(60);
+          ok('card: a wrong line is stamped Query and highlighted', await vis('.stamp.q') && await vis('.sc-row.qy'), await p.$eval('.sc-msg', e => e.textContent).catch(() => '')); }
+        for(const [k, v] of Object.entries(A)) await p.fill(`[data-sc="${k}"]`, v);
+        await p.click('#scCheck'); await p.waitForTimeout(80); seen.push('card:' + key + '=' + A.tot);
+        if(seen.filter(x => /^card/.test(x)).length === 1){ ok('card: a right answer is stamped Checked with the airline\'s initials', await vis('.stamp.ok'), await p.$eval('.stamp', e => e.textContent).catch(() => '')); await shot('card-done-' + tag.replace(/\s/g, '')); }
+        if(await p.$('#scNext:not([disabled])')) await p.click('#scNext'); continue; }
+      if(await p.$('#scNext:not([disabled])')){ await p.click('#scNext'); continue; }
       if(await p.$('#wkNext')){ await p.click('#wkNext'); continue; }
       if(await p.$('[data-wpick]')){ const ws = await p.$$('[data-wpick]'); seen.push('pick' + ws.length); await (ws[1] || ws[0]).click(); await p.waitForTimeout(80); continue; }
       if(await p.$('#pqIn')){ await practice(); seen.push('practice'); continue; }
@@ -65,7 +74,7 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
         ok('launch: every fare chip on both markets is the pupil\'s to press (none locked)', (await p.$$('.mk .fch[disabled]')).length === 0 && (await p.$$('.mk .fch:not([disabled])')).length >= 10, [(await p.$$('.mk .fch[disabled]')).length, (await p.$$('.mk .fch:not([disabled])')).length]);
         await p.click('[data-pe="0|fareTo|dub|100"]'); await p.waitForTimeout(60); ok('launch: a fare chip changes the fare', (await S()).prices.dub === 100, (await S()).prices); await p.click('[data-pe="0|fareTo|dub|80"]'); await p.waitForTimeout(60);
         ok('launch: Plan Impact offers ƒ on the figures the sums ask for', (await p.$$('[data-sum]')).length >= 4, await p.$$eval('[data-sum]', es => es.map(e => e.getAttribute('data-sum'))));
-        ok('launch: the fuel widget shows the litres the timetable needs', await vis('.fw2-tank'), await p.$eval('.fw2-gauge > b', e => e.textContent).catch(() => ''));
+        ok('launch: the fuel strip is one line: week 1 buys fuel as it is used, free on the launch days', /Fuel is bought as it is used.*free Mon–Tue/.test(await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => '')), await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
         await setPlan([{ sched:['par', 'dub', 'par'], deps:[420, 640, 1080] }], { par:90, dub:90 });
         ok('launch: both routes on the plan page', await vis('[data-pe^="0|add|dub|0"]') && await vis('[data-pe^="0|add|par|0"]')); }
       if(day === 8 && s.fleet.length > 1){ await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
@@ -73,13 +82,19 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
         if(await p.$('#ideaOpen')){ await p.click('#ideaOpen'); await p.waitForTimeout(80); const chip = await p.$('[data-pe="9|fareTo|dub|90"]'); if(chip) await chip.click(); await p.waitForTimeout(80);
           ok('day 8: Test an idea compares the current plan with the test plan, with the cause', await vis('.cmp2-t') && /Dublin fare/.test(await p.$eval('.cmp2-cause', e => e.textContent).catch(() => '')) && (await p.$$('.cmp2-t td.chg')).length >= 5, await p.$eval('.cmp2-cause', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
           await shot(`d${day}-compare`); await p.click('[data-treset]'); await p.click('#ideaShut'); }
+        ok('day 8: the fuel strip shows the stored fuel and the week it covers, with the fuel desk a press away', /L stored · \d+% of this week covered/.test(await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => '')) && await vis('.fstrip [data-nav="fuel"]'), await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
+        await p.click('[data-tl="0|0|0"]'); const sb = await p.$('[data-svccard="0|0|0"]');
+        if(sb){ await sb.click(); await p.waitForTimeout(120); const tot = await p.$eval('.sc-total .sc-v', e => e.textContent).catch(() => '');
+          ok('day 8: Service costs opens the performance card with the model\'s figures (Twin Otter Paris, 120 L × £1.47)', await vis('.sc-banner') && !(await vis('.sc-p1.sign')) && tot === '£176.40', tot); await shot(`d${day}-svccard`);
+          await p.click('[data-scm="scale"]'); await p.waitForTimeout(60); ok('day 8: the card\'s method tabs change the working (scale from 100 L)', /100 L costs/.test(await p.textContent('.sc-p1')));
+          await p.click('#scBack'); await p.waitForTimeout(100); ok('day 8: Back to plan returns to the planner', await vis('.ad'), await T()); }
         if(await p.$('#mapOpen')){ await p.click('#mapOpen'); ok('day 8: the network map is a button away', await vis('#hqMap')); await shot(`d${day}-map`); await p.click('[data-nav="plan"]'); await p.waitForTimeout(60); } }
       if(day === 15 && s.fleet.length > 1) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 });
       if(day === 22 && s.fleet.length > 2) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 });
       if(day >= 3){ const q = await p.$('.fw-quick [data-fo]:nth-child(2)'); if(q) await q.click(); }
       await shot(`d${day}-plan`); ok(`plan ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.evaluate(() => window.__sim.currentPlan().fleet.map(x => x.sched.join('/') + ' ' + (x.deps || []).join(',')))); await p.click('#nx'); continue; }
     if(t === 'workings'){ await fits('workings ' + day); const typed = await solveW(`work ${day}`); await shot(`d${day}-workings`);
-      if(s.phase === 'setup') ok('launch: tickets ×3 then the fare, the other route\'s tickets, profit, snacks ×2 then the snack, fuel after the example', typed.filter(x => /\|tk_par/.test(x)).length === 3 && typed.some(x => /\|tk_dub/.test(x)) && typed.filter(x => /\|profit/.test(x)).length === 1 && typed.filter(x => /\|snack$/.test(x)).length === 2 && typed.includes('tutorial') && typed.some(x => /\|fuel$/.test(x)), typed);
+      if(s.phase === 'setup') ok('launch: tickets ×3 then the fare, the other route\'s tickets, a fuel sign-off for each route (Paris 120 L, Dublin 180 L at £1.30), profit, snacks ×2', typed.filter(x => /\|tk_par/.test(x)).length === 3 && typed.some(x => /\|tk_dub/.test(x)) && typed.filter(x => /\|profit/.test(x)).length === 1 && typed.filter(x => /\|snack$/.test(x)).length === 2 && !typed.includes('tutorial') && typed.includes('card:dhc6|par=156.00') && typed.includes('card:dhc6|dub=234.00'), typed);
       if(s.phase === 'setup') ok('launch: the sums were done in the dock beside the plan', await vis('.dock-sum') && await vis('.ad'));
       ok(`work ${day}: back enabled`, !!(await p.$('#nx')) && await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'ready'){ await fits('ready ' + day); const en = await p.$eval('#startOps', e => !e.disabled); ok('ready ' + day, en, await p.textContent('.opplan')); if(!en){ await shot(`d${day}-ready-stuck`); break; } await p.click('#startOps'); continue; }

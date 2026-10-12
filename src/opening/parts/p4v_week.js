@@ -277,7 +277,7 @@ function decideHandSumsWeek(L, pl){
   if(g.includes('fuelCost') && !out.fuelCost && fuelPaid()) out.fuelCost = 'calc';
   return out;
 }
-function recordHandSums(L){ const H = S.rnd.handSums || {}; recordHandSumsBase(L); if(H.range){ const sk = skills(), x = sk.range || (sk.range = { first:S.day, count:0, routes:[] }); x.count++; x.lastDay = S.day; if(!x.routes.includes(H.range.route)) x.routes.push(H.range.route); }
+function recordHandSumsPlanner(L){ const H = S.rnd.handSums || {}; recordHandSumsBase(L); if(H.range){ const sk = skills(), x = sk.range || (sk.range = { first:S.day, count:0, routes:[] }); x.count++; x.lastDay = S.day; if(!x.routes.includes(H.range.route)) x.routes.push(H.range.route); }
   if(S.phase === 'setup' && weekMode() && H.fuelCost && skills().fuelCost) skills().fuelCost.last = { price:weekFuelPrice(S.day), litres:plannedLitres(currentPlan()) }; }
 
 /* the workings page's tables as stages: each stage is a table; the next opens when the one before is complete (and its choice made) */
@@ -294,10 +294,10 @@ function wkStagesLaunchWeek(pl){
 }
 function stageTable(stage, L0){
   const lines = stage.opts.map(o => planLines(o.plan)), fuelAt = stage.fuelAt;
-  const cols = stage.opts.map((o, i) => { const v = Object.assign({}, lines[i].v); if(fuelAt){ v.ppl = fuelAt; v.fuel = Math.round(v.fuelL * fuelAt); } return { id:o.id, label:o.label, sub:o.sub, values:v, parts:{ run:flightParts(o.plan), day:typeof dayParts === 'function' ? dayParts() : [], cost:costPartsOf(v) } }; });
+  const cols = stage.opts.map((o, i) => { const v = Object.assign({}, lines[i].v); if(fuelAt){ v.ppl = fuelAt; v.fuel = Math.round(v.fuelL * fuelAt * 100) / 100; } return { id:o.id, label:o.label, sub:o.sub, values:v, parts:{ run:flightParts(o.plan), day:typeof dayParts === 'function' ? dayParts() : [], cost:costPartsOf(v) } }; });
   const rows = costRowsFor(L0); let rowIds = stage.rowIds || costRowIds(L0, S.rnd.stagePlan || currentPlan());
   if(!stage.rowIds){ rowIds = rowIds.filter(id => !/^(pax_|fare_|tk_|buyers|snackP|snack$|fuelL|ppl|fuel$)/.test(id)); }   // the profit stage: the sheet's totals and the profit line only
-  const t = ensureTable('work:' + S.day + ':' + stage.id, 'cost1', cols, { rows, rowIds, labels:costLabels() }); t.stage = stage.id; return { t, lines };
+  const t = ensureTable('work:' + S.day + ':' + stage.id, 'cost1', cols, { rows, rowIds, labels:costLabels() }); t.stage = stage.id; if(stage.card) t.card = stage.card; return { t, lines };
 }
 function workTablesWeek(pl){
   if(!(weekMode() && S.phase === 'setup')) return workTablesBase(pl);

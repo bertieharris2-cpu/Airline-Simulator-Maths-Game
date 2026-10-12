@@ -118,12 +118,12 @@ function addService(i, id, j){
 function launchFares(){ const r = routeById(S.market), F = r.fares || [r.basePrice], cur = (currentPlan().prices || {})[r.id] || r.basePrice, b = Math.max(0, F.indexOf(cur)), lo = clamp(b - 1, 0, Math.max(0, F.length - 3)); return F.slice(lo, lo + 3); }
 
 /* ---------- the day's sums: on Launch Day every route in the plan has its tickets worked out ---------- */
-function decideHandSums(L, pl){
+function decideHandSumsPlanner(L, pl){
   const out = decideHandSumsWeek(L, pl); if(!(wkPlanner() && S.phase === 'setup')) return out;
   const ids = [...new Set(normPlan(pl).fleet.flatMap(x => x.sched))].filter(id => id !== S.market);
   out.revenue = { level:'calc', routes:[S.market].concat(ids) }; return out;
 }
-function wkStagesLaunch(pl){
+function wkStagesLaunchPlanner(pl){
   const st = wkStagesLaunchWeek(pl); if(!wkPlanner()) return st;
   const ids = [...new Set(normPlan(pl).fleet.flatMap(x => x.sched))].filter(id => id !== S.market);
   ids.forEach((id, n) => { const r = routeById(id), fare = pl.prices[id] || r.basePrice;
@@ -138,7 +138,7 @@ function hiddenFigs(pl, W){
   try{ W = W || workTables(pl); }catch(e){ return out; }
   const picks = S.rnd.picks || {};
   if(S.phase === 'setup' && W.stage){   // Launch Day: the stages still to come (the tables are built one stage at a time)
-    const stages = wkStagesLaunch(pl), fig = s => s.id === 'fare' || /^tk/.test(s.id) ? 'revenue' : s.id === 'profit' ? 'profit' : s.id === 'snack' ? 'snacks' : s.id === 'fuel' ? 'fuelCost' : null;
+    const stages = wkStagesLaunch(pl), fig = s => s.id === 'fare' || /^tk/.test(s.id) ? 'revenue' : s.id === 'profit' ? 'profit' : s.id === 'snack' ? 'snacks' : s.id === 'fuel' || /^fc\|/.test(s.id) ? 'fuelCost' : null;
     const cur = W.tables.find(x => x.stage === W.stage.id), past = cur && tableComplete(cur) && (!W.stage.pick || picks[W.stage.pick]);
     const at = past ? stages.length : Math.max(0, stages.findIndex(x => x.id === W.stage.id));
     stages.slice(at).forEach(x => { const k = fig(x); if(k) out.add(k); });
@@ -147,10 +147,10 @@ function hiddenFigs(pl, W){
   wkCells(W.tables).forEach(x => { if(x.s === 'done') return; const k = SUM_OF_ROW(x.r.id); if(k) out.add(k); });
   return out;
 }
-function openSum(kind){ S.rnd.sumWanted = kind; S.rnd.stageWanted = ({ snacks:'snack', fuelCost:'fuel', profit:'profit' })[kind] || null; UI.sumMode = 'grid'; if(step().t === 'plan'){ UI.ideaOpen = false; resetEntry(); UI.justDone = null; advance(); } else render(); }
+function openSumPlanner(kind){ S.rnd.sumWanted = kind; S.rnd.stageWanted = ({ snacks:'snack', fuelCost:'fuel', profit:'profit' })[kind] || null; UI.sumMode = 'grid'; if(step().t === 'plan'){ UI.ideaOpen = false; resetEntry(); UI.justDone = null; advance(); } else render(); }
 /* ƒ on a figure opens that figure's sum: a later stage is brought forward when nothing it needs is still to be chosen
    (fuel and snacks never wait; profit waits for the fare it depends on) */
-function workTables(pl){
+function workTablesPlanner(pl){
   const W = workTablesWeek(pl); if(!(wkPlanner() && S.phase === 'setup') || !W.stage) return W;
   const want = S.rnd.stageWanted; if(!want || want === W.stage.id) return W;
   const stages = wkStagesLaunch(pl), st = stages.find(x => x.id === want), picks = S.rnd.picks || {}, fareOpen = stages.some(x => x.id === 'fare') && !picks.fare;
@@ -208,7 +208,7 @@ function tlSelHtml(i, pl, L, j, k){
   const a = `${i}|${j}|${k}`;
   return `<span class="ad-selin"><span class="ad-sel-t"><span class="kl">Selected</span><b>${esc(r.city)} ${fmtTime(t.dep)}</b><small>back ${fmtTime(t.arr)} · ready ${fmtTime(t.arr + TIME.home(p))} · ${s.sold || 0}/${s.seats || p.seats} seats</small></span>
     <button class="btn" data-tlm="${a}|-20" aria-label="20 minutes earlier">&#9664; Earlier</button><button class="btn" data-tlm="${a}|20" aria-label="20 minutes later">Later &#9654;</button>
-    <button class="btn" data-tlsw="${a}" ${many ? '' : 'disabled'}>Swap route</button><button class="btn danger" data-tlrm="${a}">Remove</button></span>`;
+    <button class="btn" data-tlsw="${a}" ${many ? '' : 'disabled'}>Swap route</button><button class="btn danger" data-tlrm="${a}">Remove</button>${i !== 9 ? `<button class="btn sc-open" data-svccard="${a}" title="This service's fuel, costs and profit">Service costs</button>` : ''}</span>`;
 }
 function tlControlsHtml(){ return ''; }
 let tlDrag = null;
@@ -258,7 +258,7 @@ function autoFuelOrder(pl, L){
   const litres = need > 0 ? Math.max(0, Math.min(ceilLot(need), space, afford)) : 0;
   S.rnd.fuelOrder = litres ? { litres, price, total:r2(litres * price), auto:true } : null; return S.rnd.fuelOrder;
 }
-function fuelWidgetHtml(pl, L, o){
+function fuelWidgetHtmlPlanner(pl, L, o){
   o = o || {}; if(!S.fleet.length) return '';
   pl = normPlan(pl); const from = S.day || 1, paid = fuelPaid(), price = weekFuelPrice(from), paidDays = paidDaysThisWeek(from), need = L.fuelL || 0, cap = tankCapacity(), pct = clamp(100 * need / cap, 0, 100);
   const order = o.test ? S.rnd.fuelOrder : autoFuelOrder(pl, L);
@@ -453,7 +453,7 @@ function sumFormulaHtml(act, col, row){
   return `<div class="sd-fx"><p class="sd-q">${esc(rowLabel(act, row))} = ${esc(A.label)} ${esc(op)} ${esc(B.label)}</p><p class="sd-big mono">${A.value} ${esc(op)} ${B.value} = ?</p>
     <span class="kl">How the model works it out</span><ol class="sd-steps">${lines.map(l => `<li class="mono">${esc(l)}</li>`).join('')}</ol><p class="small muted">The last line is yours. Type the answer below.</p>${sumAnswerLine(act, col, row)}</div>`;
 }
-function sumDockHtml(o){
+function sumDockHtmlPlanner(o){
   const { W, st } = o, Z = sumState(W, st), { act, col, row, tables, opts } = Z, mode = Z.act && !Z.justDone && !Z.tut ? (UI.sumMode || 'grid') : 'grid';
   const title = Z.tut ? 'A worked example' : Z.justDone ? 'Figure done' : Z.act ? (TOOL[row.tool] ? TOOL[row.tool].name : rowLabel(act, row)) : Z.needPick ? (Z.pickFare ? 'Choose the fare' : 'Choose what happens on board') : 'Your workings today';
   const tabs = Z.act && !Z.justDone && !Z.tut ? `<div class="sd-tabs" role="tablist">${[['grid', 'Structured working'], ['pad', 'Squared paper'], ['fx', 'Formula']].map(([m, l]) => `<button role="tab" class="${mode === m ? 'on' : ''}" data-summode="${m}" aria-selected="${mode === m}">${l}</button>`).join('')}</div>` : '';
