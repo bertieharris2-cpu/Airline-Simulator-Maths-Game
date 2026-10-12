@@ -70,6 +70,7 @@ function launchMarket(pl){ pl = normPlan(pl); const all = pl.fleet.flatMap(x => 
   const c = serviceCounts(all); let best = all[0]; Object.keys(c).forEach(id => { if(c[id] > c[best]) best = id; }); return WORLD.setupRoutes.includes(best) ? best : (S.market || WORLD.setupRoutes[0]); }
 /* depTo: a service moved to a time (the buttons, the keyboard and a drag all come here); fareTo: a fare chip */
 function editPlan(i, what, a, d, j){
+  if((what === 'add' || what === 'open') && wkPlanner() && dayLike()) return addService(i, a, what === 'open' ? null : (j || 0));
   if(what !== 'depTo' && what !== 'fareTo') return editPlanBase(i, what, a, d, j);
   j = j || 0; const base = i === 9 ? testPlan() : currentPlan(), next = normPlan(JSON.parse(JSON.stringify(base))), x = next.fleet[j] || next.fleet[0], p = planeById(x.planeId);
   if(what === 'fareTo'){ const r = routeById(a), F = r.fares || [r.basePrice]; if(!F.includes(+d)) return; next.prices[a] = +d; setPlan(i, next); return; }
@@ -86,6 +87,31 @@ function editPlan(i, what, a, d, j){
   setPlan(i, next);
 }
 function moveService(i, j, k, dep){ editPlan(i, 'depTo', k, dep, j); }
+/* the earliest departure at which a new service fits around the aircraft's blocks (each block is busy until it is ready again) */
+function freeDep(next, j, id){
+  const x = next.fleet[j], p = planeById(x.planeId), r = routeById(id), trip = TIME.roundTrip(p, r), home = TIME.home(p), s0 = dayStart(), e0 = dayEnd();
+  const deps = x.sched.length ? (x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(next, j)) : [];
+  const busy = x.sched.map((rid, k) => [deps[k], deps[k] + TIME.roundTrip(p, routeById(rid)) + home]);
+  for(let t = s0; t + trip <= e0; t += PLW_SNAP){ if(!busy.some(([a, z]) => t < z && t + trip + home > a)) return t; }
+  return null;
+}
+/* + Paris on a lane (j) or an open route with no lane named (the first aircraft with room): the block lands in the first gap */
+function addService(i, id, j){
+  const base = i === 9 ? testPlan() : currentPlan(), next = normPlan(JSON.parse(JSON.stringify(base))), maxT = WORLD.maxTrips || 4, r = routeById(id);
+  const lanes = (j === null ? next.fleet.map((x, q) => q) : [j]).filter(q => next.fleet[q] && planeCanFly(planeById(next.fleet[q].planeId), r));
+  if(!lanes.length){ const p = next.fleet[j || 0] && planeById(next.fleet[j || 0].planeId); toast(p && j !== null ? `The ${p.name} can't reach ${r.city}: its range is ${num(p.range)} km and ${r.city} is ${num(routeKm(r))} km away.` : `No aircraft you own can reach ${r.city} (${num(routeKm(r))} km).`); return; }
+  let hit = null; for(const q of lanes){ if(next.fleet[q].sched.length >= maxT) continue; const t = freeDep(next, q, id); if(t !== null){ hit = { q, t }; break; } }
+  if(!hit){ toast(lanes.every(q => next.fleet[q].sched.length >= maxT) ? `One aircraft can fly at most ${maxT} services a day.` : `No room left in the day for a ${r.city} service: move or remove a block first.`); return; }
+  const x = next.fleet[hit.q], deps = x.sched.length ? (x.deps && x.deps.length === x.sched.length ? x.deps.slice() : actualDeps(next, hit.q)) : [];
+  x.sched.push(id); deps.push(hit.t);
+  const order = x.sched.map((rid, k) => ({ rid, dep:deps[k], k })).sort((u, v) => u.dep - v.dep || u.k - v.k);
+  x.sched = order.map(o => o.rid); x.deps = order.map(o => o.dep); if(!next.prices[id]) next.prices[id] = r.basePrice;
+  x.deps = actualDeps(next, hit.q);
+  UI.tlSel = { i, j:hit.q, k:order.findIndex(o => o.k === x.sched.length - 1) };
+  setPlan(i, next);
+}
+/* the launch sums weigh three fares around the fare the pupil chose on the plan (the chips are never locked) */
+function launchFares(){ const r = routeById(S.market), F = r.fares || [r.basePrice], cur = (currentPlan().prices || {})[r.id] || r.basePrice, b = Math.max(0, F.indexOf(cur)), lo = clamp(b - 1, 0, Math.max(0, F.length - 3)); return F.slice(lo, lo + 3); }
 
 /* ---------- the day's sums: on Launch Day every route in the plan has its tickets worked out ---------- */
 function decideHandSums(L, pl){
@@ -297,7 +323,7 @@ function renderPlanner(st, summing){
   let W = null; try{ W = workTables(pl); }catch(e){ W = null; }
   const hid = hiddenFigs(pl, W), picks = S.rnd.picks || {}, hasSnackStage = !!(W && W.tables.some(t => t.stage === 'snack')), hasFareStage = !!(W && W.tables.some(t => t.stage === 'fare'));
   const pickNow = summing && W && W.multi && !W.picked && !wkNext(W.tables) && !(UI.justDone && W.tables.find(x => x.id === UI.justDone.table)) ? { kind:W.pickKind, opts:W.opts } : null;
-  const lockFare = setup && hasFareStage && !picks.fare ? S.market : null, lockOb = setup && hasSnackStage && !picks.snack;
+  const lockFare = null, lockOb = false;   // the chips and tiles are always the pupil's: the sums weigh the fare he chose, the dock's pick confirms or changes it
   const i = test ? 9 : 0, P = test || pl, LL = test ? Lt : L, locked = summing, sched = pl.fleet.flatMap(x => x.sched);
   const shownRoutes = (() => { const all = plannerOrder(), inPlan = all.filter(id => P.fleet.some(x => x.sched.includes(id))); return all.length <= 2 ? all : inPlan.concat(all.filter(id => !inPlan.includes(id))).slice(0, Math.max(2, inPlan.length)); })();
   const markets = `<div class="plw-mk n${Math.min(3, shownRoutes.length)} ${locked ? 'compact' : ''}">${shownRoutes.map(id => marketWidget(i, id, P, LL, { lockFare: test ? null : lockFare, pick: pickNow && pickNow.kind === 'fare' ? pickNow.opts : null, locked })).join('')}</div>${locked ? '' : otherRoutesRow(i, P, shownRoutes)}`;

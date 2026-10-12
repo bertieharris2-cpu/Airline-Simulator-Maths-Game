@@ -49,6 +49,7 @@ forecastCols: p4b_control.js -> p4d_opening.js
 fuelPaid: p4g_opening2.js -> p4v_week.js
 fuelPanelHtml: p4v_week.js -> p4w_planner.js
 goWord: p4d_opening.js -> p4f_campaign.js
+launchFares: p4v_week.js -> p4w_planner.js
 legMinutes: p4a_core.js -> p4h_world.js
 migrate: p4a_core.js -> p4u_migrate.js
 monthNo: p4a_core.js -> p4k_chapter.js

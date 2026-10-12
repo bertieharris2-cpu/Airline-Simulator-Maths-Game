@@ -62,7 +62,8 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
         ok('launch: a drag moves the service, snapped to 10 minutes', await dep(1) !== d1 && (await dep(1)) % 10 === 0, [d1, await dep(1)]);
         await p.click('[data-tl="0|0|1"]'); await p.click('[data-tlsw="0|0|1"]'); ok('launch: Swap route changes the service', (await S()).fleet[0].schedule[1] === 'par', (await S()).fleet[0].schedule);
         await p.click('[data-tl="0|0|1"]'); await p.click('[data-tlrm="0|0|1"]'); ok('launch: Remove takes the block off', (await p.$$('.ad-blk')).length === 2, (await p.$$('.ad-blk')).length);
-        ok('launch: the market fare chips are locked until the tickets are worked out, the other market free', (await p.$$('.mk .fch[disabled]')).length >= 5 && (await p.$$('.mk .fch:not([disabled])')).length >= 5, [(await p.$$('.mk .fch[disabled]')).length, (await p.$$('.mk .fch:not([disabled])')).length]);
+        ok('launch: every fare chip on both markets is the pupil\'s to press (none locked)', (await p.$$('.mk .fch[disabled]')).length === 0 && (await p.$$('.mk .fch:not([disabled])')).length >= 10, [(await p.$$('.mk .fch[disabled]')).length, (await p.$$('.mk .fch:not([disabled])')).length]);
+        await p.click('[data-pe="0|fareTo|dub|100"]'); await p.waitForTimeout(60); ok('launch: a fare chip changes the fare', (await S()).prices.dub === 100, (await S()).prices); await p.click('[data-pe="0|fareTo|dub|80"]'); await p.waitForTimeout(60);
         ok('launch: Plan Impact offers ƒ on the figures the sums ask for', (await p.$$('[data-sum]')).length >= 4, await p.$$eval('[data-sum]', es => es.map(e => e.getAttribute('data-sum'))));
         ok('launch: the fuel widget shows the litres the timetable needs', await vis('.fw2-tank'), await p.$eval('.fw2-gauge > b', e => e.textContent).catch(() => ''));
         await setPlan([{ sched:['par', 'dub', 'par'], deps:[420, 640, 1080] }], { par:90, dub:90 });
