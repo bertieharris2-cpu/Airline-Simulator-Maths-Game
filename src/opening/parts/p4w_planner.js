@@ -145,12 +145,12 @@ function hiddenFigs(pl, W){
 }
 function openSum(kind){ S.rnd.sumWanted = kind; S.rnd.stageWanted = ({ snacks:'snack', fuelCost:'fuel', profit:'profit' })[kind] || null; UI.sumMode = 'grid'; if(step().t === 'plan'){ UI.ideaOpen = false; resetEntry(); UI.justDone = null; advance(); } else render(); }
 /* ƒ on a figure opens that figure's sum: a later stage is brought forward when nothing it needs is still to be chosen
-   (fuel never waits; snacks wait for the fare, since the passengers depend on it; profit waits for the fare) */
+   (fuel and snacks never wait; profit waits for the fare it depends on) */
 function workTables(pl){
   const W = workTablesWeek(pl); if(!(wkPlanner() && S.phase === 'setup') || !W.stage) return W;
   const want = S.rnd.stageWanted; if(!want || want === W.stage.id) return W;
   const stages = wkStagesLaunch(pl), st = stages.find(x => x.id === want), picks = S.rnd.picks || {}, fareOpen = stages.some(x => x.id === 'fare') && !picks.fare;
-  if(!st || want === 'profit' || (want === 'snack' && fareOpen)){ delete S.rnd.stageWanted; return W; }
+  if(!st || want === 'profit'){ delete S.rnd.stageWanted; return W; }   // snacks come forward at the fare on the plan: if the fare pick changes it, the table rebuilds and asks again
   if(!S.rnd.handSums) S.rnd.handSums = decideHandSums(W.L0, normPlan(pl));   // which rows are typed (the profit stage normally decides this first)
   const { t, lines } = stageTable(st, W.L0), pk = st.pick ? (picks[st.pick] || null) : null;
   if(!wkNext([t]) && (!st.pick || pk)){ delete S.rnd.stageWanted; return workTablesWeek(pl); }   // that stage is finished: back to the usual order
@@ -381,7 +381,8 @@ function wkGrid(t, col, row, o){
   o = o || {}; if(!wkPlanner() || o.done || o.show) return wkGridBase(t, col, row, o);
   const ops = stackRows(t, col, row), A = ops[0], B = ops[1], ua = operandUnit(t, A.id), ub = operandUnit(t, B.id), a = operandValue(t, col, A.id), b = operandValue(t, col, B.id);
   const fa = wkFig(ua, a), fb = wkFig(ub, b), op = B.op || row.op || '×', ans = col.values[row.id], fAns = wkFig(row.unit, ans), tenths = fb.tenths;
-  const W = Math.min(PLACES.length, Math.max(fa.s.length, fb.s.length, String(fAns.s).length) + 1);
+  const prod = op === '−' ? 0 : String(Math.round((+fa.s) * (+fb.s)));   // the working is done in the written figures (pence, tenths): room for that product and a carry
+  const W = Math.min(PLACES.length, Math.max(fa.s.length, fb.s.length, String(fAns.s).length, prod.length) + 1);
   const given = (s, cy) => { const d = s.padStart(W, ' ').split(''); return d.map((ch, c) => `<span class="wkb-c g">${cy ? `<small class="cy"><input maxlength="1" inputmode="numeric" aria-label="carry"></small>` : ''}<b>${ch === ' ' ? '' : ch}</b></span>`).join(''); };
   const boxes = (r, cls, cy) => Array.from({ length:W }, (_, c) => `<span class="wkb-c ${cls}">${cy ? `<small class="cy"><input maxlength="1" inputmode="numeric" data-cy="${r}|${c}" aria-label="carry"></small>` : ''}<input maxlength="1" inputmode="numeric" data-r="${r}" data-c="${c}" aria-label="${cls === 'ans' ? 'answer' : 'working'} column ${PLACES[W - 1 - c]}"></span>`).join('');
   const head = `<span class="wkb-op"></span>${Array.from({ length:W }, (_, c) => `<span class="wkb-h">${PLACES[W - 1 - c]}</span>`).join('')}`;
