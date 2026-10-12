@@ -229,7 +229,7 @@ R.weekReview = st => {
     say:`Seven days flown. Add up the week, then compare it with Monday's projection.`,
     context:{ title:'The week', html: cxSec('Passengers', `<p class="cx-plan mono">${num(h.pax)} <span class="small muted">of ${num(h.seats)} seats</span></p>`) + cxSec('Cash', `<p class="cx-plan mono">${money(Math.round(S.cash))}</p>`) },
     main:`<div class="rv"><section class="pnl"><div class="pnl-h"><h3>The week, day by day</h3><span class="muted">${fmtRange(W.from, W.from + 6)}</span></div><div class="sheet1">${tableHtml(t)}</div></section>
-      <div class="rv-side">${miss}${typeof fuelAdvantageLine === 'function' ? fuelAdvantageLine(weekNo(W.from)) : ''}${neg}<section class="pnl rv-routes"><div class="pnl-h"><h3>Route performance</h3></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div></div>`,
+      <div class="rv-side">${miss}${typeof fuelAdvantageLine === 'function' ? fuelAdvantageLine(weekNo(W.from)) : ''}${typeof surprisesLine === 'function' ? surprisesLine(W.from, W.from + 6) : ''}${neg}<section class="pnl rv-routes"><div class="pnl-h"><h3>Route performance</h3></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div></div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${goLabel(done ? 'On to next week' : 'Add up the week first')} &#9654;</button>` });
   bindTable(t);
   on('nx', () => { resetEntry(); UI.justDone = null; S.rnd.applied = true; closeDay(); });

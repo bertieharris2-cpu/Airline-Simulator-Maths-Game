@@ -445,3 +445,79 @@ R.fuelDesk = () => renderFuelDesk(false);
 WS_STEPS.push('fuelDesk'); SHELL_STEPS.push('fuelDesk');   // the desk sits in the Monday workspace: the plan is a press away
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-nav="plan"]'); if(!b || !S || step().t !== 'fuelDesk' || UI.view) return;
   const i = S.steps.findIndex(x => x.t === 'plan'); if(i >= 0){ e.stopPropagation(); e.preventDefault(); jumpTo(i); } }, true);
+
+/* ==================================================================
+   Part 4: the weeks from day 29 and the months on the same desks (Desks v2 §8). A week or month beat is planned on the
+   planner, signed off on the sums page, stocked at the fuel desk, then run ("week-skips"); the tank carries on.
+   ================================================================== */
+function stepsFor(b){
+  const st = stepsForWeeks(b), w = roundData(b); if(!weekMode() || !['week', 'month'].includes(w.period)) return st;
+  const out = []; st.forEach(x => { if(['costPlan', 'testIdeas', 'fuelPlan', 'plans'].includes(x.t)) return; out.push(x.t === 'planner' ? { t:'plan' } : x); });
+  if(!out.some(x => x.t === 'plan')){ const at = out.findIndex(x => x.t === 'ready'); out.splice(at < 0 ? out.length : at, 0, { t:'plan' }); }
+  const r = out.findIndex(x => x.t === 'ready'); out.splice(r, 0, { t:'workings' }, { t:'fuelDesk' });
+  return out;
+}
+/* the regular plan's approval (end of day 28): the tank carries on into the weeks */
+const ropDesk0 = R.rop;
+R.rop = st => { ropDesk0(st); if(!weekMode()) return; screen().querySelectorAll('.rop-t > div').forEach(d => { const l = d.querySelector('span'), v = d.querySelector('b'); if(l && v && /^Fuel/.test(l.textContent)) v.innerHTML = `The tank carries on: ${num(Math.round(S.fuel))} L in store. From now on it holds ${num(WORLD.tankUpgraded || 20000)} L; buy at the fuel desk each Monday.`; }); };
+
+/* the week's forecast on a week or month beat: the plan over every day of the period (not one day) */
+const readyDesk0 = R.ready;
+R.ready = st => {
+  const P = S.period, fc = S.rnd.myForecast;
+  if(weekMode() && P && ['week', 'month'].includes(P.type) && fc && fc.days !== P.to - P.from + 1){
+    const pl = currentPlan(), t = dryRun(() => { let sum = 0; for(let d = P.from; d <= P.to; d++) withDay(d, () => withBeat(beatAt(d), () => { const k = S.day; S.day = d; try{ sum += planLines(pl).v.profit; } finally { S.day = k; } })); return sum; });
+    S.rnd.myForecast = Object.assign({}, fc, { profit:Math.round(t), perDay:fc.profit, days:P.to - P.from + 1, projected:false }); }
+  return readyDesk0(st);
+};
+
+/* ==================================================================
+   Part 5: the World report (Desks v2 §9; the workbook's worldReport: "Monday plan page"), the Network's figures,
+   and the RouteNews surprises named in the reviews.
+   ================================================================== */
+function surprisesLine(from, to){
+  const n = surprisesIn(from, to); if(!n.length) return '';
+  return `<div class="fuel-adv wr-sur"><span class="kl">Surprises this week</span>${n.map(x => `<span><b>${esc(x.headline || x.id)}</b> ${x.routes.map(id => routeById(id) ? routeById(id).city : id).join(', ')}: demand ×${x.mult}${x.segment && x.segment !== 'all' ? ` (${x.segment})` : ''}, ${fmtRange(dayOfDate(x.start), dayOfDate(x.end))}.</span>`).join('')}</div>`;
+}
+UI.wr = UI.wr || {};
+function worldReportHtml(){
+  const day = S.day || 1, m = fdMarket(day), P0 = fuelOn(day), routes = openRoutes(day).filter(r => S.fleet.some(f => planeCanFly(planeById(f.planeId), r))), pl = currentPlan();
+  const flown = new Set(normPlan(pl).fleet.flatMap(x => x.sched)), focus = UI.wr.route && routes.some(r => r.id === UI.wr.route) ? UI.wr.route : (S.rnd.focusRoute || [...flown][0] || (routes[0] || {}).id);
+  const fuel = `<section class="dk-pnl wr-fuel"><div class="dk-pnl-h">${ICO2.fuel}<h2>Fuel</h2><span class="grow"></span><button class="dk-link" data-nav="fuel">Fuel desk ${ICO2.chev}</button></div><div class="fd-cw">${fuelChartSvg(day, '1M')}</div>
+    <p class="wr-l"><b>${priceL(P0)}</b> a litre this week.${m.forecastLow !== undefined && m.forecastLow !== null ? ` Next week ${priceL(m.forecastLow)}–${priceL(m.forecastHigh)}, ${esc(String(m.forecastConfidence || '').toLowerCase())} confidence.` : ''} ${esc(m.fuelHeadline || '')}</p></section>`;
+  const rk = `<section class="dk-pnl wr-rk"><div class="dk-pnl-h">${ICO2.tag}<h2>${esc(WORLD.rival || 'Red Kite')} fares</h2><span class="grow"></span><span class="sub">one way, this week</span></div><table class="dk-t"><thead><tr><th>Route</th><th class="num">Your fare</th><th class="num">${esc(WORLD.rival || 'Red Kite')}</th><th class="num">Want to fly at yours</th></tr></thead><tbody>${routes.map(r => { const f = pl.prices[r.id] || r.basePrice, c = competitorPrice(r);
+    return `<tr class="${flown.has(r.id) ? '' : 'dim'}"><td>${flagSvg(r.flag, 16)} ${esc(r.city)}${flown.has(r.id) ? '' : ' <small>not flown</small>'}</td><td class="num">${money(f)}</td><td class="num ${c !== undefined && c < f ? 'bad' : ''}">${c !== undefined && c !== null ? money(c) : '—'}</td><td class="num">${num(paxWant(r, f))}</td></tr>`; }).join('')}</tbody></table></section>`;
+  const r = routeById(focus), F = (r && r.fares) || [], cur = r ? (pl.prices[r.id] || r.basePrice) : 0, mx = Math.max(1, ...F.map(f => paxWant(r, f))), nw = r ? newsOn(r.id, day) : [];
+  const dem = `<section class="dk-pnl wr-dem"><div class="dk-pnl-h">${ICO2.people}<h2>Demand</h2><span class="grow"></span><select class="om-sel" id="wrRoute" aria-label="Route">${routes.map(x => `<option value="${x.id}" ${x.id === focus ? 'selected' : ''}>${esc(x.city)}</option>`).join('')}</select></div>
+    ${r ? `<div class="wr-bars">${F.map(f => { const n = paxWant(r, f); return `<div class="wr-b ${f === cur ? 'on' : ''}"><span class="wr-n">${num(n)}</span><i style="height:${Math.round(100 * n / mx)}%"></i><span class="wr-f">${money(f)}</span></div>`; }).join('')}</div>
+    <p class="wr-l">People a day who want to fly to ${esc(r.city)} at each fare. Your fare is highlighted.${nw.length ? ` <b class="good">${esc(nw[0].headline)}: ×${nw[0].mult} today.</b>` : ''}</p>` : ''}</section>`;
+  const from = day - ((day - 1) % 7), heads = []; for(let d = from; d < from + 7; d++){ const c = calRow(d); ((c && c.headlines) || []).forEach(h => { if(!heads.includes(h)) heads.push(h); }); }
+  if(m.headline && !heads.includes(m.headline)) heads.unshift(m.headline);
+  const ann = announcedFor(day);
+  const news = `<section class="dk-pnl wr-news"><div class="dk-pnl-h">${ICO2.news}<h2>Headlines</h2><span class="grow"></span><span class="sub">${fmtRange(from, from + 6)}</span></div><ul class="wr-ul">${heads.slice(0, 5).map(h => `<li>${esc(h)}</li>`).join('') || '<li class="muted">A quiet week.</li>'}</ul>
+    <div class="wr-ann"><span class="kl">Announced for the next two weeks</span>${ann.length ? ann.map(x => `<p>${ICO2.calendar}<span><b>${esc(x.headline || x.id)}</b> · ${x.routes.map(id => routeById(id) ? routeById(id).city : id).join(', ')} demand ×${x.mult}${x.segment && x.segment !== 'all' ? ` (${x.segment})` : ''} · ${fmtRange(dayOfDate(x.start), dayOfDate(x.end))}${x.goodResponse ? ` <small>${esc(x.goodResponse)}</small>` : ''}</span></p>`).join('') : '<p class="muted">Nothing announced yet.</p>'}</div></section>`;
+  return `<div class="wr">${fuel}${rk}${dem}${news}</div>`;
+}
+function renderWorldReport(){
+  screen().innerHTML = shell(deskPage({ title:'World report', sub:`The week ahead: fuel, ${esc(WORLD.rival || 'Red Kite')}'s fares, demand and the news. Week ${weekNo(S.day || 1)}.`, cls:'wr-page', body:worldReportHtml() }),
+    deskBar('Read the world before you plan the week: what fuel will cost, what the rival charges, and what is coming.', '<button class="btn primary big" id="wrClose">&#9664; Back</button>'));
+  on('wrClose', () => { UI.view = null; render(); });
+  const sel = $('wrRoute'); if(sel) sel.onchange = () => { UI.wr.route = sel.value; render(); };
+}
+/* the Monday plan page offers the World report (and it opens by itself the first time each Monday) */
+const planWorld0 = R.plan;
+R.plan = st => { const out = planWorld0(st); if(!weekMode() || UI.card || !deskMode()) return out;
+  const tools = screen().querySelector('.plw-tools'); if(tools && !$('worldOpen')){ tools.insertAdjacentHTML('afterbegin', '<button class="btn small" id="worldOpen" title="Fuel, the rival\'s fares, demand and the news">World report</button>'); on('worldOpen', () => { UI.view = 'world'; render(); }); }
+  return out; };
+/* Network: the destinations with the rival's fares and the demand at yours */
+function renderView(v){
+  renderViewBase(v); if(v !== 'network' || !weekMode()) return;
+  const host = screen().querySelector('.vw.net'); if(!host) return;
+  const pl = currentPlan(), flown = new Set(normPlan(pl).fleet.flatMap(x => x.sched)), routes = openRoutes(S.day || 1);
+  host.insertAdjacentHTML('beforeend', `<section class="hp net-dest"><div class="dk-pnl-h">${ICO2.globe}<h2>Destinations</h2><span class="grow"></span><span class="sub">fares one way · people a day at your fare</span></div><table class="dk-t"><thead><tr><th>Destination</th><th class="num">Distance</th><th class="num">Your fare</th><th class="num">${esc(WORLD.rival || 'Red Kite')}</th><th class="num">Want to fly</th><th>Flown</th></tr></thead><tbody>${routes.map(r => { const f = pl.prices[r.id] || r.basePrice, c = competitorPrice(r), can = S.fleet.some(x => planeCanFly(planeById(x.planeId), r));
+    return `<tr><td>${flagSvg(r.flag, 16)} ${esc(r.city)}</td><td class="num">${num(routeKm(r))} km</td><td class="num">${money(f)}</td><td class="num">${c !== undefined && c !== null ? money(c) : '—'}</td><td class="num">${num(paxWant(r, f))}</td><td>${flown.has(r.id) ? '<b class="good">Yes</b>' : can ? 'No' : '<small>out of range</small>'}</td></tr>`; }).join('')}</tbody></table></section>`);
+}
+/* the review of a week or month beat names the fuel purchasing advantage and the surprises */
+const reviewDesk0 = R.review;
+R.review = st => { reviewDesk0(st); if(!weekMode()) return; const h = lastHist(), rv = screen().querySelector('.rv'); if(!h || !rv || h.from === undefined) return;
+  const extra = (h.to - h.from >= 6 ? fuelAdvantageLine(weekNo(h.from)) : '') + surprisesLine(h.from, h.to); if(extra) rv.insertAdjacentHTML('afterbegin', `<div class="rv-desk">${extra}</div>`); };

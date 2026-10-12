@@ -11,7 +11,7 @@
        values are the brief's).
    ================================================================== */
 function weekProjected(){ return S.phase === 'round' && PW().span === 'week' && !!roundData(S.round).projectWeek; }
-function stepsFor(b){
+function stepsForWeeks(b){
   const w = roundData(b), st = w.stage ? [{ t:'milestone', stage:w.stage }] : [], L = a => withIntro(st.concat(a.map(t => ({ t }))), w);
   if(w.period === 'gap') return L(['sim', 'results']);
   if(w.period === 'week') return L(['hq', 'review', 'shop2', 'planner'].concat(w.events && w.events.some(e => e.options && e.options.length) ? ['event'] : []).concat(['costPlan', 'testIdeas', 'ready', 'sim', 'results']));

@@ -903,7 +903,7 @@ R.results = st => {
   renderOverview('results');
 };
 /* Network, Fleet and Finance: bigger views of the same data. */
-function renderView(v){
+function renderViewBase(v){
   const h = lastDay(), p = ourPlane();
   let inner = '';
   if(v === 'network') inner = `<div class="vw net"><section class="hp p-map">${hqHead('Network', `${ownedRoutes().length} ROUTES`)}<div class="hq-map" id="hqMap"></div></section><section class="hp">${hqHead('Route Performance', '')}${evidenceHtml(h, ownedRoutes())}</section></div>`;

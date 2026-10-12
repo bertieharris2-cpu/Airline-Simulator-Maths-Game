@@ -242,12 +242,13 @@ function deskBar(hint, buttons){ return `<footer class="actbar"><span class="ab-
 function shellView(st){
   const v = UI.view;
   if(v && DESK_STEP_NAV[st.t] === v){ UI.view = null; return false; }   // the desk is today's step: show the step
-  if(v && ['reputation', 'reports', 'fuel', 'model'].includes(v)){ if(MODULES[v] && !moduleOn(v)){ UI.view = null; return false; } renderDeskView(v); return true; }
+  if(v && ['reputation', 'reports', 'fuel', 'model', 'world'].includes(v)){ if(MODULES[v] && !moduleOn(v)){ UI.view = null; return false; } renderDeskView(v); return true; }
   return shellViewBase(st);
 }
 function renderDeskView(v){
   if(v === 'fuel' && typeof fuelDeskHtml === 'function'){ renderFuelDesk(true); return; }
   if(v === 'model' && typeof renderModel === 'function'){ renderModel(true); return; }
+  if(v === 'world' && typeof renderWorldReport === 'function'){ renderWorldReport(); return; }
   let body = '';
   if(v === 'reputation'){
     const rev = (S.history || []).slice().reverse().flatMap(h => (h.reviews || []).map(r => Object.assign({ when:h }, r))).slice(0, 12);

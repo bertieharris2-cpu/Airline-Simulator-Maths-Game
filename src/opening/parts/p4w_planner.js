@@ -12,7 +12,7 @@
    weekMode() is off.
    ================================================================== */
 const wkPlanner = () => typeof weekMode === 'function' && weekMode();
-const dayLike = () => !!S && (S.phase === 'setup' || !!(S.period && S.period.type === 'day'));
+const dayLike = () => !!S && (S.phase === 'setup' || !!(S.period && (S.period.type === 'day' || (wkPlanner() && ['week', 'month'].includes(S.period.type)))));   // from day 29 the week and month beats are planned on the same desks
 const planW0 = R.plan, workW0 = R.workings;
 const PLW_SNAP = 10;   // minutes: the timeline's grid
 

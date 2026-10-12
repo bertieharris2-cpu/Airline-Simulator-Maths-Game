@@ -103,7 +103,7 @@ stageSummary: p4d_opening.js -> p4g_opening2.js
 startBeat: p4f_campaign.js -> p4y_desks.js
 startFlight: p4a_core.js -> p4g_opening2.js -> p4y_desks.js
 startProtoDay: p4d_opening.js -> p4g_opening2.js -> p4l_handsums.js -> p4m_fleet.js
-stepsFor: p4f_campaign.js -> p4k_chapter.js -> p4n_weeks.js
+stepsFor: p4f_campaign.js -> p4k_chapter.js -> p4y_desks.js
 syncRoutesToHome: p4d_opening.js -> p4h_world.js
 syncSoundBtn: p4p_identity.js -> p4x_shell.js
 testPlan: p4f_campaign.js -> p4g_opening2.js

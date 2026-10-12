@@ -48,7 +48,7 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
   // the chapter
   let lastDay = 0;
   for(let i = 0; i < 400; i++){ const t = await T(), s = await S(), day = s.day;
-    if(day >= UPTO && t === 'hq') break;
+    if(day >= UPTO && t === 'hq') break; if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); break; }
     if(t === 'hq'){ await fits('hq ' + day); if(day !== lastDay) await shot(`d${day}-hq`); lastDay = day; await p.click('#startDay'); continue; }
     if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice(); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
     if(t === 'shop2'){ await fits('shop ' + day); await shot(`d${day}-shop`); const want = day === 8 ? 'sf34' : day === 22 ? 'at72' : null, card = want && await p.$(`[data-pick="${want}"]`); if(card){ await card.click(); await p.click('#nx'); } else await p.click('#skipShop'); continue; }
@@ -79,6 +79,9 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
         ok('launch: both routes on the plan page', await vis('[data-pe^="0|add|dub|0"]') && await vis('[data-pe^="0|add|par|0"]')); }
       if(day === 8 && s.fleet.length > 1){ await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
         ok('day 8: two aircraft, two lanes on the timeline', (await p.$$('.ad-lane')).length === 2 && (await p.$$('.ad-blk')).length === 4);
+        if(await p.$('#worldOpen')){ await p.click('#worldOpen'); await p.waitForTimeout(150); const wt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
+          ok('day 8: the World report shows the fuel band, Red Kite\'s fares, a demand graph and the headlines', await vis('.wr') && /£1\.60–£1\.76/.test(wt) && (await p.$$('.wr-rk tbody tr')).length >= 2 && (await p.$$('.wr-b')).length >= 3 && /Headlines/.test(wt), wt.slice(0, 160));
+          await shot(`d${day}-world`); await p.click('#wrClose'); await p.waitForTimeout(100); }
         if(await p.$('#ideaOpen')){ ok('day 8: the planner offers Try different options', /Try different options/.test(await p.textContent('#ideaOpen'))); await p.click('#ideaOpen'); await p.waitForTimeout(150);
           ok('day 8: the Operations Model asks for the Build step first', await vis('.om-build') && !(await vis('.om-rt'))); await shot(`d${day}-model-build`);
           for(const x of ['Passengers', '+', 'Fare']) await p.click(`[data-omp="${x}"]`);
@@ -95,7 +98,7 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
           ok('day 8: Service costs opens the performance card with the model\'s figures (Twin Otter Paris, 120 L × £1.47)', await vis('.sc-banner') && !(await vis('.sc-p1.sign')) && tot === '£176.40', tot); await shot(`d${day}-svccard`);
           await p.click('[data-scm="scale"]'); await p.waitForTimeout(60); ok('day 8: the card\'s method tabs change the working (scale from 100 L)', /100 L costs/.test(await p.textContent('.sc-p1')));
           await p.click('#scBack'); await p.waitForTimeout(100); ok('day 8: Back to plan returns to the planner', await vis('.ad'), await T()); }
-        if(await p.$('#mapOpen')){ await p.click('#mapOpen'); ok('day 8: the network map is a button away', await vis('#hqMap')); await shot(`d${day}-map`); await p.click('[data-nav="plan"]'); await p.waitForTimeout(60); } }
+        if(await p.$('#mapOpen')){ await p.click('#mapOpen'); ok('day 8: the network map is a button away, with the destinations, the rival\'s fares and the demand', await vis('#hqMap') && (await p.$$('.net-dest tbody tr')).length >= 2); await shot(`d${day}-map`); await p.click('[data-nav="plan"]'); await p.waitForTimeout(60); } }
       if(day === 15 && s.fleet.length > 1) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 });
       if(day === 22 && s.fleet.length > 2) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 });
       if(day >= 3){ const q = await p.$('.fw-quick [data-fo]:nth-child(2)'); if(q) await q.click(); }
@@ -117,6 +120,10 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
         const f0 = (await S()).fuel; await p.click('#fdBuy'); await p.waitForTimeout(80); const f1 = (await S()).fuel;
         ok(`day ${day}: the order of ${n} × 1,000 L goes into the tank`, Math.round(f1 - f0) === n * 1000, [f0, f1]); await shot(`d${day}-fueldesk-bought`); }
       await p.click('#nx'); continue; }
+    if(t === 'rop'){ await fits('rop'); await shot(`d${day}-rop`); ok('day 28: the regular plan says the tank carries on', /The tank carries on/.test(await p.textContent('#screen'))); await p.click('#ropGo'); continue; }
+    if(t === 'milestone'){ await shot(`d${day}-milestone`); await p.click('#msGo'); continue; }
+    if(t === 'review'){ await fits('review ' + day); await shot(`d${day}-wkreview`); sums['wreview ' + day] = await solve('wreview'); if(await p.$('#calcDone')) await p.click('#calcDone'); await p.click('#nx'); continue; }
+    if(t === 'sim'){ await shot(`d${day}-sim`); for(let k = 0; k < 160 && await T() === 'sim'; k++) await p.waitForTimeout(250); continue; }
     if(t === 'ready'){ await fits('ready ' + day); const en = await p.$eval('#startOps', e => !e.disabled); ok('ready ' + day, en, await p.textContent('.opplan')); if(!en){ await shot(`d${day}-ready-stuck`); break; } await p.click('#startOps'); continue; }
     if(t === 'takeoff'){ await p.click('#toGo'); for(let k = 0; k < 200 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     if(t === 'fly'){ for(let k = 0; k < 80 && await T() === 'fly'; k++) await p.waitForTimeout(250); continue; }
