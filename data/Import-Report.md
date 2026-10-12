@@ -8,11 +8,11 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 57 | 57 live, 8 placeholder |
+| Settings | 73 | 73 live, 8 placeholder |
 | Archetypes | 4 | 2 later, 4 live |
 | Routes | 18 | 2 later, 18 live |
 | RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
-| Aircraft | 8 | 6 later, 8 live, 2 note row, 1 placeholder, 1 removed |
+| Aircraft | 8 | 6 later, 8 live, 1 note row, 1 placeholder, 1 removed |
 | Finance | 8 | 6 later, 8 live, 2 note row, 1 placeholder |
 | Airports | 1 | 1 later, 1 live, 3 removed |
 | Calendar | 28 | 28 live |
@@ -23,6 +23,7 @@
 | Chapters | 1 | 3 later, 1 live, 1 note row, 2 placeholder |
 | HandSumRules | 8 | 8 live, 1 note row |
 | Catering | 4 | 4 live, 1 note row |
+| RouteNews | 13 | 13 live, 1 note row |
 | Livery | 35 | 35 live, 1 note row |
 | Hunts | 0 | 1 note row, 7 placeholder |
 
@@ -70,7 +71,6 @@ Livery sheet: 12 colours, 4 stripes, 7 tail symbols, 4 logo shapes, 8 name sugge
 | a340 | later |  | none yet | — |
 | b777 | later |  | none yet | — |
 | Prices from the A220 up are tuned to the cash curve (F5, replacing D16's three-tenths rule): on the Steady path each plane is a few lessons of saving away when it is meant to arrive. Tutorial planes (Twin Otter to E190, E175) keep launch-deal prices. Real prices are on the plane card for interest only. | None |  | none yet | — |
-| v4.3 draft (CR5): artworkId names the painted side-view drawing (narrowbody is a stand-in until the A220, A320 and 737 are drawn); photo* record the showroom photo: file name under src/opening/assets/photos, author, licence, source URL. Openly licensed only, plain or maker colours. | None |  | none yet | — |
 
 ## The prototype's own data and the workbook's
 

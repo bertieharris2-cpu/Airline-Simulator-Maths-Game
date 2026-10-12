@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Import the world workbook into the prototype's data.
 
-Reads data/Airline-World-Workbook.xlsx (v4.2) and writes:
+Reads data/Airline-World-Workbook.xlsx (v4.6; install a new one from Fable with tools/merge_workbook.py) and writes:
   * a JSON block <script type="application/json" id="data-workbook"> in src/opening/parts/p2_data.html
     (live rows only, as the workbook's README asks; "optional" rows are kept and flagged; note rows with no status are skipped);
   * data/Import-Report.md: what was loaded, what was skipped, every check that failed, and the rows dated inside
@@ -130,6 +130,7 @@ settings = {r['key']: r['value'] for r in live('Settings', settings_rows)}
 settings_status = {r['key']: (r.get('status') or 'note row') for r in settings_rows if r.get('key')}
 start = date(settings['startDate'])
 if 'blockedFlightCodes' in settings: settings['blockedFlightCodes'] = [w.upper() for w in words(settings['blockedFlightCodes'])]
+if isinstance(settings.get('forecastConfidenceLevels'), str): settings['forecastConfidenceLevels'] = [w.strip() for w in settings['forecastConfidenceLevels'].split('|') if w.strip()]
 for k in ('crewMechanicFromDate', 'crewFromDate'):   # crew duty waits for the airline-type choice (D51)
     if settings.get(k): settings[k] = date(settings[k]).isoformat()
 CH1_END = dt.date(2030, 12, 28)   # chapter 1's review date; rows dated on or before it must be live (see "Chapter 1 touches")
@@ -196,7 +197,10 @@ all_market = sheet(wb, 'Market')
 market = [{'week': m['week'], 'weekStart': m['weekStart'], 'season': m['season'], 'fuel': m['fuel'],
            'businessMult': m['businessMult'], 'leisureMult': m['leisureMult'],
            'seasonMult': {k[:-len('SeasonMult')]: v for k, v in m.items() if k.endswith('SeasonMult')},
-           'weather': m['weather'], 'headline': m['headline'], 'status': m['status']}
+           'weather': m['weather'], 'headline': m['headline'], 'status': m['status'],
+           # v4.6 (D57, D60): next week's forecast band, the fuel desk's news, how sure the forecast is, and a second (conflicting) signal
+           'forecastLow': m.get('forecastLow'), 'forecastHigh': m.get('forecastHigh'), 'fuelHeadline': m.get('fuelHeadline'),
+           'forecastConfidence': m.get('forecastConfidence'), 'fuelHeadline2': m.get('fuelHeadline2')}
           for m in live('Market', all_market)]
 
 all_events = sheet(wb, 'Events')
@@ -238,6 +242,17 @@ catering = [{'id': c['optionId'], 'name': c['name'], 'sellingPrice': c['sellingP
              'freeCostPerPassenger': c['freeCostPerPassenger'], 'reputationEffect': c['reputationEffect'], 'notes': c['notes'], 'status': c['status']}
             for c in live('Catering', opt_sheet('Catering'))]
 all_hunts = opt_sheet('Hunts')
+# v4.6 (D60): the working methods the workbench offers for each relationship, by level
+workingMethods = [{'relationship': r['relationship'], 'level': r['level'], 'where': r.get('whereItLives'),
+                   'methods': [m.strip() for m in str(r.get('methodsOffered') or '').split('|') if m.strip()], 'example': r.get('example'), 'notes': r.get('notes')}
+                  for r in opt_sheet('WorkingMethods') if r.get('relationship') and r.get('level')]
+if 'WorkingMethods' not in wb.sheetnames: issue('error', 'WorkingMethods', 'no WorkingMethods sheet: the workbench has no methods to offer.')
+# v4.5 (D56): route news, a demand multiplier on named routes between two dates (announced the week before, or a surprise)
+routeNews = [{'id': r['newsId'], 'announce': r['announceDate'], 'start': r['startDate'], 'end': r['endDate'], 'kind': r.get('kind'),
+              'routes': words(r.get('routes') or ''), 'mult': r['demandMultiplier'], 'segment': r.get('segment') or 'all', 'announced': bool(r.get('announced')),
+              'headline': r.get('headline'), 'goodResponse': r.get('goodResponse'), 'status': r['status']}
+             for r in live('RouteNews', opt_sheet('RouteNews'))]
+if 'RouteNews' not in wb.sheetnames: issue('error', 'RouteNews', 'no RouteNews sheet: the world report has no route news.')
 # Livery (v4.3 draft, CR5): the paint shop's fixed choices, grouped by kind
 all_livery = opt_sheet('Livery')
 if 'Livery' not in wb.sheetnames: issue('error', 'Livery', 'no Livery sheet: the paint shop has no palette, stripes, tail symbols, logo shapes or name suggestions.')
@@ -280,7 +295,7 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'aircraft': aircraft, 'finance': finance, 'airports': airports, 'calendar': calendar, 'market': market,
          'events': events, 'challenges': challenges, 'mechanics': mechanics,
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
-         'livery': livery, 'aircraftPreview': aircraft_preview}
+         'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews}
 
 
 # ---------- checks ----------
@@ -325,6 +340,19 @@ for wk in sorted({c['week'] for c in all_cal}):
             span = f'£{lo:.2f}' if lo == hi else f'£{lo:.2f}–£{hi:.2f}'
             issue('check', 'Market', f'week {wk} fuel is £{w:.2f}, but the Calendar has {span} on its days. '
                   'Time skips use the Market price, so the two should agree.')
+
+# fuel desk (D60): each week's actual price must lie inside the band forecast the week before; the band only matters from the desk week on
+for a, b in zip(all_market, all_market[1:]):
+    lo, hi = a.get('forecastLow'), a.get('forecastHigh')
+    if a.get('status') not in LOAD or b.get('status') not in LOAD or lo is None or hi is None: continue
+    if not (lo <= b['fuel'] <= hi): issue('check', 'Market', f'week {b["week"]} fuel £{b["fuel"]:.2f} is outside the band week {a["week"]} forecast (£{lo:.2f}–£{hi:.2f}).')
+    if a.get('forecastConfidence') and a['forecastConfidence'] not in (settings.get('forecastConfidenceLevels') or ['high', 'medium', 'low']):
+        issue('check', 'Market', f'week {a["week"]} forecastConfidence `{a["forecastConfidence"]}` is not one of the confidence levels.')
+rids = {r['id'] for r in all_routes}
+for n in routeNews:
+    for rid in n['routes']:
+        if rid not in rids: issue('check', 'RouteNews', f'{n["id"]}: route `{rid}` is not on the Routes sheet.')
+    if not (n['announce'] <= n['start'] <= n['end']): issue('check', 'RouteNews', f'{n["id"]}: announce {n["announce"]}, start {n["start"]}, end {n["end"]} are not in order.')
 
 # archetypes
 aids = {a['id'] for a in arche}
@@ -485,7 +513,9 @@ NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurna
           'loadFactorPercentFromDay', 'fuelHandSumPriceStep', 'fuelHandSumLitresShare', 'snacksHandSumOnce', 'timeSkip', 'leaseFromDate', 'buyFromDate',
           'financeFromDate', 'reputationFromDate', 'quarterlyTaskFromDate', 'huntPerReview', 'captainsChallengeCadence', 'fareStepWeek2', 'reportCadence',
           'blockedFlightCodes', 'soundDefault', 'revealSeconds', 'crewMechanicFromDate', 'rivalSwitchPerTenPounds', 'rivalSwitchCap', 'rivalAdvertiseFactor', 'practiceQuestionsPerDay',
-          'openingPlayMode', 'teacherDayByDay', 'weeklyReviewFromDay', 'missedProfitLine', 'neglectFromDay', 'neglectLoadFactor', 'neglectLossShare', 'neglectRecoverShare', 'launchDaySums']
+          'openingPlayMode', 'teacherDayByDay', 'weeklyReviewFromDay', 'missedProfitLine', 'neglectFromDay', 'neglectLoadFactor', 'neglectLossShare', 'neglectRecoverShare', 'launchDaySums',
+          'fuelLotSize', 'tankCapacity', 'fuelUseOrder', 'fuelBuyWhen', 'emergencyFuelPremium', 'fuelForecastFromWeek', 'fuelHandSum', 'planningSpreadsheetFromDay', 'worldReport',
+          'fuelWeek1', 'fuelDeskFromDay', 'tankUpgradeDay', 'tankCapacityUpgraded', 'fuelAdvantageWording', 'fuelCoverage', 'forecastConfidenceLevels']
 for k in NEEDED:
     st_ = settings_status.get(k)
     if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')

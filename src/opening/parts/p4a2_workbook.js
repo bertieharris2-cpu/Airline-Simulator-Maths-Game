@@ -69,6 +69,10 @@ function shareWords(x){ return x >= 0.999 ? 'Everyone' : x === 0.5 ? 'Half of pa
   Object.assign(WORLD, { dayStart:st.airportOpen || WORLD.dayStart, dayEnd:st.airportClose || WORLD.dayEnd, crewCost:WBR.crew, crewDutyMin:WBR.maxDuty, crewPadMin:WBR.pad,
     fuelLot: st.fuelLotLitres || WORLD.fuelLot, turnaroundMin: st.homeTurnaroundMin || WORLD.turnaroundMin, cashReserve: st.cashReserve !== undefined ? st.cashReserve : 0,
     startDate: st.startDate, gameEndDate: st.gameEndDate, settings: st });
+  /* v4.6 (D60): the fuel desk. Blocks of fuelLotSize litres, an 8,000 L tank from fuelDeskFromDay growing on tankUpgradeDay, emergency fuel at +10p */
+  Object.assign(WORLD, { fuelBlock: st.fuelLotSize || 1000, deskFromDay: st.fuelDeskFromDay || 8, tankBaseDesk: st.tankCapacity || 8000, tankUpgradeDay: st.tankUpgradeDay || 29,
+    tankUpgraded: st.tankCapacityUpgraded || 20000, analyticsFromDay: st.planningSpreadsheetFromDay || 8, routeNews: WB.routeNews || [], workingMethods: WB.workingMethods || [] });
+  if(st.emergencyFuelPremium !== undefined) WORLD.fuelTopUp = st.emergencyFuelPremium;
   if(st.startingCash) WORLD.startingCash = st.startingCash;
   if(st.startingReputation) WORLD.startingReputation = st.startingReputation;
 })();
