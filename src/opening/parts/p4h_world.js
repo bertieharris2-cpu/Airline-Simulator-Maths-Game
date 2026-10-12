@@ -107,6 +107,8 @@ function demandPools(route, fare){
   BANDS.forEach(b => { out[b] = roundSchool(ts * (a.bands[b] || 0)); });
   out.flex = Math.max(0, W - ts); return out;
 }
+/* projections value fuel at the week's price (the desk weeks, p4y); actual days cost the tank's layers */
+function fuelAtWeekPrice(){ return false; }
 function planFlights(){
   const out = [], pools = {}, fifo = fifoCursor(S.rnd && S.rnd.fuelOrder), paid = fuelPaid(), list = [];
   const pool = (route, price) => { if(!pools[route.id]){ const comp = competitorPrice(route); pools[route.id] = Object.assign(demandPools(route, price), { demand: demandAt(route, price), comp, cut: comp !== undefined && comp < price }); } return pools[route.id]; };
@@ -135,7 +137,7 @@ function planFlights(){
       if(timeDemandOn()) reasons.push(`${x.locked} ${x.locked === 1 ? 'person' : 'people'} wanted to fly in the ${BAND_NAMES[x.band].toLowerCase()} (${bandSpan(x.band)}) and ${x.flexible} more could fly at any time.`);
       else if((byRoute[x.route] || []).length > 1) reasons.push(`Today's ${route.city} passengers were shared between your services.`);
     }
-    out.push(Object.assign(x, { demand:d.demand, sold, revenue: sold * x.price, termCost: sold * termCharge(), compCut:d.cut, reasons, fuelCost: !paid ? 0 : fuelContract() ? r2(x.fuelL * fuelPrice()) : fifo.take(x.fuelL) }));
+    out.push(Object.assign(x, { demand:d.demand, sold, revenue: sold * x.price, termCost: sold * termCharge(), compCut:d.cut, reasons, fuelCost: !paid ? 0 : fuelContract() || fuelAtWeekPrice() ? r2(x.fuelL * fuelPrice()) : fifo.take(x.fuelL) }));
   });
   return out;
 }

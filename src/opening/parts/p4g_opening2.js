@@ -24,7 +24,7 @@ function depsOn(){ return opened(3.3); }
 function secondRouteOn(){ return opened(3.4); }
 /* The weeks (and the weekend run before them): fuel is bought as it is used, at that week's price. No tank, no top-ups,
    so "profit a day × 7" is exact. From the months the tank comes back: buying ahead when the price looks low is the decision. */
-function fuelContract(){ return !!(S && S.phase === 'round' && S.period && (S.period.type === 'week' || S.period.type === 'gap')); }
+function fuelContractBase(){ return !!(S && S.phase === 'round' && S.period && (S.period.type === 'week' || S.period.type === 'gap')); }
 function plannerRoutes(){ return secondRouteOn() ? [S.market, otherRoute()] : [S.market]; }
 /* The old "business travellers before 08:00" rule is replaced by time-of-day demand. */
 function earlyBonus(){ return 0; }
@@ -471,7 +471,7 @@ R.rop = () => {
   on('ropGo', () => { UI.ropEdit = false; S.rop = Object.assign({ approved:S.day }, currentPlan()); returnTankFuel(); startBeat(S.round + 1); });
 };
 
-function returnTankFuel(){
+function returnTankFuelBase(){
   if(!(S.fuel > 0)) return; const v = r2(S.fuelValue), L = S.fuel;
   S.cash = r2(S.cash + v); S.fuel = 0; S.fuelValue = 0; S.fuelLots = [];
   addNews([{ tag:'FUEL', text:`${num(L)} L of fuel returned to the supplier: ${money(Math.round(v))} back. From now on fuel is bought as it is used.` }]);

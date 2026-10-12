@@ -516,7 +516,7 @@ function shell(inner, bar){
 }
 function navTag(){ const f = S.fleet && S.fleet[0]; return `<div class="nv-tag" aria-hidden="true">${f && typeof planeMini === 'function' ? planeMini(f) : ''}<span>A great journey starts with a good plan</span></div>`; }
 /* Overview, Network, Fleet or Finance while a step is open: the step waits underneath. */
-function shellView(st){
+function shellViewBase(st){
   if(!SHELL_STEPS.includes(st.t)){ UI.view = null; return false; }
   const v = UI.view; if(!v || v === 'plan') return false;
   if(MODULES[v] && !moduleOn(v)){ UI.view = null; return false; }

@@ -243,7 +243,7 @@ function canAddTrip(plane, sched, route){ if(!planeCanFly(plane, route)) return 
 function activeFleet(){ return S.fleet.filter(f => schedOf(f).length && !f.grounded); }
 function dayFuel(f, sched){ const p = planeById(f.planeId); return (sched || schedOf(f)).reduce((u,id) => u + fuelForTrip(p, routeById(id)), 0); }
 function fuelNeeded(){ return activeFleet().reduce((t,f)=> t + dayFuel(f), 0); }
-function tankCapacity(){ return (WORLD.tankBase||5000) + S.fleet.reduce((t,f) => t + (planeById(f.planeId).tankAdd||0), 0); }
+function tankCapacityBase(){ return (WORLD.tankBase||5000) + S.fleet.reduce((t,f) => t + (planeById(f.planeId).tankAdd||0), 0); }
 function tankSpace(){ return Math.max(0, tankCapacity() - S.fuel); }
 function ceilLot(l, lot){ lot = lot || WORLD.fuelLot; return Math.max(lot, Math.ceil(l/lot)*lot); }
 function tankRate(){ return S.fuel > 0 ? S.fuelValue / S.fuel : fuelPrice(); }     // exact £ per litre of what's in the tank

@@ -39,7 +39,7 @@ function weekChoiceEvent(w){
 }
 function costShareOf(ev, opt){ const s = String(ev.costShare || ''); if(!s || /fixed/.test(s)) return null; const key = (opt.key || opt.label || '').toLowerCase().split(/\s+/)[0]; const m = new RegExp(key + '\\s+([\\d.]+)').exec(s); return m ? +m[1] : null; }
 function yesterdayProfit(){ const h = lastHist(); if(!h) return 0; const n = Math.max(1, (h.to || h.from || 0) - (h.from || 0) + 1); return r2((h.profit || 0) / n); }
-function startBeat(b){
+function startBeatBase(b){
   const w = roundData(b), last = S.period && S.phase === 'round' ? S.period.to : S.day;
   S.round = b; S.phase = 'round'; delete S.needsRestart;
   S.day = Math.max(beatDay(b), (last || 0) + 1);

@@ -15,7 +15,8 @@ const path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../
   else { await p.click('#nx'); await p.click('[data-mk="par"]'); await p.click('#nx'); }   // day-at-a-time: the aircraft, the market, the demand
   const res = await p.evaluate(() => {
     const { WB, WE, planOutcome, beatDay, buyPlane, planeById, fuelPrice, toMin } = window.__world, out = [], S = window.__world.getS();
-    S.phase = 'round'; S.round = 7; S.day = beatDay(7);   // day 8: time-of-day demand is on and Red Kite's Dublin fares (days 4–7) are over S.onboard = 'none'; S.fuel = 0; S.fuelValue = 0; S.fuelLots = []; S.terminal = 't5';
+    S.phase = 'round'; S.round = 7; S.day = beatDay(7);   // day 8: time-of-day demand is on and Red Kite's Dublin fares (days 4–7) are over
+    S.onboard = 'none'; S.fuel = 0; S.fuelValue = 0; S.fuelLots = []; S.terminal = 't5';
     if(!S.fleet.length) buyPlane(planeById('dhc6'));
     const T = s => toMin(s), plans = [
       ['Dublin £90, 07:00 11:20 18:00', ['dub', 'dub', 'dub'], { dub:90 }, ['07:00', '11:20', '18:00']],

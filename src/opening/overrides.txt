@@ -7,6 +7,7 @@ applyPeriodResults: p4a_core.js -> p4f_campaign.js
 applyPick: p4t_workout.js -> p4v_week.js
 applyPlanRaw: p4f_campaign.js -> p4m_fleet.js
 aptCode: p4d_opening.js -> p4i_liveops.js
+autoFuelOrder: p4w_planner.js -> p4y_desks.js
 bandOf: p4g_opening2.js -> p4h_world.js
 beatLabel: p4d_opening.js -> p4f_campaign.js -> p4k_chapter.js
 bindFuelPanel: p4v_week.js -> p4w_planner.js
@@ -33,7 +34,7 @@ dayExtras: p4a_core.js -> p4h_world.js
 dayTag: p4a_core.js -> p4k_chapter.js
 decideHandSums: p4l_handsums.js -> p4w_planner.js
 demandAt: p4a_core.js -> p4h_world.js -> p4l_handsums.js -> p4n_weeks.js
-demandMult: p4l_handsums.js -> p4n_weeks.js
+demandMult: p4l_handsums.js -> p4n_weeks.js -> p4y_desks.js
 demandPools: p4g_opening2.js -> p4h_world.js
 demandRule: p4b_control.js -> p4h_world.js
 demandStrip: p4g_opening2.js -> p4h_world.js
@@ -46,13 +47,16 @@ fleetHtml: p4b_control.js -> p4r_showroom.js
 flightParts: p4h_world.js -> p4m_fleet.js
 fmtVal: p4a_core.js -> p4m_fleet.js
 forecastCols: p4b_control.js -> p4d_opening.js
+fuelAtWeekPrice: p4h_world.js -> p4y_desks.js
 fuelPaid: p4g_opening2.js -> p4v_week.js
 fuelPanelHtml: p4v_week.js -> p4w_planner.js
 goWord: p4d_opening.js -> p4f_campaign.js
+isoOf: p4k_chapter.js -> p4y_desks.js
 launchFares: p4v_week.js -> p4w_planner.js
 legMinutes: p4a_core.js -> p4h_world.js
 migrate: p4a_core.js -> p4u_migrate.js
 monthNo: p4a_core.js -> p4k_chapter.js
+navActive: p4d_opening.js -> p4x_shell.js
 openSum: p4b_control.js -> p4w_planner.js
 operandUnit: p4a_core.js -> p4g_opening2.js
 opsSoundOn: p4i_liveops.js -> p4p_identity.js
@@ -92,18 +96,21 @@ rowTyped: p4e_toolkit.js -> p4m_fleet.js
 runCostOf: p4a_core.js -> p4h_world.js
 setLivery: p4b_control.js -> p4p_identity.js
 setPlan: p4d_opening.js -> p4g_opening2.js -> p4m_fleet.js
+shell: p4d_opening.js -> p4x_shell.js
 simulateDays: p4a_core.js -> p4f_campaign.js
 simulateRun: p4a_core.js -> p4f_campaign.js
 stageSummary: p4d_opening.js -> p4g_opening2.js
-startBeat: p4f_campaign.js -> p4n_weeks.js
-startFlight: p4a_core.js -> p4g_opening2.js -> p4i_liveops.js
+startBeat: p4f_campaign.js -> p4y_desks.js
+startFlight: p4a_core.js -> p4g_opening2.js -> p4y_desks.js
 startProtoDay: p4d_opening.js -> p4g_opening2.js -> p4l_handsums.js -> p4m_fleet.js
 stepsFor: p4f_campaign.js -> p4k_chapter.js -> p4n_weeks.js
 syncRoutesToHome: p4d_opening.js -> p4h_world.js
+syncSoundBtn: p4p_identity.js -> p4x_shell.js
 testPlan: p4f_campaign.js -> p4g_opening2.js
 timeSelfTest: p4a_core.js -> p4h_world.js
 toolLevel: p4e_toolkit.js -> p4l_handsums.js -> p4m_fleet.js
 undoEvent: p4l_handsums.js -> p4n_weeks.js
+updateTopBar: p4b_control.js -> p4x_shell.js
 weekProjected: p4g_opening2.js -> p4n_weeks.js
 withPlan: p4g_opening2.js -> p4m_fleet.js
 workoutPicked: p4t_workout.js -> p4v_week.js

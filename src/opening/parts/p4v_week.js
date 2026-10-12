@@ -150,7 +150,7 @@ function enterRunDay(nb){
   publish(); render();
 }
 /* the day flown on the standing plan: fuel from the tank (a top-up at the day's price + the supplement when the tank runs short), then the results as on any day */
-function runDayQuick(){
+function runDayQuickBase(){
   refreshPlan(); const fl = S.rnd.flights = planFlights(), paid = fuelPaid(), notes = [];
   fl.slice().sort((a, b) => a.dep - b.dep).forEach(f => {
     if(f.grounded || f.cancelled) return;
@@ -229,7 +229,7 @@ R.weekReview = st => {
     say:`Seven days flown. Add up the week, then compare it with Monday's projection.`,
     context:{ title:'The week', html: cxSec('Passengers', `<p class="cx-plan mono">${num(h.pax)} <span class="small muted">of ${num(h.seats)} seats</span></p>`) + cxSec('Cash', `<p class="cx-plan mono">${money(Math.round(S.cash))}</p>`) },
     main:`<div class="rv"><section class="pnl"><div class="pnl-h"><h3>The week, day by day</h3><span class="muted">${fmtRange(W.from, W.from + 6)}</span></div><div class="sheet1">${tableHtml(t)}</div></section>
-      <div class="rv-side">${miss}${neg}<section class="pnl rv-routes"><div class="pnl-h"><h3>Route performance</h3></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div></div>`,
+      <div class="rv-side">${miss}${typeof fuelAdvantageLine === 'function' ? fuelAdvantageLine(weekNo(W.from)) : ''}${neg}<section class="pnl rv-routes"><div class="pnl-h"><h3>Route performance</h3></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div></div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${goLabel(done ? 'On to next week' : 'Add up the week first')} &#9654;</button>` });
   bindTable(t);
   on('nx', () => { resetEntry(); UI.justDone = null; S.rnd.applied = true; closeDay(); });
@@ -322,7 +322,7 @@ function applyPick(o){
 }
 
 /* Monday in week mode: a tank that is short is topped up at the day's price plus the supplement, as on the run days (the ready step never blocks) */
-function weekTopUp(need){ if(!(weekMode() && S.day < (WORLD.weekFrom || 22) && fuelPaid())) return 0; const short = need - S.fuel; if(short <= 1e-9) return 0;
+function weekTopUpBase(need){ if(!(weekMode() && S.day < (WORLD.weekFrom || 22) && fuelPaid())) return 0; const short = need - S.fuel; if(short <= 1e-9) return 0;
   const L = Math.max(ceilLot(short), short), ppl = r2(fuelPrice() + (WORLD.fuelTopUp || 0)), bill = r2(L * ppl);
   fuelLots().push({ L, p:ppl }); S.fuel = r2(S.fuel + L); S.fuelValue = r2(S.fuelValue + bill); S.cash = r2(S.cash - bill);
   S.rnd.why.push({ ic:'⛽', text:`${num(L)} L delivered at ${priceL(ppl)} a litre (${money(bill)}): the tank ran short.` }); return L; }

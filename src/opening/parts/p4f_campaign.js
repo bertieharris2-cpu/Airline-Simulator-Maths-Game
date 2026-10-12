@@ -145,6 +145,13 @@ function simulateDays(a, b, o){
     let rev = 0, run = 0, fuel = 0, pax = 0, seats = 0;
     fl.forEach(f => {
       if(f.grounded) return;
+      if(typeof weekMode === 'function' && weekMode()){   // the desks (v4.6): the tank, oldest fuel first, the shortfall bought at that day's price + 10p
+        const fc = burnFuel(f.fuelL, d, out);
+        rev += f.revenue; run += f.runCost; fuel += fc; pax += f.sold; seats += f.seats; out.trips++;
+        const x = out.routes[f.route] || (out.routes[f.route] = { pax:0, seats:0, rev:0, cost:0, trips:0, fare:f.price, want:0 });
+        x.pax += f.sold; x.seats += f.seats; x.rev += f.revenue; x.cost = r2(x.cost + f.runCost + fc + (f.termCost || 0)); x.trips++;
+        return;
+      }
       if(fuelContract()){   // the weeks: fuel bought as it is used, at that week's price
         const fc = r2(f.fuelL * withBeat(beat, () => fuelPrice()));
         S.cash = r2(S.cash - fc);

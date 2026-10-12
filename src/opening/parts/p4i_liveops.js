@@ -282,7 +282,7 @@ function liveTotals(L, g, k){
 
 /* ---------- starting the show ---------- */
 /* Launch Day and Days 1–4 (the fly step): the flights, the launch-deal fuel, the tank, then the show. */
-function startFlight(){
+function startFlightBase(){
   S.rnd.flights = planFlights(); const paid = fuelPaid();
   S.rnd.flights.slice().sort((a, b) => a.dep - b.dep).forEach(f => {
     if(f.grounded) return;

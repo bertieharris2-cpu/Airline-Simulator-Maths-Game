@@ -33,7 +33,11 @@ Object.assign(STEP_TODO, { plan:'' });
 const LAUNCH_WK = [Object.assign(stg('plan', ['brief1', 'plan']), { sub:'Build your first operating plan' }), stg('cost', ['workings']), stg('go', ['ready']), stg('review')];
 function railStages(){ if(wkPlanner() && S.phase === 'setup') return LAUNCH_WK; return STAGES[railKind()] || STAGES.day; }
 /* the map is a button away from the planner, from the first day */
-function moduleOn(id){ if(id === 'network' && wkPlanner() && S && S.fleet && S.fleet.length) return true; return moduleOnBase(id); }
+function moduleOn(id){
+  if(id === 'network' && wkPlanner() && S && S.fleet && S.fleet.length) return true;
+  if(id === 'fuel' || id === 'model') return wkPlanner() && !!S && S.phase === 'round' && (S.day || 1) >= (WORLD.deskFromDay || 8);   // the desks of week 2 (D60)
+  if(id === 'reputation' || id === 'reports') return true;
+  return moduleOnBase(id); }
 function editStep(what){ if(wkPlanner() && dayLike()) return what === 'forecast' ? 'workings' : 'plan'; return editStepBase(what); }
 /* no plan rail (the stage list down the left): it took room the planner needs; Back steps through the day's screens */
 function planRail(){ return wkPlanner() ? '' : planRailBase(); }
