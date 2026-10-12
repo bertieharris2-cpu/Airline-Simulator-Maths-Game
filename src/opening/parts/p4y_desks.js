@@ -78,7 +78,7 @@ function tankUpgradeNotice(){
 /* ---------- route news (D56): demand × the multiplier on the listed routes between two dates, by segment ---------- */
 function isoOf(day){ const d = calDate(day); return d.toISOString().slice(0, 10); }
 function newsOn(routeId, day){ const iso = isoOf(day); return (WORLD.routeNews || []).filter(n => n.routes.includes(routeId) && n.start <= iso && iso <= n.end); }
-function demandMult(route, day){
+function demandMultNews(route, day){
   const n = newsOn(route.id, day); if(!n.length) return demandMult0(route, day);
   let fb = 1, fl = 1; n.forEach(x => { if(x.segment === 'business') fb *= x.mult; else if(x.segment === 'leisure') fl *= x.mult; else { fb *= x.mult; fl *= x.mult; } });
   const a = route.arch; if(!a) return fb;   // no archetype: no segments, the multiplier applies to everyone

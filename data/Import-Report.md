@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 73 | 73 live, 8 placeholder |
+| Settings | 77 | 77 live, 8 placeholder |
 | Archetypes | 4 | 2 later, 4 live |
 | Routes | 18 | 2 later, 18 live |
 | RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
