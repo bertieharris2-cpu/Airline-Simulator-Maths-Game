@@ -148,7 +148,7 @@ function plannerOrder(){ const all = plannerRoutes(), ord = id => { const k = WO
 function tlCode(r){ return String(r.code || r.airport || r.id).toUpperCase().slice(0, 3); }
 function timelineHtml(i, pl, L, o){
   o = o || {}; pl = normPlan(pl); const s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(2), sel = UI.tlSel && UI.tlSel.i === i ? UI.tlSel : null, maxT = WORLD.maxTrips || 4;
-  const all = plannerOrder(), inPlan = all.filter(id => pl.fleet.some(x => x.sched.includes(id))), dem = inPlan.concat(all.filter(id => !inPlan.includes(id))).slice(0, 3);
+  const all = plannerOrder(), inPlan = all.filter(id => pl.fleet.some(x => x.sched.includes(id))), dem = (inPlan.length >= 2 ? inPlan : inPlan.concat(all.filter(id => !inPlan.includes(id)))).slice(0, 3);   // the demand rows: the routes in the plan (both launch routes while the plan is small)
   const ticks = []; for(let h = Math.ceil(s0 / 60); h * 60 <= e0; h += 2) ticks.push(`<span style="left:${X(h * 60)}%">${pad(h)}:00</span>`);
   const lanes = pl.fleet.map((x, j) => { const p = planeById(x.planeId), f = S.fleet.find(z => z.uid === x.uid), home = TIME.home(p), D = x.sched.length ? withPlan(pl, () => TIME.day(p, x.sched, undefined, x.deps || null)) : null;
     const blocks = D ? D.trips.map((t, k) => { const r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === k) || {}, over = t.arr > e0, on = sel && sel.j === j && sel.k === k, ready = t.arr + home, full = s.seats && s.sold >= s.seats;

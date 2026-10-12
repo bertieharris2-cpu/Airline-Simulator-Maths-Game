@@ -2853,10 +2853,10 @@ td.c.enter button,.cellbtn{border-radius:8px;background:rgba(143,211,255,.12);bo
 .dk-help i{width:22px;height:22px;font-size:12px}
 .pi-r{padding:5px 0}
 .pi-r.profit{padding:9px 12px}
-.ws-weekReview .rv{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"table side" "table routes";grid-template-rows:auto minmax(0,1fr)}
+.ws-weekReview .rv{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"table side";align-items:start}
 .ws-weekReview .rv > .pnl:first-child{grid-area:table;grid-row:auto}
 .ws-weekReview .rv-side{grid-area:side}
-.ws-weekReview .rv-routes{grid-area:routes;min-width:0}.ws-weekReview .rv-routes .pnl-h{margin-bottom:4px}.ws-weekReview .rv-routes .pb{overflow-x:auto}.ws-weekReview .rv-routes .hq-t{font-size:12.5px}.ws-weekReview .rv-routes .hq-t th,.ws-weekReview .rv-routes .hq-t td{padding:4px 5px}
+.ws-weekReview .rv-routes{min-width:0}.ws-weekReview .rv-routes .pnl-h{margin-bottom:4px}.ws-weekReview .rv-routes .pb{overflow-x:auto}.ws-weekReview .rv-routes .hq-t{font-size:12.5px}.ws-weekReview .rv-routes .hq-t th,.ws-weekReview .rv-routes .hq-t td{padding:4px 5px}
 .ws-weekReview table.fx.one{width:100%;min-width:0}
 .ws-weekReview table.fx.one thead th:first-child{min-width:0;width:58%}
 .ws-weekReview table.fx.one td.c{min-width:0}
@@ -2907,7 +2907,7 @@ td.c.enter button,.cellbtn{border-radius:8px;background:rgba(143,211,255,.12);bo
 .br1-foot{margin:auto 0 0;font-size:15px;color:var(--muted)}
 @media (max-height:800px){ .br1{gap:10px;padding:14px 22px} .br1-hero h1{font-size:32px;margin:2px 0 4px} .br1-hero p{font-size:16px} .br1-c{min-height:80px;padding:9px 12px} .br1-steps li{padding:9px 11px;gap:4px} .br1-steps li span{font-size:12.5px} .br1-c.ac .art,.br1-c.ac .plane-svg{width:120px} }
 /* the planner */
-.plw{display:flex;flex-direction:column;gap:8px}
+.plw{display:flex;flex-direction:column;gap:6px}
 .plw-mk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.plw-mk.n3{grid-template-columns:repeat(3,minmax(0,1fr))}.plw-mk.n1{grid-template-columns:minmax(0,1fr)}
 .mk{display:flex;flex-direction:column;gap:4px;padding:8px 10px}
 .plw-mk.compact .mk-facts,.plw-mk.compact .mk-fares .label{display:none}.plw-mk.compact .mk{gap:3px;padding:6px 10px}
@@ -2937,7 +2937,7 @@ td.c.enter button,.cellbtn{border-radius:8px;background:rgba(143,211,255,.12);bo
 .ad-dem{display:grid;grid-template-columns:var(--tlw) 1fr;gap:10px;align-items:end}
 .ad-dem .ad-lab{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:6px}.ad-dem .ad-lab small{grid-column:2;display:none}
 @media (min-width:1600px){ .ad-dem .ad-lab small{display:block} }
-.ad-dem .ds-bar{height:18px;border-bottom:1px solid var(--pline2);background-image:repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),rgba(143,176,216,.35) calc(12.5% - 1px) 12.5%)}
+.ad-dem .ds-bar{height:16px;border-bottom:1px solid var(--pline2);background-image:repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),rgba(143,176,216,.35) calc(12.5% - 1px) 12.5%)}
 .ad-dem .ds-b{background:linear-gradient(180deg,rgba(63,133,232,.85),rgba(63,133,232,.4));border-right:2px solid var(--pale)}
 .ad-dem .ds-b.midday{background:linear-gradient(180deg,rgba(150,180,230,.75),rgba(150,180,230,.3))}
 .ad-dem .ds-b.midmorning,.ad-dem .ds-b.afternoon{background:linear-gradient(180deg,rgba(100,160,240,.8),rgba(100,160,240,.35))}
@@ -2948,10 +2948,10 @@ td.c.enter button,.cellbtn{border-radius:8px;background:rgba(143,211,255,.12);bo
 .ad-ac{display:grid;grid-template-columns:var(--tlw) 1fr;gap:4px 10px;align-items:center}
 .ad-ac .ad-adds{grid-column:2;display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-bottom:2px}.ad-add.btn.small{min-height:28px;padding:2px 10px;font-size:13px}.ad-adds .muted.small{font-size:12.5px}
 .ad-plane .ad-pic{width:56px;height:auto;flex:none}
-.ad-lane{position:relative;height:40px;background:#fff;border:1px solid var(--pline2);background-image:repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),rgba(143,176,216,.35) calc(12.5% - 1px) 12.5%);overflow:hidden}
+.ad-lane{position:relative;height:36px;background:#fff;border:1px solid var(--pline2);background-image:repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),rgba(143,176,216,.35) calc(12.5% - 1px) 12.5%);overflow:hidden}
 .ad-none{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px}
-.ad-ready{position:absolute;top:7px;bottom:7px;background:repeating-linear-gradient(135deg,rgba(143,176,216,.45) 0 4px,transparent 4px 8px);border-right:1px dashed var(--pline2)}
-.ad-blk{position:absolute;top:3px;bottom:3px;display:flex;flex-direction:column;justify-content:center;gap:0;padding:1px 6px;min-width:0;overflow:hidden;background:#2f7ff5;border:1px solid #1b5fc4;color:#fff;font:inherit;text-align:left;cursor:grab;touch-action:none;box-shadow:0 2px 6px rgba(10,40,100,.25)}
+.ad-ready{position:absolute;top:6px;bottom:6px;background:repeating-linear-gradient(135deg,rgba(143,176,216,.45) 0 4px,transparent 4px 8px);border-right:1px dashed var(--pline2)}
+.ad-blk{position:absolute;top:2px;bottom:2px;display:flex;flex-direction:column;justify-content:center;gap:0;padding:1px 6px;min-width:0;overflow:hidden;background:#2f7ff5;border:1px solid #1b5fc4;color:#fff;font:inherit;text-align:left;cursor:grab;touch-action:none;box-shadow:0 2px 6px rgba(10,40,100,.25)}
 .ad-blk[data-rc="1"]{background:#6f5bc4;border-color:#4f3f9a}.ad-blk[data-rc="2"]{background:#1f9e8a;border-color:#167564}.ad-blk[data-rc="3"]{background:#d9822b;border-color:#a8611a}
 .ad-blk b{font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ad-blk small{font-size:10.5px;color:#dbe9ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ad-blk.full small{color:#c8ffd8}
@@ -11128,7 +11128,7 @@ R.weekReview = st => {
     say:`Seven days flown. Add up the week, then compare it with Monday's projection.`,
     context:{ title:'The week', html: cxSec('Passengers', `<p class="cx-plan mono">${num(h.pax)} <span class="small muted">of ${num(h.seats)} seats</span></p>`) + cxSec('Cash', `<p class="cx-plan mono">${money(Math.round(S.cash))}</p>`) },
     main:`<div class="rv"><section class="pnl"><div class="pnl-h"><h3>The week, day by day</h3><span class="muted">${fmtRange(W.from, W.from + 6)}</span></div><div class="sheet1">${tableHtml(t)}</div></section>
-      <div class="rv-side">${miss}${neg}</div><section class="pnl rv-routes"><div class="pnl-h"><h3>Route performance</h3></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div>`,
+      <div class="rv-side">${miss}${neg}<section class="pnl rv-routes"><div class="pnl-h"><h3>Route performance</h3></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div></div>`,
     foot:`<button class="btn primary big" id="nx" ${done ? '' : 'disabled'}>${goLabel(done ? 'On to next week' : 'Add up the week first')} &#9654;</button>` });
   bindTable(t);
   on('nx', () => { resetEntry(); UI.justDone = null; S.rnd.applied = true; closeDay(); });
@@ -11416,7 +11416,7 @@ function plannerOrder(){ const all = plannerRoutes(), ord = id => { const k = WO
 function tlCode(r){ return String(r.code || r.airport || r.id).toUpperCase().slice(0, 3); }
 function timelineHtml(i, pl, L, o){
   o = o || {}; pl = normPlan(pl); const s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(2), sel = UI.tlSel && UI.tlSel.i === i ? UI.tlSel : null, maxT = WORLD.maxTrips || 4;
-  const all = plannerOrder(), inPlan = all.filter(id => pl.fleet.some(x => x.sched.includes(id))), dem = inPlan.concat(all.filter(id => !inPlan.includes(id))).slice(0, 3);
+  const all = plannerOrder(), inPlan = all.filter(id => pl.fleet.some(x => x.sched.includes(id))), dem = (inPlan.length >= 2 ? inPlan : inPlan.concat(all.filter(id => !inPlan.includes(id)))).slice(0, 3);   // the demand rows: the routes in the plan (both launch routes while the plan is small)
   const ticks = []; for(let h = Math.ceil(s0 / 60); h * 60 <= e0; h += 2) ticks.push(`<span style="left:${X(h * 60)}%">${pad(h)}:00</span>`);
   const lanes = pl.fleet.map((x, j) => { const p = planeById(x.planeId), f = S.fleet.find(z => z.uid === x.uid), home = TIME.home(p), D = x.sched.length ? withPlan(pl, () => TIME.day(p, x.sched, undefined, x.deps || null)) : null;
     const blocks = D ? D.trips.map((t, k) => { const r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === k) || {}, over = t.arr > e0, on = sel && sel.j === j && sel.k === k, ready = t.arr + home, full = s.seats && s.sold >= s.seats;
