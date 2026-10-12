@@ -10,6 +10,10 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0. Workbook v4.4 (12 Oct 2026)
+
+Chapter 1 is played a week at a time (D52): the Calendar's `weekPhase` (plan / run / review) drives `p4v_week.js`. Monday: HQ → (showroom, the fleet sums, buy or rent, the paint shop) → (event) → the planning page with Plan Impact → the workings page → Ready → fly → results. Tuesday–Saturday: `weekRun`, one day per step on the operations board (`S.wk` holds the week's rows and Monday's projection), an event card or a sum stops it. Sunday: fly, then `weekReview` (the week7 table, the missed-profit sweep `bestPlanSweep`, `neglectUpdate`). `closeDay` moves to the next Monday, the regular-plan approval after day 28, then the weeks. Money per D53/D55: day costs, list prices, Finance in days, `saveUp` greys Buy. The look is the Dragon Air block at the end of `p1_head.html`. Tests: `week.test.js` (weeks 1–4), `migrate.test.js` (old codes land in the week), `balance.test.js` (re-based). Decisions and the report-back items: `docs/Workbook-v4.4-Report-Back.md`. The day-by-day screens below remain for `teacherDayByDay` and the weeks.
+
 ## 1. Screens
 
 ### In play order
@@ -231,6 +235,8 @@ The notes are listed in the teacher panel under the save code and kept in `S.mig
 | Teacher "Skip to the next story beat" drops into the old round flow; Repeat this period and Tomorrow's choice do nothing in the new flow | p4c_display.js | Code |
 | Plans archive skips the months | p4g_opening2.js | Code |
 | An information event applies for its whole week, not from its date | p4n_weeks.js `startBeat` | Code (decision 14 in the report-back) |
+| Use-it-or-lose-it names every open route, including ones the pupil never flew (Frankfurt, Geneva, Barcelona at the week-4 review) | p4v_week.js `neglectUpdate` | Verified by `week.test.js`; as the v4.4 note states the rule; raised in the report-back |
+| "The airline's day (+)" sum in week 2 is not built (no addition tool) | p4v_week.js `decideHandSums` | Code; raised in the report-back |
 | Workbook: Reykjavik's report fare (£180) is not on its fare list; Istanbul's archetype is not live | `data/Import-Report.md`, `balance.test.js` | Verified by the importer and the balance test |
 
 ### Assumptions

@@ -6,7 +6,7 @@
      history are carried into a fresh state and the matching day starts again (needsRestart → landSave)
    Everything changed is listed in S.migrated.notes for the teacher panel; the Home screen says where the pupil carries on.
    ================================================================== */
-const MIG_STEP_WORDS = { hq:'HQ', intro:'briefing', shop2:'showroom', event:'event card', plan:'planning page', workings:'workings page', fuelPlan:'fuel order', ready:'Ready to fly', fly:'flight', results:'results', code:'flight-code screen', logo:'logo screen', paint:'paint shop', planner:'planner', costPlan:'cost sheet', testIdeas:'Test screen', review:'review', sim:'week', plans:'plans' };
+const MIG_STEP_WORDS = { weekRun:'the operations board', hq:'HQ', intro:'briefing', shop2:'showroom', event:'event card', plan:'planning page', workings:'workings page', fuelPlan:'fuel order', ready:'Ready to fly', fly:'flight', results:'results', code:'flight-code screen', logo:'logo screen', paint:'paint shop', planner:'planner', costPlan:'cost sheet', testIdeas:'Test screen', review:'review', sim:'week', plans:'plans' };
 function migNote(s, text){ s.migrated = s.migrated || { notes:[] }; (s.migrated.notes = s.migrated.notes || []).push(text); }
 function migFind(a, t){ return a.findIndex(x => x.t === t); }
 function withState(s, fn){ const S0 = S; S = s; try{ return fn(); } finally{ S = S0; } }
@@ -52,8 +52,10 @@ function repairV5(s){
     const w = roundData(s.round); if(s.rnd.event && s.rnd.eventChoice === undefined && w.event) s.rnd.event = JSON.parse(JSON.stringify(w.event));   // the card gets today's numbers
     let to = ['hq', 'intro', 'shop2', 'event'].includes(cur) ? cur : (cur === 'results' && s.rnd.applied ? 'results' : 'plan');
     if(to !== 'results') clearDayWork(s);
+    carryRivalAd(s);
+    if(to !== 'results' && weekLanding(s, s.round, w)) return s;
     const steps = withState(s, () => daySteps(s.round, w)); s.steps = steps; let i = migFind(steps, to); if(i < 0) i = migFind(steps, 'plan'); s.si = Math.max(0, i);
-    carryRivalAd(s); withState(s, refreshPlan); s.migrated.landedStep = steps[s.si].t; s.migrated.landedDay = s.day; return s;
+    withState(s, refreshPlan); s.migrated.landedStep = steps[s.si].t; s.migrated.landedDay = s.day; return s;
   }
   s.migrated.landedStep = cur; s.migrated.landedDay = s.day; return s;   // weeks and months kept their steps
 }
@@ -92,9 +94,20 @@ function convertOld(s, from){
   t.log = [{ round:b, tag:'NEWS', text:`${t.airline.name} carries on from the earlier version of the game on ${dateShort(D)}.` }];
   t.phase = 'round'; t.round = b; t.day = D; t.period = newPeriod('day', D - 1); t.steps = [{ t:'hq' }]; t.si = 0; t.needsRestart = { beat:b };
   t.migrated.landedStep = 'hq'; t.migrated.landedDay = D;
+  weekLanding(t, b, WORLD.rounds[b]);
   migNote(t, `The ${from === 'full-game' ? 'full game' : 'earlier version'} counted launch day as day 0 and this version as day 1, so ${from === 'full-game' ? 'round' : 'day'} ${oldDay} became ${dateShort(D)} (day ${D}); the day starts again from HQ with the airline, cash, fleet, fares and history kept.`);
   if(!s.skills) migNote(t, 'No record of sums done by hand came with the code, so the first-time sums are asked on this day.');
   return t;
+}
+/* Workbook v4.4: chapter 1 is a week at a time. A save on a Tuesday–Sunday lands on the week's board (the standing plan carries on);
+   a save with no record of sums done by hand gets one planning day with its sums first (Bertie, 9 Oct), then the board. */
+function hasSums(s){ return !!(s.skills && Object.keys(s.skills).length); }
+function weekLanding(s, b, w){
+  if(typeof weekMode !== 'function' || !withState(s, weekMode) || !w || w.period !== 'day' || !w.weekPhase || w.weekPhase === 'plan') return false;
+  const d = beatDay(b);
+  if(!hasSums(s)){ s.oneOffDay = d; s.needsRestart = { beat:b }; s.steps = [{ t:'hq' }]; s.si = 0; s.migrated.landedStep = 'hq'; s.migrated.landedDay = d; migNote(s, `${dateShort(d)} is played as one planning day with its sums, then the week carries on on the board.`); return true; }
+  s.needsRestart = { beat:b, board:true }; s.steps = [{ t:'weekRun' }]; s.si = 0; s.migrated.landedStep = 'weekRun'; s.migrated.landedDay = d;
+  migNote(s, `The game now plays a week at a time: the standing plan carries on on the operations board from ${dateShort(d)}, and Sunday's review follows.`); return true;
 }
 function migrate(s){
   if(!s || !s.steps) return null;
@@ -104,10 +117,11 @@ function migrate(s){
 }
 /* a converted save starts its landing day on the live S (from boot and the teacher panel) */
 function landSave(){ const r = S && S.needsRestart; if(!r) return false; delete S.needsRestart; const b = r && typeof r === 'object' && r.beat !== undefined ? r.beat : S.round, w = WORLD.rounds[b]; if(!w) return false;
-  if(w.period === 'day') startProtoDay(b); else if(w.period !== 'setup') startBeat(b); return true; }
+  if(w.period === 'day' && r.board && typeof weekResume === 'function') weekResume(b); else if(w.period === 'day') startProtoDay(b); else if(w.period !== 'setup') startBeat(b); return true; }
 function migratedLine(s){ s = s || S; const m = s && s.migrated; if(!m) return '';
   const from = m.from === 'full-game' ? 'the full game' : m.from === 'proto-v4' ? 'the game as it was on 5–6 October' : 'an earlier version of the game';
   const where = m.landedStep ? (MIG_STEP_WORDS[m.landedStep] || m.landedStep) : 'HQ', day = m.landedDay ? (m.landedDay === 1 ? 'Launch Day' : dateShort(m.landedDay)) : '';
+  if(m.landedStep === 'weekRun') return `Saved on ${from}: it carries on on the operations board${day ? ' from ' + day : ''}.`;
   return `Saved on ${from}: it carries on from ${day ? day + "'s " : 'the '}${where}.`; }
 function migratedHtml(s){ s = s || S; const m = s && s.migrated; if(!m) return '<p class="small muted">This game was not carried over from an older code.</p>';
   return `<p class="small"><b>${esc(migratedLine(s))}</b></p>${(m.notes || []).length ? `<ul class="small">${m.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : '<p class="small muted">Nothing else had to change.</p>'}`; }

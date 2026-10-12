@@ -457,9 +457,11 @@ function ctxForecast(){
 /* ---------- End of Day 4: the Regular Operating Plan ---------- */
 R.rop = () => {
   const pl = currentPlan(), L = planLines(pl), D = L.D;
-  const rows = [['Timetable', esc(svcLabel(pl.sched))], ['Departures', D ? `<span class="mono">${D.trips.map(t => fmtTime(t.dep)).join(', ')}</span>` : '—'], ['Fares', Object.keys(serviceCounts(pl.sched)).map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ')], ['On board', esc(onboardOf().label)],
+  const many = pl.fleet && pl.fleet.length > 1, nm = x => planeById(x.planeId).name.replace(/^DHC-6 /, '');
+  const rows = [['Timetable', many ? pl.fleet.map(x => `${esc(nm(x))}: ${esc(svcLabel(x.sched) || 'no services')}`).join('<br>') : esc(svcLabel(pl.sched))],
+    ['Departures', many ? pl.fleet.map((x, j) => `${esc(nm(x))}: <span class="mono">${x.sched.length ? actualDeps(pl, j).map(fmtTime).join(', ') : '—'}</span>`).join('<br>') : D ? `<span class="mono">${D.trips.map(t => fmtTime(t.dep)).join(', ')}</span>` : '—'], ['Fares', Object.keys(serviceCounts(pl.sched)).map(id => `${esc(routeById(id).city)} <span class="mono">${money(fareOf(id))}</span>`).join(' · ')], ['On board', esc(onboardOf().label)],
     ['Fuel', `Bought as it is used, at each week's price, until the monthly plans.${S.fuel > 0 ? ` The ${num(S.fuel)} L left in the tank go back to the supplier for what you paid (${money(Math.round(S.fuelValue))}).` : ''}`], ['Profit a day (model)', `<span class="mono ${L.v.profit >= 0 ? 'green' : 'red'}">${money(L.v.profit)}</span>`]];
-  screen().innerHTML = shell(`<div class="hp milestone rop">${hqHead('End of Day 4', 'REGULAR OPERATION')}<div class="ms-in"><span class="label">Regular Operating Plan</span><h1>Approve your regular plan</h1>
+  screen().innerHTML = shell(`<div class="hp milestone rop">${hqHead(typeof weekMode === 'function' && weekMode() ? `End of week ${weekNo(S.day)}` : 'End of Day 4', 'REGULAR OPERATION')}<div class="ms-in"><span class="label">Regular Operating Plan</span><h1>Approve your regular plan</h1>
     <p>From now on this plan runs every day by itself. You only change it when the figures say you should.</p>
     <div class="rop-t">${rows.map(([l, v]) => `<div><span>${l}</span><b>${v}</b></div>`).join('')}</div>
     ${UI.ropEdit ? `<section class="pnl rop-ed">${planEditor(0, pl, L)}</section>` : ''}

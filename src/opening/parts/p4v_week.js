@@ -113,6 +113,7 @@ function paidDaysThisWeek(from){ from = from || (S.day || 1); let n = 0; for(let
 function daySteps(n, w){
   w = w || roundData(n);
   if(!weekMode() || !w.weekPhase) return dayStepsBase(n, w);
+  if(S.oneOffDay === beatDay(n) && w.weekPhase !== 'plan') return withIntro([{ t:'hq' }].concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }, { t:'ready' }, { t:'fly' }, { t:'results' }]), w);   // an old save with no sums record: one planning day with its sums, then the board
   const shop = !!(w.unlocks && w.unlocks.planes && w.unlocks.planes.length);
   return withIntro([{ t:'hq' }].concat(shop ? [{ t:'shop2' }] : []).concat(S.rnd.event ? [{ t:'event' }] : []).concat([{ t:'plan' }, { t:'workings' }, { t:'ready' }, { t:'fly' }, { t:'results' }]), w);
 }
@@ -128,6 +129,13 @@ function weekRunStart(nb){
   const h = lastDay(), mon = S.day;
   S.wk = { week:weekNo(mon), from:mon, rows:[], projected:projectWeek(mon), sumsChecked:{}, notes:[] };
   if(h) S.wk.rows.push(dayRowOf(h, S.rnd));
+  enterRunDay(nb);
+}
+/* a week joined part-way (an old save code, a one-off planning day): the rows already flown come from the history, then the board carries on */
+function weekResume(nb){
+  const d = beatDay(nb), mon = d - ((calDate(d).getUTCDay() + 6) % 7);
+  const rows = (S.history || []).filter(h => h.from >= mon && h.to < d && h.to === h.from).map(h => dayRowOf(h, null));
+  S.wk = { week:weekNo(mon), from:mon, rows, projected:projectWeek(mon), sumsChecked:{}, notes:[] };
   enterRunDay(nb);
 }
 function dayRowOf(h, rnd){ return { d:h.from, pax:h.pax || 0, seats:h.seats || 0, trips:h.trips || 0, rev:Math.round(h.revenue || 0), cost:Math.round(h.costs || 0), profit:Math.round(h.profit || 0),
@@ -233,6 +241,7 @@ function closeDay(){
   if(weekMode() && (S.phase === 'setup' || (periodType() === 'day' && weekPhaseOf(S.round)))){
     const ph = S.phase === 'setup' ? 'plan' : weekPhaseOf(S.round), nb = S.round + 1, nxt = WORLD.rounds[nb];
     if(ph === 'plan'){ if(nxt && nxt.period === 'day' && nxt.weekPhase && nxt.weekPhase !== 'plan'){ weekRunStart(nb); return; } }
+    if(ph === 'run'){ delete S.oneOffDay; if(nxt && nxt.period === 'day' && nxt.weekPhase && nxt.weekPhase !== 'plan'){ weekResume(nb); return; } }   // a day played on its own (an old save's one-off planning day): the board carries on from tomorrow
     if(ph === 'review' || ph === 'plan'){ delete S.wk;
       if(nxt && nxt.period === 'day'){ startProtoDay(nb); return; }
       if(nxt && !S.steps.some(s => s.t === 'rop')){ S.steps.push({ t:'rop' }); next(); return; }
