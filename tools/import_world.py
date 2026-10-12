@@ -515,7 +515,9 @@ NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurna
           'blockedFlightCodes', 'soundDefault', 'revealSeconds', 'crewMechanicFromDate', 'rivalSwitchPerTenPounds', 'rivalSwitchCap', 'rivalAdvertiseFactor', 'practiceQuestionsPerDay',
           'openingPlayMode', 'teacherDayByDay', 'weeklyReviewFromDay', 'missedProfitLine', 'neglectFromDay', 'neglectLoadFactor', 'neglectLossShare', 'neglectRecoverShare', 'launchDaySums',
           'fuelLotSize', 'tankCapacity', 'fuelUseOrder', 'fuelBuyWhen', 'emergencyFuelPremium', 'fuelForecastFromWeek', 'fuelHandSum', 'planningSpreadsheetFromDay', 'worldReport',
-          'fuelWeek1', 'fuelDeskFromDay', 'tankUpgradeDay', 'tankCapacityUpgraded', 'fuelAdvantageWording', 'fuelCoverage', 'forecastConfidenceLevels']
+          'fuelWeek1', 'fuelDeskFromDay', 'tankUpgradeDay', 'tankCapacityUpgraded', 'fuelAdvantageWording', 'fuelCoverage', 'forecastConfidenceLevels',
+          'reviewTotalsMode', 'meanFromDay', 'secondAircraftCompare', 'whereCouldItFly',
+          'signOffCapPerWeek', 'signOffDecayAfter', 'auditFloor', 'boardNudgeIdleWeeks', 'boardNudgeMissedShare', 'boardReviewSignOffs']
 for k in NEEDED:
     st_ = settings_status.get(k)
     if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')
