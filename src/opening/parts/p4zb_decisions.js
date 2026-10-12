@@ -219,3 +219,182 @@ function acApplyChoice(uid){
 }
 const acquireDesk0 = R.acquire;
 R.acquire = st => { if(weekMode() && S.rnd.acChoice && S.rnd.acChoice.pid === S.rnd.shopPick) return renderAcPay(st); return acquireDesk0(st); };
+
+/* ==================================================================
+   Part D: reviews ask for method, not arithmetic (D61; Settings reviewTotalsMode "build", meanFromDay 7). The week's total
+   is built from the seven daily figures and +, a difference as the larger − the smaller, a mean by naming the divisor;
+   the game calculates. The teacher can set Calculate (typed totals) for a pupil who needs the practice.
+   ================================================================== */
+function reviewBuildOn(){ const t = settings.reviewTotals; if(t === 'calc') return false; if(t === 'build') return true; return (WBS().reviewTotalsMode || 'build') === 'build'; }
+const OPS4 = ['+', '−', '×', '÷'];
+/* an item: { id, kind:'sum'|'diff'|'mean', n, title, ask, figs:[{ k, label, v }], total?, div?, per?, done } */
+function rbState(store, id){ const B = store.rb || (store.rb = {}); return B[id] || (B[id] = { tokens:[], ok:false, q:false, msg:'' }); }
+function rbCheck(it, st){
+  if(it.kind === 'mean'){
+    if(!st.op){ st.msg = 'Choose the operation first.'; return false; }
+    if(st.op !== '÷'){ st.q = true; st.msg = st.op === '×' ? 'That multiplies: an average shares the total out equally.' : 'An average shares the total out equally: which operation shares?'; return false; }
+    const d = parseInt(String(st.div || '').trim(), 10); if(isNaN(d)){ st.msg = 'Type the number to divide by.'; return false; }
+    if(d !== it.div){ st.q = true; st.msg = d === 2 ? `÷ 2 halves the total: how many ${it.per}s are we sharing it between?` : d > it.div ? `There were not ${d} ${it.per}s: count them again.` : `How many ${it.per}s did we have? Share the total between all of them.`; return false; }
+    st.q = false; st.ok = true; st.msg = ''; return true;
+  }
+  const T = st.tokens; if(!T.length){ st.msg = 'Tap the figures and the operation into the bar.'; return false; }
+  for(let i = 0; i < T.length; i++){ const isOp = OPS4.includes(T[i]); if(isOp !== (i % 2 === 1)){ st.q = true; st.msg = 'Figures and operations take turns: a figure, an operation, a figure.'; return false; } }
+  if(OPS4.includes(T[T.length - 1])){ st.msg = 'Finish with a figure.'; return false; }
+  const figs = T.filter((_, i) => i % 2 === 0), ops = T.filter((_, i) => i % 2 === 1);
+  if(it.kind === 'sum'){
+    if(ops.some(o => o !== '+')){ st.q = true; st.msg = `We're finding the total for the ${it.unit}: which operation joins amounts together?`; return false; }
+    if(new Set(figs).size !== figs.length){ st.q = true; st.msg = `Each ${it.unit === 'week' ? 'day' : it.part} should be counted once.`; return false; }
+    const miss = it.figs.find(f => !figs.includes(f.k)); if(miss){ st.q = true; st.msg = `${miss.label}'s result isn't in the total yet.`; return false; }
+    st.q = false; st.ok = true; st.msg = ''; return true;
+  }
+  if(figs.length !== 2 || ops.length !== 1 || figs[0] === figs[1]){ st.q = true; st.msg = 'A difference compares the two figures: one of each, with one operation between.'; return false; }
+  if(ops[0] !== '−'){ st.q = true; st.msg = 'Which operation finds how far apart two amounts are?'; return false; }
+  const a = it.figs.find(f => f.k === figs[0]), b = it.figs.find(f => f.k === figs[1]);
+  if(a.v < b.v){ st.q = true; st.msg = 'That would go below zero: start from the larger amount.'; return false; }
+  st.q = false; st.ok = true; st.msg = ''; return true;
+}
+function rbValue(it){ if(it.kind === 'sum') return it.figs.reduce((t, f) => t + f.v, 0); if(it.kind === 'diff'){ const v = it.figs.map(f => f.v); return Math.abs(v[0] - v[1]); } return Math.round(it.total / it.div); }
+function rbResultWords(it){ const v = rbValue(it);
+  if(it.kind === 'diff' && it.resWord){ const [a, b] = it.figs; return `${money(v)} ${a.v >= b.v ? it.resWord[0] : it.resWord[1]}`; }
+  if(it.kind === 'diff'){ const [a, b] = it.figs; return `${money(v)} ${a.v === b.v ? 'the same as' : (b.v > a.v ? 'more than' : 'less than')} ${esc(it.than)}`; }
+  if(it.kind === 'mean') return `${money(v)} a ${it.per}`; return money(v); }
+function rbCardHtml(it, st, store){
+  const tok = t => OPS4.includes(t) ? `<i class="rb-op">${t}</i>` : (() => { const f = it.figs.find(x => x.k === t); return f ? `<span class="rb-tk">${esc(f.short || f.label)} <b>${money(f.v)}</b></span>` : ''; })();
+  const stamp = st.ok ? cardStampHtml('ok') : st.q ? cardStampHtml('q') : '';
+  let bar, ctl = '';
+  if(it.kind === 'mean'){
+    bar = `<div class="rb-bar mean"><span class="rb-tk">${esc(it.totalLabel)} <b>${money(it.total)}</b></span>${st.op ? `<i class="rb-op">${st.op}</i>` : '<i class="rb-op empty">?</i>'}${st.ok ? `<b class="rb-div">${it.div}</b>` : `<span class="sc-in rb-in ${st.q ? 'qy' : ''}"><input data-rbdiv="${it.id}" inputmode="numeric" autocomplete="off" value="${esc(st.div || '')}" aria-label="Divide by"></span>`}<span class="rb-eq">=</span><b class="rb-res">${st.ok ? rbResultWords(it) : '?'}</b></div>`;
+    if(!st.ok) ctl = `<div class="rb-ops">${OPS4.map(o => `<button data-rbop="${it.id}|${o}" class="${st.op === o ? 'on' : ''}">${o}</button>`).join('')}<span class="grow"></span><button class="btn primary rb-chk" data-rbchk="${it.id}">Check ✓</button></div>`;
+  } else {
+    bar = `<div class="rb-bar">${st.tokens.length ? st.tokens.map(tok).join('') : '<span class="rb-ph">Tap the figures and the operation</span>'}<span class="rb-eq">=</span><b class="rb-res ${st.ok && it.kind === 'diff' && it.figs[1].v < it.figs[0].v ? 'down' : ''}" data-rbres="${it.id}">${st.ok ? rbResultWords(it) : '?'}</b></div>`;
+    if(!st.ok) ctl = `<div class="rb-chips">${it.figs.map(f => `<button class="rb-chip" data-rbfig="${it.id}|${f.k}">${esc(f.label)}<b>${money(f.v)}</b></button>`).join('')}</div>
+      <div class="rb-ops">${OPS4.map(o => `<button data-rbop="${it.id}|${o}">${o}</button>`).join('')}<button class="dk-link" data-rbundo="${it.id}">Undo</button><button class="dk-link" data-rbclr="${it.id}">Clear</button><span class="grow"></span><button class="btn primary rb-chk" data-rbchk="${it.id}">Check ✓</button></div>`;
+  }
+  return `<section class="dk-pnl rb-card ${st.ok ? 'ok' : ''} ${it.locked ? 'locked' : ''}" data-rbcard="${it.id}"><div class="sc-h"><span class="sc-n">${it.n}</span><div><h2>${esc(it.title)}</h2><p>${esc(it.ask)}</p></div>${stamp}</div>
+    ${it.locked ? '<p class="rb-wait">After the one above.</p>' : bar + ctl + `<p class="sc-msg rb-msg ${st.q ? '' : 'ok'}" role="status">${esc(st.msg || '')}</p>`}</section>`;
+}
+function rbBind(items, store, onDone){
+  const root = screen(), get = id => items.find(x => x.id === id);
+  root.querySelectorAll('[data-rbfig]').forEach(b => b.onclick = () => { const [id, k] = b.getAttribute('data-rbfig').split('|'), st = rbState(store, id); if(st.tokens.length % 2 === 1){ st.msg = 'Put an operation between the figures.'; render(); return; } st.tokens.push(k); st.msg = ''; st.q = false; render(); });
+  root.querySelectorAll('[data-rbop]').forEach(b => b.onclick = () => { const [id, o] = b.getAttribute('data-rbop').split('|'), it = get(id), st = rbState(store, id);
+    if(it.kind === 'mean'){ st.op = o; st.msg = ''; render(); return; }
+    if(st.tokens.length % 2 === 0){ st.msg = st.tokens.length ? 'Two operations in a row: tap a figure next.' : 'Start with a figure.'; render(); return; } st.tokens.push(o); st.msg = ''; render(); });
+  root.querySelectorAll('[data-rbundo]').forEach(b => b.onclick = () => { const st = rbState(store, b.getAttribute('data-rbundo')); st.tokens.pop(); st.msg = ''; render(); });
+  root.querySelectorAll('[data-rbclr]').forEach(b => b.onclick = () => { const st = rbState(store, b.getAttribute('data-rbclr')); st.tokens = []; st.msg = ''; st.q = false; render(); });
+  root.querySelectorAll('[data-rbdiv]').forEach(i => { i.oninput = () => { rbState(store, i.getAttribute('data-rbdiv')).div = i.value; }; i.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); const c = root.querySelector(`[data-rbchk="${i.getAttribute('data-rbdiv')}"]`); if(c) c.click(); } }; });
+  root.querySelectorAll('[data-rbchk]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-rbchk'), it = get(id), st = rbState(store, id);
+    if(rbCheck(it, st)){ if(typeof liveChime === 'function' && typeof opsSoundOn === 'function' && opsSoundOn()) liveChime('ding'); onDone(it); render(); rbCountUp(id, rbValue(it)); } else render(); });
+}
+/* "the game fills in the total with a short adding-up animation" */
+function rbCountUp(id, v){ const el = screen().querySelector(`[data-rbres="${id}"]`); if(!el || (settings.reduceMotion)) return; const t0 = performance.now(), fin = el.innerHTML;
+  const tick = t => { const k = Math.min(1, (t - t0) / 600); if(k < 1){ el.textContent = money(Math.round(v * k)); requestAnimationFrame(tick); } else el.innerHTML = fin; }; requestAnimationFrame(tick); }
+function rbLog(names){ const log = S.handSumLog || (S.handSumLog = []), e = log.find(z => z.day === S.day) || (log.push({ day:S.day, date:dateShort(S.day), tools:[] }), log[log.length - 1]); names.forEach(n => e.tools.push(n)); }
+function rbSkill(id){ const sk = skills(), x = sk[id] || (sk[id] = { first:S.day, count:0 }); x.count++; x.lastDay = S.day; }
+const rbShort = d => { const c = calDate(d); return `${WDAY[c.getUTCDay()].slice(0, 3)} ${c.getUTCDate()}`; };
+
+/* ---------- the Sunday review ---------- */
+function weekReviewItems(W, h){
+  const days = Array.from({ length:7 }, (_, k) => W.from + k).filter(d => W.rows.some(r => r.d === d)), figs = days.map(d => ({ k:'d' + d, label:rbShort(d), short:rbShort(d), v:(W.rows.find(r => r.d === d) || {}).profit || 0 }));
+  const total = figs.reduce((t, f) => t + f.v, 0), proj = Math.round(W.projected || 0), wk = weekNo(W.from), items = [];
+  items.push({ id:'tot', n:1, kind:'sum', unit:'week', part:'day', title:`Week ${wk} accounts`, ask:"Show the finance team how to work out the week's total.", figs });
+  items.push({ id:'diff', n:2, kind:'diff', title:'Planned against what happened', ask:'Show how to find the difference between what we planned and what happened.', figs:[{ k:'proj', label:'Projected', v:proj }, { k:'act', label:'Actual', v:total }], than:'planned' });
+  if(S.day >= (WBS().meanFromDay || 7)) items.push({ id:'mean', n:3, kind:'mean', per:'day', title:'Average profit a day', ask:'What was our average profit a day this week?', total, totalLabel:"Week's total", div:days.length });
+  return items;
+}
+function renderWeekReviewBuild(st){
+  const W = S.wk || { from:S.day - 6, rows:[], projected:0 }, h = weekSummary(W), items = weekReviewItems(W, h), store = W;
+  items.forEach((it, i) => { it.locked = i > 0 && !rbState(store, items[i - 1].id).ok; });
+  const allOk = items.every(it => rbState(store, it.id).ok), wk = weekNo(W.from);
+  if(allOk && !W.logged){ W.logged = true; rbSkill('weekTotal'); rbSkill('projectedVsActual'); if(items.some(x => x.id === 'mean')) rbSkill('meanDay');
+    rbLog(['Week total (Build)', 'Projected − actual (Build)'].concat(items.some(x => x.id === 'mean') ? ['Average a day (Build)'] : [])); const mean = items.find(x => x.id === 'mean'); if(mean){ (S.means = S.means || {})[wk] = rbValue(mean); } }
+  if(!W.missed && WBS().missedProfitLine !== false){ W.missed = missedProfitLine(h.profit, 7, W.from); }
+  if(!W.neglect) W.neglect = neglectUpdate(W.from, W.from + 6);
+  const T = items.find(x => x.id === 'tot'), tOk = rbState(store, 'tot').ok, dOk = rbState(store, 'diff').ok, M = items.find(x => x.id === 'mean'), mOk = M && rbState(store, 'mean').ok, prevMean = (S.means || {})[wk - 1];
+  const rows = T.figs.map(f => `<tr><td>${esc(f.label)}</td><td class="num ${f.v < 0 ? 'bad' : ''}">${money(f.v)}</td></tr>`).join('')
+    + `<tr class="tot"><td>Profit this week</td><td class="num">${tOk ? money(rbValue(T)) : '<i class="rb-q">?</i>'}</td></tr><tr><td>Projected on Monday</td><td class="num">${money(Math.round(W.projected || 0))}</td></tr>`
+    + `<tr><td>Difference</td><td class="num">${dOk ? rbResultWords(items[1]) : '<i class="rb-q">?</i>'}</td></tr>` + (M ? `<tr><td>Average a day</td><td class="num">${mOk ? money(rbValue(M)) : '<i class="rb-q">?</i>'}</td></tr>` : '');
+  const changed = mOk ? `<p class="rb-changed">${ICO2.swap}<span>Average day: <b>${money(rbValue(M))}</b> this week${prevMean !== undefined ? `, <b>${money(prevMean)}</b> last week` : ''}.</span></p>` : '';
+  const Mi = W.missed, miss = Mi ? `<div class="wk-missed ${Mi.missed > 0 ? 'warn' : 'ok'}"><span class="kl">What the best plan would have earned</span><div class="wm-row"><span>Your plan <b class="mono">${money(Mi.yours)}</b></span><span>Best plan with your planes <b class="mono">${money(Mi.best)}</b></span><span>Missed <b class="mono ${Mi.missed > 0 ? 'orange' : 'green'}">${money(Mi.missed)}</b></span></div><p class="small muted">Best plan: ${esc(Mi.bestPlan)} · about ${money(Mi.bestDay)} a day. No cash is taken.</p></div>` : '';
+  const neg = W.neglect && W.neglect.length ? `<div class="wk-neglect">${W.neglect.map(n => `<p class="${n.bad ? 'orange' : 'green'}">${esc(n.text)}</p>`).join('')}</div>` : '';
+  const body = `<div class="rbw"><section class="dk-pnl rbw-t"><div class="dk-pnl-h">${ICO2.calendar}<h2>The week, day by day</h2><span class="grow"></span><span class="sub">${fmtRange(W.from, W.from + 6)}</span></div><table class="dk-t">${rows}</table>${changed}</section>
+    <div class="rbw-b">${items.map(it => rbCardHtml(it, rbState(store, it.id), store)).join('')}</div>
+    <div class="rbw-s">${miss}${fuelAdvantageLine(wk)}${surprisesLine(W.from, W.from + 6)}${neg}<section class="dk-pnl rv-routes"><div class="dk-pnl-h">${ICO2.route}<h2>Route performance</h2></div>${evidenceHtml(h, Object.keys(h.routes))}</section></div></div>`;
+  screen().innerHTML = shell(deskPage({ title:`How did week ${wk} go?`, sub:`Seven days flown. Show the finance team what to do with the figures; the game does the arithmetic. Passengers ${num(h.pax)} of ${num(h.seats)} seats · cash ${money(Math.round(S.cash))}.`, cls:'rbw-page', body }),
+    deskBar(allOk ? 'Signed off. On to next week.' : 'Build each line: tap the figures and the operation, then Check.', `<button class="btn primary big" id="nx" ${allOk ? '' : 'disabled'}>${goLabel(allOk ? 'On to next week' : 'Sign off the accounts first')} &#9654;</button>`));
+  rbBind(items, store, () => {});
+  on('nx', () => { if(!items.every(it => rbState(store, it.id).ok)) return; resetEntry(); UI.justDone = null; S.rnd.applied = true; closeDay(); });
+}
+const weekReviewCalc = R.weekReview;
+R.weekReview = st => { if(weekMode() && reviewBuildOn()) return renderWeekReviewBuild(st); return weekReviewCalc(st); };
+
+/* ---------- the review of a week or month beat (from day 29): the mean, and the spec's difference or average week ---------- */
+function mondaysIn(a, b){ let n = 0; for(let d = a; d <= b; d++) if(calDate(d).getUTCDay() === 1) n++; return Math.max(1, n); }
+function periodReviewItems(){
+  const H = S.history.filter(x => x.type !== 'setup'), h = H[H.length - 1], spec = reviewSpec(), items = []; if(!h) return { items, h, spec };
+  const wk = H.filter(x => x.type === 'week');
+  if(spec && spec.id === 'difference'){ const a = wk[wk.length - 2], c = wk[wk.length - 1];
+    items.push({ id:'diff', kind:'diff', title:'How much did weekly profit change?', ask:'Show how to find the difference between the two weeks.', figs:[{ k:'a', label:periodShort(a), v:Math.round(a.profit) }, { k:'c', label:periodShort(c), v:Math.round(c.profit) }], than:'the week before', spec:spec.id }); }
+  if(spec && spec.id === 'averageWeek'){ const w3 = wk.slice(-3), figs = w3.map((x, i) => ({ k:'w' + i, label:periodShort(x), v:Math.round(x.profit) })), tot = figs.reduce((t, f) => t + f.v, 0);
+    items.push({ id:'sum3', kind:'sum', unit:'three weeks', part:'week', title:'Three weeks together', ask:'Show how to work out the total for the last three weeks.', figs });
+    items.push({ id:'avgw', kind:'mean', per:'week', title:'Average profit a week', ask:'What is the average profit a week over those three weeks?', total:tot, totalLabel:'Three weeks', div:3, spec:spec.id }); }
+  if(h.type === 'week' && S.day >= (WBS().meanFromDay || 7)) items.push({ id:'mday', kind:'mean', per:'day', title:'Average profit a day', ask:`What was our average profit a day in ${periodShort(h)}?`, total:Math.round(h.profit), totalLabel:`${periodShort(h)} total`, div:h.to - h.from + 1 });
+  if(h.type === 'month') items.push({ id:'mweek', kind:'mean', per:'week', title:'Average week this month', ask:`What was the average week in ${periodShort(h)}?`, total:Math.round(h.profit), totalLabel:`${periodShort(h)} total`, div:mondaysIn(h.from, h.to), spec:spec && spec.id === 'averageDay' ? 'averageDay' : null });
+  items.forEach((it, i) => { it.n = i + 1; });
+  return { items, h, spec };
+}
+function renderPeriodReviewBuild(){
+  const { items, h, spec } = periodReviewItems(), store = S.rnd;
+  if(!items.length || !h) return reviewDesk1();
+  items.forEach((it, i) => { it.locked = i > 0 && !rbState(store, items[i - 1].id).ok; });
+  const allOk = items.every(it => rbState(store, it.id).ok);
+  if(allOk && !store.rbLogged){ store.rbLogged = true; const names = []; items.forEach(it => { if(it.spec) rbSkill(it.spec); names.push(`${it.title} (Build)`); }); rbLog(names); const m = items.find(x => x.id === 'mday'); if(m) (S.means = S.means || {})[weekNo(h.from)] = rbValue(m); }
+  const extra = (h.to - h.from >= 6 ? fuelAdvantageLine(weekNo(h.from)) : '') + surprisesLine(h.from, h.to);
+  const body = `<div class="rbw"><section class="dk-pnl rbw-t"><div class="dk-pnl-h">${ICO2.bars}<h2>Profit by period</h2></div><div class="rbw-trend">${trendHtml()}</div></section>
+    <div class="rbw-b">${items.map(it => rbCardHtml(it, rbState(store, it.id), store)).join('')}</div>
+    <div class="rbw-s">${extra}<section class="dk-pnl rv-routes"><div class="dk-pnl-h">${ICO2.route}<h2>Route performance · ${esc(periodShort(h))}</h2><span class="grow"></span><span class="sub">${fmtRange(h.from, h.to)}</span></div>${evidenceHtml(h, ownedRoutes())}</section></div></div>`;
+  screen().innerHTML = shell(deskPage({ title:`How did ${esc(periodShort(h))} go?`, sub:`Profit ${money(Math.round(h.profit))} · passengers ${num(h.pax || 0)} of ${num(h.seats || 0)} seats. Show the finance team what to do; the game does the arithmetic.`, cls:'rbw-page', body }),
+    deskBar(allOk ? 'Signed off. Carry on.' : 'Build each line: choose the figures and the operation, then Check.', `<button class="btn primary big" id="nx" ${allOk ? '' : 'disabled'}>${goLabel(allOk ? 'Continue' : 'Sign off first')} &#9654;</button>`));
+  rbBind(items, store, () => {});
+  on('nx', () => { if(!items.every(it => rbState(store, it.id).ok)) return; resetEntry(); UI.justDone = null; advance(); });
+}
+const reviewDesk1 = R.review;
+R.review = st => { if(weekMode() && reviewBuildOn()) return renderPeriodReviewBuild(); return reviewDesk1(st); };
+/* the test drives the build cards through this: the clicks the first unfinished card needs */
+function rbPlan(){
+  const card = screen().querySelector('.rb-card:not(.ok):not(.locked)'); if(!card) return null; const id = card.getAttribute('data-rbcard');
+  const list = step().t === 'weekReview' ? weekReviewItems(S.wk, weekSummary(S.wk)) : step().t === 'chapterReview' ? chapterReviewItems().items : periodReviewItems().items, it = list.find(x => x.id === id); if(!it) return null;
+  if(it.kind === 'mean') return { id, op:'÷', div:it.div };
+  if(it.kind === 'sum') return { id, seq:it.figs.flatMap((f, i) => i ? ['+', f.k] : [f.k]) };
+  const [a, b] = it.figs[0].v >= it.figs[1].v ? [it.figs[0], it.figs[1]] : [it.figs[1], it.figs[0]]; return { id, seq:[a.k, '−', b.k] };
+}
+
+/* ---------- the chapter accounts: total revenue and total costs from the months, profit, planned against what happened ---------- */
+function chapterReviewItems(){
+  const months = chapterMonths(), rev = months.map((m, k) => ({ k:'r' + k, label:m.name, v:Math.round(m.rev) })), cost = months.map((m, k) => ({ k:'c' + k, label:m.name, v:Math.round(m.cost) }));
+  const R0 = rev.reduce((t, f) => t + f.v, 0), C0 = cost.reduce((t, f) => t + f.v, 0), P0 = R0 - C0, proj = Math.round(months.reduce((t, m) => t + m.proj, 0));
+  return { months, items:[
+    { id:'rev', n:1, kind:'sum', unit:'chapter', part:'month', title:'Total revenue', ask:"Show how to work out the chapter's total revenue from the months.", figs:rev },
+    { id:'cost', n:2, kind:'sum', unit:'chapter', part:'month', title:'Total costs', ask:"Show how to work out the chapter's total costs.", figs:cost },
+    { id:'profit', n:3, kind:'diff', title:'Profit for the chapter', ask:'Show how to find the profit from the revenue and the costs.', figs:[{ k:'R', label:'Total revenue', v:R0 }, { k:'C', label:'Total costs', v:C0 }], resWord:['profit', 'loss'] },
+    { id:'vs', n:4, kind:'diff', title:'Planned against what happened', ask:'Show how to find the difference between the profit you projected and the profit you made.', figs:[{ k:'proj', label:'Projected', v:proj }, { k:'act', label:'Actual', v:P0 }], than:'projected' }] };
+}
+function renderChapterReviewBuild(st){
+  const ch = WORLD.chapter || { chapter:1, name:'Starting out' }, { months, items } = chapterReviewItems(), store = S.rnd;
+  items.forEach((it, i) => { it.locked = i > 0 && !rbState(store, items[i - 1].id).ok; });
+  const allOk = items.every(it => rbState(store, it.id).ok), val = id => rbValue(items.find(x => x.id === id));
+  const pax = S.history.reduce((a, h) => a + (h.pax || 0), 0), seats = S.history.reduce((a, h) => a + (h.seats || 0), 0), cash0 = WORLD.startingCash || 5000;
+  const rows = months.map((m, k) => `<tr><td>${esc(m.name)}</td><td class="num">${money(Math.round(m.rev))}</td><td class="num">${money(Math.round(m.cost))}</td></tr>`).join('')
+    + `<tr class="tot"><td>Chapter</td><td class="num">${rbState(store, 'rev').ok ? money(val('rev')) : '<i class="rb-q">?</i>'}</td><td class="num">${rbState(store, 'cost').ok ? money(val('cost')) : '<i class="rb-q">?</i>'}</td></tr>`;
+  const body = `<div class="rbw"><section class="dk-pnl rbw-t"><div class="dk-pnl-h">${ICO2.calendar}<h2>${esc(ch.name || 'Starting out')}: month by month</h2></div><table class="dk-t"><thead><tr><th>Month</th><th class="num">Revenue</th><th class="num">Costs</th></tr></thead>${rows}</table>
+      <p class="rb-changed">${ICO2.people}<span>${num(pax)} passengers · load factor ${seats ? Math.round(100 * pax / seats) : 0}% · cash ${money(cash0)} → <b>${money(Math.round(S.cash))}</b></span></p></section>
+    <div class="rbw-b">${items.map(it => rbCardHtml(it, rbState(store, it.id), store)).join('')}</div>
+    <div class="rbw-s"><section class="dk-pnl"><div class="dk-pnl-h">${ICO2.route}<h2>What comes next</h2></div><p class="wr-l">${esc(nextChapterLine())}</p></section></div></div>`;
+  screen().innerHTML = shell(deskPage({ title:`Chapter ${ch.chapter || 1}: the accounts`, sub:"The model shows each month's revenue and costs. Show the finance team how to put them together; the game does the arithmetic.", cls:'rbw-page', body }),
+    deskBar(allOk ? 'The accounts are signed off.' : 'Build each line: choose the figures and the operation, then Check.', `<button class="btn primary big" id="nx" ${allOk ? '' : 'disabled'}>${goLabel(allOk ? 'Close the chapter' : 'Sign off the accounts first')} &#9654;</button>`));
+  rbBind(items, store, () => {});
+  on('nx', () => { if(!items.every(it => rbState(store, it.id).ok)) return;
+    if(!st.done){ st.done = true; rbLog(['Chapter accounts: total revenue, total costs, profit, projected − actual (Build)']); S.chapterAccounts = { revenue:val('rev'), costs:val('cost'), profit:items[2].figs[0].v - items[2].figs[1].v, projected:items[3].figs[0].v }; }
+    resetEntry(); UI.justDone = null; advance(); });
+}
+const chapterReviewCalc = R.chapterReview;
+R.chapterReview = st => { if(weekMode() && reviewBuildOn()) return renderChapterReviewBuild(st); return chapterReviewCalc(st); };

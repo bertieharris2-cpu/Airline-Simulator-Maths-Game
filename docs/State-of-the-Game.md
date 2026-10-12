@@ -10,7 +10,34 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
-## 0. The desks v2 and Workbook v4.6 (12 Oct 2026)
+## 0. Workbook v4.7 (12 Oct 2026): the second-aircraft decision and Build reviews
+
+`p4zb_decisions.js`, after `p4z_model.js`:
+- **The engine for the decision.**
+  - `acProblem` finds last week's most turned-away route.
+  - `acBasePlan` is the plan without that route.
+  - `acBestOn` searches each candidate's best plan on a route: fares, one to four services, departures from `acDepSets`.
+  - `acCompare` (cached) and `whereSoon` (the week 3 and week 4 routes) build the comparison.
+  - `acGrow` uses the `DEMAND_X` what-if multiplier inside `demandMult`.
+- **The screens.**
+  - Screen 1 is `renderAcCompare`. It replaces `R.shop2` when `acCompareOn()`: week mode, one aircraft, and the three planes in the shop.
+  - Screen 2 is `renderAcPay`. It replaces `R.acquire` after a choice, and `acApplyChoice` puts the plane on its compared plan.
+- **Reviews.** `reviewBuildOn()` (the workbook's `reviewTotalsMode`, or the teacher's `settings.reviewTotals`) switches three reviews to Build cards:
+  - `R.weekReview` uses `renderWeekReviewBuild`;
+  - `R.review` uses `renderPeriodReviewBuild`;
+  - `R.chapterReview` uses `renderChapterReviewBuild`.
+
+  The cards are `rbCardHtml`/`rbBind`, checked by `rbCheck` with Fable's hints. Means are stored in `S.means`, and `rbPlan()` drives the tests.
+
+The type weights block at the end of `p1_head.html` follows the brief's §2.4.
+
+Tests:
+- `week.test.js` checks the comparison, the payment screen and the Build reviews.
+- `migrate.test.js` builds the Sunday totals.
+
+Report: `docs/v4.7-Report-Back.md`.
+
+## 0b. The desks v2 and Workbook v4.6 (12 Oct 2026)
 
 Fable's *Design Note: The desks, v2* and Bertie's three reference screens (Operations Model, Fuel Procurement, Service Cost Breakdown), built in week mode on three new parts after `p4w_planner.js`:
 - **`p4x_shell.js`, the shell.** The 1,680 × 940 canvas (`deskScale`; `canvasMedia` evaluates every media rule against the canvas), the dark header (`deskHeader`, `updateTopBar`), the nav (`DESK_NAV`, `navActive`, `shell`), the page frame (`deskPage`, `deskBar`), the drawn art (`artBanner`, `artDusk`, `artCity` with a landmark per city, `artRefinery`, `artWeather`, `artShip`, `artTank`, `artEurope`, `artCoins`), and the Reputation and Reports desks (`renderDeskView`).

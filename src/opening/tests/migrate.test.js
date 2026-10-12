@@ -28,11 +28,15 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
       if(await p.$('#pqIn')){ await practice(); seen.push('practice'); continue; }
       if(await p.$('#nx')) break; await p.waitForTimeout(80); }
     return seen; };
+  const builds = async () => { const done = []; for(let g = 0; g < 12; g++){ const P = await p.evaluate(() => window.__sim.evalIn('rbPlan()')); if(!P) break;
+      if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); }
+      else { await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
+      await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push('build|' + P.id); } return done; };
   // play from wherever the save landed to the next day's HQ; returns the typed sums and the steps seen
   const playDay = async (tag, toHq) => { const seen = [], startDay = (await S()).day; let typed = [];
     for(let i = 0; i < 60; i++){ const t = await T(), s = await S(); if(s.day !== startDay && (t === 'hq' || (t === 'weekRun' && !toHq))){ seen.push(t === 'hq' ? 'next-day hq' : 'next-day board'); break; } seen.push(t);
       if(t === 'weekRun'){ const d0 = s.day; for(let k = 0; k < 120 && await T() === 'weekRun' && (await S()).day === d0; k++) await p.waitForTimeout(150); continue; }
-      if(t === 'weekReview'){ await shot(`${tag}-review`); typed = typed.concat(await solve()); await p.click('#nx'); continue; }
+      if(t === 'weekReview'){ await shot(`${tag}-review`); typed = typed.concat(await solve()).concat(await builds()); await p.click('#nx'); continue; }
       if(t === 'hq'){ await shot(`${tag}-hq`); await p.click('#startDay'); continue; }
       if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice(); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
       if(t === 'shop2'){ await p.click('#skipShop'); continue; }
@@ -57,7 +61,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
     ok('v5: the Red Kite advertising still counts', !!s.rivalAd && s.rivalAd.untilDay >= 6, s.rivalAd);
     ok('v5: the overlay is cleared', !s.overlay); checks.push('info v5 notes ' + JSON.stringify(m.notes));
     const r = await playDay('vinnies', true); checks.push('info v5 played ' + JSON.stringify(r.seen) + ' typed ' + JSON.stringify(r.typed));
-    ok('v5: Saturday asks the weekend tenths sum on the board, then Sunday\'s review adds up the week', r.typed.some(x => /weekend/.test(x)) && !r.typed.some(x => /work:/.test(x)) && r.typed.some(x => /\|total/.test(x)), r.typed);
+    ok('v5: Saturday asks the weekend tenths sum on the board, then Sunday\'s review adds up the week', r.typed.some(x => /weekend/.test(x)) && !r.typed.some(x => /work:/.test(x)) && r.typed.some(x => /\|total|build\|tot/.test(x)), r.typed);
     ok('v5: the week completes into Monday day 8', r.seen.includes('next-day hq') && (await S()).day === 8, [(await S()).day, r.seen]);
     await p.evaluate(() => { window.__sim.S().overlay = { type:'menu' }; window.__sim.render(); }); await p.waitForTimeout(100); ok('v5: the Home screen says where it carried on', /carries on (from|on the operations board)/.test(await p.textContent('#screen'))); await shot('vinnies-home'); }
 

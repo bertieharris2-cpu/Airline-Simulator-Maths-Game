@@ -36,6 +36,10 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
       if(await p.$('#pqIn')){ await practice(); seen.push('practice'); continue; }
       if(await p.$('#nx')) break; await p.waitForTimeout(80); }
     sums[tag] = seen; return seen; };
+  const builds = async tag => { const done = []; for(let g = 0; g < 12; g++){ const P = await p.evaluate(() => window.__sim.evalIn('rbPlan()')); if(!P) break;
+      if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); }
+      else { await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
+      await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push(P.id + (P.div ? '÷' + P.div : '')); } return done; };
   const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
     if(await T() === 'reveal'){ await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); } if(await T() === 'cert') await p.click('#nx'); };
@@ -48,7 +52,8 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
   // the chapter
   let lastDay = 0;
   for(let i = 0; i < 400; i++){ const t = await T(), s = await S(), day = s.day;
-    if(day >= UPTO && t === 'hq') break; if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); break; }
+    if(day >= UPTO && t === 'hq') break; if(t === 'chapterReview' && await vis('.rbw')){ await shot('chapter-accounts'); const built = await builds('chapter'); ok('chapter accounts: total revenue, total costs, profit and projected − actual are Build steps', ['rev', 'cost', 'profit', 'vs'].every(k => built.includes(k)), built); await shot('chapter-accounts-built'); checks.push('reached chapterReview day ' + day); break; }
+    if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); break; }
     if(t === 'hq'){ await fits('hq ' + day); if(day !== lastDay) await shot(`d${day}-hq`); lastDay = day; await p.click('#startDay'); continue; }
     if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice(); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
     if(t === 'shop2' && await vis('.acx')){ await fits('compare ' + day); await shot(`d${day}-compare-aircraft`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
@@ -138,14 +143,22 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
       await p.click('#nx'); continue; }
     if(t === 'rop'){ await fits('rop'); await shot(`d${day}-rop`); ok('day 28: the regular plan says the tank carries on', /The tank carries on/.test(await p.textContent('#screen'))); await p.click('#ropGo'); continue; }
     if(t === 'milestone'){ await shot(`d${day}-milestone`); await p.click('#msGo'); continue; }
-    if(t === 'review'){ await fits('review ' + day); await shot(`d${day}-wkreview`); sums['wreview ' + day] = await solve('wreview'); if(await p.$('#calcDone')) await p.click('#calcDone'); await p.click('#nx'); continue; }
+    if(t === 'review'){ await fits('review ' + day); await shot(`d${day}-wkreview`); sums['wreview ' + day] = (await vis('.rbw')) ? await builds('wreview ' + day) : await solve('wreview'); if(await p.$('#calcDone')) await p.click('#calcDone'); await p.click('#nx'); continue; }
     if(t === 'sim'){ await shot(`d${day}-sim`); for(let k = 0; k < 160 && await T() === 'sim'; k++) await p.waitForTimeout(250); continue; }
     if(t === 'ready'){ await fits('ready ' + day); const en = await p.$eval('#startOps', e => !e.disabled); ok('ready ' + day, en, await p.textContent('.opplan')); if(!en){ await shot(`d${day}-ready-stuck`); break; } await p.click('#startOps'); continue; }
     if(t === 'takeoff'){ await p.click('#toGo'); for(let k = 0; k < 200 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     if(t === 'fly'){ for(let k = 0; k < 80 && await T() === 'fly'; k++) await p.waitForTimeout(250); continue; }
     if(t === 'results'){ await shot(`d${day}-results`); await p.click('#nx'); continue; }
     if(t === 'weekRun'){ const d0 = day; for(let k = 0; k < 120 && await T() === 'weekRun' && (await S()).day === d0; k++) await p.waitForTimeout(150); if(d0 !== lastDay){ await shot(`d${d0}-board`); lastDay = d0; } continue; }
-    if(t === 'weekReview'){ await fits('review ' + day); await shot(`d${day}-review`); const typed = await solve('review'); sums['review ' + day] = typed; ok(`review ${day}: the week total and projected − actual are typed`, typed.some(x => /total/.test(x)) && typed.some(x => /better|worse/.test(x)), typed);
+    if(t === 'weekReview' && await vis('.rbw')){ await fits('review ' + day); await shot(`d${day}-review`);
+      if(day === 7){ const f = await p.$$eval('[data-rbfig^="tot|"]', es => es.map(e => e.getAttribute('data-rbfig').split('|')[1]));
+        await p.click(`[data-rbfig="tot|${f[0]}"]`); await p.click('[data-rbop="tot|×"]'); await p.click(`[data-rbfig="tot|${f[1]}"]`); await p.click('[data-rbchk="tot"]'); await p.waitForTimeout(60);
+        ok('review 7: a wrong operation is a Query with a plain hint', await vis('.rb-card .stamp.q') && /which operation joins amounts together/.test(await p.textContent('.rb-msg')), await p.textContent('.rb-msg'));
+        await p.click('[data-rbclr="tot"]'); await p.click(`[data-rbfig="tot|${f[0]}"]`); await p.click('[data-rbop="tot|+"]'); await p.click(`[data-rbfig="tot|${f[1]}"]`); await p.click('[data-rbchk="tot"]'); await p.waitForTimeout(60);
+        ok('review 7: a missing day is named', /isn't in the total yet/.test(await p.textContent('.rb-msg')), await p.textContent('.rb-msg')); await p.click('[data-rbclr="tot"]'); }
+      const built = await builds('review ' + day); sums['review ' + day] = built;
+      ok(`review ${day}: the week total, the difference and the mean are Build steps (the game calculates)`, built.includes('tot') && built.includes('diff') && built.some(x => /^mean÷7/.test(x)), built);
+      if(day === 7){ ok('review 7: the mean asks for the divisor and shows the average day', /Average day:/.test(await p.textContent('.rbw-t'))); await shot(`d${day}-review-built`); }
       ok(`review ${day}: the missed-profit line`, await vis('.wk-missed'), await p.$eval('.wk-missed', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
       const M = (await S()).wk.missed; ok(`review ${day}: the best plan earns at least what the pupil's plan did`, M && M.best >= M.yours - 1, M && [M.yours, M.best, M.bestPlan]);
       if(day >= 15) ok(`review ${day}: use-it-or-lose-it names a route with no service (Dublin)`, /Dublin: \d+ → \d+/.test(await p.$eval('.wk-neglect', e => e.textContent).catch(() => '')), await p.$eval('.wk-neglect', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
@@ -153,7 +166,7 @@ const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process
     if(t === 'paint'){ await shot(`d${day}-paint`); const a = await S(); ok(`paint ${day}: the new plane has its own registration`, new Set(a.fleet.map(f => f.registration)).size === a.fleet.length, a.fleet.map(f => f.registration)); await p.click('#roll'); continue; } if(t === 'reveal'){ await p.click('#skipReveal'); for(let k = 0; k < 50 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     checks.push('stopped at ' + t + ' day ' + day); await shot('stop'); break; }
   const s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
-  if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t));
+  if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t) && !/\(Build\)|^Build:/.test(t));   // Build steps (the reviews, the model's formulas) are not Calculate
     const count = calc.reduce((n, t) => { const m = /^Ticket revenue \(([^)]*)\)/.exec(t); return n + (m ? m[1].split(',').length : 1); }, 0) + 2;   // launch day's three fares count as three
     ok('weeks 1–4: about 26 Calculate steps with practice off (Fable\'s target; the launch tickets at three fares count three)', count >= 22 && count <= 34, { count, calc }); }
   checks.push('info sums ' + JSON.stringify(sums)); checks.push('info handSumLog ' + JSON.stringify(s.handSumLog)); checks.push('info ledger profit ' + JSON.stringify((s.ledger.rev || []).map((v, i) => v == null ? null : Math.round(v - s.ledger.cost[i]))));
