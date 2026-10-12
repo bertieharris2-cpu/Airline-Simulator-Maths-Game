@@ -299,7 +299,7 @@ function stageTable(stage, L0){
   if(!stage.rowIds){ rowIds = rowIds.filter(id => !/^(pax_|fare_|tk_|buyers|snackP|snack$|fuelL|ppl|fuel$)/.test(id)); }   // the profit stage: the sheet's totals and the profit line only
   const t = ensureTable('work:' + S.day + ':' + stage.id, 'cost1', cols, { rows, rowIds, labels:costLabels() }); t.stage = stage.id; return { t, lines };
 }
-function workTables(pl){
+function workTablesWeek(pl){
   if(!(weekMode() && S.phase === 'setup')) return workTablesBase(pl);
   const L0 = planLines(pl), stages = wkStagesLaunch(pl), picks = S.rnd.picks || (S.rnd.picks = {}), tables = [], done = [];
   let cur = null, opts = [], picked = null, multi = false, lines = [], total = 0, pickKind = null;

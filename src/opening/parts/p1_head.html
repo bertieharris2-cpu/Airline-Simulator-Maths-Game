@@ -3061,5 +3061,17 @@ td.c.enter button,.cellbtn{border-radius:8px;background:rgba(143,211,255,.12);bo
 .ws-plan .pi-r,.ws-workings .pi-r{padding:3px 0}.ws-plan .pi-r.tot,.ws-workings .pi-r.tot{padding:5px 8px;margin-top:3px}.ws-plan .pi-r.profit,.ws-workings .pi-r.profit{padding:7px 10px;margin-top:5px}
 .dk-tools.dk-row{flex-direction:row;gap:4px;padding:6px 10px}.dk-row .dk-help{flex:1;min-width:0;padding:5px 6px;gap:5px;justify-content:center}.dk-row .dk-help i{width:20px;height:20px;font-size:12px}.dk-row .dk-help span{flex:none}.dk-row .dk-help b{font-size:12.5px;white-space:nowrap}
 .ws-plan .pi-r .pi-l,.ws-workings .pi-r .pi-l{font-size:12.5px}.ws-plan .pi-r .pi-l small,.ws-workings .pi-r .pi-l small{font-size:11px}.ws-plan .pi-r .pi-v,.ws-workings .pi-r .pi-v{font-size:15px}.ws-plan .pi-r .pi-v small,.ws-workings .pi-r .pi-v small{font-size:11px}
+/* the written method on the template: columns Th H T O, a box a digit, typed right to left, little carry boxes; green working rows */
+.wkb{display:grid;grid-template-columns:28px repeat(var(--w),minmax(0,1fr));max-width:calc(28px + var(--w) * 56px);width:100%;margin:0 auto;font-family:var(--mono)}
+.wkb-h{display:flex;align-items:center;justify-content:center;height:24px;background:#5fcff0;color:#0f2a52;font:700 12.5px var(--sans);border:1px solid #2a4a7a;margin:0 -1px -1px 0}
+.wkb-c{position:relative;display:flex;align-items:center;justify-content:center;height:46px;border:1px solid #2a4a7a;margin:0 -1px -1px 0;background:#fff;font-style:normal}
+.wkb-c > b{font:700 26px var(--mono);color:#0f2a52}
+.wkb-c.work{background:#dff3dc}.wkb-c.ans{border-top:3px double #0f2a52}
+.wkb-c > input{width:100%;height:100%;border:0;background:transparent;text-align:center;font:700 26px var(--mono);color:#0f2a52;padding:0;outline:0;caret-color:var(--pblue)}
+.wkb-c > input:focus{box-shadow:inset 0 0 0 3px var(--pblue);background:#eaf3ff}
+.wkb-c .cy{position:absolute;left:1px;top:1px;width:17px;height:17px;z-index:1}.wkb-c .cy input{width:17px;height:17px;border:1px dashed #7a9bbf;background:#fff;font:700 11px var(--mono);text-align:center;padding:0;color:#b85c00;outline:0;display:block}.wkb-c .cy input:focus{border-style:solid;border-color:var(--pblue)}
+.wkb-op{display:flex;align-items:center;justify-content:center;font:700 22px var(--mono);color:var(--pblue);background:transparent}.wkb-op.ans{font-size:24px}
+.wkb-hid{position:absolute!important;width:1px;height:1px;opacity:0;border:0;padding:0;margin:0}
+.wkb-cap{margin:6px 0 0;font-size:13px;color:var(--ink2);text-align:center}.wkb-cap b{color:var(--ink)}
 </style>
 </head>

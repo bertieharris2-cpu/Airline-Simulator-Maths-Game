@@ -143,7 +143,20 @@ function hiddenFigs(pl, W){
   wkCells(W.tables).forEach(x => { if(x.s === 'done') return; const k = SUM_OF_ROW(x.r.id); if(k) out.add(k); });
   return out;
 }
-function openSum(kind){ S.rnd.sumWanted = kind; UI.sumMode = 'grid'; if(step().t === 'plan'){ UI.ideaOpen = false; resetEntry(); UI.justDone = null; advance(); } else render(); }
+function openSum(kind){ S.rnd.sumWanted = kind; S.rnd.stageWanted = ({ snacks:'snack', fuelCost:'fuel', profit:'profit' })[kind] || null; UI.sumMode = 'grid'; if(step().t === 'plan'){ UI.ideaOpen = false; resetEntry(); UI.justDone = null; advance(); } else render(); }
+/* ƒ on a figure opens that figure's sum: a later stage is brought forward when nothing it needs is still to be chosen
+   (fuel never waits; snacks wait for the fare, since the passengers depend on it; profit waits for the fare) */
+function workTables(pl){
+  const W = workTablesWeek(pl); if(!(wkPlanner() && S.phase === 'setup') || !W.stage) return W;
+  const want = S.rnd.stageWanted; if(!want || want === W.stage.id) return W;
+  const stages = wkStagesLaunch(pl), st = stages.find(x => x.id === want), picks = S.rnd.picks || {}, fareOpen = stages.some(x => x.id === 'fare') && !picks.fare;
+  if(!st || want === 'profit' || (want === 'snack' && fareOpen)){ delete S.rnd.stageWanted; return W; }
+  if(!S.rnd.handSums) S.rnd.handSums = decideHandSums(W.L0, normPlan(pl));   // which rows are typed (the profit stage normally decides this first)
+  const { t, lines } = stageTable(st, W.L0), pk = st.pick ? (picks[st.pick] || null) : null;
+  if(!wkNext([t]) && (!st.pick || pk)){ delete S.rnd.stageWanted; return workTablesWeek(pl); }   // that stage is finished: back to the usual order
+  const tables = [t].concat(W.tables.filter(x => x !== t));
+  return Object.assign(W, { tables, t, opts:st.opts, lines, picked:pk, multi:!!st.pick, pickKind:st.kind || st.id, stage:st, third:st.third });
+}
 
 /* ---------- the market widgets: city, facts, the fare chips with the people at each fare ---------- */
 function marketWidget(i, id, pl, L, o){
@@ -362,6 +375,50 @@ function finishSums(){
   resetEntry(); UI.justDone = null; delete S.rnd.sumWanted; advance();
 }
 
+/* ---------- the written method on Bertie's template: place-value columns, one digit a box, typed right to left, carry boxes ---------- */
+const PLACES = ['O', 'T', 'H', 'Th', 'TTh', 'HTh', 'M'];
+function wkGrid(t, col, row, o){
+  o = o || {}; if(!wkPlanner() || o.done || o.show) return wkGridBase(t, col, row, o);
+  const ops = stackRows(t, col, row), A = ops[0], B = ops[1], ua = operandUnit(t, A.id), ub = operandUnit(t, B.id), a = operandValue(t, col, A.id), b = operandValue(t, col, B.id);
+  const fa = wkFig(ua, a), fb = wkFig(ub, b), op = B.op || row.op || '×', ans = col.values[row.id], fAns = wkFig(row.unit, ans), tenths = fb.tenths;
+  const W = Math.min(PLACES.length, Math.max(fa.s.length, fb.s.length, String(fAns.s).length) + 1);
+  const given = (s, cy) => { const d = s.padStart(W, ' ').split(''); return d.map((ch, c) => `<span class="wkb-c g">${cy ? `<small class="cy"><input maxlength="1" inputmode="numeric" aria-label="carry"></small>` : ''}<b>${ch === ' ' ? '' : ch}</b></span>`).join(''); };
+  const boxes = (r, cls, cy) => Array.from({ length:W }, (_, c) => `<span class="wkb-c ${cls}">${cy ? `<small class="cy"><input maxlength="1" inputmode="numeric" data-cy="${r}|${c}" aria-label="carry"></small>` : ''}<input maxlength="1" inputmode="numeric" data-r="${r}" data-c="${c}" aria-label="${cls === 'ans' ? 'answer' : 'working'} column ${PLACES[W - 1 - c]}"></span>`).join('');
+  const head = `<span class="wkb-op"></span>${Array.from({ length:W }, (_, c) => `<span class="wkb-h">${PLACES[W - 1 - c]}</span>`).join('')}`;
+  const workRows = op === '−' ? 0 : (tenths || ub === 'ppl' || (b >= 10 && b % 10 !== 0)) ? 3 : 2;
+  let r = 0; const work = Array.from({ length:workRows }, () => `<span class="wkb-op"></span>${boxes(r++, 'work', true)}`).join('');
+  const unit = row.unit === '£' ? '£' : '';
+  return `<div class="wkb" style="--w:${W}">${head}
+    <span class="wkb-op"></span>${given(fa.s, true)}
+    <span class="wkb-op">${esc(op)}</span>${given(fb.s, false)}
+    ${tenths ? `<span class="wkb-op">÷</span>${given(String(fb.div), false)}` : ''}
+    ${work}
+    <span class="wkb-op ans">=</span>${boxes(r, 'ans', true)}
+    <input id="cellAns" class="wkb-hid" inputmode="decimal" autocomplete="off" value="${esc(UI.entry)}" aria-label="${esc(rowLabel(t, row))}"></div>
+    <p class="wkb-cap">${esc(A.label)} ${fa.note ? `(${esc(fa.note)}) ` : ''}${esc(op)} ${esc(B.label)}${fb.note ? ` (${esc(fb.note)})` : ''}${tenths ? ` ÷ ${fb.div}` : ''} = <b>${esc(rowLabel(t, row))}${unit ? ' in £' : ''}</b></p>`;
+}
+/* typing in the boxes: a digit fills the box and moves one box to the left, as on paper; Enter checks; the number pad types into the focused box */
+function bindWkBoxes(){
+  const root = screen(), grid = root.querySelector('.wkb'); if(!grid) return;
+  const ans = $('cellAns'); const all = [...grid.querySelectorAll('input[data-r]')], row = r => all.filter(b => +b.dataset.r === r), ansRow = row(Math.max(...all.map(b => +b.dataset.r)));
+  let last = null;
+  const sync = () => { if(!ans) return; ans.value = ansRow.map(b => b.value).join(''); ans.dispatchEvent(new Event('input')); };
+  const go = (b, d) => { const n = row(+b.dataset.r).find(x => +x.dataset.c === +b.dataset.c + d); if(n){ n.focus(); n.select && n.select(); } };
+  all.forEach(b => {
+    b.onfocus = () => { last = b; };
+    b.oninput = () => { b.value = b.value.replace(/\D/g, '').slice(-1); if(b.value) go(b, -1); sync(); };
+    b.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); if(ans) ans.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter' })); }
+      else if(e.key === 'Backspace' && !b.value){ e.preventDefault(); const n = row(+b.dataset.r).find(x => +x.dataset.c === +b.dataset.c + 1); if(n){ n.value = ''; n.focus(); sync(); } }
+      else if(e.key === 'ArrowLeft'){ e.preventDefault(); go(b, -1); } else if(e.key === 'ArrowRight'){ e.preventDefault(); go(b, 1); } };
+  });
+  grid.querySelectorAll('input[data-cy]').forEach(b => { b.oninput = () => { b.value = b.value.replace(/\D/g, '').slice(-1); }; });
+  root.querySelectorAll('[data-k]').forEach(btn => btn.onclick = () => { const k = btn.getAttribute('data-k'), b = last && document.contains(last) ? last : ansRow[ansRow.length - 1];
+    if(k === 'back'){ if(b.value) b.value = ''; else { const n = row(+b.dataset.r).find(x => +x.dataset.c === +b.dataset.c + 1); if(n){ n.value = ''; n.focus(); last = n; } } sync(); return; }
+    if(!/^\d$/.test(k)) return; b.value = k; sync(); go(b, -1); });
+  const start = row(0)[W0(all)] || ansRow[ansRow.length - 1]; setTimeout(() => { try{ start.focus(); }catch(e){} }, 60);
+  function W0(list){ return Math.max(...list.filter(b => +b.dataset.r === 0).map(b => +b.dataset.c)); }
+}
+
 /* ---------- the Maths Dock: the sums one at a time beside the plan ---------- */
 function dockHtml(o){ if(o && o.sum) return sumDockHtml(o.sum); return dockHtmlBase(o); }
 function sumState(W, st){
@@ -417,7 +474,7 @@ function sumDockHtml(o){
 }
 function bindSumDock(W, st){
   const Z = sumState(W, st);
-  if(Z.act && !Z.justDone && !Z.tut) bindTable(Z.act);
+  if(Z.act && !Z.justDone && !Z.tut){ bindTable(Z.act); bindWkBoxes(); }
   on('wkTutNext', () => { st.tutStep = (st.tutStep || 0) + 1; render(); }); on('wkTutGo', () => { st.tut = true; render(); });
   on('wkNext', () => { UI.justDone = null; resetEntry(); render(); });
   on('wkPad', () => { st.pad = !st.pad; render(); });

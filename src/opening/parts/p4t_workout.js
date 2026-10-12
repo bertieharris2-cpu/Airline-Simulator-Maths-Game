@@ -120,7 +120,7 @@ function wkMethod(a, b, op, unitA, unitB, unitOut){
   if(b >= 10){ const tens = Math.floor(b / 10) * 10, ones = b - tens; return [`${f(a)} × ${tens} = ${f(a * tens)}`, `${f(a)} × ${ones} = ${f(a * ones)}`, `${f(a * tens)} + ${f(a * ones)} = ${f(a * b)}`]; }
   return [`${f(a)} × ${b} = ${f(a * b)}`];
 }
-function wkGrid(t, col, row, o){
+function wkGridBase(t, col, row, o){
   o = o || {}; const ops = stackRows(t, col, row), A = ops[0], B = ops[1], ua = operandUnit(t, A.id), ub = operandUnit(t, B.id), a = operandValue(t, col, A.id), b = operandValue(t, col, B.id);
   const fa = wkFig(ua, a), fb = wkFig(ub, b), op = B.op || row.op || '×', ans = col.values[row.id], fAns = wkFig(row.unit, ans), W = Math.max(fa.s.length, fb.s.length, String(fAns.s).length) + 1;
   const cells = s => { const d = s.padStart(W, ' ').split(''); return d.map(ch => `<i>${ch === ' ' ? '' : ch}</i>`).join(''); };
