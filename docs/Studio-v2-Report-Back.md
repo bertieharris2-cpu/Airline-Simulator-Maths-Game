@@ -68,4 +68,24 @@ It needs a decision from Bertie: is a pattern a whole day only, or can an aircra
   - on Launch Day, day 8 and day 22: Active routes against the engine, the route editor's fares against the Routes sheet, every block's figure and colour, the drawer (one or two PlanTips tips, six groups) and the flight editor on screen.
 
   The hand sums, the cap, the audits and the board review are checked exactly as for the main file.
-- The main file's run is unchanged apart from the three fixes.
+- **Results.**
+
+  | Run | Checks | Failures | Reaches |
+  | --- | --- | --- | --- |
+  | Revised Studio file | 183 | 0 | chapter accounts on 28 December |
+  | Main file (with the three fixes) | 165 | 0 | chapter accounts on 28 December |
+  | `migrate.test.js` | 27 on each file | 0 | — |
+
+- **Screenshots** (1680×940) in `docs/screenshots/v2studio/`:
+  1. the opener;
+  2. the operating plan;
+  3. the route editor;
+  4. the trade-offs drawer;
+  5. the flight editor;
+  6. Change network;
+  7. Launch Day's Choose where to fly;
+  8. the launch plan;
+  9. fleet groups with four aircraft;
+  10. a news review.
+
+  The three fixes are in `docs/screenshots/v410/fix-*.png`.
