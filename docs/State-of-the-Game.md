@@ -10,6 +10,40 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0i. Workbook v5.0 (13 Oct 2026): chapter 2, push 2 of 3 (revised Studio only), and Bertie's run-through fixes
+
+**What changed:**
+- **`p4zj_types.js`** (v2 only, after `p4zh_longhaul`). All shared functions are reassigned, not redeclared:
+  - **Reputation:**
+    - `repLive` goes live from `reputationFromDate`, else chapter 2's first day.
+    - `repFactor` = 1 + `reputationPerHalfStar` × half-stars from 3.
+    - `bankStars` logs each change in `S.repLog` and, once live, scales it by the type's star rate. `S.repExact` keeps the quarter; `S.rep` is whole half-stars towards 3.
+    - `applyResults` / `applyPeriodResults` run with the prototype's daily star rules off (`REP_QUIET`).
+    - `revealReputation` records `S.repReveal` and a record event.
+  - **The type:**
+    - `S.atype = { pick, day, confirmed, confirmDay }`.
+    - Every workbook route's `fares` and `prices` are getters over `_fares0` plus the type's steps from `demandAtFare`.
+    - `typeSnap` moves a fare that left the menu to the nearest one.
+  - **Steps:**
+    - `daySteps` adds `stars` and `atype` after day 127's intro (`ch2StepsFix` does it for a day-127 save made before this push).
+    - `enterRunDay` puts `atypeOk` before the run on the Calendar's "airline type confirmed" day (130).
+  - **Bags:** `dayExtras` adds `bags` and `bagRev` (in `obRev`) for a Value airline from day 127. `s2Summary`, `s2Insights` and `cashLine` show the line.
+  - **Sign-offs:**
+    - `soWorkCands` marks the first long-haul tickets (`lhEst`) and fuel (`lhFuel`) as forced, and adds `bag|<route>` (rel `bagFee`) for Value.
+    - `soDecideList` keeps a long-haul plane's seats × fare out of the Calculate slots.
+    - `decideHandSums` moves the estimated ticket sum off the sheet onto the Sign-offs page (`soStageItems`).
+    - `soSpec` / `soCardHtml` / `soBindCards` draw a two-step card: the estimate or the tenths, then the sum. The first step's tries are the record's working (`recAttempt`).
+    - `S.ch2so` records when the first long-haul ticket sum and fuel line were done.
+- **Fuel card (both files, `p4y_desks.js`):** one method, make it pence, in three boxes: × 100, a line a digit then add, ÷ 100. Each Query is specific to its step (`scPenceQuery`, `scNextStepMsg`). `soMethod` and the record name the same method.
+- **Review cards (both files, `p4zb_decisions.js`):** `rbAskHtml` puts the question in a green box with the thing to find in bold.
+
+**Interpretations (in `docs/Chapter-2-Push-2-Notes.md`):**
+- the half-star rounding towards 3;
+- the daily stars switched off;
+- whole bags rounded to the nearest;
+- the bag sum on the long-haul route's passengers;
+- the WorkingMethods fuel row still lists five methods; the card now teaches one.
+
 ## 0h. Workbook v5.1 (13 Oct 2026): the pupil record and printout (D75), and a smooth take-off
 
 **What changed:**

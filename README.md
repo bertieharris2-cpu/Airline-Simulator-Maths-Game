@@ -8,7 +8,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 | File | What it is |
 | --- | --- |
 | `airline-opening-prototype.html` | **The active development version.** Chapter 1 of the workbook's story: Launch Day (Monday 2 September 2030) to the chapter review on 28 December 2030, paced by the workbook's Chapters, Calendar and Market sheets. See *Opening prototype* below. |
-| `airline-opening-studio-v2.html` | **The revised Operating Plan Studio, to try, and chapter 2.** The same game as `airline-opening-prototype.html` with Bertie's revised interaction brief on the Monday plan page (*simplify what is visible at any one moment*), Days on every flight (D67), and chapter 2 from January 2031 (Workbook v5.0, in progress). Built from the same parts plus `p4ze_studio2.js`, `p4zf_flightdays.js`, `p4zg_chapter2.js`, `p4zh_longhaul.js` and `p1_head_studio2.css`; it shares the main game's save, so either file opens the same game. The main file is untouched by it until the revision is approved. |
+| `airline-opening-studio-v2.html` | **The revised Operating Plan Studio, to try, and chapter 2.** The same game as `airline-opening-prototype.html` with Bertie's revised interaction brief on the Monday plan page (*simplify what is visible at any one moment*), Days on every flight (D67), and chapter 2 from January 2031 (Workbook v5.0, in progress). Built from the same parts plus `p4ze_studio2.js`, `p4zf_flightdays.js`, `p4zg_chapter2.js`, `p4zh_longhaul.js`, `p4zj_types.js` and `p1_head_studio2.css`; it shares the main game's save, so either file opens the same game. The main file is untouched by it until the revision is approved. |
 | `airline-opening-prototype-v4.10-studio.html` | **Frozen copy** of the opening prototype as it was on 13 Oct 2026 (the v4.10 Operating Plan Studio), kept so the Studio Bertie liked stays playable while it is revised. Never rebuilt. |
 | `airline-simulator-full-reference.html` | **Frozen.** A snapshot of the complete simulator (weeks, months, later aircraft, international routes, storyline, awards, challenges). Critical fixes only until the opening is approved (so far: the full-screen button, which the teacher's triple-tap corner used to cover). |
 | `airline-simulator.html` | The complete game, identical to the full reference for now: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
@@ -55,7 +55,32 @@ The opening is being made excellent before the later campaign continues. `airlin
   - **The 757 and the 787** are in the shop from day 127, lease only. *What's new: Going long* explains local time.
   - **Balance Report v5.0 §2 reproduces exactly:** a full 757 to New York at £510 makes £47,426.25 a day.
   - **Tested** by `chapter2.test.js`: 50 checks to the chapter 2 review, 0 failures. Screenshots are in `docs/screenshots/chapter2/`.
-  - **Coming in pushes 2 and 3:** reputation revealed with its card; the airline type; Value's bag fee; chapter 2's sign-offs; events with options; the nineteen news items (`routes = all`, closures); challenges and hunts; the chapter 2 report for Fable.
+- **Workbook v5.0, chapter 2 push 2 of 3: reputation, the airline type, the bag fee and chapter 2's sign-offs** (`src/opening/parts/p4zj_types.js`, revised Studio only). Notes for Fable: `docs/Chapter-2-Push-2-Notes.md`.
+  - **Day 127 now runs:** HQ, *Going long*, **Your star rating is public**, **What sort of airline are you?**, the shop, the plan, the sign-offs, the fuel desk, the flying.
+  - **The star rating** is revealed at the autumn's banked level. The card lists each event choice that moved it, with the sum ("4 stars: 2 half-stars above 3, so 2 × 5% = 10% more passengers") and New York's demand at 3 stars and now. From day 127 demand on every route is × (1 + 0.05 × half-stars from 3), from `reputationPerHalfStar`.
+  - **Only the workbook's stated effects move the stars** (events, challenges). The prototype's daily ½ star for a high fare, free snacks or the cabin layout stays off.
+  - **The airline type** is chosen on day 127 and confirmed on Thursday 9 January (a card before the day's run; it can be changed then).
+    - **Premium:** the two demand-table steps above each route's top fare (New York £570, £590); stars move 1.5× as fast.
+    - **Value:** one step below (New York £450); stars move 0.75× as fast; the bag fee.
+    - **Full Service:** unchanged.
+    - The rating shown and used is whole half-stars counted towards 3 (3¾ shows 3½); the quarter is kept.
+  - **Bags (Value):** passengers × 4 tenths × £20 on every route, in the revenue. Shown on the plan summary (*Bags £2,980 · 149 × £20*), the trade-offs' money and the day's results.
+  - **Chapter 2's sign-offs, under the cap of three:**
+    - the bag fee (Value), in two steps: 4 tenths of 200 passengers = 80, then 80 × £20;
+    - the first long-haul ticket sum, **estimated first** (200 × £500 = £100,000, then 200 × £510);
+    - the first long-haul fuel line on the service card (12,375 L × £2.17);
+    - rent-or-buy for the 757 and its full plane (seats × fare, the same sum as the tickets) are Build; New York's flight time is Build when the cap is full.
+  - **Tested** by `chapter2.test.js` with `TYPE=value` (default) and `TYPE=premium`.
+  - **Coming in push 3:** events with options; the nineteen news items (`routes = all`, closures); challenges and hunts; the chapter 2 report for Fable.
+
+**From Bertie's run-through (both game files):**
+- **The fuel cost is one method: make it pence.** The Service Cost card walks it in three boxes:
+  1. the price × 100 to whole pence (£1.47 × 100 = 147p);
+  2. the litres × the pence, a line for each part (230 × 7p, 230 × 40p, 230 × 100p), then add the lines;
+  3. ÷ 100 back to pounds.
+  - A step waiting on the one above is dimmed, and a right line turns green.
+  - A Query names the step and the slip: a shift of one place, a line out by ten, an answer still in pence.
+- **Review questions stand out.** On the Build cards (the week's total, the difference, the average) the question sits in a green box with the thing to find in bold.
 
 **Workbook v5.1 (D75): the pupil record and printout, in both game files** (`src/opening/parts/p4zi_record.js`).
 - **What is kept:** every sign-off and every review Build step. That covers:
@@ -251,6 +276,7 @@ The opening is being made excellent before the later campaign continues. `airlin
     - Christmas and New Year, then day 127: lease a 757, New York at £510 at 06:30;
     - the Balance Report v5.0 §2 check (£47,426 within £10), the refused second service, the local time, the overnight rotation (Delhi, tried early) and growth;
     - then the weeks and months to `UPTO` (default 155; 400 reaches the chapter 2 review).
+    - push 2: the star rating card, the type page (`TYPE=value|premium|full`, default value) and its fare gating, the sign-offs under the cap (the estimate first, the bag fee in two steps), the Bags line, and Thursday's confirmation.
   - `node src/opening/tests/record.test.js` (`GAME` either file) checks the pupil record:
     - on Launch Day it types a long multiplication into the column template digit by digit, one line off by a carry, then right;
     - it checks that both attempts are kept cell by cell, with the note and the codes;

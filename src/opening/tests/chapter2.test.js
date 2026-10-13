@@ -9,7 +9,7 @@ const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os');
 const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-studio-v2.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch2') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 155);
-const CODE = process.env.CODE || path.join(os.tmpdir(), 'airline-ch1-end.txt');
+const CODE = process.env.CODE || path.join(os.tmpdir(), 'airline-ch1-end.txt'), TYPE = process.env.TYPE || 'value';   // the airline type chosen on day 127
 if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: GAME=airline-opening-studio-v2.html UPTO=200 SHOTS=0 SAVE=${CODE} node week.test.js`); process.exit(1); }
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
@@ -31,6 +31,9 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: GAME=a
   const signs = async tag => { const done = []; for(let g = 0; g < 14; g++){ const P = await E('soPlan()'); if(!P) break;
       if(P.rb){ await p.click(`[data-rbop="${P.rb.id}|${P.rb.op}"]`); await p.fill(`[data-rbdiv="${P.rb.id}"]`, String(P.rb.div)); await p.click(`[data-rbchk="${P.rb.id}"]`); await p.waitForTimeout(80); done.push('rb:' + P.rb.id); continue; }
       const k = P.key.replace(/"/g, '\\"');
+      if(P.pre){ if(!info.preQuery){ await p.fill(`[data-sopre="${k}"]`, '1'); await p.click(`[data-soprechk="${k}"]`); await p.waitForTimeout(60); info.preQuery = await txt(`[data-socard="${k}"] .sc-msg`);
+          ok(`${tag}: a wrong first step is a Query with a hint (${P.key})`, /^Query/.test(info.preQuery) && !(await vis(`[data-soin="${k}"]`)), info.preQuery); }
+        await p.fill(`[data-sopre="${k}"]`, P.pre); await p.click(`[data-soprechk="${k}"]`); await p.waitForTimeout(80); done.push('pre:' + P.key + '=' + P.pre); }
       if(P.level === 'build'){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-soop="${k}|${x}"]` : `[data-sofig="${k}|${x}"]`); }
       else await p.fill(`[data-soin="${k}"]`, P.answer);
       await p.click(`[data-sochk="${k}"]`); await p.waitForTimeout(80); if(!(await vis(`[data-socard="${k}"] .stamp.ok`))){ ok(`${tag}: ${P.key} signed`, false, P); break; } done.push(P.level + ':' + P.key); }
@@ -77,6 +80,15 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: GAME=a
     if(t === 'intro'){ if(day === 127){ const x = await txt('#screen'); ok('day 127: What\'s new: Going long, with the local-time arrival (out 06:30, lands 07:45 New York time, back 21:00)', /Going long/.test(x) && /06:30/.test(x) && /07:45/.test(x) && /21:00/.test(x), x.slice(0, 300)); await shot('c2-04-intro'); }
       for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice();
       const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
+    if(t === 'stars'){ const x = await txt('#screen'), r = JSON.parse(await E('JSON.stringify(typeReport())')); info.reveal = { rep:r.rep, factor:r.factor, bank:(await S()).repBank || 0 };
+      ok('day 127: the star rating is revealed at the banked level, with what moved it and what it is worth (5% a half-star)', /Your star rating is public/.test(x) && /What moved it/.test(x) && /Each half-star above 3/.test(x) && r.rep === Math.min(5, Math.max(1, Math.round((3 + info.reveal.bank) * 2) / 2)) && Math.abs(r.factor - (1 + 0.1 * (r.rep - 3))) < 1e-9, info.reveal);
+      await shot('c2-04b-stars'); await p.click('#nx'); continue; }
+    if(t === 'atype'){ await shot('c2-04c-type'); ok('day 127: the type page offers Premium, Full Service and Value; Next waits for a choice', (await p.$$('[data-atype]')).length === 3 && await p.$eval('#nx', e => e.disabled));
+      for(const ty of ['premium', 'value', 'full']){ await p.click(`[data-atype="${ty}"]`); await p.waitForTimeout(60); info['fares ' + ty] = JSON.parse(await E("JSON.stringify(routeById('nyc').fares)")); }
+      ok('fare gating: Premium adds the two steps above (New York £570, £590); Value one below (£450); Full Service the five options', JSON.stringify(info['fares premium']) === '[470,490,510,530,550,570,590]' && JSON.stringify(info['fares value']) === '[450,470,490,510,530,550]' && JSON.stringify(info['fares full']) === '[470,490,510,530,550]', [info['fares premium'], info['fares value'], info['fares full']]);
+      await p.click(`[data-atype="${TYPE}"]`); await p.waitForTimeout(60); await shot('c2-04d-type-' + TYPE); await p.click('#nx'); continue; }
+    if(t === 'atypeOk'){ await shot('c2-09-thursday-type'); ok(`day ${day}: Thursday's card asks to confirm the airline type`, day === 130 && /Confirm: /.test(await txt('#nx')), [day, await txt('#nx')]);
+      await p.click('#nx'); await p.waitForTimeout(80); ok('the type is confirmed', JSON.parse(await E('JSON.stringify(typeReport())')).confirmed === true); continue; }
     if(t === 'shop2'){ await shot(`c2-d${day}-shop`);
       if(day === 127){ const has = await p.$$eval('[data-pick]', es => es.map(e => e.getAttribute('data-pick'))); ok('day 127: the 757 and the 787 are in the shop', has.includes('b757') && has.includes('b787'), has);
         await p.click('[data-pick="b757"]'); await p.waitForTimeout(400); await p.click('#nx'); }
@@ -121,7 +133,12 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: GAME=a
         ok('seasons: Dubai\'s winter override ×1.2 replaces the archetype\'s winter ×0.9 in the day\'s demand (×1.2 ÷ 0.9); New York keeps ×0.9', growth[2] === 1.2 && growth[3] === 0.9 && growth[4] === 1.333 && growth[5] === 1.333, growth); }
       if(await vis('#s2Back')){ await p.click('#s2Back'); await p.waitForTimeout(100); }
       await shot(`c2-d${day}-plan`); const en = await p.$eval('#nx', e => !e.disabled).catch(() => false); ok(`plan ${day}: continue enabled`, en); if(!en) break; await p.click('#nx'); continue; }
-    if(t === 'workings' && await vis('.so-page')){ await shot(`c2-d${day}-signoffs`); await signs('work ' + day); await p.waitForTimeout(500); await p.click('#nx'); await p.waitForTimeout(80); continue; }
+    if(t === 'workings' && await vis('.so-page')){ await shot(`c2-d${day}-signoffs`);
+      if(day === 127){ const W = JSON.parse(await E("JSON.stringify(Object.values(soWeek(false).items).map(it => [it.key, it.level, it.point]))")); info.week19 = W; const calc = W.filter(x => x[1] === 'calc').map(x => x[0]);
+        ok(`day 127: the cap of three: the long-haul tickets (estimated first), the long-haul fuel${TYPE === 'value' ? ' and the bag fee' : ''} are Calculate; the full 757 (seats × fare) and rent-or-buy are Build`, calc.length <= 3 && calc.includes('tk|nyc') && calc.some(k => /^fc\|b757\|nyc/.test(k)) && (TYPE !== 'value' || calc.includes('bag|nyc')) && W.some(x => x[0] === 'sf|b757' && x[1] === 'build') && W.some(x => x[0] === 'rb|b757' && x[1] === 'build'), W);
+        ok('day 127: the long-haul ticket card asks for an estimate first', await vis('[data-sopre="tk|nyc"]') && /Round each number: 200 is about 200 and £510 is about £500/.test(await txt('[data-socard="tk|nyc"]')), await txt('[data-socard="tk|nyc"]'));
+        if(TYPE === 'value') ok('day 127: the bag fee card: 4 tenths of 200 passengers, then × £20', /4 tenths of 200 passengers/.test(await txt('[data-socard="bag|nyc"]')), await txt('[data-socard="bag|nyc"]')); }
+      await signs('work ' + day); await p.waitForTimeout(500); await p.click('#nx'); await p.waitForTimeout(80); continue; }
     if(t === 'workings'){ await solveW(); await p.click('#nx'); continue; }
     if(t === 'fuelDesk'){ await shot(`c2-d${day}-fueldesk`); const bn = await p.$('[data-fdb="2"]:not([disabled])'); if(bn){ await bn.click(); await p.waitForTimeout(60); if(await p.$('#fdSignChk')){ const one = await E('(fuelBlock() * fuelOn(S.day)).toFixed(2)'); await p.fill('[data-fds="one"]', one); if(await p.$('[data-fds="all"]')) await p.fill('[data-fds="all"]', (one * 2).toFixed(2)); await p.click('#fdSignChk'); await p.waitForTimeout(60); } if(await p.$('#fdBuy:not([disabled])')) await p.click('#fdBuy'); await p.waitForTimeout(80); } await p.click('#nx'); continue; }
     if(t === 'audit'){ await shot(`c2-d${day}-audit`); await signs('audit ' + day); await p.click('#nx'); continue; }
@@ -138,6 +155,9 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: GAME=a
     if(t === 'weekRun'){ const d0 = day;
       if(d0 === 128 && !info.d128){   // Balance Report v5.0 §2: the 757 on New York at £510, every line from the engine
         const live = JSON.parse(await E('JSON.stringify(lhServiceDay(null))')), full = JSON.parse(await E('JSON.stringify(lhServiceDay(null, 200))')), why = JSON.parse(await E("JSON.stringify((() => { const r = routeById('nyc'), n = S.round; return { table:tableAt(r, 510), growth:growthOf(r, n), season:seasonMult(r, n), dayMult:+demandMult(r, S.day).toFixed(4), plainDay:+demandMult0(r, S.day).toFixed(4), news:newsOn('nyc', S.day).map(x => x.id + ' ×' + x.mult + ' ' + x.segment), want:paxWant(r, 510), rep:S.rep, repFactor:repFactor(), demandAt:demandAt(r, 510), dxb:[tableAt(routeById('dxb'), 490), demandAt(routeById('dxb'), 490)] }; })())")); info.d128 = { live, full, why, crew:JSON.parse(await E("JSON.stringify((() => { const fl = planFlights(), X = dayExtras(fl); return { crew:X.crew, lhCrew:X.lhCrew, crewOn:crewOn(), duty:S.fleet.map(f => [f.planeId, dutyMin(planeById(f.planeId), schedOf(f))]), limit:WORLD.crewDutyMin, perPlane:WORLD.crewCost }; })())")) };
+        info.bags = JSON.parse(await E("JSON.stringify((() => { const X = dayExtras(planFlights()); return { bags:X.bags, bagRev:X.bagRev, nyc:(X.byRoute.nyc || {}).bags, nycPax:(X.byRoute.nyc || {}).pax }; })())"));
+        if(TYPE === 'value') ok('Value: the Bags line: passengers × 4 tenths × £20 on every route (New York: 200 × 0.4 = 80 bags × £20 = £1,600)', info.bags.nyc === 80 && info.bags.nycPax === 200 && info.bags.bagRev === info.bags.bags * 20 && info.bags.bags > 80, info.bags);
+        else ok(`${TYPE}: no bag fee`, !info.bags.bagRev, info.bags);
         ok('Balance Report v5.0 §2: a full 757 to New York at £510 makes £47,426 a day (within £10)', full && Math.abs(full.profit - 47426) <= 10, full);
         ok('the lines: 12,375 L at £2.17, 12.5 h at £1,600, landing £520, £5 a passenger, £500 crew, £4,200 day cost, £1,500 rent', full && full.fuelL === 12375 && full.ppl === 2.17 && full.fly === 20000 && full.land === 520 && full.pax === 1000 && full.crew === 500 && full.day === 4200 && full.rent === 1500, full);
         await shot('c2-08-day128-board'); }
@@ -153,7 +173,9 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: GAME=a
   ok('the opening week flew a day at a time (days 127–133)', wk19.length === 7 && wk19.every(h => h.type === 'day'), wk19.map(h => h.from));
   if(s.day >= 148) ok('then the weeks (13 and 20 January)', HH.some(h => h.type === 'week' && h.from === 134) && HH.some(h => h.type === 'week' && h.from === 141), HH.map(h => h.type + ' ' + h.from));
   const lh = []; for(let d = 127; d <= Math.min(133, s.day - 1); d++) lh.push(Math.round((s.ledger.rev[d] || 0) - (s.ledger.cost[d] || 0)));
-  info.opening = { days:lh, total:lh.reduce((a, b) => a + b, 0), cash127:cash118 };
+  info.opening = { days:lh, total:lh.reduce((a, b) => a + b, 0), cash127:cash118 }; info.type = JSON.parse(await p.evaluate(() => window.__sim.evalIn('JSON.stringify(typeReport())')));
+  ok('the first long-haul ticket sum and fuel line are done, so later weeks go back to the cap and decay', s.day < 134 || (info.type.ch2so && info.type.ch2so.tk === 127 && info.type.ch2so.fuel === 127), info.type.ch2so);
+  if(TYPE === 'value') ok('the bag fee was worked by hand once: the model does it from now on', (s.skills && s.skills.bagFee && s.skills.bagFee.count === 1) || s.day < 128, s.skills && s.skills.bagFee);
   checks.push('info ' + JSON.stringify(info));
   console.log(checks.join('\n')); console.log('OVERFLOW', overflow.length ? overflow : 'none'); console.log('ERRORS', errors.length ? errors : 'none');
   await b.close();

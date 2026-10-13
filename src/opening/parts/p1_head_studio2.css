@@ -143,3 +143,25 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 /* v5.0 long haul: the local arrival on the block, the overnight rotation's one-way block */
 .s2-lh{margin-left:10px;font-size:11px;font-weight:400;color:#b9cdea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .s2-blk.ovn{background:repeating-linear-gradient(135deg,#123a74 0 10px,#16427f 10px 20px)!important;border-right:2px dashed #36c6ff!important}
+
+/* v5.0 push 2: the star rating revealed, the airline type, the bag fee, the two-step sign-offs */
+.rv-g{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:auto auto;gap:12px}.rv-g .rv-worth{grid-column:1 / -1}
+.rv-big{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:6px 4px}.rv-big .stars{font-size:40px;letter-spacing:4px}.rv-big b{font-size:30px;color:#fff}.rv-big p{margin:0;color:#b9cdea;font-size:15px}
+.rv-t td,.rv-t th{font-size:14.5px}.rv-t tfoot th{color:#fff;font-weight:600}.rv-l{margin:6px 0 0;color:#cfe0f6;font-size:15px}
+.rv-rule{display:grid;grid-template-columns:auto auto auto auto;gap:4px 14px;align-items:baseline;justify-content:start;font-size:15px;color:#b9cdea}.rv-rule b{font-size:20px;color:var(--dk-mint)}.rv-rule b:last-child{color:#ff9a9a}
+.rv-sum{margin:10px 0 0;padding:8px 12px;border-left:4px solid var(--dk-mint);background:rgba(60,227,148,.1);font-size:16px;color:#f2fff8}.rv-sum b{color:var(--dk-mint)}
+.ty-lead{margin:0 0 12px;font-size:16px;color:#dbe8fa}.ty-lead b{color:#fff}
+.ty-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ty-c{display:flex;flex-direction:column;gap:8px;text-align:left;padding:14px 16px;border:1px solid #2b5c9e;border-radius:6px;background:#0b1d3c;color:#eef5ff;font:inherit;cursor:pointer}
+.ty-c:hover{border-color:#36c6ff}.ty-c.on{border-color:var(--dk-mint);box-shadow:inset 0 0 0 2px var(--dk-mint);background:rgba(60,227,148,.08)}
+.ty-h b{display:block;font-size:22px;font-weight:650}.ty-h small{color:#9fbde3;font-size:14px}
+.ty-c ul{margin:0;padding-left:18px;font-size:14.5px;line-height:1.45;color:#dbe8fa}.ty-pick{margin-top:auto;align-self:flex-start;padding:4px 12px;border-radius:4px;background:#1a5fd6;font-weight:600;font-size:14px}.ty-c.on .ty-pick{background:#1fb46e}
+.ty-note{margin:12px 0 0;font-size:13.5px;color:#9fbde3}
+.s2-bags em{color:#9fbde3!important}
+.dr-bags b{color:var(--dk-mint)}
+.so-two .so-pre{display:flex;flex-direction:column;gap:6px;padding:8px 10px;margin-top:8px;border:1px solid #1f4c86;border-radius:4px;background:rgba(10,28,58,.45)}
+.so-two .so-pre.ok{border-color:rgba(60,227,148,.45)}.so-two .so-pre.later{opacity:.5}.so-two .so-pre .sc-sn{align-self:flex-start}.so-two .so-pre .sc-note{margin:0}
+.rv-g .dk-pnl{padding-bottom:12px}.rv-g .dk-pnl > :not(.dk-pnl-h){margin-left:16px;margin-right:16px}.rv-g .dk-pnl > .dk-pnl-h + *{margin-top:12px}
+.rv-big .stars{display:flex;gap:6px}.rv-big .stars .st{font-style:normal}
+.rv-t{width:calc(100% - 32px)}
+.rv-t .good{color:var(--dk-mint)}.rv-t .bad{color:#ff9a9a}
