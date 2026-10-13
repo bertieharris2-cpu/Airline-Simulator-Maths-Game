@@ -7,11 +7,8 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 | File | What it is |
 | --- | --- |
-| `airline-opening-prototype.html` | **The active development version.** Chapter 1 of the workbook's story: Launch Day (Monday 2 September 2030) to the chapter review on 28 December 2030, paced by the workbook's Chapters, Calendar and Market sheets. See *Opening prototype* below. |
-| `airline-opening-studio-v2.html` | **The revised Operating Plan Studio, to try, and chapter 2.** The same game as `airline-opening-prototype.html` with Bertie's revised interaction brief on the Monday plan page (*simplify what is visible at any one moment*), Days on every flight (D67), and chapter 2 from January 2031 (Workbook v5.0, in progress). Built from the same parts plus `p4ze_studio2.js`, `p4zf_flightdays.js`, `p4zg_chapter2.js`, `p4zh_longhaul.js`, `p4zj_types.js` and `p1_head_studio2.css`; it shares the main game's save, so either file opens the same game. The main file is untouched by it until the revision is approved. |
-| `airline-opening-prototype-v4.10-studio.html` | **Frozen copy** of the opening prototype as it was on 13 Oct 2026 (the v4.10 Operating Plan Studio), kept so the Studio Bertie liked stays playable while it is revised. Never rebuilt. |
-| `airline-simulator-full-reference.html` | **Frozen.** A snapshot of the complete simulator (weeks, months, later aircraft, international routes, storyline, awards, challenges). Critical fixes only until the opening is approved (so far: the full-screen button, which the teacher's triple-tap corner used to cover). |
-| `airline-simulator.html` | The complete game, identical to the full reference for now: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
+| `airline-opening-prototype.html` | **The game: the one file to open.** Launch Day (Monday 2 September 2030) through chapter 1 (to 28 December 2030), Christmas and New Year, and chapter 2 from 6 January 2031 (in progress). It has the revised Operating Plan Studio, Days on every flight, the pupil record, the Working pad and the shop under Fleet. Double-click to run in Edge or Chrome; no internet needed. Since 13 Oct 2026 this is the only game file (the revised Studio, once `airline-opening-studio-v2.html`, is now this file). |
+| `archive/` | Earlier versions, unchanged: the first full game (`airline-simulator.html` and its identical `airline-simulator-full-reference.html`) and the v4.10 Studio copy (`airline-opening-prototype-v4.10-studio.html`). See `archive/README.md`. |
 | `src/opening/` | **The prototype's source.** `parts/` holds the pieces (style, data, screens, script) that `build.py` joins into `airline-opening-prototype.html`; `tests/` holds the browser tests. Edit the parts, never the built file. See *Building and testing the prototype* below. |
 | `data/` | The world data built in Claude chat: `Airline-World-Workbook.xlsx` (v4.2: chapters, hand-sum rules, routes, aircraft, finance, calendar, market, events, catering, challenges, hunts), the Balance Reports in `data/balance/` (v2–v4.1) and `Change-Note-v4.md`. `Import-Report.md` is written by the importer: what loaded by status, every check, and the "Chapter 1 touches" (non-live values the chapter reads). |
 | `src/opening/engine/world-engine.js` | **The world engine** on the workbook's rules (Fable Pass 1, section 0, in `data/fable-routes-pass1.json`): one aircraft's day with five time bands, time-locked and flexible passengers, costs per service and per day, and a second crew past 12 hours' duty. `node src/opening/tests/balance.test.js` checks it against every figure in `data/Balance-Report.md` (all 40 reproduced, with school rounding). **The game uses it:** `src/opening/parts/p4a2_workbook.js` applies the workbook's values as the page loads and `p4h_world.js` puts its rules into the game's model; `node src/opening/tests/engine.test.js` checks the game prices plans exactly as the engine does. |
@@ -24,7 +21,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
-**The revised Studio (13 Oct 2026, `airline-opening-studio-v2.html` only).** Bertie's interaction brief: *show what the decision being made now needs; keep everything else one click away*. The dark desk style stays. The Monday plan page has three working states (`src/opening/parts/p4ze_studio2.js`):
+**The revised Studio (13 Oct 2026; the game's Studio since the one-file tidy-up).** Bertie's interaction brief: *show what the decision being made now needs; keep everything else one click away*. The dark desk style stays. The Monday plan page has three working states (`src/opening/parts/p4ze_studio2.js`):
 - **The opener** (from week 2): *Last week's regular plan is ready to run again*, with **Keep plan** and **Edit plan**, four figures, the week's timetable (read only), and **Known changes this week**: the fuel price move, a tank that won't cover the week, announced news (each with **Review Paris services**), the board's request, an aircraft with no flights. Keep plan goes on exactly as *Cost your plan* did, so the hand sums, the cap and the audits are unchanged; while the board waits it is held.
 - **The operating plan:** **Active routes** (only the routes flown: fare, demand at that fare, services, seat fill, with *Edit fare*, *View demand*, *+ Service*; two columns from four routes), a toolbar (World report · Try different options · Network map · **Fuel** with a status dot · **Network · N routes** · How it works), the **timetable full width**, and a **summary bar** (seats likely filled, empty seats, turned away, average fare, profit a day, **View trade-offs**).
   - **Route editor** (a fare or *Edit fare*): every fare with the people at it, demand against seats ("22 more people want to fly than you have seats…"), add a service, stop serving. The strip shows that route.
@@ -73,7 +70,19 @@ The opening is being made excellent before the later campaign continues. `airlin
   - **Tested** by `chapter2.test.js` with `TYPE=value` (default) and `TYPE=premium`.
   - **Coming in push 3:** events with options; the nineteen news items (`routes = all`, closures); challenges and hunts; the chapter 2 report for Fable.
 
-**From Bertie's run-through (both game files):**
+**From Bertie's run-through, 13 Oct 2026 (second round):**
+- **One game file.** `airline-opening-prototype.html` is now the game (the revised Studio, Days, chapter 2). `airline-opening-studio-v2.html` is gone (saves are shared, so nothing is lost). The old full game and the v4.10 copy are in `archive/`.
+- **The shop is under Fleet.** The Fleet panel has *Add an aircraft*: what is in the shop today, with the rent and the price, and **Rent or buy an aircraft**. Tuesday–Sunday's board has an **Aircraft shop** button too, because it has no side menu.
+  - It opens the usual path: the comparison while there is one aircraft, the rent-or-buy sum, Rent · Finance · Buy, the paint shop and the hangar. Then he is back where he was.
+  - Bought on a run day, the aircraft costs nothing and flies nothing that day. Services chosen on the comparison fly from the next day; otherwise Monday's plan says it has no flights yet.
+  - The button is off before 9 September and while flights are in the air (it says why).
+- **A Working pad on every sum box.** A **Working** button beside each typed × answer opens a pad with the column method in digit boxes:
+  - it covers the fuel desk's first order, the sign-off cards, the estimate and the Service Cost card's lines (and *Add the lines* as a column addition);
+  - typing goes right to left, with a carry strip above each line and one line for each part of the smaller number;
+  - money with pence is worked in pence, then ÷ 100.
+  - **Use this answer** fills the box, and the box's own Check decides. What was on the pad goes into the pupil record.
+
+**From Bertie's run-through (first round):**
 - **The fuel cost is one method: make it pence.** The Service Cost card walks it in three boxes:
   1. the price × 100 to whole pence (£1.47 × 100 = 147p);
   2. the litres × the pence, a line for each part (230 × 7p, 230 × 40p, 230 × 100p), then add the lines;
@@ -271,8 +280,9 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Import:** `python3 tools/import_world.py` after editing the workbook. Live rows only; the report's *Chapter 1 touches* lists every non-live value the chapter reads (today: Istanbul's archetype, `timeSkip`, `reputationFromDate`).
 - **Tests** (Playwright, with the pre-installed Chromium; `NODE_PATH=/opt/node-tools/node_modules`):
   - `node src/opening/tests/week.test.js` plays chapter 1 a week at a time (v4.4) with the Balance Report's plans (`UPTO` day, `OUT` for screenshots): Launch Day's sums in order, the board, the Sunday reviews, the Saab on day 8, Amsterdam on day 15, the ATR on Madrid on day 22; it checks the Calculate count for weeks 1–4, that the sweep's best plan beats the pupil's, Buy greyed in week 2 and the neglect lines from week 3.
-  - `GAME=airline-opening-studio-v2.html node src/opening/tests/week.test.js` plays the same chapter on the revised Studio: the launch flow on Choose where to fly, the opener, a news review, the route and flight editors, the drawer, then everything else as for the main file (the tests take the game file from `GAME`).
-  - `node src/opening/tests/chapter2.test.js` (revised Studio) carries on from a save at chapter 1's review. Make the save with `GAME=airline-opening-studio-v2.html UPTO=200 SAVE=/tmp/airline-ch1-end.txt node week.test.js`, or pass `CODE=<file>`. The test plays:
+  - The game is the revised Studio, so `week.test.js` also plays the launch flow on Choose where to fly, the opener, a news review, the route and flight editors and the drawer. Every test takes the game file from `GAME` (default `airline-opening-prototype.html`).
+  - `CODE=<day-8 save> node src/opening/tests/fleetshop.test.js`: Not today on day 8, the shop in the Fleet panel, Tuesday's board shop button, renting the Saab mid-week (no costs or flights until the next day), and the Working pad on the fuel desk (4 × £1,470 typed digit by digit, Use this answer, signed, kept in the record). Make the save with `UPTO=8 SAVE=<file> node week.test.js`.
+  - `node src/opening/tests/chapter2.test.js` carries on from a save at chapter 1's review. Make the save with `UPTO=200 SAVE=/tmp/airline-ch1-end.txt node week.test.js`, or pass `CODE=<file>`. The test plays:
     - Christmas and New Year, then day 127: lease a 757, New York at £510 at 06:30;
     - the Balance Report v5.0 §2 check (£47,426 within £10), the refused second service, the local time, the overnight rotation (Delhi, tried early) and growth;
     - then the weeks and months to `UPTO` (default 155; 400 reaches the chapter 2 review).

@@ -1,6 +1,6 @@
 /* ==================================================================
    CHAPTER 2, PUSH 2 (Workbook v5.0, D69–D71): reputation revealed, the airline type (light), Value's bag fee and
-   chapter 2's sign-offs. The revised Studio only (airline-opening-studio-v2.html).
+   chapter 2's sign-offs. In the game (once the revised Studio only).
    - Reputation (Settings reputationFromDate, else chapter 2's first day; reputationPerHalfStar; reputationBankedFromAutumn):
      the autumn's event stars were banked silently; on 6 January the rating is revealed at that level with a card listing
      what moved it, and from then demand on every route is × (1 + 0.05 × half-stars from 3). Only the workbook's stated
@@ -246,7 +246,7 @@ soSpec = function(it){
   const sp = soSpecT0(it); if(!sp || !it || !it.lhEst) return sp;
   const sig = v => { if(!v) return 0; const p = Math.pow(10, Math.floor(Math.log10(Math.abs(v)))); return Math.round(v / p) * p; }, ea = sig(sp.a.v), eb = sig(sp.b.v);
   sp.ask = `The ticket money from ${routeById(it.route).city} on a day of this plan. Estimate first, then work it out.`;
-  sp.pre = { lab:`${num(ea)} × ${money(eb)}`, want:ea * eb, unit:'£', est:true, round:`${num(sp.a.v)} is about ${num(ea)} and ${money(sp.b.v)} is about ${money(eb)}`,
+  sp.pre = { lab:`${num(ea)} × ${money(eb)}`, a:ea, b:eb, want:ea * eb, unit:'£', est:true, round:`${num(sp.a.v)} is about ${num(ea)} and ${money(sp.b.v)} is about ${money(eb)}`,
     hint:`${num(ea)} × ${num(eb)}: multiply the first digits, then put back the noughts (${String(ea).replace(/^\d/, '').length + String(eb).replace(/^\d/, '').length} of them).` };
   return sp;
 };

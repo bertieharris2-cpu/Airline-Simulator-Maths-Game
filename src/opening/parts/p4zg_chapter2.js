@@ -1,5 +1,5 @@
 /* ==================================================================
-   CHAPTER 2 "Going long" (Workbook v5.0, D68–D73): the revised Studio only (airline-opening-studio-v2.html).
+   CHAPTER 2 "Going long" (Workbook v5.0, D68–D73): in the game since 13 Oct 2026 (once the revised Studio only).
    The beats carry on past chapter 1's review (28 Dec 2030):
      - Christmas and New Year (days 119–126) fly the winter plan by themselves, one run, then a results card;
      - chapter 2's opening week a day at a time, from the Calendar (days 127–133): Monday the plan, the run on the board,

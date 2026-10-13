@@ -3891,6 +3891,196 @@ body.desk .st-add{height:26px;line-height:26px;font-size:13px!important}
 .st-sel .ad-sel-t{flex-direction:row;align-items:baseline;gap:8px;min-width:0;overflow:hidden}.st-sel .ad-sel-t .kl{font-size:11px;color:#7fb6ee}.st-sel .ad-sel-t b{font-size:14px;color:#fff}.st-sel .ad-sel-t small{font-size:12px;color:#9fbde3;overflow:hidden;text-overflow:ellipsis}
 .st-sel .btn{min-height:30px;flex:none}
 .st-sel .ad-del{font-size:12px;color:#9fbde3;white-space:nowrap}.st-sel .ad-del kbd{font:inherit;font-size:11.5px;padding:0 5px;border:1px solid #2b5c9e;border-radius:3px;background:#0a1a35;color:#eef5ff}
+
+/* ==================================================================
+   The revised Operating Plan Studio (airline-opening-studio-v2.html only): the opener, the operating plan, the route and
+   service editors, the trade-offs drawer and Change network. Same dark desk style as the v4.10 Studio.
+   ================================================================== */
+.s2-status{display:inline-block;vertical-align:middle;margin-left:14px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:3px;background:#123a74;color:#9fd0ff}
+.s2-status.chg{background:rgba(54,198,255,.16);color:var(--dk-cyan)}.s2-status.warn{background:rgba(255,181,71,.16);color:var(--dk-amber)}
+.s2{gap:8px}
+.s2 .grow{flex:1}
+.s2-none{margin:8px 14px;font-size:14px;color:#9fbde3}
+.s2-x{width:28px;height:28px;flex:none;font:inherit;font-size:18px;line-height:1;color:#cfe0f7;background:#0a1a35;border:1px solid #2b5c9e;border-radius:3px;cursor:pointer}.s2-x:hover{border-color:var(--dk-cyan);color:#fff}
+
+/* the opener */
+.s2-op{gap:10px}
+.s2-otop{display:grid;grid-template-columns:minmax(0,52fr) minmax(0,48fr);gap:12px;flex:none}
+.s2-oc{padding:16px 20px;gap:14px;border-top:3px solid #1a78ff}
+.s2-oh .kl{display:inline-flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#7fb6ee}.s2-oh .kl .di{width:15px;height:15px}
+.s2-oh h2{margin:6px 0 4px;font-size:24px;font-weight:600;color:#fff}.s2-oh p{margin:0;font-size:15px;color:#b9cdea}
+.s2-oact{display:flex;gap:10px;margin-top:14px}.s2-oact .btn .di{width:18px;height:18px;vertical-align:-3px;margin-right:4px}
+.s2-ofs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.s2-of{display:flex;flex-direction:column;gap:2px;padding:8px 12px;background:#0a1a35;border:1px solid #1c3f73}
+.s2-of small{font-size:12px;color:#9fbde3}.s2-of b{font-size:19px;font-weight:600;color:#fff}.s2-of em{font-style:normal;font-size:12px;color:#9fbde3}
+.s2-of.warn b{color:var(--dk-amber)}.s2-of.good b{color:var(--dk-mint)}.s2-of.bad b{color:var(--dk-red)}
+.s2-ochg{padding:0 0 6px;min-height:0;overflow:auto}
+.s2-cl{list-style:none;margin:0;padding:6px 14px;display:flex;flex-direction:column;gap:6px}
+.s2-cl li{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 10px;background:#0a1a35;border-left:3px solid #2b5c9e}
+.s2-cl li .s2-ct{flex:1 1 260px}.s2-cl li .s2-ci{flex:none;width:22px}
+.s2-cl li.warn{border-left-color:var(--dk-amber)}.s2-cl li.up{border-left-color:var(--dk-mint)}.s2-cl li.good{border-left-color:#1fb46e}
+.s2-ci .di{width:20px;height:20px;color:#7cc4ff}.s2-cl li.warn .s2-ci .di{color:var(--dk-amber)}.s2-cl li.up .s2-ci .di{color:var(--dk-mint)}
+.s2-ct{display:flex;flex-direction:column;gap:2px;min-width:0}.s2-ct b{font-size:14px;font-weight:500;color:#eef5ff;line-height:1.3}.s2-ct small{font-size:12px;color:#9fbde3}
+.s2-ca{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}.s2-ca .btn{white-space:nowrap}.s2-ca .btn .di{width:14px;height:14px;vertical-align:-2px}
+.s2-otl{flex:1;min-height:0}
+.s2-ln{font-size:11.5px;color:#9fbde3}
+
+/* the operating plan */
+.s2-focus{display:flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid var(--dk-cyan);background:rgba(54,198,255,.08);font-size:14px;color:#eef5ff;flex:none}.s2-focus .di{width:18px;height:18px;color:var(--dk-cyan)}
+.s2-top{position:relative;z-index:5;display:flex;flex-direction:column;gap:6px;flex:none}
+.s2-routes{padding:6px 12px 8px}
+.s2-routes .dk-pnl-h{display:flex;align-items:center;gap:10px;margin:0 0 4px}.s2-routes .dk-pnl-h h2{margin:0;font-size:17px;font-weight:600}.s2-routes .dk-pnl-h .sub{font-size:12.5px;color:#9fbde3}
+.s2-netb .di{width:14px;height:14px;vertical-align:-2px}
+.s2-rt{display:grid;grid-template-columns:minmax(0,1fr);gap:4px 18px}.s2-rt.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.s2-rh,.s2-r{display:grid;grid-template-columns:minmax(120px,190px) 78px 64px 64px minmax(110px,220px) minmax(0,1fr);gap:10px;align-items:center}
+.s2-rh span:nth-child(3),.s2-rh span:nth-child(4){text-align:center}.s2-rh span:nth-child(2){text-align:center}
+.s2-rt.two .s2-rh,.s2-rt.two .s2-r{grid-template-columns:minmax(110px,1.2fr) 70px 54px 54px minmax(80px,1fr) auto}
+.s2-ra{justify-content:flex-end}
+.s2-rh{font-size:11.5px;color:#7fb6ee;letter-spacing:.04em;padding:0 6px 2px;border-bottom:1px solid #1c3f73}
+.s2-r{padding:3px 6px;border-bottom:1px solid #12305a;min-height:32px}.s2-r:hover{background:rgba(26,120,255,.08)}
+.s2-r.on,.s2-r.dem{background:rgba(26,120,255,.14)}.s2-r.focus{box-shadow:inset 3px 0 0 var(--dk-cyan);background:rgba(54,198,255,.1)}
+.s2-rc{display:flex;align-items:center;gap:6px;min-width:0}.s2-rc b{font-size:14.5px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.s2-rc .st-code{font-size:11px;color:#7fb6ee}
+.s2-fare{font:inherit;font-size:14px;font-weight:600;color:#fff;background:#0f2a52;border:1px solid #2b5c9e;padding:3px 8px;cursor:pointer;text-align:center}.s2-fare:hover{border-color:var(--dk-cyan)}
+.s2-n{font-size:14px;color:#eef5ff;text-align:center}
+.s2-fl{display:flex;align-items:center;gap:6px}.s2-fl .st-bf{flex:1;margin:0}.s2-fl b{font-size:13px;color:#fff;min-width:36px;text-align:right}
+.s2-ra{display:flex;gap:10px;white-space:nowrap}.s2-ra .dk-link{font-size:12.5px}.s2-ra .dk-link[aria-pressed="true"]{color:#fff;text-decoration:underline}
+.s2-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.s2-tools .plw-tools{display:inline-flex;gap:8px}.s2-tools .btn .di{width:15px;height:15px;vertical-align:-3px;margin-right:4px}
+.s2-fuel{position:relative}.s2-fuel small{margin-left:6px;font-size:12px;color:var(--dk-amber)}
+.s2-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--dk-amber);margin-left:7px;vertical-align:1px;box-shadow:0 0 6px rgba(255,181,71,.8)}.s2-dot.ok{background:var(--dk-mint);box-shadow:none}
+.s2-fuel.warn{border-color:var(--dk-amber)!important}
+
+/* the timetable, full width */
+.s2-tt{position:relative;flex:1;min-height:0}
+.s2-legend{display:inline-flex;gap:10px;font-size:11.5px;color:#9fbde3;white-space:nowrap}.s2-legend i{display:inline-block;width:14px;height:7px;border-radius:4px;margin-right:4px;vertical-align:middle}.s2-legend i.fill-good{background:#3ce394}.s2-legend i.fill-mid{background:#ffb547}.s2-legend i.fill-low{background:#ff5f5f}
+.s2-bfare{margin-left:auto;padding-left:6px;font-size:11px;font-weight:500;color:#b9cdea}
+.s2-blk.hl{box-shadow:0 0 0 2px rgba(54,198,255,.7),0 0 14px rgba(54,198,255,.45)}
+.st-row.hl .st-plane{box-shadow:inset 3px 0 0 var(--dk-cyan)}
+.s2-grp{border-bottom:1px solid #12305a}
+.s2-gh{display:flex;align-items:center;gap:10px;width:100%;padding:4px 6px;font:inherit;font-size:13px;color:#cfe0f7;background:#0a1a35;border:1px solid #1c3f73;cursor:pointer;text-align:left}
+.s2-gh b{font-size:14px;color:#fff;font-weight:600}.s2-gh .ad-pic{width:42px;height:auto}.s2-gh .st-bf{width:120px;margin:0}.s2-gh .mono{font-size:12.5px;color:#fff}
+.s2-gc .di{width:14px;height:14px;transition:transform .15s}.s2-grp.open .s2-gc .di{transform:rotate(90deg)}
+
+/* the service editor: a small panel by the pressed flight */
+.s2-pop{position:absolute;z-index:7;width:520px;max-width:calc(100% - 16px);background:#0b1f40;border:1px solid var(--dk-cyan);box-shadow:0 14px 34px rgba(0,0,0,.6);padding:8px 10px;display:flex;flex-direction:column;gap:7px}
+.s2-pop-h{display:flex;align-items:center;gap:8px}.s2-pop-h b{font-size:15px;font-weight:600;color:#fff;white-space:nowrap}.s2-pop-h small{flex:1;font-size:12px;color:#9fbde3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s2-pop-b{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}.s2-pop-b label{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:#9fbde3}
+.s2-pop-b select{font:inherit;font-size:13px;color:#eef5ff;background:#0a1a35;border:1px solid #2b5c9e;padding:3px 4px;max-width:170px}
+.s2-pop .btn{min-height:30px;padding:3px 10px;font-size:13px}
+.s2-pop-f{display:flex;align-items:center;gap:8px;border-top:1px solid #1c3f73;padding-top:6px}
+.s2-pop .ad-del{font-size:12px;color:#9fbde3}.s2-pop .ad-del kbd{font:inherit;font-size:11.5px;padding:0 5px;border:1px solid #2b5c9e;border-radius:3px;background:#0a1a35;color:#eef5ff}
+
+/* the route editor: one route's fares */
+.s2-ed{position:absolute;z-index:8;top:0;right:0;width:430px;max-height:560px;overflow:auto;background:#0b1f40;border:1px solid var(--dk-cyan);box-shadow:0 18px 40px rgba(0,0,0,.6);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.s2-ed-h{display:flex;align-items:center;gap:8px}.s2-ed-h h3{margin:0;font-size:20px;font-weight:600;color:#fff}.s2-ed-h .st-code{color:#7fb6ee;font-size:12px}
+.s2-ed-n{margin:0;font-size:13.5px;color:#b9cdea}.s2-ed-n b{color:#fff}
+.s2-ft{width:100%;border-collapse:collapse}.s2-ft th{font-size:11.5px;font-weight:600;color:#7fb6ee;text-align:left;padding:3px 6px;border-bottom:1px solid #1c3f73}.s2-ft th.num,.s2-ft td.num{text-align:right}
+.s2-ft td{padding:3px 6px;border-bottom:1px solid #12305a;font-size:14px;color:#eef5ff}.s2-ft tr.on td{background:rgba(26,120,255,.18)}
+.s2-fb{font:inherit;font-size:14px;font-weight:600;min-width:64px;color:#fff;background:#0f2a52;border:1px solid #2b5c9e;padding:3px 8px;cursor:pointer}.s2-fb[aria-pressed="true"]{background:#1a62d6;border-color:#36c6ff}.s2-fb:hover{border-color:var(--dk-cyan)}
+.s2-fbar{position:relative;display:block;width:150px;height:10px;background:rgba(255,255,255,.08);border-radius:2px}.s2-fbar i{display:block;height:100%;background:linear-gradient(90deg,#1258c9,#36c6ff);border-radius:2px}.s2-fbar b{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--dk-amber)}
+.s2-cmp{display:grid;grid-template-columns:auto auto 1fr;gap:4px 16px;align-items:center;padding:8px 10px;background:#0a1a35;border:1px solid #1c3f73}
+.s2-cmp span{display:flex;flex-direction:column}.s2-cmp small{font-size:11.5px;color:#9fbde3}.s2-cmp b{font-size:20px;font-weight:600;color:#fff}.s2-cmp p{margin:0;font-size:13px;color:#cfe0f7;line-height:1.3}
+.s2-ed-f{display:flex;gap:8px;align-items:center}.s2-ed-f .btn .di{width:14px;height:14px;vertical-align:-2px}
+
+/* the summary bar */
+.s2-sum{display:flex;align-items:center;gap:18px;flex:none;padding:7px 14px;background:linear-gradient(180deg,#0b1d3c,#08162f);border:1px solid #1f467e}
+.s2-sl{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#7fb6ee}
+.s2-si{display:flex;flex-direction:column;gap:0}.s2-si small{font-size:11.5px;color:#9fbde3}.s2-si > span{display:flex;align-items:baseline;gap:6px}.s2-si b{font-size:18px;font-weight:600;color:#fff}.s2-si em{font-style:normal;font-size:12px;color:#9fbde3}
+.s2-si.warn b{color:var(--dk-amber)}.s2-si.good b{color:var(--dk-mint)}.s2-si.bad b{color:var(--dk-red)}.s2-si.fill-good em{color:#3ce394}.s2-si.fill-mid em{color:#ffb547}.s2-si.fill-low em{color:#ff5f5f}
+.s2-trb{display:inline-flex;align-items:center;gap:8px}.s2-trb .di{width:14px;height:14px}
+.s2-badge{font-style:normal;display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--dk-gold);color:#0a1a35;font-size:12px;font-weight:700}
+
+/* the trade-offs drawer */
+.s2-dr{position:absolute;z-index:9;top:0;right:0;bottom:0;width:440px;overflow:auto;background:#0b1f40;border-left:1px solid var(--dk-cyan);box-shadow:-18px 0 40px rgba(0,0,0,.55);padding:12px 16px;display:flex;flex-direction:column;gap:10px;animation:s2In .18s ease-out}
+@keyframes s2In{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+.s2-dr-h{display:flex;align-items:center;gap:8px}.s2-dr-h .di{width:20px;height:20px;color:var(--dk-gold)}.s2-dr-h h2{margin:0;font-size:20px;font-weight:600;color:#fff}
+.s2-dr h3{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7fb6ee}
+.s2-dr .st-tips li{font-size:14px;line-height:1.35}
+.s2-allb{align-self:flex-start}.s2-allb .di{width:13px;height:13px;vertical-align:-2px}
+.s2-groups{display:flex;flex-direction:column;gap:10px}
+.s2-g h4{margin:0 0 4px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#9fd0ff}
+.s2-g ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}.s2-g li{font-size:13.5px;color:#e3eefc;line-height:1.35}.s2-g p{margin:0;font-size:13px}
+.s2-money{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.s2-money span{display:flex;flex-direction:column;padding:6px 8px;background:#0a1a35;border:1px solid #1c3f73}.s2-money small{font-size:11.5px;color:#9fbde3}.s2-money b{font-size:16px;color:#fff}
+
+/* Change network */
+.s2-net{gap:8px}
+.s2-nh{display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex:none}
+.s2-haul button small{margin-left:4px;font-size:11px;opacity:.8}
+.s2-nn{display:flex;align-items:center;gap:8px;margin:0;font-size:14px;color:#b9cdea;flex:none}.s2-nn .di{width:18px;height:18px;color:#7cc4ff}.s2-nn b{color:#fff}
+.s2-added{display:flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid #1fb46e;background:rgba(31,180,110,.1);font-size:14px;color:#eef5ff;flex:none}.s2-added .di{width:18px;height:18px;color:var(--dk-mint)}
+.s2-ng{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));grid-auto-rows:min-content;gap:10px;padding-right:4px}
+.s2-nc{position:relative}.s2-nc .st-card{height:100%}
+.s2-stop{align-self:flex-start;font-size:12.5px;color:#ff9b9b!important}
+.s2-wra{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+
+/* compact buttons inside the revised Studio (the desk's buttons are sized for the action bar) */
+body.desk .s2 .btn.small,body.desk .s2-pop .btn,body.desk .s2-ed .btn{min-height:0;height:auto;padding:4px 11px;font-size:13.5px;line-height:1.35;border-radius:4px}
+body.desk .s2 .btn.small .di{width:14px;height:14px;vertical-align:-2px}
+body.desk .s2-trb{padding:6px 14px;font-size:15px}
+.s2-otop{align-items:start}
+.s2-oc{height:100%}
+.s2-ochg{max-height:330px}
+.s2-cf-h{color:#7fb6ee;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+
+/* D67: Days on every flight */
+.s2-dt button{font-size:12.5px;padding:4px 10px}
+.s2-dchip{display:inline-block;margin-left:6px;padding:0 5px;border-radius:3px;background:#36c6ff;color:#06182f;font-size:10px;font-weight:700;letter-spacing:.02em;vertical-align:1px}
+.s2-split{display:inline-flex;gap:14px;align-items:baseline}
+.s2-sp{display:inline-flex;align-items:baseline;gap:5px}.s2-sp small{font-size:11.5px;color:#9fbde3}.s2-sp b{font-size:17px;font-weight:600;color:#fff}.s2-sp em{font-style:normal;font-size:12px}
+.s2-sp em.fill-good{color:#3ce394}.s2-sp em.fill-mid{color:#ffb547}.s2-sp em.fill-low{color:#ff5f5f}
+.s2-sl small{display:block;font-size:10px;letter-spacing:.04em;text-transform:none;color:#9fbde3;font-weight:500}
+.s2-ofsp .s2-split{flex-direction:column;gap:2px}.s2-ofsp .s2-sp b{font-size:16px}
+.s2-nd{font:inherit;font-size:13px;color:#eef5ff;background:#0a1a35;border:1px solid #2b5c9e;padding:3px 4px}
+.s2-rvsplit{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;margin:2px 0 4px}.s2-rvsplit > small{font-size:11.5px;color:#9fbde3}
+.s2-rt.two .s2-rc .st-code{display:none}
+
+/* v5.0 long haul: the local arrival on the block, the overnight rotation's one-way block */
+.s2-lh{margin-left:10px;font-size:11px;font-weight:400;color:#b9cdea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.s2-blk.ovn{background:repeating-linear-gradient(135deg,#123a74 0 10px,#16427f 10px 20px)!important;border-right:2px dashed #36c6ff!important}
+
+/* v5.0 push 2: the star rating revealed, the airline type, the bag fee, the two-step sign-offs */
+.rv-g{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:auto auto;gap:12px}.rv-g .rv-worth{grid-column:1 / -1}
+.rv-big{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:6px 4px}.rv-big .stars{font-size:40px;letter-spacing:4px}.rv-big b{font-size:30px;color:#fff}.rv-big p{margin:0;color:#b9cdea;font-size:15px}
+.rv-t td,.rv-t th{font-size:14.5px}.rv-t tfoot th{color:#fff;font-weight:600}.rv-l{margin:6px 0 0;color:#cfe0f6;font-size:15px}
+.rv-rule{display:grid;grid-template-columns:auto auto auto auto;gap:4px 14px;align-items:baseline;justify-content:start;font-size:15px;color:#b9cdea}.rv-rule b{font-size:20px;color:var(--dk-mint)}.rv-rule b:last-child{color:#ff9a9a}
+.rv-sum{margin:10px 0 0;padding:8px 12px;border-left:4px solid var(--dk-mint);background:rgba(60,227,148,.1);font-size:16px;color:#f2fff8}.rv-sum b{color:var(--dk-mint)}
+.ty-lead{margin:0 0 12px;font-size:16px;color:#dbe8fa}.ty-lead b{color:#fff}
+.ty-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ty-c{display:flex;flex-direction:column;gap:8px;text-align:left;padding:14px 16px;border:1px solid #2b5c9e;border-radius:6px;background:#0b1d3c;color:#eef5ff;font:inherit;cursor:pointer}
+.ty-c:hover{border-color:#36c6ff}.ty-c.on{border-color:var(--dk-mint);box-shadow:inset 0 0 0 2px var(--dk-mint);background:rgba(60,227,148,.08)}
+.ty-h b{display:block;font-size:22px;font-weight:650}.ty-h small{color:#9fbde3;font-size:14px}
+.ty-c ul{margin:0;padding-left:18px;font-size:14.5px;line-height:1.45;color:#dbe8fa}.ty-pick{margin-top:auto;align-self:flex-start;padding:4px 12px;border-radius:4px;background:#1a5fd6;font-weight:600;font-size:14px}.ty-c.on .ty-pick{background:#1fb46e}
+.ty-note{margin:12px 0 0;font-size:13.5px;color:#9fbde3}
+.s2-bags em{color:#9fbde3!important}
+.dr-bags b{color:var(--dk-mint)}
+.so-two .so-pre{display:flex;flex-direction:column;gap:6px;padding:8px 10px;margin-top:8px;border:1px solid #1f4c86;border-radius:4px;background:rgba(10,28,58,.45)}
+.so-two .so-pre.ok{border-color:rgba(60,227,148,.45)}.so-two .so-pre.later{opacity:.5}.so-two .so-pre .sc-sn{align-self:flex-start}.so-two .so-pre .sc-note{margin:0}
+.rv-g .dk-pnl{padding-bottom:12px}.rv-g .dk-pnl > :not(.dk-pnl-h){margin-left:16px;margin-right:16px}.rv-g .dk-pnl > .dk-pnl-h + *{margin-top:12px}
+.rv-big .stars{display:flex;gap:6px}.rv-big .stars .st{font-style:normal}
+.rv-t{width:calc(100% - 32px)}
+.rv-t .good{color:var(--dk-mint)}.rv-t .bad{color:#ff9a9a}
+
+/* the Working pad (13 Oct 2026): a button beside each × box, a column method in digit boxes */
+.pad-btn{margin-left:6px;padding:3px 9px;border:1px solid #36c6ff;border-radius:4px;background:rgba(54,198,255,.1);color:#bfeaff;font:inherit;font-size:13px;font-weight:600;cursor:pointer;vertical-align:middle;white-space:nowrap}
+.pad-btn:hover{background:rgba(54,198,255,.22)}
+.wpop{position:fixed;z-index:60;min-width:300px;max-width:min(560px,94vw);max-height:92vh;overflow:auto;padding:12px 14px;border:1px solid #36c6ff;border-radius:6px;background:#0b1d3c;box-shadow:0 12px 40px rgba(0,0,0,.6);color:#eef5ff;font-family:inherit}
+.wp-h{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}.wp-h b{font-size:17px}.wp-h span{flex:1;color:#9fbde3;font-size:14px}
+.wp-note{margin:2px 0 6px;font-size:13px;color:#b9cdea}
+.wp-grid{display:flex;flex-direction:column;gap:2px;align-items:flex-end;padding:6px 4px}
+.wp-r{display:grid;grid-template-columns:repeat(var(--w),30px);gap:3px}
+.wp-s{display:flex;align-items:center;justify-content:center;height:30px;font:600 20px/1 ui-monospace,Menlo,Consolas,monospace;color:#fff}
+.wp-d{width:30px;height:34px;padding:0;text-align:center;font:600 20px/1 ui-monospace,Menlo,Consolas,monospace;color:#7fd0ff;background:#071430;border:1px solid #2b5c9e;border-radius:3px}
+.wp-d:focus,.wp-c:focus{outline:2px solid #36c6ff;outline-offset:0}
+.wp-cy{gap:3px}.wp-c{width:30px;height:18px;padding:0;text-align:center;font:600 12px/1 ui-monospace,Menlo,Consolas,monospace;color:#ffb547;background:transparent;border:1px dashed #2b5c9e;border-radius:3px}
+.wp-line{align-self:stretch;height:2px;margin:3px 0;background:#9fbde3}
+.wp-pl{align-self:stretch;text-align:left}.wp-pl small{font-size:11.5px;color:#9fbde3}
+.wp-pnd{display:flex;align-items:center;gap:8px;margin:8px 0 2px;font-size:14px}.wp-pnd .sc-in input{width:130px}
+.wp-act{display:flex;align-items:center;gap:10px;margin-top:8px}.wp-msg{font-size:13px;color:#ffb547}
+/* the shop under Fleet */
+.fs-list{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}.fs-row{display:grid;grid-template-columns:minmax(0,1.4fr) .6fr 1fr 1fr;gap:10px;font-size:14.5px;color:#dbe8fa}.fs-row b{color:#fff}
+.fs-act{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.fs-act .muted{font-size:14px}
+.fs-board .di,.fs-board svg{width:16px;height:16px;vertical-align:-3px}.fs-board-wrap{position:fixed;right:16px;bottom:16px}
+.pad-wrap{display:inline-flex;align-items:center;gap:6px;justify-self:end;min-width:0}.pad-wrap .pad-btn{margin-left:0}
+.pad-wrap .sc-in{flex:0 0 auto}.pad-wrap .sc-in input{min-width:118px}
 </style>
 </head>
 <body>
@@ -14936,6 +15126,1313 @@ function recordPrintHtml(o){
     <body><div class="bar"><button onclick="print()">Print</button></div>${head}${body}</body></html>`;
 }
 function recordPrint(o){ const w = window.open('', '_blank'); if(!w){ toast('Allow pop-ups to print the record.'); return; } w.document.write(recordPrintHtml(o)); w.document.close(); }
+
+/* ==================================================================
+   The Operating Plan Studio, revised (Bertie's interaction brief, 13 Oct 2026): "do not simplify the airline; simplify
+   what is visible at any one moment". The game's Studio (one file since 13 Oct 2026); it
+   builds on the v4.10 Studio (p4zd_studio.js), whose helpers this part reuses (route cards, the demand strip, the fill colours, PlanTips).
+   The Monday plan page has three working states:
+     opener  — from week 2: last week's regular plan is ready to run again (Keep plan / Edit plan), with the known changes
+     plan    — the Operating Plan: the active routes (the current choice only), a toolbar, the timetable full width, a
+               summary bar; a route editor for one route's fares, a service editor on a pressed flight, and the
+               trade-offs drawer (closed by default)
+     network — Change network: the destination browser, filtered by haul, sorted, foregrounding what the aircraft can fly
+   News goes straight to the route it touches (Review Paris services). Four or more aircraft group by type.
+   Parked (Bertie): Focus View and other accessibility options; regular operating patterns (designed, next pass).
+   ================================================================== */
+UI.s2 = UI.s2 || {};
+/* short, medium and long haul by distance: defaults until Fable puts them in the workbook (Settings shortHaulMaxKm, mediumHaulMaxKm) */
+const s2HaulMax = () => ({ short:+(WBS().shortHaulMaxKm || 1500), medium:+(WBS().mediumHaulMaxKm || 4000) });
+function haulOf(r){ const km = routeKm(r), m = s2HaulMax(); return km <= m.short ? 'short' : km <= m.medium ? 'medium' : 'long'; }
+const HAUL_NAME = { all:'All', short:'Short haul', medium:'Medium haul', long:'Long haul' };
+const s2Opens = () => S.phase !== 'setup' && (S.day || 1) >= 8;   // the opener: from week 2, once there is a plan to keep
+
+/* the page's working state: one per plan step (a new Monday starts again at the opener) */
+function s2State(pl){
+  const key = (S.day || 1) + '|' + (S.si || 0);
+  if(UI.s2.key !== key){ const has = pl.fleet.some(x => x.sched.length);
+    UI.s2 = { key, mode:!has ? 'network' : s2Opens() ? 'opener' : 'plan', route:null, strip:null, drawer:false, all:false, haul:'all', sort:'demand', suit:true, focus:null, focusText:null, open:{}, added:null, stopAsk:null, dt:'weekday', newDays:'all', startKey:planKey(pl) }; }
+  return UI.s2;
+}
+let S2V = { w:null, e:null, fd:false, split:false };   // the page's weekday and weekend lines (D67), set on each render
+/* the week's fuel: weekday litres on the weekdays left, weekend litres at the weekend */
+function s2WeekNeed(){ const d = S.day || 1, n = Math.max(1, 7 - ((d - 1) % 7)); let t = 0; for(let q = d; q < d + n; q++) t += ((S2V.e && dayTypeOf(q) === 'weekend' ? S2V.e : S2V.w) || {}).fuelL || 0; return t; }
+/* news whose every date is a Saturday or Sunday (the Dublin rugby): its Review presets a Sat–Sun service */
+function s2WeekendOnly(n){ if(!n || !n.start || !n.end) return false; for(let d = dayOfDate(n.start); d <= dayOfDate(n.end); d++) if(dayTypeOf(d) !== 'weekend') return false; return true; }
+function s2Review(id, nid){ const n = (WORLD.routeNews || []).find(z => z.id === nid), we = flightDaysOn() && s2WeekendOnly(n); UI.tlSel = null; UI.stDemand = true;
+  Object.assign(UI.s2, { mode:'plan', focus:id, route:id, strip:id, focusText:n ? n.headline : null, newDays:we ? 'weekend' : 'all', dt:we ? 'weekend' : UI.s2.dt }); }
+/* Mon–Fri and Sat–Sun seat fill side by side (summaryWeekdayWeekend) */
+function s2SplitHtml(){ const f = L => s2Fill((L && L.services) || []), a = f(S2V.w), b = f(S2V.e), one = (lab, F) => `<span class="s2-sp"><small>${lab}</small><b class="mono">${num(F.sold)} / ${num(F.seats)}</b><em class="fill-${F.cls}">${F.pct}%</em></span>`;
+  return `<span class="s2-split">${one(daysLabel('weekday'), a)}${one(daysLabel('weekend'), b)}</span>`; }
+function s2DaySwitch(){ if(!S2V.fd) return ''; const dt = UI.s2.dt || 'weekday'; return `<span class="st-seg s2-dt" role="group" aria-label="Which days">${['weekday', 'weekend'].map(v => `<button data-s2dt="${v}" aria-pressed="${dt === v}">${daysLabel(v)}</button>`).join('')}</span>`; }
+const s2Svc = (L, id) => (L.services || []).filter(s => s.route === id);
+const s2Fill = list => { const seats = list.reduce((t, s) => t + (s.seats || 0), 0), sold = list.reduce((t, s) => t + (s.sold || 0), 0); return { seats, sold, pct:seats ? Math.round(100 * sold / seats) : 0, cls:fillCls(sold, seats) }; };
+const s2Want = (pl, L, id) => { const r = routeById(id), w = (L.want || {})[id]; return w !== undefined ? w : paxWant(r, pl.prices[id] || r.basePrice); };
+
+/* ---------- the page ---------- */
+function renderStudio(st){
+  const setup = S.phase === 'setup', pl = normPlan(currentPlan()); if(setup) S.market = launchMarket(pl);
+  if(!S.rnd.fareWas) S.rnd.fareWas = Object.assign({}, pl.prices);
+  const U = s2State(pl), Lw = planLines(pl), fd = flightDaysOn(), Le = fd ? withDay(satOf(S.day || 1), () => planLines(pl)) : null; if(!fd) U.dt = 'weekday';
+  const L = U.dt === 'weekend' && Le ? Le : Lw; S2V = { w:Lw, e:Le, fd, split:fd && anyDays(pl) && WBS().summaryWeekdayWeekend !== false };
+  const costed = !!(S.rnd.costed && S.rnd.costed.key === planKey(pl)), sched = pl.fleet.flatMap(x => x.sched);
+  let W = null; try{ W = workTables(pl); }catch(e){ W = null; }
+  const hid = hiddenFigs(pl, W), changed = planKey(pl) !== U.startKey;
+  const body = U.mode === 'opener' ? s2Opener(pl, L, hid, changed) : U.mode === 'network' ? s2Network(pl, L) : s2Plan(pl, L, hid, setup, costed);
+  const go = !sched.length ? 'Add some flights' : !L.fits ? "Doesn't fit in the day" : U.mode === 'opener' ? (changed ? 'Run this plan' : 'Keep plan') : costed ? goLabel('Ready to fly') : goLabel('Cost your plan');
+  const nx = `<button class="btn primary big" id="nx" ${sched.length && L.fits ? '' : 'disabled'}>${go} &#9654;</button>`;
+  const title = U.mode === 'network' ? (setup && !sched.length ? 'Choose where to fly' : 'Change network') : U.mode === 'opener' ? `Week ${weekNo(S.day || 1)} operating plan` : 'Operating Plan Studio';
+  const sub = U.mode === 'network' ? (setup && !sched.length ? 'Your first routes: press Add to schedule on a route, then go to the timetable to place the flights.' : 'Add a destination, stop serving one, or look at a new market. Your timetable is kept.') : `${esc(S.airline && S.airline.name ? S.airline.name : 'Your airline')} HQ · ${setup ? 'Launch Day' : 'the week of ' + dateShort(S.day)}`;
+  const hint = U.mode === 'network' ? 'Press Add to schedule to put a flight on the selected aircraft. Return to the operating plan to place it and check the seats.'
+    : U.mode === 'opener' ? 'The plan carries on from last week. Keep it, or edit it if one of the changes matters.'
+    : 'Press a fare to change it, press a flight to move or change it. The summary shows how full the planes are.';
+  const status = U.mode === 'network' ? '' : `<span class="s2-status ${soBoardWaiting() ? 'warn' : changed ? 'chg' : ''}">${soBoardWaiting() ? 'Board waiting' : changed ? 'Changed this week' : U.mode === 'opener' ? 'Unchanged' : setup ? 'New plan' : 'Unchanged'}</span>`;
+  screen().innerHTML = shell(deskPage({ title:title + status, sub, cls:`st-page s2-page s2-${U.mode}`, body }),
+    deskBar(hint, U.mode === 'network' ? `<button class="btn primary big" id="s2Back">${setup && !S.rnd.s2seen ? 'Go to the timetable &#9654;' : '&#9664; Return to operating plan'}</button>` : `${backBtn()}${nx}`));
+  bindStudio(pl);
+}
+
+/* ---------- B1 the opener: last week's plan, the known changes, Keep plan or Edit plan ---------- */
+function s2Changes(pl, L){
+  const d = S.day || 1, out = [], fuelLink = moduleOn('fuel') ? `<button class="btn small" data-nav="fuel">${ICO2.fuel} Fuel desk</button>` : '';
+  const now = weekFuelPrice(d), was = weekFuelPrice(Math.max(1, d - 7));
+  if(Math.abs(now - was) >= 0.05) out.push({ ic:'fuel', cls:now > was ? 'warn' : 'good', text:`Fuel price has ${now > was ? 'risen' : 'fallen'} to ${priceL(now)} a litre (last week ${priceL(was)}).`, act:fuelLink });
+  if(deskModeAt(d)){ const need = s2WeekNeed(); if(need && S.fuel < need) out.push({ ic:'fuel', cls:'warn', text:`${num(Math.round(S.fuel))} L stored: this week needs ${num(Math.round(need))} L.`, act:fuelLink }); }
+  const seen = new Set(); announcedFor(d).concat(plannerRoutes().flatMap(id => newsOn(id, d))).forEach(n => { if(seen.has(n.id)) return; seen.add(n.id);
+    const fl = new Set(pl.fleet.flatMap(x => x.sched)), ids = n.routes.filter(id => routeById(id) && plannerRoutes().includes(id) && (fl.has(id) || n.mult >= 1)); if(!ids.length) return;   // a fall on a route you do not fly is not your change
+    out.push({ ic:n.mult >= 1 ? 'arrowUp' : 'news', cls:n.mult >= 1 ? 'up' : 'warn', text:n.headline || n.id, sub:`${ids.map(id => routeById(id).city).join(', ')} demand ×${n.mult}${n.segment && n.segment !== 'all' ? ` (${n.segment})` : ''} · ${fmtRange(dayOfDate(n.start), dayOfDate(n.end))}`,
+      act:ids.map(id => `<button class="btn small" data-s2review="${id}|${esc(n.id)}">Review ${esc(routeById(id).city)} services</button>`).join('') }); });
+  if(soBoardWaiting()) out.push({ ic:'doc', cls:'warn', text:'The board wants a plan that tests a different fare or route before this week runs.', act:'<button class="btn small" data-s2go="plan">Edit plan</button>' });
+  pl.fleet.forEach((x, j) => { if(!x.sched.length) out.push({ ic:'plane', cls:'warn', text:`The ${shortPlane(planeById(x.planeId))} (${regOf(x.uid)}) has no flights yet.`, act:`<button class="btn small" data-s2plan="${j}">Plan its day</button>` }); });
+  return out;
+}
+function s2Opener(pl, L, hid, changed){
+  const ch = s2Changes(pl, L), F = s2Fill(L.services || []), away = L.nos || 0, tk = (L.routes || []).reduce((t, x) => t + x.tk, 0), wait = soBoardWaiting();
+  const fig = (l, v, sub, cls) => `<div class="s2-of ${cls || ''}"><small>${l}</small><b class="mono">${v}</b>${sub ? `<em>${sub}</em>` : ''}</div>`;
+  const card = `<section class="dk-pnl s2-oc"><div class="s2-oh"><span class="kl">${ICO2.calendar} Week ${weekNo(S.day || 1)} · ${dateShort(S.day || 1)}</span>
+      <h2>${changed ? 'Your plan has changes for this week.' : 'Last week\'s regular plan is ready to run again.'}</h2><p>${changed ? 'Run it as it is now, or carry on editing.' : 'Keep it, or edit it if one of the changes below matters.'}</p>
+      <div class="s2-oact"><button class="btn primary big" id="s2Keep" ${wait || !L.fits ? 'disabled' : ''}>${changed ? 'Run this plan' : 'Keep plan'} &#9654;</button><button class="btn big" id="s2Edit">${ICO2.sliders} Edit plan</button></div></div>
+    <div class="s2-ofs">${S2V.split ? `<div class="s2-of s2-ofsp"><small>Seats likely filled</small>${s2SplitHtml()}</div>` : fig('Seats likely filled', `${num(F.sold)} / ${num(F.seats)}`, `${F.pct}%`)}${fig('Turned away', num(away), 'a day', away ? 'warn' : '')}${fig('Average fare', hid.has('revenue') || !F.sold ? '—' : money(Math.round(tk / F.sold)))}${fig('Projected profit', hid.has('profit') ? sumBtn('profit') : money(Math.round(L.v.profit)), hid.has('profit') ? '' : 'a day', L.v.profit >= 0 ? 'good' : 'bad')}</div></section>`;
+  const chg = `<section class="dk-pnl s2-ochg"><div class="dk-pnl-h">${ICO2.bell}<h2>Known changes this week</h2><span class="grow"></span><span class="sub">you decide whether they matter</span></div>
+    <ul class="s2-cl">${ch.length ? ch.map(c => `<li class="${c.cls || ''}"><span class="s2-ci">${ICO2[c.ic] || ICO2.info}</span><span class="s2-ct"><b>${esc(c.text)}</b>${c.sub ? `<small>${esc(c.sub)}</small>` : ''}</span>${c.act ? `<span class="s2-ca">${c.act}</span>` : ''}</li>`).join('') : `<li class="good"><span class="s2-ci">${ICO2.check}</span><span class="s2-ct"><b>No known changes this week.</b></span></li>`}</ul></section>`;
+  const plan = `<section class="dk-pnl st-tt s2-tt s2-otl"><div class="st-th"><div><h2>This week's timetable</h2></div>${s2DaySwitch()}<span class="s2-legend">${s2Legend()}</span></div>${s2Lanes(0, pl, L, { locked:true })}</section>`;
+  return `<div class="plw st s2 s2-op"><div class="s2-otop">${card}${chg}</div>${plan}</div>`;
+}
+
+/* ---------- B2 the operating plan ---------- */
+function s2Legend(){ return `<span><i class="fill-good"></i>${Math.round(fillGood() * 100)}%+</span><span><i class="fill-mid"></i>${Math.round(fillMid() * 100)}–${Math.round(fillGood() * 100) - 1}%</span><span><i class="fill-low"></i>under ${Math.round(fillMid() * 100)}%</span>`; }
+function s2Plan(pl, L, hid, setup, costed){
+  const U = UI.s2, flown = new Set(pl.fleet.flatMap(x => x.sched)), ids = plannerOrder().filter(id => flown.has(id));
+  const focus = U.focus && routeById(U.focus) ? `<div class="s2-focus">${ICO2.news}<span><b>Reviewing ${esc(routeById(U.focus).city)}</b>${U.focusText ? ` · ${esc(U.focusText)}` : ''}</span><span class="grow"></span><button class="btn small primary" id="s2Apply">${ICO2.check} Apply changes</button></div>` : '';
+  const how = UI.stHow ? `<div class="st-how s2-how">${['<b>Active routes.</b> The routes you fly, at their fares: press a fare to see every fare and the people at each. View demand shows when people want to fly; + Service adds a flight.', '<b>Timetable.</b> Drag a flight along its row, or press it to move it, change its route, fare or aircraft, or remove it (or press Delete).', '<b>Summary.</b> How full the planes are, how many people get no seat, and the profit. View trade-offs explains what you could change.', '<b>Change network.</b> Add a destination or stop serving one. Fuel, the World report and the model are in the toolbar.'].map(t => `<p>${t}</p>`).join('')}<button class="dk-link" id="stHowShut">Close</button></div>` : '';
+  return `<div class="plw st s2 s2-pl">${focus}${how}<div class="s2-top">${s2Routes(pl, L, ids)}${s2Tools(pl, L, hid, setup, costed, ids.length)}${U.route && routeById(U.route) ? s2RouteEditor(pl, L, U.route) : ''}</div>${s2Timetable(pl, L)}${s2Summary(pl, L, hid)}${U.drawer ? s2Drawer(pl, L, hid) : ''}</div>`;
+}
+/* the active routes: the current choice only (fare, demand at it, services, seat fill); the alternatives come with Edit fare */
+function s2Routes(pl, L, ids){
+  const U = UI.s2, row = id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, F = s2Fill(s2Svc(L, id));
+    return `<div class="s2-r ${U.focus === id ? 'focus' : ''} ${U.route === id ? 'on' : ''} ${U.strip === id ? 'dem' : ''}" data-s2r="${id}">
+      <span class="s2-rc">${flagSvg(r.flag, 18)}<b>${esc(r.city)}</b><span class="mono st-code">${esc(r.code || '')}</span></span>
+      <button class="s2-fare mono" data-s2fare="${id}" title="See every ${esc(r.city)} fare and change it">${money(fare)}</button>
+      <span class="s2-n mono">${num(s2Want(pl, L, id))}</span><span class="s2-n mono">${s2Svc(L, id).length}</span>
+      <span class="s2-fl"><span class="st-bf fill-${F.cls}"><i style="width:${F.pct}%"></i></span><b class="mono">${F.pct}%</b></span>
+      <span class="s2-ra"><button class="dk-link" data-s2fare="${id}">Edit fare</button><button class="dk-link" data-s2dem="${id}" aria-pressed="${U.strip === id}">View demand</button><button class="dk-link" data-pe="0|open|${id}|0|0">+ Service</button></span></div>`; };
+  const head = '<div class="s2-rh"><span>Route</span><span>Fare</span><span>Demand</span><span>Services</span><span>Seat fill</span><span></span></div>';
+  const cols = ids.length > 3 ? [ids.slice(0, Math.ceil(ids.length / 2)), ids.slice(Math.ceil(ids.length / 2))] : [ids];
+  return `<section class="dk-pnl s2-routes"><div class="dk-pnl-h">${ICO2.route}<h2>Active routes</h2><span class="sub">${ids.length ? `${plural(ids.length, 'route')} · ${plural(pl.fleet.reduce((t, x) => t + x.sched.length, 0), 'flight')} a day` : 'none yet'}</span><span class="grow"></span><button class="btn small s2-netb" id="s2AddNet">${ICO2.plus} Add / change routes</button></div>
+    ${ids.length ? `<div class="s2-rt ${cols.length > 1 ? 'two' : ''}">${cols.map(c => `<div class="s2-rcol">${head}${c.map(row).join('')}</div>`).join('')}</div>` : '<p class="s2-none">No routes on the plan yet. Press <b>Add / change routes</b> to choose where to fly.</p>'}</section>`;
+}
+/* the toolbar: the drill-down tools, with a status on Fuel and on the network */
+function s2FuelBtn(pl, L){
+  const d = S.day || 1, desk = deskModeAt(d), need = s2WeekNeed(), low = desk && need > 0 && S.fuel < need, can = moduleOn('fuel');
+  const t = !desk ? 'This week fuel is bought as it is used, at each day\'s price' : low ? `${num(Math.round(S.fuel))} L stored: this week needs ${num(Math.round(need))} L` : `${num(Math.round(S.fuel))} L stored: enough for this week`;
+  return `<button class="btn small s2-fuel ${low ? 'warn' : desk ? 'ok' : ''}" ${can ? 'data-nav="fuel"' : 'disabled'} title="${t}">${ICO2.fuel} Fuel${low ? `<i class="s2-dot"></i><small class="mono">${num(Math.round(S.fuel))} L</small>` : desk ? '<i class="s2-dot ok"></i>' : ''}</button>`;
+}
+function s2Tools(pl, L, hid, setup, costed, n){
+  return `<div class="s2-tools"><span class="plw-tools">${!setup || costed ? '<button class="btn small" id="ideaOpen" title="A test plan the model costs: no sums">Test an idea</button>' : ''}<button class="btn small" id="mapOpen" title="The network map: where the routes go">Network map</button></span>
+    ${s2FuelBtn(pl, L)}<button class="btn small" id="s2Net" title="Add or stop serving destinations">${ICO2.globe} Network · ${plural(n, 'route')}</button><button class="btn small" id="stHow" aria-expanded="${!!UI.stHow}">${ICO2.info} How it works</button></div>`;
+}
+/* the timetable: the largest zone; four or more aircraft group by type */
+function s2Timetable(pl, L){
+  const U = UI.s2, view = UI.stView || 'day', showDem = UI.stDemand !== false, sid = U.route || U.strip || null;
+  const obSel = snacksOn() ? `<label class="st-ob">On board <select id="stOb">${Object.keys(ONBOARD).map(k => `<option value="${k}" ${(pl.onboard || 'none') === k ? 'selected' : ''}>${esc(ONBOARD[k].label)}</option>`).join('')}</select></label>` : '';
+  const sel = UI.tlSel && UI.tlSel.i === 0 && pl.fleet[UI.tlSel.j] && pl.fleet[UI.tlSel.j].sched[UI.tlSel.k] ? UI.tlSel : null;
+  return `<section class="dk-pnl st-tt s2-tt"><div class="st-th"><div><h2 title="Drag a flight to move it, or press it to change it; Delete removes the flight you pressed.">Aircraft timetable</h2></div>${s2DaySwitch()}<span class="s2-legend">${s2Legend()}</span>${obSel}
+      <span class="st-seg" role="group" aria-label="Timetable view"><button data-stview="day" aria-pressed="${view === 'day'}">Day view</button><button data-stview="table" aria-pressed="${view === 'table'}">Table view</button></span>
+      <label class="st-tog"><input type="checkbox" id="stDem" ${showDem ? 'checked' : ''}> Show demand</label></div>
+    ${view === 'day' ? `${showDem ? `<div class="st-stripw" id="stStrip">${stripHtml(pl, sid)}</div>` : ''}${s2Lanes(0, pl, L)}` : studioTable(pl, L)}${view === 'day' && sel ? s2SvcEditor(pl, L, sel) : ''}</section>`;
+}
+function s2Block(i, pl, L, x, j, t, k, last, o, dy){
+  const p = planeById(x.planeId), r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === k) || {}, seats = s.seats || p.seats, sold = s.sold || 0, e0 = dayEnd(), s0 = dayStart(), span = e0 - s0, X = m => (100 * (m - s0) / span);
+  const sel = UI.tlSel && UI.tlSel.i === i ? UI.tlSel : null, on = sel && sel.j === j && sel.k === k, ready = last ? t.arr : t.arr + TIME.home(p), fc = fillCls(sold, seats), empty = Math.max(0, seats - sold), hl = UI.s2.focus === t.route || UI.s2.route === t.route, fare = pl.prices[t.route] || r.basePrice, chip = dy && dy !== 'all' ? daysLabel(dy) : '';
+  return `${last ? '' : `<i class="ad-ready" style="left:${X(t.arr).toFixed(2)}%;width:${(X(ready) - X(t.arr)).toFixed(2)}%" title="Turnaround: ready again at ${fmtTime(ready)}"></i>`}<button class="ad-blk st-blk s2-blk fill-${fc} ${on ? 'on' : ''} ${hl ? 'hl' : ''} ${t.arr > e0 ? 'over' : ''}" data-tl="${i}|${j}|${k}" data-days="${dy || 'all'}" data-dep="${t.dep}" data-arr="${t.arr}" data-ready="${ready}" style="left:${X(t.dep).toFixed(2)}%;width:${(X(t.arr) - X(t.dep)).toFixed(2)}%" ${o.locked ? 'disabled' : ''} title="${empty} empty seat${empty === 1 ? '' : 's'} · ready again ${fmtTime(ready)}${chip ? ' · flies ' + chip : ''}" aria-label="${esc(r.city)} ${fmtTime(t.dep)} to ${fmtTime(t.arr)}${chip ? ', ' + chip + ' only' : ''}, ${sold} of ${seats} seats filled, fare ${money(fare)}" aria-pressed="${!!on}">
+    <span class="st-bt mono"><b>${fmtTime(t.dep)}</b>–${fmtTime(t.arr)}${chip ? `<span class="s2-dchip">${chip}</span>` : ''}</span><span class="st-br">${flagSvg(r.flag, 13)} ${esc(r.city)}<span class="s2-bfare mono">${money(fare)}</span></span><span class="st-bf"><i style="width:${Math.round(100 * Math.min(1, sold / Math.max(1, seats)))}%"></i></span><span class="st-bs mono">${sold}/${seats}</span></button>`;
+}
+/* the flights of an aircraft shown in the timetable's day type (all of them before the Days setting), as full-schedule indices */
+function s2Idx(x){ if(!S2V.fd) return x.sched.map((_, k) => k); return setOf(x, UI.s2.dt || 'weekday'); }
+function s2Lanes(i, pl, L, o){
+  o = o || {}; const U = UI.s2, s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(2), maxT = WORLD.maxTrips || 4, jSel = studioPlane(pl), sel = UI.tlSel && UI.tlSel.i === i ? UI.tlSel : null;
+  const ticks = []; for(let h = Math.ceil(s0 / 60); h * 60 <= e0; h += 2) ticks.push(`<span style="left:${X(h * 60)}%">${pad(h)}:00</span>`);
+  const lane = (x, j) => { const p = planeById(x.planeId), f = S.fleet.find(z => z.uid === x.uid), idx = s2Idx(x), days = daysFix(x.days, x.sched.length), dps = x.deps && x.deps.length === x.sched.length ? x.deps : null, D = idx.length ? withPlan(pl, () => TIME.day(p, idx.map(k => x.sched[k]), undefined, dps ? idx.map(k => dps[k]) : null)) : null, can = plannerOrder().filter(id => planeCanFly(p, routeById(id))), hl = U.focus && x.sched.includes(U.focus);
+    const add = o.locked ? `<small class="s2-ln">${plural(idx.length, 'flight')}</small>` : `<select class="st-addf" data-addsel="${i}|${j}" ${idx.length < maxT ? '' : 'disabled'} aria-label="Add a flight to the ${esc(shortPlane(p))}"><option value="">${idx.length < maxT ? '+ Add flight…' : `Full: ${maxT} flights`}</option>${can.map(id => `<option value="${id}">${esc(routeById(id).city)} · ${fmtDur(TIME.leg(p, routeById(id)))} each way</option>`).join('')}</select>`;
+    return `<div class="ad-ac st-row ${j === jSel && !o.locked ? 'sel' : ''} ${hl ? 'hl' : ''}"><div class="st-plane"><button class="st-pn" data-stplane="${j}" ${o.locked ? 'disabled' : ''} title="Read the routes for this aircraft">${planeMini(f || p, 'ad-pic')}<span><b>${esc(shortPlane(p))}</b><small>${esc(regOf(x.uid))} · ${p.seats} seats</small></span></button>${add}</div>
+      <div class="ad-lane ${o.locked ? 'locked' : ''}" data-lane="${i}|${j}" data-s0="${s0}" data-span="${span}">${D ? D.trips.map((t, q) => s2Block(i, pl, L, x, j, t, idx[q], q === D.trips.length - 1, o, days[idx[q]])).join('') : `<span class="ad-none muted">${o.locked ? 'No flights.' : 'No flights yet: add one from the menu or a route.'}</span>`}</div></div>`; };
+  // four or more aircraft: one group per type; a group with the selected or reviewed aircraft opens by itself
+  let rows; if(pl.fleet.length >= 4){ const types = []; pl.fleet.forEach((x, j) => { let g = types.find(t => t.pid === x.planeId); if(!g) types.push(g = { pid:x.planeId, js:[] }); g.js.push(j); });
+    rows = types.map(g => { if(g.js.length === 1) return lane(pl.fleet[g.js[0]], g.js[0]);
+      const auto = g.js.some(j => (sel && sel.j === j) || j === jSel || (U.focus && pl.fleet[j].sched.includes(U.focus))), open = U.open[g.pid] !== undefined ? U.open[g.pid] : auto, F = s2Fill((L.services || []).filter(s => g.js.some(j => pl.fleet[j].uid === s.uid))), n = g.js.reduce((t, j) => t + s2Idx(pl.fleet[j]).length, 0), p = planeById(g.pid);
+      return `<div class="s2-grp ${open ? 'open' : ''}"><button class="s2-gh" data-s2grp="${g.pid}" aria-expanded="${open}"><span class="s2-gc">${ICO2.chev}</span>${planeMini(p, 'ad-pic')}<b>${esc(shortPlane(p))}</b><span>${g.js.length} aircraft · ${plural(n, 'flight')} a day</span><span class="st-bf fill-${F.cls}"><i style="width:${F.pct}%"></i></span><span class="mono">${F.pct}% full</span></button>${open ? g.js.map(j => lane(pl.fleet[j], j)).join('') : ''}</div>`; }).join('');
+  } else rows = pl.fleet.map(lane).join('');
+  return `<div class="ad st-ad s2-ad ${pl.fleet.length >= 3 ? 'many' : ''}"><div class="ad-axis"><span class="ad-lab"></span><div class="ad-ticks">${ticks.join('')}</div></div>${rows}</div>`;
+}
+/* B3 the service editor: on a pressed flight, never shown otherwise */
+function s2SvcEditor(pl, L, sel){
+  const x = pl.fleet[sel.j], p = planeById(x.planeId), id0 = x.sched[sel.k]; if(!id0) return '';
+  const dps = x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(pl, sel.j), r0 = routeById(id0), t = { route:id0, dep:dps[sel.k], arr:dps[sel.k] + TIME.roundTrip(p, r0) }, idx = s2Idx(x), last = idx[idx.length - 1] === sel.k, dy = daysFix(x.days, x.sched.length)[sel.k];
+  const r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === sel.k) || {}, a = `0|${sel.j}|${sel.k}`, fare = pl.prices[r.id] || r.basePrice, ready = last ? t.arr : t.arr + TIME.home(p);
+  const routes = plannerOrder().filter(id => planeCanFly(p, routeById(id))), planes = pl.fleet.map((y, q) => ({ y, q })).filter(({ y, q }) => q !== sel.j && planeCanFly(planeById(y.planeId), r));
+  return `<div class="s2-pop" id="s2Pop" role="dialog" aria-label="Change the ${esc(r.city)} ${fmtTime(t.dep)} flight"><div class="s2-pop-h">${flagSvg(r.flag, 16)}<b>${esc(r.city)} <span class="mono">${fmtTime(t.dep)}–${fmtTime(t.arr)}</span></b><small><span class="mono">${s.sold || 0}/${s.seats || p.seats}</span> seats · ready again <span class="mono">${fmtTime(ready)}</span> · ${esc(shortPlane(p))}</small><button class="s2-x" id="s2PopX" aria-label="Close">×</button></div>
+    <div class="s2-pop-b"><button class="btn" data-tlm="${a}|-20" aria-label="20 minutes earlier">&#9664; Earlier</button><button class="btn" data-tlm="${a}|20" aria-label="20 minutes later">Later &#9654;</button>
+      <label>Route <select data-s2rt="${sel.j}|${sel.k}">${routes.map(id => `<option value="${id}" ${id === r.id ? 'selected' : ''}>${esc(routeById(id).city)}</option>`).join('')}</select></label>
+      <label>Fare <select data-s2fr="${r.id}">${(r.fares || [r.basePrice]).map(f => `<option value="${f}" ${f === fare ? 'selected' : ''}>${money(f)} · ${paxWant(r, f)} want</option>`).join('')}</select></label>
+      ${S2V.fd ? `<label>Days <select data-s2dy="${sel.j}|${sel.k}" aria-label="Which days this flight flies">${DAYS_KEYS.map(v => `<option value="${v}" ${v === dy ? 'selected' : ''}>${daysLabel(v)}</option>`).join('')}</select></label>` : ''}
+      <label>Aircraft <select data-s2ac="${sel.j}|${sel.k}" ${planes.length ? '' : 'disabled'}><option value="">${esc(shortPlane(p))} · ${esc(regOf(x.uid))}</option>${planes.map(({ y, q }) => `<option value="${q}">${esc(shortPlane(planeById(y.planeId)))} · ${esc(regOf(y.uid))}</option>`).join('')}</select></label></div>
+    <div class="s2-pop-f"><button class="btn danger" data-tlrm="${a}">Remove</button><span class="ad-del">or press <kbd>Delete</kbd></span><span class="grow"></span><button class="btn sc-open" data-svccard="${a}" title="This service's fuel, costs and profit">Service costs</button></div></div>`;
+}
+function s2SetRoute(j, k, id){
+  const next = normPlan(JSON.parse(JSON.stringify(currentPlan()))), x = next.fleet[j], r = routeById(id); if(!x || !x.sched[k] || !r || !planeCanFly(planeById(x.planeId), r)) return;
+  if(!x.deps || x.deps.length !== x.sched.length) x.deps = actualDeps(next, j);
+  x.sched[k] = id; if(!next.prices[id]) next.prices[id] = r.basePrice; x.deps = actualDeps(next, j);
+  if(!withPlan(next, () => fitsFor(x))){ toast(`A ${r.city} flight won't fit there: move or remove another flight first.`); render(); return; }
+  UI.tlSel = { i:0, j, k }; UI.tlFocus = true; setPlan(0, next);
+}
+function s2SetPlane(j, k, q){
+  const next = normPlan(JSON.parse(JSON.stringify(currentPlan()))), x = next.fleet[j], y = next.fleet[q], maxT = WORLD.maxTrips || 4; if(!x || !y || !x.sched[k]) return;
+  const id = x.sched[k], r = routeById(id), p = planeById(y.planeId), xd = x.deps && x.deps.length === x.sched.length ? x.deps.slice() : actualDeps(next, j), dep = xd[k];
+  if(!planeCanFly(p, r)){ toast(`The ${shortPlane(p)} can't reach ${r.city}.`); render(); return; }
+  if(y.sched.filter((_, n) => { const v = daysFix(y.days, y.sched.length)[n], w = daysFix(x.days, x.sched.length)[k]; return v === 'all' || w === 'all' || v === w; }).length >= maxT){ toast(`The ${shortPlane(p)} already flies ${maxT} services: the most in a day.`); render(); return; }
+  const xdy = daysFix(x.days, x.sched.length), dy = xdy[k]; x.sched.splice(k, 1); xd.splice(k, 1); xdy.splice(k, 1); x.days = xdy; x.deps = x.sched.length ? xd : null; if(x.deps) x.deps = actualDeps(next, j);
+  const yd = y.sched.length ? (y.deps && y.deps.length === y.sched.length ? y.deps.slice() : actualDeps(next, q)) : [], ydy = daysFix(y.days, y.sched.length), trip = TIME.roundTrip(p, r), home = TIME.home(p);
+  const share = n => dy === 'all' || ydy[n] === 'all' || ydy[n] === dy;   // only flights on the same days are in the way
+  const busy = y.sched.map((rid, n) => share(n) ? [yd[n], yd[n] + TIME.roundTrip(p, routeById(rid)) + home] : null).filter(Boolean); y.deps = yd; y.days = ydy;
+  let t = dep; if(t + trip > dayEnd() || busy.some(([a, z]) => t < z && t + trip + home > a)){ t = null; for(let u = dayStart(); u + trip <= dayEnd(); u += PLW_SNAP){ if(!busy.some(([a, z]) => u < z && u + trip + home > a)){ t = u; break; } } }
+  if(t === null || t === undefined){ toast(`No room left in the ${shortPlane(p)}'s day for a ${r.city} flight.`); render(); return; }
+  y.sched.push(id); yd.push(t); ydy.push(dy); const order = y.sched.map((rid, n) => ({ rid, dep:yd[n], dy:ydy[n], n })).sort((u, v) => u.dep - v.dep || u.n - v.n);
+  y.sched = order.map(z => z.rid); y.deps = order.map(z => z.dep); y.days = order.map(z => z.dy); y.deps = actualDeps(next, q);
+  if(!withPlan(next, () => next.fleet.every(z => !z.sched.length || fitsFor(z)))){ toast("That timetable won't fit in the operating day."); render(); return; }
+  if(t !== dep) toast(`The ${r.city} flight moves to the ${shortPlane(p)} at ${fmtTime(y.deps[order.findIndex(z => z.n === order.length - 1)])}: that was its first free time.`);
+  UI.tlSel = { i:0, j:q, k:order.findIndex(z => z.n === order.length - 1) }; UI.tlFocus = true; setPlan(0, next);
+}
+/* B4 the route editor: one route, every fare with the people at it, against the seats it offers */
+function s2RouteEditor(pl, L, id){
+  const r = routeById(id), fare = pl.prices[id] || r.basePrice, F = r.fares || [r.basePrice], svc = s2Svc(L, id), seats = svc.reduce((t, s) => t + (s.seats || 0), 0), want = s2Want(pl, L, id), mx = Math.max(1, ...F.map(f => paxWant(r, f))), U = UI.s2;
+  const gap = want - seats, line = !svc.length ? `No ${r.city} flights on the plan yet.` : gap > 0 ? `${num(gap)} more people want to fly than you have seats: raise the fare, add a service, or accept turning them away.` : gap < 0 ? `${num(-gap)} seats would be empty at ${money(fare)}: a lower fare or fewer seats would fill them.` : 'Demand matches the seats exactly.';
+  return `<section class="s2-ed" role="dialog" aria-label="${esc(r.city)} fares"><div class="s2-ed-h">${flagSvg(r.flag, 20)}<h3>${esc(r.city)}</h3><span class="mono st-code">${esc(r.code || '')}</span><span class="grow"></span><button class="s2-x" id="s2EdX" aria-label="Close">×</button></div>
+    <p class="s2-ed-n">Current fare <b class="mono">${money(fare)}</b> · ${plural(svc.length, 'service')} a day · <span class="mono">${num(seats)}</span> seats</p>
+    <table class="s2-ft"><thead><tr><th>Fare</th><th class="num">People who want to fly</th><th></th></tr></thead><tbody>${F.map(f => { const n = paxWant(r, f); return `<tr class="${f === fare ? 'on' : ''}"><td><button class="s2-fb mono" data-pe="0|fareTo|${id}|${f}" aria-pressed="${f === fare}">${money(f)}</button></td><td class="num mono">${num(n)}</td><td><span class="s2-fbar"><i style="width:${Math.round(100 * n / mx)}%"></i>${seats ? `<b style="left:${Math.min(100, Math.round(100 * seats / mx))}%" title="${num(seats)} seats"></b>` : ''}</span></td></tr>`; }).join('')}</tbody></table>
+    <div class="s2-cmp"><span><small>Demand at ${money(fare)}</small><b class="mono">${num(want)}</b></span><span><small>Seats</small><b class="mono">${num(seats)}</b></span><p>${line}</p></div>
+    <div class="s2-ed-f"><button class="btn small" data-pe="0|open|${id}|0|0">${ICO2.plus} Add a service</button>${S2V.fd ? `<select class="s2-nd" id="s2Nd" aria-label="Days for the new service">${DAYS_KEYS.map(v => `<option value="${v}" ${v === (U.newDays || 'all') ? 'selected' : ''}>${daysLabel(v)}</option>`).join('')}</select>` : ''}<button class="btn small" data-s2dem="${id}">View demand</button><span class="grow"></span>${svc.length ? `<button class="btn small danger" data-s2stop="${id}">${U.stopAsk === id ? `Yes, stop serving ${esc(r.city)}` : 'Stop serving'}</button>` : ''}</div></section>`;
+}
+/* the summary bar: seat use first; profit is there but does not lead */
+function s2Summary(pl, L, hid){
+  const F = s2Fill(L.services || []), away = L.nos || 0, tk = (L.routes || []).reduce((t, x) => t + x.tk, 0), n = planTipsFor(pl, L).filter(t => !['all_good', 'general_tradeoff'].includes(t.id)).length;
+  const it = (l, v, sub, cls) => `<span class="s2-si ${cls || ''}"><small>${l}</small><span><b class="mono">${v}</b>${sub ? `<em>${sub}</em>` : ''}</span></span>`;
+  return `<div class="s2-sum" aria-live="polite"><span class="s2-sl">Plan summary${S2V.split ? `<small>${daysLabel(UI.s2.dt || 'weekday')} figures</small>` : ''}</span>${S2V.split ? `<span class="s2-si s2-sisp"><small>Seats likely filled</small>${s2SplitHtml()}</span>` : it('Seats likely filled', `${num(F.sold)} / ${num(F.seats)}`, `${F.pct}%`, F.seats ? 'fill-' + F.cls : '')}${it('Empty seats', num(Math.max(0, F.seats - F.sold)))}${it('Turned away', num(away), 'a day', away ? 'warn' : '')}
+    ${it('Average fare', hid.has('revenue') || !F.sold ? '—' : money(Math.round(tk / F.sold)))}${it('Projected profit', hid.has('profit') ? sumBtn('profit') : money(Math.round(L.v.profit)), hid.has('profit') ? '' : 'a day', hid.has('profit') ? '' : L.v.profit >= 0 ? 'good' : 'bad')}
+    ${hid.has('fuelCost') ? it('Fuel cost', sumBtn('fuelCost')) : ''}<span class="grow"></span><button class="btn s2-trb" id="s2Tr" aria-expanded="${!!UI.s2.drawer}">View trade-offs${n ? `<i class="s2-badge">${n}</i>` : ''} ${ICO2.chev}</button></div>`;
+}
+/* B5 the trade-offs drawer: two things worth looking at; every insight, grouped, one press away */
+function s2Insights(pl, L, hid){
+  const all = planTipsFor(pl, L, { all:true }), by = ids => all.filter(t => ids.includes(t.id)).map(t => t.text), F = s2Fill(L.services || []), out = [];
+  out.push(['Seat use', [`${num(F.sold)} of ${num(F.seats)} seats filled (${F.pct}%); ${num(Math.max(0, F.seats - F.sold))} empty.`]]);
+  out.push(['Lost demand', [(L.nos || 0) ? `${num(L.nos)} people a day wanted to fly but could not get a seat.` : 'Everyone who wants to fly at your fares gets a seat.'].concat(by(['turned_away']))]);
+  out.push(['Timing', by(['peak_unserved', 'idle_plane', 'weekend_only_news'])]);
+  out.push(['Fare', by(['fare_too_high', 'fare_too_low', 'fare_lower_fills'])]);
+  const cap = (L.services || []).filter(s => s.seats && s.sold / s.seats < fillMid()).map(s => { const x = pl.fleet.find(z => z.uid === s.uid); return `The ${shortPlane(planeById(x ? x.planeId : 'dhc6'))} is lightly filled on ${routeById(s.route).city} at ${fmtTime(s.dep)} (${s.sold} / ${s.seats}).`; });
+  out.push(['Capacity', cap.concat(by(['range_fail', 'long_leg_warning']))]);
+  const m = (l, v) => `<span><small>${l}</small><b class="mono">${v}</b></span>`, tk = (L.routes || []).reduce((t, x) => t + x.tk, 0);
+  out.push(['Money', null, `<div class="s2-money">${m('Ticket revenue', hid.has('revenue') ? sumBtn('revenue') : money(Math.round(tk)))}${m('On-board sales', money(Math.round(L.v.snack || 0)))}${hid.has('profit') ? '' : m('Costs', money(Math.round(L.v.cost || 0)))}${m('Projected profit', hid.has('profit') ? sumBtn('profit') : money(Math.round(L.v.profit)))}</div><small class="muted">A day, at this week's prices.</small>`]);
+  return out;
+}
+function s2Drawer(pl, L, hid){
+  const U = UI.s2, top = planTipsFor(pl, L), real = top.filter(t => !['all_good', 'general_tradeoff'].includes(t.id));
+  const groups = U.all ? `<div class="s2-groups">${s2Insights(pl, L, hid).map(([h, lines, html]) => `<div class="s2-g"><h4>${h}</h4>${html || (lines.length ? `<ul>${lines.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : '<p class="muted">Nothing to look at here.</p>')}</div>`).join('')}</div>` : '';
+  return `<aside class="s2-dr" role="dialog" aria-label="Trade-offs"><div class="s2-dr-h">${ICO2.bulb}<h2>Trade-offs</h2><span class="grow"></span><button class="s2-x" id="s2DrX" aria-label="Close">×</button></div>
+    <h3>${real.length ? `${real.length === 1 ? 'One thing' : real.length + ' things'} worth looking at` : 'Nothing pressing'}</h3><ul class="st-tips">${top.map(t => `<li data-tip="${t.id}">${ICO2.bulb}<span>${esc(t.text)}</span></li>`).join('')}</ul>
+    <button class="dk-link s2-allb" id="s2All" aria-expanded="${!!U.all}">${U.all ? 'Show fewer' : 'Show all insights'} ${ICO2.chev}</button>${groups}</aside>`;
+}
+
+/* ---------- B6 Change network: every destination, filtered by haul, sorted, foregrounding what the aircraft can fly ---------- */
+function s2Network(pl, L){
+  const U = UI.s2, j = studioPlane(pl), p = planeById(pl.fleet[j].planeId), flown = new Set(pl.fleet.flatMap(x => x.sched)), all = plannerOrder();
+  const cnt = h => all.filter(id => (h === 'all' || haulOf(routeById(id)) === h) && (!U.suit || planeCanFly(p, routeById(id)))).length;
+  let ids = all.filter(id => U.haul === 'all' || haulOf(routeById(id)) === U.haul); if(U.suit) ids = ids.filter(id => planeCanFly(p, routeById(id)));
+  const fareOf2 = id => pl.prices[id] || routeById(id).basePrice, key = { demand:id => -paxWant(routeById(id), fareOf2(id)), distance:id => routeKm(routeById(id)), fare:id => -fareOf2(id), az:id => routeById(id).city };
+  ids.sort((a, b) => { const f = key[U.sort] || key.demand, u = f(a), v = f(b); return (flown.has(b) ? 1 : 0) - (flown.has(a) ? 1 : 0) || (typeof u === 'string' ? u.localeCompare(v) : u - v); });
+  const added = U.added && UI.tlSel && pl.fleet[UI.tlSel.j] && pl.fleet[UI.tlSel.j].sched[UI.tlSel.k] === U.added ? (() => { const x = pl.fleet[UI.tlSel.j], dp = actualDeps(pl, UI.tlSel.j)[UI.tlSel.k]; return `<div class="s2-added">${ICO2.check}<span>${esc(routeById(U.added).city)} flight added to the ${esc(shortPlane(planeById(x.planeId)))} at <b class="mono">${fmtTime(dp)}</b>. Return to the operating plan to place it and see the seats.</span></div>`; })() : '';
+  const card = id => { let h = studioCard(0, id, pl, j, false).replace(' km</span>', ` km</span><span class="s2-cf-h">${HAUL_NAME[haulOf(routeById(id))]}</span>`); if(flown.has(id)) h = h.replace(/<\/div>\s*$/, `<button class="dk-link s2-stop" data-s2stop="${id}">${U.stopAsk === id ? `Yes, stop serving ${esc(routeById(id).city)}` : 'Stop serving'}</button></div>`); return `<div class="s2-nc h-${haulOf(routeById(id))}">${h}</div>`; };
+  const few = all.length <= 6;   // a few routes: no filters or sorting to read past
+  const head = `<div class="s2-nh">${few ? '' : `<span class="st-seg s2-haul" role="group" aria-label="Haul">${['all', 'short', 'medium', 'long'].map(h => `<button data-s2haul="${h}" aria-pressed="${U.haul === h}">${HAUL_NAME[h].toUpperCase()} <small>${cnt(h)}</small></button>`).join('')}</span>
+    <label class="st-filt">Sort <select id="s2Sort">${[['demand', 'Demand'], ['distance', 'Distance'], ['fare', 'Fare'], ['az', 'A–Z']].map(([v, l]) => `<option value="${v}" ${U.sort === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`}
+    <span class="grow"></span>${pl.fleet.length > 1 ? `<label class="st-filt">Aircraft <select id="s2Plane">${pl.fleet.map((x, q) => `<option value="${q}" ${q === j ? 'selected' : ''}>${esc(shortPlane(planeById(x.planeId)))} · ${esc(regOf(x.uid))}</option>`).join('')}</select></label>
+    <span class="st-seg" role="group" aria-label="Which routes"><button data-s2suit="1" aria-pressed="${!!U.suit}">Suitable</button><button data-s2suit="0" aria-pressed="${!U.suit}">All routes</button></span>` : ''}</div>
+    <p class="s2-nn">${ICO2.plane}<span><b>${esc(shortPlane(p))} selected</b> — ${U.suit ? 'showing the routes this aircraft can fly.' : `showing every route; the ones out of its ${num(p.range)} km range say so.`} Your network: ${plural(flown.size, 'route')}.</span></p>`;
+  return `<div class="plw st s2 s2-net">${head}${added}<div class="s2-ng">${ids.map(card).join('') || `<p class="s2-none">No ${HAUL_NAME[U.haul].toLowerCase()} routes ${U.suit ? 'this aircraft can fly' : 'open yet'}.</p>`}</div></div>`;
+}
+function s2StopRoute(id){
+  const next = normPlan(JSON.parse(JSON.stringify(currentPlan())));
+  next.fleet.forEach((x, j) => { if(!x.sched.includes(id)) return; const d = x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(next, j), keep = x.sched.map((s, k) => s === id ? -1 : k).filter(k => k >= 0);
+    const dy = daysFix(x.days, x.sched.length); x.deps = keep.map(k => d[k]); x.days = keep.map(k => dy[k]); x.sched = keep.map(k => x.sched[k]); if(!x.sched.length){ x.deps = null; x.days = null; } });
+  next.fleet.forEach((x, j) => { if(x.deps) x.deps = actualDeps(next, j); });
+  UI.tlSel = null; Object.assign(UI.s2, { stopAsk:null, route:UI.s2.route === id ? null : UI.s2.route, strip:UI.s2.strip === id ? null : UI.s2.strip }); toast(`${routeById(id).city} is off the plan.`); setPlan(0, next);
+}
+
+/* ---------- binding ---------- */
+function bindStudio(pl){
+  const root = screen(), U = UI.s2, go = o => { Object.assign(UI.s2, o); render(); };
+  bindPlanEditor(); bindTimeline();
+  root.querySelectorAll('[data-sum]').forEach(b => b.onclick = () => openSum(b.getAttribute('data-sum')));
+  on('s2Edit', () => go({ mode:'plan' })); root.querySelectorAll('[data-s2go]').forEach(b => b.onclick = () => go({ mode:b.getAttribute('data-s2go') }));
+  on('s2Keep', () => { const n = $('nx'); if(n && !n.disabled) n.click(); });
+  root.querySelectorAll('[data-s2plan]').forEach(b => b.onclick = () => { UI.stPlane = +b.getAttribute('data-s2plan'); go({ mode:'network' }); });
+  on('s2Net', () => { UI.tlSel = null; go({ mode:'network', added:null }); }); on('s2AddNet', () => { UI.tlSel = null; go({ mode:'network', added:null }); });
+  on('s2Back', () => { S.rnd.s2seen = true; UI.tlSel = null; go({ mode:'plan', added:null, stopAsk:null }); });
+  root.querySelectorAll('[data-s2fare]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-s2fare'); UI.tlSel = null; go({ route:U.route === id ? null : id, stopAsk:null }); });
+  root.querySelectorAll('[data-s2dem]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-s2dem'); UI.stDemand = true; go({ strip:U.strip === id ? null : id }); });
+  on('s2EdX', () => go({ route:null, stopAsk:null, newDays:U.focus ? U.newDays : 'all' }));
+  root.querySelectorAll('[data-s2review]').forEach(b => b.onclick = () => { const [id, nid] = b.getAttribute('data-s2review').split('|'); s2Review(id, nid); render(); });
+  on('s2Apply', () => { UI.tlSel = null; go({ focus:null, focusText:null, route:null, strip:null, newDays:'all', dt:'weekday', mode:s2Opens() ? 'opener' : 'plan' }); });
+  root.querySelectorAll('[data-s2dt]').forEach(b => b.onclick = () => { UI.tlSel = null; go({ dt:b.getAttribute('data-s2dt') }); });
+  root.querySelectorAll('[data-s2dy]').forEach(s => s.onchange = () => { const [j, k] = s.getAttribute('data-s2dy').split('|').map(Number); s2SetDays(j, k, s.value); });
+  const nd = $('s2Nd'); if(nd) nd.onchange = () => { UI.s2.newDays = nd.value; };
+  on('s2Tr', () => go({ drawer:!U.drawer })); on('s2DrX', () => go({ drawer:false })); on('s2All', () => go({ all:!U.all }));
+  root.querySelectorAll('[data-s2haul]').forEach(b => b.onclick = () => go({ haul:b.getAttribute('data-s2haul') }));
+  root.querySelectorAll('[data-s2suit]').forEach(b => b.onclick = () => go({ suit:b.getAttribute('data-s2suit') === '1' }));
+  const so = $('s2Sort'); if(so) so.onchange = () => go({ sort:so.value });
+  const sp = $('s2Plane'); if(sp) sp.onchange = () => { UI.stPlane = +sp.value; render(); };
+  root.querySelectorAll('[data-s2stop]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-s2stop'); if(U.stopAsk === id) s2StopRoute(id); else go({ stopAsk:id }); });
+  root.querySelectorAll('[data-s2grp]').forEach(b => b.onclick = () => { const pid = b.getAttribute('data-s2grp'); U.open[pid] = b.getAttribute('aria-expanded') !== 'true'; render(); });
+  root.querySelectorAll('[data-stplane]').forEach(b => b.onclick = () => { UI.stPlane = +b.getAttribute('data-stplane'); render(); });
+  root.querySelectorAll('[data-stview]').forEach(b => b.onclick = () => { UI.stView = b.getAttribute('data-stview'); render(); });
+  const d = $('stDem'); if(d) d.onchange = () => { UI.stDemand = d.checked; render(); };
+  const o = $('stOb'); if(o) o.onchange = () => editPlan(0, 'ob', o.value, 0);
+  on('stHow', () => { UI.stHow = !UI.stHow; render(); }); on('stHowShut', () => { UI.stHow = false; render(); });
+  on('ideaOpen', () => { UI.ideaOpen = true; UI.tlSel = null; render(); });
+  on('mapOpen', () => { UI.view = 'network'; render(); });
+  on('nx', () => { S.rnd.focusRoute = schedOf(fleetOne())[0] || S.market; UI.ideaOpen = false; UI.tlSel = null; resetEntry(); UI.justDone = null; advance(); });
+  // the service editor
+  on('s2PopX', () => { UI.tlSel = null; render(); });
+  root.querySelectorAll('[data-s2rt]').forEach(s => s.onchange = () => { const [j, k] = s.getAttribute('data-s2rt').split('|').map(Number); s2SetRoute(j, k, s.value); });
+  root.querySelectorAll('[data-s2fr]').forEach(s => s.onchange = () => editPlan(0, 'fareTo', s.getAttribute('data-s2fr'), +s.value));
+  root.querySelectorAll('[data-s2ac]').forEach(s => s.onchange = () => { if(s.value === '') return; const [j, k] = s.getAttribute('data-s2ac').split('|').map(Number); s2SetPlane(j, k, +s.value); });
+  const pop = $('s2Pop'), blk = root.querySelector('.s2-tt .ad-blk.on'), host = root.querySelector('.s2-tt');
+  if(pop && blk && host){ const place = () => { const b = blk.getBoundingClientRect(), h = host.getBoundingClientRect(), sc = h.width / Math.max(1, host.offsetWidth) || 1, pw = pop.offsetWidth, ph = pop.offsetHeight;
+      let top = (b.bottom - h.top) / sc + 6; if(top + ph > host.offsetHeight - 4) top = (b.top - h.top) / sc - ph - 6; if(top < 4) top = 4;
+      pop.style.top = top + 'px'; pop.style.left = clamp((b.left - h.left) / sc, 8, Math.max(8, host.offsetWidth - pw - 8)) + 'px'; };
+    place(); const ad = root.querySelector('.s2-tt .st-ad'); if(ad) ad.addEventListener('scroll', place, { passive:true }); }
+  // the strip follows a hovered route row
+  root.querySelectorAll('.s2-r').forEach(r => { const id = r.getAttribute('data-s2r');
+    r.onmouseenter = () => { const s = $('stStrip'); if(s) s.innerHTML = stripHtml(pl, id); };
+    r.onmouseleave = () => { const s = $('stStrip'); if(s) s.innerHTML = stripHtml(pl, UI.s2.route || UI.s2.strip || null); }; });
+  // Change network: a card's Add to schedule says where the flight went
+  if(U.mode === 'network') root.querySelectorAll('.st-card [data-pe*="|add|"]').forEach(b => b.addEventListener('click', () => { UI.s2.added = b.getAttribute('data-pe').split('|')[2]; }, true));
+}
+
+/* B7 the World report's announced news offers the same Review buttons */
+const s2World0 = renderWorldReport;   // reassigned, not redeclared: a second declaration would replace the original before it could be kept
+renderWorldReport = function(){
+  s2World0(); if(step().t !== 'plan') return;
+  const ann = announcedFor(S.day || 1), ps = screen().querySelectorAll('.wr-ann > p'); ann.forEach((n, q) => { const p = ps[q]; if(!p) return;
+    const ids = n.routes.filter(id => routeById(id) && plannerRoutes().includes(id)); if(!ids.length) return;
+    p.insertAdjacentHTML('beforeend', `<span class="s2-wra">${ids.map(id => `<button class="btn small" data-s2review="${id}|${esc(n.id)}">Review ${esc(routeById(id).city)} services</button>`).join('')}</span>`); });
+  screen().querySelectorAll('[data-s2review]').forEach(b => b.onclick = () => { const [id, nid] = b.getAttribute('data-s2review').split('|'); UI.view = null; s2Review(id, nid); render(); });
+};
+/* for the tests: the page's state and its figures */
+function studio2Report(){ const pl = currentPlan(), L = planLines(pl), F = s2Fill(L.services || []), U = UI.s2 || {};
+  return { dt:U.dt, newDays:U.newDays, split:!!S2V.split, days:normPlan(pl).fleet.map(x => daysFix(x.days, x.sched.length)), mode:U.mode, route:U.route, focus:U.focus, drawer:!!U.drawer, haul:U.haul, suit:U.suit, sold:F.sold, seats:F.seats, away:L.nos || 0, profit:Math.round(L.v.profit),
+    active:[...new Set(normPlan(pl).fleet.flatMap(x => x.sched))].map(id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, S2 = s2Fill(s2Svc(L, id)); return { id, fare, want:s2Want(pl, L, id), n:s2Svc(L, id).length, pct:S2.pct, fares:(r.fares || [r.basePrice]).map(f => [f, paxWant(r, f)]) }; }),
+    hauls:Object.fromEntries(plannerRoutes().map(id => [id, haulOf(routeById(id))])), tips:planTipsFor(pl, L).map(t => t.id) }; }
+
+/* ==================================================================
+   D67 (Workbook v4.11, Fable's "Note — A Days setting on every flight"): from flightDaysFromDay every flight in a standing
+   plan carries Days: All week, Mon–Fri or Sat–Sun. Part of the game's revised Studio. Each aircraft keeps f.days beside f.schedule (missing = all week, so old saves and
+   Launch Day are unchanged); a plan's fleet entry carries x.days only when a flight is not All week.
+   The engine prices each day with that day's flights only; departures, the turnaround and the duty day are checked per
+   day type (Mon–Fri = all + weekday flights, Sat–Sun = all + weekend flights). Functions are reassigned here, never
+   redeclared, so the originals stay reachable and the main build never sees this part.
+   ================================================================== */
+const DAYS_KEYS = ['all', 'weekday', 'weekend'];
+function daysLabels(){ const s = String(WBS().flightDays || 'All week | Mon–Fri | Sat–Sun').split('|').map(x => x.trim()).filter(Boolean); return s.length === 3 ? s : ['All week', 'Mon–Fri', 'Sat–Sun']; }
+const daysLabel = v => daysLabels()[Math.max(0, DAYS_KEYS.indexOf(v || 'all'))];
+const flightDaysOn = () => typeof weekMode === 'function' && weekMode() && !!S && S.phase !== 'setup' && (S.day || 1) >= +(WBS().flightDaysFromDay || 8);
+const dayTypeOf = d => { const w = calDate(d).getUTCDay(); return w === 0 || w === 6 ? 'weekend' : 'weekday'; };
+const fliesOn = (v, dt) => !v || v === 'all' || v === dt;
+const daysFix = (days, n) => { const out = []; for(let k = 0; k < n; k++) out.push(days && DAYS_KEYS.includes(days[k]) ? days[k] : 'all'); return out; };
+const hasDays = days => !!days && days.some(v => v && v !== 'all');
+const anyDays = pl => normPlan(pl).fleet.some(x => hasDays(x.days));
+const simDayNow = () => (SIM_DAY !== null && SIM_DAY !== undefined ? SIM_DAY : (S && S.day) || 1);
+/* the Saturday of the week a day belongs to (the plan's weekend) */
+const satOf = d => d + ((6 - calDate(d).getUTCDay() + 7) % 7);
+/* the flights of one aircraft that fly on a day type, as indices into its schedule */
+function setOf(x, dt){ const days = daysFix(x.days, x.sched.length); return x.sched.map((_, k) => k).filter(k => fliesOn(days[k], dt)); }
+
+/* ---------- the engine: a day prices only its own flights ---------- */
+const fdPlanFlights0 = planFlights;
+planFlights = function(){
+  if(!S || !S.fleet || !S.fleet.some(f => hasDays(f.days))) return fdPlanFlights0();
+  const dt = dayTypeOf(simDayNow()), keep = S.fleet.map(f => ({ schedule:f.schedule, route:f.route, deps:f.deps })), keepDeps = S.deps, maps = {};
+  try{
+    S.fleet.forEach(f => { const sched = schedOf(f), days = daysFix(f.days, sched.length), deps = fleetDeps(f), idx = sched.map((_, k) => k).filter(k => fliesOn(days[k], dt));
+      maps[f.uid] = idx; f.schedule = idx.map(k => sched[k]); f.route = f.schedule[0] || null; f.deps = deps && deps.length === sched.length ? idx.map(k => deps[k]) : null; });
+    S.deps = S.fleet[0] ? S.fleet[0].deps : null;
+    const out = fdPlanFlights0();
+    out.forEach(x => { const m = maps[x.uid]; if(!m || m[x.trip] === undefined) return; const i = S.fleet.findIndex(f => f.uid === x.uid); x.trip = m[x.trip]; x.key = x.uid + '-' + x.trip; if(i >= 0) x.code = flightCode(i, x.trip); });
+    return out;
+  } finally { S.fleet.forEach((f, k) => Object.assign(f, keep[k])); S.deps = keepDeps; }
+};
+
+/* ---------- plans carry their Days ---------- */
+const fdWithPlan0 = withPlan;
+withPlan = function(pl, fn){
+  pl = normPlan(pl); const keep = S.fleet.map(f => f.days);
+  return fdWithPlan0(pl, () => {
+    pl.fleet.forEach(x => { const f = S.fleet.find(y => y.uid === x.uid); if(f) f.days = hasDays(x.days) ? daysFix(x.days, x.sched.length) : null; });
+    try{ return fn(); } finally { S.fleet.forEach((f, k) => { f.days = keep[k]; }); } });
+};
+const fdCurrentPlan0 = currentPlan;
+currentPlan = function(){
+  const pl = fdCurrentPlan0();
+  pl.fleet.forEach(x => { const f = S.fleet.find(y => y.uid === x.uid); if(f && hasDays(f.days)) x.days = daysFix(f.days, x.sched.length); });
+  return pl;
+};
+const fdSetDays = pl => { normPlan(pl).fleet.forEach(x => { const f = S.fleet.find(y => y.uid === x.uid); if(f) f.days = hasDays(x.days) ? daysFix(x.days, x.sched.length) : null; }); };
+const fdApplyPlan0 = applyPlan, fdApplyPlanRaw0 = applyPlanRaw;
+applyPlan = function(pl){ fdSetDays(pl); return fdApplyPlan0(pl); };
+applyPlanRaw = function(pl){ fdSetDays(pl); return fdApplyPlanRaw0(pl); };
+const fdPlanKey0 = planKey;
+planKey = function(pl){ const k = fdPlanKey0(pl); pl = normPlan(pl); return anyDays(pl) ? k + JSON.stringify(pl.fleet.map(x => daysFix(x.days, x.sched.length))) : k; };
+
+/* ---------- departures and the day's fit, per day type ---------- */
+const fdActualDeps0 = actualDeps, fdFitsFor0 = fitsFor;
+actualDeps = function(pl, j){
+  pl = normPlan(pl); const x = pl.fleet[j || 0]; if(!x || !hasDays(x.days)) return fdActualDeps0(pl, j);
+  const p = planeById(x.planeId), sets = ['weekday', 'weekend'].map(dt => setOf(x, dt)).filter(s => s.length);
+  let cur = x.deps && x.deps.length === x.sched.length ? x.deps.slice() : null;
+  for(let it = 0; it < 6; it++){   // an All-week flight takes the later of its two times; pushes only go later, so this settles
+    const next = x.sched.map(() => -Infinity);
+    sets.forEach(idx => { const D = withPlan(pl, () => TIME.day(p, idx.map(k => x.sched[k]), undefined, cur ? idx.map(k => cur[k]) : null)); D.trips.forEach((t, q) => { next[idx[q]] = Math.max(next[idx[q]], t.dep); }); });
+    if(cur && next.every((v, k) => v === cur[k])) break; cur = next;
+  }
+  return cur;
+};
+fitsFor = function(x){
+  if(!hasDays(x.days)) return fdFitsFor0(x);
+  const p = planeById(x.planeId), maxT = WORLD.maxTrips || 4, deps = x.deps && x.deps.length === x.sched.length ? x.deps : null;
+  return ['weekday', 'weekend'].map(dt => setOf(x, dt)).every(idx => idx.length <= maxT && (idx.length <= 1 || TIME.day(p, idx.map(k => x.sched[k]), undefined, deps ? idx.map(k => deps[k]) : null).end <= dayEnd()));
+};
+
+/* ---------- edits that re-sort or remove a flight keep its Days with it ---------- */
+const fdEditPlan0 = editPlan;
+editPlan = function(i, what, a, d, j){
+  const base = i === 9 ? testPlan() : currentPlan();
+  if(!anyDays(base) || (what !== 'del' && what !== 'depTo')) return fdEditPlan0(i, what, a, d, j);
+  j = j || 0; const next = normPlan(JSON.parse(JSON.stringify(base))), x = next.fleet[j] || next.fleet[0], k = +a; if(!x || !x.sched[k]) return;
+  x.days = daysFix(x.days, x.sched.length); if(!x.deps || x.deps.length !== x.sched.length) x.deps = actualDeps(next, j);
+  if(what === 'del'){ x.sched.splice(k, 1); x.deps.splice(k, 1); x.days.splice(k, 1); if(!x.sched.length) x.deps = null; else x.deps = actualDeps(next, j); UI.tlSel = null; setPlan(i, next); return; }
+  const p = planeById(x.planeId), r = routeById(x.sched[k]), trip = TIME.roundTrip(p, r), dep = clamp(Math.round(d / PLW_SNAP) * PLW_SNAP, dayStart(), dayEnd() - trip);
+  x.deps[k] = dep;
+  const order = x.sched.map((id, q) => ({ id, dep:x.deps[q], dy:x.days[q], q })).sort((u, v) => u.dep - v.dep || u.q - v.q);
+  x.sched = order.map(o => o.id); x.deps = order.map(o => o.dep); x.days = order.map(o => o.dy);
+  const actual = actualDeps(next, j), nk = order.findIndex(o => o.q === k); x.deps = actual;
+  if(!withPlan(next, () => fitsFor(x))){ toast("That timetable won't fit in the operating day."); return; }
+  if(actual[nk] !== dep) toast(`${r.city} leaves at ${fmtTime(actual[nk])}: the aircraft is not back until then.`);
+  UI.tlSel = { i, j, k:nk }; setPlan(i, next);
+};
+/* a new flight takes the Days chosen for it (UI.s2.newDays, All week unless set); it only has to fit around the flights it shares a day with */
+const fdAddService0 = addService;
+addService = function(i, id, j){
+  const nd = (UI.s2 && UI.s2.newDays && flightDaysOn()) ? UI.s2.newDays : 'all', base = i === 9 ? testPlan() : currentPlan();
+  if(nd === 'all' && !anyDays(base)) return fdAddService0(i, id, j);
+  const r = routeById(id), next = normPlan(JSON.parse(JSON.stringify(base))), maxT = WORLD.maxTrips || 4;
+  next.fleet.forEach((x, q) => { x.days = daysFix(x.days, x.sched.length); x.deps = x.sched.length ? (x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(next, q)) : []; });
+  const lanes = (j === null || j === undefined ? next.fleet.map((x, q) => q) : [j]).filter(q => next.fleet[q] && planeCanFly(planeById(next.fleet[q].planeId), r));
+  if(i !== 9 && S.rnd){ if(!lanes.length) S.rnd.stRange = { route:id, plane:next.fleet[j === null || j === undefined ? 0 : j].planeId }; else delete S.rnd.stRange; }
+  if(!lanes.length){ const p = next.fleet[j || 0] && planeById(next.fleet[j || 0].planeId); toast(p && j !== null && j !== undefined ? `The ${p.name} can't reach ${r.city}: its range is ${num(p.range)} km and ${r.city} is ${num(routeKm(r))} km away.` : `No aircraft you own can reach ${r.city} (${num(routeKm(r))} km).`); render(); return; }
+  let hit = null;
+  for(const q of lanes){
+    const x = next.fleet[q], p = planeById(x.planeId), sets = (nd === 'all' ? ['weekday', 'weekend'] : [nd]).map(dt => setOf(x, dt));
+    if(sets.some(s => s.length >= maxT)) continue;
+    const home = TIME.home(p), trip = TIME.roundTrip(p, r), busy = [...new Set(sets.flat())].map(k => [x.deps[k], x.deps[k] + TIME.roundTrip(p, routeById(x.sched[k])) + home]);
+    for(let t = dayStart(); t + trip <= dayEnd(); t += PLW_SNAP){ if(!busy.some(([a, z]) => t < z && t + trip + home > a)){ hit = { q, t }; break; } }
+    if(hit) break;
+  }
+  if(!hit){ toast(`No room left in the ${daysLabel(nd) === daysLabel('all') ? '' : daysLabel(nd) + ' '}day for a ${r.city} service: move or remove a flight first.`); return; }
+  const x = next.fleet[hit.q]; x.sched.push(id); x.deps.push(hit.t); x.days.push(nd);
+  const order = x.sched.map((rid, k) => ({ rid, dep:x.deps[k], dy:x.days[k], k })).sort((u, v) => u.dep - v.dep || u.k - v.k);
+  x.sched = order.map(o => o.rid); x.deps = order.map(o => o.dep); x.days = order.map(o => o.dy); if(!next.prices[id]) next.prices[id] = r.basePrice;
+  x.deps = actualDeps(next, hit.q);
+  next.fleet.forEach(z => { if(!z.sched.length){ z.deps = null; z.days = null; } });
+  UI.tlSel = { i, j:hit.q, k:order.findIndex(o => o.k === x.sched.length - 1) }; UI.tlFocus = true;
+  setPlan(i, next);
+};
+/* the Operations Model moving a route between aircraft keeps the other flights' Days */
+const fdOmMoveRoute0 = omMoveRoute;
+omMoveRoute = function(id, uid){
+  const base = testPlan(); if(!anyDays(base)) return fdOmMoveRoute0(id, uid);
+  const next = normPlan(JSON.parse(JSON.stringify(base))), to = next.fleet.findIndex(x => x.uid === uid); if(to < 0) return;
+  const n = next.fleet.reduce((t, x, j) => t + (j === to ? 0 : x.sched.filter(s => s === id).length), 0); if(!n) return;
+  next.fleet.forEach((x, j) => { if(j === to) return; const days = daysFix(x.days, x.sched.length), keep = x.sched.map((s, k) => s === id ? -1 : k).filter(k => k >= 0);
+    x.deps = x.deps && x.deps.length === x.sched.length ? keep.map(k => x.deps[k]) : null; x.days = keep.map(k => days[k]); x.sched = keep.map(k => x.sched[k]); });
+  S.rnd.test = next; for(let q = 0; q < n; q++){ const before = planKey(testPlan()); addService(9, id, to); if(planKey(testPlan()) === before) break; }
+};
+/* one flight's Days changed in the flight editor */
+function s2SetDays(j, k, v){
+  if(!DAYS_KEYS.includes(v)) return;
+  const next = normPlan(JSON.parse(JSON.stringify(currentPlan()))), x = next.fleet[j]; if(!x || !x.sched[k]) return;
+  x.days = daysFix(x.days, x.sched.length); if(!x.deps || x.deps.length !== x.sched.length) x.deps = actualDeps(next, j);
+  x.days[k] = v; x.deps = actualDeps(next, j);
+  if(!withPlan(next, () => fitsFor(x))){ toast(`On ${v === 'weekend' ? 'Saturday and Sunday' : 'weekdays'} that would be more than the aircraft can fly in a day.`); render(); return; }
+  if(v !== 'all' && UI.s2 && UI.s2.dt !== v) UI.s2.dt = v;   // the flight stays in view (and selected)
+  UI.tlSel = { i:0, j, k }; UI.tlFocus = true; setPlan(0, next);
+}
+
+/* ---------- PlanTips v4.11: weekend_only_news and fare_lower_fills, read from the workbook's PlanTips sheet (the older rows keep the
+   Studio's own copy: the sheet writes their thresholds with units, '4 h', '1 plane', which the tip code does not read) ---------- */
+const FD_TIPS = (() => { try{ return (JSON.parse(document.getElementById('data-workbook').textContent).planTips || []).filter(t => ['weekend_only_news', 'fare_lower_fills'].includes(t.id)); }catch(e){ return []; } })();
+const fdPlanTips0 = planTipsFor;
+planTipsFor = function(pl, L, opts){
+  opts = opts || {}; pl = normPlan(pl);
+  const T = Object.fromEntries(FD_TIPS.filter(t => t.message).map(t => [t.id, t])), extra = [];
+  const pr = (id, def) => T[id] && T[id].priority !== undefined && T[id].priority !== null && !isNaN(+T[id].priority) ? +T[id].priority : def;
+  if(T.fare_lower_fills) [...new Set((L.services || []).map(s => s.route))].forEach(id => {
+    const r = routeById(id), fare = pl.prices[id] || r.basePrice, lo = (r.fares || []).filter(f => f < fare).pop(), act = opts.actual && opts.routes && opts.routes[id], svc = (L.services || []).filter(s => s.route === id);
+    const seats = act ? act.seats : svc.reduce((t, s) => t + (s.seats || 0), 0), sold = act ? act.pax : svc.reduce((t, s) => t + (s.sold || 0), 0);
+    if(lo !== undefined && seats && sold < seats && paxWant(r, lo) >= seats) extra.push({ id:'fare_lower_fills', priority:pr('fare_lower_fills', 3), weight:seats - sold, text:fillTip(T.fare_lower_fills.message, { route:r.city, seats:num(seats), lower:num(lo), diff:num(fare - lo) }) }); });
+  if(T.weekend_only_news && flightDaysOn() && !opts.actual){ const seen = new Set();
+    announcedFor(S.day || 1).filter(s2WeekendOnly).forEach(n => n.routes.forEach(id => { if(seen.has(id) || !routeById(id) || !plannerRoutes().includes(id)) return; seen.add(id);
+      const has = pl.fleet.some(x => { const dy = daysFix(x.days, x.sched.length); return x.sched.some((s, k) => s === id && dy[k] === 'weekend'); });
+      if(!has) extra.push({ id:'weekend_only_news', priority:pr('weekend_only_news', 1), weight:1e6, text:fillTip(T.weekend_only_news.message, { route:routeById(id).city }) }); })); }
+  if(!extra.length) return fdPlanTips0(pl, L, opts);
+  const list = fdPlanTips0(pl, L, Object.assign({}, opts, { all:true })).filter(t => !['all_good', 'general_tradeoff'].includes(t.id)).concat(extra).sort((a, b) => a.priority - b.priority || (b.weight || 0) - (a.weight || 0));
+  if(opts.all) return list;
+  const seen = new Set(); return list.filter(h => { if(seen.has(h.id)) return false; seen.add(h.id); return true; }).slice(0, 2);
+};
+
+/* ---------- the Sunday and period review: Mon–Fri and Sat–Sun seat fill from the days that flew ---------- */
+const fdSeatFill0 = seatFillReviewHtml;
+seatFillReviewHtml = function(h){
+  const html = fdSeatFill0(h); if(!html || !h || !h.from || WBS().summaryWeekdayWeekend === false || !anyDays(currentPlan())) return html;
+  const Lg = ledger(), a = { pax:0, seats:0 }, b = { pax:0, seats:0 };
+  for(let d = h.from; d <= (h.to || h.from); d++){ if(Lg.seats[d] === undefined || Lg.seats[d] === null) continue; const o = dayTypeOf(d) === 'weekend' ? b : a; o.pax += Lg.pax[d] || 0; o.seats += Lg.seats[d] || 0; }
+  const one = (lab, o) => `<span class="s2-sp"><small>${lab}</small><b class="mono">${num(o.pax)} / ${num(o.seats)}</b><em class="fill-${fillCls(o.pax, o.seats)}">${o.seats ? Math.round(100 * o.pax / o.seats) : 0}%</em></span>`;
+  const at = html.indexOf('class="st-rvf"'), end = at < 0 ? -1 : html.indexOf('</div>', at); if(end < 0) return html;
+  return html.slice(0, end + 6) + `<div class="s2-rvsplit"><small>Seats filled</small>${one(daysLabel('weekday'), a)}${one(daysLabel('weekend'), b)}</div>` + html.slice(end + 6);
+};
+/* for the tests: one day's flights as the engine prices them */
+function fdDayFlights(d){ return withDay(d, () => withBeat(beatAt(d), () => planFlights())).map(f => ({ route:f.route, uid:f.uid, k:f.trip, dep:f.dep, seats:f.seats, sold:f.sold })); }
+/* ==================================================================
+   CHAPTER 2 "Going long" (Workbook v5.0, D68–D73): in the game since 13 Oct 2026 (once the revised Studio only).
+   The beats carry on past chapter 1's review (28 Dec 2030):
+     - Christmas and New Year (days 119–126) fly the winter plan by themselves, one run, then a results card;
+     - chapter 2's opening week a day at a time, from the Calendar (days 127–133): Monday the plan, the run on the board,
+       Sunday the review, the same week loop as chapter 1's first four weeks;
+     - weeks to the end of January, months from the first Monday in February, the chapter 2 review on 31 August 2031.
+   WORLD.chapter, reviewDay, weekFrom and monthFrom follow the chapter of the day, so "the opening days" (S.day < weekFrom)
+   mean days 127–133 in chapter 2 as they mean days 1–28 in chapter 1.
+   Functions shared with the main game are reassigned here, not redeclared (the main build stays as it was).
+   ================================================================== */
+const CH2 = CHAPTERS.find(c => c.chapter === 2) || null;
+let CH_SPANS = [];
+const buildBeatsCh1 = buildBeats;
+buildBeats = function(){
+  ['chapter', 'reviewDay', 'weekFrom', 'monthFrom'].forEach(k => { delete WORLD[k]; });
+  buildBeatsCh1(); if(!WORLD.rounds || !WORLD.chapter) return;
+  const c1 = { no:1, ch:WORLD.chapter, start:dayOfDate(WORLD.chapter.start), review:WORLD.reviewDay, weekFrom:WORLD.weekFrom, monthFrom:WORLD.monthFrom };
+  CH_SPANS = [c1];
+  if(CH2) CH_SPANS.push(chapter2Beats(WORLD.rounds, c1));
+  const span = () => { const d = typeof S !== 'undefined' && S && S.day ? S.day : 1; return CH_SPANS.slice().reverse().find(x => d >= x.start) || CH_SPANS[0]; };
+  [['chapter', 'ch'], ['reviewDay', 'review'], ['weekFrom', 'weekFrom'], ['monthFrom', 'monthFrom']].forEach(([k, f]) => Object.defineProperty(WORLD, k, { get:() => span()[f], configurable:true, enumerable:true }));
+};
+function beatEvents(a, z){ return WB_EVENTS.filter(e => e.date && dayOfDate(e.date) >= a && dayOfDate(e.date) <= z).map(e => Object.assign({ day:dayOfDate(e.date) }, gameEvent(e.id) || { id:e.id, title:e.title, text:e.text, info:true, effectsText:e.effects })); }
+/* chapter 2's beats, appended to chapter 1's */
+function chapter2Beats(R, c1){
+  const start = dayOfDate(CH2.start), review = dayOfDate(CH2.reviewDate || CH2.end), hol = c1.review + 1;
+  if(start > hol){   // the holiday between the chapters: the standing plan flies, nothing to plan
+    const m = marketWeekOf(hol) || {}, news = [...new Set([m.headline, (marketWeekOf(start - 1) || {}).headline].filter(Boolean))];
+    R.push({ date:isoOf(hol), day:hol, period:'gap', holiday:true, fuel:fuelOn(hol), prog:5, title:'Christmas and New Year', headline:'Christmas and New Year: the winter timetable flies by itself.', news, market:m, season:m.season, weather:m.weather });
+  }
+  const cal = CAL.filter(c => c.day >= start && c.day < review).sort((a, b) => a.day - b.day);
+  cal.forEach(c => { const d = c.day;
+    R.push({ date:c.date || isoOf(d), day:d, period:'day', chapterNo:2, fuel:fuelOn(d), prog:5, title:c.title || dateShort(d), headline:(c.headlines || [])[0] || '', news:(c.headlines || []).slice(),
+      intro: d === start ? 'longhaul' : undefined, eventId:c.event || null, event:gameEvent(c.event), competitor:c.rivalFares || null, demandMod:modOf(c.demandChanges), demandChanges:c.demandChanges || null,
+      unlocks:c.unlocks || null, jobs:c.jobs || [], gatedCalc:c.gatedCalc || null, phase:c.phase || 'day', weekend: c.phase === 'weekend' || calDate(d).getUTCDay() % 6 === 0, cal:c,
+      weekPhase:c.weekPhase || null, week:c.week || weekNo(d) }); });
+  let d = cal.length ? cal[cal.length - 1].day + 1 : start;
+  // weeks until the first Monday of the next month ("then weekly play, then months from February")
+  let monthFrom = d; while(calDate(monthFrom).getUTCDate() > 7 || calDate(monthFrom).getUTCDay() !== 1 || calDate(monthFrom).getUTCMonth() === calDate(start).getUTCMonth()) monthFrom++;
+  const weekFrom = d;
+  while(d < monthFrom && d < review){ const m = marketWeekOf(d) || {};
+    R.push({ date:isoOf(d), day:d, period:'week', chapterNo:2, fuel:fuelOn(d), prog:5, title:'Week ' + weekNo(d), headline:m.headline || '', news: m.headline ? [m.headline] : [], market:m, season:m.season, weather:m.weather, events:beatEvents(d, d + 6) });
+    d += 7; }
+  while(d < review){ const m = marketWeekOf(d) || {}, end = Math.min(monthEnd(d), review - 1);
+    R.push({ date:isoOf(d), day:d, period:'month', chapterNo:2, fuel:fuelOn(d), prog:5, title:monthName(d), headline:m.headline || '', news: m.headline ? [m.headline] : [], market:m, season:m.season, weather:m.weather, events:beatEvents(d, end) });
+    d = monthEnd(d) + 1; }
+  R.push({ date:isoOf(review), day:review, period:'review', chapterNo:2, fuel:fuelOn(review), prog:5, title:`Chapter ${CH2.chapter} review`, headline:`${CH2.name}: the chapter ends today. Time to look at the accounts.`, news:[], chapter:CH2 });
+  return { no:2, ch:CH2, start, review, weekFrom, monthFrom };
+}
+buildBeats();
+
+/* ---------- the holiday: HQ, the run, the results; its words; its fuel at the day's price (nobody was there to buy it) ---------- */
+function holidayNow(){ const P = S && S.period; return !!(P && P.type === 'gap' && roundData(S.round).holiday); }
+const stepsForCh1 = stepsFor;
+stepsFor = function(b){ return roundData(b).holiday ? [{ t:'hq' }, { t:'sim' }, { t:'results' }] : stepsForCh1(b); };   // the run starts from HQ's button, so the sim step is entered (and simulated)
+const PWch1 = PW;
+PW = function(){ if(holidayNow()) return { now:'over Christmas and New Year', poss:"The holiday's", the:"the holiday's", span:'gap' }; return PWch1(); };
+const planWordCh1 = planWord;
+planWord = function(){ return holidayNow() ? 'Fly Christmas and New Year' : planWordCh1(); };
+const closeWordCh1 = closeWord;
+closeWord = function(){ return holidayNow() ? `On to chapter ${CH2 ? CH2.chapter : 2}` : closeWordCh1(); };
+const emergencyFuelCh1 = emergencyFuel;
+emergencyFuel = function(short, day){
+  if(!holidayNow()) return emergencyFuelCh1(short, day);
+  const L = Math.ceil(short - 1e-9), ppl = r2(fuelOn(day)), bill = r2(L * ppl);
+  fuelLots().push({ L, p:ppl }); S.fuel = r2(S.fuel + L); S.fuelValue = r2(S.fuelValue + bill); S.cash = r2(S.cash - bill);
+  S.holidayFuel = { L:r2(((S.holidayFuel || {}).L || 0) + L), bill:r2(((S.holidayFuel || {}).bill || 0) + bill) };
+  return { L, ppl, bill };
+};
+
+/* ---------- moving between the chapters ---------- */
+const closeDayWeekCh1 = closeDayWeek;
+closeDayWeek = function(){
+  const P = S.period, nb = P ? beatStartingOn(P.to + 1) : null, nxt = nb !== null ? WORLD.rounds[nb] : null;
+  // the holiday ends on chapter 2's first day: a day beat, started as a day (the plan, the shop, the sums)
+  if(S.phase === 'round' && P && P.type !== 'day' && nxt && nxt.period === 'day'){ UI.view = null; UI.fbI = 0; if(typeof attachArchive === 'function') attachArchive(); startProtoDay(nb); return; }
+  // chapter 2's Sunday review leads straight into the weeks (the regular plan was approved in chapter 1)
+  if(S.phase === 'round' && P && P.type === 'day' && weekPhaseOf(S.round) === 'review' && roundData(S.round).chapterNo === 2){ const n2 = S.round + 1, w2 = WORLD.rounds[n2];
+    if(w2 && w2.period !== 'day'){ UI.view = null; UI.fbI = 0; if(typeof attachArchive === 'function') attachArchive(); delete S.wk; startBeat(n2); return; } }
+  return closeDayWeekCh1();
+};
+/* the chapter's end: chapter 1's card leads on to the holiday; chapter 2's says what comes next */
+const protoEndCh1 = R.protoEnd;
+R.protoEnd = st => {
+  const nb = nextBeat(S.day), ch = WORLD.chapter || {};
+  protoEndCh1(st);
+  const p = screen().querySelector('.proto-end p.muted'), H = (S.history || []).filter(h => h.type !== 'setup' && h.from >= dayOfDate(ch.start || WORLD.startDate));
+  const px = screen().querySelectorAll('.pe-grid > div')[2]; if(px && ch.chapter > 1){ const b = px.querySelector('b'); if(b) b.textContent = num(H.reduce((t, h) => t + (h.pax || 0), 0)); }
+  if(nb !== null && CH2 && ch.chapter === 1){
+    delete S.finished;
+    if(p) p.innerHTML = `Next: Christmas and New Year, when the winter timetable flies by itself. Then <b>chapter ${CH2.chapter}, ${esc(CH2.name)}</b>, opens on ${esc(dateLong(dayOfDate(CH2.start)))}: New York, Dubai and the long-haul planes.`;
+    const row = screen().querySelector('.proto-end .row'); if(row) row.insertAdjacentHTML('afterbegin', `<button class="btn primary big" id="peNext">On to Christmas and New Year &#9654;</button>`);
+    const again = $('again'); if(again) again.classList.remove('primary');
+    on('peNext', () => { delete S.finished; startBeat(nb); });
+    publish(); return;
+  }
+  if(ch.chapter === 2 && p){ const buy = (WORLD.settings || {}).buyFromDate; p.innerHTML = `Next: chapter 3, buying aircraft outright${buy ? `, from ${esc(dateLong(dayOfDate(buy)))}` : ''}. That part of the game is not built yet.`; }
+};
+/* ---------- the best-plan sweep at chapter 2's size ----------
+   The sweep (p4v bestPlanSweep) tries every mix of up to four services from every route an aircraft can reach. Chapter 1's
+   planes reach a handful of routes; a 757 reaches all sixteen, which is thousands of plans for each review. From chapter 2
+   each aircraft type tries its eight most promising routes (one full service's profit at the route's base fare) and the
+   routes it flies now. Chapter 1's sweep is unchanged. */
+let SWEEP_ROUTES = null;
+const sweepCh1 = bestPlanSweep;
+bestPlanSweep = function(from){
+  const d0 = from || (S.wk && S.wk.from) || S.day; if(!CH2 || d0 < dayOfDate(CH2.start)) return sweepCh1(from);
+  SWEEP_ROUTES = { day:d0 }; try{ return sweepCh1(from); } finally { SWEEP_ROUTES = null; }
+};
+const planeCanFlyCh1 = planeCanFly;
+planeCanFly = function(plane, route){
+  if(!planeCanFlyCh1(plane, route)) return false; if(!SWEEP_ROUTES) return true;
+  const top = SWEEP_ROUTES[plane.id] || (SWEEP_ROUTES[plane.id] = sweepRoutesFor(plane, SWEEP_ROUTES.day)); return top.includes(route.id);
+};
+function sweepRoutesFor(p, day){
+  const flown = S.fleet.filter(f => f.planeId === p.id).flatMap(f => schedOf(f)), est = r => Math.min(p.seats, paxFor(r, r.basePrice)) * r.basePrice - runCostOf(p, r) - fuelForTrip(p, r) * fuelOn(day);
+  const top = openRoutes(day).filter(r => planeCanFlyCh1(p, r)).map(r => [r.id, est(r)]).sort((a, b) => b[1] - a[1]).slice(0, 8).map(x => x[0]);
+  return [...new Set(top.concat(flown))];
+}
+
+/* the chapter review's "What comes next": chapter 2 after chapter 1 (built now), chapter 3 after chapter 2 (not yet) */
+const nextChapterLineCh1 = nextChapterLine;
+nextChapterLine = function(){
+  const ch = WORLD.chapter || {}; if(ch.chapter === 1 && CH2) return `Christmas and New Year fly by themselves, then chapter ${CH2.chapter}, ${CH2.name}, opens on ${dateLong(dayOfDate(CH2.start))}: ${CH2.newIdea || 'long haul'}.`;
+  if(ch.chapter === 2){ const buy = (WORLD.settings || {}).buyFromDate; return `Chapter 3 opens${buy ? ` on ${dateLong(dayOfDate(buy))}` : ''}: buying aircraft outright. That part of the game is not built yet.`; }
+  return nextChapterLineCh1();
+};
+
+/* an older v2 save that stopped at chapter 1's end can carry on */
+function chapterEndCanContinue(){ return !!(S && S.finished && CH2 && nextBeat(S.day) !== null && (WORLD.chapter || {}).chapter === 1); }
+/* ==================================================================
+   LONG HAUL (Workbook v5.0: D68 long haul, D72 the 757 and the 787, D73 the long-haul crew). Revised Studio only.
+   A route over Settings longHaulFromKm (4,000 km) is long haul:
+     - the aircraft waits longHaulTurnaroundMin (120) at the far end, so New York is out at 06:30, back at 21:00: one a day;
+     - every long-haul service pays longHaulCrewCost (£500), a flat second crew, in place of the duty-day rule (D51);
+     - arrival is shown in local time: London departure + flying time + the route's utc (Delhi 5.5 hours);
+     - fuel is the whole litres (12,375 L to New York in a 757), not rounded to tens;
+     - Routes.rotation = overnight (Delhi, from June): out on day 1, back on day 2. Revenue, fuel, flying, landing,
+       passenger charges and the crew are booked on the way out, the plane's day cost every day: it earns every second day.
+   Archetype long_haul grows 5% a week from the route's opening week, to ×1.5; Routes.seasonOverride replaces the
+   archetype's season multipliers on that route.
+   ================================================================== */
+const LH = () => { const st = WORLD.settings || {}; return { from:st.longHaulFromKm || 4000, turn:st.longHaulTurnaroundMin || 120, crew:st.longHaulCrewCost || 500, sameDayMax:st.longHaulSameDayMaxKm || 6000, dep:toMin('06:30') }; };
+(WB && WB.routes || []).forEach(w => { const r = WORLD.routes.find(x => x.id === w.id); if(r){ r.rotation = w.rotation || 'same-day'; r.seasonOverride = w.seasonOverride || null; } });
+function isLongHaul(route){ return !!route && routeKm(route) > LH().from; }
+function isOvernight(route){ return !!route && route.rotation === 'overnight'; }
+const lhId = id => isLongHaul(routeById(id)), onId = id => isOvernight(routeById(id));
+/* the far end's clock: London + the route's utc (hours, fractional allowed) */
+function localTime(route, londonMin){ return londonMin + Math.round(60 * ((route && route.utc) || 0)); }
+function localArrText(route, trip){ const t = localTime(route, trip.arriveAway), d = Math.floor(t / 1440) - Math.floor(trip.arriveAway / 1440); return `lands ${fmtTime(t)}${d > 0 ? ' next day' : d < 0 ? ' the day before' : ''} ${route.city} time`; }
+function zoneText(route){ const u = (route && route.utc) || 0, h = Math.abs(u), hs = h === 1 ? 'an hour' : `${String(h).replace('.5', '½')} hours`; return u === 0 ? 'the same time as London' : `${hs} ${u > 0 ? 'ahead of' : 'behind'} London`; }
+
+/* ---------- time: the long turnaround, the overnight rotation's one-way day ---------- */
+const lhAway0 = TIME.away;
+TIME.away = function(plane, route){ return isLongHaul(route) ? LH().turn : lhAway0.call(TIME, plane, route); };
+const lhDay0 = TIME.day;
+TIME.day = function(plane, ids, start, deps){
+  if(!(ids.length === 1 && onId(ids[0]))) return lhDay0.call(TIME, plane, ids, start, deps);
+  if(deps === undefined) deps = depsOn() && S && Array.isArray(S.deps) ? S.deps : null;
+  const id = ids[0], r = routeById(id), L = TIME.leg(plane, r), dep = deps && deps[0] !== undefined && deps[0] !== null ? deps[0] : start === undefined ? LH().dep : start;
+  const segs = [{ kind:'out', start:dep, end:dep + L, route:id, k:0 }];
+  return { start:dep, trips:[{ route:id, k:0, dep, arriveAway:dep + L, leaveAway:null, arr:dep + L, overnight:true, segments:segs }], segments:segs, end:dep + L, elapsed:L };
+};
+/* a long-haul service looks for 06:30 first (Balance Report: "one service at 06:30 is the natural plan") */
+const lhFreeDep0 = freeDep;
+freeDep = function(next, j, id){
+  const x = next.fleet[j]; if(!lhId(id) || !x) return lhFreeDep0(next, j, id);
+  if(onId(id)) return x.sched.length ? null : LH().dep;   // an overnight rotation is the aircraft's whole day, and the next
+  if(x.sched.some(onId)) return null;
+  const p = planeById(x.planeId), r = routeById(id), trip = TIME.roundTrip(p, r), home = TIME.home(p), t = LH().dep;
+  const deps = x.sched.length ? (x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(next, j)) : [], busy = x.sched.map((rid, k) => [deps[k], deps[k] + TIME.roundTrip(p, routeById(rid)) + home]);
+  if(t + trip <= dayEnd() && !busy.some(([a, z]) => t < z && t + trip + home > a)) return t;
+  return lhFreeDep0(next, j, id);
+};
+const lhFitsFor0 = fitsFor;
+fitsFor = function(x){ if(x.sched.length > 1 && x.sched.some(onId)) return false; return lhFitsFor0(x); };
+/* adding a long-haul service that can't fit says why */
+const lhAddService0 = addService;
+addService = function(i, id, j){
+  const r = routeById(id); if(!lhId(id)) return lhAddService0(i, id, j);
+  const base = normPlan(JSON.parse(JSON.stringify(i === 9 ? testPlan() : currentPlan()))), lanes = (j === null || j === undefined ? base.fleet.map((x, q) => q) : [j]).filter(q => base.fleet[q] && planeCanFly(planeById(base.fleet[q].planeId), r));
+  if(lanes.length && !lanes.some(q => freeDep(base, q, id) !== null)){
+    const p = planeById(base.fleet[lanes[0]].planeId), rt = TIME.roundTrip(p, r);
+    toast(isOvernight(r) ? `Doesn't fit: ${r.city} is an overnight rotation. The aircraft flies out one day and back the next, so it can't fly anything else.` : `Doesn't fit: ${r.city} and back takes ${fmtDur(rt)} (out at ${fmtTime(LH().dep)}, back at ${fmtTime(LH().dep + rt)}), so a long-haul aircraft flies one ${r.city} service a day.`);
+    render(); return;
+  }
+  return lhAddService0(i, id, j);
+};
+
+/* ---------- fuel in whole litres ---------- */
+const lhFuel0 = fuelForTrip;
+fuelForTrip = function(plane, route){ return isLongHaul(route) ? Math.round(plane.fuelUse * 2 * routeKm(route) / 100) : lhFuel0(plane, route); };
+
+/* ---------- demand: growth from the opening week, the route's own seasons ---------- */
+const lhGrowth0 = growthOf;
+growthOf = function(route, n){
+  const a = route && route.arch; if(!a || route.archId !== 'long_haul') return lhGrowth0(route, n);
+  const g = a.growthPerWeek < 1 ? a.growthPerWeek : a.growthPerWeek / 100, wk = Math.max(0, weekNo(beatDay(n === undefined ? S.round : n)) - weekNo(route.openDay || 1));
+  return Math.min(a.growthCeiling || Infinity, 1 + g * wk);
+};
+/* the route's own season replaces the archetype's (the day's demand multiplier carries the season: p4n demandMult0, p4y route news) */
+function seasonOverrideFactor(route, day){
+  const o = route && route.seasonOverride, s = seasonOf(day), m = marketWeekOf(day) || {}, a = route && route.arch; if(!o || o[s] === undefined) return 1;
+  if(m.seasonMult && m.seasonMult[route.id] !== undefined && m.seasonMult[route.id] !== null) return 1;   // a Market column for the route wins, as before
+  const base = a && a.season ? (a.season[s] || 1) : 1; return o[s] / base;
+}
+const lhDemandMult0 = demandMult;
+demandMult = function(route, day){ return lhDemandMult0(route, day) * seasonOverrideFactor(route, day); };
+const lhSeason0 = seasonMult;
+seasonMult = function(route, n){ const o = route && route.seasonOverride, s = o ? seasonOf(beatDay(n === undefined ? S.round : n)) : null; return o && o[s] !== undefined ? o[s] : lhSeason0(route, n); };
+
+/* ---------- the overnight rotation: out on day 1, home on day 2 ---------- */
+/* which days an aircraft flies out: from the first day it flew the route, every second day */
+function rotOut(f, day){ const r = (schedOf(f) || [])[0]; if(!r || !onId(r)) return true;
+  if(!f.rot || f.rot.route !== r){ if(SIM_DAY !== null && SIM_DAY !== S.day) return (day - S.day) % 2 === 0; f.rot = { route:r, from:day }; }
+  return ((day - f.rot.from) % 2 + 2) % 2 === 0; }
+function rotOn(f){ const s = schedOf(f); return s.length === 1 && onId(s[0]); }
+const lhPlanFlights0 = planFlights;
+planFlights = function(){
+  if(!S || !S.fleet) return lhPlanFlights0();
+  const day = simDayNow(), home = S.fleet.filter(f => rotOn(f) && !rotOut(f, day));
+  let out;
+  if(!home.length) out = lhPlanFlights0();
+  else { const keep = home.map(f => [f, f.schedule, f.route]); home.forEach(f => { f.schedule = []; f.route = null; });
+    try{ out = lhPlanFlights0(); } finally { keep.forEach(([f, s, r]) => { f.schedule = s; f.route = r; }); } }
+  home.forEach(f => { const i = S.fleet.indexOf(f), id = schedOf(f)[0], r = routeById(id), p = planeById(f.planeId), D = TIME.day(p, [id], undefined, fleetDeps(f)), t = D.trips[0];
+    out.push({ key:f.uid + '-0', uid:f.uid, trip:0, planeId:f.planeId, route:id, code:flightCode(i, 0), price:fareOf(id), seats:0, layout:f.layout, dep:t.dep, arr:t.arr, segments:t.segments,
+      fuelL:0, runCost:0, fuelCost:0, termCost:0, demand:0, sold:0, revenue:0, homeLeg:true, band:bandOf(t.dep), reasons:[`Flying home from ${r.city}: the rotation's passengers and costs were booked on the way out.`] }); });
+  out.forEach(x => { const r = routeById(x.route); if(isLongHaul(r) && !x.homeLeg){ const D = x.segments && x.segments[0]; x.longHaul = true; x.localArr = localTime(r, D ? D.end : x.arr); } });
+  return out;
+};
+/* a long-haul service pays the flat second crew; its aircraft is not charged the duty-day crew as well */
+const lhDuty0 = dutyMin;
+dutyMin = function(plane, sched){ return (sched || []).some(lhId) ? 0 : lhDuty0(plane, sched); };
+const lhExtras0 = dayExtras;
+dayExtras = function(fl){
+  const X = lhExtras0(fl); if(!crewOn()) return Object.assign(X, { lhCrew:0, lhServices:0 });
+  const n = fl.filter(f => !f.grounded && !f.noFuel && !f.homeLeg && f.longHaul).length;
+  return Object.assign(X, { lhCrew:n * LH().crew, lhServices:n, crew:(X.crew || 0) + n * LH().crew });
+};
+
+/* ---------- the timetable: the local arrival on the block, the overnight block ---------- */
+const lhBlock0 = s2Block;
+s2Block = function(i, pl, L, x, j, t, k, last, o, dy){
+  const h = lhBlock0(i, pl, L, x, j, t, k, last, o, dy), r = routeById(t.route); if(!isLongHaul(r)) return h;
+  const note = t.overnight ? `Out today, back tomorrow · earns every second day · ${localArrText(r, t)}` : localArrText(r, t);
+  return h.replace(/<button class="ad-blk st-blk s2-blk /, `<button class="ad-blk st-blk s2-blk lh ${t.overnight ? 'ovn' : ''} `).replace('<span class="s2-bfare', `<span class="s2-lh">${esc(note)}</span><span class="s2-bfare`);
+};
+/* the flight editor: the local arrival in place of "ready again"; an overnight rotation is one way today */
+const lhSvc0 = s2SvcEditor;
+s2SvcEditor = function(pl, L, sel){
+  const h = lhSvc0(pl, L, sel), x = pl.fleet[sel.j], id = x && x.sched[sel.k], r = id && routeById(id); if(!h || !isLongHaul(r)) return h;
+  const p = planeById(x.planeId), dps = x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(pl, sel.j), dep = dps[sel.k], leg = TIME.leg(p, r), back = dep + TIME.roundTrip(p, r);
+  let out = h.replace(/ready again <span class="mono">[^<]*<\/span>/, esc(localArrText(r, { arriveAway:dep + leg })));
+  if(isOvernight(r)) out = out.replace(`${fmtTime(dep)}–${fmtTime(back)}`, `${fmtTime(dep)}–${fmtTime(dep + leg)}`).replace('<small>', '<small>back tomorrow, earns every second day · ');
+  return out;
+};
+
+/* ---------- what's new on day 127 ---------- */
+INTRO.longhaul = { kicker:'New this week · Long haul', title:'Going long', before:'shop2',
+  words:[['Long haul', () => `A route over ${num(LH().from)} km. New York is ${num(routeKm(routeById('nyc')))} km from London.`], ['Local time', 'The time on the clocks where the plane lands.'], ['Second crew', () => `A long flight needs two crews: ${money(LH().crew)} for every long-haul service.`]],
+  what:() => { const r = routeById('nyc'), p = planeById('b757') || ourPlane(), L = TIME.leg(p, r), dep = LH().dep, back = dep + TIME.roundTrip(p, r);
+    return [[`New York and Dubai open today. They are too far for your short-haul planes: you need a long-haul plane, the <b>Boeing 757</b> or the <b>Boeing 787</b>, rented by the day.`],
+      `<div class="ni-flow"><div><span class="kl">Out from London</span><b class="mono">${fmtTime(dep)}</b><small>${fmtDur(L)} flying</small></div><div><span class="kl">Lands in New York</span><b class="mono">${fmtTime(localTime(r, dep + L))}</b><small>New York time (${esc(zoneText(r))})</small></div><div><span class="kl">Back in London</span><b class="mono">${fmtTime(back)}</b><small>so one flight a day</small></div></div>`,
+      ['Each long-haul flight has a second crew on board, and the plane waits two hours at the far end.']]; },
+  maths:() => [niRule('London time', '−', '5 hours', 'New York time'),
+    `<div class="ni-eg"><p>A plane leaves London at <b>09:00</b> and flies for <b>7 hours</b>. It lands at 16:00 London time.</p><p>New York is 5 hours behind: ${niSum('16:00 − 5 hours = 11:00')} New York time.</p></div>`],
+  check:{ q:'A plane lands in Dubai at 15:00 London time. Dubai is 4 hours ahead of London. What time is it in Dubai?', opts:[['11:00', 'That is 4 hours behind. Dubai is ahead, so add the 4 hours.'], ['19:00', ''], ['15:00', 'That is London time. Dubai\'s clocks are 4 hours ahead.']], ok:1, done:'15:00 + 4 hours = 19:00 in Dubai.' },
+  think:['A 757 has 200 seats and a 787 has 250. Which would you rent first, and why?', 'Look at the rent as well as the seats.'] };
+
+/* ---------- for the tests and the report: one service's day, each line from the engine ---------- */
+function lhServiceDay(uid, soldTo){
+  const f = S.fleet.find(x => x.uid === uid) || S.fleet.find(x => schedOf(x).some(lhId)); if(!f) return null;
+  const fl = planFlights(), x = fl.find(z => z.uid === f.uid && !z.homeLeg); if(!x) return null;
+  const sold = soldTo === undefined ? x.sold : soldTo, X = dayExtras(fl.filter(z => z.uid === f.uid)), r = routeById(x.route), p = planeById(f.planeId), ppl = fuelOn(simDayNow());
+  const rev = sold * x.price, fuel = r2(x.fuelL * ppl), land = landingFees(r), fly = x.runCost - land, pax = r2(sold * termCharge()), crew = X.lhCrew, day = p.dayCost || 0, rent = dayCostOf(f) - day;
+  return { route:x.route, plane:f.planeId, fare:x.price, dep:fmtTime(x.dep), arr:fmtTime(x.arr), localArr:fmtTime(x.localArr), want:x.demand, soldLive:x.sold, sold, rev, fuelL:x.fuelL, ppl, fuel, fly, land, pax, crew, day, rent,
+    profit:r2(rev - fuel - fly - land - pax - crew - day - rent) };
+}
+/* ==================================================================
+   CHAPTER 2, PUSH 2 (Workbook v5.0, D69–D71): reputation revealed, the airline type (light), Value's bag fee and
+   chapter 2's sign-offs. In the game (once the revised Studio only).
+   - Reputation (Settings reputationFromDate, else chapter 2's first day; reputationPerHalfStar; reputationBankedFromAutumn):
+     the autumn's event stars were banked silently; on 6 January the rating is revealed at that level with a card listing
+     what moved it, and from then demand on every route is × (1 + 0.05 × half-stars from 3). Only the workbook's stated
+     effects move the stars (events, challenges): the prototype's daily ½-star for a high fare, free snacks or the cabin
+     layout stays off, since the Premium airline's point is the higher fares.
+   - The airline type (airlineTypeMode light), chosen on day 127 and confirmed on Thursday (the Calendar's "airline type
+     confirmed"): Premium opens the two demand-table steps above each route's top fare (premiumExtraFareSteps) and moves
+     stars 1.5× as fast; Value opens one step below (valueLowerFareSteps), moves stars 0.75× as fast and charges the bag
+     fee; Full Service is unchanged. The rating shown and used is whole half-stars, counted towards 3 (3¾ shows 3½); the
+     quarter is kept, so a second ½ makes it 4½.
+   - Bags (extrasBagFee £20, extrasBagTakeUp 0.4): a revenue line for a Value airline, passengers × 4 tenths × £20 a day.
+   - Sign-offs (Change Note §6, under the cap of three): the first long-haul ticket sum, estimated first (200 × £510 is
+     about 200 × £500); the first long-haul fuel line on the service card (12,375 L × £2.17); the bag fee for a Value
+     airline, two steps (4 tenths of the passengers, then × £20). Rent-or-buy at jet scale and a full long-haul plane
+     (seats × fare, the same numbers as the ticket sum) are Build.
+   ================================================================== */
+const CH2_DAY = typeof CH2 !== 'undefined' && CH2 ? dayOfDate(CH2.start) : null;
+const T2 = () => { const st = WORLD.settings || {}; return { per:st.reputationPerHalfStar !== undefined ? st.reputationPerHalfStar : 0.05, prem:st.premiumStarRate || 1.5, val:st.valueStarRate || 0.75, banked:st.reputationBankedFromAutumn !== false,
+  up:st.premiumExtraFareSteps === undefined ? 2 : st.premiumExtraFareSteps, down:st.valueLowerFareSteps === undefined ? 1 : st.valueLowerFareSteps, fee:st.extrasBagFee || 20, take:st.extrasBagTakeUp === undefined ? 0.4 : st.extrasBagTakeUp,
+  on:(st.airlineTypeMode || 'light') !== 'off' }; };
+const ch2Now = () => !!(CH2_DAY && S && (S.day || 1) >= CH2_DAY);
+const halfWord = h => { const a = Math.abs(h), w = Math.floor(a / 2), half = a % 2; return `${w || !half ? w : ''}${half ? '½' : ''}`; };
+const starText = n => { const h = Math.round(n * 2); return `${h >= 0 ? '+' : '−'}${halfWord(h)} star${Math.abs(h) > 2 || Math.abs(h) === 0 ? 's' : ''}`; };
+const ratingText = r => `${halfWord(Math.round(r * 2))} star${r === 1 ? '' : 's'}`;
+
+/* ---------- reputation: when it goes live, what it is worth, what moves it ---------- */
+function repFromDay(){ const d = gateDay('reputationFromDate'); return d !== null ? d : (CH2_DAY && (WORLD.settings || {}).reputationPerHalfStar !== undefined ? CH2_DAY : null); }
+let REP_QUIET = 0;
+repLive = function(){ if(REP_QUIET) return false; const d = repFromDay(); return !!(d !== null && S && (S.day || 1) >= d) || !!WORLD.reputationOn; };
+/* whole half-stars from 3, counted towards 3 */
+function repHalves(x){ const h = (x - 3) * 2; return h >= 0 ? Math.floor(h + 1e-9) : Math.ceil(h - 1e-9); }
+function repShown(x){ return clamp(3 + repHalves(x) / 2, 1, 5); }
+repFactor = function(){ if(!repLive()) return 1; return Math.max(0, 1 + T2().per * Math.round(((S && S.rep) || 3) * 2 - 6)); };
+function starRate(t){ t = t === undefined ? airlineType() : t; return t === 'premium' ? T2().prem : t === 'value' ? T2().val : 1; }
+/* an event's stars: banked before the reveal, scaled by the airline type after it; each change is logged for the reveal card */
+const bankStarsT0 = bankStars;
+bankStars = function(n){
+  if(!n || !S) return;
+  const live = repLive(), ev = S.rnd && S.rnd.event, L = S.repLog || (S.repLog = []), last = L[L.length - 1], rate = live ? starRate() : 1;
+  const opt = ev && S.rnd.eventChoice !== undefined && ev.options ? ev.options[S.rnd.eventChoice] : null;
+  S.repBank = r2((S.repBank || 0) + n);
+  if(live){ let x = S.repExact; if(x === undefined || x === null || repShown(x) !== S.rep) x = S.rep; x = clamp(Math.round((x + n * rate) * 1000) / 1000, 1, 5); S.repExact = x; S.rep = repShown(x); }
+  if(last && ev && last.ev === ev.id && last.day === S.day && last.n === -n){ L.pop(); return; }   // a choice taken back
+  L.push({ day:S.day, n, eff:live ? Math.round(n * rate * 1000) / 1000 : 0, live, ev:ev ? ev.id : null, what:ev ? `${ev.title}${opt ? `: ${opt.label}` : ''}` : 'Stars' });
+};
+/* the prototype's daily stars (a high fare, free snacks, the cabin) stay off: only the stated effects move the rating */
+const applyResultsT0 = applyResults;
+applyResults = function(){ const r0 = S.rep; REP_QUIET++; try{ return applyResultsT0.apply(this, arguments); } finally { REP_QUIET--; S.rep = r0; if(S.rnd) S.rnd.repDelta = 0;
+  const X = S.rnd && S.rnd.extras; if(X && X.bagRev) (S.bagDays = S.bagDays || {})[S.day] = X.bagRev; } };
+const applyPeriodResultsT0 = applyPeriodResults;
+applyPeriodResults = function(){ const r0 = S.rep; REP_QUIET++; try{ return applyPeriodResultsT0.apply(this, arguments); } finally { REP_QUIET--; S.rep = r0; if(S.rnd) S.rnd.repDelta = 0; } };
+/* the reveal: at the banked level (or 3 if the workbook says the autumn is not banked) */
+const revealT0 = revealReputation;
+revealReputation = function(){
+  const was = S && S.repRevealed; revealT0(); if(!S || was || !S.repRevealed) return;
+  if(!T2().banked) S.rep = WORLD.startingReputation || 3;
+  S.repExact = S.rep; S.repReveal = { day:S.day, bank:S.repBank || 0, rep:S.rep };
+  try{ rec().pend.events.push({ day:S.day, title:'Star rating revealed', choice:ratingText(S.rep), cost:0 }); }catch(e){}
+  if(CH2_DAY && S.day > CH2_DAY) addNews([{ tag:'NEWS', text:`Your star rating is public: ${ratingText(S.rep)}. Each half-star above 3 brings ${Math.round(T2().per * 100)}% more passengers.` }]);
+};
+
+/* ---------- the airline type ---------- */
+const ATYPE = {
+  premium:{ name:'Premium', short:'Premium', line:'Higher fares, higher expectations.' },
+  full:{ name:'Full Service', short:'Full Service', line:'As you are now.' },
+  value:{ name:'Value', short:'Value', line:'Lower fares, paid extras.' } };
+function airlineType(){ return S && S.atype && S.atype.pick || null; }
+function typeFaresFor(r, t){
+  const base = r._fares0 || []; if(!t || t === 'full' || !r.demandAtFare || !base.length || !T2().on) return base;
+  const k = Object.keys(r.demandAtFare).map(Number).filter(v => !isNaN(v)).sort((a, b) => a - b), lo = Math.min(...base), hi = Math.max(...base);
+  if(t === 'premium') return base.concat(k.filter(v => v > hi).slice(0, T2().up));
+  if(t === 'value') return (T2().down > 0 ? k.filter(v => v < lo).slice(-T2().down) : []).concat(base);
+  return base;
+}
+/* every workbook route's fare menu follows the type (the shop, the Studio, the sweep and the sums all read r.fares) */
+WORLD.routes.forEach(r => { if(!r.wb) return; r._fares0 = (r.fares || []).slice(); const get = () => typeFaresFor(r, airlineType());
+  Object.defineProperty(r, 'fares', { get, set(v){ r._fares0 = (v || []).slice(); }, configurable:true, enumerable:true });
+  Object.defineProperty(r, 'prices', { get, set(){}, configurable:true, enumerable:true }); });
+/* a fare that is no longer on the menu moves to the nearest one */
+function typeSnap(){ const fix = P => { if(!P) return; Object.keys(P).forEach(id => { const r = routeById(id); if(r && r.wb && !r.fares.includes(P[id])) P[id] = nearestFare(r, P[id]); }); };
+  fix(S.prices); if(S.rnd && S.rnd.test) fix(S.rnd.test.prices); if(S.rop) fix(S.rop.prices); }
+function setAirlineType(t, confirm){
+  const was = airlineType(); S.atype = Object.assign({}, S.atype || {}, { pick:t, day:(S.atype && S.atype.day) || S.day });
+  if(confirm){ S.atype.confirmed = true; S.atype.confirmDay = S.day; }
+  typeSnap(); if(typeof refreshPlan === 'function') refreshPlan();
+  if(confirm || was !== t){ try{ const R = rec(), E = R.pend.events, e = E.find(x => x.title === 'Airline type' && x.day === S.day); const choice = `${ATYPE[t].name}${confirm ? ' (confirmed)' : ''}`; if(e) e.choice = choice; else E.push({ day:S.day, title:'Airline type', choice, cost:0 }); }catch(e){} }
+  save();
+}
+function typeConfirmDay(){ const c = CAL.find(x => x.unlocks && (x.unlocks.mechanics || []).some(m => /airline type confirmed/i.test(m))); return c ? c.day : (CH2_DAY ? CH2_DAY + 3 : null); }
+
+/* ---------- Value's bag fee: four tenths of the passengers × £20, on every route ---------- */
+function bagsFor(pax){ return Math.round(pax * T2().take); }
+const extrasT0 = dayExtras;
+dayExtras = function(fl){
+  const X = extrasT0(fl); if(airlineType() !== 'value' || !ch2Now()) return Object.assign(X, { bags:0, bagRev:0 });
+  let bags = 0; Object.keys(X.byRoute || {}).forEach(id => { const x = X.byRoute[id], b = bagsFor(x.pax || 0); x.bags = b; bags += b; });
+  const bagRev = bags * T2().fee; return Object.assign(X, { bags, bagRev, obRev:(X.obRev || 0) + bagRev });
+};
+/* the Bags line: in the plan summary, the trade-offs' money and the day's results */
+const s2SummaryT0 = s2Summary;
+s2Summary = function(pl, L, hid){
+  const h = s2SummaryT0(pl, L, hid), X = L && L.X; if(airlineType() !== 'value' || !X || !ch2Now()) return h;
+  return h.replace('<span class="grow"></span>', `<span class="s2-si s2-bags"><small>Bags</small><span><b class="mono">${money(X.bagRev || 0)}</b><em>${num(X.bags || 0)} × ${money(T2().fee)}</em></span></span><span class="grow"></span>`);
+};
+const s2InsightsT0 = s2Insights;
+s2Insights = function(pl, L, hid){
+  const out = s2InsightsT0(pl, L, hid), X = L && L.X; if(airlineType() !== 'value' || !X || !X.bagRev) return out;
+  return out.map(g => g[0] !== 'Money' || !g[2] ? g : [g[0], g[1], g[2].replace(/(<span><small>On-board sales<\/small><b class="mono">)[^<]*(<\/b><\/span>)/, `$1${money(Math.round((L.v.snack || 0) - X.bagRev))}$2<span><small>Bags</small><b class="mono">${money(X.bagRev)}</b></span>`)]);
+};
+const cashLineT0 = cashLine;
+cashLine = function(){ const h = cashLineT0(), X = S.rnd && S.rnd.extras; if(!X || !X.bagRev) return h;
+  const line = ` · <span class="dr-bags">bags ${num(X.bags)} × ${money(T2().fee)} = <b>${money(X.bagRev)}</b> (in the revenue)</span>`, i = h.lastIndexOf('</p>');
+  return i >= 0 ? h.slice(0, i) + line + h.slice(i) : h + line; };
+
+/* ---------- day 127: the stars revealed, then the choice of type; Thursday: confirm it ---------- */
+const dayStepsT0 = daySteps;
+daySteps = function(n, w){
+  const st = dayStepsT0(n, w); if(!CH2_DAY || beatDay(n) !== CH2_DAY) return st;
+  const at = st.findIndex(x => x.t === 'intro'), i = at >= 0 ? at + 1 : Math.max(1, st.findIndex(x => x.t === 'hq') + 1);
+  const add = [{ t:'stars' }].concat(T2().on ? [{ t:'atype' }] : []); st.splice(i, 0, ...add); return st;
+};
+/* a save made on day 127 before these pages existed gets them, if the pupil has not reached the shop yet */
+function ch2StepsFix(){
+  if(!S || !CH2_DAY || S.day !== CH2_DAY || !Array.isArray(S.steps) || S.steps.some(x => x.t === 'stars') || S.phase !== 'round') return;
+  const shop = S.steps.findIndex(x => x.t === 'shop2' || x.t === 'plan'); if(shop < 0 || S.si > shop) return;
+  S.steps.splice(shop, 0, ...[{ t:'stars' }].concat(T2().on ? [{ t:'atype' }] : []));
+}
+const renderT0 = render;
+render = function(){ try{ ch2StepsFix(); if(S && Array.isArray(S.steps) && S.steps[S.si] && S.steps[S.si].t === 'stars') revealReputation(); }catch(e){} return renderT0.apply(this, arguments); };
+const enterRunDayT0 = enterRunDay;
+enterRunDay = function(nb){
+  enterRunDayT0(nb); const d = typeConfirmDay();
+  if(T2().on && d !== null && S.day === d && !(S.atype && S.atype.confirmed)){ S.steps.splice(S.si, 0, { t:'atypeOk' }); render(); }
+};
+Object.assign(RAIL_LABEL, { stars:'Your star rating', atype:'What sort of airline?', atypeOk:'Confirm the airline type' });
+SHELL_STEPS.push('stars', 'atype', 'atypeOk'); NO_BACK.push('atypeOk');
+
+/* the reveal card */
+function repMovesHtml(){
+  const L = (S.repLog || []).filter(x => !x.live && x.day < (S.repReveal ? S.repReveal.day : (CH2_DAY || 1e9)));
+  if(L.length) return `<table class="dk-t rv-t"><thead><tr><th>When</th><th>What happened</th><th class="num">Stars</th></tr></thead><tbody>${L.map(x => `<tr><td>${esc(dateShort(x.day))}</td><td>${esc(x.what)}</td><td class="num ${x.n > 0 ? 'good' : 'bad'}">${esc(starText(x.n))}</td></tr>`).join('')}</tbody>
+    <tfoot><tr><th colspan="2">Start at 3, ${L.map(x => starText(x.n).replace(/ stars?$/, '')).join(' ')}</th><th class="num">${esc(ratingText(S.rep))}</th></tr></tfoot></table>`;
+  const b = S.repBank || 0;
+  return b ? `<p class="rv-l">Your choices in the autumn came to <b>${esc(starText(b))}</b> altogether (the game did not keep each one then).</p>` : '<p class="rv-l">Nothing in the autumn moved your stars, so you start at 3.</p>';
+}
+function repWorthHtml(){
+  const h = Math.round(S.rep * 2) - 6, pct = Math.round(T2().per * 100), r = routeById('nyc'), fare = r ? (S.prices[r.id] || r.basePrice) : 0;
+  const sum = h > 0 ? `${esc(ratingText(S.rep))}: ${h} half-star${h > 1 ? 's' : ''} above 3, so ${h} × ${pct}% = <b>${h * pct}% more</b> passengers on every route.` : h < 0 ? `${esc(ratingText(S.rep))}: ${-h} half-star${h < -1 ? 's' : ''} below 3, so ${-h} × ${pct}% = <b>${-h * pct}% fewer</b> passengers on every route.` : `3 stars: no half-stars above or below 3, so <b>no change</b> to your passengers.`;
+  let eg = '';
+  if(r && h){ const keep = S.rep; let base; try{ S.rep = 3; base = paxWant(r, fare); } finally { S.rep = keep; } const now = paxWant(r, fare); eg = `<p class="rv-l">New York at ${money(fare)}: ${num(base)} want to fly at 3 stars; ${num(now)} at ${esc(ratingText(S.rep))}.</p>`; }
+  return `<div class="rv-rule"><span>Each half-star above 3</span><b>+${pct}%</b><span>Each half-star below 3</span><b>−${pct}%</b></div><p class="rv-sum">${sum}</p>${eg}`;
+}
+R.stars = st => {
+  if(typeof revealReputation === 'function') revealReputation();
+  const body = `<div class="rv-g"><section class="dk-pnl rv-score"><div class="dk-pnl-h">${ICO2.medal}<h2>Your star rating</h2></div><div class="rv-big"><span class="stars">${deskStars(S.rep)}</span><b>${esc(ratingText(S.rep))}</b><p>Passengers can now see it, and it changes how many want to fly with you.</p></div></section>
+    <section class="dk-pnl rv-moves"><div class="dk-pnl-h">${ICO2.people}<h2>What moved it this autumn</h2></div>${repMovesHtml()}</section>
+    <section class="dk-pnl rv-worth"><div class="dk-pnl-h">${ICO2.bars}<h2>What it is worth</h2></div>${repWorthHtml()}</section></div>`;
+  screen().innerHTML = shell(deskPage({ title:'Your star rating is public', sub:"Since September, how you treated passengers has been noted. From today it counts.", cls:'rv-page', body }),
+    deskBar('Stars change with the choices you make when things go wrong.', `<button class="btn primary big" id="nx">${T2().on ? 'Next: what sort of airline?' : 'Next'} &#9654;</button>`));
+  on('nx', () => { UI.justDone = null; next(); });
+};
+/* the three types, side by side */
+function typeCardHtml(t, picked, eg){
+  const r = eg, fares = r ? typeFaresFor(r, t) : [], base = r ? r._fares0 : [], extra = fares.filter(f => !base.includes(f)), rate = starRate(t);
+  const pts = t === 'premium' ? [`Two higher fares on every route${r && extra.length ? `: ${r.city} adds ${extra.map(money).join(' and ')}` : ''}.`, `Stars move 1½ times as fast: good choices count more, and so do bad ones.`]
+    : t === 'value' ? [`One lower fare on every route${r && extra.length ? `: ${r.city} adds ${extra.map(money).join(', ')}` : ''}.`, `A ${money(T2().fee)} bag fee: about ${Math.round(T2().take * 10)} in 10 passengers pay it.`, 'Stars move more slowly (¾ as fast).']
+    : ['Your fares stay as they are.', 'Stars move at the usual rate.'];
+  return `<button class="ty-c ${picked ? 'on' : ''}" data-atype="${t}" aria-pressed="${picked}"><span class="ty-h"><b>${ATYPE[t].name}</b><small>${esc(ATYPE[t].line)}</small></span><ul>${pts.map(p => `<li>${esc(p)}</li>`).join('')}</ul><span class="ty-pick">${picked ? 'Chosen ✓' : 'Choose'}</span></button>`;
+}
+function typePageBody(pick, intro){
+  const r = routeById('nyc') || WORLD.routes.find(x => x.wb), grid = `<div class="ty-g">${['premium', 'full', 'value'].map(t => typeCardHtml(t, pick === t, r)).join('')}</div>`;
+  return `${intro}${grid}<p class="ty-note">${esc(`The full profiles of each type arrive at the August review. For now the type changes your fare menu, how fast your stars move, and the bag fee.`)}</p>`;
+}
+R.atype = st => {
+  const pick = airlineType(), d = typeConfirmDay();
+  const intro = `<p class="ty-lead">Passengers ask what sort of airline you are. Choose today; you can change your mind on ${d ? esc(dateLong(d)) : 'Thursday'}, when it is confirmed.</p>`;
+  screen().innerHTML = shell(deskPage({ title:'What sort of airline are you?', sub:'Premium, Full Service or Value.', cls:'ty-page', body:typePageBody(pick, intro) }),
+    deskBar(pick ? `${ATYPE[pick].name}: ${esc(ATYPE[pick].line)}` : 'Choose one of the three.', `${backBtn()}<button class="btn primary big" id="nx" ${pick ? '' : 'disabled'}>${pick ? 'Next: the aircraft' : 'Choose a type first'} &#9654;</button>`));
+  screen().querySelectorAll('[data-atype]').forEach(b => b.onclick = () => { setAirlineType(b.getAttribute('data-atype'), false); render(); });
+  on('nx', () => { if(!airlineType()) return; UI.justDone = null; next(); });
+};
+R.atypeOk = st => {
+  const pick = st.pick || airlineType() || 'full', since = S.atype && S.atype.day, bags = Object.entries(S.bagDays || {}).filter(([d]) => since && +d >= since).reduce((t, [, v]) => t + v, 0);
+  const was = airlineType(), intro = `<p class="ty-lead">${was ? `You chose <b>${esc(ATYPE[was].name)}</b> on ${esc(dateShort(since))}.` : 'You have not chosen yet.'} Confirm it, or change it now: it then stays until the August review.${was === 'value' && bags ? ` Bags have brought in ${money(bags)} so far.` : ''}</p>`;
+  screen().innerHTML = shell(deskPage({ title:'Thursday: what sort of airline?', sub:'Passengers want to know what sort of airline you are.', cls:'ty-page', body:typePageBody(pick, intro) }),
+    deskBar(pick !== was ? `Changing to ${ATYPE[pick].name}. New fares are set on Monday's plan.` : `Confirm: ${ATYPE[pick].name}.`, `<button class="btn primary big" id="nx">Confirm: ${esc(ATYPE[pick].name)} &#9654;</button>`));
+  screen().querySelectorAll('[data-atype]').forEach(b => b.onclick = () => { st.pick = b.getAttribute('data-atype'); render(); });
+  on('nx', () => { setAirlineType(pick, true); addNews([{ tag:'NEWS', text:`${S.airline && S.airline.name || 'The airline'} is a ${ATYPE[pick].name} airline.` }]); UI.justDone = null; next(); });
+};
+
+/* ==================================================================
+   Sign-offs: the long-haul ticket sum (estimated first), the long-haul fuel line, the bag fee
+   ================================================================== */
+SO_REL.bagFee = { name:'Bag fee', rel:'tenths of passengers × fee', skill:'bagFee' };
+if(typeof REC_REL !== 'undefined') REC_REL.bagFee = 'tenths of passengers';
+const ch2so = () => S.ch2so || (S.ch2so = {});
+const lhRoute = id => { const r = routeById(id); return !!r && typeof isLongHaul === 'function' && isLongHaul(r); };
+const lhPlane = pid => { const p = planeById(pid); return !!p && p.range > (typeof LH === 'function' ? LH().from : 4000); };
+/* the bag fee's passengers: the long-haul route flown (a full 757: 200), else the busiest */
+function bagLine(pl){ const L = planLines(pl || currentPlan()), rs = (L.routes || []).filter(x => x.pax > 0); if(!rs.length) return null;
+  const x = rs.filter(z => lhRoute(z.id)).sort((a, b) => b.pax - a.pax)[0] || rs.slice().sort((a, b) => b.pax - a.pax)[0];
+  const exact = x.pax * T2().take; return { route:x.id, pax:x.pax, exact, bags:bagsFor(x.pax), fee:T2().fee }; }
+const soWorkCandsT0 = soWorkCands;
+soWorkCands = function(H, L, pl){
+  const out = soWorkCandsT0(H, L, pl); if(!ch2Now()) return out; const o = ch2so();
+  if(!o.tk){ const c = out.filter(x => x.rel === 'tickets' && lhRoute(x.route)).sort((a, b) => (b.money || 0) - (a.money || 0))[0]; if(c) Object.assign(c, { forced:true, lhEst:true }); }
+  if(!o.fuel){ const c = out.filter(x => x.rel === 'fuel' && lhRoute(x.route)).sort((a, b) => (b.money || 0) - (a.money || 0))[0]; if(c) Object.assign(c, { forced:true, lhFuel:true }); }
+  if(airlineType() === 'value' && !((skills().bagFee || {}).count > 0) && !(S.tools && S.tools.bagFee)){ const b = bagLine(pl); if(b) out.push({ key:'bag|' + b.route, rel:'bagFee', inst:false, carryable:true, route:b.route, money:b.bags * b.fee, label:`Bag fee: ${routeById(b.route).city}` }); }
+  return out;
+};
+const SO_FLAGS = ['lhEst', 'lhFuel'];
+const soDecideListT0 = soDecideList;
+soDecideList = function(cands, point, commit){
+  if(!ch2Now()) return soDecideListT0(cands, point, commit);
+  // a full long-haul plane (seats × fare) is the same sum as the long-haul ticket sum: Build, not a Calculate slot
+  const o = soS(), sf = cands.some(c => c.rel === 'seatsFare' && lhPlane(c.plane)), keep = o.rel.seatsFare;
+  if(sf) o.rel.seatsFare = Math.max(keep || 0, soDecay());
+  let out; try{ out = soDecideListT0(cands, point, commit); } finally { if(sf){ if(keep === undefined) delete o.rel.seatsFare; else o.rel.seatsFare = keep; } }
+  out.forEach(it => { const c = cands.find(x => x.key === it.key); if(c) SO_FLAGS.forEach(k => { if(c[k] && it[k] === undefined) it[k] = true; }); });
+  return out;
+};
+/* the long-haul ticket sum is a card on the Sign-offs page (estimate, then the sum), not a line on the sheet */
+const decideHandSumsT0 = decideHandSums;
+decideHandSums = function(L, pl){
+  const H = decideHandSumsT0(L, pl); if(!soOn() || !ch2Now() || !H || !H.revenue) return H;
+  const W = soWeek(false), est = Object.values(W.items).filter(it => it.lhEst && it.level === 'calc').map(it => it.route);
+  if(est.length){ const r = H.revenue.routes.filter(id => !est.includes(id)); if(r.length) H.revenue = Object.assign({}, H.revenue, { routes:r }); else delete H.revenue; }
+  return H;
+};
+const soStageItemsT0 = soStageItems;
+soStageItems = function(){
+  const base = soStageItemsT0(); if(!soOn() || !ch2Now()) return base;
+  const W = soWeek(false), more = W.order.map(k => W.items[k]).filter(it => it.point === 'workings' && it.level === 'calc' && (it.lhEst || it.rel === 'bagFee') && !base.includes(it));
+  return more.concat(base);
+};
+const soSpecT0 = soSpec;
+soSpec = function(it){
+  if(it && it.rel === 'bagFee'){ const b = bagLine() || { route:it.route, pax:0, exact:0, bags:0, fee:T2().fee }, r = routeById(b.route);
+    const sp = { title:`Bag fee — ${r.city}`, ask:`A Value airline: about ${Math.round(T2().take * 10)} in 10 passengers pay a ${money(b.fee)} bag fee. The bag money on a day of ${r.city} flights.`, op:'×', a:{ k:'bags', label:'Bags', v:b.bags, f:'n' }, b:{ k:'fee', label:'Bag fee', v:b.fee, f:'£' }, res:'£', dis:[],
+      opHint:'Every bag pays the fee.', log:`Bag fee (${r.city})`, pre:{ lab:`${Math.round(T2().take * 10)} tenths of ${num(b.pax)} passengers`, want:b.exact, alt:b.bags, unit:'bags',
+        hint:`One tenth of ${num(b.pax)} is ${num(b.pax)} ÷ 10 = ${num(b.pax / 10)}; ${Math.round(T2().take * 10)} tenths is ${Math.round(T2().take * 10)} × ${num(b.pax / 10)}.` } };
+    Object.defineProperty(sp, 'it', { value:it, enumerable:false, configurable:true }); return sp; }
+  const sp = soSpecT0(it); if(!sp || !it || !it.lhEst) return sp;
+  const sig = v => { if(!v) return 0; const p = Math.pow(10, Math.floor(Math.log10(Math.abs(v)))); return Math.round(v / p) * p; }, ea = sig(sp.a.v), eb = sig(sp.b.v);
+  sp.ask = `The ticket money from ${routeById(it.route).city} on a day of this plan. Estimate first, then work it out.`;
+  sp.pre = { lab:`${num(ea)} × ${money(eb)}`, a:ea, b:eb, want:ea * eb, unit:'£', est:true, round:`${num(sp.a.v)} is about ${num(ea)} and ${money(sp.b.v)} is about ${money(eb)}`,
+    hint:`${num(ea)} × ${num(eb)}: multiply the first digits, then put back the noughts (${String(ea).replace(/^\d/, '').length + String(eb).replace(/^\d/, '').length} of them).` };
+  return sp;
+};
+/* the card: the first step (the estimate, or the tenths), then the sum */
+function soPreState(cs){ return cs.pre || (cs.pre = { v:'', ok:false, q:false, msg:'', lines:[] }); }
+const soCardHtmlT0 = soCardHtml;
+soCardHtml = function(it, st, n){
+  const sp = it && it.level === 'calc' && (it.lhEst || it.rel === 'bagFee') ? soSpec(it) : null; if(!sp || !sp.pre) return soCardHtmlT0(it, st, n);
+  soCardHtmlT0(it, st, n);   // the record's "first seen"
+  const cs = soCardState(st, it.key), P = soPreState(cs), done = it.done || cs.ok, id = esc(it.key), pre = sp.pre, ans = soAns(sp), resTxt = soFmt(sp.res, ans);
+  if(done && !P.ok){ P.ok = true; }
+  const stamp = done ? cardStampHtml('ok') : (cs.q || P.q) ? cardStampHtml('q') : '';
+  const head = `<div class="sc-h"><span class="sc-n">${n}</span><div><h2>${esc(sp.title)}</h2><p>${esc(sp.ask)}</p></div><span class="so-lv calc">Calculate</span>${stamp}</div>`;
+  const preTxt = pre.unit === '£' ? money(pre.want) : `${num(pre.want)}${pre.want !== pre.alt ? ` (about ${num(pre.alt)})` : ''} ${pre.unit}`;
+  const step1 = `<div class="so-pre ${P.ok ? 'ok' : ''}"><span class="sc-sn">${pre.est ? 'Estimate' : 'Step 1'}</span>${pre.est ? `<p class="sc-note">Round each number: ${esc(pre.round)}.</p>` : ''}
+    ${P.ok ? `<p class="acq-ans"><b>${esc(pre.lab)} = ${esc(preTxt)}</b> ✓</p>` : `<div class="acq-in"><span class="mono">${esc(pre.lab)} =</span><span class="sc-in ${P.q ? 'qy' : ''}">${pre.unit === '£' ? '<i class="pre">£</i>' : ''}<input data-sopre="${id}" inputmode="decimal" autocomplete="off" value="${esc(P.v || '')}" aria-label="${pre.est ? 'Estimate' : 'Step 1'}">${pre.unit === 'bags' ? '<i class="suf">bags</i>' : ''}</span><button class="btn primary" data-soprechk="${id}">Check ✓</button><span class="sc-msg" role="status">${esc(P.msg || '')}</span></div>`}</div>`;
+  const step2 = !P.ok ? `<div class="so-pre later"><span class="sc-sn">${pre.est ? 'Then work it out' : 'Step 2'}</span><p class="sc-note">After the ${pre.est ? 'estimate' : 'step above'}.</p></div>`
+    : `<div class="so-pre"><span class="sc-sn">${pre.est ? 'Now work it out' : 'Step 2'}</span><p class="sc-note">${esc(pre.est ? soMethod(sp) : `${num(sp.a.v)} bags, each paying ${money(sp.b.v)}.`)}</p>
+      ${done ? `<p class="acq-ans"><b>${soFmt(sp.a.f, sp.a.v)} ${sp.op} ${soFmt(sp.b.f, sp.b.v)} = ${resTxt}</b> ✓${pre.est ? ` <span class="muted">close to your estimate of ${money(pre.want)}</span>` : ''}</p>` : `<div class="acq-in"><span class="mono">${soFmt(sp.a.f, sp.a.v)} ${sp.op} ${soFmt(sp.b.f, sp.b.v)} =</span><span class="sc-in ${cs.q ? 'qy' : ''}"><i class="pre">£</i><input data-soin="${id}" inputmode="decimal" autocomplete="off" value="${esc(cs.v || '')}" aria-label="${esc(sp.title)}"></span><button class="btn primary" data-sochk="${id}">Check ✓</button><span class="sc-msg" role="status">${esc(cs.msg || '')}</span></div>`}</div>`;
+  return `<section class="dk-pnl so-card acq-rb so-two ${done ? 'ok' : ''}" data-socard="${id}">${head}${step1}${step2}</section>`;
+};
+/* the first step's check; its tries go into the record with the sum's working */
+const soBindCardsT0 = soBindCards;
+soBindCards = function(items, st){
+  soBindCardsT0(items, st); const root = screen();
+  root.querySelectorAll('[data-sopre]').forEach(i => { i.oninput = () => { soPreState(soCardState(st, i.getAttribute('data-sopre'))).v = i.value; }; i.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); const c = root.querySelector(`[data-soprechk="${i.getAttribute('data-sopre')}"]`); if(c) c.click(); } }; });
+  root.querySelectorAll('[data-soprechk]').forEach(b => b.onclick = () => { const key = b.getAttribute('data-soprechk'), it = items.find(x => x.key === key), sp = it && soSpec(it), cs = soCardState(st, key), P = soPreState(cs); if(!sp || !sp.pre) return;
+    const v = soParse(P.v, 'n'); if(v === null){ P.msg = sp.pre.est ? 'Type your estimate in pounds.' : 'Type the number of bags.'; render(); return; }
+    const ok = Math.abs(v - sp.pre.want) < 0.005 || (sp.pre.alt !== undefined && Math.abs(v - sp.pre.alt) < 0.005);
+    P.lines.push({ lab:`${sp.pre.est ? 'Estimate: ' : ''}${sp.pre.lab}`, typed:String(P.v).trim(), want:sp.pre.unit === '£' ? money(sp.pre.want) : num(sp.pre.want), wantV:sp.pre.want, unit:'n', ok, est:true });
+    if(ok){ P.ok = true; P.q = false; P.msg = ''; }
+    else { P.q = true; P.msg = `Query: ${v > sp.pre.want ? 'too much' : 'too little'}. ${sp.pre.hint}`; }
+    save(); render(); const nx = screen().querySelector(`[data-soin="${key}"]`); if(ok && nx) setTimeout(() => { try{ nx.focus(); }catch(e){} }, 40); });
+  const fp = root.querySelector('[data-sopre]'); if(fp) setTimeout(() => { try{ fp.focus(); }catch(e){} }, 50);
+};
+/* the record: the first step's tries are the working of the sum's attempt */
+let SO_PRE_WORK = null;
+const soCalcCheckT0 = soCalcCheck;
+soCalcCheck = function(sp, cs){ SO_PRE_WORK = sp && sp.pre && cs.pre && cs.pre.lines && cs.pre.lines.length && sp.it ? { key:'so:' + sp.it.key, lines:cs.pre.lines.slice() } : null; try{ return soCalcCheckT0(sp, cs); } finally { SO_PRE_WORK = null; } };
+if(typeof recAttempt === 'function'){ const recAttemptT0 = recAttempt;
+  recAttempt = function(e, a){ if(SO_PRE_WORK && e && e.key === SO_PRE_WORK.key && !a.working){ if(!a.ok && !a.note) a.note = recNote(e, a); a.working = SO_PRE_WORK.lines.map(x => Object.assign({}, x, { total:false })); if(/^Estimate/.test(a.working[0].lab)) e.method = 'estimate first, then partition or formal multiplication'; else e.method = 'tenths of the passengers, then × the fee'; } return recAttemptT0(e, a); }; }
+/* finishing: the bag fee is the model from now on; the long-haul ticket sum is done */
+const soFinishT0 = soFinish;
+soFinish = function(it, sp){
+  if(it.rel === 'bagFee'){ soTouch('bagFee', { route:it.route, count:true }); soLog(`${sp.log} (Calculate)`); soDone(it); return; }
+  soFinishT0(it, sp); if(it.lhEst) ch2so().tk = S.day;
+};
+const soSyncT0 = soSync;
+soSync = function(){ soSyncT0(); if(!S || !S.so || !S.so.weeks || !ch2Now()) return; const o = ch2so();
+  if(!o.fuel) Object.values(S.so.weeks).forEach(W => Object.values(W.items).forEach(it => { if(it.lhFuel && it.done) o.fuel = it.doneDay || S.day; }));
+  if(!o.tk) Object.values(S.so.weeks).forEach(W => Object.values(W.items).forEach(it => { if(it.lhEst && it.done) o.tk = it.doneDay || S.day; })); };
+/* for the tests: the first step's answer too */
+const soPlanT0 = soPlan;
+soPlan = function(){ const P = soPlanT0(); if(!P || !P.key) return P; const it = soItem(P.key); if(!it || !(it.lhEst || it.rel === 'bagFee')) return P; const sp = soSpec(it); return Object.assign(P, { pre:sp && sp.pre ? String(sp.pre.alt !== undefined ? sp.pre.alt : sp.pre.want) : null }); };
+
+/* ---------- for the tests and the report ---------- */
+function typeReport(){ const r = routeById('nyc'); return { type:airlineType(), confirmed:!!(S.atype && S.atype.confirmed), rep:S.rep, repExact:S.repExact, factor:repFactor(), fares:r ? r.fares.slice() : [], base:r ? r._fares0.slice() : [], ch2so:S.ch2so || null }; }
+/* ==================================================================
+   THE WORKING PAD (Bertie, 13 Oct 2026): "what if I need to do workings for the multiplication? Can you have a button
+   where a popup comes out for the working? 4 × 1470".
+   A Working button sits beside every typed × answer (the fuel desk's first order, the sign-off cards, the estimate, the
+   Service Cost card's lines, and the card's "Add the lines" as a column addition). It opens a small pad with the
+   column method in digit boxes, typed right to left: the two numbers, a carry strip above each line, a line for each
+   part of the smaller number when it has more than one, and the answer. Money with pence is worked in pence, as the fuel
+   card teaches ("£1.47 = 147p"), then ÷ 100 back to pounds. The pad does not mark anything: Use this answer copies the
+   bottom line into the box, and the box's own Check decides. What is on the pad then goes into the pupil record.
+   ================================================================== */
+UI.padCells = UI.padCells || {};
+const padDigits = v => String(v);
+/* the sum a box asks for, or null */
+function padSpecFor(inp){
+  try{
+    if(inp.matches('[data-fds]')){ const k = inp.getAttribute('data-fds'), P0 = fuelOn(S.day || 1), blk = fuelBlock(), one = r2(blk * P0);
+      if(k === 'one') return { op:'×', a:blk, b:P0, money:true, lab:`${num(blk)} L × ${priceL(P0)}`, sel:'[data-fds="one"]' };
+      if(k === 'all'){ const n = UI.fd.selNow || 0; return n > 1 ? { op:'×', a:n, b:one, money:true, lab:`${n} × ${twoDp(one)}`, sel:'[data-fds="all"]' } : null; } }
+    if(inp.matches('[data-soin]')){ const key = inp.getAttribute('data-soin'), it = soItem(key), sp = it && soSpec(it); if(!sp || sp.op !== '×') return null;
+      const money = /^£|ppl/.test(sp.a.f + sp.b.f) || /^£/.test(sp.res);
+      return { op:'×', a:sp.a.v, b:sp.b.v, money, lab:`${soFmt(sp.a.f, sp.a.v)} × ${soFmt(sp.b.f, sp.b.v)}`, sel:`[data-soin="${key}"]` }; }
+    if(inp.matches('[data-sopre]')){ const key = inp.getAttribute('data-sopre'), it = soItem(key), sp = it && soSpec(it); if(!sp || !sp.pre || !sp.pre.est || !sp.pre.a) return null;
+      return { op:'×', a:sp.pre.a, b:sp.pre.b, money:true, lab:sp.pre.lab, sel:`[data-sopre="${key}"]` }; }
+    if(inp.matches('[data-sc]')){ const k = inp.getAttribute('data-sc'), F = UI.sc.F; if(!F || !/^r\d+$/.test(k)) return null; const R = scRows(UI.sc.mUsed || 'pence', F), x = R.rows[+k.slice(1)]; if(!x) return null;
+      if(x.part) return { op:'×', a:F.L, b:x.part.v, money:false, unit:'p', lab:`${num(F.L)} × ${num(x.part.v)}p`, sel:`[data-sc="${k}"]` };
+      if(x.add) return { op:'+', lines:R.rows.filter(z => z.part).map(z => z.want), money:false, unit:'p', lab:'Add the lines', sel:`[data-sc="${k}"]` };
+      return null; }
+  }catch(e){}
+  return null;
+}
+/* the column layout: which number goes underneath, pence or pounds, the lines and the answer */
+function padModel(sp){
+  if(sp.op === '+'){ const ans = sp.lines.reduce((t, v) => t + v, 0); return { op:'+', top:sp.lines, parts:[], ans, pence:false, W:Math.max(...sp.lines.map(v => String(v).length), String(ans).length) + 1, unit:sp.unit || '' }; }
+  const dec = v => Math.abs(Math.round(v * 100) % 100) !== 0, pence = !!sp.money && (dec(sp.a) || dec(sp.b));
+  let a = sp.a, b = sp.b, note = '';
+  if(pence){ if(dec(a)){ note = `${priceL(a)} = ${Math.round(a * 100)}p`; a = Math.round(a * 100); } if(dec(b)){ note = `${sp.b < 10 ? priceL(b) : twoDp(b)} = ${num(Math.round(b * 100))}p`; b = Math.round(b * 100); } }
+  a = Math.round(a); b = Math.round(b);
+  const nz = v => String(v).split('').filter(d => d !== '0').length;
+  let top = a, low = b; if(nz(a) < nz(b) || (nz(a) === nz(b) && String(a).length < String(b).length)){ top = b; low = a; }
+  const parts = nz(low) > 1 ? String(low).split('').reverse().map((d, k) => ({ d:+d, k, v:top * +d * Math.pow(10, k), lab:`${num(top)} × ${num(+d * Math.pow(10, k))}` })).filter(x => x.d) : [];
+  const ans = top * low, W = Math.max(String(ans).length, String(top).length, String(low).length + 1) + 1;
+  return { op:'×', top:[top], low, parts, ans, pence, note, W, unit:pence ? 'p' : (sp.unit || '') };
+}
+function padKey(sp){ return sp.sel + '|' + sp.lab; }
+function padCellsOf(key){ return UI.padCells[key] || (UI.padCells[key] = {}); }
+function padRowHtml(key, rid, W, carry){
+  const C = padCellsOf(key), vals = C[rid] || [], cy = C[rid + 'c'] || [];
+  const cells = Array.from({ length:W }, (_, c) => `<input class="wp-d" data-wpr="${rid}" data-wpc="${c}" maxlength="1" inputmode="numeric" autocomplete="off" value="${esc(vals[c] || '')}" aria-label="digit">`).join('');
+  const carries = carry ? `<div class="wp-r wp-cy">${Array.from({ length:W }, (_, c) => `<input class="wp-c" data-wpr="${rid}c" data-wpc="${c}" maxlength="1" inputmode="numeric" autocomplete="off" value="${esc(cy[c] || '')}" aria-label="carry">`).join('')}</div>` : '';
+  return `${carries}<div class="wp-r">${cells}</div>`;
+}
+function padStatic(v, W, op){ const s = String(v).padStart(W, ' ').split(''); return `<div class="wp-r wp-g">${s.map((ch, i) => `<span class="wp-s">${i === 0 && op ? op : ch === ' ' ? '' : ch}</span>`).join('')}</div>`; }
+function padHtml(sp){
+  const M = padModel(sp), key = padKey(sp), W = M.W, C = padCellsOf(key);
+  let body = '';
+  if(M.op === '+'){ body = M.top.map((v, i) => padStatic(v, W, i === M.top.length - 1 ? '+' : '')).join('') + '<div class="wp-line"></div>' + padRowHtml(key, 'ans', W, true); }
+  else { body = padStatic(M.top[0], W, '') + padStatic(M.low, W, '×') + '<div class="wp-line"></div>';
+    if(M.parts.length){ body += M.parts.map((x, i) => `<div class="wp-pl"><small>${esc(x.lab)}</small></div>${padRowHtml(key, 'p' + i, W, true)}`).join('') + '<div class="wp-line"></div>' + padRowHtml(key, 'ans', W, true); }
+    else body += padRowHtml(key, 'ans', W, true); }
+  const pounds = M.pence ? `<div class="wp-pnd"><span>Answer in pence ÷ 100 =</span><span class="sc-in"><i class="pre">£</i><input data-wpp="1" inputmode="decimal" autocomplete="off" value="${esc(C.pounds || '')}" aria-label="In pounds"></span></div>` : '';
+  const hint = M.op === '+' ? 'Add each column from the right; carry into the next column.' : M.parts.length ? `One line for each part of ${num(M.low)}, then add the lines.` : /^10+$/.test(String(M.low)) ? `× ${num(M.low)} moves each digit ${String(M.low).length - 1 === 1 ? 'one place' : (String(M.low).length - 1) + ' places'} to the left; the empty places get a 0.` : `Multiply each digit of ${num(M.top[0])} by ${num(M.low)}, from the right, carrying as you go.`;
+  return `<div class="wp-h"><b>Working</b><span>${esc(sp.lab)}</span><button class="s2-x" data-wpx="1" aria-label="Close">×</button></div>
+    ${M.note ? `<p class="wp-note">Make it pence: ${esc(M.note)}</p>` : ''}<p class="wp-note">${esc(hint)}</p>
+    <div class="wp-grid" style="--w:${W}">${body}</div>${M.unit === 'p' && !M.pence ? '<p class="wp-note">In pence.</p>' : ''}${pounds}
+    <div class="wp-act"><button class="dk-link" data-wpclr="1">Clear</button><span class="grow"></span><span class="wp-msg" role="status"></span><button class="btn primary" data-wpuse="1">Use this answer ✓</button></div>`;
+}
+function padRowValue(key, rid){ const r = padCellsOf(key)[rid] || []; const s = Array.from(r, ch => ch === undefined || ch === null ? '' : ch); if(!s.some(ch => /\d/.test(ch))) return null;
+  let str = s.map(ch => /\d/.test(ch) ? ch : ' ').join('').replace(/^\s+/, '').replace(/\s/g, '0'); return str === '' ? null : +str; }
+/* the pad's lines as text, for the record */
+function padSnapshot(sp){
+  const M = padModel(sp), key = padKey(sp), C = padCellsOf(key), W = M.W, line = (cells, op) => (op || ' ') + ' ' + Array.from({ length:W }, (_, c) => (cells && cells[c] && /\d/.test(cells[c])) ? cells[c] : ' ').join(' ');
+  const stat = (v, op) => (op || ' ') + ' ' + String(v).padStart(W, ' ').split('').join(' ');
+  const L = []; if(M.note) L.push(`Make it pence: ${M.note}`);
+  if(M.op === '+') M.top.forEach((v, i) => L.push(stat(v, i === M.top.length - 1 ? '+' : '')));
+  else { L.push(stat(M.top[0])); L.push(stat(M.low, '×')); }
+  L.push('  ' + '-'.repeat(W * 2 - 1));
+  M.parts.forEach((x, i) => L.push(line(C['p' + i])));
+  if(M.parts.length) L.push('  ' + '-'.repeat(W * 2 - 1));
+  L.push(line(C.ans)); if(M.pence) L.push(`÷ 100 = £${C.pounds || ' '}`);
+  return { lab:sp.lab, lines:L };
+}
+let PAD = null;   // { sp, el }
+function closePad(){ if(PAD && PAD.el) PAD.el.remove(); PAD = null; }
+function openPad(sp, btn){
+  closePad(); const el = document.createElement('div'); el.className = 'wpop'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Working'); el.innerHTML = padHtml(sp); document.body.appendChild(el);
+  PAD = { sp, el, at:(S.day || 0) + '|' + S.si };
+  // beside the box, not over it: to its left when there is room, else to the right of the button, else below
+  const tgt = screen().querySelector(sp.sel), t = (tgt && tgt.closest('.pad-wrap') || btn || document.body).getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
+  let x = t.left - w - 12, y = t.top - 60; if(x < 8){ x = t.right + 12; if(x + w > vw - 8){ x = Math.max(8, Math.min(vw - w - 8, t.left)); y = t.bottom + 8; } }
+  el.style.left = Math.round(x) + 'px'; el.style.top = Math.round(Math.max(8, Math.min(vh - h - 8, y))) + 'px';
+  bindPad();
+  const first = el.querySelector('[data-wpr="' + (padModel(sp).parts.length ? 'p0' : 'ans') + '"][data-wpc="' + (padModel(sp).W - 1) + '"]'); if(first) setTimeout(() => { try{ first.focus(); }catch(e){} }, 30);
+}
+function bindPad(){
+  if(!PAD) return; const el = PAD.el, sp = PAD.sp, key = padKey(sp), C = padCellsOf(key), M = padModel(sp);
+  const box = (r, c) => el.querySelector(`[data-wpr="${r}"][data-wpc="${c}"]`);
+  el.querySelectorAll('[data-wpr]').forEach(i => {
+    const r = i.getAttribute('data-wpr'), c = +i.getAttribute('data-wpc'), carry = /c$/.test(r);
+    i.oninput = () => { const d = (i.value.match(/\d/g) || []).pop() || ''; i.value = d; (C[r] = C[r] || [])[c] = d; if(d && !carry){ const L = box(r, c - 1); if(L) L.focus(); } };
+    i.onkeydown = e => {
+      if(e.key === 'Backspace' && !i.value){ e.preventDefault(); const Rb = box(r, c + 1); if(Rb){ Rb.value = ''; (C[r] = C[r] || [])[c + 1] = ''; Rb.focus(); } }
+      else if(e.key === 'ArrowLeft'){ e.preventDefault(); const L = box(r, c - 1); if(L) L.focus(); }
+      else if(e.key === 'ArrowRight'){ e.preventDefault(); const Rb = box(r, c + 1); if(Rb) Rb.focus(); }
+      else if(e.key === 'Escape'){ closePad(); }
+      else if(e.key === 'Enter'){ e.preventDefault(); const u = el.querySelector('[data-wpuse]'); if(u) u.click(); } };
+  });
+  const pp = el.querySelector('[data-wpp]'); if(pp) pp.oninput = () => { C.pounds = pp.value; };
+  el.querySelector('[data-wpx]').onclick = closePad;
+  el.querySelector('[data-wpclr]').onclick = () => { UI.padCells[key] = {}; const s = PAD.sp, keep = PAD.el.style.cssText; PAD.el.innerHTML = padHtml(s); PAD.el.style.cssText = keep; bindPad(); };
+  el.querySelector('[data-wpuse]').onclick = () => {
+    const msg = el.querySelector('.wp-msg'), ans = padRowValue(key, 'ans');
+    let v = null;
+    if(M.pence){ const p = String(C.pounds || '').replace(/[£,\s]/g, ''); if(p === '' || isNaN(+p)){ msg.textContent = ans === null ? 'Work out the answer line first.' : 'Now change the pence to pounds: ÷ 100.'; return; } v = p; }
+    else { if(ans === null){ msg.textContent = 'Fill in the answer line first.'; return; } v = String(ans); }
+    const t = screen().querySelector(sp.sel); if(!t){ msg.textContent = 'The box has gone: close the pad.'; return; }
+    t.value = v; t.dispatchEvent(new Event('input', { bubbles:true }));
+    UI.padSnap = padSnapshot(sp); closePad(); try{ t.focus(); }catch(e){}
+  };
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && PAD) closePad(); });
+/* the Working buttons, after each render; a pad from another step closes */
+function padButtons(){
+  if(PAD && PAD.at !== (S.day || 0) + '|' + S.si) closePad();
+  screen().querySelectorAll('[data-fds],[data-soin],[data-sopre],[data-sc]').forEach(inp => {
+    if(inp.type === 'hidden' || inp.dataset.padOn) return; const sp = padSpecFor(inp); if(!sp) return; inp.dataset.padOn = '1';
+    const box = inp.closest('.sc-in') || inp, wrap = document.createElement('span'), b = document.createElement('button'); wrap.className = 'pad-wrap'; box.parentNode.insertBefore(wrap, box); wrap.appendChild(box);
+    b.type = 'button'; b.className = 'pad-btn'; b.textContent = 'Working'; b.title = `Open a working pad for ${sp.lab}`;
+    b.onclick = e => { e.preventDefault(); const cur = screen().querySelector(sp.sel); const s2 = cur ? padSpecFor(cur) || sp : sp; if(PAD && padKey(PAD.sp) === padKey(s2)){ closePad(); return; } openPad(s2, b); };
+    wrap.appendChild(b);
+  });
+}
+const renderPad0 = render;
+render = function(){ const r = renderPad0.apply(this, arguments); try{ if(S && !IS_DISPLAY) padButtons(); }catch(e){} return r; };
+/* the record: what was on the pad goes into the attempt that follows */
+if(typeof recAttempt === 'function'){ const recAttemptPad0 = recAttempt;
+  recAttempt = function(e, a){ if(UI.padSnap && a && !a.pad){ a.pad = UI.padSnap; UI.padSnap = null; } return recAttemptPad0(e, a); }; }
+if(typeof recAttemptHtml === 'function'){ const recAttemptHtmlPad0 = recAttemptHtml;
+  recAttemptHtml = function(e, a, n){ const h = recAttemptHtmlPad0(e, a, n); if(!a || !a.pad) return h;
+    const pre = `<p class="an">Working on the pad: ${recE(a.pad.lab)}</p><pre class="w"><span class="b">${a.pad.lines.map(recE).join('\n')}</span></pre>`;
+    return h.replace('<div class="att">', '<div class="att">' + pre); }; }
+/* for the tests: the pad's lines for a box (W, the parts, the answer, pence or not) */
+function padInfo(sel){ const inp = screen().querySelector(sel), sp = inp && padSpecFor(inp); if(!sp) return null; const M = padModel(sp); return { W:M.W, low:M.low, top:M.top, parts:M.parts.map(x => x.v), ans:M.ans, pence:M.pence, pounds:M.pence ? (M.ans / 100).toFixed(2) : null }; }
+/* ==================================================================
+   THE SHOP UNDER FLEET (Bertie, 13 Oct 2026): "I declined to buy a plane at the end of week one, because it wasn't
+   economically viable. I need the opportunity to buy a plane after that whenever I want."
+   - The Fleet view has an "Add an aircraft" panel: what is in the shop today and one button, Rent or buy an aircraft.
+   - The run board (Tuesday to Sunday) has the same button in its footer, since it has no side menu.
+   - The button puts the shop (shop2) in front of the step he is on. The usual chain follows: the comparison while the
+     fleet is one aircraft, the rent-or-buy sum, Rent · Finance · Buy, the paint shop and the hangar. Then he is back
+     where he was. "Not today" goes straight back.
+   - Bought on a run day: the aircraft joins the fleet now. Its rent, finance payment and day cost start tomorrow, and
+     it flies nothing today. Services chosen on the comparison screen fly from tomorrow; otherwise Monday's plan
+     ("has no flights yet: Plan its day").
+   ================================================================== */
+const SHOP_CHAIN = ['shop2', 'fleetSums', 'acquire', 'paint', 'reveal'];
+function shopPlanesNow(day){ return shopPlanes(day).filter(p => { const o = shopOffer(p, day); return o.canLease || o.buyOffered || o.canFinance; }); }
+function shopFirstDay(){ const d0 = (S && S.day) || 1; for(let d = d0; d < d0 + 400; d++) if(shopPlanesNow(d).length) return d; return null; }
+/* why the button is off, or '' when it is on */
+function shopClosedWhy(){
+  if(!S || S.phase === 'setup') return 'The shop opens once the airline is flying.';
+  const t = (step() || {}).t;
+  if(['fly', 'sim', 'takeoff'].includes(t)) return "Open the shop when today's flights have landed.";
+  if(SHOP_CHAIN.includes(t)) return 'You are in the shop now.';
+  if(!shopPlanesNow().length){ const d = shopFirstDay(); return d ? `Aircraft can be rented or bought from ${dateLong(d)}.` : 'No aircraft are for sale yet.'; }
+  return '';
+}
+function openShopNow(){
+  if(shopClosedWhy()) { toast(shopClosedWhy()); return; }
+  if(UI.wkTimer){ clearTimeout(UI.wkTimer); UI.wkTimer = null; }
+  // the shop's own steps find "the" shop2, so a visit earlier today steps aside
+  for(let k = S.si - 1; k >= 0; k--) if(SHOP_CHAIN.includes(S.steps[k].t)){ S.steps.splice(k, 1); S.si--; if(S.rnd.returnTo !== undefined && S.rnd.returnTo > k) S.rnd.returnTo--; }
+  const t = step().t;
+  S.rnd.shopAdHoc = { day:S.day, run:t === 'weekRun', from:t };
+  delete S.rnd.shopPick; delete S.rnd.acChoice;
+  S.steps.splice(S.si, 0, { t:'shop2', adHoc:true }); UI.view = null; UI.justDone = null;
+  if(typeof resetEntry === 'function') resetEntry();
+  save(); render();
+}
+/* bought on a run day: nothing until tomorrow (no flights today, no rent or day cost today) */
+const acquirePlaneFS0 = acquirePlane;
+acquirePlane = function(p, kind){
+  const uid = acquirePlaneFS0(p, kind), A = S.rnd && S.rnd.shopAdHoc;
+  if(A && A.run && A.day === S.day){ const f = S.fleet.find(x => x.uid === uid); if(f){ f.costFrom = S.day + 1; f.flyFrom = S.day + 1; } }
+  return uid;
+};
+const dayCostOfFS0 = dayCostOf;
+dayCostOf = function(f){ if(f && f.costFrom && simDayNow() < f.costFrom) return 0; return dayCostOfFS0(f); };   // simDayNow: the day being simulated (withDay), else today
+const planFlightsFS0 = planFlights;
+planFlights = function(){ const out = planFlightsFS0.apply(this, arguments); if(!S || !S.fleet || !S.fleet.some(f => f.flyFrom)) return out;
+  const d = simDayNow(); return out.filter(x => { const f = S.fleet.find(z => z.uid === x.uid); return !(f && f.flyFrom && d < f.flyFrom); }); };
+
+/* the panel in the Fleet view */
+function fleetShopHtml(){
+  const why = shopClosedWhy(), list = shopPlanesNow(), cash = Math.round(S.cash);
+  const rows = list.map(p => { const o = shopOffer(p); return `<div class="fs-row"><b>${esc(p.name)}</b><span>${p.seats} seats</span><span>${o.canLease ? `${money(o.lease)} a day to rent` : '—'}</span><span>${o.buyOffered ? `${money(o.price)} to buy` : 'not for sale yet'}</span></div>`; }).join('');
+  return `<section class="hp fs-shop">${hqHead('Add an aircraft', list.length ? `${list.length} IN THE SHOP` : 'SHOP CLOSED')}<div class="pb">
+    ${rows ? `<div class="fs-list">${rows}</div>` : ''}
+    <div class="fs-act"><button class="btn primary" id="fleetShop" ${why ? 'disabled' : ''}>Rent or buy an aircraft &#9654;</button><span class="muted">${esc(why || `Cash ${money(cash)}. Keep ${money(WORLD.cashReserve || 0)} back for emergencies. You will see the sums before you decide.`)}</span></div></div></section>`;
+}
+const renderViewFS0 = renderView;
+renderView = function(v){
+  renderViewFS0(v); if(v !== 'fleet' || !S) return;
+  const host = screen().querySelector('.vw'); if(!host || host.querySelector('.fs-shop')) return;
+  host.insertAdjacentHTML('beforeend', fleetShopHtml()); on('fleetShop', openShopNow);
+};
+/* the run board's footer: the same button (the board has no side menu) */
+const weekRunFS0 = R.weekRun;
+R.weekRun = st => {
+  const r = weekRunFS0(st); if(step().t !== 'weekRun') return r;
+  const foot = screen().querySelector('.tf-foot, footer, .foot') || null, why = shopClosedWhy();
+  const btn = `<button class="btn small fs-board" id="boardShop" ${why ? 'disabled' : ''} title="${esc(why || 'Rent or buy an aircraft now. It flies from tomorrow at the earliest.')}">${ICO2 && ICO2.plane ? ICO2.plane : ''} Aircraft shop</button>`;
+  if(foot) foot.insertAdjacentHTML('beforeend', btn); else screen().insertAdjacentHTML('beforeend', `<div class="fs-board-wrap">${btn}</div>`);
+  on('boardShop', openShopNow);
+  return r;
+};
+/* when he leaves the shop, the visit is over */
+const advanceFS0 = advance;
+advance = function(){ const r = advanceFS0.apply(this, arguments); if(S && S.rnd && S.rnd.shopAdHoc && !SHOP_CHAIN.includes((step() || {}).t)) delete S.rnd.shopAdHoc; return r; };
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).

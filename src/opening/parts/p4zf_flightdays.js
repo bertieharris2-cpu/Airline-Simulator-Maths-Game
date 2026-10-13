@@ -1,8 +1,7 @@
 
 /* ==================================================================
    D67 (Workbook v4.11, Fable's "Note — A Days setting on every flight"): from flightDaysFromDay every flight in a standing
-   plan carries Days: All week, Mon–Fri or Sat–Sun. Built only into the revised Studio (airline-opening-studio-v2.html);
-   the main game's build is untouched. Each aircraft keeps f.days beside f.schedule (missing = all week, so old saves and
+   plan carries Days: All week, Mon–Fri or Sat–Sun. Part of the game's revised Studio. Each aircraft keeps f.days beside f.schedule (missing = all week, so old saves and
    Launch Day are unchanged); a plan's fleet entry carries x.days only when a flight is not All week.
    The engine prices each day with that day's flights only; departures, the turnaround and the duty day are checked per
    day type (Mon–Fri = all + weekday flights, Sat–Sun = all + weekend flights). Functions are reassigned here, never

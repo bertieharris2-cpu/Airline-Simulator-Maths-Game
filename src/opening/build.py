@@ -1,12 +1,12 @@
 """Builds the game from the parts in this folder:
 
-    airline-opening-prototype.html   the game (the v4.10 Operating Plan Studio)
-    airline-opening-studio-v2.html   the same game with the revised Studio (p4ze_studio2.js + p1_head_studio2.css), Days (p4zf), chapter 2 (p4zg, p4zh)
+    airline-opening-prototype.html   the game: the revised Operating Plan Studio (p4ze + p1_head_studio2.css), Days (p4zf),
+                                     chapter 2 (p4zg, p4zh, p4zj) and the Working pad (p4zk). One file (Bertie, 13 Oct 2026).
 
     python3 src/opening/build.py
 
 Checks every JSON data block and the JavaScript syntax (node --check), and lists in
-overrides.txt (overrides-studio-v2.txt) every function defined in more than one part (a later part wins).
+overrides.txt every function defined in more than one part (a later part wins).
 """
 import re, json, subprocess, os, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -59,7 +59,6 @@ def build(name, js_list, css='', ovr='overrides.txt'):
     open(os.path.join(ROOT, name), 'w', encoding='utf-8').write(out)
     print('built %s,' % name, len(out), 'bytes; JSON + syntax OK')
 
-build('airline-opening-prototype.html', JS)
-# the revised Studio: one more part before the display part, and its own styles; the main file is untouched by it
-if os.path.exists(os.path.join(HERE, 'parts', 'p4ze_studio2.js')):
-    build('airline-opening-studio-v2.html', JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js'] + JS[-1:], r('parts', 'p1_head_studio2.css'), 'overrides-studio-v2.txt')
+# one game: the shared parts, then the revised Studio, Days, chapter 2 and the Working pad, then the display part
+GAME = JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js', 'p4zk_pad.js', 'p4zl_fleetshop.js'] + JS[-1:]
+build('airline-opening-prototype.html', GAME, r('parts', 'p1_head_studio2.css'))

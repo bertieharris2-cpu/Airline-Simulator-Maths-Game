@@ -3,7 +3,7 @@
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-week') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 15);
-const V2 = /studio-v2/.test(process.env.GAME || '');   // the revised Studio (airline-opening-studio-v2.html): opener, operating plan, change network
+const V2 = true;   // the game is the revised Studio (one file since 13 Oct 2026): opener, operating plan, change network
 const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();

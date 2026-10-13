@@ -1,8 +1,8 @@
 
 /* ==================================================================
    The Operating Plan Studio, revised (Bertie's interaction brief, 13 Oct 2026): "do not simplify the airline; simplify
-   what is visible at any one moment". Built only into airline-opening-studio-v2.html: the main game keeps the v4.10
-   Studio (p4zd_studio.js), whose helpers this part reuses (route cards, the demand strip, the fill colours, PlanTips).
+   what is visible at any one moment". The game's Studio (one file since 13 Oct 2026); it
+   builds on the v4.10 Studio (p4zd_studio.js), whose helpers this part reuses (route cards, the demand strip, the fill colours, PlanTips).
    The Monday plan page has three working states:
      opener  — from week 2: last week's regular plan is ready to run again (Keep plan / Edit plan), with the known changes
      plan    — the Operating Plan: the active routes (the current choice only), a toolbar, the timetable full width, a

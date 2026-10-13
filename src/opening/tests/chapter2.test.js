@@ -1,16 +1,16 @@
 // Run: NODE_PATH=<playwright node_modules> CODE=<file> node chapter2.test.js   (env: UPTO day (default 155), SHOTS=0, OUT, W, H, SAVE=file for the save code at the end)
-// Workbook v5.0 (D68–D73), the revised Studio (airline-opening-studio-v2.html) only.
-// CODE is a save code at chapter 1's review, written by: GAME=airline-opening-studio-v2.html UPTO=200 SAVE=<file> node week.test.js
+// Workbook v5.0 (D68–D73), the game (airline-opening-prototype.html).
+// CODE is a save code at chapter 1's review, written by: UPTO=200 SAVE=<file> node week.test.js
 // The pupil carries on from chapter 1's end: Christmas and New Year fly by themselves, then on Monday 6 January 2031 they
 // lease a Boeing 757 and fly New York at £510 at 06:30. Checked: the long-haul block and the local-time arrival, the
 // refused second service, Balance Report v5.0 §2 (£47,426 a day for a full 757 at £510, within £10), the week's run and
 // review, the overnight rotation (Delhi, tried early), growth from the opening week, and the beats on to February.
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os');
-const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-studio-v2.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch2') + '/'; fs.mkdirSync(OUT, { recursive:true });
+const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch2') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 155);
 const CODE = process.env.CODE || path.join(os.tmpdir(), 'airline-ch1-end.txt'), TYPE = process.env.TYPE || 'value';   // the airline type chosen on day 127
-if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: GAME=airline-opening-studio-v2.html UPTO=200 SHOTS=0 SAVE=${CODE} node week.test.js`); process.exit(1); }
+if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=200 SHOTS=0 SAVE=${CODE} node week.test.js`); process.exit(1); }
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
   const errors = [], checks = [], overflow = [], info = {};

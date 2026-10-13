@@ -11,7 +11,9 @@ autoFuelOrder: p4w_planner.js -> p4y_desks.js
 bandOf: p4g_opening2.js -> p4h_world.js
 beatLabel: p4d_opening.js -> p4f_campaign.js -> p4k_chapter.js
 bindFuelPanel: p4v_week.js -> p4w_planner.js
+bindPad: p4d_opening.js -> p4zk_pad.js
 bindPlanEditor: p4g_opening2.js -> p4m_fleet.js
+bindStudio: p4zd_studio.js -> p4ze_studio2.js
 buyPlane: p4a_core.js -> p4p_identity.js
 campaignSummary: p4d_opening.js -> p4f_campaign.js
 capFirst: p4a2_workbook.js -> p4d_opening.js
@@ -87,6 +89,7 @@ readyOk: p4d_opening.js -> p4f_campaign.js -> p4l_handsums.js
 readyTitle: p4d_opening.js -> p4f_campaign.js
 recordHandSums: p4l_handsums.js -> p4y_desks.js
 regOf: p4i_liveops.js -> p4p_identity.js
+renderStudio: p4zd_studio.js -> p4ze_studio2.js
 repLive: p4a_core.js -> p4o_review.js
 reviewSpec: p4f_campaign.js -> p4n_weeks.js
 routeKm: p4a_core.js -> p4h_world.js

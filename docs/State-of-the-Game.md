@@ -10,6 +10,24 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0j. One game file, the shop under Fleet, the Working pad (13 Oct 2026, Bertie's run-through)
+
+**What changed:**
+- **`build.py`** builds one file, `airline-opening-prototype.html`. Its list is the shared parts, then `p4ze_studio2`, `p4zf_flightdays`, `p4zg_chapter2`, `p4zh_longhaul`, `p4zj_types`, `p4zk_pad` and `p4zl_fleetshop`, then `p4c_display`, with `p1_head_studio2.css`. There is one `overrides.txt`.
+  - The `airline-opening-studio-v2.html` build and file are gone.
+  - `archive/` holds the first full game and the v4.10 Studio copy, unchanged.
+  - Tests default to the one file, and `week.test.js` always takes the Studio path.
+- **`p4zl_fleetshop.js` (the shop under Fleet):**
+  - `renderView('fleet')` gets the *Add an aircraft* panel, and `R.weekRun` gets an *Aircraft shop* button in its footer.
+  - `openShopNow()` removes earlier shop steps before `S.si` (`shop2` is found by `findIndex`), then inserts `{ t:'shop2', adHoc:true }` at `S.si`. The existing chain runs from there.
+  - `acquirePlane` on a run day sets `costFrom` and `flyFrom` to the next day. `dayCostOf` returns 0 before `costFrom` on the simulated day (`simDayNow`), and `planFlights` drops the plane's flights before `flyFrom`.
+  - `shopClosedWhy()` gives the reasons the button is off.
+- **`p4zk_pad.js` (the Working pad):**
+  - A `render` wrapper adds a Working button beside `[data-fds]`, `[data-soin]`, `[data-sopre]` and `[data-sc]` boxes whose sum is × (or the card's add row). `padSpecFor` gives the sum.
+  - `padModel` sets the column layout: the number with fewer non-zero digits goes underneath, pence only when a factor has pence, and one partial line a non-zero digit.
+  - The pad is a fixed dialog on `document.body`, with its own key handling. Its state is in `UI.padCells`.
+  - Use this answer fires `input` on the box. `recAttempt` / `recAttemptHtml` are wrapped to keep and print the pad's lines.
+
 ## 0i. Workbook v5.0 (13 Oct 2026): chapter 2, push 2 of 3 (revised Studio only), and Bertie's run-through fixes
 
 **What changed:**
