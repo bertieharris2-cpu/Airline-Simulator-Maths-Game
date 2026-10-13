@@ -19,7 +19,7 @@ function shopClosedWhy(){
   const t = (step() || {}).t;
   if(['fly', 'sim', 'takeoff'].includes(t)) return "Open the shop when today's flights have landed.";
   if(SHOP_CHAIN.includes(t)) return 'You are in the shop now.';
-  if(!shopPlanesNow().length){ const d = shopFirstDay(); return d ? `Aircraft can be rented or bought from ${dateLong(d)}.` : 'No aircraft are for sale yet.'; }
+  if(!shopPlanesNow().length){ const d = shopFirstDay(); return d ? `Aircraft can be bought from ${dateLong(d)}.` : 'No aircraft are for sale yet.'; }
   return '';
 }
 function openShopNow(){
@@ -47,13 +47,15 @@ const planFlightsFS0 = planFlights;
 planFlights = function(){ const out = planFlightsFS0.apply(this, arguments); if(!S || !S.fleet || !S.fleet.some(f => f.flyFrom)) return out;
   const d = simDayNow(); return out.filter(x => { const f = S.fleet.find(z => z.uid === x.uid); return !(f && f.flyFrom && d < f.flyFrom); }); };
 
+/* "Buy" in chapter 1 (buy only), "Rent or buy" once renting opens */
+function shopVerb(){ return shopPlanesNow().some(p => shopOffer(p).canLease) ? 'Rent or buy' : 'Buy'; }
 /* the panel in the Fleet view */
 function fleetShopHtml(){
-  const why = shopClosedWhy(), list = shopPlanesNow(), cash = Math.round(S.cash);
-  const rows = list.map(p => { const o = shopOffer(p); return `<div class="fs-row"><b>${esc(p.name)}</b><span>${p.seats} seats</span><span>${o.canLease ? `${money(o.lease)} a day to rent` : '—'}</span><span>${o.buyOffered ? `${money(o.price)} to buy` : 'not for sale yet'}</span></div>`; }).join('');
+  const why = shopClosedWhy(), list = shopPlanesNow(), cash = Math.round(S.cash), rent = list.some(p => shopOffer(p).canLease);
+  const rows = list.map(p => { const o = shopOffer(p); return `<div class="fs-row"><b>${esc(p.name)}</b><span>${p.seats} seats</span>${rent ? `<span>${o.canLease ? `${money(o.lease)} a day to rent` : '—'}</span>` : ''}<span>${o.buyOffered ? `${money(o.price)} to buy` : 'not for sale yet'}</span></div>`; }).join('');
   return `<section class="hp fs-shop">${hqHead('Add an aircraft', list.length ? `${list.length} IN THE SHOP` : 'SHOP CLOSED')}<div class="pb">
     ${rows ? `<div class="fs-list">${rows}</div>` : ''}
-    <div class="fs-act"><button class="btn primary" id="fleetShop" ${why ? 'disabled' : ''}>Rent or buy an aircraft &#9654;</button><span class="muted">${esc(why || `Cash ${money(cash)}. Keep ${money(WORLD.cashReserve || 0)} back for emergencies. You will see the sums before you decide.`)}</span></div></div></section>`;
+    <div class="fs-act"><button class="btn primary" id="fleetShop" ${why ? 'disabled' : ''}>${shopVerb()} an aircraft &#9654;</button><span class="muted">${esc(why || `Cash ${money(cash)}. Keep ${money(WORLD.cashReserve || 0)} back for emergencies. You will see the sums before you decide.`)}</span></div></div></section>`;
 }
 const renderViewFS0 = renderView;
 renderView = function(v){
@@ -66,7 +68,7 @@ const weekRunFS0 = R.weekRun;
 R.weekRun = st => {
   const r = weekRunFS0(st); if(step().t !== 'weekRun') return r;
   const foot = screen().querySelector('.tf-foot, footer, .foot') || null, why = shopClosedWhy();
-  const btn = `<button class="btn small fs-board" id="boardShop" ${why ? 'disabled' : ''} title="${esc(why || 'Rent or buy an aircraft now. It flies from tomorrow at the earliest.')}">${ICO2 && ICO2.plane ? ICO2.plane : ''} Aircraft shop</button>`;
+  const btn = `<button class="btn small fs-board" id="boardShop" ${why ? 'disabled' : ''} title="${esc(why || `${shopVerb()} an aircraft now. It flies from tomorrow at the earliest.`)}">${ICO2 && ICO2.plane ? ICO2.plane : ''} Aircraft shop</button>`;
   if(foot) foot.insertAdjacentHTML('beforeend', btn); else screen().insertAdjacentHTML('beforeend', `<div class="fs-board-wrap">${btn}</div>`);
   on('boardShop', openShopNow);
   return r;

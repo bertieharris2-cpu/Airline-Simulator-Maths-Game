@@ -114,7 +114,7 @@ def unlocks(s):         # 'routes:dub,par; planes:dhc6(launch deal); mechanics:f
     for part in str(s).split(';'):
         if ':' not in part: continue
         k, v = part.split(':', 1)
-        items = [re.sub(r'\(.*?\)', '', x).strip() for x in v.split(',')]
+        items = [x.strip() for x in re.sub(r'\(.*?\)', '', v).split(',')]   # brackets first: "dhc6 (second, £10,000)"
         if k.strip() == 'planes': items = [AIRCRAFT_IDS.get(x, x) for x in items]
         out[k.strip()] = [x for x in items if x]
     return out
@@ -536,7 +536,7 @@ NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurna
           'seatFillGood', 'seatFillMedium', 'demandStripMode', 'planStudioSteps',
           'flightDays', 'flightDaysFromDay', 'summaryWeekdayWeekend', 'patternPlusExtras', 'shortHaulMaxKm', 'mediumHaulMaxKm',
           'longHaulFromKm', 'longHaulTurnaroundMin', 'longHaulCrewCost', 'longHaulSameDayMaxKm', 'reputationPerHalfStar', 'reputationBankedFromAutumn',
-          'airlineTypeMode', 'premiumExtraFareSteps', 'valueLowerFareSteps', 'premiumStarRate', 'valueStarRate', 'extrasBagFee', 'extrasBagTakeUp', 'chapter2SetUpDays']
+          'airlineTypeMode', 'premiumExtraFareSteps', 'valueLowerFareSteps', 'premiumStarRate', 'valueStarRate', 'extrasBagFee', 'extrasBagTakeUp', 'chapter2SetUpDays', 'chapter1BuyOnly', 'timeToAffordSum']
 for k in NEEDED:
     st_ = settings_status.get(k)
     if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')

@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 110 | 110 live, 8 placeholder |
+| Settings | 112 | 112 live, 8 placeholder |
 | Archetypes | 5 | 2 later, 5 live |
 | Routes | 23 | 23 live |
 | RouteCatalogue | 0 | 17 moved to Routes, 4 placeholder |
@@ -39,7 +39,7 @@
 
 ## Notes
 
-- **Aircraft:** dhc6 differs from Pass 1 (Pass 1 → workbook): dayCost 600 → 900, listPrice 5000 → 12000. The workbook wins.
+- **Aircraft:** dhc6 differs from Pass 1 (Pass 1 → workbook): dayCost 600 → 900, listPrice 5000 → 10000. The workbook wins.
 - **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 1200, listPrice 9000 → 22000. The workbook wins.
 - **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1800, listPrice 15000 → 36000. The workbook wins.
 - **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900, dayCost 2500 → 3500, listPrice 30000 → 70000. The workbook wins.
@@ -102,7 +102,7 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | Lagos fares | £150, £175, £200, £250 | £440, £460, £480, £500, £520 |
 | Delhi distance | 7200 km | 6700 km |
 | Delhi fares | £200, £250, £300, £350 | £560, £580, £600, £620, £640 |
-| DHC-6 Twin Otter price | £2,500 | £12,000 (launch deal £2,500) |
+| DHC-6 Twin Otter price | £2,500 | £10,000 (launch deal £2,500) |
 | DHC-6 Twin Otter running costs | £192 an hour, £900 a day | £150 an hour, £900 a day |
 | DHC-6 Twin Otter fuel | 20 L per 100 km | 20 L per 100 km |
 | Saab 340 price | £180,000 | £22,000 |

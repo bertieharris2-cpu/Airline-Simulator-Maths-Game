@@ -2443,8 +2443,8 @@ div.ev{display:grid;gap:14px;max-width:980px}.ev-opts{display:grid;grid-template
 @keyframes artSpin{0%{transform:scaleY(1)}50%{transform:scaleY(-1)}100%{transform:scaleY(1)}}@keyframes artTurn{to{transform:rotate(360deg)}}
 .art .glint{transform:translateX(-400px) skewX(-18deg)}.art .glint.go{animation:artGlint 1.3s ease-in-out 1}
 @keyframes artGlint{from{transform:translateX(-400px) skewX(-18deg)}to{transform:translateX(1500px) skewX(-18deg)}}
-.hangar .roll{transform:translateX(-115%)}.hangar .roll.go{animation:artRoll var(--roll,3.4s) cubic-bezier(.15,.7,.25,1) forwards}.hangar .roll.done{transform:none;animation:none}
-@keyframes artRoll{from{transform:translateX(-115%)}to{transform:translateX(0)}}
+.hangar .roll{transform:translateX(115%)}.hangar .roll.go{animation:artRoll var(--roll,3.4s) cubic-bezier(.15,.7,.25,1) forwards}.hangar .roll.done{transform:none;animation:none}
+@keyframes artRoll{from{transform:translateX(115%)}to{transform:translateX(0)}}
 .hangar.fade .roll{animation:none;transform:none}.hangar.fade .doors div{transition:none}
 .art.thumb{width:150px;height:auto}.art.pic{width:100%;height:auto}
 .art.mini{display:inline-block;width:72px;height:auto;vertical-align:middle;flex:none}.ac .art.mini{width:66px}.hqd.compact .ac .art.mini{width:50px}

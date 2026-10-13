@@ -70,10 +70,35 @@ The opening is being made excellent before the later campaign continues. `airlin
   - **Tested** by `chapter2.test.js` with `TYPE=value` (default) and `TYPE=premium`.
   - **Coming in push 3:** events with options; the nineteen news items (`routes = all`, closures); challenges and hunts; the chapter 2 report for Fable.
 
+**Workbook v5.2: chapter 1 is buy only (D76, Fable's note of 13 Oct 2026)** (`src/opening/parts/p4zm_buyonly.js`):
+- **No renting or finance before 6 January 2031** (`chapter1BuyOnly`, `leaseFromDate`). The shop sells, and the Rent and Finance buttons, the launch-deal finance rows and the week-2 rent-or-buy sum are gone. Renting opens in January with the long-haul planes, where rent-or-buy is first met. Finance waits for `financeFromDate` (chapter 4). The second Twin Otter is £10,000.
+- **Screen 2 of the week-2 comparison is "Buy now, or wait?"** Each plane shows:
+  - its price and the cash now;
+  - **still to save** (price − cash);
+  - **days to wait** (still to save ÷ the average profit a day over the last 7 days, rounded up; 0 when affordable);
+  - **what waiting costs** (the affordable smaller plane's extra profit a day × the days to wait);
+  - the extra profit a day once bought.
+  Buy is greyed with the shortfall while cash < price + the £1,000 reserve. **Wait for it** leaves the plan as it is. The shop then comes back on each Monday plan day with the countdown ("Saving for the Saab 340: … about 5 days at your rate"), in the Fleet panel too.
+- **The time-to-afford sum** (`timeToAffordSum`) is the week-2 Calculate sign-off, in two steps: the subtraction, then the division rounded up to whole days. Each step's box has a Working pad. Adding is a Query ("that adds them"), and so is a decimal number of days ("round up: after 4 days you'd still be short"). From the next time it is Build. The pupil record keeps it as "time to afford, then rent-or-buy".
+- **A later visit to the shop** (one plane, no comparison) is the same question for that plane: the sum, Buy now or Wait for it, and Not today.
+- **What's new: The fleet** on day 8 is now *A second aircraft: buy now, or wait?*, with the prices, a worked example and a check question.
+- **The test run** (Steady): on day 8 it waits for the Saab (cash £14,841, £1,687 a day, so (22,000 − 14,841) ÷ 1,687 = 4.24, which is 5 days). It buys the Saab on day 15 and waits for the ATR on day 22 (7 days). It buys the ATR on day 29 and flies Madrid from then. Chapter 1 ends on **£697,112** (coasting pupil £689,806). Screenshots: `docs/screenshots/buy-only/`.
+
+**From Bertie's run-through, 13 Oct 2026 (third round): working space everywhere, the Finance card's sums, the roll-out:**
+- **Division on the pad: a bus stop with multiples.** The divisor sits outside the bracket and the dividend's digits under it. There is one answer box above each digit, and a small box for the remainder carried to the next digit. When the answer isn't whole, there is a decimal point and two 0 places.
+  - **Multiples of the divisor** are listed (1 × 650 = 650 filled, 2 × … 9 × for him to fill).
+  - **Make it smaller** appears when both numbers end in 0: "36,000 ÷ 650 is the same as 3,600 ÷ 65".
+  - Working buttons are on every ÷ box: the rent-or-buy days, the days to wait, and the ÷ sign-offs (flight time).
+- **Subtraction on the pad:** the bigger number on top, an exchange strip above it, then the answer line.
+- **A Working pad on every screen:** the pencil in the top bar opens a free pad. Type two numbers, pick × ÷ + −, then **Set it out**. It is not checked or recorded. It stays over any screen, including the run board, and Escape closes it.
+- **The Finance card shows its sums.** "Total paid after 30 days" reads "£7,000 today + 30 days × £500". A new **Paid in all** row reads "£7,000 + 32 days × £500: £1,000 more than buying; then it is yours". Rent shows "30 days × £400"; Buy shows "the price, paid today". So there is no doubt that the £22,000 includes the £7,000.
+- **The new plane rolls out of the hangar nose first** (the roll comes in from the right).
+- Screenshots: `docs/screenshots/fleet-and-pad/` (the free pad, the rent-or-buy pad, the pay page's sums, the hangar).
+
 **From Bertie's run-through, 13 Oct 2026 (second round):**
 - **One game file.** `airline-opening-prototype.html` is now the game (the revised Studio, Days, chapter 2). `airline-opening-studio-v2.html` is gone (saves are shared, so nothing is lost). The old full game and the v4.10 copy are in `archive/`.
-- **The shop is under Fleet.** The Fleet panel has *Add an aircraft*: what is in the shop today, with the rent and the price, and **Rent or buy an aircraft**. Tuesday–Sunday's board has an **Aircraft shop** button too, because it has no side menu.
-  - It opens the usual path: the comparison while there is one aircraft, the rent-or-buy sum, Rent · Finance · Buy, the paint shop and the hangar. Then he is back where he was.
+- **The shop is under Fleet.** The Fleet panel has *Add an aircraft*: what is in the shop today, with the price (and the rent once renting opens), and **Buy an aircraft** (**Rent or buy an aircraft** from January). Tuesday–Sunday's board has an **Aircraft shop** button too, because it has no side menu.
+  - It opens the usual path: the comparison while there is one aircraft, Buy now or wait (chapter 1) or the rent-or-buy sum and Rent · Finance · Buy (from January), the paint shop and the hangar. Then he is back where he was.
   - Bought on a run day, the aircraft costs nothing and flies nothing that day. Services chosen on the comparison fly from the next day; otherwise Monday's plan says it has no flights yet.
   - The button is off before 9 September and while flights are in the air (it says why).
 - **A Working pad on every sum box.** A **Working** button beside each typed × answer opens a pad with the column method in digit boxes:
@@ -276,12 +301,20 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Not yet:** months and the year keep the plain run (the brief's month timeline is in the evaluation), decision pauses, no-shows, knock-on delays and weather costs wait for the uncertainty stage.
 
 ### Building and testing the prototype
-- **Build:** `python3 src/opening/build.py` joins `src/opening/parts/` (in order: head, data, HTML, then the scripts `p4a_core`, `../engine/world-engine`, `p4a2_workbook` (the workbook's routes, aircraft, catering and settings), `p4b_control`, `p4d_opening`, `p4e_toolkit`, `p4f_campaign`, `p4g_opening2`, `p4h_world`, `p4i_liveops`, `p4j_intro`, `p4k_chapter` (the calendar from the sheets), `p4l_handsums` (week 1: hand-sum rules, events, weekends), `p4m_fleet` (the fleet and the shop), `p4n_weeks` (the weeks, Market events, the teacher's skip), `p4o_review` (December, the chapter review, the gates), `p4p_identity`, `p4q_paint`, `p4r_showroom`, `p4s_practice`, `p4t_workout`, `p4u_migrate` (old save codes), `p4v_week` (the week loop), `p4w_planner` (the Week 1 planner: the intro, the timeline editor, the fuel strip, the Maths Dock, the comparison), `p4c_display`). A later part's function wins; `overrides.txt` lists them. The build checks every JSON block and the script's syntax.
+- **Build:** `python3 src/opening/build.py` joins `src/opening/parts/` (in order: head, data, HTML, then the scripts `p4a_core`, `../engine/world-engine`, `p4a2_workbook` (the workbook's routes, aircraft, catering and settings), `p4b_control`, `p4d_opening`, `p4e_toolkit`, `p4f_campaign`, `p4g_opening2`, `p4h_world`, `p4i_liveops`, `p4j_intro`, `p4k_chapter` (the calendar from the sheets), `p4l_handsums` (week 1: hand-sum rules, events, weekends), `p4m_fleet` (the fleet and the shop), `p4n_weeks` (the weeks, Market events, the teacher's skip), `p4o_review` (December, the chapter review, the gates), `p4p_identity`, `p4q_paint`, `p4r_showroom`, `p4s_practice`, `p4t_workout`, `p4u_migrate` (old save codes), `p4v_week` (the week loop), `p4w_planner` (the Week 1 planner: the intro, the timeline editor, the fuel strip, the Maths Dock, the comparison), the later parts up to `p4zd`, then the game's own `p4ze_studio2`, `p4zf_flightdays`, `p4zg_chapter2`, `p4zh_longhaul`, `p4zj_types`, `p4zk_pad` (the Working pad), `p4zl_fleetshop` (the shop under Fleet), `p4zm_buyonly` (chapter 1 buy only), and last `p4c_display`), with `p1_head_studio2.css`. A later part's function wins; `overrides.txt` lists them. The build checks every JSON block and the script's syntax.
 - **Import:** `python3 tools/import_world.py` after editing the workbook. Live rows only; the report's *Chapter 1 touches* lists every non-live value the chapter reads (today: Istanbul's archetype, `timeSkip`, `reputationFromDate`).
 - **Tests** (Playwright, with the pre-installed Chromium; `NODE_PATH=/opt/node-tools/node_modules`):
-  - `node src/opening/tests/week.test.js` plays chapter 1 a week at a time (v4.4) with the Balance Report's plans (`UPTO` day, `OUT` for screenshots): Launch Day's sums in order, the board, the Sunday reviews, the Saab on day 8, Amsterdam on day 15, the ATR on Madrid on day 22; it checks the Calculate count for weeks 1–4, that the sweep's best plan beats the pupil's, Buy greyed in week 2 and the neglect lines from week 3.
+  - `node src/opening/tests/week.test.js` plays chapter 1 a week at a time (v4.4) with the Balance Report's plans (`UPTO` day, `OUT` for screenshots): Launch Day's sums in order, the board, the Sunday reviews, Buy now or wait on day 8 (it waits for the Saab and signs off the time to afford), the Saab bought on day 15, Amsterdam, the ATR waited for on day 22 and bought on day 29 for Madrid; it checks the Calculate count for weeks 1–4, that the sweep's best plan beats the pupil's, Buy greyed in week 2 and the neglect lines from week 3.
   - The game is the revised Studio, so `week.test.js` also plays the launch flow on Choose where to fly, the opener, a news review, the route and flight editors and the drawer. Every test takes the game file from `GAME` (default `airline-opening-prototype.html`).
-  - `CODE=<day-8 save> node src/opening/tests/fleetshop.test.js`: Not today on day 8, the shop in the Fleet panel, Tuesday's board shop button, renting the Saab mid-week (no costs or flights until the next day), and the Working pad on the fuel desk (4 × £1,470 typed digit by digit, Use this answer, signed, kept in the record). Make the save with `UPTO=8 SAVE=<file> node week.test.js`.
+  - `CODE=<day-8 save> node src/opening/tests/fleetshop.test.js` (35 checks) covers:
+    - Not today on day 8, the shop in the Fleet panel, and Tuesday's board shop button;
+    - Buy now or wait mid-week: the time to afford signed, its ÷ step through the bus-stop pad, with a Query for 4.02 days;
+    - buying a second Twin Otter (no costs or flights until the next day) and the hangar roll-out nose first;
+    - the Working pad on the fuel desk (4 × £1,470);
+    - the free pad (36,000 ÷ 650 made smaller, 3,420 − 1,830 with exchanges, Escape);
+    - as from January, with buy only switched off: the pay page's sums and the rent-or-buy pad (22,000 ÷ 400 → 220 ÷ 4 = 55).
+
+    Make the save with `UPTO=8 SAVE=<file> node week.test.js`.
   - `node src/opening/tests/chapter2.test.js` carries on from a save at chapter 1's review. Make the save with `UPTO=200 SAVE=/tmp/airline-ch1-end.txt node week.test.js`, or pass `CODE=<file>`. The test plays:
     - Christmas and New Year, then day 127: lease a 757, New York at £510 at 06:30;
     - the Balance Report v5.0 §2 check (£47,426 within £10), the refused second service, the local time, the overnight rotation (Delhi, tried early) and growth;

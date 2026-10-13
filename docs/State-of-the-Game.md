@@ -10,6 +10,50 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0k. Workbook v5.2 (13 Oct 2026): chapter 1 is buy only (D76), and working space everywhere
+
+**What changed:**
+- **Data.** `data/Airline-World-Workbook.xlsx` is v5.2. It imported with 0 to fix and 6 to check.
+  - `tools/import_world.py` gains `chapter1BuyOnly` and `timeToAffordSum` in `NEEDED`.
+  - The `unlocks()` parser drops brackets before splitting on commas, so "dhc6 (second, £10,000)" stays one item.
+- **`p4zm_buyonly.js` (new, after `p4zl_fleetshop`):**
+  - `buyOnlyOn(day)` is true while `chapter1BuyOnly` holds and the day is before `leaseFromDate`.
+  - The `shopOffer` wrapper clears `canLease` / `lease` then, and clears `canFinance` / `deposit` until `financeFromDate` (or the offer's own `finFrom`). With `chapter1BuyOnly` off, the offers are as before.
+  - `taFig(pid)` gives price, cash, rate (`avgDailyProfit()`, rounded), still, days (rounded up, 0 when affordable), exact, afford, shortfall and reserve.
+  - `taWaitCost` takes the best affordable cheaper candidate with a positive extra profit, times the days.
+  - `taTarget` is the chosen plane if unaffordable, else the cheapest unaffordable one.
+  - **The sign-off** (`timeToAfford`): `taCardHtml` / `taBind` give Calculate in two steps (`[data-pad="ta1"]` −, `[data-pad="ta2"]` ÷), or Build with figure chips (correct is `still ÷ rate`).
+    - `taLedger` puts `ta|<pid>` in the week's ledger; `taDone` calls `soTouch` and `soDone`; `taRecord` writes `recOpen('ta:'+pid)`.
+    - `REC_REL.rentOrBuy` and `REC_REL.timeToAfford` are both "time to afford, then rent-or-buy".
+  - **`renderAcWait`** (Screen 2 when `acChoice` is set): the three columns, `[data-bw="pid|buy|wait"]`. The asked plane's still / days / cost show `?` until it is signed.
+    - Buy runs `acquirePlane(p,'buy')` and `acApplyChoice`.
+    - Wait sets `S.waitFor = { pid, from, price, days }`, with news and a record event.
+  - **`renderBuyOne`** (a later visit from the showroom or Fleet panel, no comparison): one plane, the sign-off if it is unaffordable, then Buy now, Wait for it or Not today.
+  - **While `S.waitFor` stands:** `daySteps` puts `shop2` before `plan` on plan days, and `waitBanner()` / `fleetShopHtml` show the countdown. `acquirePlane` clears it, and so does `waitNow()` once the plane is in the fleet.
+  - `INTRO.fleet` is replaced while `chapter1BuyOnly` is on. `acGiveUp`, `acCashBar` and the comparison's hint get buy-only words.
+  - `buyOnlyReport()` is for the tests.
+- **`p4zl_fleetshop.js`:** `shopVerb()` gives "Buy" or "Rent or buy". The panel's rent column shows only once renting is offered.
+- **`p4zk_pad.js`:**
+  - `padModel` gains `÷`: a bus stop with `data-wpr="q"` answer boxes and `.wp-rm` remainder boxes, multiples `[data-wpm]`, and `[data-wpsmall]` *Make it smaller*. There are 2 decimal places when the division isn't whole; `padDivValue` reads the answer.
+  - `padModel` gains `−`: an exchange strip `data-wpr="x"`.
+  - The free pad is `#padFree` in `.dkh-tools` (`openFreePad`, `[data-wfa]`, `[data-wfop]`, `[data-wfb]`, `[data-wfgo]`). It is not checked or recorded.
+  - ÷ specs cover `#rbIn` and `ta2`, and − covers `ta1`.
+- **`p4zb_decisions.js` `renderAcPay`:** the rows are `[label, value, cls, sub]`. The sub-line shows how each figure is made, and a **Paid in all** row is added.
+- **`p1_head.html`:** the hangar roll starts at `translateX(115%)` (nose first).
+
+**Tests** (all 0 failures):
+- `week.test.js` plays buy only: on day 8 it waits for the Saab (Calculate, with the two Queries). It buys the Saab on day 15 (Build), waits for the ATR on day 22 and buys it on day 29.
+  - **New checks:** the week-2 sign-off is the time to afford, and there is no rent-or-buy sum in any chapter 1 week.
+  - 199 checks, ending on £697,112. `COAST=1`: 202 checks, £689,806.
+- `fleetshop.test.js`: 35 checks.
+- `chapter2.test.js` (from the new chapter 1 save): Value 48 checks, Premium 46.
+  - On day 127 rent-or-buy is now Calculate (first met), so the cap's three Calculate are rent-or-buy, the tickets, and the fuel (Premium) or the bag fee (Value, where the long-haul fuel is Build).
+- `migrate.test.js`: 27 checks. `record.test.js`: 16 checks.
+
+**Not done / to note:**
+- Days to wait use price − cash, as the note says. Buy needs price + the £1,000 reserve, so on the day the countdown reaches 0, Buy can still be greyed by up to £1,000 (the shortfall is shown).
+- The finance card's sums are only reachable from January (rent) and chapter 4 (finance).
+
 ## 0j. One game file, the shop under Fleet, the Working pad (13 Oct 2026, Bertie's run-through)
 
 **What changed:**

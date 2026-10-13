@@ -60,5 +60,5 @@ def build(name, js_list, css='', ovr='overrides.txt'):
     print('built %s,' % name, len(out), 'bytes; JSON + syntax OK')
 
 # one game: the shared parts, then the revised Studio, Days, chapter 2 and the Working pad, then the display part
-GAME = JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js', 'p4zk_pad.js', 'p4zl_fleetshop.js'] + JS[-1:]
+GAME = JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js', 'p4zk_pad.js', 'p4zl_fleetshop.js', 'p4zm_buyonly.js'] + JS[-1:]
 build('airline-opening-prototype.html', GAME, r('parts', 'p1_head_studio2.css'))

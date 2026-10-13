@@ -104,14 +104,14 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   if(CAP) await p.evaluate(c => window.__sim.evalIn(`soS().cap = ${c}`), CAP);
   if(BOARD_SHARE !== null) await p.evaluate(v => window.__sim.evalIn(`WORLD.settings.boardNudgeMissedShare = ${v}`), BOARD_SHARE);
   // the chapter
-  let lastDay = 0;
+  let lastDay = 0, planned2 = 0, planned3 = 0, delChk = false; const info = {};
   try{
   for(let i = 0; i < 400; i++){ const t = await T(), s = await S(), day = s.day;
     if(day >= UPTO && t === 'hq') break; if(t === 'chapterReview' && await vis('.rbw')){ await shot('chapter-accounts'); const built = await builds('chapter'); ok('chapter accounts: total revenue, total costs, profit and projected − actual are Build steps', ['rev', 'cost', 'profit', 'vs'].every(k => built.includes(k)), built); await shot('chapter-accounts-built'); checks.push('reached chapterReview day ' + day); break; }
     if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); break; }
     if(t === 'hq'){ await fits('hq ' + day); if(day !== lastDay) await shot(`d${day}-hq`); lastDay = day; await p.click('#startDay'); continue; }
     if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice(); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
-    if(t === 'shop2' && await vis('.acx')){ await fits('compare ' + day); await shot(`d${day}-compare-aircraft`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
+    if(t === 'shop2' && day === 8 && await vis('.acx')){ await fits('compare ' + day); await shot(`d${day}-compare-aircraft`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
       ok(`day ${day}: the second-aircraft comparison: three columns, nine rows each, the capacity problem first`, (await p.$$('.acx-col')).length === 3 && (await p.$$('.acx-col:first-child .acx-r')).length === 9 && /We have a capacity problem/.test(txt), (await p.$$('.acx-col:first-child .acx-r')).length);
       ok(`day ${day}: nothing is labelled best; the descriptors are derived`, !/\bbest\b/i.test(await p.$$eval('.acx-tag', es => es.map(e => e.textContent).join(' '))) && /FITS TODAY'S MARKET/.test(txt) && /LOW COMMITMENT/.test(txt) && /A BET ON/.test(txt), await p.$$eval('.acx-tag', es => es.map(e => e.textContent)));
       ok(`day ${day}: the cash bar shows a reserve breach in red when buying outright is not possible`, await vis('.acx-bar i.x'));
@@ -120,6 +120,21 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       await p.click('[data-actab="grow"]'); await p.waitForTimeout(100); await p.$eval('#acGrowIn', e => { e.value = '2'; e.dispatchEvent(new Event('change')); }); await p.waitForTimeout(200);
       ok(`day ${day}: If Dublin grows recomputes the three planes at ×2.0`, (await p.$$('.acx-gb')).length === 3 && /×2\.0/.test(await p.textContent('.acx-grow')), await p.$eval('.acx-grow', e => e.textContent.replace(/\s+/g, ' ').slice(0, 200)));
       await shot(`d${day}-compare-grow`); await p.click('[data-actab="where"]'); await p.click('[data-acc="sf34"]'); await p.waitForTimeout(150); continue; }
+    if(t === 'shop2' && await vis('.acx') && day > 8){ await shot(`d${day}-compare-again`); ok(`day ${day}: while saving, the shop comes back with the countdown`, /Saving for the Saab 340|You can buy the Saab 340 now/.test(await p.textContent('.bw-wait').catch(() => '')), await p.textContent('.bw-wait').catch(() => ''));
+      await p.click('[data-acc="sf34"]'); await p.waitForTimeout(150); continue; }
+    if(t === 'acquire' && await vis('.bw-page')){ await shot(`d${day}-buy-or-wait`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' '), F = await p.evaluate(() => window.__sim.evalIn('JSON.stringify(UI.taF)')).then(JSON.parse);
+      ok(`day ${day}: chapter 1 is buy only: no rent or finance on Buy now or wait`, !(await vis('[data-terms]')) && !/a day to rent|Finance, down|rent or finance for now/.test(txt) && /Days to wait/.test(txt) && (await vis('.bw-one') || /What waiting costs/.test(txt)), txt.slice(0, 200));
+      if(await p.$('[data-pad="ta1"]')){ info.ta = F;
+        await p.fill('[data-pad="ta1"]', String(F.price + F.cash)); await p.click('#ta1Chk'); await p.waitForTimeout(60); ok(`day ${day}: time to afford, step 1: adding is a Query ("that adds them")`, /adds them/.test(await p.textContent('.ta-card')), await p.textContent('.ta-card .sc-msg').catch(() => ''));
+        await p.fill('[data-pad="ta1"]', String(F.still)); await p.click('#ta1Chk'); await p.waitForTimeout(60);
+        if(Math.abs(F.exact - Math.round(F.exact)) > 0.01){ await p.fill('[data-pad="ta2"]', String(Math.floor(F.exact))); await p.click('#ta2Chk'); await p.waitForTimeout(60); ok(`day ${day}: time to afford, step 2: not rounded up is a Query`, /round up/.test(await p.textContent('.ta-card')), await p.textContent('.ta-card .sc-msg').catch(() => '')); }
+        await p.fill('[data-pad="ta2"]', String(F.days)); await p.click('#ta2Chk'); await p.waitForTimeout(80);
+        ok(`day ${day}: (${F.price} − ${F.cash}) ÷ ${F.rate} = ${F.days} days, Checked; the week's ledger counts it as a Calculate`, await vis('.ta-card.ok') && (await p.evaluate(() => window.__sim.evalIn("JSON.stringify(Object.values(soWeek(false).items).filter(it => it.rel === 'timeToAfford').map(it => [it.level, it.done]))"))) === '[["calc",true]]', F); }
+      else if(await p.$('[data-tafig]')){ for(const x of ['still', '÷', 'rate']) await p.click(['÷'].includes(x) ? `[data-taop="${x}"]` : `[data-tafig="${x}"]`); await p.click('#taBuildChk'); await p.waitForTimeout(80); ok(`day ${day}: the time to afford is Build the second time`, await vis('.ta-card.ok')); }
+      const pid = await p.evaluate(() => window.__sim.evalIn('S.rnd.shopPick')), n0 = (await S()).fleet.length, can = await p.$(`[data-bw="${pid}|buy"]:not([disabled])`);
+      if(can){ await can.click(); await p.click('#nx'); await p.waitForTimeout(150); info[pid] = day; ok(`day ${day}: the ${pid} is bought outright once there is enough cash`, (await S()).fleet.some(f => f.planeId === pid && f.terms && f.terms.kind === 'buy'), (await S()).fleet.map(f => [f.planeId, f.terms && f.terms.kind])); }
+      else { await p.click(`[data-bw="${pid}|wait"]`); await p.click('#nx'); await p.waitForTimeout(150); ok(`day ${day}: wait for the ${pid}: the fleet is unchanged and the shop will count down`, ((await S()).waitFor || {}).pid === pid && (await S()).fleet.length === n0, (await S()).waitFor); }
+      continue; }
     if(t === 'acquire' && await vis('.so-page')){ await shot(`d${day}-acquire-build`); await signs('acquire ' + day); await p.click('#nx'); continue; }
     if(t === 'acquire' && await vis('.acq')){ await shot(`d${day}-pay`); const buy = await p.$eval('[data-terms="buy"]', e => e.disabled), cash = (await S()).cash, reserve = await p.evaluate(() => window.__sim.evalIn('WORLD.cashReserve || 0'));
       ok(`day ${day}: How should we get it: Buy is greyed with the shortfall when cash is below price + reserve`, buy === (cash < 22000 + reserve) && /still to save/.test(await p.textContent('.acq-cols')), await p.$eval('.acq-n', e => e.textContent).catch(() => ''));
@@ -127,11 +142,13 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         await p.fill('#rbIn', '55'); await p.click('#rbChk'); await p.waitForTimeout(60); ok(`day ${day}: 22,000 ÷ 400 = 55 days is Checked`, await vis('.acq-rb .stamp.ok')); }
       await shot(`d${day}-pay-signed`); await p.click('[data-terms="lease"]'); await p.click('#nx'); await p.waitForTimeout(100);
       ok(`day ${day}: the Saab starts on Dublin as compared (two services at £80)`, await p.evaluate(() => JSON.stringify(window.__sim.currentPlan().fleet.map(x => x.sched))) === '[["par","par"],["dub","dub"]]', await p.evaluate(() => JSON.stringify(window.__sim.currentPlan().fleet.map(x => x.sched)))); continue; }
-    if(t === 'shop2'){ await fits('shop ' + day); await shot(`d${day}-shop`); const want = day === 8 ? 'sf34' : day === 22 ? 'at72' : null, card = want && await p.$(`[data-pick="${want}"]`); if(card){ await card.click(); await p.waitForTimeout(400); await shot(`d${day}-shop-turned`); ok(`shop ${day}: the turned card is drawn flat (no 3D transform, so its text stays sharp)`, await p.$eval(`[data-pick="${want}"] .sc-back`, e => { const t = getComputedStyle(e).transform, i = getComputedStyle(e.parentElement).transform; return (t === 'none' || /^matrix\(/.test(t)) && (i === 'none' || /^matrix\(/.test(i)) && getComputedStyle(e).display !== 'none'; })); await p.click('#nx'); } else await p.click('#skipShop'); continue; }
+    if(t === 'shop2'){ await fits('shop ' + day); await shot(`d${day}-shop`); const want = day === 8 ? 'sf34' : day >= 22 && s.fleet.length === 2 && !s.fleet.some(f => f.planeId === 'at72') ? 'at72' : null, card = want && await p.$(`[data-pick="${want}"]`); if(card){ await card.click(); await p.waitForTimeout(400); await shot(`d${day}-shop-turned`); ok(`shop ${day}: the turned card is drawn flat (no 3D transform, so its text stays sharp)`, await p.$eval(`[data-pick="${want}"] .sc-back`, e => { const t = getComputedStyle(e).transform, i = getComputedStyle(e.parentElement).transform; return (t === 'none' || /^matrix\(/.test(t)) && (i === 'none' || /^matrix\(/.test(i)) && getComputedStyle(e).display !== 'none'; })); await p.click('#nx'); } else await p.click('#skipShop'); continue; }
     if(t === 'fleetSums' && await vis('.so-page')){ await fits('fleetSums ' + day); await shot(`d${day}-fleetsums`); sums['fleetSums ' + day] = await signs('fleetSums ' + day); await p.click('#nx'); continue; }
     if(t === 'fleetSums'){ const typed = await solve('fleetSums'); sums['fleetSums ' + day] = typed; if(await p.$('#calcDone')) await p.click('#calcDone'); await p.click('#nx'); continue; }
     if(t === 'acquire'){ await shot(`d${day}-acquire`); const buy = await p.$eval('[data-terms="buy"]', e => e.disabled), txt = await p.$eval('[data-terms="buy"]', e => e.textContent.replace(/\s+/g, ' ')), cash = (await S()).cash, price = +((/£([\d,]+)/.exec(txt) || [])[1] || '0').replace(/,/g, ''), reserve = await p.evaluate(() => window.__sim.evalIn('WORLD.cashReserve || 0'));
-      ok(`day ${day}: Buy is greyed until affordable (cash ${cash} against ${price} + the ${reserve} reserve)`, buy === (cash < price + reserve), txt); await p.click('[data-terms="lease"]'); await p.click('#nx'); continue; }
+      ok(`day ${day}: Buy is greyed until affordable (cash ${cash} against ${price} + the ${reserve} reserve)`, buy === (cash < price + reserve), txt);
+      ok(`day ${day}: chapter 1 is buy only: Rent and Finance are off`, await p.$eval('[data-terms="lease"]', e => e.disabled).catch(() => true) && await p.$eval('[data-terms="finance"]', e => e.disabled).catch(() => true));
+      if(!buy){ await p.click('[data-terms="buy"]'); await p.click('#nx'); info.atrBought = info.atrBought || day; } else await p.click('#noBuy'); continue; }
     if(t === 'event'){ await fits('event ' + day); await shot(`d${day}-event`); await p.click(`[data-o="${day === 5 ? 2 : 1}"]`); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
     if(t === 'plan' && process.env.DUMP && process.env.DUMP.split(',').includes(String(day)) && !dumped[day]){ dumped[day] = true; fs.writeFileSync(OUT + `state-${day}.json`, await p.evaluate(() => window.__sim.evalIn('JSON.stringify(S)'))); }
     if(t === 'plan'){ await fits('plan ' + day);
@@ -178,6 +195,9 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         ok('launch: the fuel strip is one line: week 1 buys fuel as it is used, free on the launch days', /Fuel is bought as it is used.*free Mon–Tue/.test(await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => '')), await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
         await setPlan([{ sched:['par', 'dub', 'par'], deps:[420, 640, 1080] }], { par:90, dub:90 });
         ok('launch: both routes on the plan page', await vis('[data-pe^="0|add|dub|0"]') && await vis('[data-pe^="0|add|par|0"]')); await studioChecks('launch'); await shot('d1-studio'); }
+      // a new aircraft's plan on the Monday it is first there (before the opener's checks, so a weekend service added below stays)
+      if(s.fleet.length === 2 && !planned2 && day >= 15){ planned2 = day; await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 }); }
+      if(s.fleet.length > 2 && !planned3 && day >= 22){ planned3 = day; await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 }); }
       if(V2 && s.phase !== 'setup' && await vis('#s2Keep')){
         if(!openerSeen){ openerSeen = true; const ch = await p.$$eval('.s2-cl li', ls => ls.map(l => l.textContent.replace(/\s+/g, ' ').trim()));
           ok(`plan ${day} (v2): from week 2 the Monday opens on last week's plan, ready to run again, with Keep plan and Edit plan and the known changes`, /ready to run again/.test(await p.textContent('.s2-oh h2')) && /Keep plan/.test(await p.textContent('#nx')) && await vis('#s2Edit') && ch.length >= 1 && (await p.$$('.s2-otl .ad-blk[disabled]')).length >= 1, ch); await shot(`d${day}-v2-opener`); }
@@ -216,8 +236,8 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         ok(`plan ${day} (D67): Delete removes the Sat–Sun flight, and the plan is All week again`, !(await p.evaluate(() => window.__sim.evalIn('anyDays(currentPlan())'))));
         await p.click('[data-s2dt="weekday"]'); await p.waitForTimeout(80); }
       if(V2 && day <= 22) await toPlan();
-      if(day === 8 && s.fleet.length > 1){ await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
-        ok('day 8: two aircraft, two lanes on the timeline', (await p.$$('.ad-lane')).length === 2 && (await p.$$('.ad-blk')).length === 4);
+      if(day === 8){ if(s.fleet.length > 1){ await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
+          ok('day 8: two aircraft, two lanes on the timeline', (await p.$$('.ad-lane')).length === 2 && (await p.$$('.ad-blk')).length === 4); }
         if(await p.$('#worldOpen')){ await p.click('#worldOpen'); await p.waitForTimeout(150); const wt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
           ok('day 8: the World report shows the fuel band, Red Kite\'s fares, a demand graph and the headlines', await vis('.wr') && /£1\.60–£1\.76/.test(wt) && (await p.$$('.wr-rk tbody tr')).length >= 2 && (await p.$$('.wr-b')).length >= 3 && /Headlines/.test(wt), wt.slice(0, 160));
           await shot(`d${day}-world`); await p.click('#wrClose'); await p.waitForTimeout(100); }
@@ -228,7 +248,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
           for(const x of ['Passengers', '×', 'Fare', 'Revenue', '−', 'Costs']) await p.click(`[data-omp="${x}"]`); await p.waitForTimeout(150);
           ok('day 8: with both formulas built the model projects the week', await vis('.om-rt') && !!((await S()).analyst || {}).built, (await S()).analyst);
           await p.click('[data-mo="fare|dub|1"]'); await p.waitForTimeout(150);
-          ok('day 8: the test plan changes, What changed names it and the results show the change', /Dublin fare £80 → £90/.test(await p.textContent('.om-what')) && (await p.$$('.om-rt td.good, .om-rt td.bad')).length >= 2, await p.$eval('.om-what', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
+          ok('day 8: the test plan changes, What changed names it and the results show the change', /Dublin fare £\d+ → £\d+/.test(await p.textContent('.om-what')) && (await p.$$('.om-rt td.good, .om-rt td.bad')).length >= 2, await p.$eval('.om-what', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
           await p.click('#omSave'); await p.waitForTimeout(80); ok('day 8: the test plan can be saved', (await p.$$('.om-sv')).length === 1); await shot(`d${day}-model`);
           await p.click('#omReset'); await p.click('#omClose'); await p.waitForTimeout(100); ok('day 8: Back returns to the planner', await vis('.ad'), await T()); }
         if(V2) ok('day 8 (v2): no fuel strip; Fuel is a toolbar button with the tank\'s status, a press from the fuel desk', !(await vis('.fstrip')) && await vis('.s2-fuel[data-nav="fuel"]') && /Fuel/.test(await p.textContent('.s2-fuel')), await p.$eval('.s2-fuel', e => e.title).catch(() => ''));
@@ -240,15 +260,13 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
           await p.click('#scBack'); await p.waitForTimeout(100); ok('day 8: Back to plan returns to the planner', await vis('.ad'), await T()); }
         if(await p.$('#mapOpen')){ await p.click('#mapOpen'); ok('day 8: the network map is a button away, with the destinations, the rival\'s fares and the demand', await vis('#hqMap') && (await p.$$('.net-dest tbody tr')).length >= 2); await shot(`d${day}-map`); await p.click('[data-nav="plan"]'); await p.waitForTimeout(60); } }
       if(day === 29) ok('day 29: the storage upgrade: the tank holds 20,000 L from today', await p.evaluate(() => window.__sim.evalIn('tankCapacity()')) === 20000, await p.evaluate(() => window.__sim.evalIn('tankCapacity()')));
-      if(day === 15 && s.fleet.length > 1) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 });
-      if(day === 22 && s.fleet.length > 2) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 });
       if(day === 8 || day === 22){ await (V2 ? v2Checks : studioChecks)('day ' + day); await shot(`d${day}-studio`); }
-      if(day === 22 && s.fleet.length > 2){   // three aircraft: the pressed flight's buttons stay on screen, and Delete removes it
-        const blks = await p.$$('.ad-blk[data-tl]'), n0 = blks.length; await blks[n0 - 1].click(); await p.waitForTimeout(150);
+      if(planned3 && !delChk && !(d67 && d67.day === day)){ delChk = true;   // three aircraft: the pressed flight's buttons stay on screen, and Delete removes it
+        await toPlan(); const blks = await p.$$('.ad-blk[data-tl]'), n0 = blks.length; await blks[n0 - 1].click(); await p.waitForTimeout(150);
         const rm = await p.evaluate(() => { const b = document.querySelector('[data-tlrm]'), tt = document.querySelector('.st-tt'); if(!b || !tt) return 'no Remove button'; const r = b.getBoundingClientRect(), q = tt.getBoundingClientRect(); return r.height > 0 && r.top >= q.top - 1 && r.bottom <= q.bottom + 1 && r.bottom <= innerHeight ? true : [r.top, r.bottom, q.top, q.bottom].map(Math.round).join(','); });
-        ok('day 22: with three aircraft, a pressed flight\'s Remove button is on screen', rm === true, rm); await shot('d22-studio-selected');
+        ok(`day ${day}: with three aircraft, a pressed flight's Remove button is on screen`, rm === true, rm); await shot('d22-studio-selected');
         await p.keyboard.press('Delete'); await p.waitForTimeout(150);
-        ok('day 22: pressing a flight then the Delete key removes it', (await p.$$('.ad-blk[data-tl]')).length === n0 - 1 && !(await vis('[data-tlrm]')), (await p.$$('.ad-blk[data-tl]')).length + ' of ' + n0);
+        ok(`day ${day}: pressing a flight then the Delete key removes it`, (await p.$$('.ad-blk[data-tl]')).length === n0 - 1 && !(await vis('[data-tlrm]')), (await p.$$('.ad-blk[data-tl]')).length + ' of ' + n0);
         await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 }); }
       if(day >= 50 && !modelWide && (await toPlan(), await vis('#ideaOpen'))){ modelWide = true;   // the model page with six routes: every control inside its panel
         await p.click('#ideaOpen'); await p.waitForTimeout(150);
@@ -309,7 +327,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       await shot(`d${day}-review-done`); await p.click('#nx'); continue; }
     if(t === 'paint'){ await shot(`d${day}-paint`); const a = await S(); ok(`paint ${day}: the new plane has its own registration`, new Set(a.fleet.map(f => f.registration)).size === a.fleet.length, a.fleet.map(f => f.registration)); await p.click('#roll'); continue; } if(t === 'reveal'){ await p.click('#skipReveal'); for(let k = 0; k < 50 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     checks.push('stopped at ' + t + ' day ' + day); await shot('stop'); break; }
-  }catch(e){ checks.push('FAIL exception ' + e.message.split('\n')[0]); await shot('exception'); }
+  }catch(e){ checks.push('FAIL exception ' + e.message.split('\n')[0] + ' (test line ' + ((String(e.stack).match(/week\.test\.js:(\d+)/) || [])[1] || '?') + ', ' + await T().catch(() => '?') + ')'); await shot('exception'); }
   const s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
   if(process.env.SAVE){ fs.writeFileSync(process.env.SAVE, await p.evaluate(() => window.__sim.saveCode())); checks.push('info save code written to ' + process.env.SAVE); }   // chapter2.test.js starts from this save
   if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t) && !/\(Build\)|^Build:/.test(t));   // Build steps (the reviews, the model's formulas) are not Calculate
@@ -319,9 +337,9 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   const rows = await p.evaluate(() => window.__sim.evalIn('soLogRows()')), cap = CAP || 3;
   if(rows.length){ ok(`from week 2, no week asks more than ${cap} Calculate sign-offs`, rows.every(r => r.asked.length <= cap), rows.map(r => [r.wk, r.asked.length]));
     const w = n => rows.find(r => r.wk === n) || { asked:[], build:[], model:[] };
-    if(s.day >= 22 && !CAP){ ok('week 2: rent-or-buy, the Saab\'s Dublin fuel and the first fuel order', w(2).asked.length === 3 && w(2).asked.some(x => /Rent or buy/.test(x)) && w(2).asked.some(x => /Fuel: Saab 340 Dublin/.test(x)) && w(2).asked.some(x => /first fuel order/.test(x)), w(2).asked);
+    if(s.day >= 22 && !CAP){ ok('week 2: the time to afford (the Saab) is the Calculate sign-off, with the first fuel order', w(2).asked.some(x => /Time to afford: Saab 340/.test(x)) && w(2).asked.some(x => /first fuel order/.test(x)) && !w(2).asked.some(x => /Rent or buy/.test(x)), w(2).asked);
       ok('week 3: Amsterdam tickets, Amsterdam flight time and the Saab\'s Amsterdam fuel', w(3).asked.length === 3 && w(3).asked.some(x => /Tickets: Amsterdam/.test(x)) && w(3).asked.some(x => /Flight time: Amsterdam/.test(x)) && w(3).asked.some(x => /Fuel: Saab 340 Amsterdam/.test(x)), w(3).asked);
-      ok('week 4: three Calculate; the ATR\'s Madrid fuel is Build (the third fuel line from week 2)', w(4).asked.length === 3 && w(4).build.some(x => /Fuel: ATR 72 Madrid/.test(x)), w(4)); } }
+      ok('chapter 1 is buy only: no rent-or-buy sum in any week (it is first met in January)', rows.every(r => !r.asked.concat(r.build).some(x => /Rent or buy/.test(x))), rows.map(r => r.asked.concat(r.build).filter(x => /Rent|afford/.test(x)))); } }
   if(s.day >= 92 && !CAP) ok('month ends: an audit at the start of the 4 Nov and 2 Dec weeks', audits.some(a => a.day === 64) && audits.some(a => a.day === 92), audits);
   if(COAST && s.day >= 64) ok('COAST: the plan unchanged all October brings a board review, and the plan waits for a change', audits.some(a => a.board) && boards.length > 0, { audits, boards });
   if(!COAST && s.day >= 92) ok('Steady: the plan changes each month, so no board review', !audits.some(a => a.board), { audits, changes });
