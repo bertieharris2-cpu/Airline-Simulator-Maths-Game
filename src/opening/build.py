@@ -62,4 +62,4 @@ def build(name, js_list, css='', ovr='overrides.txt'):
 build('airline-opening-prototype.html', JS)
 # the revised Studio: one more part before the display part, and its own styles; the main file is untouched by it
 if os.path.exists(os.path.join(HERE, 'parts', 'p4ze_studio2.js')):
-    build('airline-opening-studio-v2.html', JS[:-1] + ['p4ze_studio2.js'] + JS[-1:], r('parts', 'p1_head_studio2.css'), 'overrides-studio-v2.txt')
+    build('airline-opening-studio-v2.html', JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js'] + JS[-1:], r('parts', 'p1_head_studio2.css'), 'overrides-studio-v2.txt')

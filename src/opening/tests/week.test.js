@@ -7,7 +7,7 @@ const V2 = /studio-v2/.test(process.env.GAME || '');   // the revised Studio (ai
 const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
-  let modelWide = false, openerSeen = false, newsSeen = false; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [];
+  let modelWide = false, openerSeen = false, newsSeen = false, d67 = null; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
@@ -186,6 +186,35 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
           ok(`plan ${day} (v2): a news item's Review button opens the plan on that route: highlighted, its flights glowing, its editor open, the strip on it`, (n ? await vis(`.s2-r.focus[data-s2r="${id}"]`) : true) && await vis('.s2-ed') && (await p.$$('.s2-blk.hl')).length === n && await p.$eval('.st-strip', e => e.getAttribute('data-strip')).catch(() => null) === id && await vis('#s2Apply'), { id, n, hl:(await p.$$('.s2-blk.hl')).length }); await shot(`d${day}-v2-review`);
           await p.click('#s2Apply'); await p.waitForTimeout(100); ok(`plan ${day} (v2): Apply changes returns to the week's plan`, await vis('#s2Keep')); }
         if(await vis('.so-board-note')) ok(`plan ${day} (v2): while the board waits, Keep plan is held too`, await p.$eval('#s2Keep', e => e.disabled)); }
+      // D67 (Workbook v4.11): a Sat–Sun Dublin service for the rugby weekend, and what it does to the week
+      if(V2 && day >= 29 && !d67 && await vis('[data-s2review^="dub|dub_rugby"]')){ d67 = { day }; const R2 = () => p.evaluate(() => window.__sim.evalIn('studio2Report()'));
+        const tipsBefore = (await R2()).tips; await p.click('[data-s2review^="dub|dub_rugby"]'); await p.waitForTimeout(150); let r = await R2();
+        ok(`plan ${day} (D67): the rugby (a weekend-only story) opens the plan on Sat–Sun with a Sat–Sun service preset`, r.dt === 'weekend' && r.newDays === 'weekend' && await p.$eval('#s2Nd', e => e.value).catch(() => '') === 'weekend', { dt:r.dt, newDays:r.newDays });
+        ok(`plan ${day} (D67): the weekend_only_news tip fires while there is no Sat–Sun Dublin service`, tipsBefore.includes('weekend_only_news'), tipsBefore);
+        await p.click('.s2-ed [data-pe="0|open|dub|0|0"]'); await p.waitForTimeout(150); r = await R2();
+        const wk = await p.$$eval('.s2-blk[data-days="weekend"]', bs => bs.map(b => b.textContent.replace(/\s+/g, ' ')));
+        ok(`plan ${day} (D67): the new Dublin flight is Sat–Sun, with its chip on the block`, r.days.flat().filter(v => v === 'weekend').length === 1 && wk.some(t => /Dublin/.test(t) && /Sat–Sun/.test(t)), { days:r.days, wk }); await shot(`d${day}-d67-weekend`);
+        await p.click('[data-s2dt="weekday"]'); await p.waitForTimeout(120);
+        ok(`plan ${day} (D67): it is not in the Mon–Fri timetable`, !(await p.$$eval('.s2-blk', bs => bs.some(b => b.getAttribute('data-days') === 'weekend'))));
+        const sumTxt = await p.$eval('.s2-sum', e => e.textContent.replace(/\s+/g, ' '));
+        ok(`plan ${day} (D67): the summary shows Mon–Fri and Sat–Sun seat fill side by side`, (await R2()).split && /Mon–Fri\s*\d+ \/ \d+/.test(sumTxt) && /Sat–Sun\s*\d+ \/ \d+/.test(sumTxt), sumTxt.slice(0, 140)); await shot(`d${day}-d67-split`);
+        ok(`plan ${day} (D67): the weekend_only_news tip is gone once the Sat–Sun service is on`, !(await R2()).tips.includes('weekend_only_news'), (await R2()).tips);
+        const ov = await p.evaluate(() => window.__sim.evalIn(`(() => { const pl = currentPlan(), j = pl.fleet.findIndex(x => (x.days || []).includes('weekend')), x = pl.fleet[j], k = x.days.indexOf('weekend'), dep = x.deps[k], p0 = planeById(x.planeId);
+          UI.s2.newDays = 'weekday'; addService(0, 'par', j); const y = currentPlan().fleet[j], kk = (y.days || []).indexOf('weekday'), d2 = kk >= 0 ? y.deps[kk] : null;
+          const overlap = d2 !== null && d2 < dep + TIME.roundTrip(p0, routeById('dub')) && d2 + TIME.roundTrip(p0, routeById('par')) > dep, fits = planLines(currentPlan()).fits;
+          if(kk >= 0) editPlan(0, 'del', kk, 0, j); UI.s2.newDays = 'weekend'; return { overlap, fits, d2, dep, back:(currentPlan().fleet[j].days || []).join() }; })()`));
+        ok(`plan ${day} (D67): a Mon–Fri flight may share its times with the Sat–Sun flight on the same aircraft (checked per day type)`, ov.overlap && ov.fits && !/weekday/.test(ov.back), ov);
+        await p.click('#s2Apply'); await p.waitForTimeout(120); }
+      if(V2 && d67 && !d67.after && day > d67.day){ d67.after = true;
+        const wkH = (await S()).history.find(h => h.from === d67.day), dub = wkH && wkH.routes && wkH.routes.dub;
+        ok(`plan ${day} (D67): rugby week flew the Sat–Sun Dublin service twice, full (the rugby doubles Dublin demand)`, !!dub && dub.trips === 2 && dub.pax === dub.seats, dub);
+        const fl = await p.evaluate(d0 => window.__sim.evalIn(`JSON.stringify([0,1,2,3,4,5,6].map(q => fdDayFlights(${d0} + q).filter(f => f.route === 'dub').length))`), d67.day);
+        ok(`plan ${day} (D67): no Dublin flight Monday to Friday, one on Saturday and one on Sunday`, fl === '[0,0,0,0,0,1,1]', fl);
+        const rv = await p.evaluate(d0 => window.__sim.evalIn(`seatFillReviewHtml(S.history.find(h => h.from === ${d0}))`), d67.day);
+        ok(`plan ${day} (D67): the week's review shows Mon–Fri and Sat–Sun seat fill`, /s2-rvsplit/.test(rv) && /Mon–Fri/.test(rv) && /Sat–Sun/.test(rv), (rv.match(/s2-rvsplit.{0,200}/) || [''])[0].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' '));
+        await toPlan(); await p.click('[data-s2dt="weekend"]'); await p.waitForTimeout(120); await p.click('.s2-blk[data-days="weekend"]'); await p.waitForTimeout(150); await p.keyboard.press('Delete'); await p.waitForTimeout(150);
+        ok(`plan ${day} (D67): Delete removes the Sat–Sun flight, and the plan is All week again`, !(await p.evaluate(() => window.__sim.evalIn('anyDays(currentPlan())'))));
+        await p.click('[data-s2dt="weekday"]'); await p.waitForTimeout(80); }
       if(V2 && day <= 22) await toPlan();
       if(day === 8 && s.fleet.length > 1){ await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
         ok('day 8: two aircraft, two lanes on the timeline', (await p.$$('.ad-lane')).length === 2 && (await p.$$('.ad-blk')).length === 4);

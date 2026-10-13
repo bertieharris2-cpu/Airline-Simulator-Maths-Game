@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 12 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 13 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **0 to fix, 2 to check, 5 notes.**
 
@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 87 | 87 live, 8 placeholder |
+| Settings | 93 | 93 live, 8 placeholder |
 | Archetypes | 4 | 2 later, 4 live |
 | Routes | 18 | 2 later, 18 live |
 | RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
@@ -23,7 +23,7 @@
 | Chapters | 1 | 3 later, 1 live, 1 note row, 2 placeholder |
 | HandSumRules | 11 | 11 live, 1 note row |
 | Catering | 4 | 4 live, 1 note row |
-| PlanTips | 10 | 10 live, 1 note row |
+| PlanTips | 12 | 12 live, 1 note row |
 | RouteNews | 13 | 13 live, 1 note row |
 | Livery | 35 | 35 live, 1 note row |
 | Hunts | 0 | 1 note row, 7 placeholder |

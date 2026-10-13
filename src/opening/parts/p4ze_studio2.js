@@ -23,9 +23,20 @@ const s2Opens = () => S.phase !== 'setup' && (S.day || 1) >= 8;   // the opener:
 function s2State(pl){
   const key = (S.day || 1) + '|' + (S.si || 0);
   if(UI.s2.key !== key){ const has = pl.fleet.some(x => x.sched.length);
-    UI.s2 = { key, mode:!has ? 'network' : s2Opens() ? 'opener' : 'plan', route:null, strip:null, drawer:false, all:false, haul:'all', sort:'demand', suit:true, focus:null, focusText:null, open:{}, added:null, stopAsk:null, startKey:planKey(pl) }; }
+    UI.s2 = { key, mode:!has ? 'network' : s2Opens() ? 'opener' : 'plan', route:null, strip:null, drawer:false, all:false, haul:'all', sort:'demand', suit:true, focus:null, focusText:null, open:{}, added:null, stopAsk:null, dt:'weekday', newDays:'all', startKey:planKey(pl) }; }
   return UI.s2;
 }
+let S2V = { w:null, e:null, fd:false, split:false };   // the page's weekday and weekend lines (D67), set on each render
+/* the week's fuel: weekday litres on the weekdays left, weekend litres at the weekend */
+function s2WeekNeed(){ const d = S.day || 1, n = Math.max(1, 7 - ((d - 1) % 7)); let t = 0; for(let q = d; q < d + n; q++) t += ((S2V.e && dayTypeOf(q) === 'weekend' ? S2V.e : S2V.w) || {}).fuelL || 0; return t; }
+/* news whose every date is a Saturday or Sunday (the Dublin rugby): its Review presets a Sat–Sun service */
+function s2WeekendOnly(n){ if(!n || !n.start || !n.end) return false; for(let d = dayOfDate(n.start); d <= dayOfDate(n.end); d++) if(dayTypeOf(d) !== 'weekend') return false; return true; }
+function s2Review(id, nid){ const n = (WORLD.routeNews || []).find(z => z.id === nid), we = flightDaysOn() && s2WeekendOnly(n); UI.tlSel = null; UI.stDemand = true;
+  Object.assign(UI.s2, { mode:'plan', focus:id, route:id, strip:id, focusText:n ? n.headline : null, newDays:we ? 'weekend' : 'all', dt:we ? 'weekend' : UI.s2.dt }); }
+/* Mon–Fri and Sat–Sun seat fill side by side (summaryWeekdayWeekend) */
+function s2SplitHtml(){ const f = L => s2Fill((L && L.services) || []), a = f(S2V.w), b = f(S2V.e), one = (lab, F) => `<span class="s2-sp"><small>${lab}</small><b class="mono">${num(F.sold)} / ${num(F.seats)}</b><em class="fill-${F.cls}">${F.pct}%</em></span>`;
+  return `<span class="s2-split">${one(daysLabel('weekday'), a)}${one(daysLabel('weekend'), b)}</span>`; }
+function s2DaySwitch(){ if(!S2V.fd) return ''; const dt = UI.s2.dt || 'weekday'; return `<span class="st-seg s2-dt" role="group" aria-label="Which days">${['weekday', 'weekend'].map(v => `<button data-s2dt="${v}" aria-pressed="${dt === v}">${daysLabel(v)}</button>`).join('')}</span>`; }
 const s2Svc = (L, id) => (L.services || []).filter(s => s.route === id);
 const s2Fill = list => { const seats = list.reduce((t, s) => t + (s.seats || 0), 0), sold = list.reduce((t, s) => t + (s.sold || 0), 0); return { seats, sold, pct:seats ? Math.round(100 * sold / seats) : 0, cls:fillCls(sold, seats) }; };
 const s2Want = (pl, L, id) => { const r = routeById(id), w = (L.want || {})[id]; return w !== undefined ? w : paxWant(r, pl.prices[id] || r.basePrice); };
@@ -34,7 +45,9 @@ const s2Want = (pl, L, id) => { const r = routeById(id), w = (L.want || {})[id];
 function renderStudio(st){
   const setup = S.phase === 'setup', pl = normPlan(currentPlan()); if(setup) S.market = launchMarket(pl);
   if(!S.rnd.fareWas) S.rnd.fareWas = Object.assign({}, pl.prices);
-  const U = s2State(pl), L = planLines(pl), costed = !!(S.rnd.costed && S.rnd.costed.key === planKey(pl)), sched = pl.fleet.flatMap(x => x.sched);
+  const U = s2State(pl), Lw = planLines(pl), fd = flightDaysOn(), Le = fd ? withDay(satOf(S.day || 1), () => planLines(pl)) : null; if(!fd) U.dt = 'weekday';
+  const L = U.dt === 'weekend' && Le ? Le : Lw; S2V = { w:Lw, e:Le, fd, split:fd && anyDays(pl) && WBS().summaryWeekdayWeekend !== false };
+  const costed = !!(S.rnd.costed && S.rnd.costed.key === planKey(pl)), sched = pl.fleet.flatMap(x => x.sched);
   let W = null; try{ W = workTables(pl); }catch(e){ W = null; }
   const hid = hiddenFigs(pl, W), changed = planKey(pl) !== U.startKey;
   const body = U.mode === 'opener' ? s2Opener(pl, L, hid, changed) : U.mode === 'network' ? s2Network(pl, L) : s2Plan(pl, L, hid, setup, costed);
@@ -56,7 +69,7 @@ function s2Changes(pl, L){
   const d = S.day || 1, out = [], fuelLink = moduleOn('fuel') ? `<button class="btn small" data-nav="fuel">${ICO2.fuel} Fuel desk</button>` : '';
   const now = weekFuelPrice(d), was = weekFuelPrice(Math.max(1, d - 7));
   if(Math.abs(now - was) >= 0.05) out.push({ ic:'fuel', cls:now > was ? 'warn' : 'good', text:`Fuel price has ${now > was ? 'risen' : 'fallen'} to ${priceL(now)} a litre (last week ${priceL(was)}).`, act:fuelLink });
-  if(deskModeAt(d)){ const need = (L.fuelL || 0) * Math.max(1, 7 - ((d - 1) % 7)); if(need && S.fuel < need) out.push({ ic:'fuel', cls:'warn', text:`${num(Math.round(S.fuel))} L stored: this week needs ${num(Math.round(need))} L.`, act:fuelLink }); }
+  if(deskModeAt(d)){ const need = s2WeekNeed(); if(need && S.fuel < need) out.push({ ic:'fuel', cls:'warn', text:`${num(Math.round(S.fuel))} L stored: this week needs ${num(Math.round(need))} L.`, act:fuelLink }); }
   const seen = new Set(); announcedFor(d).concat(plannerRoutes().flatMap(id => newsOn(id, d))).forEach(n => { if(seen.has(n.id)) return; seen.add(n.id);
     const fl = new Set(pl.fleet.flatMap(x => x.sched)), ids = n.routes.filter(id => routeById(id) && plannerRoutes().includes(id) && (fl.has(id) || n.mult >= 1)); if(!ids.length) return;   // a fall on a route you do not fly is not your change
     out.push({ ic:n.mult >= 1 ? 'arrowUp' : 'news', cls:n.mult >= 1 ? 'up' : 'warn', text:n.headline || n.id, sub:`${ids.map(id => routeById(id).city).join(', ')} demand ×${n.mult}${n.segment && n.segment !== 'all' ? ` (${n.segment})` : ''} · ${fmtRange(dayOfDate(n.start), dayOfDate(n.end))}`,
@@ -71,10 +84,10 @@ function s2Opener(pl, L, hid, changed){
   const card = `<section class="dk-pnl s2-oc"><div class="s2-oh"><span class="kl">${ICO2.calendar} Week ${weekNo(S.day || 1)} · ${dateShort(S.day || 1)}</span>
       <h2>${changed ? 'Your plan has changes for this week.' : 'Last week\'s regular plan is ready to run again.'}</h2><p>${changed ? 'Run it as it is now, or carry on editing.' : 'Keep it, or edit it if one of the changes below matters.'}</p>
       <div class="s2-oact"><button class="btn primary big" id="s2Keep" ${wait || !L.fits ? 'disabled' : ''}>${changed ? 'Run this plan' : 'Keep plan'} &#9654;</button><button class="btn big" id="s2Edit">${ICO2.sliders} Edit plan</button></div></div>
-    <div class="s2-ofs">${fig('Seats likely filled', `${num(F.sold)} / ${num(F.seats)}`, `${F.pct}%`)}${fig('Turned away', num(away), 'a day', away ? 'warn' : '')}${fig('Average fare', hid.has('revenue') || !F.sold ? '—' : money(Math.round(tk / F.sold)))}${fig('Projected profit', hid.has('profit') ? sumBtn('profit') : money(Math.round(L.v.profit)), hid.has('profit') ? '' : 'a day', L.v.profit >= 0 ? 'good' : 'bad')}</div></section>`;
+    <div class="s2-ofs">${S2V.split ? `<div class="s2-of s2-ofsp"><small>Seats likely filled</small>${s2SplitHtml()}</div>` : fig('Seats likely filled', `${num(F.sold)} / ${num(F.seats)}`, `${F.pct}%`)}${fig('Turned away', num(away), 'a day', away ? 'warn' : '')}${fig('Average fare', hid.has('revenue') || !F.sold ? '—' : money(Math.round(tk / F.sold)))}${fig('Projected profit', hid.has('profit') ? sumBtn('profit') : money(Math.round(L.v.profit)), hid.has('profit') ? '' : 'a day', L.v.profit >= 0 ? 'good' : 'bad')}</div></section>`;
   const chg = `<section class="dk-pnl s2-ochg"><div class="dk-pnl-h">${ICO2.bell}<h2>Known changes this week</h2><span class="grow"></span><span class="sub">you decide whether they matter</span></div>
     <ul class="s2-cl">${ch.length ? ch.map(c => `<li class="${c.cls || ''}"><span class="s2-ci">${ICO2[c.ic] || ICO2.info}</span><span class="s2-ct"><b>${esc(c.text)}</b>${c.sub ? `<small>${esc(c.sub)}</small>` : ''}</span>${c.act ? `<span class="s2-ca">${c.act}</span>` : ''}</li>`).join('') : `<li class="good"><span class="s2-ci">${ICO2.check}</span><span class="s2-ct"><b>No known changes this week.</b></span></li>`}</ul></section>`;
-  const plan = `<section class="dk-pnl st-tt s2-tt s2-otl"><div class="st-th"><div><h2>This week's timetable</h2></div><span class="s2-legend">${s2Legend()}</span></div>${s2Lanes(0, pl, L, { locked:true })}</section>`;
+  const plan = `<section class="dk-pnl st-tt s2-tt s2-otl"><div class="st-th"><div><h2>This week's timetable</h2></div>${s2DaySwitch()}<span class="s2-legend">${s2Legend()}</span></div>${s2Lanes(0, pl, L, { locked:true })}</section>`;
   return `<div class="plw st s2 s2-op"><div class="s2-otop">${card}${chg}</div>${plan}</div>`;
 }
 
@@ -102,7 +115,7 @@ function s2Routes(pl, L, ids){
 }
 /* the toolbar: the drill-down tools, with a status on Fuel and on the network */
 function s2FuelBtn(pl, L){
-  const d = S.day || 1, desk = deskModeAt(d), need = (L.fuelL || 0) * Math.max(1, 7 - ((d - 1) % 7)), low = desk && need > 0 && S.fuel < need, can = moduleOn('fuel');
+  const d = S.day || 1, desk = deskModeAt(d), need = s2WeekNeed(), low = desk && need > 0 && S.fuel < need, can = moduleOn('fuel');
   const t = !desk ? 'This week fuel is bought as it is used, at each day\'s price' : low ? `${num(Math.round(S.fuel))} L stored: this week needs ${num(Math.round(need))} L` : `${num(Math.round(S.fuel))} L stored: enough for this week`;
   return `<button class="btn small s2-fuel ${low ? 'warn' : desk ? 'ok' : ''}" ${can ? 'data-nav="fuel"' : 'disabled'} title="${t}">${ICO2.fuel} Fuel${low ? `<i class="s2-dot"></i><small class="mono">${num(Math.round(S.fuel))} L</small>` : desk ? '<i class="s2-dot ok"></i>' : ''}</button>`;
 }
@@ -115,41 +128,45 @@ function s2Timetable(pl, L){
   const U = UI.s2, view = UI.stView || 'day', showDem = UI.stDemand !== false, sid = U.route || U.strip || null;
   const obSel = snacksOn() ? `<label class="st-ob">On board <select id="stOb">${Object.keys(ONBOARD).map(k => `<option value="${k}" ${(pl.onboard || 'none') === k ? 'selected' : ''}>${esc(ONBOARD[k].label)}</option>`).join('')}</select></label>` : '';
   const sel = UI.tlSel && UI.tlSel.i === 0 && pl.fleet[UI.tlSel.j] && pl.fleet[UI.tlSel.j].sched[UI.tlSel.k] ? UI.tlSel : null;
-  return `<section class="dk-pnl st-tt s2-tt"><div class="st-th"><div><h2 title="Drag a flight to move it, or press it to change it; Delete removes the flight you pressed.">Aircraft timetable</h2></div><span class="s2-legend">${s2Legend()}</span>${obSel}
+  return `<section class="dk-pnl st-tt s2-tt"><div class="st-th"><div><h2 title="Drag a flight to move it, or press it to change it; Delete removes the flight you pressed.">Aircraft timetable</h2></div>${s2DaySwitch()}<span class="s2-legend">${s2Legend()}</span>${obSel}
       <span class="st-seg" role="group" aria-label="Timetable view"><button data-stview="day" aria-pressed="${view === 'day'}">Day view</button><button data-stview="table" aria-pressed="${view === 'table'}">Table view</button></span>
       <label class="st-tog"><input type="checkbox" id="stDem" ${showDem ? 'checked' : ''}> Show demand</label></div>
     ${view === 'day' ? `${showDem ? `<div class="st-stripw" id="stStrip">${stripHtml(pl, sid)}</div>` : ''}${s2Lanes(0, pl, L)}` : studioTable(pl, L)}${view === 'day' && sel ? s2SvcEditor(pl, L, sel) : ''}</section>`;
 }
-function s2Block(i, pl, L, x, j, t, k, D, o){
+function s2Block(i, pl, L, x, j, t, k, last, o, dy){
   const p = planeById(x.planeId), r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === k) || {}, seats = s.seats || p.seats, sold = s.sold || 0, e0 = dayEnd(), s0 = dayStart(), span = e0 - s0, X = m => (100 * (m - s0) / span);
-  const sel = UI.tlSel && UI.tlSel.i === i ? UI.tlSel : null, on = sel && sel.j === j && sel.k === k, last = k === D.trips.length - 1, ready = last ? t.arr : t.arr + TIME.home(p), fc = fillCls(sold, seats), empty = Math.max(0, seats - sold), hl = UI.s2.focus === t.route || UI.s2.route === t.route, fare = pl.prices[t.route] || r.basePrice;
-  return `${last ? '' : `<i class="ad-ready" style="left:${X(t.arr).toFixed(2)}%;width:${(X(ready) - X(t.arr)).toFixed(2)}%" title="Turnaround: ready again at ${fmtTime(ready)}"></i>`}<button class="ad-blk st-blk s2-blk fill-${fc} ${on ? 'on' : ''} ${hl ? 'hl' : ''} ${t.arr > e0 ? 'over' : ''}" data-tl="${i}|${j}|${k}" data-dep="${t.dep}" data-arr="${t.arr}" data-ready="${ready}" style="left:${X(t.dep).toFixed(2)}%;width:${(X(t.arr) - X(t.dep)).toFixed(2)}%" ${o.locked ? 'disabled' : ''} title="${empty} empty seat${empty === 1 ? '' : 's'} · ready again ${fmtTime(ready)}" aria-label="${esc(r.city)} ${fmtTime(t.dep)} to ${fmtTime(t.arr)}, ${sold} of ${seats} seats filled, fare ${money(fare)}" aria-pressed="${!!on}">
-    <span class="st-bt mono"><b>${fmtTime(t.dep)}</b>–${fmtTime(t.arr)}</span><span class="st-br">${flagSvg(r.flag, 13)} ${esc(r.city)}<span class="s2-bfare mono">${money(fare)}</span></span><span class="st-bf"><i style="width:${Math.round(100 * Math.min(1, sold / Math.max(1, seats)))}%"></i></span><span class="st-bs mono">${sold}/${seats}</span></button>`;
+  const sel = UI.tlSel && UI.tlSel.i === i ? UI.tlSel : null, on = sel && sel.j === j && sel.k === k, ready = last ? t.arr : t.arr + TIME.home(p), fc = fillCls(sold, seats), empty = Math.max(0, seats - sold), hl = UI.s2.focus === t.route || UI.s2.route === t.route, fare = pl.prices[t.route] || r.basePrice, chip = dy && dy !== 'all' ? daysLabel(dy) : '';
+  return `${last ? '' : `<i class="ad-ready" style="left:${X(t.arr).toFixed(2)}%;width:${(X(ready) - X(t.arr)).toFixed(2)}%" title="Turnaround: ready again at ${fmtTime(ready)}"></i>`}<button class="ad-blk st-blk s2-blk fill-${fc} ${on ? 'on' : ''} ${hl ? 'hl' : ''} ${t.arr > e0 ? 'over' : ''}" data-tl="${i}|${j}|${k}" data-days="${dy || 'all'}" data-dep="${t.dep}" data-arr="${t.arr}" data-ready="${ready}" style="left:${X(t.dep).toFixed(2)}%;width:${(X(t.arr) - X(t.dep)).toFixed(2)}%" ${o.locked ? 'disabled' : ''} title="${empty} empty seat${empty === 1 ? '' : 's'} · ready again ${fmtTime(ready)}${chip ? ' · flies ' + chip : ''}" aria-label="${esc(r.city)} ${fmtTime(t.dep)} to ${fmtTime(t.arr)}${chip ? ', ' + chip + ' only' : ''}, ${sold} of ${seats} seats filled, fare ${money(fare)}" aria-pressed="${!!on}">
+    <span class="st-bt mono"><b>${fmtTime(t.dep)}</b>–${fmtTime(t.arr)}${chip ? `<span class="s2-dchip">${chip}</span>` : ''}</span><span class="st-br">${flagSvg(r.flag, 13)} ${esc(r.city)}<span class="s2-bfare mono">${money(fare)}</span></span><span class="st-bf"><i style="width:${Math.round(100 * Math.min(1, sold / Math.max(1, seats)))}%"></i></span><span class="st-bs mono">${sold}/${seats}</span></button>`;
 }
+/* the flights of an aircraft shown in the timetable's day type (all of them before the Days setting), as full-schedule indices */
+function s2Idx(x){ if(!S2V.fd) return x.sched.map((_, k) => k); return setOf(x, UI.s2.dt || 'weekday'); }
 function s2Lanes(i, pl, L, o){
   o = o || {}; const U = UI.s2, s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(2), maxT = WORLD.maxTrips || 4, jSel = studioPlane(pl), sel = UI.tlSel && UI.tlSel.i === i ? UI.tlSel : null;
   const ticks = []; for(let h = Math.ceil(s0 / 60); h * 60 <= e0; h += 2) ticks.push(`<span style="left:${X(h * 60)}%">${pad(h)}:00</span>`);
-  const lane = (x, j) => { const p = planeById(x.planeId), f = S.fleet.find(z => z.uid === x.uid), D = x.sched.length ? withPlan(pl, () => TIME.day(p, x.sched, undefined, x.deps || null)) : null, can = plannerOrder().filter(id => planeCanFly(p, routeById(id))), hl = U.focus && x.sched.includes(U.focus);
-    const add = o.locked ? `<small class="s2-ln">${plural(x.sched.length, 'flight')}</small>` : `<select class="st-addf" data-addsel="${i}|${j}" ${x.sched.length < maxT ? '' : 'disabled'} aria-label="Add a flight to the ${esc(shortPlane(p))}"><option value="">${x.sched.length < maxT ? '+ Add flight…' : `Full: ${maxT} flights`}</option>${can.map(id => `<option value="${id}">${esc(routeById(id).city)} · ${fmtDur(TIME.leg(p, routeById(id)))} each way</option>`).join('')}</select>`;
+  const lane = (x, j) => { const p = planeById(x.planeId), f = S.fleet.find(z => z.uid === x.uid), idx = s2Idx(x), days = daysFix(x.days, x.sched.length), dps = x.deps && x.deps.length === x.sched.length ? x.deps : null, D = idx.length ? withPlan(pl, () => TIME.day(p, idx.map(k => x.sched[k]), undefined, dps ? idx.map(k => dps[k]) : null)) : null, can = plannerOrder().filter(id => planeCanFly(p, routeById(id))), hl = U.focus && x.sched.includes(U.focus);
+    const add = o.locked ? `<small class="s2-ln">${plural(idx.length, 'flight')}</small>` : `<select class="st-addf" data-addsel="${i}|${j}" ${idx.length < maxT ? '' : 'disabled'} aria-label="Add a flight to the ${esc(shortPlane(p))}"><option value="">${idx.length < maxT ? '+ Add flight…' : `Full: ${maxT} flights`}</option>${can.map(id => `<option value="${id}">${esc(routeById(id).city)} · ${fmtDur(TIME.leg(p, routeById(id)))} each way</option>`).join('')}</select>`;
     return `<div class="ad-ac st-row ${j === jSel && !o.locked ? 'sel' : ''} ${hl ? 'hl' : ''}"><div class="st-plane"><button class="st-pn" data-stplane="${j}" ${o.locked ? 'disabled' : ''} title="Read the routes for this aircraft">${planeMini(f || p, 'ad-pic')}<span><b>${esc(shortPlane(p))}</b><small>${esc(regOf(x.uid))} · ${p.seats} seats</small></span></button>${add}</div>
-      <div class="ad-lane ${o.locked ? 'locked' : ''}" data-lane="${i}|${j}" data-s0="${s0}" data-span="${span}">${D ? D.trips.map((t, k) => s2Block(i, pl, L, x, j, t, k, D, o)).join('') : `<span class="ad-none muted">${o.locked ? 'No flights.' : 'No flights yet: add one from the menu or a route.'}</span>`}</div></div>`; };
+      <div class="ad-lane ${o.locked ? 'locked' : ''}" data-lane="${i}|${j}" data-s0="${s0}" data-span="${span}">${D ? D.trips.map((t, q) => s2Block(i, pl, L, x, j, t, idx[q], q === D.trips.length - 1, o, days[idx[q]])).join('') : `<span class="ad-none muted">${o.locked ? 'No flights.' : 'No flights yet: add one from the menu or a route.'}</span>`}</div></div>`; };
   // four or more aircraft: one group per type; a group with the selected or reviewed aircraft opens by itself
   let rows; if(pl.fleet.length >= 4){ const types = []; pl.fleet.forEach((x, j) => { let g = types.find(t => t.pid === x.planeId); if(!g) types.push(g = { pid:x.planeId, js:[] }); g.js.push(j); });
     rows = types.map(g => { if(g.js.length === 1) return lane(pl.fleet[g.js[0]], g.js[0]);
-      const auto = g.js.some(j => (sel && sel.j === j) || j === jSel || (U.focus && pl.fleet[j].sched.includes(U.focus))), open = U.open[g.pid] !== undefined ? U.open[g.pid] : auto, F = s2Fill((L.services || []).filter(s => g.js.some(j => pl.fleet[j].uid === s.uid))), n = g.js.reduce((t, j) => t + pl.fleet[j].sched.length, 0), p = planeById(g.pid);
+      const auto = g.js.some(j => (sel && sel.j === j) || j === jSel || (U.focus && pl.fleet[j].sched.includes(U.focus))), open = U.open[g.pid] !== undefined ? U.open[g.pid] : auto, F = s2Fill((L.services || []).filter(s => g.js.some(j => pl.fleet[j].uid === s.uid))), n = g.js.reduce((t, j) => t + s2Idx(pl.fleet[j]).length, 0), p = planeById(g.pid);
       return `<div class="s2-grp ${open ? 'open' : ''}"><button class="s2-gh" data-s2grp="${g.pid}" aria-expanded="${open}"><span class="s2-gc">${ICO2.chev}</span>${planeMini(p, 'ad-pic')}<b>${esc(shortPlane(p))}</b><span>${g.js.length} aircraft · ${plural(n, 'flight')} a day</span><span class="st-bf fill-${F.cls}"><i style="width:${F.pct}%"></i></span><span class="mono">${F.pct}% full</span></button>${open ? g.js.map(j => lane(pl.fleet[j], j)).join('') : ''}</div>`; }).join('');
   } else rows = pl.fleet.map(lane).join('');
   return `<div class="ad st-ad s2-ad ${pl.fleet.length >= 3 ? 'many' : ''}"><div class="ad-axis"><span class="ad-lab"></span><div class="ad-ticks">${ticks.join('')}</div></div>${rows}</div>`;
 }
 /* B3 the service editor: on a pressed flight, never shown otherwise */
 function s2SvcEditor(pl, L, sel){
-  const x = pl.fleet[sel.j], p = planeById(x.planeId), D = withPlan(pl, () => TIME.day(p, x.sched, undefined, x.deps || null)), t = D.trips[sel.k]; if(!t) return '';
-  const r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === sel.k) || {}, a = `0|${sel.j}|${sel.k}`, fare = pl.prices[r.id] || r.basePrice, last = sel.k === D.trips.length - 1, ready = last ? t.arr : t.arr + TIME.home(p);
+  const x = pl.fleet[sel.j], p = planeById(x.planeId), id0 = x.sched[sel.k]; if(!id0) return '';
+  const dps = x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(pl, sel.j), r0 = routeById(id0), t = { route:id0, dep:dps[sel.k], arr:dps[sel.k] + TIME.roundTrip(p, r0) }, idx = s2Idx(x), last = idx[idx.length - 1] === sel.k, dy = daysFix(x.days, x.sched.length)[sel.k];
+  const r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === sel.k) || {}, a = `0|${sel.j}|${sel.k}`, fare = pl.prices[r.id] || r.basePrice, ready = last ? t.arr : t.arr + TIME.home(p);
   const routes = plannerOrder().filter(id => planeCanFly(p, routeById(id))), planes = pl.fleet.map((y, q) => ({ y, q })).filter(({ y, q }) => q !== sel.j && planeCanFly(planeById(y.planeId), r));
   return `<div class="s2-pop" id="s2Pop" role="dialog" aria-label="Change the ${esc(r.city)} ${fmtTime(t.dep)} flight"><div class="s2-pop-h">${flagSvg(r.flag, 16)}<b>${esc(r.city)} <span class="mono">${fmtTime(t.dep)}–${fmtTime(t.arr)}</span></b><small><span class="mono">${s.sold || 0}/${s.seats || p.seats}</span> seats · ready again <span class="mono">${fmtTime(ready)}</span> · ${esc(shortPlane(p))}</small><button class="s2-x" id="s2PopX" aria-label="Close">×</button></div>
     <div class="s2-pop-b"><button class="btn" data-tlm="${a}|-20" aria-label="20 minutes earlier">&#9664; Earlier</button><button class="btn" data-tlm="${a}|20" aria-label="20 minutes later">Later &#9654;</button>
       <label>Route <select data-s2rt="${sel.j}|${sel.k}">${routes.map(id => `<option value="${id}" ${id === r.id ? 'selected' : ''}>${esc(routeById(id).city)}</option>`).join('')}</select></label>
       <label>Fare <select data-s2fr="${r.id}">${(r.fares || [r.basePrice]).map(f => `<option value="${f}" ${f === fare ? 'selected' : ''}>${money(f)} · ${paxWant(r, f)} want</option>`).join('')}</select></label>
+      ${S2V.fd ? `<label>Days <select data-s2dy="${sel.j}|${sel.k}" aria-label="Which days this flight flies">${DAYS_KEYS.map(v => `<option value="${v}" ${v === dy ? 'selected' : ''}>${daysLabel(v)}</option>`).join('')}</select></label>` : ''}
       <label>Aircraft <select data-s2ac="${sel.j}|${sel.k}" ${planes.length ? '' : 'disabled'}><option value="">${esc(shortPlane(p))} · ${esc(regOf(x.uid))}</option>${planes.map(({ y, q }) => `<option value="${q}">${esc(shortPlane(planeById(y.planeId)))} · ${esc(regOf(y.uid))}</option>`).join('')}</select></label></div>
     <div class="s2-pop-f"><button class="btn danger" data-tlrm="${a}">Remove</button><span class="ad-del">or press <kbd>Delete</kbd></span><span class="grow"></span><button class="btn sc-open" data-svccard="${a}" title="This service's fuel, costs and profit">Service costs</button></div></div>`;
 }
@@ -164,14 +181,15 @@ function s2SetPlane(j, k, q){
   const next = normPlan(JSON.parse(JSON.stringify(currentPlan()))), x = next.fleet[j], y = next.fleet[q], maxT = WORLD.maxTrips || 4; if(!x || !y || !x.sched[k]) return;
   const id = x.sched[k], r = routeById(id), p = planeById(y.planeId), xd = x.deps && x.deps.length === x.sched.length ? x.deps.slice() : actualDeps(next, j), dep = xd[k];
   if(!planeCanFly(p, r)){ toast(`The ${shortPlane(p)} can't reach ${r.city}.`); render(); return; }
-  if(y.sched.length >= maxT){ toast(`The ${shortPlane(p)} already flies ${maxT} services: the most in a day.`); render(); return; }
-  x.sched.splice(k, 1); xd.splice(k, 1); x.deps = x.sched.length ? xd : null; if(x.deps) x.deps = actualDeps(next, j);
-  const yd = y.sched.length ? (y.deps && y.deps.length === y.sched.length ? y.deps.slice() : actualDeps(next, q)) : [], trip = TIME.roundTrip(p, r), home = TIME.home(p);
-  const busy = y.sched.map((rid, n) => [yd[n], yd[n] + TIME.roundTrip(p, routeById(rid)) + home]); y.deps = yd;
-  let t = dep; if(t + trip > dayEnd() || busy.some(([a, z]) => t < z && t + trip + home > a)) t = freeDep(next, q, id);
+  if(y.sched.filter((_, n) => { const v = daysFix(y.days, y.sched.length)[n], w = daysFix(x.days, x.sched.length)[k]; return v === 'all' || w === 'all' || v === w; }).length >= maxT){ toast(`The ${shortPlane(p)} already flies ${maxT} services: the most in a day.`); render(); return; }
+  const xdy = daysFix(x.days, x.sched.length), dy = xdy[k]; x.sched.splice(k, 1); xd.splice(k, 1); xdy.splice(k, 1); x.days = xdy; x.deps = x.sched.length ? xd : null; if(x.deps) x.deps = actualDeps(next, j);
+  const yd = y.sched.length ? (y.deps && y.deps.length === y.sched.length ? y.deps.slice() : actualDeps(next, q)) : [], ydy = daysFix(y.days, y.sched.length), trip = TIME.roundTrip(p, r), home = TIME.home(p);
+  const share = n => dy === 'all' || ydy[n] === 'all' || ydy[n] === dy;   // only flights on the same days are in the way
+  const busy = y.sched.map((rid, n) => share(n) ? [yd[n], yd[n] + TIME.roundTrip(p, routeById(rid)) + home] : null).filter(Boolean); y.deps = yd; y.days = ydy;
+  let t = dep; if(t + trip > dayEnd() || busy.some(([a, z]) => t < z && t + trip + home > a)){ t = null; for(let u = dayStart(); u + trip <= dayEnd(); u += PLW_SNAP){ if(!busy.some(([a, z]) => u < z && u + trip + home > a)){ t = u; break; } } }
   if(t === null || t === undefined){ toast(`No room left in the ${shortPlane(p)}'s day for a ${r.city} flight.`); render(); return; }
-  y.sched.push(id); yd.push(t); const order = y.sched.map((rid, n) => ({ rid, dep:yd[n], n })).sort((u, v) => u.dep - v.dep || u.n - v.n);
-  y.sched = order.map(z => z.rid); y.deps = order.map(z => z.dep); y.deps = actualDeps(next, q);
+  y.sched.push(id); yd.push(t); ydy.push(dy); const order = y.sched.map((rid, n) => ({ rid, dep:yd[n], dy:ydy[n], n })).sort((u, v) => u.dep - v.dep || u.n - v.n);
+  y.sched = order.map(z => z.rid); y.deps = order.map(z => z.dep); y.days = order.map(z => z.dy); y.deps = actualDeps(next, q);
   if(!withPlan(next, () => next.fleet.every(z => !z.sched.length || fitsFor(z)))){ toast("That timetable won't fit in the operating day."); render(); return; }
   if(t !== dep) toast(`The ${r.city} flight moves to the ${shortPlane(p)} at ${fmtTime(y.deps[order.findIndex(z => z.n === order.length - 1)])}: that was its first free time.`);
   UI.tlSel = { i:0, j:q, k:order.findIndex(z => z.n === order.length - 1) }; UI.tlFocus = true; setPlan(0, next);
@@ -184,13 +202,13 @@ function s2RouteEditor(pl, L, id){
     <p class="s2-ed-n">Current fare <b class="mono">${money(fare)}</b> · ${plural(svc.length, 'service')} a day · <span class="mono">${num(seats)}</span> seats</p>
     <table class="s2-ft"><thead><tr><th>Fare</th><th class="num">People who want to fly</th><th></th></tr></thead><tbody>${F.map(f => { const n = paxWant(r, f); return `<tr class="${f === fare ? 'on' : ''}"><td><button class="s2-fb mono" data-pe="0|fareTo|${id}|${f}" aria-pressed="${f === fare}">${money(f)}</button></td><td class="num mono">${num(n)}</td><td><span class="s2-fbar"><i style="width:${Math.round(100 * n / mx)}%"></i>${seats ? `<b style="left:${Math.min(100, Math.round(100 * seats / mx))}%" title="${num(seats)} seats"></b>` : ''}</span></td></tr>`; }).join('')}</tbody></table>
     <div class="s2-cmp"><span><small>Demand at ${money(fare)}</small><b class="mono">${num(want)}</b></span><span><small>Seats</small><b class="mono">${num(seats)}</b></span><p>${line}</p></div>
-    <div class="s2-ed-f"><button class="btn small" data-pe="0|open|${id}|0|0">${ICO2.plus} Add a service</button><button class="btn small" data-s2dem="${id}">View demand</button><span class="grow"></span>${svc.length ? `<button class="btn small danger" data-s2stop="${id}">${U.stopAsk === id ? `Yes, stop serving ${esc(r.city)}` : 'Stop serving'}</button>` : ''}</div></section>`;
+    <div class="s2-ed-f"><button class="btn small" data-pe="0|open|${id}|0|0">${ICO2.plus} Add a service</button>${S2V.fd ? `<select class="s2-nd" id="s2Nd" aria-label="Days for the new service">${DAYS_KEYS.map(v => `<option value="${v}" ${v === (U.newDays || 'all') ? 'selected' : ''}>${daysLabel(v)}</option>`).join('')}</select>` : ''}<button class="btn small" data-s2dem="${id}">View demand</button><span class="grow"></span>${svc.length ? `<button class="btn small danger" data-s2stop="${id}">${U.stopAsk === id ? `Yes, stop serving ${esc(r.city)}` : 'Stop serving'}</button>` : ''}</div></section>`;
 }
 /* the summary bar: seat use first; profit is there but does not lead */
 function s2Summary(pl, L, hid){
   const F = s2Fill(L.services || []), away = L.nos || 0, tk = (L.routes || []).reduce((t, x) => t + x.tk, 0), n = planTipsFor(pl, L).filter(t => !['all_good', 'general_tradeoff'].includes(t.id)).length;
   const it = (l, v, sub, cls) => `<span class="s2-si ${cls || ''}"><small>${l}</small><span><b class="mono">${v}</b>${sub ? `<em>${sub}</em>` : ''}</span></span>`;
-  return `<div class="s2-sum" aria-live="polite"><span class="s2-sl">Plan summary</span>${it('Seats likely filled', `${num(F.sold)} / ${num(F.seats)}`, `${F.pct}%`, F.seats ? 'fill-' + F.cls : '')}${it('Empty seats', num(Math.max(0, F.seats - F.sold)))}${it('Turned away', num(away), 'a day', away ? 'warn' : '')}
+  return `<div class="s2-sum" aria-live="polite"><span class="s2-sl">Plan summary${S2V.split ? `<small>${daysLabel(UI.s2.dt || 'weekday')} figures</small>` : ''}</span>${S2V.split ? `<span class="s2-si s2-sisp"><small>Seats likely filled</small>${s2SplitHtml()}</span>` : it('Seats likely filled', `${num(F.sold)} / ${num(F.seats)}`, `${F.pct}%`, F.seats ? 'fill-' + F.cls : '')}${it('Empty seats', num(Math.max(0, F.seats - F.sold)))}${it('Turned away', num(away), 'a day', away ? 'warn' : '')}
     ${it('Average fare', hid.has('revenue') || !F.sold ? '—' : money(Math.round(tk / F.sold)))}${it('Projected profit', hid.has('profit') ? sumBtn('profit') : money(Math.round(L.v.profit)), hid.has('profit') ? '' : 'a day', hid.has('profit') ? '' : L.v.profit >= 0 ? 'good' : 'bad')}
     ${hid.has('fuelCost') ? it('Fuel cost', sumBtn('fuelCost')) : ''}<span class="grow"></span><button class="btn s2-trb" id="s2Tr" aria-expanded="${!!UI.s2.drawer}">View trade-offs${n ? `<i class="s2-badge">${n}</i>` : ''} ${ICO2.chev}</button></div>`;
 }
@@ -199,10 +217,8 @@ function s2Insights(pl, L, hid){
   const all = planTipsFor(pl, L, { all:true }), by = ids => all.filter(t => ids.includes(t.id)).map(t => t.text), F = s2Fill(L.services || []), out = [];
   out.push(['Seat use', [`${num(F.sold)} of ${num(F.seats)} seats filled (${F.pct}%); ${num(Math.max(0, F.seats - F.sold))} empty.`]]);
   out.push(['Lost demand', [(L.nos || 0) ? `${num(L.nos)} people a day wanted to fly but could not get a seat.` : 'Everyone who wants to fly at your fares gets a seat.'].concat(by(['turned_away']))]);
-  out.push(['Timing', by(['peak_unserved', 'idle_plane'])]);
-  const fares = by(['fare_too_high', 'fare_too_low']); [...new Set((L.services || []).map(s => s.route))].forEach(id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, Fx = r.fares || [], lo = Fx.filter(f => f < fare).pop(), S2 = s2Fill(s2Svc(L, id));
-    if(lo !== undefined && S2.sold < S2.seats && paxWant(r, lo) > S2.sold) fares.push(paxWant(r, lo) >= S2.seats ? `${r.city} could fill all ${num(S2.seats)} seats at ${money(lo)}, but would earn ${money(fare - lo)} less per passenger.` : `${r.city} could fill more seats at ${money(lo)} (about ${num(paxWant(r, lo))} of ${num(S2.seats)}), but would earn ${money(fare - lo)} less per passenger.`); });
-  out.push(['Fare', fares]);
+  out.push(['Timing', by(['peak_unserved', 'idle_plane', 'weekend_only_news'])]);
+  out.push(['Fare', by(['fare_too_high', 'fare_too_low', 'fare_lower_fills'])]);
   const cap = (L.services || []).filter(s => s.seats && s.sold / s.seats < fillMid()).map(s => { const x = pl.fleet.find(z => z.uid === s.uid); return `The ${shortPlane(planeById(x ? x.planeId : 'dhc6'))} is lightly filled on ${routeById(s.route).city} at ${fmtTime(s.dep)} (${s.sold} / ${s.seats}).`; });
   out.push(['Capacity', cap.concat(by(['range_fail', 'long_leg_warning']))]);
   const m = (l, v) => `<span><small>${l}</small><b class="mono">${v}</b></span>`, tk = (L.routes || []).reduce((t, x) => t + x.tk, 0);
@@ -237,7 +253,7 @@ function s2Network(pl, L){
 function s2StopRoute(id){
   const next = normPlan(JSON.parse(JSON.stringify(currentPlan())));
   next.fleet.forEach((x, j) => { if(!x.sched.includes(id)) return; const d = x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(next, j), keep = x.sched.map((s, k) => s === id ? -1 : k).filter(k => k >= 0);
-    x.deps = keep.map(k => d[k]); x.sched = keep.map(k => x.sched[k]); if(!x.sched.length) x.deps = null; });
+    const dy = daysFix(x.days, x.sched.length); x.deps = keep.map(k => d[k]); x.days = keep.map(k => dy[k]); x.sched = keep.map(k => x.sched[k]); if(!x.sched.length){ x.deps = null; x.days = null; } });
   next.fleet.forEach((x, j) => { if(x.deps) x.deps = actualDeps(next, j); });
   UI.tlSel = null; Object.assign(UI.s2, { stopAsk:null, route:UI.s2.route === id ? null : UI.s2.route, strip:UI.s2.strip === id ? null : UI.s2.strip }); toast(`${routeById(id).city} is off the plan.`); setPlan(0, next);
 }
@@ -254,9 +270,12 @@ function bindStudio(pl){
   on('s2Back', () => { S.rnd.s2seen = true; UI.tlSel = null; go({ mode:'plan', added:null, stopAsk:null }); });
   root.querySelectorAll('[data-s2fare]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-s2fare'); UI.tlSel = null; go({ route:U.route === id ? null : id, stopAsk:null }); });
   root.querySelectorAll('[data-s2dem]').forEach(b => b.onclick = () => { const id = b.getAttribute('data-s2dem'); UI.stDemand = true; go({ strip:U.strip === id ? null : id }); });
-  on('s2EdX', () => go({ route:null, stopAsk:null }));
-  root.querySelectorAll('[data-s2review]').forEach(b => b.onclick = () => { const [id, nid] = b.getAttribute('data-s2review').split('|'), n = (WORLD.routeNews || []).find(z => z.id === nid); UI.tlSel = null; UI.stDemand = true; go({ mode:'plan', focus:id, route:id, strip:id, focusText:n ? n.headline : null }); });
-  on('s2Apply', () => { UI.tlSel = null; go({ focus:null, focusText:null, route:null, strip:null, mode:s2Opens() ? 'opener' : 'plan' }); });
+  on('s2EdX', () => go({ route:null, stopAsk:null, newDays:U.focus ? U.newDays : 'all' }));
+  root.querySelectorAll('[data-s2review]').forEach(b => b.onclick = () => { const [id, nid] = b.getAttribute('data-s2review').split('|'); s2Review(id, nid); render(); });
+  on('s2Apply', () => { UI.tlSel = null; go({ focus:null, focusText:null, route:null, strip:null, newDays:'all', dt:'weekday', mode:s2Opens() ? 'opener' : 'plan' }); });
+  root.querySelectorAll('[data-s2dt]').forEach(b => b.onclick = () => { UI.tlSel = null; go({ dt:b.getAttribute('data-s2dt') }); });
+  root.querySelectorAll('[data-s2dy]').forEach(s => s.onchange = () => { const [j, k] = s.getAttribute('data-s2dy').split('|').map(Number); s2SetDays(j, k, s.value); });
+  const nd = $('s2Nd'); if(nd) nd.onchange = () => { UI.s2.newDays = nd.value; };
   on('s2Tr', () => go({ drawer:!U.drawer })); on('s2DrX', () => go({ drawer:false })); on('s2All', () => go({ all:!U.all }));
   root.querySelectorAll('[data-s2haul]').forEach(b => b.onclick = () => go({ haul:b.getAttribute('data-s2haul') }));
   root.querySelectorAll('[data-s2suit]').forEach(b => b.onclick = () => go({ suit:b.getAttribute('data-s2suit') === '1' }));
@@ -297,11 +316,10 @@ renderWorldReport = function(){
   const ann = announcedFor(S.day || 1), ps = screen().querySelectorAll('.wr-ann > p'); ann.forEach((n, q) => { const p = ps[q]; if(!p) return;
     const ids = n.routes.filter(id => routeById(id) && plannerRoutes().includes(id)); if(!ids.length) return;
     p.insertAdjacentHTML('beforeend', `<span class="s2-wra">${ids.map(id => `<button class="btn small" data-s2review="${id}|${esc(n.id)}">Review ${esc(routeById(id).city)} services</button>`).join('')}</span>`); });
-  screen().querySelectorAll('[data-s2review]').forEach(b => b.onclick = () => { const [id, nid] = b.getAttribute('data-s2review').split('|'), n = (WORLD.routeNews || []).find(z => z.id === nid);
-    UI.view = null; UI.tlSel = null; UI.stDemand = true; Object.assign(UI.s2, { mode:'plan', focus:id, route:id, strip:id, focusText:n ? n.headline : null }); render(); });
+  screen().querySelectorAll('[data-s2review]').forEach(b => b.onclick = () => { const [id, nid] = b.getAttribute('data-s2review').split('|'); UI.view = null; s2Review(id, nid); render(); });
 };
 /* for the tests: the page's state and its figures */
 function studio2Report(){ const pl = currentPlan(), L = planLines(pl), F = s2Fill(L.services || []), U = UI.s2 || {};
-  return { mode:U.mode, route:U.route, focus:U.focus, drawer:!!U.drawer, haul:U.haul, suit:U.suit, sold:F.sold, seats:F.seats, away:L.nos || 0, profit:Math.round(L.v.profit),
+  return { dt:U.dt, newDays:U.newDays, split:!!S2V.split, days:normPlan(pl).fleet.map(x => daysFix(x.days, x.sched.length)), mode:U.mode, route:U.route, focus:U.focus, drawer:!!U.drawer, haul:U.haul, suit:U.suit, sold:F.sold, seats:F.seats, away:L.nos || 0, profit:Math.round(L.v.profit),
     active:[...new Set(normPlan(pl).fleet.flatMap(x => x.sched))].map(id => { const r = routeById(id), fare = pl.prices[id] || r.basePrice, S2 = s2Fill(s2Svc(L, id)); return { id, fare, want:s2Want(pl, L, id), n:s2Svc(L, id).length, pct:S2.pct, fares:(r.fares || [r.basePrice]).map(f => [f, paxWant(r, f)]) }; }),
     hauls:Object.fromEntries(plannerRoutes().map(id => [id, haulOf(routeById(id))])), tips:planTipsFor(pl, L).map(t => t.id) }; }

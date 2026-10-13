@@ -10,6 +10,24 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0f. Workbook v4.11 (13 Oct 2026): Days on every flight (D67, revised Studio only)
+
+**What changed:**
+- From day 8 each flight carries Days: All week, Mon–Fri or Sat–Sun. It lives in `f.days` beside `f.schedule` and is missing for All week.
+- `p4zf_flightdays.js` reassigns these functions, so the main build never sees them:
+  - `planFlights`: each day prices only its own flights;
+  - `withPlan`, `currentPlan`, `applyPlan`, `applyPlanRaw` and `planKey`;
+  - `actualDeps` and `fitsFor`: per day type;
+  - `editPlan` (move and delete) and `addService`: days-aware;
+  - `omMoveRoute`, `planTipsFor` and `seatFillReviewHtml`.
+- **Studio:** a Mon–Fri | Sat–Sun switch, chips on blocks, Days in the flight and route editors, and Mon–Fri / Sat–Sun seat fill side by side.
+- **Test:** the rugby-week check in `week.test.js` (v2 mode). The Dublin Sat–Sun service flies 0,0,0,0,0,1,1 and is full.
+
+**Known:**
+- The PlanTips sheet's older rows give thresholds with units ('4 h', '1 plane'). The tip code keeps its own thresholds for those rows; only the two new rows are read from the sheet.
+- The shared fuel desk's suggestion still assumes every day is a weekday.
+- In the main file, a Sat–Sun flight from a shared save flies all week.
+
 ## 0e. v4.10.1 (13 Oct 2026): Studio fixes, and two parked thoughts
 
 **Fixed** (all three checked by `week.test.js`):

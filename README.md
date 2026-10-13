@@ -34,6 +34,12 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Change network:** every destination as a card, with **Short / Medium / Long haul** filters (1,500 and 4,000 km until the workbook says otherwise), a sort (demand, distance, fare, A–Z), the aircraft to plan for and **Suitable / All routes**. On Launch Day, with an empty plan, it opens first as *Choose where to fly*, without filters.
 - **News to the plan:** *Review Dublin services* (from the opener or the World report) opens the plan on that route: its row highlighted, its flights glowing, its editor open, the strip on it, and **Apply changes**.
 - **Not built:** Focus View and other accessibility options (parked by Bertie); regular operating patterns (designed in `docs/Studio-v2-Report-Back.md`, next pass).
+- **Workbook v4.11 (D67): Days on every flight** (`src/opening/parts/p4zf_flightdays.js`, revised Studio only).
+  - From day 8, every flight is All week, Mon–Fri or Sat–Sun, chosen in the flight editor and shown as a chip on its block.
+  - The engine prices each day with that day's flights only; departures and the duty day are checked per day type. A Sat–Sun flight may share times with a Mon–Fri one.
+  - The timetable has a **Mon–Fri | Sat–Sun** switch. When any flight is not All week, the summary, the opener and the Sunday review show both seat fills side by side.
+  - Weekend-only news (the Dublin rugby) presets a Sat–Sun service. New PlanTips rows: `weekend_only_news` and `fare_lower_fills`.
+  - Report: `docs/Flight-Days-Report-Back.md`.
 
 **v4.10.1 (13 Oct 2026): three fixes from Bertie's first go on the Studio.**
 - **The timetable's buttons stay on screen.** With three aircraft, the bar under the timetable (Earlier, Later, Swap route, Remove, Service costs) was cut off and the page could not scroll. Now only the aircraft rows scroll; the header, the demand strip and that bar always show, and three or more aircraft get tighter rows.

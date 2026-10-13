@@ -522,7 +522,8 @@ NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurna
           'fuelWeek1', 'fuelDeskFromDay', 'tankUpgradeDay', 'tankCapacityUpgraded', 'fuelAdvantageWording', 'fuelCoverage', 'forecastConfidenceLevels',
           'reviewTotalsMode', 'meanFromDay', 'secondAircraftCompare', 'whereCouldItFly',
           'signOffCapPerWeek', 'signOffDecayAfter', 'auditFloor', 'boardNudgeIdleWeeks', 'boardNudgeMissedShare', 'boardReviewSignOffs',
-          'seatFillGood', 'seatFillMedium', 'demandStripMode', 'planStudioSteps']
+          'seatFillGood', 'seatFillMedium', 'demandStripMode', 'planStudioSteps',
+          'flightDays', 'flightDaysFromDay', 'summaryWeekdayWeekend', 'patternPlusExtras', 'shortHaulMaxKm', 'mediumHaulMaxKm']
 for k in NEEDED:
     st_ = settings_status.get(k)
     if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')
