@@ -32,11 +32,16 @@ The week's results for Dublin: 2 trips, 38 passengers in 38 seats. The rugby's �
 
 | Run | File | Checks | Failures |
 | --- | --- | --- | --- |
-| Full chapter, with the D67 checks | revised Studio | RESULT_V2 | 0 |
-| Coasting pupil | revised Studio | RESULT_COAST | 0 |
-| Full chapter | main game | RESULT_MAIN | 0 |
+| Full chapter, with the D67 checks | revised Studio | 194 | 0 |
+| Coasting pupil | revised Studio | 193 | 0 |
+| Full chapter | main game | 165 (unchanged) | 0 |
 
-The Steady pupil removes the Dublin service the next Monday (with the Delete key), so the rest of the run matches before.
+The save migration passes on both files (27 checks each). The Steady pupil removes the Dublin service the next Monday (with the Delete key), so the rest of the run matches before.
+
+**Screenshots** in `docs/screenshots/v2studio/`:
+- `11-d67-rugby-opener`: the opener with the rugby news;
+- `12-d67-sat-sun-dublin`: the Sat–Sun view with the Dublin chip, the Days menu and the split summary;
+- `13-d67-mon-fri-view`: the Mon–Fri view.
 
 ## What was built
 
