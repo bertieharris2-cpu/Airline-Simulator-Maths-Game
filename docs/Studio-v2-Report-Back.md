@@ -74,6 +74,7 @@ It needs a decision from Bertie: is a pattern a whole day only, or can an aircra
   | --- | --- | --- | --- |
   | Revised Studio file | 183 | 0 | chapter accounts on 28 December |
   | Main file (with the three fixes) | 165 | 0 | chapter accounts on 28 December |
+  | Revised Studio file, coasting pupil (`COAST=1`) | 182 | 0 | the board review on 4 Nov holds Keep plan until a fare changes |
   | `migrate.test.js` | 27 on each file | 0 | — |
 
 - **Screenshots** (1680×940) in `docs/screenshots/v2studio/`:
