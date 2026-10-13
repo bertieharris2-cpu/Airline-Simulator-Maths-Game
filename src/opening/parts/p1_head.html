@@ -3293,6 +3293,11 @@ body.desk .wk-head h2{color:#fff}
 .sc-row{display:grid;grid-template-columns:minmax(0,1fr) auto 150px;align-items:center;gap:10px;padding:5px 10px;border-radius:4px;background:#0a1c3a;border-left:4px solid #1a5fd6;font-size:15.5px;color:#eaf3ff;font-variant-numeric:tabular-nums}
 .sc-row.c2{border-left-color:#6b4fd8}.sc-row.c3{border-left-color:#14a8a0}
 .sc-row.qy{background:rgba(255,95,95,.12);box-shadow:inset 0 0 0 1px var(--dk-red)}
+/* make it pence: three steps, each in its own box; a step that waits for the one above is dimmed; a right line goes green */
+.sc-p1 .sc-frame:has(.sc-pz){overflow:auto;flex:1 1 auto;padding-right:2px}
+.sc-pz{display:flex;flex-direction:column;gap:6px}.sc-pz .sc-note{font-size:13px}.sc-pz .sc-row{min-height:30px;padding-top:1px;padding-bottom:1px}.sc-pz .sc-in input{height:28px}.sc-pz .sc-total{padding:5px 10px}.sc-pzs{display:flex;flex-direction:column;gap:4px;padding:6px 8px;border:1px solid #1f4c86;border-radius:4px;background:rgba(10,28,58,.45);transition:opacity .2s}
+.sc-pzs.later{opacity:.55}.sc-pzs .sc-eq{margin:2px 0}
+.sc-row.rt{box-shadow:inset 0 0 0 1px rgba(60,227,148,.6);background:rgba(60,227,148,.08)}.sc-row.sc-add{border-left-color:#14a8a0;font-weight:600}
 .sc-l small{display:block;font-size:12px;color:#8fb0da}
 .sc-in{position:relative;display:flex;align-items:center}
 .sc-in input{width:100%;height:34px;font:inherit;font-size:17px;font-weight:600;text-align:right;color:#fff;background:#071630;border:1.5px solid var(--dk-cyan);border-radius:4px;padding:0 10px 0 22px;font-variant-numeric:tabular-nums;outline:none}
@@ -3642,6 +3647,8 @@ body.desk .btn.acx-go{margin:5px 10px 8px;height:34px;font-size:14px}
 .rbw-b{display:flex;flex-direction:column;gap:10px;overflow:auto}
 .rb-card{padding:10px 14px;gap:8px;flex:none}.rb-card.ok{border-color:rgba(60,227,148,.45)}.rb-card.locked{opacity:.55}
 .rb-card .sc-h h2{font-size:17px}.rb-card .sc-h p{font-size:13.5px}
+.rb-card .sc-h p.rb-ask{margin-top:6px;padding:7px 12px;border:1px solid rgba(60,227,148,.45);border-left:4px solid var(--dk-mint,#3ce394);background:rgba(60,227,148,.1);color:#f2fff8;font-size:16px;line-height:1.4;font-weight:500}.rb-card .sc-h p.rb-ask b{color:var(--dk-mint,#3ce394);font-weight:700}
+.rb-card.ok .sc-h p.rb-ask{border-color:rgba(60,227,148,.25);background:rgba(60,227,148,.05)}
 .rb-wait{margin:0;font-size:13px;color:#8fb0da}
 .rb-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:44px;padding:6px 10px;border:1.5px solid #2b5c9e;border-radius:4px;background:#071630;font-variant-numeric:tabular-nums}
 .rb-card.ok .rb-bar{border-color:#1fb46e}

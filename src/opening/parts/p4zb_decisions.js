@@ -258,6 +258,9 @@ function rbResultWords(it){ const v = rbValue(it);
   if(it.kind === 'diff' && it.resWord){ const [a, b] = it.figs; return `${money(v)} ${a.v >= b.v ? it.resWord[0] : it.resWord[1]}`; }
   if(it.kind === 'diff'){ const [a, b] = it.figs; return `${money(v)} ${a.v === b.v ? 'the same as' : (b.v > a.v ? 'more than' : 'less than')} ${esc(it.than)}`; }
   if(it.kind === 'mean') return `${money(v)} a ${it.per}`; return money(v); }
+/* the question itself stands out: a highlighted box, the thing to find (the total, the average, the difference, the profit) in green */
+function rbAskHtml(ask){ const m = /\b(?:the|our) (?:[\w']+ )?(?:total|average|difference|profit)(?: (?:costs|revenue|profit))?(?: (?:for|between) [^.?]+)?/i.exec(ask || '');
+  return m ? `${esc(ask.slice(0, m.index))}<b>${esc(m[0])}</b>${esc(ask.slice(m.index + m[0].length))}` : esc(ask || ''); }
 function rbCardHtml(it, st, store){
   const tok = t => OPS4.includes(t) ? `<i class="rb-op">${t}</i>` : (() => { const f = it.figs.find(x => x.k === t); return f ? `<span class="rb-tk">${esc(f.short || f.label)} <b>${money(f.v)}</b></span>` : ''; })();
   const stamp = st.ok ? cardStampHtml('ok') : st.q ? cardStampHtml('q') : '';
@@ -270,7 +273,7 @@ function rbCardHtml(it, st, store){
     if(!st.ok) ctl = `<div class="rb-chips">${it.figs.map(f => `<button class="rb-chip" data-rbfig="${it.id}|${f.k}">${esc(f.label)}<b>${money(f.v)}</b></button>`).join('')}</div>
       <div class="rb-ops">${OPS4.map(o => `<button data-rbop="${it.id}|${o}">${o}</button>`).join('')}<button class="dk-link" data-rbundo="${it.id}">Undo</button><button class="dk-link" data-rbclr="${it.id}">Clear</button><span class="grow"></span><button class="btn primary rb-chk" data-rbchk="${it.id}">Check ✓</button></div>`;
   }
-  return `<section class="dk-pnl rb-card ${st.ok ? 'ok' : ''} ${it.locked ? 'locked' : ''}" data-rbcard="${it.id}"><div class="sc-h"><span class="sc-n">${it.n}</span><div><h2>${esc(it.title)}</h2><p>${esc(it.ask)}</p></div>${stamp}</div>
+  return `<section class="dk-pnl rb-card ${st.ok ? 'ok' : ''} ${it.locked ? 'locked' : ''}" data-rbcard="${it.id}"><div class="sc-h"><span class="sc-n">${it.n}</span><div><h2>${esc(it.title)}</h2><p class="rb-ask">${rbAskHtml(it.ask)}</p></div>${stamp}</div>
     ${it.locked ? '<p class="rb-wait">After the one above.</p>' : bar + ctl + `<p class="sc-msg rb-msg ${st.q ? '' : 'ok'}" role="status">${esc(st.msg || '')}</p>`}</section>`;
 }
 function rbBind(items, store, onDone){

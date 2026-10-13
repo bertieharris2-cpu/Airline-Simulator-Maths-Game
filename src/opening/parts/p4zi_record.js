@@ -26,7 +26,7 @@ const REC_REL = { tickets:'passengers × fare', seatsFare:'passengers × fare', 
   flightTime:'flight time: distance ÷ speed', rentOrBuy:'price ÷ rent', timeToAfford:'price ÷ rent', fuelOrder:'fuel purchase', capacity:'time: service length, departures, duty day', timetable:'time: service length, departures, duty day',
   investment:'second-aircraft comparison' };
 function recRel(key){ const name = REC_REL[key] || key || 'other', w = (WORLD.workingMethods || []).find(m => m.relationship === name); return { rel:w ? w.relationship : name, level:w ? w.level : '', codes:w && w.bettws ? w.bettws.slice() : [] }; }
-const REC_SC_METHOD = { part:'partition the price', scale:'scale from 100 L', pence:'make it pence', dp:'count the decimal places', formal:'formal multiplication' };
+const REC_SC_METHOD = { part:'partition the price', scale:'scale from 100 L', pence:'make it pence (× 100, multiply, ÷ 100)', dp:'count the decimal places', formal:'formal multiplication' };
 
 /* ---------- entries ---------- */
 function recFmt(unit, v){ if(v === null || v === undefined || v === '' || isNaN(v)) return String(v === undefined ? '' : v);
@@ -51,7 +51,7 @@ function recAttempt(e, a){
 const recSoSpec0 = soSpec;
 soSpec = function(it){ const sp = recSoSpec0(it); if(sp) Object.defineProperty(sp, 'it', { value:it, enumerable:false, configurable:true }); return sp; };
 function recSoMethod(sp){ if(sp.op === '÷'){ let x = sp.a.v, y = sp.b.v, k = 0; while(x % 10 === 0 && y % 10 === 0 && x && y){ x /= 10; y /= 10; k++; } return k ? 'make the sum smaller, then short division (suggested)' : 'short division (suggested)'; }
-  return sp.b.f === 'ppl' ? 'partition the price (suggested)' : 'partition, or formal multiplication (suggested)'; }
+  return sp.b.f === 'ppl' ? 'make it pence (suggested)' : 'partition, or formal multiplication (suggested)'; }
 function recSoEntry(sp){ const it = sp.it || {};
   return recOpen('so:' + it.key, { type:it.level === 'build' ? 'build' : 'calc', relKey:it.rel, doc:sp.title, ask:sp.ask, question:`${soFmt(sp.a.f, sp.a.v)} ${sp.op} ${soFmt(sp.b.f, sp.b.v)}`, unit:sp.res, correct:soAns(sp),
     correctText:soFmt(sp.res, soAns(sp)), ops:[sp.a.v, sp.b.v], op:sp.op, level:it.level === 'build' ? 'Build' : 'Calculate' }); }
@@ -131,7 +131,7 @@ wkGrid = function(t, col, row, o){ try{ if(t && col && row && !(o && (o.done || 
 
 /* ---------- 4. the checks written inline: the service card, rent or buy, the first fuel order ---------- */
 function recBefore(id){
-  if(id === 'scCheck'){ if(!screen().querySelector('.sc-p1.sign') || !UI.sc || !UI.sc.F) return null; const F = UI.sc.F, m = UI.sc.mUsed || 'part'; return { F, m, R:scRows(m, F), vals:Object.assign({}, UI.sc.vals) }; }
+  if(id === 'scCheck'){ if(!screen().querySelector('.sc-p1.sign') || !UI.sc || !UI.sc.F) return null; const F = UI.sc.F, m = UI.sc.mUsed || 'pence'; return { F, m, R:scRows(m, F), vals:Object.assign({}, UI.sc.vals) }; }
   if(id === 'rbChk'){ const st = step(), ch = S.rnd && S.rnd.acChoice; if(!st || !ch) return null; const p = planeById(ch.pid), o = acOffer(ch.pid); return { st, p, o, v:st.rbV, m:st.rbM || 'short' }; }
   if(id === 'fdSignChk'){ if(!UI.fd) return null; const P0 = fuelOn(S.day || 1), blk = fuelBlock(); return { n:UI.fd.selNow || 0, P0, blk, vals:Object.assign({}, UI.fd.vals) }; }
   return null;

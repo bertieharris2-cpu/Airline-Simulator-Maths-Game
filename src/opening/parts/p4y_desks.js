@@ -100,8 +100,8 @@ function startBeatDesk(b){ startBeatBase(b); tankUpgradeNotice(); }
    Part 2: the aircraft performance card ("Service Cost Breakdown") and the per-service fuel sign-off (Desks v2 §3, §7).
    The fuel line is signed off by hand the first time a plane type flies a route, and again when the price it is valued
    at has moved 50p or more (one card a day when several qualify; the model fills the rest). The day's fuel bill and the
-   1,000 × £1.30 worked example are gone: the card's methods (WorkingMethods: partition the price, scale from 100 L, make
-   it pence, count the decimal places, formal multiplication) teach it.
+   1,000 × £1.30 worked example are gone: the card teaches one method, make it pence (Bertie, 13 Oct 2026): the price × 100
+   to whole pence, the litres × the pence a line a digit, then ÷ 100 back to pounds.
    ================================================================== */
 const cardKey = (planeId, route) => planeId + '|' + route;
 /* a card's table asks for the fuel line only (the litres and the price are given) */
@@ -175,8 +175,11 @@ const twoDp = v => '£' + (Math.round(v * 100) / 100).toFixed(2).replace(/\B(?=(
 
 /* ---------- the methods (WorkingMethods: litres × price per litre) ---------- */
 const SC_METHODS = [['part', 'Partition price'], ['scale', 'Scale it'], ['pence', 'Make it pence'], ['dp', 'Decimals'], ['formal', 'Formal ×']];
-function scMethodsOffered(){ const wm = (WORLD.workingMethods || []).find(m => /litres/.test(m.relationship)); if(!wm) return SC_METHODS;
-  const has = k => wm.methods.some(m => ({ part:/partition/, scale:/scale/, pence:/pence/, dp:/decimal/, formal:/formal/ })[k].test(m)); return SC_METHODS.filter(([k]) => has(k)); }
+/* Bertie (13 Oct 2026): one method on the card, make it pence. × 100 to whole pence, multiply (a line for each digit of the
+   pence, then add the lines), ÷ 100 back to pounds. The other methods stay in scRows for older records. */
+function scMethodsOffered(){ return SC_METHODS.filter(([k]) => k === 'pence'); }
+/* the lines of step 2: the litres × each digit of the pence, units first, as in the column method */
+function scPenceLines(L, P){ const out = []; String(P).split('').reverse().forEach((d, k) => { if(+d) out.push({ d:+d, k, v:+d * Math.pow(10, k) }); }); return out; }
 /* the rows of a method: each { lab, want (pence), unit:'£'|'p'|'n', cls } and the result row */
 function scRows(m, F){
   const L = F.L, P = F.P, a = Math.floor(P / 100), t = Math.floor((P % 100) / 10) * 10, u = P % 10, total = L * P;
@@ -186,7 +189,10 @@ function scRows(m, F){
     if(h > 1) rows.push({ lab:`${num(h * 100)} L costs`, want:h * 100 * P, unit:'£', cls:'c1' });
     if(rem) rows.push({ lab:`${num(rem)} L costs`, want:rem * P, unit:'£', cls:'c2', hint: 100 % rem === 0 ? `${rem} L is 1⁄${100 / rem} of 100 L` : '' });
     return { note:h ? `${num(L)} L = ${h > 1 ? num(h * 100) + ' L' : '100 L'}${rem ? ` + ${num(rem)} L` : ''}. Find the cost of 100 L first.` : `${num(L)} L is less than 100 L: find 100 L first, then the part you need.`, rows, total }; }
-  if(m === 'pence') return { note:`${priceL(F.price)} = ${P}p. Multiply in pence, then change pence to pounds.`, rows:[{ lab:`${num(L)} × ${P}p`, want:total, unit:'p', cls:'c1' }], total };
+  if(m === 'pence'){ const lines = scPenceLines(L, P), rows = [{ lab:`${priceL(F.price)} × 100`, want:P, unit:'p', cls:'c1', step:1 }];
+    lines.forEach(x => rows.push({ lab:`${num(L)} × ${num(x.v)}p`, want:L * x.v, unit:'p', cls:'c2', step:2, part:x }));
+    if(lines.length > 1) rows.push({ lab:`Add the lines: ${num(L)} × ${num(P)}p`, want:total, unit:'p', cls:'c3', step:2, add:true });
+    return { note:`${priceL(F.price)} = ${P}p. Multiply in pence, then change pence to pounds.`, rows, total }; }
   if(m === 'dp') return { note:`Leave out the decimal point: ${num(L)} × ${P}. ${priceL(F.price)} has 2 decimal places, so the answer has 2.`, rows:[{ lab:`${num(L)} × ${P}`, want:total, unit:'n', cls:'c1' }], total };
   return { note:'Line up the digits in their columns. The answer has pounds and pence.', rows:[], total };
 }
@@ -194,17 +200,24 @@ function scParse(unit, s){ s = String(s || '').replace(/[£,\s]/g, '').replace(/
 function scShow(unit, pence){ return unit === '£' ? twoDp(pence / 100) : unit === 'p' ? num(pence) + 'p' : num(pence); }
 
 /* ---------- the screen ---------- */
-UI.sc = UI.sc || { m:'part', vals:{}, q:{}, tries:0 };
+UI.sc = UI.sc || { m:'pence', vals:{}, q:{}, tries:0 };
 function cardStampHtml(kind){ const ini = String((S.airline && (S.airline.code || S.airline.flightCode)) || 'CEO').toUpperCase().slice(0, 3); return kind === 'ok' ? `<span class="stamp ok">CHECKED · ${esc(ini)}</span>` : kind === 'q' ? '<span class="stamp q">QUERY</span>' : ''; }
 function svcCardHtml(o){
   const F = o.F, sign = !!o.sign, done = !!o.done, practice = !sign && !!UI.sc.practice, entry = sign && !done || practice, methods = scMethodsOffered(), m = methods.some(x => x[0] === UI.sc.m) ? UI.sc.m : methods[0][0];
   const R = scRows(m, F), city = F.r.city, code = tlCode(F.r), home = homeData(), q = UI.sc.q || {}, vals = UI.sc.vals || {};
   UI.sc.F = F; UI.sc.mUsed = m;
   const box = (key, want, unit) => entry ? `<span class="sc-in ${unit === 'p' ? 'pc' : ''} ${q[key] ? 'qy' : ''}">${unit === '£' ? '<i class="pre">£</i>' : ''}<input data-sc="${key}" data-unit="${unit}" inputmode="decimal" autocomplete="off" value="${esc(vals[key] || '')}" aria-label="${key === 'tot' ? 'Fuel cost' : 'Line ' + (+key.slice(1) + 1)}">${unit === 'p' ? '<i class="suf">p</i>' : ''}</span>` : `<b class="sc-v">${scShow(unit, want)}</b>`;
-  const tabs = `<div class="sc-tabs" role="tablist">${methods.map(([k, l]) => `<button role="tab" class="${k === m ? 'on' : ''}" data-scm="${k}" aria-selected="${k === m}">${l}</button>`).join('')}</div>`;
+  const tabs = methods.length < 2 ? '' : `<div class="sc-tabs" role="tablist">${methods.map(([k, l]) => `<button role="tab" class="${k === m ? 'on' : ''}" data-scm="${k}" aria-selected="${k === m}">${l}</button>`).join('')}</div>`;
   let frame = '';
   if(m === 'formal' && sign && !done) frame = `<div class="sc-formal">${wkGrid(o.t, o.col, o.row, {})}</div>`;
   else if(m === 'formal') frame = `<div class="sc-step"><span class="sc-sn">Formal ×</span><span>${esc(R.note)}</span></div><div class="sc-eq big"><span>${num(F.L)} × ${F.P}p</span><span>=</span><b>${num(F.L * F.P)}p</b><span>=</span><b>${twoDp(F.fuel)}</b></div>`;
+  else if(m === 'pence'){ const right = UI.sc.right || {}, rowsOf = k => R.rows.map((x, i) => [x, i]).filter(([x]) => x.step === k), stepOk = k => rowsOf(k).every(([x, i]) => right['r' + i] || (!entry)), lines = scPenceLines(F.L, F.P);
+    const rowHtml = ([x, i]) => `<div class="sc-row ${x.cls} ${x.add ? 'sc-add' : ''} ${q['r' + i] ? 'qy' : ''} ${right['r' + i] && entry ? 'rt' : ''}"><span class="sc-l">${x.lab}</span><span>=</span>${box('r' + i, x.want, x.unit)}</div>`;
+    frame = `<div class="sc-pz"><div class="sc-pzs"><div class="sc-step"><span class="sc-sn">Step 1</span><b>Make the price whole pence</b></div><p class="sc-note">£1 is 100p: × 100 moves the digits two places left.</p><div class="sc-rows">${rowsOf(1).map(rowHtml).join('')}</div></div>
+      <div class="sc-pzs ${entry && !stepOk(1) ? 'later' : ''}"><div class="sc-step"><span class="sc-sn">Step 2</span><b>Multiply the litres by the pence</b></div><p class="sc-note">${lines.length > 1 ? `A line for each part of ${num(F.P)}p (${lines.map(x => num(x.v)).join(' + ')}), then add the lines.` : `${num(F.L)} × ${num(F.P)}p.`}</p>
+        <div class="sc-rows">${rowsOf(2).map(rowHtml).join('')}</div></div>
+      <div class="sc-pzs ${entry && !(stepOk(1) && stepOk(2)) ? 'later' : ''}"><div class="sc-step"><span class="sc-sn">Step 3</span><b>Change the pence back to pounds</b></div><p class="sc-note">100p make £1: ÷ 100 moves the digits two places right. The last two digits are the pence.</p><!--SCRES--></div></div>`;
+  }
   else {
     const eq = m === 'part' ? `<div class="sc-eq"><span class="sc-blk p0">${priceL(F.price)}</span><span>=</span>${R.parts.map(([t, c], i) => `${i ? '<span>+</span>' : ''}<span class="sc-blk ${c}">${t}</span>`).join('')}</div>` : m === 'pence' ? `<div class="sc-eq"><span class="sc-blk p0">${priceL(F.price)}</span><span>=</span><span class="sc-blk c1">${F.P}p</span></div>` : m === 'dp' ? `<div class="sc-eq"><span class="sc-blk p0">${priceL(F.price)}</span><span>→</span><span class="sc-blk c1">${F.P}</span><span class="sc-x">2 decimal places</span></div>` : `<div class="sc-eq"><span class="sc-blk p0">100 L</span><span>×</span><span class="sc-blk c1">${priceL(F.price)}</span></div>`;
     frame = `<div class="sc-step"><span class="sc-sn">Step 1</span><b>${m === 'part' ? 'Partition the price' : m === 'scale' ? 'Start from 100 litres' : m === 'pence' ? 'Make it pence' : 'Count the decimal places'}</b></div><p class="sc-note">${esc(R.note)}</p>${eq}
@@ -212,10 +225,11 @@ function svcCardHtml(o){
       <div class="sc-rows">${R.rows.map((x, i) => `<div class="sc-row ${x.cls} ${q['r' + i] ? 'qy' : ''}"><span class="sc-l">${x.lab}${x.hint ? `<small>${esc(x.hint)}</small>` : ''}</span><span>=</span>${box('r' + i, x.want, x.unit)}</div>`).join('')}</div>`;
   }
   const checkBtn = entry && !(m === 'formal' && sign) ? `<button class="btn primary sc-chk" id="scCheck">Check ✓</button>` : '';
-  const result = m === 'formal' && sign && !done ? '' : `<div class="sc-total ${q.tot ? 'qy' : ''} ${checkBtn ? 'wc' : ''}"><span>Fuel cost <small>(${num(F.L)} L × ${priceL(F.price)})</small></span>${box('tot', F.L * F.P, '£')}${checkBtn}</div>`;
+  let result = m === 'formal' && sign && !done ? '' : `<div class="sc-total ${q.tot ? 'qy' : ''} ${checkBtn ? 'wc' : ''}"><span>Fuel cost <small>(${num(F.L)} L × ${priceL(F.price)})</small></span>${box('tot', F.L * F.P, '£')}${checkBtn}</div>`;
+  if(m === 'pence' && frame.includes('<!--SCRES-->')){ frame = frame.replace('<!--SCRES-->', result); result = ''; }
   const stamp = done ? cardStampHtml('ok') : sign && UI.sc.queried ? cardStampHtml('q') : '';
   const check = entry && !(m === 'formal' && sign) ? `<div class="sc-act"><span class="sc-msg ${UI.sc.ok ? 'ok' : ''}" role="status">${esc(UI.sc.msg || '')}</span>${(UI.sc.tries || 0) >= 3 ? '<button class="dk-link" id="scShow">Show me</button>' : ''}</div>` : m === 'formal' && sign && !done ? `<div class="sc-act"><button class="btn primary" id="cellCheck">Check ✓</button><span class="msg wk-msg sc-msg" id="ftMsg" role="status">${esc(UI.msg || '')}</span></div>` : '';
-  const p1 = `<section class="dk-pnl sc-p1 ${sign ? 'sign' : ''}"><div class="sc-h"><span class="sc-n">1</span><div><h2>Calculate the fuel cost</h2><p>${sign ? 'Sign this line off: multiply the litres burned by the price per litre. Pick a method.' : 'Multiply the litres burned by the price per litre using different methods.'}</p></div>${stamp}</div>${tabs}<div class="sc-frame">${frame}</div>${result}${check}</section>`;
+  const p1 = `<section class="dk-pnl sc-p1 ${sign ? 'sign' : ''}"><div class="sc-h"><span class="sc-n">1</span><div><h2>Calculate the fuel cost</h2><p>${sign ? 'Sign this line off: the litres × the price, in three steps.' : 'The litres × the price, in three steps.'}</p></div>${stamp}</div>${tabs}<div class="sc-frame">${frame}</div>${result}${check}</section>`;
   const fuelShown = sign && !done ? null : F.fuel, line = (l, v, cls) => `<div class="sc-li ${cls || ''}"><span>${l}</span><b>${v}</b></div>`;
   const p2 = `<section class="dk-pnl sc-p2"><div class="sc-h"><span class="sc-n">2</span><div><h2>Work out the projected profit</h2><p>Subtract the total operating cost from the total revenue for this service.</p></div></div>
     <div class="sc-box"><div class="sc-bh"><span class="sc-sn">Step 1</span><b>Total revenue <small>(this service)</small></b></div>${line(`Ticket revenue (${F.sold} × ${money(F.fare)})`, twoDp(F.sold * F.fare))}${line(`On-board sales${F.buyers ? ` (${F.buyers} × ${money(F.ob.price)})` : ''}`, twoDp(F.onboard))}${line('Total revenue', twoDp(F.rev), 'tot')}</div>
@@ -231,8 +245,24 @@ function svcCardHtml(o){
     ${[['plane', 'Aircraft', esc(shortPlane(F.p)), `${F.seats} seats`], ['clock', 'Flying time', fmtDur(F.flyMin), 'out and back'], ['fuel', 'Fuel burned', num(F.L) + ' L', '(one service)'], ['coin', 'Fuel price', priceL(F.price), F.price === fuelPrice() || fuelPaid() ? 'per litre' : `per litre from ${dateShort(firstPaidDay())}`], ['tower', 'Airport charges', money(F.airport), `(${home.code} + ${code})`], ['people', 'Flying & passengers', money(F.flying + F.paxCh), `per service`], ['seat', 'Seats', String(F.seats), `${F.sold} sold`]].map(([ic, l, v, s]) => `<div class="sc-stat"><span>${l}</span>${ICO2[ic]}<b>${v}</b><small>${s}</small></div>`).join('')}</div>`;
   return `<div class="sc">${banner}<div class="sc-g">${p1}${p2}${p3}</div></div>`;
 }
+/* make it pence: what to do next when a step is right and the next is empty, and what a Query means */
+function scNextStepMsg(x, F){ if(!x) return 'Fill in every box first.';
+  if(x.tot) return `Steps 1 and 2 are right. Step 3: ${num(F.L * F.P)}p ÷ 100 — change the pence back to pounds.`;
+  if(x.step === 1) return `Step 1: ${priceL(F.price)} × 100. How many pence is that?`;
+  if(x.add) return 'Step 2: now add the lines, lining up the digits in their columns.';
+  return `Step 1 is right: ${F.P}p. Step 2: ${num(F.L)} × each part of ${F.P}p.`; }
+function scPenceQuery(R, q, F){
+  const i = R.rows.findIndex((x, k) => q['r' + k]), x = R.rows[i], typed = x ? scParse(x.unit, UI.sc.vals['r' + i]) : scParse('£', UI.sc.vals.tot);
+  if(!x){ const pence = F.L * F.P; if(typed === pence * 100) return `Query, step 3: that is still pence. Divide ${num(pence)}p by 100: the digits move two places to the right.`;
+    if(typed * 10 === pence || typed * 1000 === pence) return 'Query, step 3: divide by 100, so the digits move two places, not one or three.';
+    return `Query, step 3: ${num(pence)}p ÷ 100. The last two digits are the pence; the rest are the pounds.`; }
+  if(x.step === 1) return typed === F.P * 10 || typed * 10 === F.P ? `Query, step 1: × 100 moves the digits two places, not one. ${priceL(F.price)} is ${F.P}p.` : `Query, step 1: £1 is 100p, so ${priceL(F.price)} × 100 moves each digit two places to the left.`;
+  if(x.add) return 'Query, step 2: the lines are right; add them again, lining up the units, tens and hundreds.';
+  const P = x.part; if(typed !== null && (typed * 10 === x.want || typed === x.want * 10)) return `Query, step 2: ${num(F.L)} × ${num(P.v)}${P.k ? ` is ${num(F.L)} × ${P.d}, then × ${num(Math.pow(10, P.k))}` : ''}: check how many places the digits move.`;
+  return P.k ? `Query, step 2: ${num(F.L)} × ${num(P.v)} is ${num(F.L)} × ${P.d}, then × ${num(Math.pow(10, P.k))} (the digits move ${P.k === 1 ? 'one place' : P.k + ' places'} to the left).` : `Query, step 2: ${num(F.L)} × ${P.d}. Multiply each digit by ${P.d}, carrying as you go.`;
+}
 /* the answers to the card on screen (the tests type them) */
-function scAnswers(){ const F = UI.sc.F; if(!F) return null; const R = scRows(UI.sc.mUsed || 'part', F), out = {}; R.rows.forEach((x, i) => { out['r' + i] = x.unit === '£' ? (x.want / 100).toFixed(2) : String(x.want); }); out.tot = (F.L * F.P / 100).toFixed(2); return out; }
+function scAnswers(){ const F = UI.sc.F; if(!F) return null; const R = scRows(UI.sc.mUsed || 'pence', F), out = {}; R.rows.forEach((x, i) => { out['r' + i] = x.unit === '£' ? (x.want / 100).toFixed(2) : String(x.want); }); out.tot = (F.L * F.P / 100).toFixed(2); return out; }
 function firstPaidDay(){ const from = S.day || 1; for(let d = from; d < from + 7; d++) if(!fuelFreeDay(d)) return d; return from; }
 /* the card on screen: o = { uid, k } (model) or { t } (a sign-off) */
 function renderSvcCard(o){
@@ -241,10 +271,10 @@ function renderSvcCard(o){
   const col = sign ? t.cols[0] : null, row = sign ? tRows(t).find(r => r.id === 'fuel') : null, done = sign && !!t.done[cellId('a', 'fuel')];
   if(sign && !done){ t.active = { col:'a', row:'fuel' }; S.rnd.activeTable = t.id; }
   const homeBtn = sign ? '' : '<button class="btn big" id="scBack">&#9664; Back to plan</button>';
-  const bar = deskBar(sign ? (done ? 'Checked. Use this figure in your plan, then the next sum.' : 'Work out this service\'s fuel cost. Choose a method; the model checks your working.') : 'One service\'s costs and profit. The fuel line is the price per litre × the litres burned.',
+  const bar = deskBar(sign ? (done ? 'Checked. Use this figure in your plan, then the next sum.' : 'Work out this service\'s fuel cost in three steps: make the price pence, multiply, change back to pounds.') : 'One service\'s costs and profit. The fuel line is the price per litre × the litres burned.',
     sign ? `${backBtn()}<button class="btn primary big" id="scNext" ${done ? '' : 'disabled'}>${done ? 'Use this figure &#9654;' : 'Sign off the fuel line first'}</button>` : homeBtn);
   screen().innerHTML = shell(deskPage({ title:'Service Cost Breakdown', sub:'Work out the cost and profit for a single service. Use the calculation tools to find the fuel cost, the total operating cost and the projected profit.',
-    cards:[{ ic:'bulb', t:'Work it out', s:sign ? 'Try different methods to multiply decimals and check your working.' : (UI.sc.practice ? 'Practising: your own working, nothing is recorded.' : 'Try different methods to multiply decimals and check your working.'), id:'scWork' }, { ic:'back', t:'Back to plan', s:'Return to the operating plan when you\'re ready.', id:'scBackCard' }],
+    cards:[{ ic:'bulb', t:'Work it out', s:sign ? 'Make it pence: × 100, multiply, ÷ 100. Check each step.' : (UI.sc.practice ? 'Practising: your own working, nothing is recorded.' : 'Make it pence: × 100, multiply, ÷ 100. Try it yourself.'), id:'scWork' }, { ic:'back', t:'Back to plan', s:'Return to the operating plan when you\'re ready.', id:'scBackCard' }],
     body:svcCardHtml({ F, sign, done, t, col, row }), cls:'sc-page' }), bar);
   bindSvcCard(o, F, sign, t, col, row, done);
 }
@@ -257,14 +287,15 @@ function bindSvcCard(o, F, sign, t, col, row, done){
   on('scBackCard', () => { if(sign){ goBack(); return; } close(); }); on('scBack', close);
   on('scUse', () => { if(sign){ if(!done) return; UI.justDone = null; resetEntry(); UI.sc = { m:UI.sc.m, vals:{}, q:{}, tries:0 }; render(); return; } close(); });
   on('scNext', () => { UI.justDone = null; resetEntry(); UI.sc = { m:UI.sc.m, vals:{}, q:{}, tries:0 }; render(); });
-  on('scShow', () => { const m = root.querySelector('[data-scm].on'), R = scRows(m ? m.getAttribute('data-scm') : 'part', F); R.rows.forEach((x, i) => { UI.sc.vals['r' + i] = scShow(x.unit, x.want).replace(/^£/, ''); }); UI.sc.vals.tot = (F.L * F.P / 100).toFixed(2); UI.sc.msg = 'Here is the working. Check each line, then press Check.'; render(); });
+  on('scShow', () => { const m = root.querySelector('[data-scm].on'), R = scRows(m ? m.getAttribute('data-scm') : (UI.sc.mUsed || 'pence'), F); R.rows.forEach((x, i) => { UI.sc.vals['r' + i] = scShow(x.unit, x.want).replace(/^£/, ''); }); UI.sc.vals.tot = (F.L * F.P / 100).toFixed(2); UI.sc.msg = 'Here is the working. Check each line, then press Check.'; render(); });
   on('scCheck', () => {
-    const mk = (root.querySelector('[data-scm].on') || {}).getAttribute ? root.querySelector('[data-scm].on').getAttribute('data-scm') : 'part', R = scRows(mk, F), q = {}; let blank = false;
-    R.rows.forEach((x, i) => { const v = scParse(x.unit, UI.sc.vals['r' + i]); if(v === null) blank = true; else if(v !== x.want) q['r' + i] = true; });
-    const tv = scParse('£', UI.sc.vals.tot); if(tv === null) blank = true; else if(tv !== F.L * F.P) q.tot = true;
+    const mk = (root.querySelector('[data-scm].on') || {}).getAttribute ? root.querySelector('[data-scm].on').getAttribute('data-scm') : (UI.sc.mUsed || 'pence'), R = scRows(mk, F), q = {}, right = UI.sc.right = {}; let blank = false, firstBlank = null;
+    R.rows.forEach((x, i) => { const v = scParse(x.unit, UI.sc.vals['r' + i]); if(v === null){ blank = true; if(firstBlank === null) firstBlank = x; } else if(v !== x.want) q['r' + i] = true; else right['r' + i] = true; });
+    const tv = scParse('£', UI.sc.vals.tot); if(tv === null){ blank = true; if(firstBlank === null) firstBlank = { tot:true }; } else if(tv !== F.L * F.P) q.tot = true;
     UI.sc.q = q;
-    if(blank && !Object.keys(q).length){ UI.sc.msg = 'Fill in every box first.'; UI.sc.ok = false; render(); return; }
-    if(Object.keys(q).length){ UI.sc.tries = (UI.sc.tries || 0) + 1; UI.sc.queried = true; UI.sc.ok = false; UI.sc.msg = q.tot && Object.keys(q).length === 1 ? 'Query: the lines are right; check how you added them.' : 'Query: the highlighted line is not right. Look at it again.'; render(); return; }
+    if(blank && !Object.keys(q).length){ UI.sc.ok = false; UI.sc.msg = mk === 'pence' ? scNextStepMsg(firstBlank, F) : 'Fill in every box first.'; render(); return; }
+    if(Object.keys(q).length){ UI.sc.tries = (UI.sc.tries || 0) + 1; UI.sc.queried = true; UI.sc.ok = false;
+      UI.sc.msg = mk === 'pence' ? scPenceQuery(R, q, F) : q.tot && Object.keys(q).length === 1 ? 'Query: the lines are right; check how you added them.' : 'Query: the highlighted line is not right. Look at it again.'; render(); return; }
     UI.sc.ok = true; UI.sc.queried = false; UI.sc.msg = sign ? '' : 'All correct.';
     if(sign){ const res = checkCell(t, col, row, (F.L * F.P / 100).toFixed(2)); if(res === 'ok'){ cellCorrect(t); if(typeof liveChime === 'function' && typeof opsSoundOn === 'function' && opsSoundOn()) liveChime('ding'); } }
     render(); });
