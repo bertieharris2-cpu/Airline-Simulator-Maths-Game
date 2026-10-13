@@ -14426,7 +14426,7 @@ function planTipsFor(pl, L, opts){
     (D ? D.trips : []).forEach(t => { const r = routeById(t.route), leg = TIME.leg(p, r); if(leg > (T.long_leg_warning.threshold || 180)) add('long_leg_warning', { route:r.city, hours:hoursWord(leg), plane:shortPlane(p) }, leg); }); });
   const seen = new Set(), list = hits.sort((a, b) => a.priority - b.priority || b.weight - a.weight).filter(h => { if(seen.has(h.id)) return false; seen.add(h.id); return true; });
   if(!list.length){ if(svc.length && svc.every(s => s.seats && s.sold / s.seats >= fillGood() - 1e-9)) list.push({ id:'all_good', priority:9, text:T.all_good.message }); else if(!opts.actual) list.push({ id:'general_tradeoff', priority:9, text:T.general_tradeoff.message }); }
-  return list.slice(0, 2);
+  return opts.all ? (hits.length ? hits.filter((h, q) => hits.findIndex(z => z.text === h.text) === q) : list) : list.slice(0, 2);   // opts.all: every condition that holds (the revised Studio's insights)
 }
 
 /* ---------- the live panel: passengers / seats offered, ticket revenue, profit (one figure), turned away; two tips ---------- */

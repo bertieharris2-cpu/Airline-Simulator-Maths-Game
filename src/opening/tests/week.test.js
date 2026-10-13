@@ -3,10 +3,11 @@
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-week') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 15);
+const V2 = /studio-v2/.test(process.env.GAME || '');   // the revised Studio (airline-opening-studio-v2.html): opener, operating plan, change network
 const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
-  let modelWide = false; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [];
+  let modelWide = false, openerSeen = false, newsSeen = false; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
@@ -66,6 +67,31 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     const tips = await p.$$eval('[data-tip]', es => es.map(e => e.getAttribute('data-tip')));
     ok(`${tag}: the live panel shows the four figures and one or two tips from PlanTips`, (await p.$$('.st-live .st-fig')).length === 4 && tips.length >= 1 && tips.length <= 2 && tips.every(t => R.tips.includes(t)), { tips, figs:{ pax:R.pax, seats:R.seats, revenue:R.revenue, profit:R.profit, away:R.away } });
     studio.push({ tag, tips, report:{ pax:R.pax, seats:R.seats, revenue:R.revenue, profit:R.profit, away:R.away }, blocks:blk }); };
+  // the revised Studio: a fare is changed in its route editor (the plan's state first, from the opener if needed)
+  const fareTo = async (id, f) => { if(!V2){ await p.click(`[data-pe="0|fareTo|${id}|${f}"]`); return; }
+    if(await vis('#s2Edit')){ await p.click('#s2Edit'); await p.waitForTimeout(80); }
+    if(!(await vis(`[data-pe="0|fareTo|${id}|${f}"]`))){ await p.click(`[data-s2fare="${id}"]`); await p.waitForTimeout(80); }
+    await p.click(`[data-pe="0|fareTo|${id}|${f}"]`); await p.waitForTimeout(80); if(await vis('#s2EdX')){ await p.click('#s2EdX'); await p.waitForTimeout(60); } };
+  const toPlan = async () => { if(V2 && await vis('#s2Edit')){ await p.click('#s2Edit'); await p.waitForTimeout(100); } if(V2 && await vis('#s2Back')){ await p.click('#s2Back'); await p.waitForTimeout(100); } };
+  // the revised Studio, checked against the engine: active routes, the route editor, the blocks, the drawer, the service editor
+  const v2Checks = async tag => { const R = await p.evaluate(() => window.__sim.evalIn('studio2Report()')), E = await p.evaluate(() => window.__sim.evalIn('studioReport()'));
+    const rows = await p.$$eval('.s2-r', rs => rs.map(r => { const n = [...r.querySelectorAll('.s2-n')].map(x => +x.textContent.replace(/,/g, '')); return { id:r.getAttribute('data-s2r'), fare:+r.querySelector('.s2-fare').textContent.replace(/[£,]/g, ''), want:n[0], n:n[1], pct:+r.querySelector('.s2-fl b').textContent.replace('%', '') }; }));
+    ok(`${tag}: Active routes shows only the routes flown, each at its fare with the demand, services and seat fill the engine gives`, rows.length === R.active.length && rows.every(x => { const a = R.active.find(z => z.id === x.id); return a && a.fare === x.fare && a.want === x.want && a.n === x.n && a.pct === x.pct; }), rows);
+    ok(`${tag}: no route catalogue on the operating plan (the full fares appear only in a route editor)`, !(await vis('.st-card')) && !(await vis('.s2-ed')));
+    const blk = (await p.$$eval('.st-blk', bs => bs.map(b => b.querySelector('.st-bs').textContent + '|' + (b.className.match(/fill-(\w+)/) || [])[1]))).sort(), eng = E.services.map(x => `${x.sold}/${x.seats}|${x.fill}`).sort();
+    ok(`${tag}: each flight block is seats filled / seats, green, amber or red`, blk.length > 0 && JSON.stringify(blk) === JSON.stringify(eng), blk);
+    const r0 = rows[0] && rows[0].id; if(r0){ await p.click(`.s2-fare[data-s2fare="${r0}"]`); await p.waitForTimeout(100);
+      const ft = await p.$$eval('.s2-ft tbody tr', trs => trs.map(t => [+t.querySelector('.s2-fb').textContent.replace(/[£,]/g, ''), +t.querySelector('td.num').textContent.replace(/,/g, '')]));
+      const strip = await p.$eval('.st-strip', e => e.getAttribute('data-strip')).catch(() => null);
+      ok(`${tag}: Edit fare opens one route's editor: every fare with the people at it (the Routes sheet through the engine), and the strip on that route`, JSON.stringify(ft) === JSON.stringify(R.active.find(a => a.id === r0).fares) && strip === r0 && await vis('.s2-cmp'), { ft, strip }); await shot(`${tag.replace(/\W+/g, '-')}-v2-route`);
+      await p.click('#s2EdX'); await p.waitForTimeout(80); }
+    ok(`${tag}: the trade-offs drawer is closed by default`, !(await vis('.s2-dr')) && await vis('#s2Tr'));
+    await p.click('#s2Tr'); await p.waitForTimeout(100); const tips = await p.$$eval('.s2-dr [data-tip]', es => es.map(e => e.getAttribute('data-tip')));
+    ok(`${tag}: the drawer shows one or two things worth looking at, from PlanTips`, tips.length >= 1 && tips.length <= 2 && tips.every(t => E.tips.includes(t)), tips);
+    await p.click('#s2All'); await p.waitForTimeout(100); ok(`${tag}: Show all insights groups them: seat use, lost demand, timing, fare, capacity, money`, (await p.$$('.s2-g')).length === 6); await shot(`${tag.replace(/\W+/g, '-')}-v2-drawer`); await p.click('#s2All'); await p.click('#s2DrX'); await p.waitForTimeout(80);
+    const b0 = await p.$('.ad-blk[data-tl]'); if(b0){ await b0.click(); await p.waitForTimeout(120); const pop = await p.evaluate(() => { const e = document.querySelector('#s2Pop'); if(!e) return null; const r = e.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight && r.left >= 0 && r.right <= innerWidth && !!e.querySelector('[data-tlrm]') && !!e.querySelector('[data-s2rt]') && !!e.querySelector('[data-s2fr]') && !!e.querySelector('[data-s2ac]'); });
+      ok(`${tag}: a pressed flight opens its editor on screen (earlier, later, route, fare, aircraft, remove)`, pop === true, pop); await shot(`${tag.replace(/\W+/g, '-')}-v2-service`); await p.keyboard.press('Escape'); await p.waitForTimeout(80); ok(`${tag}: Escape closes the flight editor`, !(await vis('#s2Pop'))); }
+    studio.push({ tag, tips, active:R.active.map(a => `${a.id} ${a.fare} ${a.want} ${a.n} ${a.pct}%`), blocks:blk }); };
   const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
     if(await T() === 'reveal'){ await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); } if(await T() === 'cert') await p.click('#nx'); };
@@ -110,7 +136,30 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     if(t === 'plan' && process.env.DUMP && process.env.DUMP.split(',').includes(String(day)) && !dumped[day]){ dumped[day] = true; fs.writeFileSync(OUT + `state-${day}.json`, await p.evaluate(() => window.__sim.evalIn('JSON.stringify(S)'))); }
     if(t === 'plan'){ await fits('plan ' + day);
       // the plans from Balance Report v4.4: week 1 the mixed day; week 2 the Saab on Dublin; week 3 the Saab to Amsterdam; week 4 the ATR to Madrid
-      if(s.phase === 'setup'){
+      if(s.phase === 'setup' && V2){
+        ok('launch (v2): an empty plan opens on Choose where to fly, with both launch routes and no filters to read past', await vis('.s2-net') && /Choose where to fly/.test(await p.textContent('.dp-tt h1')) && await vis('[data-pe="0|add|par|0|0"]') && await vis('[data-pe="0|add|dub|0|0"]') && !(await vis('.s2-haul')), await p.textContent('.dp-tt h1')); await shot('d1-v2-network');
+        await p.click('[data-pe="0|add|par|0|0"]'); await p.click('[data-pe="0|add|dub|0|0"]'); await p.click('[data-pe="0|add|par|0|0"]'); await p.waitForTimeout(80);
+        ok('launch (v2): Add to schedule says where the flight went', /flight added to the Twin Otter at \d\d:\d\d/.test(await p.$eval('.s2-added', e => e.textContent).catch(() => '')), await p.$eval('.s2-added', e => e.textContent).catch(() => ''));
+        await p.click('#s2Back'); await p.waitForTimeout(100);
+        ok('launch (v2): the operating plan: three blocks, two active routes, the timetable full width', (await p.$$('.ad-blk')).length === 3 && (await p.$$('.s2-r')).length === 2 && !(await vis('.st-card')), [(await p.$$('.ad-blk')).length, (await p.$$('.s2-r')).length]);
+        const dep = async k => +(await p.$eval(`[data-tl="0|0|${k}"]`, e => e.dataset.dep));
+        await p.click('[data-tl="0|0|2"]'); await p.waitForTimeout(80); ok('launch (v2): a pressed flight opens its editor', await vis('#s2Pop') && await vis('[data-tlm="0|0|2|20"]'));
+        const d2 = await dep(2); await p.click('[data-tlm="0|0|2|20"]'); await p.waitForTimeout(60); ok('launch (v2): Later moves the flight 20 minutes', await dep(2) === d2 + 20, [d2, await dep(2)]);
+        await p.focus('[data-tl="0|0|2"]'); await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(60); ok('launch (v2): the arrow key moves it 10 minutes back', await dep(2) === d2 + 10, [d2, await dep(2)]);
+        await p.keyboard.press('Escape'); await p.waitForTimeout(60);
+        const d1 = await dep(1), bb = await (await p.$('[data-tl="0|0|1"]')).boundingBox(), lane = await (await p.$('.ad-lane')).boundingBox();
+        await p.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2); await p.mouse.down(); await p.mouse.move(bb.x + bb.width / 2 + lane.width * 0.08, bb.y + bb.height / 2, { steps:8 }); await p.mouse.up(); await p.waitForTimeout(150);
+        ok('launch (v2): a drag moves the flight, snapped to 10 minutes', await dep(1) !== d1 && (await dep(1)) % 10 === 0, [d1, await dep(1)]);
+        if(!(await vis('[data-s2rt="0|1"]'))){ await p.click('[data-tl="0|0|1"]'); await p.waitForTimeout(80); }
+        await p.selectOption('[data-s2rt="0|1"]', 'par'); await p.waitForTimeout(100); ok('launch (v2): Route in the flight editor changes the flight', (await S()).fleet[0].schedule[1] === 'par', (await S()).fleet[0].schedule);
+        await p.click('[data-tl="0|0|1"]'); await p.waitForTimeout(100); await p.keyboard.press('Delete'); await p.waitForTimeout(100); ok('launch (v2): Delete removes the pressed flight', (await p.$$('.ad-blk')).length === 2, (await p.$$('.ad-blk')).length);
+        const pf0 = (await S()).prices.par || 90; await fareTo('par', 100); ok('launch (v2): a fare in the route editor changes the fare', (await S()).prices.par === 100, (await S()).prices); await fareTo('par', pf0);
+        const sumK = await p.$$eval('.s2-sum [data-sum]', es => es.map(e => e.getAttribute('data-sum'))); await p.click('#s2Tr'); await p.waitForTimeout(80); await p.click('#s2All'); await p.waitForTimeout(80);
+        const drK = await p.$$eval('.s2-dr [data-sum]', es => es.map(e => e.getAttribute('data-sum'))); await p.click('#s2All'); await p.click('#s2DrX'); await p.waitForTimeout(60);
+        ok('launch (v2): ƒ on the figures the sums ask for: profit and fuel in the summary, tickets in the drawer\'s money', sumK.includes('profit') && sumK.includes('fuelCost') && drK.includes('revenue'), { sumK, drK });
+        ok('launch (v2): no permanent fuel strip; Fuel is a toolbar button (bought as used in week 1)', !(await vis('.fstrip')) && await vis('.s2-fuel'));
+        await setPlan([{ sched:['par', 'dub', 'par'], deps:[420, 640, 1080] }], { par:90, dub:90 }); await v2Checks('launch'); await shot('d1-studio'); }
+      else if(s.phase === 'setup'){
         // the timeline is the schedule editor: add, select, move with the buttons, the keyboard and a drag, swap the route, remove
         await p.click('[data-pe="0|add|par|0|0"]'); await p.click('[data-pe="0|add|dub|0|0"]'); await p.click('[data-pe="0|add|par|0|0"]');
         ok('launch: three blocks on the timeline, both markets shown', (await p.$$('.ad-blk')).length === 3 && (await p.$$('.mk')).length === 2, [(await p.$$('.ad-blk')).length, (await p.$$('.mk')).length]);
@@ -129,6 +178,15 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         ok('launch: the fuel strip is one line: week 1 buys fuel as it is used, free on the launch days', /Fuel is bought as it is used.*free Mon–Tue/.test(await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => '')), await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
         await setPlan([{ sched:['par', 'dub', 'par'], deps:[420, 640, 1080] }], { par:90, dub:90 });
         ok('launch: both routes on the plan page', await vis('[data-pe^="0|add|dub|0"]') && await vis('[data-pe^="0|add|par|0"]')); await studioChecks('launch'); await shot('d1-studio'); }
+      if(V2 && s.phase !== 'setup' && await vis('#s2Keep')){
+        if(!openerSeen){ openerSeen = true; const ch = await p.$$eval('.s2-cl li', ls => ls.map(l => l.textContent.replace(/\s+/g, ' ').trim()));
+          ok(`plan ${day} (v2): from week 2 the Monday opens on last week's plan, ready to run again, with Keep plan and Edit plan and the known changes`, /ready to run again/.test(await p.textContent('.s2-oh h2')) && /Keep plan/.test(await p.textContent('#nx')) && await vis('#s2Edit') && ch.length >= 1 && (await p.$$('.s2-otl .ad-blk[disabled]')).length >= 1, ch); await shot(`d${day}-v2-opener`); }
+        if(!newsSeen && await vis('[data-s2review]')){ newsSeen = true; const id = (await p.getAttribute('[data-s2review]', 'data-s2review')).split('|')[0]; await p.click('[data-s2review]'); await p.waitForTimeout(120);
+          const n = (await S()).fleet.reduce((t, f) => t + (f.schedule || []).filter(x => x === id).length, 0);
+          ok(`plan ${day} (v2): a news item's Review button opens the plan on that route: highlighted, its flights glowing, its editor open, the strip on it`, (n ? await vis(`.s2-r.focus[data-s2r="${id}"]`) : true) && await vis('.s2-ed') && (await p.$$('.s2-blk.hl')).length === n && await p.$eval('.st-strip', e => e.getAttribute('data-strip')).catch(() => null) === id && await vis('#s2Apply'), { id, n, hl:(await p.$$('.s2-blk.hl')).length }); await shot(`d${day}-v2-review`);
+          await p.click('#s2Apply'); await p.waitForTimeout(100); ok(`plan ${day} (v2): Apply changes returns to the week's plan`, await vis('#s2Keep')); }
+        if(await vis('.so-board-note')) ok(`plan ${day} (v2): while the board waits, Keep plan is held too`, await p.$eval('#s2Keep', e => e.disabled)); }
+      if(V2 && day <= 22) await toPlan();
       if(day === 8 && s.fleet.length > 1){ await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['dub', 'dub'], deps:[480, 960] }], { par:90, dub:80 });
         ok('day 8: two aircraft, two lanes on the timeline', (await p.$$('.ad-lane')).length === 2 && (await p.$$('.ad-blk')).length === 4);
         if(await p.$('#worldOpen')){ await p.click('#worldOpen'); await p.waitForTimeout(150); const wt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
@@ -144,7 +202,8 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
           ok('day 8: the test plan changes, What changed names it and the results show the change', /Dublin fare £80 → £90/.test(await p.textContent('.om-what')) && (await p.$$('.om-rt td.good, .om-rt td.bad')).length >= 2, await p.$eval('.om-what', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
           await p.click('#omSave'); await p.waitForTimeout(80); ok('day 8: the test plan can be saved', (await p.$$('.om-sv')).length === 1); await shot(`d${day}-model`);
           await p.click('#omReset'); await p.click('#omClose'); await p.waitForTimeout(100); ok('day 8: Back returns to the planner', await vis('.ad'), await T()); }
-        ok('day 8: the fuel strip shows the stored fuel and the week it covers, with the fuel desk a press away', /L stored · \d+% of this week covered/.test(await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => '')) && await vis('.fstrip [data-nav="fuel"]'), await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
+        if(V2) ok('day 8 (v2): no fuel strip; Fuel is a toolbar button with the tank\'s status, a press from the fuel desk', !(await vis('.fstrip')) && await vis('.s2-fuel[data-nav="fuel"]') && /Fuel/.test(await p.textContent('.s2-fuel')), await p.$eval('.s2-fuel', e => e.title).catch(() => ''));
+        else ok('day 8: the fuel strip shows the stored fuel and the week it covers, with the fuel desk a press away', /L stored · \d+% of this week covered/.test(await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => '')) && await vis('.fstrip [data-nav="fuel"]'), await p.$eval('.fstrip', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
         await p.click('[data-tl="0|0|0"]'); const sb = await p.$('[data-svccard="0|0|0"]');
         if(sb){ await sb.click(); await p.waitForTimeout(120); const tot = await p.$eval('.sc-total .sc-v', e => e.textContent).catch(() => '');
           ok('day 8: Service costs opens the performance card with the model\'s figures (Twin Otter Paris, 120 L × £1.47)', await vis('.sc-banner') && !(await vis('.sc-p1.sign')) && tot === '£176.40', tot); await shot(`d${day}-svccard`);
@@ -154,7 +213,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       if(day === 29) ok('day 29: the storage upgrade: the tank holds 20,000 L from today', await p.evaluate(() => window.__sim.evalIn('tankCapacity()')) === 20000, await p.evaluate(() => window.__sim.evalIn('tankCapacity()')));
       if(day === 15 && s.fleet.length > 1) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 });
       if(day === 22 && s.fleet.length > 2) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 });
-      if(day === 8 || day === 22){ await studioChecks('day ' + day); await shot(`d${day}-studio`); }
+      if(day === 8 || day === 22){ await (V2 ? v2Checks : studioChecks)('day ' + day); await shot(`d${day}-studio`); }
       if(day === 22 && s.fleet.length > 2){   // three aircraft: the pressed flight's buttons stay on screen, and Delete removes it
         const blks = await p.$$('.ad-blk[data-tl]'), n0 = blks.length; await blks[n0 - 1].click(); await p.waitForTimeout(150);
         const rm = await p.evaluate(() => { const b = document.querySelector('[data-tlrm]'), tt = document.querySelector('.st-tt'); if(!b || !tt) return 'no Remove button'; const r = b.getBoundingClientRect(), q = tt.getBoundingClientRect(); return r.height > 0 && r.top >= q.top - 1 && r.bottom <= q.bottom + 1 && r.bottom <= innerHeight ? true : [r.top, r.bottom, q.top, q.bottom].map(Math.round).join(','); });
@@ -162,7 +221,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         await p.keyboard.press('Delete'); await p.waitForTimeout(150);
         ok('day 22: pressing a flight then the Delete key removes it', (await p.$$('.ad-blk[data-tl]')).length === n0 - 1 && !(await vis('[data-tlrm]')), (await p.$$('.ad-blk[data-tl]')).length + ' of ' + n0);
         await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 }); }
-      if(day >= 50 && !modelWide && await vis('#ideaOpen')){ modelWide = true;   // the model page with six routes: every control inside its panel
+      if(day >= 50 && !modelWide && (await toPlan(), await vis('#ideaOpen'))){ modelWide = true;   // the model page with six routes: every control inside its panel
         await p.click('#ideaOpen'); await p.waitForTimeout(150);
         for(const id of ['dub', 'fra', 'gva']) if(await p.$(`[data-madd] option[value="${id}"]`)){ await p.selectOption('[data-madd]', id); await p.waitForTimeout(150); }
         const om = await p.evaluate(() => ['.om-cur', '.om-test'].map(sel => { const pn = document.querySelector(sel), R = pn.getBoundingClientRect(); return { rows:pn.querySelectorAll('tbody tr').length, wide:pn.scrollWidth > pn.clientWidth + 1, out:[...pn.querySelectorAll('button,select')].filter(e => { const q = e.getBoundingClientRect(); return q.width && (q.left < R.left - 1 || q.right > R.right + 1); }).length }; }));
@@ -170,9 +229,9 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         await p.click('#omReset'); await p.waitForTimeout(100); await p.click('#omClose'); await p.waitForTimeout(150); }
       if(day >= 3){ const q = await p.$('.fw-quick [data-fo]:nth-child(2)'); if(q) await q.click(); }
       if(await vis('.so-board-note')){ await shot(`d${day}-plan-board`); ok(`plan ${day}: the board holds the plan until something changes`, await p.$eval('#nx', e => e.disabled), await p.textContent('.so-board-note'));
-        const f = (await S()).prices.par === 100 ? 90 : 100; await p.click(`[data-pe="0|fareTo|par|${f}"]`); await p.waitForTimeout(80); boards.push(day);
+        const f = (await S()).prices.par === 100 ? 90 : 100; await fareTo('par', f); await p.waitForTimeout(80); boards.push(day);
         ok(`plan ${day}: a changed fare releases the plan`, !(await vis('.so-board-note')) && await p.$eval('#nx', e => !e.disabled)); }
-      else if(day >= 29 && !COAST && (await p.evaluate(d => window.__sim.evalIn(`calDate(${d}).getUTCDate()`), day)) <= 7){ const f = (await S()).prices.par === 100 ? 90 : 100; await p.click(`[data-pe="0|fareTo|par|${f}"]`); await p.waitForTimeout(80); changes.push(day + ':par ' + f); }   // Steady: one change at the start of each month
+      else if(day >= 29 && !COAST && (await p.evaluate(d => window.__sim.evalIn(`calDate(${d}).getUTCDate()`), day)) <= 7){ const f = (await S()).prices.par === 100 ? 90 : 100; await fareTo('par', f); await p.waitForTimeout(80); changes.push(day + ':par ' + f); }   // Steady: one change at the start of each month
       await shot(`d${day}-plan`); ok(`plan ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.evaluate(() => window.__sim.currentPlan().fleet.map(x => x.sched.join('/') + ' ' + (x.deps || []).join(',')))); await p.click('#nx'); continue; }
     if(t === 'workings' && await vis('.so-page')){ await fits('signoffs ' + day); await shot(`d${day}-signoffs`); await signs('work ' + day); await p.waitForTimeout(700); await shot(`d${day}-signoffs-done`); await p.click('#nx'); await p.waitForTimeout(80); continue; }
     if(t === 'workings'){ await fits('workings ' + day); const typed = await solveW(`work ${day}`); await shot(`d${day}-workings`);

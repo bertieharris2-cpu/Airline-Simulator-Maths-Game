@@ -21,7 +21,17 @@
 - The Studio is busy for dyslexic learners.
 - As the fleet grows, short-, medium- and long-haul could be separate views.
 
-Bertie's revised interaction brief takes both further. It is being built as a separate file, `airline-opening-studio-v2.html`, so the main game is untouched until he approves. Focus View and other accessibility options are parked for now. The v4.10 Studio is kept, byte for byte, as `airline-opening-prototype-v4.10-studio.html`.
+Bertie's revised interaction brief takes both further. It is built as a separate file, `airline-opening-studio-v2.html` (`p4ze_studio2.js`, `p1_head_studio2.css`), so the main game is untouched until he approves. The v4.10 Studio is kept, byte for byte, as `airline-opening-prototype-v4.10-studio.html`.
+
+The revised Studio's Monday plan page has three states:
+- **the opener:** Keep plan / Edit plan, with the known changes;
+- **the operating plan:** active routes, toolbar, full-width timetable, summary bar, route editor, flight editor, trade-offs drawer, and fleet groups from four aircraft;
+- **Change network:** haul filters, sort, and aircraft suitability.
+
+News items open the plan on their route. The full report is `docs/Studio-v2-Report-Back.md`.
+- **Parked:** Focus View and other accessibility options.
+- **Designed, next pass:** regular operating patterns.
+- **To confirm:** the haul bands (1,500 / 4,000 km) are code defaults until the workbook carries them.
 
 ## 0d. Workbook v4.10 (13 Oct 2026): the Operating Plan Studio
 
