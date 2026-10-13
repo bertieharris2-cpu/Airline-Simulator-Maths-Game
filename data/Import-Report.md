@@ -2,36 +2,40 @@
 
 *Written by `tools/import_world.py` on 13 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 2 to check, 5 notes.**
+**0 to fix, 6 to check, 6 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 93 | 93 live, 8 placeholder |
-| Archetypes | 4 | 2 later, 4 live |
-| Routes | 18 | 2 later, 18 live |
-| RouteCatalogue | 0 | 14 moved to Routes, 7 placeholder |
-| Aircraft | 8 | 6 later, 8 live, 1 note row, 1 placeholder, 1 removed |
-| Finance | 8 | 6 later, 8 live, 2 note row, 1 placeholder |
+| Settings | 110 | 110 live, 8 placeholder |
+| Archetypes | 5 | 2 later, 5 live |
+| Routes | 23 | 23 live |
+| RouteCatalogue | 0 | 17 moved to Routes, 4 placeholder |
+| Aircraft | 10 | 5 later, 10 live, 1 note row, 1 removed |
+| Finance | 10 | 5 later, 10 live, 2 note row |
 | Airports | 1 | 1 later, 1 live, 3 removed |
-| Calendar | 28 | 28 live |
-| Market | 17 | 397 later, 17 live, 2 placeholder |
-| Events | 16 rows → 10 events | 6 later, 16 live, 14 placeholder, 2 removed |
+| Calendar | 35 | 35 live |
+| Market | 52 | 364 later, 52 live |
+| Events | 24 rows → 18 events | 5 later, 24 live, 7 placeholder, 2 removed |
 | Challenges | 2 | 2 live, 6 placeholder |
-| Mechanics | 11 | 5 later, 11 live, 4 placeholder |
-| Chapters | 1 | 3 later, 1 live, 1 note row, 2 placeholder |
+| Mechanics | 13 | 5 later, 13 live, 2 placeholder |
+| Chapters | 2 | 3 later, 2 live, 1 note row, 1 placeholder |
 | HandSumRules | 11 | 11 live, 1 note row |
 | Catering | 4 | 4 live, 1 note row |
 | PlanTips | 12 | 12 live, 1 note row |
-| RouteNews | 13 | 13 live, 1 note row |
+| RouteNews | 32 | 32 live, 1 note row |
 | Livery | 35 | 35 live, 1 note row |
-| Hunts | 0 | 1 note row, 7 placeholder |
+| Hunts | 2 | 2 live, 1 note row, 5 placeholder |
 
 ## To check
 
+- **Market:** week 19 fuel is £2.16, but the Calendar has £2.17 on its days. Time skips use the Market price, so the two should agree.
 - **Routes:** ist is loaded, but its archetype "long_haul_mixed" is not live. The game uses the route's own demand table and applies no business/leisure or season multipliers to it.
-- **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Embraer E175 20 min.
+- **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Boeing 787 Dreamliner 20 min, Embraer E175 20 min, Boeing 757 20 min.
+- **Routes:** yyz (5700 km): legs not on a quarter hour: Saab 340 760 min, ATR 72 760 min, Embraer E190 380 min, Airbus A220 380 min, Airbus A320 380 min, Boeing 737 380 min, Boeing 787 Dreamliner 380 min, Embraer E175 380 min, Boeing 757 380 min.
+- **Routes:** los (5000 km): legs not on a quarter hour: DHC-6 Twin Otter 1000 min, Saab 340 667 min, ATR 72 667 min, Embraer E190 333 min, Airbus A220 333 min, Airbus A320 333 min, Boeing 737 333 min, Boeing 787 Dreamliner 333 min, Embraer E175 333 min, Boeing 757 333 min.
+- **Routes:** del (6700 km): legs not on a quarter hour: DHC-6 Twin Otter 1340 min, Saab 340 893 min, ATR 72 893 min, Embraer E190 447 min, Airbus A220 447 min, Airbus A320 447 min, Boeing 737 447 min, Boeing 787 Dreamliner 447 min, Embraer E175 447 min, Boeing 757 447 min.
 
 ## Notes
 
@@ -39,6 +43,7 @@
 - **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 1200, listPrice 9000 → 22000. The workbook wins.
 - **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1800, listPrice 15000 → 36000. The workbook wins.
 - **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900, dayCost 2500 → 3500, listPrice 30000 → 70000. The workbook wins.
+- **Events:** events are not in date order (harmless; the game sorts them).
 - **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events undercut_dub, storm, crew; challenges 2. Those choices then differ only in cash.
 
 ## Chapter 1 touches
@@ -63,12 +68,12 @@ Livery sheet: 12 colours, 4 stripes, 7 tail symbols, 4 logo shapes, 8 name sugge
 | a220 | live | narrowbody | none yet | — |
 | a320 | live | narrowbody | none yet | — |
 | b737 | live | narrowbody | none yet | — |
-| b787 | later |  | none yet | — |
+| b787 | live | — | none yet | — |
 | a350 | later |  | none yet | — |
 | b747 | later |  | none yet | — |
 | a380 | later |  | none yet | — |
 | e175 | live | e175 | none yet | — |
-| b757 | placeholder |  | none yet | — |
+| b757 | live | — | none yet | — |
 | a340 | later |  | none yet | — |
 | b777 | later |  | none yet | — |
 | Prices from the A220 up are tuned to the cash curve (F5, replacing D16's three-tenths rule): on the Steady path each plane is a few lessons of saving away when it is meant to arrive. Tutorial planes (Twin Otter to E190, E175) keep launch-deal prices. Real prices are on the plane card for interest only. | None |  | none yet | — |
@@ -87,8 +92,16 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | Madrid fares | £80, £90, £100, £120 | £150, £160, £170, £180, £190 |
 | Marrakech distance | 2400 km | 2250 km |
 | Marrakech fares | £100, £120, £140, £160 | £220, £230, £240, £250, £260 |
+| New York distance | 5600 km | 5625 km |
+| New York fares | £150, £200, £250, £300 | £470, £490, £510, £530, £550 |
+| Dubai distance | 5600 km | 5400 km |
+| Dubai fares | £200, £250, £300, £350 | £450, £470, £490, £510, £530 |
 | Cairo distance | 3600 km | 3600 km |
 | Cairo fares | £125, £150, £175, £200 | £330, £340, £350, £360, £370 |
+| Lagos distance | 4800 km | 5000 km |
+| Lagos fares | £150, £175, £200, £250 | £440, £460, £480, £500, £520 |
+| Delhi distance | 7200 km | 6700 km |
+| Delhi fares | £200, £250, £300, £350 | £560, £580, £600, £620, £640 |
 | DHC-6 Twin Otter price | £2,500 | £12,000 (launch deal £2,500) |
 | DHC-6 Twin Otter running costs | £192 an hour, £900 a day | £150 an hour, £900 a day |
 | DHC-6 Twin Otter fuel | 20 L per 100 km | 20 L per 100 km |
@@ -110,6 +123,9 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | Boeing 737 price | £600,000 | £400,000 |
 | Boeing 737 running costs | £— an hour, £7150 a day | £1300 an hour, £3500 a day |
 | Boeing 737 fuel | 62 L per 100 km | 90 L per 100 km |
+| Boeing 787 Dreamliner price | £1,200,000 | £6,000,000 |
+| Boeing 787 Dreamliner running costs | £— an hour, £15550 a day | £2000 an hour, £6000 a day |
+| Boeing 787 Dreamliner fuel | 110 L per 100 km | 130 L per 100 km |
 | Second crew | £300 | £None when duty is over 12 h, from 2031-01-06 (D51) |
 | Rival switch rule (D50) | 1 in 5 switch when undercut | 0.1 per £10 dearer, cap 0.6, advertising × 0.5 |
 | Starting cash | £5,000 | £5,000 |

@@ -1,7 +1,7 @@
 """Builds the game from the parts in this folder:
 
     airline-opening-prototype.html   the game (the v4.10 Operating Plan Studio)
-    airline-opening-studio-v2.html   the same game with the revised Studio (p4ze_studio2.js + p1_head_studio2.css)
+    airline-opening-studio-v2.html   the same game with the revised Studio (p4ze_studio2.js + p1_head_studio2.css), Days (p4zf), chapter 2 (p4zg, p4zh)
 
     python3 src/opening/build.py
 
@@ -62,4 +62,4 @@ def build(name, js_list, css='', ovr='overrides.txt'):
 build('airline-opening-prototype.html', JS)
 # the revised Studio: one more part before the display part, and its own styles; the main file is untouched by it
 if os.path.exists(os.path.join(HERE, 'parts', 'p4ze_studio2.js')):
-    build('airline-opening-studio-v2.html', JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js'] + JS[-1:], r('parts', 'p1_head_studio2.css'), 'overrides-studio-v2.txt')
+    build('airline-opening-studio-v2.html', JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js'] + JS[-1:], r('parts', 'p1_head_studio2.css'), 'overrides-studio-v2.txt')

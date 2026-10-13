@@ -139,3 +139,7 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .s2-nd{font:inherit;font-size:13px;color:#eef5ff;background:#0a1a35;border:1px solid #2b5c9e;padding:3px 4px}
 .s2-rvsplit{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;margin:2px 0 4px}.s2-rvsplit > small{font-size:11.5px;color:#9fbde3}
 .s2-rt.two .s2-rc .st-code{display:none}
+
+/* v5.0 long haul: the local arrival on the block, the overnight rotation's one-way block */
+.s2-lh{margin-left:10px;font-size:11px;font-weight:400;color:#b9cdea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.s2-blk.ovn{background:repeating-linear-gradient(135deg,#123a74 0 10px,#16427f 10px 20px)!important;border-right:2px dashed #36c6ff!important}

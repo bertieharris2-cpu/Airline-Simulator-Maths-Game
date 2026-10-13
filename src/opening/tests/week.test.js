@@ -1,4 +1,4 @@
-// Run: NODE_PATH=<playwright node_modules> node week.test.js   (env: UPTO day, SHOTS=0, OUT, W, H)
+// Run: NODE_PATH=<playwright node_modules> node week.test.js   (env: UPTO day, SHOTS=0, OUT, W, H, GAME, COAST, DUMP=days for state JSON, SAVE=file for the save code at the end)
 // Workbook v4.4: chapter 1 a week at a time. Launch Day plan + sums, the week on the board, the Sunday review, then the next Monday.
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-week') + '/'; fs.mkdirSync(OUT, { recursive:true });
@@ -311,6 +311,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     checks.push('stopped at ' + t + ' day ' + day); await shot('stop'); break; }
   }catch(e){ checks.push('FAIL exception ' + e.message.split('\n')[0]); await shot('exception'); }
   const s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
+  if(process.env.SAVE){ fs.writeFileSync(process.env.SAVE, await p.evaluate(() => window.__sim.saveCode())); checks.push('info save code written to ' + process.env.SAVE); }   // chapter2.test.js starts from this save
   if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t) && !/\(Build\)|^Build:/.test(t));   // Build steps (the reviews, the model's formulas) are not Calculate
     const count = calc.reduce((n, t) => { const m = /^Ticket revenue \(([^)]*)\)/.exec(t); return n + (m ? m[1].split(',').length : 1); }, 0) + 2;   // launch day's three fares count as three
     if(!CAP) ok('weeks 1–4: about 18 Calculate steps (Launch Day 7, the week-1 tenths 2, then three a week: Fable\'s §4)', count >= 15 && count <= 21, { count, calc });

@@ -121,6 +121,10 @@ def unlocks(s):         # 'routes:dub,par; planes:dhc6(launch deal); mechanics:f
 
 def date(s): return dt.date.fromisoformat(str(s)[:10])
 
+def season_override(s):  # 'winter:1.2,summer:0.8' -> {'winter': 1.2, 'summer': 0.8}
+    if not s: return None
+    return {k.strip(): num(v) for k, v in (p.split(':') for p in str(s).split(',') if ':' in p)}
+
 
 # ---------- the workbook ----------
 wb = openpyxl.load_workbook(BOOK, data_only=True)
@@ -152,7 +156,9 @@ for r in live('Routes', all_routes):
                    'turnaroundAwayMin': r['turnaroundAwayMin'], 'landingFeeAway': r['landingFeeAway'],
                    'baseFare': r['baseFare'], 'fareOptions': nums(r['fareOptions']), 'demandAtFare': pairs(r['demandAtFare']),
                    'competitionSensitivity': r['competitionSensitivity'], 'unlockDay': r['unlockDay'],
-                   'story': r['story'], 'status': r['status']})
+                   'story': r['story'], 'status': r['status'],
+                   # v5.0 (D68): a long-haul route flies out and back the same day or as an overnight rotation; a season override replaces the archetype's
+                   'rotation': r.get('rotation') or 'same-day', 'seasonOverride': season_override(r.get('seasonOverride'))})
 
 catalogue = [{'id': r['id'], 'city': r['city'], 'country': r['country'], 'airport': r['code'], 'km': r['distanceKm'],
               'archetype': r['archetype'], 'haul': r['haul'], 'baseFare': r['baseFare'], 'legHours': r['legHours'],
@@ -355,7 +361,8 @@ for a, b in zip(all_market, all_market[1:]):
 rids = {r['id'] for r in all_routes}
 for n in routeNews:
     for rid in n['routes']:
-        if rid not in rids: issue('check', 'RouteNews', f'{n["id"]}: route `{rid}` is not on the Routes sheet.')
+        if rid not in rids and rid != 'all':   # v5.0: `all` means every open route
+            issue('check', 'RouteNews', f'{n["id"]}: route `{rid}` is not on the Routes sheet.')
     if not (n['announce'] <= n['start'] <= n['end']): issue('check', 'RouteNews', f'{n["id"]}: announce {n["announce"]}, start {n["start"]}, end {n["end"]} are not in order.')
 
 # archetypes
@@ -523,7 +530,9 @@ NEEDED = ['startDate', 'startingCash', 'airportOpen', 'airportClose', 'homeTurna
           'reviewTotalsMode', 'meanFromDay', 'secondAircraftCompare', 'whereCouldItFly',
           'signOffCapPerWeek', 'signOffDecayAfter', 'auditFloor', 'boardNudgeIdleWeeks', 'boardNudgeMissedShare', 'boardReviewSignOffs',
           'seatFillGood', 'seatFillMedium', 'demandStripMode', 'planStudioSteps',
-          'flightDays', 'flightDaysFromDay', 'summaryWeekdayWeekend', 'patternPlusExtras', 'shortHaulMaxKm', 'mediumHaulMaxKm']
+          'flightDays', 'flightDaysFromDay', 'summaryWeekdayWeekend', 'patternPlusExtras', 'shortHaulMaxKm', 'mediumHaulMaxKm',
+          'longHaulFromKm', 'longHaulTurnaroundMin', 'longHaulCrewCost', 'longHaulSameDayMaxKm', 'reputationPerHalfStar', 'reputationBankedFromAutumn',
+          'airlineTypeMode', 'premiumExtraFareSteps', 'valueLowerFareSteps', 'premiumStarRate', 'valueStarRate', 'extrasBagFee', 'extrasBagTakeUp', 'chapter2SetUpDays']
 for k in NEEDED:
     st_ = settings_status.get(k)
     if st_ is None: touch.append(f'- **Settings:** `{k}` is not on the sheet: the game needs it for chapter 1.')

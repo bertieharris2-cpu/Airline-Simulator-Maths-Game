@@ -10,6 +10,55 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0g. Workbook v5.0 (13 Oct 2026): chapter 2, push 1 of 3 (revised Studio only)
+
+**What changed:**
+- **Data.** Workbook v5.0 is installed; the main game's full chapter run is unchanged (165 checks, cash £690,850). The importer reads:
+  - Routes `rotation` and `seasonOverride` (`winter:1.2,summer:0.8`);
+  - the 14 new settings in `NEEDED`;
+  - RouteNews `routes = all`, without flagging it.
+- **`p4zg_chapter2.js`** (v2 build only) reassigns `buildBeats` to append chapter 2's beats after chapter 1's:
+  - the holiday (days 119–126: HQ, the run, the results);
+  - Calendar days 127–133 with their week phases;
+  - weeks 134, 141 and 148;
+  - months from 3 February;
+  - the chapter 2 review (day 364, 31 August 2031).
+
+  It also reassigns:
+  - `stepsFor`, `PW`, `planWord`, `closeWord` and `emergencyFuel` for the holiday;
+  - `closeDayWeek`: the holiday leads into a day beat, and chapter 2's Sunday leads into the weeks without a second regular-plan approval;
+  - `R.protoEnd`, which leads chapter 1's end into the holiday.
+
+  `WORLD.chapter`, `reviewDay`, `weekFrom` and `monthFrom` are getters on the day's chapter.
+
+  **The best-plan sweep** (`bestPlanSweep`, used by the missed-profit line and the audits) tried every mix of routes an aircraft can reach. A 757 reaches all sixteen open routes, which is thousands of plans, and the February audit hung. From day 127, each aircraft type tries its eight most promising routes plus the ones it flies, through `planeCanFly` during the sweep only. One sweep with a 757 takes about 4 seconds. Chapter 1's sweep is unchanged.
+- **`p4zh_longhaul.js`** (v2 build only) reassigns:
+  - `TIME.away` (120 min at the far end on long haul);
+  - `TIME.day` (an overnight rotation is one way today);
+  - `freeDep` (long haul looks for 06:30 first);
+  - `fitsFor` (nothing beside an overnight rotation);
+  - `addService` (says why a long-haul service doesn't fit);
+  - `fuelForTrip` (whole litres on long haul);
+  - `growthOf` (`long_haul`: 5% a week from the opening week, to ×1.5);
+  - `demandMult` and `seasonMult` (the route's season override);
+  - `planFlights` (the overnight rotation's home day books nothing; flights get `longHaul` and `localArr`);
+  - `dutyMin` and `dayExtras` (£500 per long-haul service from `crewMechanicFromDate`, not the duty-day crew as well);
+  - `s2Block` and `s2SvcEditor` (local time, the overnight block);
+  - `INTRO.longhaul` (*What's new: Going long*).
+
+  `lhServiceDay(uid, soldTo)` gives one service's lines for the tests.
+- **Test:** `chapter2.test.js` from a chapter-1-end save: 50 checks to the chapter 2 review (day 364), 0 failures, no errors. `nextChapterLine` is reassigned so each review names the right next chapter.
+
+**Known (for Fable, in the push 3 report):**
+- **Balance Report §2's launch figures leave out the season and the market week.** In play, New York on Tue 7 Jan is 220 × 1.06 (week 19's business 0.7 / leisure 1.3 at 40% business) × winter 0.9 × the `nyc_launch_buzz` news ×1.2 = 252 wanting to fly at £510. The 757 fills (200), so the day is £47,426.25 as the report says.
+- **The duty-day second crew (D51) starts on 6 January for short-haul aircraft as well.** `secondCrewCost` is still a placeholder, so the Pass 1 £250 applies to any aircraft with a duty day over 12 hours. Long-haul aircraft pay the £500 a service instead.
+- **The A320/737 (5,500 km) can still reach Dubai (5,400 km).**
+- **The `long_haul` archetype writes `growthPerWeek` as 0.05,** where chapter 1's archetypes write percent. The code reads a value under 1 as a fraction.
+- **Push 1 leaves these as they are:**
+  - the ticket sum is Build, not Calculate (chapter 2's sign-offs come in push 2);
+  - RouteNews `all` and closures (multiplier 0) don't apply yet (push 3);
+  - chapter 2's events use chapter 1's option handling (push 3).
+
 ## 0f. Workbook v4.11 (13 Oct 2026): Days on every flight (D67, revised Studio only)
 
 **What changed:**

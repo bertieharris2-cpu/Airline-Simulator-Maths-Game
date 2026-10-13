@@ -8,7 +8,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 | File | What it is |
 | --- | --- |
 | `airline-opening-prototype.html` | **The active development version.** Chapter 1 of the workbook's story: Launch Day (Monday 2 September 2030) to the chapter review on 28 December 2030, paced by the workbook's Chapters, Calendar and Market sheets. See *Opening prototype* below. |
-| `airline-opening-studio-v2.html` | **The revised Operating Plan Studio, to try.** The same game as `airline-opening-prototype.html` with Bertie's revised interaction brief on the Monday plan page (*simplify what is visible at any one moment*). Built from the same parts plus `p4ze_studio2.js` and `p1_head_studio2.css`; it shares the main game's save, so either file opens the same game. The main file is untouched by it until the revision is approved. |
+| `airline-opening-studio-v2.html` | **The revised Operating Plan Studio, to try, and chapter 2.** The same game as `airline-opening-prototype.html` with Bertie's revised interaction brief on the Monday plan page (*simplify what is visible at any one moment*), Days on every flight (D67), and chapter 2 from January 2031 (Workbook v5.0, in progress). Built from the same parts plus `p4ze_studio2.js`, `p4zf_flightdays.js`, `p4zg_chapter2.js`, `p4zh_longhaul.js` and `p1_head_studio2.css`; it shares the main game's save, so either file opens the same game. The main file is untouched by it until the revision is approved. |
 | `airline-opening-prototype-v4.10-studio.html` | **Frozen copy** of the opening prototype as it was on 13 Oct 2026 (the v4.10 Operating Plan Studio), kept so the Studio Bertie liked stays playable while it is revised. Never rebuilt. |
 | `airline-simulator-full-reference.html` | **Frozen.** A snapshot of the complete simulator (weeks, months, later aircraft, international routes, storyline, awards, challenges). Critical fixes only until the opening is approved (so far: the full-screen button, which the teacher's triple-tap corner used to cover). |
 | `airline-simulator.html` | The complete game, identical to the full reference for now: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
@@ -40,6 +40,22 @@ The opening is being made excellent before the later campaign continues. `airlin
   - The timetable has a **Mon–Fri | Sat–Sun** switch. When any flight is not All week, the summary, the opener and the Sunday review show both seat fills side by side.
   - Weekend-only news (the Dublin rugby) presets a Sat–Sun service. New PlanTips rows: `weekend_only_news` and `fare_lower_fills`.
   - Report: `docs/Flight-Days-Report-Back.md`.
+- **Workbook v5.0: chapter 2, Going long (D68–D73), revised Studio only. Push 1 of 3: the long-haul engine and the opening week.** The main game still ends at chapter 1.
+  - **The game carries on past chapter 1** (`src/opening/parts/p4zg_chapter2.js`). Chapter 1's end card leads on to **Christmas and New Year** (days 119–126), which fly the winter plan by themselves from HQ; fuel the tank lacks is bought at each day's price, without the 10p.
+  - Then **chapter 2 opens on Monday 6 January 2031**. Days 127–133 are played a day at a time with chapter 1's week loop: Monday plan, the run on the board, Sunday review. Then come weeks to the end of January, months from 3 February, and the chapter 2 review on 31 August 2031.
+  - `WORLD.chapter`, `reviewDay`, `weekFrom` and `monthFrom` follow the day's chapter.
+  - **Long haul** (`src/opening/parts/p4zh_longhaul.js`) covers any route over 4,000 km:
+    - 2 hours on the ground at the far end;
+    - a flat **£500 second crew** per service, in place of the duty-day crew;
+    - fuel in whole litres (12,375 L to New York in a 757);
+    - growth of 5% a week from the route's opening week, to ×1.5;
+    - Dubai and Delhi's own seasons.
+  - **On the timetable,** New York is one block, 06:30–21:00, with *lands 07:45 New York time*. A second New York service is refused with the reason.
+  - **Delhi** (from June) is an **overnight rotation**. Its block reads *Out today, back tomorrow · earns every second day*. Revenue and flying costs are booked on the way out, and the day cost and rent every day.
+  - **The 757 and the 787** are in the shop from day 127, lease only. *What's new: Going long* explains local time.
+  - **Balance Report v5.0 §2 reproduces exactly:** a full 757 to New York at £510 makes £47,426.25 a day.
+  - **Tested** by `chapter2.test.js`: 50 checks to the chapter 2 review, 0 failures. Screenshots are in `docs/screenshots/chapter2/`.
+  - **Coming in pushes 2 and 3:** reputation revealed with its card; the airline type; Value's bag fee; chapter 2's sign-offs; events with options; the nineteen news items (`routes = all`, closures); challenges and hunts; the chapter 2 report for Fable.
 
 **v4.10.1 (13 Oct 2026): three fixes from Bertie's first go on the Studio.**
 - **The timetable's buttons stay on screen.** With three aircraft, the bar under the timetable (Earlier, Later, Swap route, Remove, Service costs) was cut off and the page could not scroll. Now only the aircraft rows scroll; the header, the demand strip and that bar always show, and three or more aircraft get tighter rows.
@@ -187,6 +203,10 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Tests** (Playwright, with the pre-installed Chromium; `NODE_PATH=/opt/node-tools/node_modules`):
   - `node src/opening/tests/week.test.js` plays chapter 1 a week at a time (v4.4) with the Balance Report's plans (`UPTO` day, `OUT` for screenshots): Launch Day's sums in order, the board, the Sunday reviews, the Saab on day 8, Amsterdam on day 15, the ATR on Madrid on day 22; it checks the Calculate count for weeks 1–4, that the sweep's best plan beats the pupil's, Buy greyed in week 2 and the neglect lines from week 3.
   - `GAME=airline-opening-studio-v2.html node src/opening/tests/week.test.js` plays the same chapter on the revised Studio: the launch flow on Choose where to fly, the opener, a news review, the route and flight editors, the drawer, then everything else as for the main file (the tests take the game file from `GAME`).
+  - `node src/opening/tests/chapter2.test.js` (revised Studio) carries on from a save at chapter 1's review. Make the save with `GAME=airline-opening-studio-v2.html UPTO=200 SAVE=/tmp/airline-ch1-end.txt node week.test.js`, or pass `CODE=<file>`. The test plays:
+    - Christmas and New Year, then day 127: lease a 757, New York at £510 at 06:30;
+    - the Balance Report v5.0 §2 check (£47,426 within £10), the refused second service, the local time, the overnight rotation (Delhi, tried early) and growth;
+    - then the weeks and months to `UPTO` (default 155; 400 reaches the chapter 2 review).
   - `node src/opening/tests/migrate.test.js` loads the two real pupil codes and a full-game code: they land on the week's board (or one planning day with the first-time sums), and the week completes.
   - `node src/opening/tests/opening.test.js` (the day-by-day flow, `teacherDayByDay`) plays chapter 1 as a scripted pupil (`UPTO` beats, `W`/`H` for the screen size, `SHOTS=0` to skip screenshots): Launch Day's sums, the events, the shop on day 8 (rents the Saab), two aircraft, the weeks, December and the chapter accounts; it checks the typed figures, that projected = actual every period, and that no screen overflows at 1366×768 or 1915×891.
   - `node src/opening/tests/balance.test.js` (no browser) checks the world engine against Balance Reports v2, v3, v4, v4.1 (re-based to the v4.4 day costs, no crew in chapter 1) and the v4.4 addendum: every single-service figure to the pound, 23 known differences noted (see `docs/Workbook-v4-Report-Back.md`).
