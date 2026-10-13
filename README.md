@@ -57,6 +57,50 @@ The opening is being made excellent before the later campaign continues. `airlin
   - **Tested** by `chapter2.test.js`: 50 checks to the chapter 2 review, 0 failures. Screenshots are in `docs/screenshots/chapter2/`.
   - **Coming in pushes 2 and 3:** reputation revealed with its card; the airline type; Value's bag fee; chapter 2's sign-offs; events with options; the nineteen news items (`routes = all`, closures); challenges and hunts; the chapter 2 report for Fable.
 
+**Workbook v5.1 (D75): the pupil record and printout, in both game files** (`src/opening/parts/p4zi_record.js`).
+- **What is kept:** every sign-off and every review Build step. That covers:
+  - the sign-off cards;
+  - the Service Cost card's fuel line;
+  - the column template;
+  - rent or buy;
+  - the first fuel order;
+  - the weekly, period and chapter reviews;
+  - the audits.
+- **Each entry holds:**
+  - the date, the week, the chapter and the document;
+  - the question as set;
+  - the method;
+  - each attempt as it was made: the working typed on the card or in the column template, cell by cell with its carries, or the chips chosen on a Build card;
+  - Checked or Query, the attempts and the time taken;
+  - the Bettws statement codes of its kind of maths (WorkingMethods.bettwsStatements), stored with the entry.
+- **A Query gets a red note worked out from the working:**
+  - the × 10 shift;
+  - pence not turned into pounds;
+  - a partial product that is off;
+  - a carry missed or added twice;
+  - a line not shifted;
+  - a subtraction that needed exchanging;
+  - transposed digits;
+  - a Build figure missing or doubled;
+  - the wrong operation;
+  - ÷ 2 for a mean.
+
+  When none of these matches, the note is *Answer £X given; correct answer £Y*.
+- **Decisions, one block a week (or period):**
+  - the standing plan;
+  - what changed;
+  - events and choices, and news acted on;
+  - aircraft, fuel and the fuel purchasing advantage;
+  - projected / actual / missed;
+  - stars.
+- **In the teacher panel's Pupil record box:** the pupil's name, a note for each week, and **Print record**. The record prints by date or by kind of maths, for a week, a chapter or everything. It is a plain A4 page: the question in black, the working in blue, a green tick, and red for the wrong cell, the note and Query.
+- **Report:** `docs/Pupil-Record-Report-Back.md`. Samples are in `docs/record-samples/`.
+
+**The first take-off is smooth (13 Oct 2026).** The launch-day take-off is now one continuous motion:
+- the plane taxis in and eases to a stop, lines up, accelerates down the runway, rotates and climbs out;
+- it runs at 60 fps on transforms, drawn from the start time, so the whiteboard and a redrawn screen stay in step;
+- before, it stopped and started at each stage.
+
 **v4.10.1 (13 Oct 2026): three fixes from Bertie's first go on the Studio.**
 - **The timetable's buttons stay on screen.** With three aircraft, the bar under the timetable (Earlier, Later, Swap route, Remove, Service costs) was cut off and the page could not scroll. Now only the aircraft rows scroll; the header, the demand strip and that bar always show, and three or more aircraft get tighter rows.
 - **Click a flight, press Delete.** A pressed flight keeps the keyboard focus, so Delete (or Backspace) removes it and Escape lets go. The bar says "or press Delete".
@@ -207,6 +251,11 @@ The opening is being made excellent before the later campaign continues. `airlin
     - Christmas and New Year, then day 127: lease a 757, New York at £510 at 06:30;
     - the Balance Report v5.0 §2 check (£47,426 within £10), the refused second service, the local time, the overnight rotation (Delhi, tried early) and growth;
     - then the weeks and months to `UPTO` (default 155; 400 reaches the chapter 2 review).
+  - `node src/opening/tests/record.test.js` (`GAME` either file) checks the pupil record:
+    - on Launch Day it types a long multiplication into the column template digit by digit, one line off by a carry, then right;
+    - it checks that both attempts are kept cell by cell, with the note and the codes;
+    - it fires every error note of the brief on its own case;
+    - with `CODE=<save> PRINT=w8` it prints that week of a saved run in both views, as HTML and PDF in `OUT`.
   - `node src/opening/tests/migrate.test.js` loads the two real pupil codes and a full-game code: they land on the week's board (or one planning day with the first-time sums), and the week completes.
   - `node src/opening/tests/opening.test.js` (the day-by-day flow, `teacherDayByDay`) plays chapter 1 as a scripted pupil (`UPTO` beats, `W`/`H` for the screen size, `SHOTS=0` to skip screenshots): Launch Day's sums, the events, the shop on day 8 (rents the Saab), two aircraft, the weeks, December and the chapter accounts; it checks the typed figures, that projected = actual every period, and that no screen overflows at 1366×768 or 1915×891.
   - `node src/opening/tests/balance.test.js` (no browser) checks the world engine against Balance Reports v2, v3, v4, v4.1 (re-based to the v4.4 day costs, no crew in chapter 1) and the v4.4 addendum: every single-service figure to the pound, 23 known differences noted (see `docs/Workbook-v4-Report-Back.md`).

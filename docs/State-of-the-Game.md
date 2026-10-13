@@ -10,6 +10,32 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0h. Workbook v5.1 (13 Oct 2026): the pupil record and printout (D75), and a smooth take-off
+
+**What changed:**
+- **`p4zi_record.js`** (both builds, before `p4c_display`) keeps `S.record`:
+  - `{ pupil, entries, notes, pend }`;
+  - each entry is `calc`, `build` or `decision`;
+  - a calculation entry holds its attempts and their working.
+- **It wraps:**
+  - `soSpec` (to find the card), `soCalcCheck`, `soBuildCheck`, `soCardHtml`;
+  - `rbCheck`, `rbCardHtml`;
+  - `checkCell`, `cellCorrect` (a shown answer), `wkGrid` (the column template, read cell by cell at Check), `svcCardHtml`;
+  - `applyEventNow`, `acquirePlane`;
+  - `closeDay` (a decision entry at each week's or period's end), `soTeacherRender` (the Pupil record box);
+  - `dryRun` (the record stays out of the copy).
+- **The checks written inline** (`#scCheck`, `#rbChk`, `#fdSignChk`) are read by a capture-phase click listener: the screen before the handler, the state after.
+- **The error notes** (`recNote`) work from the working first (a card line, a column-template line), then from the answer.
+- **The printout** (`recordPrintHtml`) opens in a new window with a Print button.
+- **The take-off** (`p4q_paint.js` `takeoffRun`, `takeoffPose`) is drawn each frame on transforms; the `rwTakeoff` keyframes are gone.
+
+**Known:**
+- **Attempts that never reach a verdict are not attempts:** a blank box, or a format message such as "Type the number of days".
+- **A Calculate sign-off card has an answer box and no working,** so its method is the one the card suggests, marked "(suggested)". The working the pupil types is kept where there is a template (the column template, the service card's methods, the fuel order).
+- **Squared paper is a drawing:** the record notes the method, not the strokes.
+- **Time taken** runs from when the sum is first on screen (this session) to the Check. A reload starts the clock at the first attempt.
+- **Missed profit** is on the weekly decisions (from the Sunday review's sweep); a week or month period has none.
+
 ## 0g. Workbook v5.0 (13 Oct 2026): chapter 2, push 1 of 3 (revised Studio only)
 
 **What changed:**
