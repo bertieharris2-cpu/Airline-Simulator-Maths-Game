@@ -249,8 +249,12 @@ catering = [{'id': c['optionId'], 'name': c['name'], 'sellingPrice': c['sellingP
             for c in live('Catering', opt_sheet('Catering'))]
 all_hunts = opt_sheet('Hunts')
 # v4.6 (D60): the working methods the workbench offers for each relationship, by level
+# v5.1 (D75): each relationship's Bettws statement codes (WPS 3 + PFA), printed against every entry in the pupil record
+def codes(s): return [re.sub(r'\s*\(.*?\)', '', c).strip() for c in str(s or '').split('·') if c.strip()]
 workingMethods = [{'relationship': r['relationship'], 'level': r['level'], 'where': r.get('whereItLives'),
-                   'methods': [m.strip() for m in str(r.get('methodsOffered') or '').split('|') if m.strip()], 'example': r.get('example'), 'notes': r.get('notes')}
+                   'methods': [m.strip() for m in str(r.get('methodsOffered') or '').split('|') if m.strip()], 'example': r.get('example'),
+                   'notes': None if r.get('notes') == 'live' else r.get('notes'),   # v5.1's six new rows carry 'live' in the notes column
+                   'bettws': codes(r.get('bettwsStatements')), 'bettwsText': r.get('bettwsStatements')}
                   for r in opt_sheet('WorkingMethods') if r.get('relationship') and r.get('level')]
 if 'WorkingMethods' not in wb.sheetnames: issue('error', 'WorkingMethods', 'no WorkingMethods sheet: the workbench has no methods to offer.')
 # v4.10 (D66): the Operating Plan Studio's live tips, each a condition the game checks on the projected plan

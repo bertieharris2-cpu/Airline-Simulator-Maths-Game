@@ -203,17 +203,36 @@ R.takeoff = st => {
   if(running) takeoffRun(screen(), S.rnd.takeoff.at, finish);
 };
 function runwayHtml(I){ const f = ensureIdentity(I.f.uid ? I.f : Object.assign({ uid:0, planeId:'dhc6' }, I.f));
-  return `<div class="rw-sky"></div><div class="rw-ground"><div class="rw-strip"></div></div><div class="rw-plane">${aircraftArt(f, { cls:'anim' })}</div><div class="rw-cap"><b>${esc(I.code)}</b><span>${esc(homeData().code)} → ${esc(I.r ? (I.r.code || I.r.city) : '…')}</span><span class="rw-st">READY</span></div>`; }
-/* the same timeline in both windows: taxi in, line up, roll, rotate, climb out */
+  return `<div class="rw-sky"></div><div class="rw-ground"><div class="rw-strip"></div></div><div class="rw-plane" style="transform:translate3d(272%,0,0)">${aircraftArt(f, { cls:'anim' })}</div><div class="rw-cap"><b>${esc(I.code)}</b><span>${esc(homeData().code)} → ${esc(I.r ? (I.r.code || I.r.city) : '…')}</span><span class="rw-st">READY</span></div>`; }
+/* the same timeline in both windows: taxi in, line up, roll, rotate, climb out.
+   One continuous motion from the start time (no stop-start between stages): the plane eases to a stop at the holding point,
+   waits, then accelerates evenly down the runway; it rotates and climbs on a curve that starts level. Transforms only, drawn
+   each frame from S.rnd.takeoff.at, so a redrawn screen picks up where it was. */
+const TKO = { taxiEnd:0.30, roll:0.38, rotate:0.60, x0:1.25, xHold:0.60, xEnd:-0.55, climb:0.9, climbPow:1.6, pitch:13 };
+function takeoffPose(u){
+  const T = TKO, ease = v => 1 - Math.pow(1 - v, 3), smooth = v => v <= 0 ? 0 : v >= 1 ? 1 : v * v * (3 - 2 * v);
+  if(u < T.taxiEnd) return { x: T.x0 - (T.x0 - T.xHold) * ease(u / T.taxiEnd), y:0, a:0, o:1 };
+  if(u < T.roll) return { x:T.xHold, y:0, a:0, o:1 };
+  const v = (u - T.roll) / (1 - T.roll), vr = (T.rotate - T.roll) / (1 - T.roll), x = T.xHold - (T.xHold - T.xEnd) * v * v;
+  const y = v <= vr ? 0 : T.climb * Math.pow((v - vr) / (1 - vr), T.climbPow), a = T.pitch * smooth((v - vr) / 0.3), o = v < 0.9 ? 1 : Math.max(0, 1 - (v - 0.9) / 0.1);
+  return { x, y, a, o };
+}
 function takeoffRun(root, at, onDone){
-  const R0 = root.querySelector('.runway'); if(!R0) return; const total = takeoffSecs(), el = Math.max(0, (Date.now() - at) / 1000), rm = reducedMotion(), st = R0.querySelector('.rw-st');
-  const stage = (k, label) => { R0.classList.remove('taxi', 'roll', 'climb', 'gone'); R0.classList.add(k); if(st) st.textContent = label; };
-  R0._timers = (R0._timers || []); R0._timers.forEach(clearTimeout); R0._timers = [];
-  R0.style.setProperty('--tk', total.toFixed(2) + 's');
-  const t = (s, fn) => { const d = (s - el) * 1000; if(d <= 0) fn(); else R0._timers.push(setTimeout(fn, d)); };
-  if(rm || el >= total){ stage('gone', 'AIRBORNE'); if(onDone) onDone(); return; }
-  if(liveHere() && el < 0.5) takeoffSound(total);
-  stage('taxi', 'TAXI'); t(total * 0.36, () => stage('roll', 'TAKE-OFF')); t(total * 0.68, () => stage('climb', 'AIRBORNE')); t(total, () => { stage('gone', 'AIRBORNE'); if(onDone) onDone(); });
+  const R0 = root.querySelector('.runway'); if(!R0) return; const plane = R0.querySelector('.rw-plane'), total = takeoffSecs(), rm = reducedMotion(), st = R0.querySelector('.rw-st');
+  const stage = (k, label) => { if(R0.classList.contains(k)) return; R0.classList.remove('taxi', 'roll', 'climb', 'gone'); R0.classList.add(k); if(st) st.textContent = label; };
+  if(R0._raf) cancelAnimationFrame(R0._raf);
+  const el0 = Math.max(0, (Date.now() - at) / 1000);
+  if(rm || el0 >= total || !plane){ stage('gone', 'AIRBORNE'); if(onDone) onDone(); return; }
+  if(liveHere() && el0 < 0.5) takeoffSound(total);
+  const frame = () => {
+    if(!R0.isConnected) return;
+    const u = Math.min(1, Math.max(0, (Date.now() - at) / 1000 / total)), P = takeoffPose(u), W = R0.clientWidth, H = R0.clientHeight;
+    plane.style.transform = `translate3d(${(P.x * W).toFixed(1)}px,${(-P.y * H).toFixed(1)}px,0) rotate(${P.a.toFixed(2)}deg)`; plane.style.opacity = P.o.toFixed(3);
+    if(u < TKO.roll) stage('taxi', 'TAXI'); else if(u < TKO.rotate) stage('roll', 'TAKE-OFF'); else if(u < 1) stage('climb', 'AIRBORNE');
+    if(u >= 1){ stage('gone', 'AIRBORNE'); if(onDone) onDone(); return; }
+    R0._raf = requestAnimationFrame(frame);
+  };
+  frame();
 }
 /* engine spool-up (filtered noise and a rising tone), then the airport chime: nothing is downloaded */
 function takeoffSound(secs){
