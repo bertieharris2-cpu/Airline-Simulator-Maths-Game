@@ -3855,6 +3855,37 @@ body.desk .st-add{height:26px;line-height:26px;font-size:13px!important}
 .st-rv{padding:8px 12px}.st-rv .dk-pnl-h{margin:0}.st-rv .dk-pnl-h h2{font-size:15px}.st-rvf{margin:4px 0}.st-rvf b{font-size:17px}.st-rv .st-tips li{font-size:12px}
 .st-ad .ad-lane{height:46px}.st-tt{gap:4px}
 .st{position:relative}.st-how{position:absolute;top:46px;left:0;right:0;z-index:6;box-shadow:0 14px 34px rgba(0,0,0,.55);background:#0b1f40}
+
+/* the Operations Model: the plans as one row per route, so every control fits however many routes there are */
+.om-top,.om-bot{grid-template-columns:29fr 38fr 33fr}
+.om-pt.om-rows{table-layout:auto}
+.om-rows th,.om-rows td{padding:4px 4px}
+.om-rows thead th,.om-rows thead th:first-child{width:auto;font-size:12px;font-weight:600;color:#9fc0e8;text-align:left;white-space:normal;line-height:1.15;vertical-align:bottom}
+.om-rows thead th.om-c{text-align:center}
+.om-rows thead th .di{width:14px;height:14px;margin-right:4px;vertical-align:-2px;color:#7cc4ff}
+.om-rows tbody th{width:auto}
+.om-rows .om-rn{white-space:nowrap;position:relative;overflow:hidden}
+.om-rows .om-city{position:absolute;inset:0;height:auto;border:0;border-radius:0;opacity:.32;-webkit-mask-image:linear-gradient(90deg,#000 20%,transparent);mask-image:linear-gradient(90deg,#000 20%,transparent);pointer-events:none}
+.om-rc{position:relative;display:inline-flex;align-items:center;gap:5px;vertical-align:middle}.om-rc b{font-weight:600;color:#fff;font-size:13.5px}
+.om-rows .om-step{gap:4px}.om-rows .om-step b{min-width:34px;text-align:center}.om-rows .om-step button{width:24px;height:24px}
+.om-dp .om-sel{font-size:12.5px;padding:2px 1px}
+.om-ac .om-sel{max-width:118px}.om-ac .om-pl{white-space:normal;font-size:12px;line-height:1.2}
+.om-rows .om-step button{width:22px;height:22px;font-size:15px}.om-rows .om-step b{min-width:30px}
+.om-obl{display:flex;align-items:center;gap:8px;padding:7px 8px;font-size:13px;color:#a9c4e8}.om-obl .di{width:16px;height:16px;color:#7cc4ff}.om-obl .om-sel{min-width:180px}.om-obl b{color:#fff;font-weight:600}
+
+/* the timetable: only the aircraft rows scroll, so the header, the strip and the selected flight's buttons always show */
+.st-tt > .st-th,.st-tt > .st-stripw,.st-tt > .st-foot{flex:none}
+.st-tt > .st-ad{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+.st-tt > .st-ad > .ad-axis{position:sticky;top:0;z-index:4;background:#0a1b39}
+.st-tt > .st-tw{flex:1 1 auto;min-height:0;overflow:auto}
+.st-ad.many .ad-lane{height:42px}.st-ad.many .st-pn .ad-pic{width:40px}.st-ad.many .st-pn b{font-size:13px}.st-ad.many .st-pn small{font-size:10.5px}
+.st-ad.many .st-plane{flex-direction:row;align-items:center;gap:6px;flex-wrap:wrap;row-gap:1px}.st-ad.many .st-addf{font-size:11.5px;padding:1px 4px;max-width:120px}
+.st-ad.many .st-blk{padding:1px 6px!important}.st-ad.many .st-bt{font-size:11px}.st-ad.many .st-br{font-size:12px}
+.st-foot > .st-sel{flex:1;min-width:0}
+.st-sel .ad-selin{flex-wrap:nowrap;margin-left:0;padding-left:0;border-left:0}
+.st-sel .ad-sel-t{flex-direction:row;align-items:baseline;gap:8px;min-width:0;overflow:hidden}.st-sel .ad-sel-t .kl{font-size:11px;color:#7fb6ee}.st-sel .ad-sel-t b{font-size:14px;color:#fff}.st-sel .ad-sel-t small{font-size:12px;color:#9fbde3;overflow:hidden;text-overflow:ellipsis}
+.st-sel .btn{min-height:30px;flex:none}
+.st-sel .ad-del{font-size:12px;color:#9fbde3;white-space:nowrap}.st-sel .ad-del kbd{font:inherit;font-size:11.5px;padding:0 5px;border:1px solid #2b5c9e;border-radius:3px;background:#0a1a35;color:#eef5ff}
 </style>
 </head>
 <body>
@@ -12288,7 +12319,7 @@ function tlSelHtml(i, pl, L, j, k){
   const a = `${i}|${j}|${k}`;
   return `<span class="ad-selin"><span class="ad-sel-t"><span class="kl">Selected</span><b>${esc(r.city)} ${fmtTime(t.dep)}</b><small>back ${fmtTime(t.arr)} · ready ${fmtTime(t.arr + TIME.home(p))} · ${s.sold || 0}/${s.seats || p.seats} seats</small></span>
     <button class="btn" data-tlm="${a}|-20" aria-label="20 minutes earlier">&#9664; Earlier</button><button class="btn" data-tlm="${a}|20" aria-label="20 minutes later">Later &#9654;</button>
-    <button class="btn" data-tlsw="${a}" ${many ? '' : 'disabled'}>Swap route</button><button class="btn danger" data-tlrm="${a}">Remove</button>${i !== 9 ? `<button class="btn sc-open" data-svccard="${a}" title="This service's fuel, costs and profit">Service costs</button>` : ''}</span>`;
+    <button class="btn" data-tlsw="${a}" ${many ? '' : 'disabled'}>Swap route</button><button class="btn danger" data-tlrm="${a}">Remove</button><span class="ad-del">or press <kbd>Delete</kbd></span>${i !== 9 ? `<button class="btn sc-open" data-svccard="${a}" title="This service's fuel, costs and profit">Service costs</button>` : ''}</span>`;
 }
 function tlControlsHtml(){ return ''; }
 let tlDrag = null;
@@ -12299,7 +12330,7 @@ function bindTimeline(){
   root.querySelectorAll('[data-tlrm]').forEach(b => b.onclick = () => { const [i, j, k] = b.getAttribute('data-tlrm').split('|').map(Number); UI.tlSel = null; editPlan(i, 'del', k, 0, j); });
   root.querySelectorAll('.ad-blk').forEach(b => {
     const [i, j, k] = b.getAttribute('data-tl').split('|').map(Number), lane = b.closest('.ad-lane'), s0 = +lane.dataset.s0, span = +lane.dataset.span, locked = lane.classList.contains('locked');
-    b.onclick = e => { if(tlDrag && tlDrag.moved){ e.preventDefault(); return; } UI.tlSel = { i, j, k }; render(); };
+    b.onclick = e => { if(tlDrag && tlDrag.moved){ e.preventDefault(); return; } UI.tlSel = { i, j, k }; UI.tlFocus = true; render(); };   // keep the focus on the flight, so Delete removes it
     if(locked) return;
     b.onkeydown = e => { const dep = +b.dataset.dep;
       if(e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ e.preventDefault(); UI.tlFocus = true; moveService(i, j, k, dep + (e.key === 'ArrowLeft' ? -1 : 1) * (e.shiftKey ? 60 : PLW_SNAP)); }
@@ -12319,6 +12350,15 @@ function bindTimeline(){
   });
   if(UI.tlFocus){ UI.tlFocus = false; const el = root.querySelector('.ad-blk.on'); if(el) setTimeout(() => { try{ el.focus(); }catch(e){} }, 20); }
 }
+
+/* a selected flight: Delete or Backspace removes it and Escape lets go, even when the block has lost the focus (after a drag) */
+document.addEventListener('keydown', e => {
+  if(!UI.tlSel || e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+  const t = e.target, tag = t && t.tagName; if(tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+  const blk = screen().querySelector('.ad-blk.on[data-tl]'); if(!blk || blk.disabled || blk.closest('.ad-lane.locked')) return;
+  if(e.key === 'Delete' || e.key === 'Backspace'){ e.preventDefault(); const [i, j, k] = blk.getAttribute('data-tl').split('|').map(Number); UI.tlSel = null; editPlan(i, 'del', k, 0, j); }
+  else if(e.key === 'Escape'){ UI.tlSel = null; render(); }
+});
 
 /* ---------- on board ---------- */
 function onboardTiles(i, pl, o){
@@ -13398,8 +13438,6 @@ function omRoutes(pl){
 const omPlaneName = uid => { const f = S.fleet.find(z => z.uid === uid); return f ? shortPlane(planeById(f.planeId)) + (f.registration ? ` · ${f.registration}` : '') : ''; };
 function omPlanTable(pl, ids, edit){
   const R = omRoutes(pl), ob = ONBOARD[pl.onboard || 'none'] || ONBOARD.none;
-  const head = ids.map(id => { const r = routeById(id); return `<th class="om-c"><div class="om-city">${artCity(id)}<span>${flagSvg(r.flag, 18)}<b>${esc(r.city)}</b></span></div></th>`; }).join('');
-  const cell = (id, f) => `<td class="om-c">${f(R[id] || { id, n:0, deps:[], planes:[], at:[] }, routeById(id))}</td>`;
   const fare = (x, r) => { const v = pl.prices[r.id] || r.basePrice; return edit ? `<span class="om-step"><button data-mo="fare|${r.id}|-1" aria-label="Lower the ${esc(r.city)} fare">−</button><b>${money(v)}</b><button data-mo="fare|${r.id}|1" aria-label="Raise the ${esc(r.city)} fare">+</button></span>` : `<b>${money(v)}</b>`; };
   const svc = (x, r) => edit ? `<span class="om-step"><button data-mo="svc|${r.id}|-1" ${x.n ? '' : 'disabled'} aria-label="One fewer ${esc(r.city)} service">−</button><b>${x.n}</b><button data-mo="svc|${r.id}|1" aria-label="One more ${esc(r.city)} service">+</button></span>` : `<b>${x.n}</b>`;
   const deps = (x, r) => !x.n ? '<span class="muted">—</span>' : edit ? x.at.map((a, q) => { const lane = normPlan(pl).fleet[a.j], p = planeById(lane.planeId), trip = TIME.roundTrip(p, r), opts = []; for(let t = dayStart(); t + trip <= dayEnd(); t += 30) opts.push(t);
@@ -13407,14 +13445,13 @@ function omPlanTable(pl, ids, edit){
       return `<select class="om-sel" data-mdep="${a.j}|${a.k}" aria-label="${esc(r.city)} service ${q + 1} departs">${opts.map(t => `<option value="${t}" ${t === x.deps[q] ? 'selected' : ''}>${fmtTime(t)}</option>`).join('')}</select>`; }).join('') : x.deps.map(t => `<span class="om-t">${fmtTime(t)}</span>`).join('');
   const planes = (x, r) => { if(!edit || S.fleet.length < 2) return x.planes.length ? x.planes.map(u => `<span class="om-pl">${esc(omPlaneName(u))}</span>`).join('') : '<span class="muted">—</span>';
     const can = S.fleet.filter(f => planeCanFly(planeById(f.planeId), r)), cur = x.planes.length === 1 ? x.planes[0] : '';
-    return `<select class="om-sel" data-mpl="${r.id}" ${x.n ? '' : 'disabled'} aria-label="Aircraft for ${esc(r.city)}">${cur ? '' : '<option value="">mixed</option>'}${can.map(f => `<option value="${f.uid}" ${f.uid === cur ? 'selected' : ''}>${esc(omPlaneName(f.uid))}</option>`).join('')}</select>`; };
+    return `<select class="om-sel" data-mpl="${r.id}" ${x.n ? '' : 'disabled'} aria-label="Aircraft for ${esc(r.city)}">${cur ? '' : '<option value="">mixed</option>'}${can.map(f => `<option value="${f.uid}" ${f.uid === cur ? 'selected' : ''} title="${esc(omPlaneName(f.uid))}">${esc(S.fleet.filter(z => z.planeId === f.planeId).length > 1 ? omPlaneName(f.uid) : shortPlane(planeById(f.planeId)))}</option>`).join('')}</select>`; };
   const obCell = edit ? `<select class="om-sel" data-mob aria-label="On board">${Object.keys(ONBOARD).map(k => `<option value="${k}" ${k === (pl.onboard || 'none') ? 'selected' : ''}>${esc(ONBOARD[k].label)}</option>`).join('')}</select>` : `<b>${esc(ob.label)}</b>`;
-  return `<table class="om-pt"><thead><tr><th></th>${head}</tr></thead><tbody>
-    <tr><th>${ICO2.tag}Fare</th>${ids.map(id => cell(id, fare)).join('')}</tr>
-    <tr><th>${ICO2.plane}Services a day</th>${ids.map(id => cell(id, svc)).join('')}</tr>
-    <tr><th>${ICO2.clock}Departures</th>${ids.map(id => cell(id, deps)).join('')}</tr>
-    <tr><th>${ICO2.snack}On board</th><td class="om-c om-ob" colspan="${ids.length}">${obCell}</td></tr>
-    <tr><th>${ICO2.seat}Aircraft</th>${ids.map(id => cell(id, planes)).join('')}</tr></tbody></table>`;
+  const blank = id => ({ id, n:0, deps:[], planes:[], at:[] });
+  const rows = ids.map(id => { const r = routeById(id), x = R[id] || blank(id);
+    return `<tr><th class="om-rn"><span class="om-city">${artCity(id)}</span><span class="om-rc">${flagSvg(r.flag, 16)}<b>${esc(r.city)}</b></span></th><td class="om-c">${fare(x, r)}</td><td class="om-c">${svc(x, r)}</td><td class="om-dp">${deps(x, r)}</td><td class="om-ac">${planes(x, r)}</td></tr>`; }).join('');
+  return `<table class="om-pt om-rows"><thead><tr><th>Route</th><th class="om-c">${ICO2.tag}Fare</th><th class="om-c">${ICO2.plane}Services<br>a day</th><th>${ICO2.clock}Departures</th><th>${ICO2.seat}Aircraft</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="om-obl">${ICO2.snack}<span>On board</span>${obCell}</div>`;
 }
 function omResults(A, B){
   const lf = o => o.seats ? Math.round(100 * o.pax / o.seats) : 0, m = v => money(Math.round(v));
@@ -14342,9 +14379,9 @@ function studioLanes(i, pl, L){
         <span class="st-bt mono"><b>${fmtTime(t.dep)}</b>–${fmtTime(t.arr)}</span><span class="st-br">${flagSvg(r.flag, 13)} ${esc(r.city)}</span><span class="st-bf"><i style="width:${Math.round(100 * Math.min(1, sold / Math.max(1, seats)))}%"></i></span><span class="st-bs mono">${sold}/${seats}</span></button>`; }).join('') : '';
     const can = plannerOrder().filter(id => planeCanFly(p, routeById(id)));
     return `<div class="ad-ac st-row ${j === jSel ? 'sel' : ''}"><div class="st-plane"><button class="st-pn" data-stplane="${j}" title="Read the route cards for this aircraft">${planeMini(f || p, 'ad-pic')}<span><b>${esc(shortPlane(p))}</b><small>${esc(regOf(x.uid))} · ${p.seats} seats</small></span></button>
-        <select class="st-addf" data-addsel="${i}|${j}" ${x.sched.length < maxT ? '' : 'disabled'} aria-label="Add a flight to the ${esc(shortPlane(p))}"><option value="">${x.sched.length < maxT ? '+ Add flight…' : `${maxT} flights is the most`}</option>${can.map(id => `<option value="${id}">${esc(routeById(id).city)} · ${fmtDur(TIME.leg(p, routeById(id)))} each way</option>`).join('')}</select></div>
+        <select class="st-addf" data-addsel="${i}|${j}" ${x.sched.length < maxT ? '' : 'disabled'} aria-label="Add a flight to the ${esc(shortPlane(p))}"><option value="">${x.sched.length < maxT ? '+ Add flight…' : `Full: ${maxT} flights`}</option>${can.map(id => `<option value="${id}">${esc(routeById(id).city)} · ${fmtDur(TIME.leg(p, routeById(id)))} each way</option>`).join('')}</select></div>
       <div class="ad-lane" data-lane="${i}|${j}" data-s0="${s0}" data-span="${span}">${blocks || '<span class="ad-none muted">No flights yet: add one from a route card or the menu.</span>'}</div></div>`; }).join('');
-  return `<div class="ad st-ad"><div class="ad-axis"><span class="ad-lab"></span><div class="ad-ticks">${ticks.join('')}</div></div>${lanes}</div>`;
+  return `<div class="ad st-ad ${pl.fleet.length >= 3 ? 'many' : ''}"><div class="ad-axis"><span class="ad-lab"></span><div class="ad-ticks">${ticks.join('')}</div></div>${lanes}</div>`;
 }
 function studioTable(pl, L){
   const rows = pl.fleet.flatMap((x, j) => { const p = planeById(x.planeId), D = x.sched.length ? withPlan(pl, () => TIME.day(p, x.sched, undefined, x.deps || null)) : null; return D ? D.trips.map((t, k) => { const r = routeById(t.route), s = (L.services || []).find(z => z.uid === x.uid && z.k === k) || {}, seats = s.seats || p.seats, sold = s.sold || 0;
@@ -14422,13 +14459,13 @@ function renderStudio(st){
   const view = UI.stView || 'day', showDem = UI.stDemand !== false, sel = UI.tlSel && UI.tlSel.i === 0 ? UI.tlSel : null, sx = sel && pl.fleet[sel.j] && pl.fleet[sel.j].sched[sel.k];
   const obSel = snacksOn() ? `<label class="st-ob">On board <select id="stOb">${Object.keys(ONBOARD).map(k => `<option value="${k}" ${(pl.onboard || 'none') === k ? 'selected' : ''}>${esc(ONBOARD[k].label)}</option>`).join('')}</select></label>` : '';
   const legend = `<div class="st-legend"><span><i class="fill-good"></i>Good fill (${Math.round(fillGood() * 100)}% or more)</span><span><i class="fill-mid"></i>Medium (${Math.round(fillMid() * 100)}–${Math.round(fillGood() * 100) - 1}%)</span><span><i class="fill-low"></i>Low (under ${Math.round(fillMid() * 100)}%)</span><span class="muted">Each block: seats filled / seats on that plane</span></div>`;
-  const tt = `<section class="dk-pnl st-tt ${UI.stPulse === 2 ? 'pulse' : ''}"><div class="st-th"><div><h2 title="Drag a flight to move it, or press it to change it. The hatched gap is the turnaround.">Aircraft timetable</h2></div>${obSel}
+  const tt = `<section class="dk-pnl st-tt ${UI.stPulse === 2 ? 'pulse' : ''}"><div class="st-th"><div><h2 title="Drag a flight to move it, or press it to change it; Delete removes the flight you pressed. The hatched gap is the turnaround.">Aircraft timetable</h2></div>${obSel}
       <span class="plw-tools">${!setup || costed ? '<button class="btn small" id="ideaOpen" title="A test plan the model costs: no sums">Test an idea</button>' : ''}<button class="btn small" id="mapOpen" title="The network map: where the routes go">Network map</button></span>
       <span class="st-seg" role="group" aria-label="Timetable view"><button data-stview="day" aria-pressed="${view === 'day'}">Day view</button><button data-stview="table" aria-pressed="${view === 'table'}">Table view</button></span>
       <label class="st-tog"><input type="checkbox" id="stDem" ${showDem ? 'checked' : ''}> Show demand</label></div>
     ${view === 'day' ? `${showDem ? `<div class="st-stripw" id="stStrip">${stripHtml(pl, selR)}</div>` : ''}${studioLanes(0, pl, L)}` : studioTable(pl, L)}
     <div class="st-foot">${sx ? `<div class="st-sel">${tlSelHtml(0, pl, L, sel.j, sel.k)}</div>` : legend}</div></section>`;
-  const how = UI.stHow ? `<div class="st-how">${steps.map((t, k) => `<p><b>${k + 1}. ${esc(t)}.</b> ${['Pick a route card and press Add to schedule: the flight goes on the selected aircraft. Press an aircraft\'s name to choose which one.', 'Press a fare on a card. The numbers are the people who want to fly each day at that fare: a higher fare earns more for each seat, but fewer people fly.', 'Drag a flight along its row, or press it for Earlier, Later, Swap route and Remove. The strip above shows when people want to fly.', 'Read the live panel: passengers against seats, the money, and the tips. Green flights are nearly full; red ones are under half full.'][k]}</p>`).join('')}<button class="dk-link" id="stHowShut">Close</button></div>` : '';
+  const how = UI.stHow ? `<div class="st-how">${steps.map((t, k) => `<p><b>${k + 1}. ${esc(t)}.</b> ${['Pick a route card and press Add to schedule: the flight goes on the selected aircraft. Press an aircraft\'s name to choose which one.', 'Press a fare on a card. The numbers are the people who want to fly each day at that fare: a higher fare earns more for each seat, but fewer people fly.', 'Drag a flight along its row, or press it for Earlier, Later, Swap route and Remove (or press the Delete key). The strip above shows when people want to fly.', 'Read the live panel: passengers against seats, the money, and the tips. Green flights are nearly full; red ones are under half full.'][k]}</p>`).join('')}<button class="dk-link" id="stHowShut">Close</button></div>` : '';
   const body = `<div class="plw st">${stepBar}${how}<div class="st-top">${cards}${studioLive(pl, L, hid)}</div>${tt}</div>`;
   const nx = `<button class="btn primary big" id="nx" ${sched.length && L.fits ? '' : 'disabled'}>${!sched.length ? 'Add some flights' : !L.fits ? "Doesn't fit in the day" : costed ? goLabel('Ready to fly') : goLabel('Cost your plan')} &#9654;</button>`;
   screen().innerHTML = shell(deskPage({ title:'Operating Plan Studio', sub:`${esc(S.airline && S.airline.name ? S.airline.name : 'Your airline')} HQ · ${setup ? 'Launch Day' : 'the week of ' + dateShort(S.day)} · choose routes, set fares, build the timetable, see the seats fill`, cls:'st-page', body }),

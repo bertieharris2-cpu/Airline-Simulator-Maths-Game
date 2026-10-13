@@ -210,7 +210,7 @@ function tlSelHtml(i, pl, L, j, k){
   const a = `${i}|${j}|${k}`;
   return `<span class="ad-selin"><span class="ad-sel-t"><span class="kl">Selected</span><b>${esc(r.city)} ${fmtTime(t.dep)}</b><small>back ${fmtTime(t.arr)} · ready ${fmtTime(t.arr + TIME.home(p))} · ${s.sold || 0}/${s.seats || p.seats} seats</small></span>
     <button class="btn" data-tlm="${a}|-20" aria-label="20 minutes earlier">&#9664; Earlier</button><button class="btn" data-tlm="${a}|20" aria-label="20 minutes later">Later &#9654;</button>
-    <button class="btn" data-tlsw="${a}" ${many ? '' : 'disabled'}>Swap route</button><button class="btn danger" data-tlrm="${a}">Remove</button>${i !== 9 ? `<button class="btn sc-open" data-svccard="${a}" title="This service's fuel, costs and profit">Service costs</button>` : ''}</span>`;
+    <button class="btn" data-tlsw="${a}" ${many ? '' : 'disabled'}>Swap route</button><button class="btn danger" data-tlrm="${a}">Remove</button><span class="ad-del">or press <kbd>Delete</kbd></span>${i !== 9 ? `<button class="btn sc-open" data-svccard="${a}" title="This service's fuel, costs and profit">Service costs</button>` : ''}</span>`;
 }
 function tlControlsHtml(){ return ''; }
 let tlDrag = null;
@@ -221,7 +221,7 @@ function bindTimeline(){
   root.querySelectorAll('[data-tlrm]').forEach(b => b.onclick = () => { const [i, j, k] = b.getAttribute('data-tlrm').split('|').map(Number); UI.tlSel = null; editPlan(i, 'del', k, 0, j); });
   root.querySelectorAll('.ad-blk').forEach(b => {
     const [i, j, k] = b.getAttribute('data-tl').split('|').map(Number), lane = b.closest('.ad-lane'), s0 = +lane.dataset.s0, span = +lane.dataset.span, locked = lane.classList.contains('locked');
-    b.onclick = e => { if(tlDrag && tlDrag.moved){ e.preventDefault(); return; } UI.tlSel = { i, j, k }; render(); };
+    b.onclick = e => { if(tlDrag && tlDrag.moved){ e.preventDefault(); return; } UI.tlSel = { i, j, k }; UI.tlFocus = true; render(); };   // keep the focus on the flight, so Delete removes it
     if(locked) return;
     b.onkeydown = e => { const dep = +b.dataset.dep;
       if(e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ e.preventDefault(); UI.tlFocus = true; moveService(i, j, k, dep + (e.key === 'ArrowLeft' ? -1 : 1) * (e.shiftKey ? 60 : PLW_SNAP)); }
@@ -241,6 +241,15 @@ function bindTimeline(){
   });
   if(UI.tlFocus){ UI.tlFocus = false; const el = root.querySelector('.ad-blk.on'); if(el) setTimeout(() => { try{ el.focus(); }catch(e){} }, 20); }
 }
+
+/* a selected flight: Delete or Backspace removes it and Escape lets go, even when the block has lost the focus (after a drag) */
+document.addEventListener('keydown', e => {
+  if(!UI.tlSel || e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+  const t = e.target, tag = t && t.tagName; if(tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+  const blk = screen().querySelector('.ad-blk.on[data-tl]'); if(!blk || blk.disabled || blk.closest('.ad-lane.locked')) return;
+  if(e.key === 'Delete' || e.key === 'Backspace'){ e.preventDefault(); const [i, j, k] = blk.getAttribute('data-tl').split('|').map(Number); UI.tlSel = null; editPlan(i, 'del', k, 0, j); }
+  else if(e.key === 'Escape'){ UI.tlSel = null; render(); }
+});
 
 /* ---------- on board ---------- */
 function onboardTiles(i, pl, o){

@@ -8,6 +8,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 | File | What it is |
 | --- | --- |
 | `airline-opening-prototype.html` | **The active development version.** Chapter 1 of the workbook's story: Launch Day (Monday 2 September 2030) to the chapter review on 28 December 2030, paced by the workbook's Chapters, Calendar and Market sheets. See *Opening prototype* below. |
+| `airline-opening-prototype-v4.10-studio.html` | **Frozen copy** of the opening prototype as it was on 13 Oct 2026 (the v4.10 Operating Plan Studio), kept so the Studio Bertie liked stays playable while it is revised. Never rebuilt. |
 | `airline-simulator-full-reference.html` | **Frozen.** A snapshot of the complete simulator (weeks, months, later aircraft, international routes, storyline, awards, challenges). Critical fixes only until the opening is approved (so far: the full-screen button, which the teacher's triple-tap corner used to cover). |
 | `airline-simulator.html` | The complete game, identical to the full reference for now: the HQ (laptop) and the Operations Wall (IWB) in one file. Double-click to run in Edge/Chrome. No internet needed. |
 | `src/opening/` | **The prototype's source.** `parts/` holds the pieces (style, data, screens, script) that `build.py` joins into `airline-opening-prototype.html`; `tests/` holds the browser tests. Edit the parts, never the built file. See *Building and testing the prototype* below. |
@@ -21,6 +22,12 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 ## Opening prototype
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
+
+**v4.10.1 (13 Oct 2026): three fixes from Bertie's first go on the Studio.**
+- **The timetable's buttons stay on screen.** With three aircraft, the bar under the timetable (Earlier, Later, Swap route, Remove, Service costs) was cut off and the page could not scroll. Now only the aircraft rows scroll; the header, the demand strip and that bar always show, and three or more aircraft get tighter rows.
+- **Click a flight, press Delete.** A pressed flight keeps the keyboard focus, so Delete (or Backspace) removes it and Escape lets go. The bar says "or press Delete".
+- **The Operations Model's plans are one row per route** (Route · Fare · Services a day · Departures · Aircraft, then On board), so every button and menu fits however many routes there are. The panels are 29 : 38 : 33, giving the test plan the most room.
+- `airline-opening-prototype-v4.10-studio.html` is a frozen copy of the Studio as it was before these fixes.
 
 **Workbook v4.10 (13 Oct 2026): the Operating Plan Studio.** The Monday plan page rebuilt from Bertie's mock-ups and Fable's data appendix (D66; `src/opening/parts/p4zd_studio.js`).
 - **Four steps** across the top (Choose routes · Set fares · Place services · Review seat fill), ticked as they are done, with *How it works*.

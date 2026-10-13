@@ -29,8 +29,6 @@ function omRoutes(pl){
 const omPlaneName = uid => { const f = S.fleet.find(z => z.uid === uid); return f ? shortPlane(planeById(f.planeId)) + (f.registration ? ` · ${f.registration}` : '') : ''; };
 function omPlanTable(pl, ids, edit){
   const R = omRoutes(pl), ob = ONBOARD[pl.onboard || 'none'] || ONBOARD.none;
-  const head = ids.map(id => { const r = routeById(id); return `<th class="om-c"><div class="om-city">${artCity(id)}<span>${flagSvg(r.flag, 18)}<b>${esc(r.city)}</b></span></div></th>`; }).join('');
-  const cell = (id, f) => `<td class="om-c">${f(R[id] || { id, n:0, deps:[], planes:[], at:[] }, routeById(id))}</td>`;
   const fare = (x, r) => { const v = pl.prices[r.id] || r.basePrice; return edit ? `<span class="om-step"><button data-mo="fare|${r.id}|-1" aria-label="Lower the ${esc(r.city)} fare">−</button><b>${money(v)}</b><button data-mo="fare|${r.id}|1" aria-label="Raise the ${esc(r.city)} fare">+</button></span>` : `<b>${money(v)}</b>`; };
   const svc = (x, r) => edit ? `<span class="om-step"><button data-mo="svc|${r.id}|-1" ${x.n ? '' : 'disabled'} aria-label="One fewer ${esc(r.city)} service">−</button><b>${x.n}</b><button data-mo="svc|${r.id}|1" aria-label="One more ${esc(r.city)} service">+</button></span>` : `<b>${x.n}</b>`;
   const deps = (x, r) => !x.n ? '<span class="muted">—</span>' : edit ? x.at.map((a, q) => { const lane = normPlan(pl).fleet[a.j], p = planeById(lane.planeId), trip = TIME.roundTrip(p, r), opts = []; for(let t = dayStart(); t + trip <= dayEnd(); t += 30) opts.push(t);
@@ -38,14 +36,13 @@ function omPlanTable(pl, ids, edit){
       return `<select class="om-sel" data-mdep="${a.j}|${a.k}" aria-label="${esc(r.city)} service ${q + 1} departs">${opts.map(t => `<option value="${t}" ${t === x.deps[q] ? 'selected' : ''}>${fmtTime(t)}</option>`).join('')}</select>`; }).join('') : x.deps.map(t => `<span class="om-t">${fmtTime(t)}</span>`).join('');
   const planes = (x, r) => { if(!edit || S.fleet.length < 2) return x.planes.length ? x.planes.map(u => `<span class="om-pl">${esc(omPlaneName(u))}</span>`).join('') : '<span class="muted">—</span>';
     const can = S.fleet.filter(f => planeCanFly(planeById(f.planeId), r)), cur = x.planes.length === 1 ? x.planes[0] : '';
-    return `<select class="om-sel" data-mpl="${r.id}" ${x.n ? '' : 'disabled'} aria-label="Aircraft for ${esc(r.city)}">${cur ? '' : '<option value="">mixed</option>'}${can.map(f => `<option value="${f.uid}" ${f.uid === cur ? 'selected' : ''}>${esc(omPlaneName(f.uid))}</option>`).join('')}</select>`; };
+    return `<select class="om-sel" data-mpl="${r.id}" ${x.n ? '' : 'disabled'} aria-label="Aircraft for ${esc(r.city)}">${cur ? '' : '<option value="">mixed</option>'}${can.map(f => `<option value="${f.uid}" ${f.uid === cur ? 'selected' : ''} title="${esc(omPlaneName(f.uid))}">${esc(S.fleet.filter(z => z.planeId === f.planeId).length > 1 ? omPlaneName(f.uid) : shortPlane(planeById(f.planeId)))}</option>`).join('')}</select>`; };
   const obCell = edit ? `<select class="om-sel" data-mob aria-label="On board">${Object.keys(ONBOARD).map(k => `<option value="${k}" ${k === (pl.onboard || 'none') ? 'selected' : ''}>${esc(ONBOARD[k].label)}</option>`).join('')}</select>` : `<b>${esc(ob.label)}</b>`;
-  return `<table class="om-pt"><thead><tr><th></th>${head}</tr></thead><tbody>
-    <tr><th>${ICO2.tag}Fare</th>${ids.map(id => cell(id, fare)).join('')}</tr>
-    <tr><th>${ICO2.plane}Services a day</th>${ids.map(id => cell(id, svc)).join('')}</tr>
-    <tr><th>${ICO2.clock}Departures</th>${ids.map(id => cell(id, deps)).join('')}</tr>
-    <tr><th>${ICO2.snack}On board</th><td class="om-c om-ob" colspan="${ids.length}">${obCell}</td></tr>
-    <tr><th>${ICO2.seat}Aircraft</th>${ids.map(id => cell(id, planes)).join('')}</tr></tbody></table>`;
+  const blank = id => ({ id, n:0, deps:[], planes:[], at:[] });
+  const rows = ids.map(id => { const r = routeById(id), x = R[id] || blank(id);
+    return `<tr><th class="om-rn"><span class="om-city">${artCity(id)}</span><span class="om-rc">${flagSvg(r.flag, 16)}<b>${esc(r.city)}</b></span></th><td class="om-c">${fare(x, r)}</td><td class="om-c">${svc(x, r)}</td><td class="om-dp">${deps(x, r)}</td><td class="om-ac">${planes(x, r)}</td></tr>`; }).join('');
+  return `<table class="om-pt om-rows"><thead><tr><th>Route</th><th class="om-c">${ICO2.tag}Fare</th><th class="om-c">${ICO2.plane}Services<br>a day</th><th>${ICO2.clock}Departures</th><th>${ICO2.seat}Aircraft</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="om-obl">${ICO2.snack}<span>On board</span>${obCell}</div>`;
 }
 function omResults(A, B){
   const lf = o => o.seats ? Math.round(100 * o.pax / o.seats) : 0, m = v => money(Math.round(v));

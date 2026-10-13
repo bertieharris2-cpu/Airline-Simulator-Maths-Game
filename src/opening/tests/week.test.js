@@ -1,12 +1,12 @@
 // Run: NODE_PATH=<playwright node_modules> node week.test.js   (env: UPTO day, SHOTS=0, OUT, W, H)
 // Workbook v4.4: chapter 1 a week at a time. Launch Day plan + sums, the week on the board, the Sunday review, then the next Monday.
 const { chromium } = require('playwright');
-const path = require('path'), fs = require('fs'), FILE = 'file://' + path.resolve(__dirname, '../../../airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-week') + '/'; fs.mkdirSync(OUT, { recursive:true });
+const path = require('path'), fs = require('fs'), FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-week') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 15);
 const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
-  const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [];
+  let modelWide = false; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
@@ -155,6 +155,19 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       if(day === 15 && s.fleet.length > 1) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 });
       if(day === 22 && s.fleet.length > 2) await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 });
       if(day === 8 || day === 22){ await studioChecks('day ' + day); await shot(`d${day}-studio`); }
+      if(day === 22 && s.fleet.length > 2){   // three aircraft: the pressed flight's buttons stay on screen, and Delete removes it
+        const blks = await p.$$('.ad-blk[data-tl]'), n0 = blks.length; await blks[n0 - 1].click(); await p.waitForTimeout(150);
+        const rm = await p.evaluate(() => { const b = document.querySelector('[data-tlrm]'), tt = document.querySelector('.st-tt'); if(!b || !tt) return 'no Remove button'; const r = b.getBoundingClientRect(), q = tt.getBoundingClientRect(); return r.height > 0 && r.top >= q.top - 1 && r.bottom <= q.bottom + 1 && r.bottom <= innerHeight ? true : [r.top, r.bottom, q.top, q.bottom].map(Math.round).join(','); });
+        ok('day 22: with three aircraft, a pressed flight\'s Remove button is on screen', rm === true, rm); await shot('d22-studio-selected');
+        await p.keyboard.press('Delete'); await p.waitForTimeout(150);
+        ok('day 22: pressing a flight then the Delete key removes it', (await p.$$('.ad-blk[data-tl]')).length === n0 - 1 && !(await vis('[data-tlrm]')), (await p.$$('.ad-blk[data-tl]')).length + ' of ' + n0);
+        await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 }); }
+      if(day >= 50 && !modelWide && await vis('#ideaOpen')){ modelWide = true;   // the model page with six routes: every control inside its panel
+        await p.click('#ideaOpen'); await p.waitForTimeout(150);
+        for(const id of ['dub', 'fra', 'gva']) if(await p.$(`[data-madd] option[value="${id}"]`)){ await p.selectOption('[data-madd]', id); await p.waitForTimeout(150); }
+        const om = await p.evaluate(() => ['.om-cur', '.om-test'].map(sel => { const pn = document.querySelector(sel), R = pn.getBoundingClientRect(); return { rows:pn.querySelectorAll('tbody tr').length, wide:pn.scrollWidth > pn.clientWidth + 1, out:[...pn.querySelectorAll('button,select')].filter(e => { const q = e.getBoundingClientRect(); return q.width && (q.left < R.left - 1 || q.right > R.right + 1); }).length }; }));
+        ok(`plan ${day}: the model page shows every test-plan control with six routes (one row a route)`, om[1].rows >= 6 && om.every(x => !x.wide && !x.out), JSON.stringify(om)); await shot(`d${day}-model-wide`);
+        await p.click('#omReset'); await p.waitForTimeout(100); await p.click('#omClose'); await p.waitForTimeout(150); }
       if(day >= 3){ const q = await p.$('.fw-quick [data-fo]:nth-child(2)'); if(q) await q.click(); }
       if(await vis('.so-board-note')){ await shot(`d${day}-plan-board`); ok(`plan ${day}: the board holds the plan until something changes`, await p.$eval('#nx', e => e.disabled), await p.textContent('.so-board-note'));
         const f = (await S()).prices.par === 100 ? 90 : 100; await p.click(`[data-pe="0|fareTo|par|${f}"]`); await p.waitForTimeout(80); boards.push(day);

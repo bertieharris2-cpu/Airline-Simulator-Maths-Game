@@ -10,6 +10,19 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0e. v4.10.1 (13 Oct 2026): Studio fixes, and two parked thoughts
+
+**Fixed** (all three checked by `week.test.js`):
+- **The timetable's selected-flight bar was cut off with three aircraft.** `.st-tt` hid its overflow and could not scroll. Now only the aircraft rows (`.st-ad`) scroll, with a sticky time axis; three or more aircraft get tighter rows (`.st-ad.many`).
+- **Delete did nothing after clicking a flight.** The click re-rendered the page and the block lost focus. The block now keeps focus, and a document listener removes the selected flight on Delete/Backspace (Escape lets go) unless the pupil is typing in a field.
+- **The Operations Model's Test plan hid half its controls with six routes.** It had one column per route in a third-width panel. Both plans are now one row per route.
+
+**Parked by Bertie (to discuss with Fable, no change yet):**
+- The Studio is busy for dyslexic learners.
+- As the fleet grows, short-, medium- and long-haul could be separate views.
+
+Bertie's revised interaction brief takes both further. It is being built as a separate file, `airline-opening-studio-v2.html`, so the main game is untouched until he approves. Focus View and other accessibility options are parked for now. The v4.10 Studio is kept, byte for byte, as `airline-opening-prototype-v4.10-studio.html`.
+
 ## 0d. Workbook v4.10 (13 Oct 2026): the Operating Plan Studio
 
 `p4zd_studio.js`, after `p4zc_signoffs.js`:

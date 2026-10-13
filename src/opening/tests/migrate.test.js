@@ -1,7 +1,7 @@
 // Run: NODE_PATH=<playwright node_modules> node migrate.test.js   (env: OUT for screenshots)
 // Old save codes: the two real pupil codes (5–6 Oct and 7 Oct builds), a mid-day v5 save, a full-game code, and a current save (no change).
 const { chromium } = require('playwright');
-const fs = require('fs'), path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../../airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-migrate') + '/'; fs.mkdirSync(OUT, { recursive:true });
+const fs = require('fs'), path = require('path'), FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-migrate') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const FIX = n => fs.readFileSync(path.join(__dirname, 'fixtures', n), 'utf8').trim();
 const b64d = s => Buffer.from(s, 'base64').toString('utf8'), b64e = s => Buffer.from(s, 'utf8').toString('base64');
 const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) => `ASIM${v}.` + b64e(JSON.stringify(s));

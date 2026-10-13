@@ -1,9 +1,12 @@
-"""Builds airline-opening-prototype.html from the parts in this folder.
+"""Builds the game from the parts in this folder:
+
+    airline-opening-prototype.html   the game (the v4.10 Operating Plan Studio)
+    airline-opening-studio-v2.html   the same game with the revised Studio (p4ze_studio2.js + p1_head_studio2.css)
 
     python3 src/opening/build.py
 
 Checks every JSON data block and the JavaScript syntax (node --check), and lists in
-overrides.txt every function defined in more than one part (a later part wins).
+overrides.txt (overrides-studio-v2.txt) every function defined in more than one part (a later part wins).
 """
 import re, json, subprocess, os, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -39,17 +42,24 @@ p2 = p2.replace('<!--PHOTOS-->', '<script type="application/json" id="data-photo
 print(len(art), 'aircraft drawings;', len(photos), 'photos embedded' + ('; over 150 KB: ' + ', '.join(big) if big else ''))
 head = r('parts', 'p1_head.html')
 JS = ['p4a_core.js', '../engine/world-engine.js', 'p4a2_workbook.js', 'p4b_control.js', 'p4d_opening.js', 'p4e_toolkit.js', 'p4f_campaign.js', 'p4g_opening2.js', 'p4h_world.js', 'p4i_liveops.js', 'p4j_intro.js', 'p4k_chapter.js', 'p4l_handsums.js', 'p4m_fleet.js', 'p4n_weeks.js', 'p4o_review.js', 'p4p_identity.js', 'p4q_paint.js', 'p4r_showroom.js', 'p4s_practice.js', 'p4t_workout.js', 'p4u_migrate.js', 'p4v_week.js', 'p4w_planner.js', 'p4x_shell.js', 'p4y_desks.js', 'p4z_model.js', 'p4zb_decisions.js', 'p4zc_signoffs.js', 'p4zd_studio.js', 'p4c_display.js']
-out = head + p2 + p3 + ''.join(r('parts', f) for f in JS)
-seen = {}
-for f in JS:
-    for n in re.findall(r'^function\s+(\w+)\s*\(', r('parts', f), re.M): seen.setdefault(n, []).append(f)
-dups = {n: fs for n, fs in seen.items() if len(fs) > 1}
-open(os.path.join(HERE, 'overrides.txt'), 'w').write('\n'.join(f'{n}: {" -> ".join(fs)}' for n, fs in sorted(dups.items())) + '\n')
-print(len(dups), 'functions overridden by a later part (see overrides.txt)')
-for m in re.finditer(r'<script type="application/json" id="([^"]+)">(.*?)</script>', out, re.S):
-    json.loads(m.group(2))
-js = re.search(r'<script>\n(.*)</script>\s*</body>', out, re.S).group(1)
-with tempfile.NamedTemporaryFile('w', suffix='.js', delete=False) as t: t.write(js)
-subprocess.check_call(['node', '--check', t.name]); os.unlink(t.name)
-open(os.path.join(ROOT, 'airline-opening-prototype.html'), 'w', encoding='utf-8').write(out)
-print('built airline-opening-prototype.html,', len(out), 'bytes; JSON + syntax OK')
+def build(name, js_list, css='', ovr='overrides.txt'):
+    a, _, b = head.rpartition('</style>'); h = a + css + '</style>' + b if css else head
+    out = h + p2 + p3 + ''.join(r('parts', f) for f in js_list)
+    seen = {}
+    for f in js_list:
+        for n in re.findall(r'^function\s+(\w+)\s*\(', r('parts', f), re.M): seen.setdefault(n, []).append(f)
+    dups = {n: fs for n, fs in seen.items() if len(fs) > 1}
+    open(os.path.join(HERE, ovr), 'w').write('\n'.join(f'{n}: {" -> ".join(fs)}' for n, fs in sorted(dups.items())) + '\n')
+    print(len(dups), 'functions overridden by a later part (see %s)' % ovr)
+    for m in re.finditer(r'<script type="application/json" id="([^"]+)">(.*?)</script>', out, re.S):
+        json.loads(m.group(2))
+    js = re.search(r'<script>\n(.*)</script>\s*</body>', out, re.S).group(1)
+    with tempfile.NamedTemporaryFile('w', suffix='.js', delete=False) as t: t.write(js)
+    subprocess.check_call(['node', '--check', t.name]); os.unlink(t.name)
+    open(os.path.join(ROOT, name), 'w', encoding='utf-8').write(out)
+    print('built %s,' % name, len(out), 'bytes; JSON + syntax OK')
+
+build('airline-opening-prototype.html', JS)
+# the revised Studio: one more part before the display part, and its own styles; the main file is untouched by it
+if os.path.exists(os.path.join(HERE, 'parts', 'p4ze_studio2.js')):
+    build('airline-opening-studio-v2.html', JS[:-1] + ['p4ze_studio2.js'] + JS[-1:], r('parts', 'p1_head_studio2.css'), 'overrides-studio-v2.txt')

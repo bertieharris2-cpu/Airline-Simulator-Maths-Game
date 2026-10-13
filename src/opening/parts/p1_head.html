@@ -3855,5 +3855,36 @@ body.desk .st-add{height:26px;line-height:26px;font-size:13px!important}
 .st-rv{padding:8px 12px}.st-rv .dk-pnl-h{margin:0}.st-rv .dk-pnl-h h2{font-size:15px}.st-rvf{margin:4px 0}.st-rvf b{font-size:17px}.st-rv .st-tips li{font-size:12px}
 .st-ad .ad-lane{height:46px}.st-tt{gap:4px}
 .st{position:relative}.st-how{position:absolute;top:46px;left:0;right:0;z-index:6;box-shadow:0 14px 34px rgba(0,0,0,.55);background:#0b1f40}
+
+/* the Operations Model: the plans as one row per route, so every control fits however many routes there are */
+.om-top,.om-bot{grid-template-columns:29fr 38fr 33fr}
+.om-pt.om-rows{table-layout:auto}
+.om-rows th,.om-rows td{padding:4px 4px}
+.om-rows thead th,.om-rows thead th:first-child{width:auto;font-size:12px;font-weight:600;color:#9fc0e8;text-align:left;white-space:normal;line-height:1.15;vertical-align:bottom}
+.om-rows thead th.om-c{text-align:center}
+.om-rows thead th .di{width:14px;height:14px;margin-right:4px;vertical-align:-2px;color:#7cc4ff}
+.om-rows tbody th{width:auto}
+.om-rows .om-rn{white-space:nowrap;position:relative;overflow:hidden}
+.om-rows .om-city{position:absolute;inset:0;height:auto;border:0;border-radius:0;opacity:.32;-webkit-mask-image:linear-gradient(90deg,#000 20%,transparent);mask-image:linear-gradient(90deg,#000 20%,transparent);pointer-events:none}
+.om-rc{position:relative;display:inline-flex;align-items:center;gap:5px;vertical-align:middle}.om-rc b{font-weight:600;color:#fff;font-size:13.5px}
+.om-rows .om-step{gap:4px}.om-rows .om-step b{min-width:34px;text-align:center}.om-rows .om-step button{width:24px;height:24px}
+.om-dp .om-sel{font-size:12.5px;padding:2px 1px}
+.om-ac .om-sel{max-width:118px}.om-ac .om-pl{white-space:normal;font-size:12px;line-height:1.2}
+.om-rows .om-step button{width:22px;height:22px;font-size:15px}.om-rows .om-step b{min-width:30px}
+.om-obl{display:flex;align-items:center;gap:8px;padding:7px 8px;font-size:13px;color:#a9c4e8}.om-obl .di{width:16px;height:16px;color:#7cc4ff}.om-obl .om-sel{min-width:180px}.om-obl b{color:#fff;font-weight:600}
+
+/* the timetable: only the aircraft rows scroll, so the header, the strip and the selected flight's buttons always show */
+.st-tt > .st-th,.st-tt > .st-stripw,.st-tt > .st-foot{flex:none}
+.st-tt > .st-ad{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+.st-tt > .st-ad > .ad-axis{position:sticky;top:0;z-index:4;background:#0a1b39}
+.st-tt > .st-tw{flex:1 1 auto;min-height:0;overflow:auto}
+.st-ad.many .ad-lane{height:42px}.st-ad.many .st-pn .ad-pic{width:40px}.st-ad.many .st-pn b{font-size:13px}.st-ad.many .st-pn small{font-size:10.5px}
+.st-ad.many .st-plane{flex-direction:row;align-items:center;gap:6px;flex-wrap:wrap;row-gap:1px}.st-ad.many .st-addf{font-size:11.5px;padding:1px 4px;max-width:120px}
+.st-ad.many .st-blk{padding:1px 6px!important}.st-ad.many .st-bt{font-size:11px}.st-ad.many .st-br{font-size:12px}
+.st-foot > .st-sel{flex:1;min-width:0}
+.st-sel .ad-selin{flex-wrap:nowrap;margin-left:0;padding-left:0;border-left:0}
+.st-sel .ad-sel-t{flex-direction:row;align-items:baseline;gap:8px;min-width:0;overflow:hidden}.st-sel .ad-sel-t .kl{font-size:11px;color:#7fb6ee}.st-sel .ad-sel-t b{font-size:14px;color:#fff}.st-sel .ad-sel-t small{font-size:12px;color:#9fbde3;overflow:hidden;text-overflow:ellipsis}
+.st-sel .btn{min-height:30px;flex:none}
+.st-sel .ad-del{font-size:12px;color:#9fbde3;white-space:nowrap}.st-sel .ad-del kbd{font:inherit;font-size:11.5px;padding:0 5px;border:1px solid #2b5c9e;border-radius:3px;background:#0a1a35;color:#eef5ff}
 </style>
 </head>
