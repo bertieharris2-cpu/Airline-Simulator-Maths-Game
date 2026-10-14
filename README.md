@@ -7,7 +7,7 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 | File | What it is |
 | --- | --- |
-| `airline-opening-prototype.html` | **The game: the one file to open.** Launch Day (Monday 2 September 2030) through chapter 1 (to 28 December 2030), Christmas and New Year, and chapter 2 from 6 January 2031 (in progress). It has the revised Operating Plan Studio, Days on every flight, the pupil record, the Working pad and the shop under Fleet. Double-click to run in Edge or Chrome; no internet needed. Since 13 Oct 2026 this is the only game file (the revised Studio, once `airline-opening-studio-v2.html`, is now this file). |
+| `airline-opening-prototype.html` | **The game: the one file to open.** Launch Day (Monday 2 September 2030) through chapter 1 (to 28 December 2030), Christmas and New Year, chapter 2 (6 January to 31 August 2031) and chapter 3 to its review on 31 August 2032 (push 1 of 2). It has the revised Operating Plan Studio, Days on every flight, the pupil record, the Working pad and the shop under Fleet. Double-click to run in Edge or Chrome; no internet needed. Since 13 Oct 2026 this is the only game file (the revised Studio, once `airline-opening-studio-v2.html`, is now this file). |
 | `archive/` | Earlier versions, unchanged: the first full game (`airline-simulator.html` and its identical `airline-simulator-full-reference.html`) and the v4.10 Studio copy (`airline-opening-prototype-v4.10-studio.html`). See `archive/README.md`. |
 | `src/opening/` | **The prototype's source.** `parts/` holds the pieces (style, data, screens, script) that `build.py` joins into `airline-opening-prototype.html`; `tests/` holds the browser tests. Edit the parts, never the built file. See *Building and testing the prototype* below. |
 | `data/` | The world data built in Claude chat: `Airline-World-Workbook.xlsx` (v4.2: chapters, hand-sum rules, routes, aircraft, finance, calendar, market, events, catering, challenges, hunts), the Balance Reports in `data/balance/` (v2–v4.1) and `Change-Note-v4.md`. `Import-Report.md` is written by the importer: what loaded by status, every check, and the "Chapter 1 touches" (non-live values the chapter reads). |
@@ -86,6 +86,27 @@ The opening is being made excellent before the later campaign continues. `airlin
   - **The Captain's challenges** (one a term, optional): Challenge 1 (24 × 36 barrels, 10% off the next fuel purchase) first appears on Mon 13 Jan; Challenge 2 (648 ÷ 6 sandwiches, +½★) on Mon 21 Apr. Have a go or Not today; after Not today a Captain's challenge button waits on HQ. The answer box has the Working pad; a wrong answer is a Query with an estimate. The fuel desk shows the discount waiting, then used.
   - **The hunts** ("Spot the mistake"): the fuel invoice on Mon 21 Apr (three lines; the total, 14,000 L × £2.04, is shown as £29,560) and the year-1 accounts on the 31 August review (New York 200 × £510 shown as £104,000). He taps This is wrong on a line, then types what it should say (with the Working pad); Everything is right counts as missed. A missed invoice costs £1,000 and gets a second look at the start of May (found: £1,000 back). A missed year-1 hunt puts a note on chapter 2's end card: chapter 3's cash forecast starts £1,000 out. Challenges and hunts go into the pupil record.
   - **Tested** by `chapter2.test.js` to the chapter 2 review (31 August 2031), with different choices for `TYPE=value` and `TYPE=premium`. Screenshots are in `docs/screenshots/chapter2/push3-*`. Notes for Fable: `docs/Chapter-2-Push-3-Notes.md`.
+
+**Workbook v5.4: chapter 3, Owning, push 1 of 2 (D78–D81, Fable's note of 14 Oct 2026)** (`src/opening/parts/p4zo_ch3money.js`; the beats in `p4zg_chapter2.js`). Notes for Fable: `docs/Chapter-3-Push-1-Notes.md`.
+- **The year.**
+  - Chapter 2's end card has **On to chapter 3**. Monday 1 September 2031 is chapter 3's first day: no day flies by itself.
+  - Days 365–371 are played one at a time (the Calendar's rows), then months from Monday 8 September to the **chapter 3 review on 31 August 2032**.
+  - The chapter's rules (bags, closures, months that pause, the Monday landing fee) carry on from chapter 2.
+- **Day 365:** HQ, *What's new: Buying big planes, and the overdraft*, the bank's **overdraft offer** (accept / decline for now, from the EventOptions rows), **How many weeks until we can afford it?**, the air show (the A340, 777 and A350 are new; prices from the 757 up doubled: 787 £12m), then the plan.
+- **The overdraft.**
+  - Before 1 September the £1,000 reserve holds. From then the floor is −(one week's average profit) when accepted, and £0 while declined.
+  - Purchases, rentals and fuel orders that would go below the floor are greyed with the reason. The plan always flies, and there are no free bank top-ups now.
+  - The header and the Finance desk's statement say **Overdrawn £X of £Y**. Two month-ends overdrawn make that month's audit a board review.
+  - After declining, **Accept the overdraft** is on the Finance desk.
+- **The Fleet desk.**
+  - **Buy it** on a rented plane: the list price. The rent stops that day. When cash would go below zero, the cash after is a negative-cash sum to sign first.
+  - **Hand back on 30 Sep:** the rent stops after the month's last day, and the plane leaves at the next beat. No charge; owned planes cannot be sold.
+- **Time to afford in weeks:** (price − cash) ÷ profit a week, to the nearest £1,000. Step 1 is the subtraction with millions, step 2 the division rounded up, each with the Working pad. Calculate on day 365, Build on later visits to the shop, with **Save for it** counting down in weeks.
+- **A missed year-1 hunt:** the cash figure reads £2,000 high from 1 September until the first month-end audit corrects it and says why.
+- **The review:** the year-2 accounts month by month, with the average month as a Build; then the A380 offer for chapter 4 and the next investment in weeks. The end card names chapter 4 (not built yet).
+- **Routes:** Tokyo and Cape Town from 1 September and Singapore from 27 October are overnight rotations. Sydney (two legs via Singapore) waits for push 2, with storm 2, the second ash cloud, the landing-fee card's return, challenges 3–4, hunts h3–h4 and percentage change.
+- **Tested** by `chapter3.test.js` from a chapter 2 end save to the review: `TYPE=value` 60 checks and `TYPE=premium` 70, 0 failures. Screenshots are in `docs/screenshots/chapter3/push1-*`.
+- **Overnight routes on the plan:** a planning day shows a 2-day rotation on its way out (its passengers, fares and costs, and its Service Cost Breakdown). Before, a plan day on the way home showed the service empty. The simulated days still alternate.
 
 **Workbook v5.2: chapter 1 is buy only (D76, Fable's note of 13 Oct 2026)** (`src/opening/parts/p4zm_buyonly.js`):
 - **No renting or finance before 6 January 2031** (`chapter1BuyOnly`, `leaseFromDate`). The shop sells, and the Rent and Finance buttons, the launch-deal finance rows and the week-2 rent-or-buy sum are gone. Renting opens in January with the long-haul planes, where rent-or-buy is first met. Finance waits for `financeFromDate` (chapter 4). The second Twin Otter is £10,000.
@@ -338,6 +359,11 @@ The opening is being made excellent before the later campaign continues. `airlin
     - then the weeks and months to `UPTO` (default 400: the chapter 2 review, with its accounts and the end card).
     - push 2: the star rating card, the type page (`TYPE=value|premium|full`, default value) and its fare gating, the sign-offs under the cap (the estimate first, the bag fee in two steps), the Bags line, and Thursday's confirmation.
     - push 3: every event's choice (Value and Premium choose differently), April paused on 2, 14 and 21 April, the ash cloud's closure or the long way round, the landing fees every Monday, the challenges (Value says Not today, then plays Challenge 1 from HQ), the hunts (Value finds both; Premium misses the invoice, finds it in May, and misses the year-1 accounts), the board's request for a changed plan, and the chapter 2 accounts.
+  - `TYPE=value|premium node src/opening/tests/chapter3.test.js` carries on from a save at chapter 2's end card. Make it with `TYPE=<type> SAVE=/tmp/airline-ch2-end-<type>.txt node chapter2.test.js`, or pass `CODE=<file>`. The test plays:
+    - the end card's On to chapter 3, the overdraft offer (Value accepts, Premium declines), and the weekly time to afford with its Queries and the pad;
+    - Value buying its rented 757 on day 365 (the negative-cash sum at a forced cash level, the rent stopped), the blocks at the limit (a purchase, the fuel desk), "Overdrawn £X of £Y", and two overdrawn month-ends making a board review;
+    - Premium handing its 757 back at the end of September, the missed-h1 £2,000 and its correction, and a Build time to afford on the A350;
+    - Tokyo's overnight rotation, Singapore from day 421, Sydney shut, and the months to the review (accounts with the mean, the A380 offer, the end card).
   - `node src/opening/tests/record.test.js` (`GAME` either file) checks the pupil record:
     - on Launch Day it types a long multiplication into the column template digit by digit, one line off by a carry, then right;
     - it checks that both attempts are kept cell by cell, with the note and the codes;
@@ -475,6 +501,7 @@ Market rules (in the engine, published on screen): demand falls by `drop` passen
 
 - [x] Working out the time of each flight (distance ÷ speed) arrives with Madrid on day 15.
 - [x] Chapter 2 (6 January 2031 to 31 August 2031): long haul, leasing, reputation live, the airline type, events with options, the news, the Captain's challenges and the hunts (pushes 1–3).
+- [ ] Chapter 3 (1 September 2031 to 31 August 2032): push 1 done (the year, the overdraft, owning and handing back, time to afford in weeks, the review); push 2 to come (Sydney, storm 2 and ash cloud 2, challenges 3–4, hunts h3–h4, percentage change).
 - [ ] Decisions for Fable in `docs/Workbook-v4-Report-Back.md` (the review day, rule 2 on day 4, the fault's options, the price war, Istanbul's archetype, Reykjavik's fares).
 - [ ] Step 3: the commissioning loop for new planes (configure, route, timetable, launch week, review, "Regular service approved"), story callbacks (`S.flags` already records each event choice) and a multi-award finale.
 - [ ] Tune Year 2 (long-haul) numbers with real play.

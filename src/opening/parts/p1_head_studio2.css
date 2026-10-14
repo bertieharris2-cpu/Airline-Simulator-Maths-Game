@@ -231,3 +231,11 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .hunt-carry{margin-top:12px;padding:8px 12px;border-left:4px solid var(--dk-amber);background:rgba(255,181,71,.1)}
 .dr-why{margin:6px 0 8px;padding:6px 10px;border-left:4px solid var(--dk-amber);background:rgba(255,181,71,.08);font-size:14px}.dr-why p{margin:3px 0}
 .cap-try .sc-msg.won{color:var(--dk-mint)}
+/* chapter 3, push 1: owning (buy the plane you rent, hand a lease back), the statement and the overdraft, weeks to wait, the year-2 review */
+.fa-own{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fa-own .chip.warn{background:rgba(255,181,71,.16);color:#ffe2b3;border:1px solid rgba(255,181,71,.5)}
+.od-st .od-big{font-size:26px;font-weight:700;margin:2px 0 6px}.od-st .od-big.red,.dk-cash b.red{color:#ff8a7a}.od-st .muted{max-width:760px}
+.od-letter{margin-top:10px;padding:8px 12px;border-left:4px solid #ff8a7a;background:rgba(255,138,122,.1)}
+.h1-fix{margin-top:10px;padding:8px 12px;border-left:4px solid var(--dk-amber);background:rgba(255,181,71,.1)}
+.taw-page .dk-t tr.on td{background:rgba(255,200,61,.1)}.taw-page .dk-t .good{color:var(--dk-mint)}
+.ta-save{margin:-2px 0 12px}.neg-card .sc-note{margin-top:6px}
+.ch4-card{margin-top:10px;border-color:#ffc83d}.ch4-card .wr-l{margin:6px 0}

@@ -172,7 +172,7 @@ function typeCardHtml(t, picked, eg){
 }
 function typePageBody(pick, intro){
   const r = routeById('nyc') || WORLD.routes.find(x => x.wb), grid = `<div class="ty-g">${['premium', 'full', 'value'].map(t => typeCardHtml(t, pick === t, r)).join('')}</div>`;
-  return `${intro}${grid}<p class="ty-note">${esc(`The full profiles of each type arrive at the August review. For now the type changes your fare menu, how fast your stars move, and the bag fee.`)}</p>`;
+  return `${intro}${grid}<p class="ty-note">${esc(`The type changes your fare menu, how fast your stars move, and the bag fee. These are the type's rules for good (D77).`)}</p>`;
 }
 R.atype = st => {
   const pick = airlineType(), d = typeConfirmDay();

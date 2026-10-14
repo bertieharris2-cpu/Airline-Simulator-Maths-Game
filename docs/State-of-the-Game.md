@@ -10,6 +10,80 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0m. Workbook v5.4 (14 Oct 2026): chapter 3 "Owning", push 1 — the year to 31 August 2032, the overdraft, owning and handing back
+
+**Data.** Workbook v5.4 (v5.3 plus Fable's note D81) is installed.
+- `tools/import_world.py` reads:
+  - the new **EventOptions** sheet into `eventOptions[eventId]`;
+  - `Routes.legs` (parsed to `[{km, from, to}]`) and `rotationDays`;
+  - `Challenges.rewardShareOrStars` into `rewardShare` (`{share}` or `{stars}`);
+  - `chapterPreview` (chapters not built: name, start, idea);
+  - `eventPreview` (the offer that opens such a chapter: the A380).
+- New checks:
+  - EventOptions' event ids, option numbers, and cash versus costShare by day 29;
+  - the legs add up to the distance, and `rotationDays` matches the rotation;
+  - Finance price ÷ lease = 2,000 for big planes (D78);
+  - an Events/Calendar date clash within a week is a "check" (the Calendar wins).
+- The report has a **Chapter 3 touches** section.
+
+**Beats** (`p4zg_chapter2.js`, now every chapter). `chapterBeats(CH, R, prev)` replaces `chapter2Beats`:
+- a holiday only when the chapter starts after the day following the last review;
+- the Calendar's days;
+- weeks only when `runCadence` is not `month`;
+- then months, and the review.
+
+So chapter 3 is:
+- days 365–371 one at a time;
+- months from 8 Sep (8–30 Sep, then 1 Oct … 1–30 Aug);
+- the review on Tue 31 Aug 2032 (day 730).
+
+Also in `p4zg`:
+- `CH_SPANS` gets every chapter with Calendar rows.
+- `closeDayWeek`'s "Sunday review → the next beat" applies to chapters ≥ 2.
+- Chapter 2's end card has **On to chapter 3** (`startProtoDay(365)`), read from the Chapters row. `nextChapterOf(n)` and `chapterHook()` name the next chapter, built or not.
+- `marketWeekOf` falls back to the last live week for the week after it (week 105 is still `later`).
+
+**Money rules** (`p4zo_ch3money.js`, after `p4zn`; reassignments only, `overrides.txt` unchanged at 120):
+- **EventOptions.**
+  - `ch2Event` takes each option's label, sub-line, costShare and stars from the rows; `CH2_OPT` keeps the mechanics by option number. `ch2Price` adds the stars to the sub-line, and `ch2PatchBeats()` is run again.
+  - `rowEvent(id)` builds `overdraft_offer` from its two rows (`ROW_EVENTS`).
+  - Chapter 1's events are unchanged (Bertie, 14 Oct).
+- **Overdraft.**
+  - `S.od = {on, limit, since, declined}`. `cashFloor()` is `cashReserve` before `overdraftFromDate`; after it, −limit when accepted and £0 when declined. `WORLD.cashReserve` is a getter for it, so `saveUp`, `shopOffer`, `R.acquire`, `fdMaxBlocks` and `reserveState` block at the floor.
+  - `odLimitNow()` is the last 28 days' profit ÷ 4, to £100, refreshed at each beat.
+  - `bankCheck` lends nothing from 1 Sep 2031.
+  - `reserveState` blocks only a fuel order beyond the floor, so the plan always flies.
+  - `reserveWords()` replaces "Keep £1,000 back".
+  - "Overdrawn £X of £Y" appears in the header (`updateTopBar`) and the Finance desk's statement (`odStatementHtml`, with **Accept the overdraft** after declining).
+  - `soAuditData` sets `board` when the last two month-ends were overdrawn (`odMonthEnds`), and `R.audit` says why.
+- **Buy a rented plane / hand a lease back.**
+  - `fleetHtml` adds **Buy it: £price** and **Hand back on <month end>** / **Keep it** to each rented plane.
+  - `R.ov_buyLeased` is the confirm page: price, rent, rent-or-buy days, and cash after. When cash goes below zero the cash after is a negative-cash sum (`negcash`, NCP-3-03).
+  - `buyLeasedNow` sets `terms = {kind:'buy', was:'lease'}`.
+  - `f.returnOn` = the month's last day; `leaseReturnsDue` removes the plane at the next beat (`handBackNow`: fleet, `S.returned`, `S.ch3Log`, news, record).
+- **Time to afford in weeks.**
+  - `taFigW` works to the nearest £1,000, with profit a week = the last 28 days ÷ 4. `taCardW`/`taBindW` are the weekly card (Calculate in two steps, or Build).
+  - The **afford3** step comes on day 365 after the overdraft offer and before the air show; the target is the cheapest plane he can't afford.
+  - Later, the Buy-or-rent page shows the card (Build once met) and **Save for it**; `waitLine` counts down in weeks.
+- **Missed h1.** `S.ch3Forecast.out` (now £2,000 from the data): `shownCash()` = cash + £2,000 from day 365 until the first month-end audit, which corrects it (`.h1-fix`). There is a fallback if audits are off.
+- **Rotations on a planning page.** `rotOut` returns true when no day is being simulated (`SIM_DAY` null), so the plan and its Service Cost Breakdown show an overnight rotation on its way out; simulated days still alternate. This fixes a plan day on the way home showing the service empty (£0 of tickets).
+- **Day 365.**
+  - `daySteps`: HQ, What's new (`INTRO.owning`), the overdraft offer, afford3, the air show, the plan.
+  - `routeOpen` keeps two-leg routes shut (Sydney, push 2).
+- **The review.** `chapterReviewItems` adds **The average month** (Build) from chapter 3. `renderChapterReviewBuild` adds the A380 offer card (`offerCardHtml`) and the next investment (`nextInvestment`). The end card names chapter 4 (not built yet).
+- **Other.**
+  - The light airline types are permanent (D77): the type page's note changed.
+  - `secondCrewCost` (£250) is live, so a short-haul second crew costs £250, not the engine's £300.
+  - `REC_REL` gains `timeToAffordWeekly`, `negCash` and `rentOrBuyJet` ("rent-or-buy at jet prices", in chapter 3).
+
+**Tests.**
+- `chapter2.test.js` now expects:
+  - the EventOptions labels;
+  - h1's £2,000;
+  - "Chapter 3, Owning, opens on Monday 1 September 2031";
+  - the On to chapter 3 button.
+- The new `chapter3.test.js` runs from a chapter 2 end save to the review (see `docs/Chapter-3-Push-1-Notes.md`).
+
 ## 0l. Workbook v5.2 (14 Oct 2026): chapter 2 push 3 — events with options, the news, the Captain's challenges, the hunts
 
 **What changed** (`p4zn_ch2events.js`, after `p4zm_buyonly` in the build; reassignments only, `overrides.txt` unchanged at 120):

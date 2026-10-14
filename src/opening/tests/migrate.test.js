@@ -94,7 +94,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
   { const s = decode(v4); s.home = 'cwl'; delete s.market; delete s.toolSeen; delete s.deps; s.fleet.push({ uid:2, planeId:'conc', route:'syd', schedule:['syd'], layout:'standard', grounded:false }); s.prices.syd = 600;
     await fresh(); await loadViaPanel(encode(4, s)); const a = await S(), m = a.migrated || {};
     ok('full game: recognised and landed', m.from === 'full-game' && a.day === 16 && await T() === 'hq' && a.home === 'lhr', [m.from, a.day, a.home]);
-    ok('full game: the Concorde and Sydney are replaced with a note', a.fleet.length === 2 && a.fleet[1].planeId === 'dhc6' && a.fleet[1].schedule.join() === 'dub' && !a.prices.syd && m.notes.some(n => /conc/.test(n)) && m.notes.some(n => /SYD|Sydney/.test(n)), [a.fleet[1], m.notes]);
+    ok('full game: the Concorde and Sydney are replaced with a note', a.fleet.length === 2 && a.fleet[1].planeId === 'dhc6' && a.fleet[1].schedule.join() === 'dub' && !a.fleet.some(f => (f.schedule || []).includes('syd')) && m.notes.some(n => /conc/.test(n)) && m.notes.some(n => /SYD|Sydney/.test(n)), [a.fleet[1], m.notes]);
     const r = await playDay('full-game'); ok('full game: the day completes onto the board', r.seen.includes('next-day board'), r.seen); }
 
   // 5. a current save is untouched; loading an old code twice gives the same landing

@@ -55,7 +55,7 @@ function fleetShopHtml(){
   const rows = list.map(p => { const o = shopOffer(p); return `<div class="fs-row"><b>${esc(p.name)}</b><span>${p.seats} seats</span>${rent ? `<span>${o.canLease ? `${money(o.lease)} a day to rent` : '—'}</span>` : ''}<span>${o.buyOffered ? `${money(o.price)} to buy` : 'not for sale yet'}</span></div>`; }).join('');
   return `<section class="hp fs-shop">${hqHead('Add an aircraft', list.length ? `${list.length} IN THE SHOP` : 'SHOP CLOSED')}<div class="pb">
     ${rows ? `<div class="fs-list">${rows}</div>` : ''}
-    <div class="fs-act"><button class="btn primary" id="fleetShop" ${why ? 'disabled' : ''}>${shopVerb()} an aircraft &#9654;</button><span class="muted">${esc(why || `Cash ${money(cash)}. Keep ${money(WORLD.cashReserve || 0)} back for emergencies. You will see the sums before you decide.`)}</span></div></div></section>`;
+    <div class="fs-act"><button class="btn primary" id="fleetShop" ${why ? 'disabled' : ''}>${shopVerb()} an aircraft &#9654;</button><span class="muted">${esc(why || `Cash ${money(cash)}. ${reserveWords()} You will see the sums before you decide.`)}</span></div></div></section>`;
 }
 const renderViewFS0 = renderView;
 renderView = function(v){

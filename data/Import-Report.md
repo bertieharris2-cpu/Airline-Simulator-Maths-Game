@@ -1,41 +1,51 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 13 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 14 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 6 to check, 6 notes.**
+**0 to fix, 15 to check, 7 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 112 | 112 live, 8 placeholder |
+| Settings | 122 | 122 live, 9 placeholder |
 | Archetypes | 5 | 2 later, 5 live |
-| Routes | 23 | 23 live |
-| RouteCatalogue | 0 | 17 moved to Routes, 4 placeholder |
-| Aircraft | 10 | 5 later, 10 live, 1 note row, 1 removed |
-| Finance | 10 | 5 later, 10 live, 2 note row |
+| Routes | 27 | 27 live |
+| RouteCatalogue | 0 | 21 moved to Routes |
+| Aircraft | 13 | 2 later, 13 live, 1 note row, 1 removed |
+| Finance | 13 | 2 later, 13 live, 2 note row |
 | Airports | 1 | 1 later, 1 live, 3 removed |
-| Calendar | 35 | 35 live |
-| Market | 52 | 364 later, 52 live |
-| Events | 24 rows → 18 events | 5 later, 24 live, 7 placeholder, 2 removed |
-| Challenges | 2 | 2 live, 6 placeholder |
-| Mechanics | 13 | 5 later, 13 live, 2 placeholder |
-| Chapters | 2 | 3 later, 2 live, 1 note row, 1 placeholder |
+| Calendar | 42 | 42 live |
+| Market | 104 | 312 later, 104 live |
+| Events | 29 rows → 23 events | 4 later, 29 live, 3 placeholder, 2 removed |
+| EventOptions | 37 | 37 live, 1 note row |
+| Challenges | 4 | 4 live, 4 placeholder |
+| Mechanics | 15 | 5 later, 15 live |
+| Chapters | 3 | 3 later, 3 live, 1 note row |
 | HandSumRules | 11 | 11 live, 1 note row |
 | Catering | 4 | 4 live, 1 note row |
 | PlanTips | 12 | 12 live, 1 note row |
-| RouteNews | 32 | 32 live, 1 note row |
+| RouteNews | 54 | 54 live, 1 note row |
 | Livery | 35 | 35 live, 1 note row |
-| Hunts | 2 | 2 live, 1 note row, 5 placeholder |
+| Hunts | 4 | 4 live, 1 note row, 3 placeholder |
 
 ## To check
 
+- **Events:** "overdraft_offer" is dated 2031-09-02, but the Calendar puts it on day 365 (2031-09-01). The game follows the Calendar.
+- **Finance:** a220: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
+- **Finance:** a320: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
+- **Finance:** b737: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
 - **Market:** week 19 fuel is £2.16, but the Calendar has £2.17 on its days. Time skips use the Market price, so the two should agree.
+- **Market:** week 53 fuel is £2.20, but the Calendar has £2.24 on its days. Time skips use the Market price, so the two should agree.
 - **Routes:** ist is loaded, but its archetype "long_haul_mixed" is not live. The game uses the route's own demand table and applies no business/leisure or season multipliers to it.
-- **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Boeing 787 Dreamliner 20 min, Embraer E175 20 min, Boeing 757 20 min.
-- **Routes:** yyz (5700 km): legs not on a quarter hour: Saab 340 760 min, ATR 72 760 min, Embraer E190 380 min, Airbus A220 380 min, Airbus A320 380 min, Boeing 737 380 min, Boeing 787 Dreamliner 380 min, Embraer E175 380 min, Boeing 757 380 min.
-- **Routes:** los (5000 km): legs not on a quarter hour: DHC-6 Twin Otter 1000 min, Saab 340 667 min, ATR 72 667 min, Embraer E190 333 min, Airbus A220 333 min, Airbus A320 333 min, Boeing 737 333 min, Boeing 787 Dreamliner 333 min, Embraer E175 333 min, Boeing 757 333 min.
-- **Routes:** del (6700 km): legs not on a quarter hour: DHC-6 Twin Otter 1340 min, Saab 340 893 min, ATR 72 893 min, Embraer E190 447 min, Airbus A220 447 min, Airbus A320 447 min, Boeing 737 447 min, Boeing 787 Dreamliner 447 min, Embraer E175 447 min, Boeing 757 447 min.
+- **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Boeing 787 Dreamliner 20 min, Airbus A350 20 min, Embraer E175 20 min, Boeing 757 20 min, Airbus A340 20 min, Boeing 777 20 min.
+- **Routes:** yyz (5700 km): legs not on a quarter hour: Saab 340 760 min, ATR 72 760 min, Embraer E190 380 min, Airbus A220 380 min, Airbus A320 380 min, Boeing 737 380 min, Boeing 787 Dreamliner 380 min, Airbus A350 380 min, Embraer E175 380 min, Boeing 757 380 min, Airbus A340 380 min, Boeing 777 380 min.
+- **Routes:** los (5000 km): legs not on a quarter hour: DHC-6 Twin Otter 1000 min, Saab 340 667 min, ATR 72 667 min, Embraer E190 333 min, Airbus A220 333 min, Airbus A320 333 min, Boeing 737 333 min, Boeing 787 Dreamliner 333 min, Airbus A350 333 min, Embraer E175 333 min, Boeing 757 333 min, Airbus A340 333 min, Boeing 777 333 min.
+- **Routes:** del (6700 km): legs not on a quarter hour: DHC-6 Twin Otter 1340 min, Saab 340 893 min, ATR 72 893 min, Embraer E190 447 min, Airbus A220 447 min, Airbus A320 447 min, Boeing 737 447 min, Boeing 787 Dreamliner 447 min, Airbus A350 447 min, Embraer E175 447 min, Boeing 757 447 min, Airbus A340 447 min, Boeing 777 447 min.
+- **Routes:** tyo (9600 km): legs not on a quarter hour: Saab 340 1280 min, ATR 72 1280 min, Embraer E190 640 min, Airbus A220 640 min, Airbus A320 640 min, Boeing 737 640 min, Boeing 787 Dreamliner 640 min, Airbus A350 640 min, Embraer E175 640 min, Boeing 757 640 min, Airbus A340 640 min, Boeing 777 640 min.
+- **Routes:** cpt (9700 km): legs not on a quarter hour: DHC-6 Twin Otter 1940 min, Saab 340 1293 min, ATR 72 1293 min, Embraer E190 647 min, Airbus A220 647 min, Airbus A320 647 min, Boeing 737 647 min, Boeing 787 Dreamliner 647 min, Airbus A350 647 min, Embraer E175 647 min, Boeing 757 647 min, Airbus A340 647 min, Boeing 777 647 min.
+- **Routes:** sin (10900 km): legs not on a quarter hour: DHC-6 Twin Otter 2180 min, Saab 340 1453 min, ATR 72 1453 min, Embraer E190 727 min, Airbus A220 727 min, Airbus A320 727 min, Boeing 737 727 min, Boeing 787 Dreamliner 727 min, Airbus A350 727 min, Embraer E175 727 min, Boeing 757 727 min, Airbus A340 727 min, Boeing 777 727 min.
+- **Routes:** syd (17200 km): legs not on a quarter hour: DHC-6 Twin Otter 3440 min, Saab 340 2293 min, ATR 72 2293 min, Embraer E190 1147 min, Airbus A220 1147 min, Airbus A320 1147 min, Boeing 737 1147 min, Boeing 787 Dreamliner 1147 min, Airbus A350 1147 min, Embraer E175 1147 min, Boeing 757 1147 min, Airbus A340 1147 min, Boeing 777 1147 min.
 
 ## Notes
 
@@ -43,6 +53,7 @@
 - **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 1200, listPrice 9000 → 22000. The workbook wins.
 - **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1800, listPrice 15000 → 36000. The workbook wins.
 - **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900, dayCost 2500 → 3500, listPrice 30000 → 70000. The workbook wins.
+- **EventOptions:** "ash_cloud2" has option rows but no Events row (it is a RouteNews item; the game builds the card from the news).
 - **Events:** events are not in date order (harmless; the game sorts them).
 - **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events undercut_dub, storm, crew; challenges 2. Those choices then differ only in cash.
 
@@ -51,9 +62,29 @@
 Rows dated on or before 28 Dec 2030 (chapter 1's review) that the game would read but are not `live`, and values the chapter-1 flow needs that the workbook lacks. The game reports these; it never invents a value.
 
 - **Routes:** ist opens on day 57 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
-- **Settings:** `secondCrewCost` is `placeholder`: not loaded.
 - **Settings:** `timeSkip` is `placeholder`: not loaded (the game builds teacher skips of 0 / 1 / 4 / 8 weeks from the brief and reports it here).
 - **Settings:** `reputationFromDate` is `placeholder`: not loaded (a date gate only in chapter 1).
+
+## Chapter 3 touches
+
+The Settings rows chapter 3 reads (D78–D81), as loaded.
+
+- `overdraftFromDate`: 2031-09-01
+- `overdraftLimit`: one week's average profit
+- `overdraftDailyCharge`: 0
+- `overdraftAtLimit`: purchases and fuel orders blocked; flights continue
+- `buyLeasedPlane`: yes, at list price; the lease stops that day
+- `leaseReturn`: at a month end, no charge
+- `timeToAffordWeekly`: (price − cash) ÷ profit a week = weeks to wait
+- `missedHuntH1Effect`: chapter-3 opening cash shown £2,000 high until the first audit
+- `twoLegRotation`: Sydney via Singapore
+- `bigPlanePriceRule`: doubled from v5.2
+- `chapter3SetUpDays`: 5
+- `challengeRewardRule`: a share of a day's profit, or stars
+- `secondCrewCost`: 250
+- `leaseRule`: price ÷ 2,000 a day from the A220 up
+- **EventOptions:** 37 option rows for 12 events (ash_cloud, ash_cloud2, blogger, crew, fault, fees_rise, fog, mystery_shopper, overdraft_offer, storm, storm2, undercut_dub).
+- **Two-leg routes:** syd (10,900 km + 6,300 km, 4 days).
 
 ## Identity and photos (CR5)
 
@@ -69,13 +100,13 @@ Livery sheet: 12 colours, 4 stripes, 7 tail symbols, 4 logo shapes, 8 name sugge
 | a320 | live | narrowbody | none yet | — |
 | b737 | live | narrowbody | none yet | — |
 | b787 | live | — | none yet | — |
-| a350 | later |  | none yet | — |
+| a350 | live | — | none yet | — |
 | b747 | later |  | none yet | — |
 | a380 | later |  | none yet | — |
 | e175 | live | e175 | none yet | — |
 | b757 | live | — | none yet | — |
-| a340 | later |  | none yet | — |
-| b777 | later |  | none yet | — |
+| a340 | live | — | none yet | — |
+| b777 | live | — | none yet | — |
 | Prices from the A220 up are tuned to the cash curve (F5, replacing D16's three-tenths rule): on the Steady path each plane is a few lessons of saving away when it is meant to arrive. Tutorial planes (Twin Otter to E190, E175) keep launch-deal prices. Real prices are on the plane card for interest only. | None |  | none yet | — |
 
 ## The prototype's own data and the workbook's
@@ -102,6 +133,14 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | Lagos fares | £150, £175, £200, £250 | £440, £460, £480, £500, £520 |
 | Delhi distance | 7200 km | 6700 km |
 | Delhi fares | £200, £250, £300, £350 | £560, £580, £600, £620, £640 |
+| Tokyo distance | 9600 km | 9600 km |
+| Tokyo fares | £350, £400, £450, £500 | £790, £810, £830, £850, £870 |
+| Cape Town distance | 9600 km | 9700 km |
+| Cape Town fares | £300, £350, £400, £450 | £800, £820, £840, £860, £880 |
+| Singapore distance | 10800 km | 10900 km |
+| Singapore fares | £350, £400, £450, £500 | £890, £910, £930, £950, £970 |
+| Sydney distance | 17600 km | 17200 km |
+| Sydney fares | £500, £600, £700, £800 | £1390, £1410, £1430, £1450, £1470 |
 | DHC-6 Twin Otter price | £2,500 | £10,000 (launch deal £2,500) |
 | DHC-6 Twin Otter running costs | £192 an hour, £900 a day | £150 an hour, £900 a day |
 | DHC-6 Twin Otter fuel | 20 L per 100 km | 20 L per 100 km |
@@ -123,10 +162,13 @@ The game uses the workbook's values. The prototype's own (in `data-world` and `d
 | Boeing 737 price | £600,000 | £400,000 |
 | Boeing 737 running costs | £— an hour, £7150 a day | £1300 an hour, £3500 a day |
 | Boeing 737 fuel | 62 L per 100 km | 90 L per 100 km |
-| Boeing 787 Dreamliner price | £1,200,000 | £6,000,000 |
+| Boeing 787 Dreamliner price | £1,200,000 | £12,000,000 |
 | Boeing 787 Dreamliner running costs | £— an hour, £15550 a day | £2000 an hour, £6000 a day |
 | Boeing 787 Dreamliner fuel | 110 L per 100 km | 130 L per 100 km |
-| Second crew | £300 | £None when duty is over 12 h, from 2031-01-06 (D51) |
+| Airbus A350 price | £1,600,000 | £30,000,000 |
+| Airbus A350 running costs | £— an hour, £25650 a day | £2250 an hour, £6600 a day |
+| Airbus A350 fuel | 120 L per 100 km | 140 L per 100 km |
+| Second crew | £300 | £250 when duty is over 12 h, from 2031-01-06 (D51) |
 | Rival switch rule (D50) | 1 in 5 switch when undercut | 0.1 per £10 dearer, cap 0.6, advertising × 0.5 |
 | Starting cash | £5,000 | £5,000 |
 | Start date | Sun 12 May 2030 | Mon 02 Sep 2030 |

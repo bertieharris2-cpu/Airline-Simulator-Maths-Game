@@ -80,10 +80,10 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
   for(let i = 0; i < 1200; i++){ const t = await T(); s = await S(); const day = s.day;
     if(day >= UPTO && t === 'hq'){ checks.push('stopped at hq day ' + day); break; }
     if(t === 'chapterReview' && day === 364 && !seen.accounts){ seen.accounts = true; await shot('c2-chapter-accounts');
-      ok('the chapter 2 review (31 August 2031) says chapter 3 comes next', /Chapter 3 opens on Tuesday 2 September 2031/.test(await txt('#screen')) && !/Chapter 2, Going long, opens/.test(await txt('#screen')), (await txt('#screen')).match(/What comes next.{0,140}/));
+      ok('the chapter 2 review (31 August 2031) says chapter 3 comes next', /Chapter 3, Owning, opens on Monday 1 September 2031/.test(await txt('#screen')) && !/Chapter 2, Going long, opens/.test(await txt('#screen')), (await txt('#screen')).match(/What comes next.{0,140}/));
       await builds(); await p.waitForTimeout(100);
       ok('day 364: the chapter 2 accounts are signed off and the chapter closes', await p.$eval('#nx', e => !e.disabled).catch(() => false), await txt('.ab-hint')); await p.click('#nx'); await p.waitForTimeout(150); continue; }
-    if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); if(day === 364 && TYPE === 'premium') ok('Premium missed the year-1 accounts hunt: the end card carries it into chapter 3\'s forecast', /starts £1,000 out/.test(await txt('#screen')), (await txt('.hunt-carry'))); await shot('c2-chapter-end'); if(day === 364) ok('the chapter 2 end card: chapter 3 (buying aircraft outright) is next', /Next: chapter 3/.test(await txt('#screen')), await txt('.proto-end')); break; }
+    if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); if(day === 364 && TYPE === 'premium') ok('Premium missed the year-1 accounts hunt: the end card carries it into chapter 3\'s forecast', /starts £2,000 out/.test(await txt('#screen')), (await txt('.hunt-carry'))); await shot('c2-chapter-end'); if(day === 364) ok('the chapter 2 end card: chapter 3, Owning, opens on Monday 1 September 2031, with an On to chapter 3 button', /Next: chapter 3, Owning, opens on Monday 1 September 2031/.test(await txt('#screen')) && await vis('#peNext'), await txt('.proto-end')); break; }
     if(t === 'hq'){ if(day === 127){ ok('day 127: chapter 2 opens on Monday 6 January with New York and Dubai', /New York and Dubai/.test(await txt('#screen')), (await txt('#screen')).slice(0, 200)); await shot('c2-03-day127-hq'); }
       if(seen.capLater && !seen.capHq && await vis('#capChBtn')){ seen.capHq = day; await shot(`c2-d${day}-hq-challenge`); ok("after Not today, HQ has a Captain's challenge button", true, day); await p.click('#capChBtn'); await p.waitForTimeout(100); continue; }
       await fits('hq ' + day); lastDay = day; await p.click('#startDay'); continue; }
@@ -109,10 +109,11 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
       const buy = await p.$eval('[data-terms="buy"]', e => e.disabled).catch(() => true); ok(`day ${day}: the long-haul plane is lease only (buying opens in chapter 3)`, buy === true);
       await p.click('[data-terms="lease"]'); await p.click('#nx'); await p.waitForTimeout(100); continue; }
     if(t === 'paint'){ await p.click('#roll'); continue; }
-    if(t === 'reveal'){ await p.click('#skipReveal'); for(let k = 0; k < 50 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
+    if(t === 'reveal'){ await p.click('#skipReveal', { timeout:2000 }).catch(() => {}); for(let k = 0; k < 50 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     if(t === 'event'){ await shot(`c2-d${day}-event`); const ev = await E('JSON.stringify((({ id, ch2, day, options, window }) => ({ id, ch2, day, window, keys:options.map(o => o.key), labels:options.map(o => o.label), cash:options.map(o => o.effects && o.effects.cash || 0) }))(S.rnd.event))').then(JSON.parse);
       const st = await E('JSON.stringify(step())').then(JSON.parse), k = ev.ch2 && CHOICE[ev.id] ? Math.max(0, ev.keys.indexOf(CHOICE[ev.id])) : 1, x = await txt('#screen'); info.events = info.events || {};
-      if(ev.ch2){ ok(`${ev.id}: the choices are built from the workbook's prose, priced in pounds (${ev.labels.join(' / ')})`, ev.keys.length >= 3 && ev.cash.some(c => c < 0) && /ev-date/.test(await p.innerHTML('#screen')), ev);
+      if(ev.ch2){ const rows = await E(`JSON.stringify((WB.eventOptions['${ev.id}'] || []).map(r => r.label))`).then(JSON.parse);
+        ok(`${ev.id}: the choices are the EventOptions rows (v5.4), priced in pounds (${ev.labels.join(' / ')})`, ev.keys.length >= 3 && ev.cash.some(c => c < 0) && /ev-date/.test(await p.innerHTML('#screen')) && ev.labels.every(l => rows.includes(l)), { ev, rows });
         if(st.day !== undefined){ const L = await E(`JSON.stringify([S.day, S.ledger.rev[${st.day}] === undefined || S.ledger.rev[${st.day}] === null, S.ledger.rev[${st.day} - 1] !== undefined])`).then(JSON.parse);
           ok(`${ev.id}: the month stops on the day (${st.day}), before it is flown`, L[0] === st.day && L[1] && L[2], L); } }
       if(ev.id === 'fees_rise') ok('Landing fees rise: three choices, no Luton (cancelled for now)', ev.keys.length === 3 && !/luton/i.test(ev.labels.join(' ')), ev.labels);
@@ -131,7 +132,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
       await shot(`c2-d${day}-challenge${P.n}-won`); await p.click('#capDone'); await p.waitForTimeout(100); continue; }
     if(t === 'hunt'){ const P = await E('JSON.stringify(huntPlan())').then(JSON.parse); await shot(`c2-d${day}-hunt-${P.id}${P.recheck ? '-recheck' : ''}`); info.hunts = info.hunts || [];
       const miss = TYPE === 'premium' && !P.recheck;
-      if(miss){ await p.click('#huntAllOk'); await p.waitForTimeout(80); const x = await txt('.hunt-msg'); ok(`hunt ${P.id}: Everything is right counts as missed, with the consequence`, P.id === 'h2' ? /paid £1,000 too much/.test(x) : /chapter 3 starts £1,000 out/.test(x), x); }
+      if(miss){ await p.click('#huntAllOk'); await p.waitForTimeout(80); const x = await txt('.hunt-msg'); ok(`hunt ${P.id}: Everything is right counts as missed, with the consequence`, P.id === 'h2' ? /paid £1,000 too much/.test(x) : /chapter 3 starts £2,000 out/.test(x), x); }
       else { if(!P.recheck && P.n > 1){ const right = P.wrong === 0 ? 1 : 0; await p.click(`[data-hunt="${right}"]`); await p.waitForTimeout(60); ok(`hunt ${P.id}: tapping a line that is right says so`, /This line is right/.test(await txt('.hunt-msg')), await txt('.hunt-msg')); }
         await p.click(`[data-hunt="${P.wrong}"]`); await p.waitForTimeout(60); await p.fill('[data-pad="hunt"]', String(P.shown)); await p.click('#huntChk'); await p.waitForTimeout(60);
         ok(`hunt ${P.id}: typing the figure it already shows is a Query`, /That is what it says/.test(await txt('.hunt-msg')), await txt('.hunt-msg'));
@@ -236,7 +237,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
     else ok('Value found the fuel invoice mistake: nothing charged', !!R.hunts.h2 && R.hunts.h2.state === 'found' && !due.some(c => c.ev === 'hunt:h2'), R.hunts);
     const recH = await E("JSON.stringify(rec().entries.filter(e => /^(hunt|ch):/.test(e.key)).map(e => [e.key, e.status, e.attempts.length]))").then(JSON.parse);
     ok('the pupil record keeps the challenges and the hunts, with every attempt', recH.some(e => e[0] === 'hunt:h2') && recH.some(e => e[0] === 'ch:1' && e[1] === 'checked') && recH.some(e => e[0] === 'ch:2' && e[1] === 'checked'), recH); info.rec = recH; }
-  if(s.day >= 364){ const R = await R2(); ok(TYPE === 'premium' ? 'hunt h1 missed: chapter 3\'s cash forecast starts £1,000 out' : 'hunt h1 (year-1 accounts) found and fixed', TYPE === 'premium' ? !!R.ch3 && R.ch3.out === 1000 : R.hunts.h1 && R.hunts.h1.state === 'found', [R.hunts.h1, R.ch3]); }
+  if(s.day >= 364){ const R = await R2(); ok(TYPE === 'premium' ? 'hunt h1 missed: chapter 3\'s cash forecast starts £2,000 out' : 'hunt h1 (year-1 accounts) found and fixed', TYPE === 'premium' ? !!R.ch3 && R.ch3.out === 2000 : R.hunts.h1 && R.hunts.h1.state === 'found', [R.hunts.h1, R.ch3]); }
   if(TYPE === 'value') ok('the bag fee was worked by hand once: the model does it from now on', (s.skills && s.skills.bagFee && s.skills.bagFee.count === 1) || s.day < 128, s.skills && s.skills.bagFee);
   checks.push('info ' + JSON.stringify(info));
   console.log(checks.join('\n')); console.log('OVERFLOW', overflow.length ? overflow : 'none'); console.log('ERRORS', errors.length ? errors : 'none');

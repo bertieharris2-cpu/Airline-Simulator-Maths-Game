@@ -121,6 +121,23 @@ def unlocks(s):         # 'routes:dub,par; planes:dhc6(launch deal); mechanics:f
 
 def date(s): return dt.date.fromisoformat(str(s)[:10])
 
+def legs(s):            # '10900 via sin; 6300 sin–syd' -> [{'km': 10900, 'from': 'home', 'to': 'sin'}, {'km': 6300, 'from': 'sin', 'to': 'syd'}]
+    if not s: return None
+    out = []
+    for part in [p.strip() for p in str(s).split(';') if p.strip()]:
+        m = re.match(r'([\d,]+)\s*(?:via\s+(\w+)|(\w+)\s*[–-]\s*(\w+))', part)
+        if not m: issue('check', 'Routes', f'legs "{s}": cannot read "{part}".'); continue
+        km = num(m.group(1))
+        out.append({'km': km, 'from': 'home', 'to': m.group(2)} if m.group(2) else {'km': km, 'from': m.group(3), 'to': m.group(4)})
+    return out or None
+
+def reward_share(v):    # '0.25' -> {'share': 0.25}; '+½★' -> {'stars': 0.5}
+    if v in (None, ''): return None
+    t = str(v).strip()
+    if '★' in t or 'star' in t.lower(): return {'stars': 0.5 if '½' in t else num(re.sub(r'[^\d.]', '', t) or 1)}
+    try: return {'share': float(t)}
+    except ValueError: issue('check', 'Challenges', f'rewardShare "{t}" is neither a share nor stars.'); return None
+
 def season_override(s):  # 'winter:1.2,summer:0.8' -> {'winter': 1.2, 'summer': 0.8}
     if not s: return None
     return {k.strip(): num(v) for k, v in (p.split(':') for p in str(s).split(',') if ':' in p)}
@@ -158,7 +175,9 @@ for r in live('Routes', all_routes):
                    'competitionSensitivity': r['competitionSensitivity'], 'unlockDay': r['unlockDay'],
                    'story': r['story'], 'status': r['status'],
                    # v5.0 (D68): a long-haul route flies out and back the same day or as an overnight rotation; a season override replaces the archetype's
-                   'rotation': r.get('rotation') or 'same-day', 'seasonOverride': season_override(r.get('seasonOverride'))})
+                   'rotation': r.get('rotation') or 'same-day', 'seasonOverride': season_override(r.get('seasonOverride')),
+                   # v5.3 (D79): a two-leg route lists its legs and how many days a rotation takes (1 same-day, 2 overnight, 4 two-leg)
+                   'legs': legs(r.get('legs')), 'rotationDays': r.get('rotationDays')})
 
 catalogue = [{'id': r['id'], 'city': r['city'], 'country': r['country'], 'airport': r['code'], 'km': r['distanceKm'],
               'archetype': r['archetype'], 'haul': r['haul'], 'baseFare': r['baseFare'], 'legHours': r['legHours'],
@@ -226,9 +245,20 @@ for e in ev_rows:
     elif e['otherEffects']:
         x['effects'] = e['otherEffects']
 
+# v5.4 (D81): EventOptions, one row per option for every event with choices in chapters 1–3. Cash is a cost (positive) before
+# eventCostScaleFromDay; from then costShare × a day's profit. The game reads these for chapters 2–3 (chapter 1 keeps its Events rows: Bertie, 14 Oct).
+all_eo = sheet(wb, 'EventOptions') if 'EventOptions' in wb.sheetnames else []
+eventOptions = {}
+for o in live('EventOptions', all_eo):
+    eventOptions.setdefault(o['eventId'], []).append({'n': o['option'], 'label': o['label'], 'sub': o.get('subLine'), 'cash': o.get('cash'),
+        'costShare': o.get('costShare'), 'stars': o.get('stars'), 'other': o.get('otherEffect')})
+for v in eventOptions.values(): v.sort(key=lambda x: x['n'])
+
 all_ch = sheet(wb, 'Challenges')
 challenges = [{'n': c['n'], 'fromDate': c.get('fromDate'), 'title': c['title'], 'story': c['story'], 'question': c['question'],
-               'answer': c['answer'], 'unit': c['unit'], 'reward': c['reward'], 'status': c['status']}
+               'answer': c['answer'], 'unit': c['unit'], 'reward': c['reward'], 'status': c['status'],
+               # v5.3/D81: a share of a day's profit or half a star (the game keeps challenges 1–2 as built: Bertie, 14 Oct)
+               'rewardShare': reward_share(c.get('rewardShareOrStars'))}
               for c in live('Challenges', all_ch)]
 
 mechanics = [{'fromDay': m['fromDay'], 'mechanic': m['mechanic'], 'notes': m['notes'], 'status': m['status']}
@@ -242,6 +272,13 @@ all_chapters = opt_sheet('Chapters')
 chapters = [{'chapter': c['chapter'], 'name': c['name'], 'start': c['start'], 'end': c['end'], 'setUpDays': c['setUpDays'], 'runCadence': c['runCadence'],
              'reviewDate': c['reviewDate'], 'newIdea': c['newIdea'], 'mechanicsArriving': c['mechanicsArriving'], 'handSumsPlanned': c['handSumsPlanned'],
              'mathsFront': c['mathsFront'], 'status': c['status']} for c in live('Chapters', all_chapters)]
+# the chapters not built yet, by name, dates and idea only, for "chapter 4 opens on …" lines
+chapterPreview = [{'chapter': c['chapter'], 'name': c['name'], 'start': c['start'], 'end': c['end'], 'newIdea': c['newIdea'], 'status': c['status']}
+                  for c in all_chapters if c.get('chapter') and c.get('status') in ('placeholder', 'later')]
+# the offer that opens a chapter not built yet (the A380 at chapter 4's start): its words only, shown on the chapter review's "what comes next"
+starts = {c['start'] for c in chapterPreview}
+eventPreview = [{'id': e['eventId'], 'date': e['date'], 'title': e['title'], 'text': e['text'], 'effects': e.get('otherEffects'), 'status': e['status']}
+                for e in all_events if e.get('eventId') and e.get('title') and e.get('status') in ('placeholder', 'later') and e.get('date') in starts]
 handSumRules = [{'rule': r['rule'], 'name': r['name'], 'text': r['ruleText'], 'trigger': r['trigger'], 'examples': r['examples'], 'status': r['status']}
                 for r in live('HandSumRules', opt_sheet('HandSumRules'))]
 catering = [{'id': c['optionId'], 'name': c['name'], 'sellingPrice': c['sellingPrice'], 'takeUp': c['takeUp'], 'unitStockCost': c['unitStockCost'],
@@ -309,7 +346,8 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'aircraft': aircraft, 'finance': finance, 'airports': airports, 'calendar': calendar, 'market': market,
          'events': events, 'challenges': challenges, 'mechanics': mechanics,
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
-         'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips}
+         'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips,
+         'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview}
 
 
 # ---------- checks ----------
@@ -422,7 +460,9 @@ for c in all_cal:
     if c['eventId'] and c['eventId'] not in ev_ids: issue('error', 'Calendar', f'day {c["day"]}: event "{c["eventId"]}" is not on the Events sheet.')
     if c['eventId'] in ev_ids:
         ed = next(e['date'] for e in all_events if e['eventId'] == c['eventId'])
-        if ed != c['date']: issue('error', 'Events', f'"{c["eventId"]}" is dated {ed}, but the Calendar puts it on day {c["day"]} ({c["date"]}).')
+        if ed != c['date']:
+            near = abs((date(ed) - date(c['date'])).days) <= 6
+            issue('check' if near else 'error', 'Events', f'"{c["eventId"]}" is dated {ed}, but the Calendar puts it on day {c["day"]} ({c["date"]}).' + (' The game follows the Calendar.' if near else ''))
     if c['challenge'] is not None:
         ch = ch_by_n.get(c['challenge'])
         if not ch: issue('error', 'Calendar', f'day {c["day"]}: challenge {c["challenge"]} is not on the Challenges sheet.')
@@ -438,8 +478,34 @@ for f in finance_rows:
     tot = fin_num(f['financeTotalPaid'])
     if tot is not None and f['financeDeposit'] + f['financeWeeklyPayment'] * f['financeWeeks'] != tot:
         issue('check', 'Finance', f'{f["aircraftId"]}: deposit + payment × {f["financeWeeks"]} = {f["financeDeposit"] + f["financeWeeklyPayment"] * f["financeWeeks"]:,}, but financeTotalPaid says {tot:,} (rounded to £1,000 as the note says).')
-    if f['leaseDaily'] and f['cashPrice'] and f['aircraftId'] not in TUTORIAL and f['cashPrice'] / f['leaseDaily'] != 1000:
-        issue('check', 'Finance', f'{f["aircraftId"]}: price ÷ lease a day = {f["cashPrice"] / f["leaseDaily"]:g}, not the 1,000 days of F4.')
+    if f['leaseDaily'] and f['cashPrice'] and f['aircraftId'] not in TUTORIAL and f['cashPrice'] / f['leaseDaily'] != 2000:
+        issue('check', 'Finance', f'{f["aircraftId"]}: price ÷ lease a day = {f["cashPrice"] / f["leaseDaily"]:g}, not the 2,000 days of Settings leaseRule (F4 revised with D78).')
+# EventOptions (v5.4): the event exists, options run 1..n, a fixed cash price only before eventCostScaleFromDay and a share from then
+news_ids = {r.get('newsId') for r in opt_sheet('RouteNews')}
+scale_from = settings.get('eventCostScaleFromDay') or 29
+for eid, opts in eventOptions.items():
+    if eid not in ev_ids:
+        issue('note' if eid in news_ids else 'error', 'EventOptions', f'"{eid}" has option rows but no Events row' + (' (it is a RouteNews item; the game builds the card from the news)' if eid in news_ids else '') + '.')
+    if [o['n'] for o in opts] != list(range(1, len(opts) + 1)): issue('check', 'EventOptions', f'"{eid}": options are numbered {[o["n"] for o in opts]}, not 1..{len(opts)}.')
+    e = next((x for x in all_events if x['eventId'] == eid and x.get('date')), None)
+    if e:
+        day = (date(e['date']) - start).days + 1
+        for o in opts:
+            if day >= scale_from and o['cash'] not in (None, 0): issue('check', 'EventOptions', f'"{eid}" option {o["n"]} has a cash price £{o["cash"]} on day {day}, but costs are a share of a day\'s profit from day {scale_from}.')
+            if day < scale_from and o['costShare'] not in (None, 0): issue('check', 'EventOptions', f'"{eid}" option {o["n"]} has a costShare on day {day}, before day {scale_from}.')
+# two-leg routes (v5.3, D79): the legs add up to the distance and rotationDays agrees with the rotation
+ROT_DAYS = {'same-day': 1, 'overnight': 2, 'two-leg': 4}
+for r in routes:
+    want = ROT_DAYS.get(r['rotation'])
+    if r.get('rotationDays') is not None and want is not None and r['rotationDays'] != want:
+        issue('check', 'Routes', f'{r["id"]}: rotation {r["rotation"]} but rotationDays {r["rotationDays"]} (expected {want}).')
+    if r.get('legs'):
+        tot = sum(l['km'] for l in r['legs'])
+        if tot != r['km']: issue('check', 'Routes', f'{r["id"]}: the legs add up to {tot:,} km, but distanceKm is {r["km"]:,}.')
+        for l in r['legs']:
+            for x in (l['from'], l['to']):
+                if x not in ('home', r['id']) and x not in route_ids: issue('error', 'Routes', f'{r["id"]}: leg stop "{x}" is not on the Routes sheet.')
+
 dates = [e['date'] for e in events]
 if dates != sorted(dates): issue('note', 'Events', 'events are not in date order (harmless; the game sorts them).')
 
@@ -546,6 +612,19 @@ if not chapters or chapters[0].get('chapter') != 1: touch.append('- **Chapters:*
 out += ['', '## Chapter 1 touches', '',
         'Rows dated on or before 28 Dec 2030 (chapter 1\'s review) that the game would read but are not `live`, and values the chapter-1 flow needs that the workbook lacks. '
         'The game reports these; it never invents a value.', ''] + (touch or ['- Nothing: every row chapter 1 touches is live.'])
+
+# chapter 3 touches (v5.4, D81): the rules chapter 3 reads from Settings, and whether each is live
+NEEDED_CH3 = ['overdraftFromDate', 'overdraftLimit', 'overdraftDailyCharge', 'overdraftAtLimit', 'buyLeasedPlane', 'leaseReturn', 'timeToAffordWeekly',
+              'missedHuntH1Effect', 'twoLegRotation', 'bigPlanePriceRule', 'chapter3SetUpDays', 'challengeRewardRule', 'secondCrewCost', 'leaseRule']
+t3 = []
+for k in NEEDED_CH3:
+    st_ = settings_status.get(k)
+    if st_ is None: t3.append(f'- **Settings:** `{k}` is not on the sheet.')
+    elif st_ not in LOAD: t3.append(f'- **Settings:** `{k}` is `{st_}`: not loaded.')
+    else: t3.append(f'- `{k}`: {settings.get(k)}')
+t3.append(f'- **EventOptions:** {sum(len(v) for v in eventOptions.values())} option rows for {len(eventOptions)} events ({", ".join(sorted(eventOptions))}).')
+t3.append(f'- **Two-leg routes:** ' + (', '.join(f'{r["id"]} ({" + ".join(format(l["km"], ",") + " km" for l in r["legs"])}, {r["rotationDays"]} days)' for r in routes if r.get('legs')) or 'none') + '.')
+out += ['', '## Chapter 3 touches', '', 'The Settings rows chapter 3 reads (D78–D81), as loaded.', ''] + t3
 
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'
