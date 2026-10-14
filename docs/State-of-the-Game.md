@@ -34,7 +34,7 @@ Bertie played to week three. Two fixes (`p4zp_runthrough.js`, new, after `p4zo`;
 - Old saves: `rtShopFix` (a render wrapper) removes a scheduled `shop2` still ahead in today's steps and adds the Fleet desk line to today's brief.
 - For the tests: `shopOfferedReport()`.
 
-**Tests.** `week.test.js` opens the shop from the Fleet desk (day 8, a plan day while saving, from day 22 until the ATR) and checks every HQ for a scheduled shop; chapter 1 still ends on £697,112 (215 checks) and the coasting pupil on £689,806 (218). `fleetshop` 35, `record` 16, `migrate` 27. `chapter2.test.js` rents the 757 from the Fleet desk on day 127; `chapter3.test.js` opens it on day 365 (Premium's 787) and in October (the A350).
+**Tests.** `week.test.js` opens the shop from the Fleet desk (day 8, a plan day while saving, from day 22 until the ATR) and checks every HQ for a scheduled shop; chapter 1 still ends on £697,112 (215 checks) and the coasting pupil on £689,806 (218). `fleetshop` 35, `record` 16, `migrate` 27. `chapter2.test.js` rents the 757 from the Fleet desk on day 127: Value 107 checks and Premium 101, ending unchanged on £13,591,851 and £13,312,048. `chapter3.test.js` opens it on day 365 (Premium's 787) and in October (the A350): Value 62 and Premium 72, unchanged on £28,212,563 and £19,821,669. All with 0 failures. `runthrough`, `answers` and `liveops` stop at the launch market screen removed in v4.4, as on the previous commit (stale, like `opening`).
 
 ## 0m. Workbook v5.4 (14 Oct 2026): chapter 3 "Owning", push 1 — the year to 31 August 2032, the overdraft, owning and handing back
 
@@ -424,7 +424,7 @@ Tests:
 - `week.test.js` plays to day 60 (`UPTO=100` reaches the chapter review day, 28 December, with no errors): the cards, Query/Checked, the strip, the fuel desk and its first-order sign-off, the model's Build step, the World report, Network, and the 20,000 L tank.
 - `engine.test.js` adds Dublin ×2 for RouteNews.
 - `migrate.test.js` handles the card and the fuel desk.
-- `opening.test.js` (day at a time) is stale since v4.4: it waits for the removed market screen.
+- `opening.test.js` (day at a time) is stale since v4.4: it waits for the removed market screen. So are `runthrough.test.js`, `answers.test.js` and `liveops.test.js` (checked 14 Oct on this build and the one before).
 
 Report: `docs/Desks-v2-Report-Back.md`.
 

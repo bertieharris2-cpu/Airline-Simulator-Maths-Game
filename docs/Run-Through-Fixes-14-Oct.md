@@ -61,10 +61,20 @@ Bertie chose **never: the Fleet desk only**.
 | The fleet shop | 35 | all pass |
 | The pupil record | 16 | all pass |
 | Old saves (`migrate`) | 27 | all pass |
-| Chapter 2, Value and Premium | see below | |
-| Chapter 3, Value and Premium | see below | |
+| Chapter 2, Value | 107 | £13,591,851, unchanged |
+| Chapter 2, Premium | 101 | £13,312,048, unchanged |
+| Chapter 3, Value | 62 | £28,212,563, unchanged |
+| Chapter 3, Premium | 72 | £19,821,669, unchanged |
+| Engine and Balance Reports | 85 balance figures | all pass |
 
-The test pupil buys the same planes on the same days as before. It just goes to the Fleet desk to do it: the Saab on day 15, the ATR on day 29. Every test also checks each HQ for a shop step that opened by itself; none did.
+All of them have 0 failures. The test pupils buy the same planes on the same days as before, so every end-of-chapter figure is the same. They just go to the Fleet desk to do it:
+- the Saab on day 15 and the ATR on day 29;
+- the 757 on day 127;
+- Premium's 787 on day 365 and its saving for the A350 in October.
+
+Every chapter 1 HQ is also checked for a shop step that opened by itself; none did.
+
+`runthrough`, `answers` and `liveops` (like `opening`) stop in their first 30 seconds, waiting for the launch market screen removed in v4.4. The previous commit's build stops in the same place, so this is not new.
 
 ## Parked
 
