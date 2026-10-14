@@ -10,6 +10,41 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0l. Workbook v5.2 (14 Oct 2026): chapter 2 push 3 — events with options, the news, the Captain's challenges, the hunts
+
+**What changed** (`p4zn_ch2events.js`, after `p4zm_buyonly` in the build; reassignments only, `overrides.txt` unchanged at 120):
+- **Charges.** `S.charges = { due:[{ev, at, day, amount, what}], weekly:[{ev, at, from, to, amount, what}] }`, `chargesOn(d)`, `chargesIn(a, b)`.
+  - `simulateDays` takes each day's charges off cash and adds them to the ledger, `out.days` and the totals.
+  - `planLines` uses `chargesOn(SIM_DAY)` in place of `S.rnd.eventCost` in weeks, months and gaps (0 on the plan page's typical day).
+  - `applyEventNow` turns a week's or month's event cost into a charge (once, a day each for a window, or every Monday); `undoEvent` removes it with `S.flags[id]` and `S.ch2pick[id]`.
+  - This also fixes chapter 1: a week's event cost was never charged (the week test picks the free options, so its figures are unchanged).
+- **Chapter 2's events.** `CH2_OPT` (mechanics by event id) + `ch2Event(id)` (options from the prose: label before the brackets, sub-line inside, stars parsed; share from `ch2Share(costShare, phrase)`).
+  - `gameEvent` returns them, and `ch2PatchBeats()` patches the beats already built.
+  - `costShareOf` reads `opt.share`; `yesterdayProfit` is the last 7 days' average at a pause in a month.
+  - `R.event` prices each option (`ch2Price`), adds the date line, and labels the button "Carry on: fly …" at a pause.
+  - The ash cloud's window comes from its news item (14–18 Apr), so its card is on the 14th. `ch2Late(day)`: the blogger's flight is late when the Market weather is not clear.
+  - `demandAt` adds "Geneva +30 for the week" (`ch2DemandAdd`). Easter adds nothing (its news item carries the +20%).
+- **A month in parts.** `CH2_PAUSERS` (events, challenges, hunts) give the pause days; `ch2Segment()` replaces the month's `sim` with `{t:'sim', seg, a, b}` steps and the pause steps.
+  - `startBeat` and a `render` fix (saves made before the run) call it; `S.rnd.segs = { round, n, parts, ran }`.
+  - `simulateRun` runs one part and returns the month so far as one part (`mergeParts`, `periodTOf`), so the history keeps one line.
+  - `enterStep` restores `S.day` on each part and sets it to the pause day (with `S.rnd.midPause`) on a pause step; the bar carries on (`R.sim` fills over the whole month).
+  - `applyPeriodResults` / `periodResultsCard` add "Charged in April: …" and "Nothing flew on …".
+- **News.** `newsOn` matches `all` and drops an item a choice lifted (`newsLifted`); `planFlights` grounds a flight under a ×0 item (or the fog choice) with no fares, fuel or flying costs.
+  - `announcedFor` covers the whole month in a month; `worldReportHtml`, `s2Changes` and `surprisesLine` say "All routes · nothing flies", "Announced for April" and "News this month".
+- **Challenges.** `capList()` (start = the later of `fromDate` and chapter 2's first week), `S.capCh[n] = {state:new|offered|later|won}`.
+  - The card step `capChallenge` comes after HQ in a week (`capWeekStep`) or at a pause in a month; `R.hq` adds `#capChBtn` while one is waiting.
+  - Rewards (`capReward`): "N% off your next fuel" sets `S.fuelDiscount`, which a `buyFuel` wrapper now applies (it used to be cleared unused); "+½ star" goes through `bankStars`.
+  - The box `[data-pad="capch"]` has the Working pad; `recOpen('ch:'+n)`.
+- **Hunts.** `huntSpec(id)` reads the numbers from `whatIsWrong` (h2: litres at a price shown as; h1: passengers × fare =); `R.hunt` draws the document with "This is wrong" on each line and a fix box `[data-pad="hunt"]`.
+  - h2 is a pause on 21 April; missed, it is a £1,000 charge and May gets a second look (found: −£1,000 on 1 May).
+  - h1 sits before `chapterReview` on 31 August; missed, `S.ch3Forecast` and a note on the end card.
+  - `recOpen('hunt:'+id)`, status `missed` printed by a `recCalcHtml` wrapper.
+- **For the tests:** `ch2Report()`, `capPlan()`, `huntPlan()`.
+
+**Tests:** see the push 3 notes (`docs/Chapter-2-Push-3-Notes.md`) for the figures. `chapter2.test.js` now runs to the chapter 2 review by default.
+
+**Not done / to note:** Luton (fees_rise option 4) is left out for now; the other open questions are in the push 3 notes.
+
 ## 0k. Workbook v5.2 (13 Oct 2026): chapter 1 is buy only (D76), and working space everywhere
 
 **What changed:**
@@ -484,7 +519,7 @@ FG = full game (frozen); Proto = opening prototype. CR1, CR2 Stages A–B and CR
 
 | Item | FG | Proto | Notes |
 |---|---|---|---|
-| H1–H7 | No | No | Nothing built; the Hunts sheet is placeholder and is read for the teacher panel only |
+| H1–H7 | h1, h2 | Yes (chapter 2) | h2 (fuel invoice, 21 Apr 2031) and h1 (year-1 accounts, 31 Aug 2031) are played; h3–h7 are placeholder rows |
 
 ### CR4: clarity and decision-led rounds
 

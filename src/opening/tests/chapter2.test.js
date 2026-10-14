@@ -1,14 +1,17 @@
-// Run: NODE_PATH=<playwright node_modules> CODE=<file> node chapter2.test.js   (env: UPTO day (default 155), SHOTS=0, OUT, W, H, SAVE=file for the save code at the end)
+// Run: NODE_PATH=<playwright node_modules> CODE=<file> node chapter2.test.js   (env: UPTO day (default 400: the chapter 2 review), SHOTS=0, OUT, W, H, SAVE=file for the save code at the end, TYPE=value|premium|full)
 // Workbook v5.0 (D68–D73), the game (airline-opening-prototype.html).
 // CODE is a save code at chapter 1's review, written by: UPTO=200 SAVE=<file> node week.test.js
 // The pupil carries on from chapter 1's end: Christmas and New Year fly by themselves, then on Monday 6 January 2031 they
 // lease a Boeing 757 and fly New York at £510 at 06:30. Checked: the long-haul block and the local-time arrival, the
 // refused second service, Balance Report v5.0 §2 (£47,426 a day for a full 757 at £510, within £10), the week's run and
 // review, the overnight rotation (Delhi, tried early), growth from the opening week, and the beats on to February.
+// Push 3: the events with options (a choice per event and type: CHOICE), a month that pauses on the event's day, the
+// ash cloud's closure, the Captain's challenges (Value says Not today first, then plays it from HQ) and the hunts (Value
+// finds both; Premium misses the fuel invoice, finds it on the second look in May, and misses the year-1 accounts).
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os');
 const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch2') + '/'; fs.mkdirSync(OUT, { recursive:true });
-const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 155);
+const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 400);
 const CODE = process.env.CODE || path.join(os.tmpdir(), 'airline-ch1-end.txt'), TYPE = process.env.TYPE || 'value';   // the airline type chosen on day 127
 if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=200 SHOTS=0 SAVE=${CODE} node week.test.js`); process.exit(1); }
 (async () => {
@@ -71,11 +74,18 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
   await p.click('#nx'); await p.waitForTimeout(200);
 
   // ---------- chapter 2, a day at a time ----------
-  let lastDay = 0, nyc = null, refused = false, overnight = null, growth = null;
-  for(let i = 0; i < 300; i++){ const t = await T(); s = await S(); const day = s.day;
+  let lastDay = 0, nyc = null, refused = false, overnight = null, growth = null; const seen = {};
+  const CHOICE = { value:{ blogger:'anyone', fog:'wait', fees_rise:'pay', ash_cloud:'cancel', mystery_shopper:'cheap' }, premium:{ blogger:'vip', fog:'hire', fees_rise:'deal', ash_cloud:'long', mystery_shopper:'fixall' } }[TYPE === 'premium' ? 'premium' : 'value'];
+  const R2 = () => E('JSON.stringify(ch2Report())').then(JSON.parse);
+  for(let i = 0; i < 1200; i++){ const t = await T(); s = await S(); const day = s.day;
     if(day >= UPTO && t === 'hq'){ checks.push('stopped at hq day ' + day); break; }
-    if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); await shot('c2-chapter-end'); if(day === 364) ok('the chapter 2 review (31 August 2031) says chapter 3 comes next', /Chapter 3 opens on Tuesday 2 September 2031/.test(await txt('#screen')) && !/Chapter 2, Going long, opens/.test(await txt('#screen')), (await txt('#screen')).match(/What comes next.{0,140}/)); break; }
+    if(t === 'chapterReview' && day === 364 && !seen.accounts){ seen.accounts = true; await shot('c2-chapter-accounts');
+      ok('the chapter 2 review (31 August 2031) says chapter 3 comes next', /Chapter 3 opens on Tuesday 2 September 2031/.test(await txt('#screen')) && !/Chapter 2, Going long, opens/.test(await txt('#screen')), (await txt('#screen')).match(/What comes next.{0,140}/));
+      await builds(); await p.waitForTimeout(100);
+      ok('day 364: the chapter 2 accounts are signed off and the chapter closes', await p.$eval('#nx', e => !e.disabled).catch(() => false), await txt('.ab-hint')); await p.click('#nx'); await p.waitForTimeout(150); continue; }
+    if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); if(day === 364 && TYPE === 'premium') ok('Premium missed the year-1 accounts hunt: the end card carries it into chapter 3\'s forecast', /starts £1,000 out/.test(await txt('#screen')), (await txt('.hunt-carry'))); await shot('c2-chapter-end'); if(day === 364) ok('the chapter 2 end card: chapter 3 (buying aircraft outright) is next', /Next: chapter 3/.test(await txt('#screen')), await txt('.proto-end')); break; }
     if(t === 'hq'){ if(day === 127){ ok('day 127: chapter 2 opens on Monday 6 January with New York and Dubai', /New York and Dubai/.test(await txt('#screen')), (await txt('#screen')).slice(0, 200)); await shot('c2-03-day127-hq'); }
+      if(seen.capLater && !seen.capHq && await vis('#capChBtn')){ seen.capHq = day; await shot(`c2-d${day}-hq-challenge`); ok("after Not today, HQ has a Captain's challenge button", true, day); await p.click('#capChBtn'); await p.waitForTimeout(100); continue; }
       await fits('hq ' + day); lastDay = day; await p.click('#startDay'); continue; }
     if(t === 'intro'){ if(day === 127){ const x = await txt('#screen'); ok('day 127: What\'s new: Going long, with the local-time arrival (out 06:30, lands 07:45 New York time, back 21:00)', /Going long/.test(x) && /06:30/.test(x) && /07:45/.test(x) && /21:00/.test(x), x.slice(0, 300)); await shot('c2-04-intro'); }
       for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice();
@@ -100,7 +110,37 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
       await p.click('[data-terms="lease"]'); await p.click('#nx'); await p.waitForTimeout(100); continue; }
     if(t === 'paint'){ await p.click('#roll'); continue; }
     if(t === 'reveal'){ await p.click('#skipReveal'); for(let k = 0; k < 50 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
-    if(t === 'event'){ await shot(`c2-d${day}-event`); await p.click('[data-o="1"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
+    if(t === 'event'){ await shot(`c2-d${day}-event`); const ev = await E('JSON.stringify((({ id, ch2, day, options, window }) => ({ id, ch2, day, window, keys:options.map(o => o.key), labels:options.map(o => o.label), cash:options.map(o => o.effects && o.effects.cash || 0) }))(S.rnd.event))').then(JSON.parse);
+      const st = await E('JSON.stringify(step())').then(JSON.parse), k = ev.ch2 && CHOICE[ev.id] ? Math.max(0, ev.keys.indexOf(CHOICE[ev.id])) : 1, x = await txt('#screen'); info.events = info.events || {};
+      if(ev.ch2){ ok(`${ev.id}: the choices are built from the workbook's prose, priced in pounds (${ev.labels.join(' / ')})`, ev.keys.length >= 3 && ev.cash.some(c => c < 0) && /ev-date/.test(await p.innerHTML('#screen')), ev);
+        if(st.day !== undefined){ const L = await E(`JSON.stringify([S.day, S.ledger.rev[${st.day}] === undefined || S.ledger.rev[${st.day}] === null, S.ledger.rev[${st.day} - 1] !== undefined])`).then(JSON.parse);
+          ok(`${ev.id}: the month stops on the day (${st.day}), before it is flown`, L[0] === st.day && L[1] && L[2], L); } }
+      if(ev.id === 'fees_rise') ok('Landing fees rise: three choices, no Luton (cancelled for now)', ev.keys.length === 3 && !/luton/i.test(ev.labels.join(' ')), ev.labels);
+      await p.click(`[data-o="${k}"]`); await p.click('#nx'); await p.waitForTimeout(80); info.events[ev.id] = { day:st.day || day, pick:ev.keys[k] };
+      if(st.day !== undefined) ok(`${ev.id}: after the choice, the button carries on with the month`, /Carry on: fly/.test(await txt('#nx')), await txt('#nx'));
+      if(ev.id === 'fog' && CHOICE.fog === 'wait') ok('fog, wait: the flights before 12:00 on 22 January are grounded, the later ones fly', await E('JSON.stringify(withDay(143, () => { const f = planFlights(); return [f.filter(x => x.dep < 720 && !x.grounded).length, f.filter(x => x.dep >= 720 && !x.grounded).length]; }))').then(v => { const a = JSON.parse(v); return a[0] === 0 && a[1] > 0; }), await E('JSON.stringify(withDay(143, () => planFlights().map(x => [x.dep, x.grounded])))'));
+      if(await T() === 'event') await p.click('#nx'); continue; }
+    if(t === 'capChallenge'){ const P = await E('JSON.stringify(capPlan())').then(JSON.parse), st = await E('JSON.stringify(step())').then(JSON.parse); await shot(`c2-d${day}-challenge${P.n}`);
+      if(P.n === 1 && TYPE !== 'premium' && !st.adHoc){ ok('Challenge 1 is offered once as a card: Have a go / Not today', await vis('#capGo') && await vis('#capLater'), await txt('.cap-card')); await p.click('#capLater'); await p.waitForTimeout(100); seen.capLater = day; continue; }
+      if(await p.$('#capGo')) await p.click('#capGo'); await p.waitForTimeout(60);
+      if(P.n === 1){ const bt = await p.$('.pad-wrap .pad-btn'); if(bt){ await bt.click(); await p.waitForTimeout(80); const I = await E(`JSON.stringify(padInfo('[data-pad="capch"]'))`).then(JSON.parse); ok('Challenge 1: the Working pad sets out 24 × 36 = 864', I && I.op === '×' && I.ans === 864, I); await p.keyboard.press('Escape'); }
+        await p.fill('[data-pad="capch"]', '764'); await p.click('#capChk'); await p.waitForTimeout(60); ok('Challenge 1: a wrong answer is a Query with an estimate', /Query: too small\. Estimate: 24 × 36 is about 20 × 40 = 800/.test(await txt('.cap-card')), await txt('.cap-card .sc-msg')); }
+      await p.fill('[data-pad="capch"]', String(P.answer)); await p.click('#capChk'); await p.waitForTimeout(80); const R = await R2();
+      ok(`Challenge ${P.n}: won (${P.n === 1 ? '10% off the next fuel' : '+½ star'})`, R.cap[P.n] && R.cap[P.n].state === 'won' && (P.n === 1 ? R.disc === 0.1 : true), R.cap); info.cap = R.cap;
+      if(P.n === 2){ const L = await E('JSON.stringify((S.repLog || []).slice(-1)[0])').then(JSON.parse); ok("Challenge 2: +½ star, in the star log as the Captain's challenge", L && L.n === 0.5 && /Captain's challenge/.test(L.what), L); }
+      await shot(`c2-d${day}-challenge${P.n}-won`); await p.click('#capDone'); await p.waitForTimeout(100); continue; }
+    if(t === 'hunt'){ const P = await E('JSON.stringify(huntPlan())').then(JSON.parse); await shot(`c2-d${day}-hunt-${P.id}${P.recheck ? '-recheck' : ''}`); info.hunts = info.hunts || [];
+      const miss = TYPE === 'premium' && !P.recheck;
+      if(miss){ await p.click('#huntAllOk'); await p.waitForTimeout(80); const x = await txt('.hunt-msg'); ok(`hunt ${P.id}: Everything is right counts as missed, with the consequence`, P.id === 'h2' ? /paid £1,000 too much/.test(x) : /chapter 3 starts £1,000 out/.test(x), x); }
+      else { if(!P.recheck && P.n > 1){ const right = P.wrong === 0 ? 1 : 0; await p.click(`[data-hunt="${right}"]`); await p.waitForTimeout(60); ok(`hunt ${P.id}: tapping a line that is right says so`, /This line is right/.test(await txt('.hunt-msg')), await txt('.hunt-msg')); }
+        await p.click(`[data-hunt="${P.wrong}"]`); await p.waitForTimeout(60); await p.fill('[data-pad="hunt"]', String(P.shown)); await p.click('#huntChk'); await p.waitForTimeout(60);
+        ok(`hunt ${P.id}: typing the figure it already shows is a Query`, /That is what it says/.test(await txt('.hunt-msg')), await txt('.hunt-msg'));
+        if(P.id === 'h2'){ const bt = await p.$('.hunt-fix .pad-btn'); if(bt){ await bt.click(); await p.waitForTimeout(80); const I = await E(`JSON.stringify(padInfo('[data-pad="hunt"]'))`).then(JSON.parse); ok('hunt h2: the Working pad sets out 14,000 × £2.04 in pence', I && I.op === '×' && I.pence && +I.pounds === 28560, I); await p.keyboard.press('Escape'); } }
+        await p.fill('[data-pad="hunt"]', String(P.right)); await p.click('#huntChk'); await p.waitForTimeout(80); ok(`hunt ${P.id}${P.recheck ? ' (second look)' : ''}: found and fixed`, /Found/.test(await txt('.hunt-msg')), await txt('.hunt-msg')); }
+      info.hunts.push({ id:P.id, day, recheck:P.recheck, miss }); await shot(`c2-d${day}-hunt-${P.id}-done`); await p.click('#nx'); await p.waitForTimeout(100); continue; }
+    if(t === 'plan' && day === 212 && !seen.april){ seen.april = true; await shot('c2-d212-april-opener'); const x = await txt('#screen'), wr = await E('worldReportHtml()');
+      ok("April's plan: the ash cloud is on the known changes as All routes · nothing flies (announced 7 April, inside the month)", /All routes · nothing flies/.test(x), (x.match(/Known changes.{0,400}/) || [''])[0]);
+      ok('the World report: Announced for April, with All routes · nothing flies', /Announced for April/.test(wr) && /All routes · nothing flies/.test(wr), (wr.replace(/<[^>]+>/g, ' ').match(/Announced.{0,200}/) || [''])[0]); }
     if(t === 'plan'){ await fits('plan ' + day);
       if(await vis('#s2Edit')){ await p.click('#s2Edit'); await p.waitForTimeout(100); }
       if(day === 127 && !nyc){ const j = await plane757();
@@ -132,6 +172,8 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
         ok('growth: New York is ×1.05 in its second week (×1 in the opening week)', growth[0] === 1.05 && growth[1] === 1, growth);
         ok('seasons: Dubai\'s winter override ×1.2 replaces the archetype\'s winter ×0.9 in the day\'s demand (×1.2 ÷ 0.9); New York keeps ×0.9', growth[2] === 1.2 && growth[3] === 0.9 && growth[4] === 1.333 && growth[5] === 1.333, growth); }
       if(await vis('#s2Back')){ await p.click('#s2Back'); await p.waitForTimeout(100); }
+      if(await E('soBoardWaiting()')){ const ch = await E("(() => { const id = ['par', 'ams', 'mad'].find(x => S.prices[x] !== undefined && routeById(x)) || Object.keys(S.prices)[0], F = routeById(id).fares, i = F.indexOf(S.prices[id]); S.prices[id] = F[i > 0 ? i - 1 : i + 1]; refreshPlan(); render(); return id + ' ' + S.prices[id]; })()");
+        info.board = (info.board || []).concat([day + ': ' + ch]); await p.waitForTimeout(100); if(await vis('#s2Back')){ await p.click('#s2Back'); await p.waitForTimeout(100); } }
       await shot(`c2-d${day}-plan`); const en = await p.$eval('#nx', e => !e.disabled).catch(() => false); ok(`plan ${day}: continue enabled`, en); if(!en) break; await p.click('#nx'); continue; }
     if(t === 'workings' && await vis('.so-page')){ await shot(`c2-d${day}-signoffs`);
       if(day === 127){ const W = JSON.parse(await E("JSON.stringify(Object.values(soWeek(false).items).map(it => [it.key, it.level, it.point]))")); info.week19 = W; const calc = W.filter(x => x[1] === 'calc').map(x => x[0]);
@@ -145,10 +187,13 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
     if(t === 'audit'){ await shot(`c2-d${day}-audit`); await signs('audit ' + day); await p.click('#nx'); continue; }
     if(t === 'rop'){ ok('no second regular-plan approval in chapter 2', false, day); await p.click('#ropGo'); continue; }
     if(t === 'milestone'){ await p.click('#msGo'); continue; }
+    if(t === 'review' && day === 242 && !seen.may){ seen.may = true; const x = await txt('#screen'); ok("May's review names April's news: News this month, with the ash cloud", /News this month/.test(x) && /All routes: nothing flies/.test(x), (x.match(/News this month.{0,300}/) || [''])[0]); }
     if(t === 'review'){ await shot(`c2-d${day}-review`); if(await vis('.rbw')) await builds(); if(await p.$('#calcDone')) await p.click('#calcDone');
       if(!(await p.$eval('#nx', e => !e.disabled).catch(() => false))){ ok(`review ${day}: the review's sums can be signed`, false, await E('JSON.stringify({ rb:typeof rbPlan === "function" ? rbPlan() : null, rbw:!!document.querySelector(".rbw"), cards:[...document.querySelectorAll("[data-rbcard]")].map(e => e.getAttribute("data-rbcard")) })')); await shot(`c2-d${day}-review-stuck`); break; }
       await p.click('#nx'); continue; }
-    if(t === 'sim'){ for(let k = 0; k < 200 && await T() === 'sim'; k++) await p.waitForTimeout(150); continue; }
+    if(t === 'sim'){ const sg = await E('JSON.stringify(step())').then(JSON.parse); if(sg.seg !== undefined && day >= 212 && day < 242 && !seen['seg' + sg.seg]){ seen['seg' + sg.seg] = true; await p.waitForTimeout(300); await shot(`c2-april-run-${sg.seg}`); }
+      if(await p.$('#skipSim')) await p.click('#skipSim').catch(() => {}); for(let k = 0; k < 200 && await T() === 'sim' && JSON.stringify(await E('JSON.stringify(step())')) === JSON.stringify(JSON.stringify(sg)); k++) await p.waitForTimeout(100); continue; }
+    if(t === 'results' && day >= 212 && day < 242 && !seen.aprRes){ seen.aprRes = true; await shot('c2-april-results'); const x = await txt('#screen'); ok("April's results: what the month's decisions cost (the landing fees each Monday) and, if cancelled, the days nothing flew", /Charged in April/.test(x) && (CHOICE.ash_cloud !== 'cancel' || /Nothing flew on 14–18 Apr/.test(x)), (x.match(/(Charged|Nothing flew).{0,200}/g) || []).join(' | ')); }
     if(t === 'ready'){ const en = await p.$eval('#startOps', e => !e.disabled); ok('ready ' + day, en); if(!en){ await shot(`c2-d${day}-ready-stuck`); break; } await p.click('#startOps'); continue; }
     if(t === 'takeoff'){ await p.click('#toGo'); for(let k = 0; k < 200 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     if(t === 'fly'){ for(let k = 0; k < 80 && await T() === 'fly'; k++) await p.waitForTimeout(250); continue; }
@@ -176,6 +221,22 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
   const lh = []; for(let d = 127; d <= Math.min(133, s.day - 1); d++) lh.push(Math.round((s.ledger.rev[d] || 0) - (s.ledger.cost[d] || 0)));
   info.opening = { days:lh, total:lh.reduce((a, b) => a + b, 0), cash127:cash118 }; info.type = JSON.parse(await p.evaluate(() => window.__sim.evalIn('JSON.stringify(typeReport())')));
   ok('the first long-haul ticket sum and fuel line are done, so later weeks go back to the cap and decay', s.day < 134 || (info.type.ch2so && info.type.ch2so.tk === 127 && info.type.ch2so.fuel === 127), info.type.ch2so);
+  if(s.day >= 242){ const apr = HH.filter(h => h.from === 212), R = await R2(), due = (R.charges && R.charges.due) || [], wk = (R.charges && R.charges.weekly) || []; info.ch2 = { pick:R.pick, cap:R.cap, hunts:R.hunts, discUsed:R.discUsed, weekly:wk, due:due.map(c => [c.ev, c.day, c.amount]) };
+    ok('April is one history line, 1–30 April (days 212–241), with every day in the ledger', apr.length === 1 && apr[0].to === 241 && [...Array(30)].every((_, i) => s.ledger.rev[212 + i] !== undefined && s.ledger.rev[212 + i] !== null), apr.map(h => [h.from, h.to]));
+    const fee = wk.find(w => w.ev === 'fees_rise'); ok(`Landing fees (${CHOICE.fees_rise}): a share of a day's profit every Monday from 7 April (day 218)${CHOICE.fees_rise === 'deal' ? ' to 31 August' : ', for good'}`, !!fee && fee.from === 218 && fee.amount > 0 && (CHOICE.fees_rise === 'deal' ? fee.to === 364 : fee.to === 99999), fee);
+    const LD = d => [d, Math.round(s.ledger.rev[d] || 0), Math.round(s.ledger.cost[d] || 0)];
+    if(CHOICE.ash_cloud === 'cancel') ok('ash cloud, cancel everything: 14–18 April nothing flew (no fares, no fuel), the day costs were still paid', [225, 226, 227, 228, 229].every(d => (s.ledger.rev[d] || 0) === 0 && (s.ledger.cost[d] || 0) > 0) && (s.ledger.rev[224] || 0) > 0 && (s.ledger.rev[230] || 0) > 0, [224, 225, 229, 230].map(LD));
+    else ok("ash cloud, the long way round: the flights fly, and 0.4 of a day's profit is charged on each of the five days", due.filter(c => c.ev === 'ash_cloud').length === 5 && due.filter(c => c.ev === 'ash_cloud').every(c => c.day >= 225 && c.day <= 229) && (s.ledger.rev[226] || 0) > 0, due.filter(c => c.ev === 'ash_cloud'));
+    if(CHOICE.blogger === 'anyone') ok('blogger, treat as anyone: an icy week, so the flight was late: −½★ in the star log', (s.repLog || []).some(x => x.ev === 'blogger' && x.n === -0.5), (s.repLog || []).filter(x => x.ev === 'blogger'));
+    else ok('blogger, VIP: its cost charged once on 15 January, +1★', due.filter(c => c.ev === 'blogger').length === 1 && due.find(c => c.ev === 'blogger').day === 136 && (s.repLog || []).some(x => x.ev === 'blogger' && x.n === 1), due.filter(c => c.ev === 'blogger'));
+    const g = await E("JSON.stringify([168, 169, 175, 176].map(d => ch2DemandAdd(routeById('gva'), d)))").then(JSON.parse); ok('half-term: Geneva +30 people a day, only in the week of 18 February', JSON.stringify(g) === '[0,30,30,0]', g);
+    ok('Easter adds nothing beyond its news item (no double counting)', await E("JSON.stringify(infoEffects(eventById('easter')).demandMod)") === '{}');
+    ok("Challenge 1's reward: the next fuel bought cost 90% of the price", !!R.discUsed && Math.abs(R.discUsed.paid - Math.round(R.discUsed.price * 0.9 * 1000) / 1000) < 1e-9 && !R.disc, R.discUsed);
+    if(TYPE === 'premium') ok('hunt h2 missed: £1,000 charged on 21 April; found on the second look in May, so £1,000 back on 1 May', due.some(c => c[0] === undefined && false) || (due.some(c => c.ev === 'hunt:h2' && c.day === 232 && c.amount === 1000) && due.some(c => c.ev === 'hunt:h2' && c.day === 242 && c.amount === -1000) && R.hunts.h2.state === 'found'), R.hunts);
+    else ok('Value found the fuel invoice mistake: nothing charged', !!R.hunts.h2 && R.hunts.h2.state === 'found' && !due.some(c => c.ev === 'hunt:h2'), R.hunts);
+    const recH = await E("JSON.stringify(rec().entries.filter(e => /^(hunt|ch):/.test(e.key)).map(e => [e.key, e.status, e.attempts.length]))").then(JSON.parse);
+    ok('the pupil record keeps the challenges and the hunts, with every attempt', recH.some(e => e[0] === 'hunt:h2') && recH.some(e => e[0] === 'ch:1' && e[1] === 'checked') && recH.some(e => e[0] === 'ch:2' && e[1] === 'checked'), recH); info.rec = recH; }
+  if(s.day >= 364){ const R = await R2(); ok(TYPE === 'premium' ? 'hunt h1 missed: chapter 3\'s cash forecast starts £1,000 out' : 'hunt h1 (year-1 accounts) found and fixed', TYPE === 'premium' ? !!R.ch3 && R.ch3.out === 1000 : R.hunts.h1 && R.hunts.h1.state === 'found', [R.hunts.h1, R.ch3]); }
   if(TYPE === 'value') ok('the bag fee was worked by hand once: the model does it from now on', (s.skills && s.skills.bagFee && s.skills.bagFee.count === 1) || s.day < 128, s.skills && s.skills.bagFee);
   checks.push('info ' + JSON.stringify(info));
   console.log(checks.join('\n')); console.log('OVERFLOW', overflow.length ? overflow : 'none'); console.log('ERRORS', errors.length ? errors : 'none');

@@ -68,7 +68,24 @@ The opening is being made excellent before the later campaign continues. `airlin
     - the first long-haul fuel line on the service card (12,375 L × £2.17);
     - rent-or-buy for the 757 and its full plane (seats × fare, the same sum as the tickets) are Build; New York's flight time is Build when the cap is full.
   - **Tested** by `chapter2.test.js` with `TYPE=value` (default) and `TYPE=premium`.
-  - **Coming in push 3:** events with options; the nineteen news items (`routes = all`, closures); challenges and hunts; the chapter 2 report for Fable.
+- **Workbook v5.2, chapter 2 push 3 of 3: events with options, the news, the Captain's challenges and the hunts** (`src/opening/parts/p4zn_ch2events.js`). Bertie's decisions (14 Oct 2026): a month pauses on the day of its event; Luton is left out for now; a hunt is solved by tapping the wrong line, then typing the right figure; a challenge is offered once as a card, then waits on HQ.
+  - **Event costs are charged once, on their day.** Until now a week's or a month's event cost was never taken from cash, while the Ready forecast took it off every day. A dated ledger (`S.charges`: one-off, daily and weekly charges) now pays them inside the run, and the forecast counts each one once.
+  - **Chapter 2's five choice events** carry their choices as prose in the workbook ("VIP treatment (a quarter of a day's profit, +1★) · …") with a costShare. The game builds the options from that prose; the code adds only the mechanics. Each choice is priced in pounds: a share of a day's profit (the last 7 days' average).
+
+    | Event | Day | The choices |
+    | --- | --- | --- |
+    | The travel blogger | Wed 15 Jan (week) | VIP (0.25, +1★) · upgrade (0.1, +½★) · treat as anyone (−½★ when the week's weather makes the flight late; that week is icy) |
+    | Fog at London | Wed 22 Jan (week) | hire an instrument crew (0.2) · wait (the flights before 12:00 are grounded) · cancel the day (−½★) |
+    | Landing fees rise | Wed 2 Apr (April pauses) | pay (0.3 every Monday, for good) · night slots (−½★) · a two-season deal (0.2 every Monday to 31 Aug). Luton is left out for now. |
+    | Ash cloud | Mon 14 Apr (April pauses) | cancel everything (+½★; nothing flies 14–18 Apr) · the long way round (0.4 a day for 5 days, −½★) · fly anyway (−1★, a fine of 0.5) |
+    | Mystery shopper | Tue 13 May (May pauses) | fix everything (0.4, +1★) · the cheap fixes (0.15, +½★) · ignore it (−½★) |
+
+    Half-term adds 30 people a day to Geneva for its week. Easter's +20% comes from its news item only, so it is not counted twice.
+  - **A month pauses on the day.** The run stops on the event's (or hunt's, or challenge's) day, shows the card ("Carry on: fly 2–13 April"), then carries on. It is still one beat, one plan, one forecast and one history line; the results list what the month's decisions cost and the days nothing flew.
+  - **The news:** an item for `all` routes applies to every route; a multiplier of 0 is a closure (nothing flies: no fares, no fuel burned, no flying costs; the aircraft's day costs are still paid). A choice can lift it. A month's plan lists the news announced during that month, the World report says "Announced for April" and "All routes · nothing flies", and the next review lists "News this month".
+  - **The Captain's challenges** (one a term, optional): Challenge 1 (24 × 36 barrels, 10% off the next fuel purchase) first appears on Mon 13 Jan; Challenge 2 (648 ÷ 6 sandwiches, +½★) on Mon 21 Apr. Have a go or Not today; after Not today a Captain's challenge button waits on HQ. The answer box has the Working pad; a wrong answer is a Query with an estimate. The fuel desk shows the discount waiting, then used.
+  - **The hunts** ("Spot the mistake"): the fuel invoice on Mon 21 Apr (three lines; the total, 14,000 L × £2.04, is shown as £29,560) and the year-1 accounts on the 31 August review (New York 200 × £510 shown as £104,000). He taps This is wrong on a line, then types what it should say (with the Working pad); Everything is right counts as missed. A missed invoice costs £1,000 and gets a second look at the start of May (found: £1,000 back). A missed year-1 hunt puts a note on chapter 2's end card: chapter 3's cash forecast starts £1,000 out. Challenges and hunts go into the pupil record.
+  - **Tested** by `chapter2.test.js` to the chapter 2 review (31 August 2031), with different choices for `TYPE=value` and `TYPE=premium`. Screenshots are in `docs/screenshots/chapter2/push3-*`. Notes for Fable: `docs/Chapter-2-Push-3-Notes.md`.
 
 **Workbook v5.2: chapter 1 is buy only (D76, Fable's note of 13 Oct 2026)** (`src/opening/parts/p4zm_buyonly.js`):
 - **No renting or finance before 6 January 2031** (`chapter1BuyOnly`, `leaseFromDate`). The shop sells, and the Rent and Finance buttons, the launch-deal finance rows and the week-2 rent-or-buy sum are gone. Renting opens in January with the long-haul planes, where rent-or-buy is first met. Finance waits for `financeFromDate` (chapter 4). The second Twin Otter is £10,000.
@@ -318,8 +335,9 @@ The opening is being made excellent before the later campaign continues. `airlin
   - `node src/opening/tests/chapter2.test.js` carries on from a save at chapter 1's review. Make the save with `UPTO=200 SAVE=/tmp/airline-ch1-end.txt node week.test.js`, or pass `CODE=<file>`. The test plays:
     - Christmas and New Year, then day 127: lease a 757, New York at £510 at 06:30;
     - the Balance Report v5.0 §2 check (£47,426 within £10), the refused second service, the local time, the overnight rotation (Delhi, tried early) and growth;
-    - then the weeks and months to `UPTO` (default 155; 400 reaches the chapter 2 review).
+    - then the weeks and months to `UPTO` (default 400: the chapter 2 review, with its accounts and the end card).
     - push 2: the star rating card, the type page (`TYPE=value|premium|full`, default value) and its fare gating, the sign-offs under the cap (the estimate first, the bag fee in two steps), the Bags line, and Thursday's confirmation.
+    - push 3: every event's choice (Value and Premium choose differently), April paused on 2, 14 and 21 April, the ash cloud's closure or the long way round, the landing fees every Monday, the challenges (Value says Not today, then plays Challenge 1 from HQ), the hunts (Value finds both; Premium misses the invoice, finds it in May, and misses the year-1 accounts), the board's request for a changed plan, and the chapter 2 accounts.
   - `node src/opening/tests/record.test.js` (`GAME` either file) checks the pupil record:
     - on Launch Day it types a long multiplication into the column template digit by digit, one line off by a carry, then right;
     - it checks that both attempts are kept cell by cell, with the note and the codes;
@@ -456,7 +474,7 @@ Market rules (in the engine, published on screen): demand falls by `drop` passen
 ## Open items (from the brief)
 
 - [x] Working out the time of each flight (distance ÷ speed) arrives with Madrid on day 15.
-- [ ] Chapter 2 (6 January 2031): the long-haul decision, leasing, reputation live, the Captain's challenges and hunts (the gates are built; the screens are not).
+- [x] Chapter 2 (6 January 2031 to 31 August 2031): long haul, leasing, reputation live, the airline type, events with options, the news, the Captain's challenges and the hunts (pushes 1–3).
 - [ ] Decisions for Fable in `docs/Workbook-v4-Report-Back.md` (the review day, rule 2 on day 4, the fault's options, the price war, Istanbul's archetype, Reykjavik's fares).
 - [ ] Step 3: the commissioning loop for new planes (configure, route, timetable, launch week, review, "Regular service approved"), story callbacks (`S.flags` already records each event choice) and a multi-award finale.
 - [ ] Tune Year 2 (long-haul) numbers with real play.

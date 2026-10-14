@@ -214,3 +214,20 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .bw-act{display:flex;gap:8px;margin-top:8px}.bw-act .btn{flex:1}
 .bw-wait{display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:7px 12px;border-left:4px solid var(--dk-amber);background:rgba(255,181,71,.1);color:#ffe2b3;font-size:15px}.bw-wait .di,.bw-wait svg{width:18px;height:18px}
 .ta-card{margin-bottom:10px}.ta-card .sc-note.later{opacity:.55}
+/* chapter 2, push 3: the event's date, the Captain's challenge, the hunt's document, the month's charges */
+.ev-date{margin:-4px 0 8px;font-size:14px;color:#9fc3ef}
+.cap{max-width:860px}.cap-card{padding:16px 20px}.cap-h{display:flex;align-items:center;gap:12px;margin-bottom:8px}.cap-h h2{margin:2px 0 0;font-size:22px}
+.cap-badge{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:rgba(255,200,61,.16);color:#ffc83d;font-size:22px;border:1px solid rgba(255,200,61,.5)}.cap-badge svg{width:24px;height:24px}
+.cap-story{font-size:17px;line-height:1.45;margin:4px 0 10px}.cap-win{margin:0 0 12px;color:#ffe2b3}.cap-try{position:relative;padding-top:6px;border-top:1px solid #1d3e6e}.cap-try.ok .acq-in{opacity:.85}.cap-u{margin-left:6px;color:#cfe0f7}
+.cap-hq{margin-left:10px;border-color:#ffc83d!important;color:#ffe2b3!important}.cap-hq svg{width:16px;height:16px;vertical-align:-3px}
+.hunt{max-width:900px}.hunt-lead{font-size:16px;margin:0 0 10px}
+.hunt-doc{position:relative;background:#f7f3ea;color:#1d2433;padding:18px 22px;border-radius:2px;box-shadow:0 6px 24px rgba(0,0,0,.35);font-size:15px}
+.hd-h{display:flex;flex-direction:column;gap:2px;border-bottom:2px solid #1d2433;padding-bottom:8px;margin-bottom:8px}.hd-h b{font-size:20px;letter-spacing:.02em}.hd-h span{color:#55607a}
+.hd-t{width:100%;border-collapse:collapse}.hd-t th{text-align:left;font-size:12px;color:#55607a;font-weight:600;padding:4px 6px;border-bottom:1px solid #cfc6b4}.hd-t th.num,.hd-t td.num{text-align:right}
+.hd-t td{padding:8px 6px;border-bottom:1px dashed #cfc6b4;vertical-align:middle}.hd-t tr.on td{background:#fff3c4}.hd-t tr.fixed td{background:#e3f6e8}.hd-t .good{color:#127a3f}
+.hd-t .hunt-x{color:#7a2a12;background:#fff;border:1px solid #c9a27a}.hd-t .hunt-x:hover{background:#fff3c4}
+.hunt-fix td{background:#fffbe8}.hunt-fix .acq-in{color:#1d2433}.hunt-fix .sc-in input{background:#fff;color:#1d2433}
+.hd-stamp{position:absolute;right:18px;top:12px}.hunt-msg.bad{color:var(--dk-amber)}
+.hunt-carry{margin-top:12px;padding:8px 12px;border-left:4px solid var(--dk-amber);background:rgba(255,181,71,.1)}
+.dr-why{margin:6px 0 8px;padding:6px 10px;border-left:4px solid var(--dk-amber);background:rgba(255,181,71,.08);font-size:14px}.dr-why p{margin:3px 0}
+.cap-try .sc-msg.won{color:var(--dk-mint)}
