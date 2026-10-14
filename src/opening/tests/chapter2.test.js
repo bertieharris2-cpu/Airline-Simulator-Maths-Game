@@ -142,6 +142,10 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
     if(t === 'plan' && day === 212 && !seen.april){ seen.april = true; await shot('c2-d212-april-opener'); const x = await txt('#screen'), wr = await E('worldReportHtml()');
       ok("April's plan: the ash cloud is on the known changes as All routes · nothing flies (announced 7 April, inside the month)", /All routes · nothing flies/.test(x), (x.match(/Known changes.{0,400}/) || [''])[0]);
       ok('the World report: Announced for April, with All routes · nothing flies', /Announced for April/.test(wr) && /All routes · nothing flies/.test(wr), (wr.replace(/<[^>]+>/g, ' ').match(/Announced.{0,200}/) || [''])[0]); }
+    // the shop never opens by itself (Bertie, 14 Oct): on day 127 the test pupil rents the 757 from the Fleet desk
+    if(t === 'plan' && day === 127 && !seen.shop127){ seen.shop127 = true; await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150);
+      const so = JSON.parse(await E('JSON.stringify(shopOfferedReport())')); ok('day 127: no shop by itself; the 757 and 787 are on the Fleet desk, and the brief says so', !so.scheduled && /757/.test(await txt('.fs-shop')) && so.brief.some(l => /On the Fleet desk from today: .*757/.test(l)), so); await shot('c2-04e-fleet-desk');
+      await p.click('#fleetShop'); await p.waitForTimeout(150); continue; }
     if(t === 'plan'){ await fits('plan ' + day);
       if(await vis('#s2Edit')){ await p.click('#s2Edit'); await p.waitForTimeout(100); }
       if(day === 127 && !nyc){ const j = await plane757();

@@ -1069,7 +1069,7 @@ function tankSvg(need, order){
   return `<svg class="tank-svg" viewBox="0 0 ${W} ${H + 2}" aria-hidden="true"><defs><pattern id="burnHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="rgba(255,159,67,.10)"/><line x1="0" y1="0" x2="0" y2="8" stroke="rgba(255,159,67,.55)" stroke-width="3"/></pattern></defs>
     <rect x="1" y="1" width="${W - 2}" height="${H}" rx="3" fill="rgba(255,255,255,.03)" stroke="rgba(150,190,255,.45)" stroke-width="2"/>${g}</svg>`;
 }
-/* The order bill, typed on screen: litres × a decimal price. A wrong go shows the pounds-then-pence method; after three, Show me. */
+/* The order bill, typed on screen: litres × a decimal price. A wrong go shows the make-it-whole method (× 100, multiply, ÷ 100); after three, Show me. */
 function fuelBillHtml(order, price, FB){
   const tries = FB ? FB.tries || 0 : 0, msg = FB ? FB.msg || '' : '';
   return `<span class="fb"><span class="answer"><span class="unit">£</span><input id="fbIn" class="mono" inputmode="decimal" autocomplete="off" value="${esc(FB && FB.entry || '')}" aria-label="Order cost"></span><button class="btn primary" id="fbCheck">Check</button>${tries >= 3 ? '<button class="link" id="fbShow">Show me</button>' : ''}</span>${msg ? `<span class="fb-msg">${msg}</span>` : ''}`;
@@ -1080,7 +1080,7 @@ function bindFuelBill(order, price){
   inp.oninput = () => { FB.entry = inp.value; }; inp.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); check(); } };
   function check(){ const got = pqParse('£', inp.value); if(got === null){ FB.msg = 'Type the cost first.'; render(); return; }
     if(Math.abs(got - want) < 0.005){ FB.ok = true; FB.flash = true; FB.msg = ''; countTyped(); (S.handSumLog = S.handSumLog || []).push({ day:S.day, date:dateShort(S.day), tools:[`Fuel order: ${num(order)} L × ${priceL(price)} (Calculate)`] }); render(); return; }
-    FB.tries++; FB.msg = FB.tries === 1 ? `Not quite. ${priceL(price)} is £${Math.floor(price)} and ${Math.round(price * 100) % 100}p: work out ${W[0].split(' = ')[0]}, then ${W[1].split(' = ')[0]}, and add them.` : FB.tries === 2 ? `Have another go: ${W[0]}, then ${W[1].split(' = ')[0]} …` : 'Nearly there. Press Show me to see the working, or try once more.'; render(); }
+    FB.tries++; FB.msg = FB.tries === 1 ? `Not quite. ${priceL(price)} has 2 decimal places: make it whole (${W[0].split(' = ')[0]}), multiply by ${num(order)}, then ÷ 100.` : FB.tries === 2 ? `Have another go: ${W[0]}, then ${W[1].split(' = ')[0]} …, then ÷ 100.` : 'Nearly there. Press Show me to see the working, or try once more.'; render(); }
   on('fbCheck', check);
   on('fbShow', () => { FB.ok = true; FB.msg = ''; if(typeof diagNote === 'function') diagNote({ kind:'answer shown to pupil', table:'fuelbill', cell:'bill', stored:want, typed:FB.entry, tries:FB.tries }); toast(W.join(' · ')); render(); });
   setTimeout(() => { try{ inp.focus(); }catch(e){} }, 30);

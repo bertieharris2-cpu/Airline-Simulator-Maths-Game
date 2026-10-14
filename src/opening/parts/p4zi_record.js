@@ -26,7 +26,7 @@ const REC_REL = { tickets:'passengers × fare', seatsFare:'passengers × fare', 
   flightTime:'flight time: distance ÷ speed', rentOrBuy:'price ÷ rent', timeToAfford:'price ÷ rent', fuelOrder:'fuel purchase', capacity:'time: service length, departures, duty day', timetable:'time: service length, departures, duty day',
   investment:'second-aircraft comparison' };
 function recRel(key){ const name = REC_REL[key] || key || 'other', w = (WORLD.workingMethods || []).find(m => m.relationship === name); return { rel:w ? w.relationship : name, level:w ? w.level : '', codes:w && w.bettws ? w.bettws.slice() : [] }; }
-const REC_SC_METHOD = { part:'partition the price', scale:'scale from 100 L', pence:'make it pence (× 100, multiply, ÷ 100)', dp:'count the decimal places', formal:'formal multiplication' };
+const REC_SC_METHOD = { part:'partition the price', scale:'scale from 100 L', pence:'make it pence (× 100, multiply, ÷ 100)', dp:'count the decimal places', formal:'formal multiplication', whole:'make it whole (× 10, 100 or 1,000), multiply, divide back' };
 
 /* ---------- entries ---------- */
 function recFmt(unit, v){ if(v === null || v === undefined || v === '' || isNaN(v)) return String(v === undefined ? '' : v);
@@ -51,7 +51,7 @@ function recAttempt(e, a){
 const recSoSpec0 = soSpec;
 soSpec = function(it){ const sp = recSoSpec0(it); if(sp) Object.defineProperty(sp, 'it', { value:it, enumerable:false, configurable:true }); return sp; };
 function recSoMethod(sp){ if(sp.op === '÷'){ let x = sp.a.v, y = sp.b.v, k = 0; while(x % 10 === 0 && y % 10 === 0 && x && y){ x /= 10; y /= 10; k++; } return k ? 'make the sum smaller, then short division (suggested)' : 'short division (suggested)'; }
-  return sp.b.f === 'ppl' ? 'make it pence (suggested)' : 'partition, or formal multiplication (suggested)'; }
+  return sp.b.f === 'ppl' ? 'make it whole (× 100), multiply, ÷ 100 (suggested)' : 'partition, or formal multiplication (suggested)'; }
 function recSoEntry(sp){ const it = sp.it || {};
   return recOpen('so:' + it.key, { type:it.level === 'build' ? 'build' : 'calc', relKey:it.rel, doc:sp.title, ask:sp.ask, question:`${soFmt(sp.a.f, sp.a.v)} ${sp.op} ${soFmt(sp.b.f, sp.b.v)}`, unit:sp.res, correct:soAns(sp),
     correctText:soFmt(sp.res, soAns(sp)), ops:[sp.a.v, sp.b.v], op:sp.op, level:it.level === 'build' ? 'Build' : 'Calculate' }); }
@@ -131,7 +131,7 @@ wkGrid = function(t, col, row, o){ try{ if(t && col && row && !(o && (o.done || 
 
 /* ---------- 4. the checks written inline: the service card, rent or buy, the first fuel order ---------- */
 function recBefore(id){
-  if(id === 'scCheck'){ if(!screen().querySelector('.sc-p1.sign') || !UI.sc || !UI.sc.F) return null; const F = UI.sc.F, m = UI.sc.mUsed || 'pence'; return { F, m, R:scRows(m, F), vals:Object.assign({}, UI.sc.vals) }; }
+  if(id === 'scCheck'){ if(!screen().querySelector('.sc-p1.sign') || !UI.sc || !UI.sc.F) return null; const F = UI.sc.F, m = UI.sc.mUsed || 'whole'; return { F, m, R:scRows(m, F), vals:Object.assign({}, UI.sc.vals) }; }
   if(id === 'rbChk'){ const st = step(), ch = S.rnd && S.rnd.acChoice; if(!st || !ch) return null; const p = planeById(ch.pid), o = acOffer(ch.pid); return { st, p, o, v:st.rbV, m:st.rbM || 'short' }; }
   if(id === 'fdSignChk'){ if(!UI.fd) return null; const P0 = fuelOn(S.day || 1), blk = fuelBlock(); return { n:UI.fd.selNow || 0, P0, blk, vals:Object.assign({}, UI.fd.vals) }; }
   return null;
@@ -166,7 +166,7 @@ const recEq = (x, y, money) => money ? Math.round(x * 100) === Math.round(y * 10
 const recTimes = k => ({ 1:'ten', 2:'a hundred', 3:'a thousand' })[k];
 function recNumNote(v, c, e){
   const money = /^£/.test(e.unit || ''), show = x => recFmt(e.unit, x);
-  if(money && recEq(v, c * 100, false)) return `${num(v)} is pence; the bill is ${recMoney(c)}.`;
+  if(money && recEq(v, c * 100, false)) return `${num(v)} is the whole-number answer: ÷ 100 puts the 2 decimal places back, so the bill is ${recMoney(c)}.`;   // make it whole (Bertie, 14 Oct)
   for(let k = 1; k <= 3; k++){
     if(recEq(v * Math.pow(10, k), c, money)) return `Right digits; the answer should be ${recTimes(k)} times bigger — the × ${Math.pow(10, k)} shift was missed.`;
     if(recEq(v, c * Math.pow(10, k), money)) return `Right digits; the answer should be ${recTimes(k)} times smaller — the point is in the wrong place.`; }
@@ -188,7 +188,7 @@ function recScNote(working){
   const lab = bad.lab.replace(/£0\.(\d)(\d)/, (m, a, b) => `${+(a + b)}p`).replace(/£(\d+)\.00/, '£$1'), typed = scParse(bad.unit === 'p' ? 'p' : bad.unit === 'n' ? 'n' : '£', bad.typed);
   if(typed === null) return `${lab}: this line is empty.`;
   if(bad.total && working.filter(w => !w.total).every(w => w.ok) && working.length > 1) return `The lines are right; adding them gives ${bad.unit === '£' ? recMoney(bad.wantV / 100) : bad.want}, not ${bad.unit === '£' ? recMoney(typed / 100) : num(typed)}.`;
-  const unit = bad.unit === '£' ? '£2' : 'n', tv = bad.unit === '£' ? typed / 100 : typed, wv = bad.unit === '£' ? bad.wantV / 100 : bad.wantV, why = recNumNote(tv, wv, { unit, op:'×' }), keep = /^Right digits|is pence/.test(why);
+  const unit = bad.unit === '£' ? '£2' : 'n', tv = bad.unit === '£' ? typed / 100 : typed, wv = bad.unit === '£' ? bad.wantV / 100 : bad.wantV, why = recNumNote(tv, wv, { unit, op:'×' }), keep = /^Right digits|whole-number answer/.test(why);
   const is = /costs$/.test(lab) ? '' : ' is', show = v => bad.unit === '£' ? recMoney(v) : bad.unit === 'p' ? num(v) + 'p' : num(v);
   return `${lab}${is} ${show(wv)}, not ${show(tv)}${keep ? '. ' + why : '.'}`;
 }

@@ -60,10 +60,10 @@ const INTRO = {
         ['You buy fuel before you fly. It goes into your tank, and your flights burn it.', `The price changes from day to day. Today it is <b class="mono">${priceL(fuelPrice())}</b> a litre.`],
         niPrices(0, S.round)]; },
     maths:() => [niRule('litres', '×', 'price per litre', 'Cost'),
-      `<div class="ni-eg"><p>Buying <b>1,000 L</b> at <b>£1.30</b> a litre. The price has a decimal point: £1.30 is <b>£1 and 30p</b>, so do the pounds, then the pence, then add.</p>
-        <div class="ni-col total"><span class="r">1,000 × £1</span><span class="eq">=</span><span class="a">£1,000</span><span class="note">the pounds</span>
-          <span class="r">1,000 × 30p</span><span class="eq">=</span><span class="a">£300</span><span class="note">the pence</span>
-          <span class="r">£1,000 + £300</span><span class="eq">=</span><span class="a">£1,300</span><span class="note">so 1,000 × £1.30 = £1,300</span></div>
+      `<div class="ni-eg"><p>Buying <b>1,000 L</b> at <b>£1.30</b> a litre. The price has a decimal point. <b>Make it whole</b>: £1.30 has 2 decimal places, so × 100. Multiply the whole numbers, then ÷ 100 to put the decimal places back.</p>
+        <div class="ni-col total"><span class="r">1.30 × 100</span><span class="eq">=</span><span class="a">130</span><span class="note">make it whole (2 decimal places)</span>
+          <span class="r">1,000 × 130</span><span class="eq">=</span><span class="a">130,000</span><span class="note">multiply the whole numbers</span>
+          <span class="r">130,000 ÷ 100</span><span class="eq">=</span><span class="a">£1,300</span><span class="note">divide back: 1,000 × £1.30 = £1,300</span></div>
         <p>The same sum works out the <b>fuel cost</b> of a day's flying: the litres your flights burn × the price per litre. You will work out today's on the next screen.</p></div>`],
     practice:'fuelPrice',
     check:{ q:'You want to buy 1,000 L of fuel at £1.30 a litre. Which sum works out the cost?', opts:[['1,000 + £1.30', 'Adding gives £1,001.30, but every one of the 1,000 litres costs £1.30.'], ['1,000 × £1.30', ''], ['1,000 ÷ £1.30', 'Dividing shares something out. Here each of the 1,000 litres costs £1.30.']], ok:1, done:'1,000 × £1.30 = £1,300.' },

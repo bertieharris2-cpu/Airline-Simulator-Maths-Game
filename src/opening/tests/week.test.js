@@ -27,7 +27,8 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       if(await p.$('.sc-p1.sign #scCheck')){   // a fuel sign-off on the service card: the first is answered wrong once (Query), then right (Checked)
         const key = await p.evaluate(() => window.__sim.evalIn('(UI.sc.F && UI.sc.F.p.id + "|" + UI.sc.F.r.id) || ""')), A = await p.evaluate(() => window.__sim.evalIn('scAnswers()'));
         if(!seen.some(x => /^card/.test(x))){ await shot('card-' + tag.replace(/\s/g, '')); await p.fill('[data-sc="r0"]', '1'); await p.click('#scCheck'); await p.waitForTimeout(60);
-          ok('card: a wrong line is stamped Query and highlighted', await vis('.stamp.q') && await vis('.sc-row.qy'), await p.$eval('.sc-msg', e => e.textContent).catch(() => '')); }
+          ok('card: a wrong line is stamped Query and highlighted', await vis('.stamp.q') && await vis('.sc-row.qy'), await p.$eval('.sc-msg', e => e.textContent).catch(() => ''));
+          ok('card: before step 1 is right, steps 2 and 3 do not show its answer or the product (make it whole)', /your step 1 answer/.test(await p.textContent('.sc-p1')) && /Your step 2 answer ÷ 100/.test(await p.textContent('.sc-p1')) && !(await p.$('.sc-c2 .pad-btn, .c2 .pad-btn')), (await p.textContent('.sc-p1')).replace(/\s+/g, ' ').slice(0, 400)); }
         for(const [k, v] of Object.entries(A)) await p.fill(`[data-sc="${k}"]`, v);
         await p.click('#scCheck'); await p.waitForTimeout(80); seen.push('card:' + key + '=' + A.tot);
         if(seen.filter(x => /^card/.test(x)).length === 1){ ok('card: a right answer is stamped Checked with the airline\'s initials', await vis('.stamp.ok'), await p.$eval('.stamp', e => e.textContent).catch(() => '')); await shot('card-done-' + tag.replace(/\s/g, '')); }
@@ -104,12 +105,14 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   if(CAP) await p.evaluate(c => window.__sim.evalIn(`soS().cap = ${c}`), CAP);
   if(BOARD_SHARE !== null) await p.evaluate(v => window.__sim.evalIn(`WORLD.settings.boardNudgeMissedShare = ${v}`), BOARD_SHARE);
   // the chapter
-  let lastDay = 0, planned2 = 0, planned3 = 0, delChk = false; const info = {};
+  let lastDay = 0, planned2 = 0, planned3 = 0, delChk = false; const info = {}, shopVisit = {}, shopSelf = [];
   try{
   for(let i = 0; i < 400; i++){ const t = await T(), s = await S(), day = s.day;
     if(day >= UPTO && t === 'hq') break; if(t === 'chapterReview' && await vis('.rbw')){ await shot('chapter-accounts'); const built = await builds('chapter'); ok('chapter accounts: total revenue, total costs, profit and projected − actual are Build steps', ['rev', 'cost', 'profit', 'vs'].every(k => built.includes(k)), built); await shot('chapter-accounts-built'); checks.push('reached chapterReview day ' + day); break; }
     if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); break; }
-    if(t === 'hq'){ await fits('hq ' + day); if(day !== lastDay) await shot(`d${day}-hq`); lastDay = day; await p.click('#startDay'); continue; }
+    if(t === 'hq'){ const so = await p.evaluate(() => window.__sim.evalIn('JSON.stringify(shopOfferedReport())')).then(JSON.parse); if(so.scheduled) shopSelf.push(day);
+      if([8, 22].includes(day) && s.phase === 'round') ok(`day ${day}: HQ's brief says new aircraft are on the Fleet desk (no shop step)`, so.brief.some(l => /^On the Fleet desk from today: /.test(l)) && !so.scheduled, so.brief);
+      await fits('hq ' + day); if(day !== lastDay) await shot(`d${day}-hq`); lastDay = day; await p.click('#startDay'); continue; }
     if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice(); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
     if(t === 'shop2' && day === 8 && await vis('.acx')){ await fits('compare ' + day); await shot(`d${day}-compare-aircraft`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
       ok(`day ${day}: the second-aircraft comparison: three columns, nine rows each, the capacity problem first`, (await p.$$('.acx-col')).length === 3 && (await p.$$('.acx-col:first-child .acx-r')).length === 9 && /We have a capacity problem/.test(txt), (await p.$$('.acx-col:first-child .acx-r')).length);
@@ -120,7 +123,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       await p.click('[data-actab="grow"]'); await p.waitForTimeout(100); await p.$eval('#acGrowIn', e => { e.value = '2'; e.dispatchEvent(new Event('change')); }); await p.waitForTimeout(200);
       ok(`day ${day}: If Dublin grows recomputes the three planes at ×2.0`, (await p.$$('.acx-gb')).length === 3 && /×2\.0/.test(await p.textContent('.acx-grow')), await p.$eval('.acx-grow', e => e.textContent.replace(/\s+/g, ' ').slice(0, 200)));
       await shot(`d${day}-compare-grow`); await p.click('[data-actab="where"]'); await p.click('[data-acc="sf34"]'); await p.waitForTimeout(150); continue; }
-    if(t === 'shop2' && await vis('.acx') && day > 8){ await shot(`d${day}-compare-again`); ok(`day ${day}: while saving, the shop comes back with the countdown`, /Saving for the Saab 340|You can buy the Saab 340 now/.test(await p.textContent('.bw-wait').catch(() => '')), await p.textContent('.bw-wait').catch(() => ''));
+    if(t === 'shop2' && await vis('.acx') && day > 8){ await shot(`d${day}-compare-again`); ok(`day ${day}: while saving, the shop (opened from the Fleet desk) shows the countdown`, /Saving for the Saab 340|You can buy the Saab 340 now/.test(await p.textContent('.bw-wait').catch(() => '')), await p.textContent('.bw-wait').catch(() => ''));
       await p.click('[data-acc="sf34"]'); await p.waitForTimeout(150); continue; }
     if(t === 'acquire' && await vis('.bw-page')){ await shot(`d${day}-buy-or-wait`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' '), F = await p.evaluate(() => window.__sim.evalIn('JSON.stringify(UI.taF)')).then(JSON.parse);
       ok(`day ${day}: chapter 1 is buy only: no rent or finance on Buy now or wait`, !(await vis('[data-terms]')) && !/a day to rent|Finance, down|rent or finance for now/.test(txt) && /Days to wait/.test(txt) && (await vis('.bw-one') || /What waiting costs/.test(txt)), txt.slice(0, 200));
@@ -133,7 +136,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       else if(await p.$('[data-tafig]')){ for(const x of ['still', '÷', 'rate']) await p.click(['÷'].includes(x) ? `[data-taop="${x}"]` : `[data-tafig="${x}"]`); await p.click('#taBuildChk'); await p.waitForTimeout(80); ok(`day ${day}: the time to afford is Build the second time`, await vis('.ta-card.ok')); }
       const pid = await p.evaluate(() => window.__sim.evalIn('S.rnd.shopPick')), n0 = (await S()).fleet.length, can = await p.$(`[data-bw="${pid}|buy"]:not([disabled])`);
       if(can){ await can.click(); await p.click('#nx'); await p.waitForTimeout(150); info[pid] = day; ok(`day ${day}: the ${pid} is bought outright once there is enough cash`, (await S()).fleet.some(f => f.planeId === pid && f.terms && f.terms.kind === 'buy'), (await S()).fleet.map(f => [f.planeId, f.terms && f.terms.kind])); }
-      else { await p.click(`[data-bw="${pid}|wait"]`); await p.click('#nx'); await p.waitForTimeout(150); ok(`day ${day}: wait for the ${pid}: the fleet is unchanged and the shop will count down`, ((await S()).waitFor || {}).pid === pid && (await S()).fleet.length === n0, (await S()).waitFor); }
+      else { await p.click(`[data-bw="${pid}|wait"]`); await p.click('#nx'); await p.waitForTimeout(150); ok(`day ${day}: wait for the ${pid}: the fleet is unchanged and the Fleet desk will count down`, ((await S()).waitFor || {}).pid === pid && (await S()).fleet.length === n0, (await S()).waitFor); }
       continue; }
     if(t === 'acquire' && await vis('.so-page')){ await shot(`d${day}-acquire-build`); await signs('acquire ' + day); await p.click('#nx'); continue; }
     if(t === 'acquire' && await vis('.acq')){ await shot(`d${day}-pay`); const buy = await p.$eval('[data-terms="buy"]', e => e.disabled), cash = (await S()).cash, reserve = await p.evaluate(() => window.__sim.evalIn('WORLD.cashReserve || 0'));
@@ -150,6 +153,13 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       ok(`day ${day}: chapter 1 is buy only: Rent and Finance are off`, await p.$eval('[data-terms="lease"]', e => e.disabled).catch(() => true) && await p.$eval('[data-terms="finance"]', e => e.disabled).catch(() => true));
       if(!buy){ await p.click('[data-terms="buy"]'); await p.click('#nx'); info.atrBought = info.atrBought || day; } else await p.click('#noBuy'); continue; }
     if(t === 'event'){ await fits('event ' + day); await shot(`d${day}-event`); await p.click(`[data-o="${day === 5 ? 2 : 1}"]`); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
+    // the shop never opens by itself (Bertie, 14 Oct): the test pupil opens it from the Fleet desk on day 8, on a plan day while saving, and from day 22 until the ATR is bought
+    if(t === 'plan' && s.phase === 'round' && !shopVisit[day] && (day === 8 || (s.waitFor && day > 8) || (day >= 22 && s.fleet.length === 2 && !s.fleet.some(f => f.planeId === 'at72')))){ shopVisit[day] = true;
+      await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150);
+      if(day === 8){ ok('day 8: the Fleet desk has Add an aircraft, with the three planes and the Buy button', await vis('.fs-shop #fleetShop:not([disabled])') && (await p.$$('.fs-shop .fs-row')).length === 3, await p.$eval('.fs-shop', e => e.textContent.replace(/\s+/g, ' ')).catch(() => '')); await shot('d8-fleet-desk'); }
+      if(s.waitFor) ok(`day ${day}: while saving, the Fleet desk shows the countdown`, /Saving for the|You can buy the/.test(await p.textContent('.fs-shop').catch(() => '')), await p.textContent('.fs-shop .bw-wait').catch(() => ''));
+      if(await vis('#fleetShop:not([disabled])')){ await p.click('#fleetShop'); await p.waitForTimeout(150); ok(`day ${day}: Add an aircraft opens the shop in front of the plan`, await T() === 'shop2', await T()); continue; }
+      await p.click('[data-nav="plan"]').catch(() => {}); await p.waitForTimeout(100); }
     if(t === 'plan' && process.env.DUMP && process.env.DUMP.split(',').includes(String(day)) && !dumped[day]){ dumped[day] = true; fs.writeFileSync(OUT + `state-${day}.json`, await p.evaluate(() => window.__sim.evalIn('JSON.stringify(S)'))); }
     if(t === 'plan'){ await fits('plan ' + day);
       // the plans from Balance Report v4.4: week 1 the mixed day; week 2 the Saab on Dublin; week 3 the Saab to Amsterdam; week 4 the ATR to Madrid
@@ -256,7 +266,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         await p.click('[data-tl="0|0|0"]'); const sb = await p.$('[data-svccard="0|0|0"]');
         if(sb){ await sb.click(); await p.waitForTimeout(120); const tot = await p.$eval('.sc-total .sc-v', e => e.textContent).catch(() => '');
           ok('day 8: Service costs opens the performance card with the model\'s figures (Twin Otter Paris, 120 L × £1.47)', await vis('.sc-banner') && !(await vis('.sc-p1.sign')) && tot === '£176.40', tot); await shot(`d${day}-svccard`);
-          ok('day 8: the card has one method, make it pence, in three steps (× 100, a line a digit, ÷ 100)', !(await vis('[data-scm]')) && /Make the price whole pence/.test(await p.textContent('.sc-p1')) && /£1\.47 × 100/.test(await p.textContent('.sc-p1')) && /120 × 7p/.test(await p.textContent('.sc-p1')) && /Change the pence back to pounds/.test(await p.textContent('.sc-p1')), (await p.textContent('.sc-p1')).replace(/\s+/g, ' ').slice(0, 300));
+          ok('day 8: the card has one method, make it whole, in three steps (1.47 × 100, one whole-number multiplication, ÷ 100)', !(await vis('[data-scm]')) && /Make the price a whole number/.test(await p.textContent('.sc-p1')) && /1\.47 × 100/.test(await p.textContent('.sc-p1')) && /Multiply the whole numbers/.test(await p.textContent('.sc-p1')) && /120 × 147/.test(await p.textContent('.sc-p1')) && !/120 × 7p|a line for each part/i.test(await p.textContent('.sc-p1')) && /Divide by 100 to put the 2 decimal places back/.test(await p.textContent('.sc-p1')), (await p.textContent('.sc-p1')).replace(/\s+/g, ' ').slice(0, 300));
           await p.click('#scBack'); await p.waitForTimeout(100); ok('day 8: Back to plan returns to the planner', await vis('.ad'), await T()); }
         if(await p.$('#mapOpen')){ await p.click('#mapOpen'); ok('day 8: the network map is a button away, with the destinations, the rival\'s fares and the demand', await vis('#hqMap') && (await p.$$('.net-dest tbody tr')).length >= 2); await shot(`d${day}-map`); await p.click('[data-nav="plan"]'); await p.waitForTimeout(60); } }
       if(day === 29) ok('day 29: the storage upgrade: the tank holds 20,000 L from today', await p.evaluate(() => window.__sim.evalIn('tankCapacity()')) === 20000, await p.evaluate(() => window.__sim.evalIn('tankCapacity()')));
@@ -329,6 +339,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     checks.push('stopped at ' + t + ' day ' + day); await shot('stop'); break; }
   }catch(e){ checks.push('FAIL exception ' + e.message.split('\n')[0] + ' (test line ' + ((String(e.stack).match(/week\.test\.js:(\d+)/) || [])[1] || '?') + ', ' + await T().catch(() => '?') + ')'); await shot('exception'); }
   const s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
+  ok('no day puts the shop in front of the pupil by itself (week, month and arrival days alike)', !shopSelf.length, shopSelf);
   if(process.env.SAVE){ fs.writeFileSync(process.env.SAVE, await p.evaluate(() => window.__sim.saveCode())); checks.push('info save code written to ' + process.env.SAVE); }   // chapter2.test.js starts from this save
   if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t) && !/\(Build\)|^Build:/.test(t));   // Build steps (the reviews, the model's formulas) are not Calculate
     const count = calc.reduce((n, t) => { const m = /^Ticket revenue \(([^)]*)\)/.exec(t); return n + (m ? m[1].split(',').length : 1); }, 0) + 2;   // launch day's three fares count as three

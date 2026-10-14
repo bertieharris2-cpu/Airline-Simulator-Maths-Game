@@ -239,3 +239,7 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .taw-page .dk-t tr.on td{background:rgba(255,200,61,.1)}.taw-page .dk-t .good{color:var(--dk-mint)}
 .ta-save{margin:-2px 0 12px}.neg-card .sc-note{margin-top:6px}
 .ch4-card{margin-top:10px;border-color:#ffc83d}.ch4-card .wr-l{margin:6px 0}
+
+/* run-through fixes (14 Oct): a Working button beside a sum box widens its column instead of running off the panel */
+.sc-row:has(> .pad-wrap){grid-template-columns:minmax(0,1fr) auto auto}.fd-sr:has(> .pad-wrap){grid-template-columns:minmax(0,1fr) auto}
+.sc-row > .pad-wrap .sc-in input,.fd-sr > .pad-wrap .sc-in input{min-width:0;width:118px}

@@ -108,14 +108,14 @@ R.plan = st => {
 /* the first open cell, row by row then column by column */
 function wkNext(tables){ for(const t of tables){ const rows = tRows(t); for(let ri = 0; ri < rows.length; ri++) for(const c of t.cols) if(cellState(t, c, ri) === 'enter') return { t, cell:{ col:c.id, row:rows[ri].id } }; } return null; }
 function wkCells(tables){ const out = [], auto = S.rnd.autoDone || []; tables.forEach(t => { const rows = tRows(t); rows.forEach((r, ri) => t.cols.forEach(c => { const s = cellState(t, c, ri); if(rowTyped(t, r) && ['enter', 'done', 'wait'].includes(s) && !auto.includes(t.id + '|' + cellId(c.id, r.id))) out.push({ t, c, r, s }); })); }); return out; }
-/* a figure as it is written down: pounds as whole pounds, litres as a number, a price per litre in pence */
-function wkFig(unit, v){ if(unit === 'ppl') return { s:String(Math.round(v * 100)), note:`${priceL(v)} = ${Math.round(v * 100)}p` }; if(unit === 'dec'){ const h = Math.round(v * 100); return h % 10 === 0 ? { s:String(h / 10), note:`${h / 10} in 10`, tenths:true, div:10 } : { s:String(h), note:`${h} in 100`, tenths:true, div:100 }; } if(unit === '£') return { s:String(Math.round(v)) }; return { s:String(Math.round(v)) }; }
+/* a figure as it is written down, made whole: pounds as whole pounds, litres as a number, a decimal × 10 or × 100 */
+function wkFig(unit, v){ if(unit === 'ppl') return { s:String(Math.round(v * 100)), note:`${v.toFixed(2)} × 100 = ${Math.round(v * 100)}` }; if(unit === 'dec'){ const h = Math.round(v * 100); return h % 10 === 0 ? { s:String(h / 10), note:`${(h / 100).toFixed(1)} × 10 = ${h / 10}`, tenths:true, div:10 } : { s:String(h), note:`${(h / 100).toFixed(2)} × 100 = ${h}`, tenths:true, div:100 }; } if(unit === '£') return { s:String(Math.round(v)) }; return { s:String(Math.round(v)) }; }
 /* the method, line by line, for Show me and the working rows */
 function wkMethod(a, b, op, unitA, unitB, unitOut){
   const f = v => num(v);
   if(op === '−') return [`${f(a)} − ${f(b)}`, `= ${f(a - b)}`];
-  if(unitB === 'dec'){ const h = Math.round(b * 100); if(h % 10 === 0){ const k = h / 10; return [`${f(a)} ÷ 10 = ${f(a / 10)}`, `${f(a / 10)} × ${k} = ${f(Math.round(a * k) / 10)}`]; } return [`${f(a)} × ${h} = ${f(a * h)}`, `${f(a * h)} ÷ 100 = ${f(Math.round(a * h) / 100)}`]; }
-  if(unitB === 'ppl'){ const p = Math.round(b * 100), pounds = Math.floor(p / 100), pence = p % 100; return [`${f(a)} × £${pounds} = £${f(a * pounds)}`, `${f(a)} × ${pence}p = £${f(a * pence / 100)}`, `£${f(a * pounds)} + £${f(a * pence / 100)} = £${f(a * b)}`]; }
+  if(unitB === 'dec'){ const h = Math.round(b * 100), k = h % 10 === 0 ? 10 : 100, w = h * k / 100; return [`${(h / 100).toFixed(k === 10 ? 1 : 2)} × ${k} = ${w}`, `${f(a)} × ${w} = ${f(a * w)}`, `${f(a * w)} ÷ ${k} = ${f(Math.round(a * w) / k)}`]; }
+  if(unitB === 'ppl'){ const p = Math.round(b * 100); return [`${(p / 100).toFixed(2)} × 100 = ${p}`, `${f(a)} × ${p} = ${f(a * p)}`, `${f(a * p)} ÷ 100 = £${f(a * p / 100)}`]; }
   if(b % 10 === 0 && b >= 20) return [`${f(a)} × ${b / 10} = ${f(a * b / 10)}`, `${f(a * b / 10)} × 10 = ${f(a * b)}`];
   if(b >= 10){ const tens = Math.floor(b / 10) * 10, ones = b - tens; return [`${f(a)} × ${tens} = ${f(a * tens)}`, `${f(a)} × ${ones} = ${f(a * ones)}`, `${f(a * tens)} + ${f(a * ones)} = ${f(a * b)}`]; }
   return [`${f(a)} × ${b} = ${f(a * b)}`];
@@ -138,7 +138,7 @@ function wkGridBase(t, col, row, o){
 }
 /* the fuel tutorial: the example stepped through on the paper before his own litres */
 function wkTutorial(st){
-  const k = st.tutStep || 0, steps = [['1,000 × £1.30', 'The price has a decimal point. £1.30 is £1 and 30p, so do the pounds, then the pence, then add.'], ['1,000 × £1 = £1,000', 'The pounds first.'], ['1,000 × 30p = £300', 'Then the pence: 1,000 × 30p is 30,000p, which is £300.'], ['£1,000 + £300 = £1,300', 'Add them: 1,000 × £1.30 = £1,300. Another way: 130p × 1,000 = 130,000p = £1,300.']];
+  const k = st.tutStep || 0, steps = [['1,000 × £1.30', 'The price has a decimal point. Make it whole, multiply the whole numbers, then divide back.'], ['1.30 × 100 = 130', 'Make it whole: £1.30 has 2 decimal places, so × 100.'], ['1,000 × 130 = 130,000', 'One multiplication, with whole numbers.'], ['130,000 ÷ 100 = £1,300', 'Divide back by 100 to put the 2 decimal places back: 1,000 × £1.30 = £1,300.']];
   return `<div class="wk-tut"><span class="kl">A worked example first</span><h2>Litres × a price with a decimal point</h2>
     <div class="wk-tut-lines">${steps.slice(0, k + 1).map(([s, w], i) => `<div class="wk-tl ${i === k ? 'now' : ''}"><b class="mono">${s}</b><span>${w}</span></div>`).join('')}</div>
     <div class="wk-act">${k < steps.length - 1 ? '<button class="btn primary big" id="wkTutNext">Next step &#9654;</button>' : '<button class="btn primary big" id="wkTutGo">Now your own fuel &#9654;</button>'}</div></div>`;

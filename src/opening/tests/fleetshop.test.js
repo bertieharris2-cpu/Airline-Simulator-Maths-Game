@@ -46,13 +46,13 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
   await p.evaluate(c => { const s = window.__sim.loadCode(c); window.__sim.setS(s); window.__sim.landSave(); window.__sim.render(); }, fs.readFileSync(CODE, 'utf8').trim());
   let s = await S(); ok('the save is at day 8 with one aircraft', s.day === 8 && s.fleet.length === 1, { day:s.day, fleet:s.fleet.map(f => f.planeId) });
   ok('before day 8 the Fleet shop says when aircraft can be had', /from Monday 9 September/.test(await E("(() => { const k = S.day; S.day = 3; try{ return shopClosedWhy(); } finally { S.day = k; } })()")), await E("(() => { const k = S.day; S.day = 3; try{ return shopClosedWhy(); } finally { S.day = k; } })()"));
-  let declined = false, planShop = false, boardShop = false, padDone = false, rented = null, divPad = false;
+  let planShop = false, boardShop = false, padDone = false, rented = null, divPad = false;
   for(let i = 0; i < 400; i++){ const t = await T(); s = await S(); const day = s.day;
     if(day >= 15 && t === 'hq'){ checks.push('stopped at hq day ' + day); break; }
     if(t === 'hq'){ await p.click('#startDay'); continue; }
     if(t === 'intro'){ for(let pg = 0; pg < 3; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')){ for(let k = 0; k < 3; k++){ const a = await E('practiceAnswer()'); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } }
       const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
-    if(t === 'shop2' && !declined){ ok('day 8: the comparison is offered', day === 8 && await vis('[data-acc]')); await p.click('#skipShop'); declined = true; await p.waitForTimeout(100); continue; }
+    if(t === 'shop2' && !boardShop && !planShop){ ok('day 8: the shop is not offered by itself (Bertie, 14 Oct: the Fleet desk only)', false, (await S()).steps.map(x => x.t)); await p.click('#skipShop'); await p.waitForTimeout(100); continue; }
     if(t === 'shop2' && boardShop && !rented){ await shot('fs-02-shop-from-board'); ok('the shop opened from the board is the comparison (one aircraft)', await vis('[data-acc="sf34"]'));
       if(await p.$('[data-actab="where"]')) await p.click('[data-actab="where"]'); await p.click('[data-acc="sf34"]'); await p.waitForTimeout(150); continue; }
     if(t === 'acquire' && await vis('.so-page')){ await signs(); await p.click('#nx'); continue; }
@@ -85,7 +85,8 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
       continue; }
     if(t === 'event'){ await p.click('[data-o="1"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
     if(t === 'plan'){
-      if(day === 8 && !planShop){ await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150); await shot('fs-01-fleet-panel');
+      if(day === 8 && !planShop){ const so = JSON.parse(await E('JSON.stringify(shopOfferedReport())')); ok('day 8: no shop step by itself: HQ goes straight to the plan, and the brief names the Fleet desk', !so.scheduled && so.brief.some(l => /On the Fleet desk from today/.test(l)), so);
+        await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150); await shot('fs-01-fleet-panel');
         ok('Fleet (plan page): the Add an aircraft panel lists the shop and its button is on', await vis('.fs-shop') && await p.$eval('#fleetShop', e => !e.disabled) && /Saab 340/.test(await txt('.fs-shop')), await txt('.fs-shop')); planShop = true;
         await p.click('[data-nav="plan"]'); await p.waitForTimeout(100); }
       if(await vis('#s2Edit')){ await p.click('#s2Edit'); await p.waitForTimeout(100); } if(await vis('#s2Back')){ await p.click('#s2Back'); await p.waitForTimeout(100); }
@@ -133,8 +134,10 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
   // as from January (renting opens; buy only switched off here): the comparison's pay page shows its sums, and the rent-or-buy box has the division pad
   await p.evaluate(c => { const s = window.__sim.loadCode(c); window.__sim.setS(s); window.__sim.landSave(); window.__sim.render(); }, fs.readFileSync(CODE, 'utf8').trim());
   await E('(WBS().chapter1BuyOnly = false, true)');
+  let rentShop = false;
   for(let i = 0; i < 40; i++){ const t = await T();
     if(t === 'hq'){ await p.click('#startDay'); continue; }
+    if(t === 'plan' && !rentShop){ rentShop = true; await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150); await p.click('#fleetShop'); await p.waitForTimeout(150); continue; }
     if(t === 'intro'){ for(let pg = 0; pg < 3; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')){ for(let k = 0; k < 3; k++){ const a = await E('practiceAnswer()'); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } }
       const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
     if(t === 'shop2'){ if(await p.$('[data-actab="where"]')) await p.click('[data-actab="where"]'); await p.click('[data-acc="sf34"]'); await p.waitForTimeout(150); continue; }

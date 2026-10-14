@@ -7,7 +7,7 @@
      to afford) and − (still to save).
    - A Working button in the top bar opens a free pad on any screen: type two numbers, choose × ÷ + or −, set it out.
    - × is the column method, typed right to left, a carry strip above each line and a line for each part of the smaller
-     number; money with pence is worked in pence ("£1.47 = 147p"), then ÷ 100. ÷ is the bus stop (Bertie's choice): the
+     number; a decimal is made whole first ("1.47 × 100 = 147 (2 decimal places)", × 10, 100 or 1,000), then divided back. ÷ is the bus stop (Bertie's choice): the
      divisor outside, a box for each answer digit, a small box for each remainder carried, decimal places after the
      point, a list of the divisor's multiples to fill in, and "Make it smaller" when both numbers end in 0. − is column
      subtraction with an exchange strip. + is column addition.
@@ -32,7 +32,9 @@ function padSpecFor(inp){
       return { op:'×', a:sp.a.v, b:sp.b.v, money, lab:`${soFmt(sp.a.f, sp.a.v)} × ${soFmt(sp.b.f, sp.b.v)}`, sel:`[data-soin="${key}"]` }; }
     if(inp.matches('[data-sopre]')){ const key = inp.getAttribute('data-sopre'), it = soItem(key), sp = it && soSpec(it); if(!sp || !sp.pre || !sp.pre.est || !sp.pre.a) return null;
       return { op:'×', a:sp.pre.a, b:sp.pre.b, money:true, lab:sp.pre.lab, sel:`[data-sopre="${key}"]` }; }
-    if(inp.matches('[data-sc]')){ const k = inp.getAttribute('data-sc'), F = UI.sc.F; if(!F || !/^r\d+$/.test(k)) return null; const R = scRows(UI.sc.mUsed || 'pence', F), x = R.rows[+k.slice(1)]; if(!x) return null;
+    if(inp.matches('[data-sc]')){ const k = inp.getAttribute('data-sc'), F = UI.sc.F; if(!F || !/^r\d+$/.test(k)) return null; const R = scRows(UI.sc.mUsed || 'whole', F), x = R.rows[+k.slice(1)]; if(!x) return null;
+      if(x.whole){ if(!(UI.sc.right || {})['r' + R.rows.findIndex(z => z.step === 1)]) return null;   // step 1 first: the pad would show its answer
+        return { op:'×', a:F.L, b:F.P, money:false, lab:`${num(F.L)} × ${num(F.P)}`, sel:`[data-sc="${k}"]` }; }   // make it whole: one long multiplication
       if(x.part) return { op:'×', a:F.L, b:x.part.v, money:false, unit:'p', lab:`${num(F.L)} × ${num(x.part.v)}p`, sel:`[data-sc="${k}"]` };
       if(x.add) return { op:'+', lines:R.rows.filter(z => z.part).map(z => z.want), money:false, unit:'p', lab:'Add the lines', sel:`[data-sc="${k}"]` };
       return null; }
@@ -56,16 +58,21 @@ function padModel(sp){
     let a = a0, b = b0, k = 0; if(C.small && canSmall){ while(a % 10 === 0 && b % 10 === 0 && a && b){ a /= 10; b /= 10; k++; } }
     const dp = b && a % b !== 0 ? 2 : 0, int = String(a).length, q = b ? Math.floor(a / b * Math.pow(10, dp) + 1e-9) / Math.pow(10, dp) : 0;
     return { op:'÷', a, b, a0, b0, k, canSmall, small:!!(C.small && canSmall), dp, int, ans:q, exact:b ? a / b : 0, W:int + dp, top:[a], low:b, parts:[], pence:false, unit:sp.unit || '' }; }
-  // ×
-  const pence = !!sp.money && (padDec(sp.a) || padDec(sp.b));
-  let a = sp.a, b = sp.b, note = '';
-  if(pence){ if(padDec(a)){ note = `${priceL(a)} = ${Math.round(a * 100)}p`; a = Math.round(a * 100); } if(padDec(b)){ note = `${sp.b < 10 ? priceL(b) : twoDp(b)} = ${num(Math.round(b * 100))}p`; b = Math.round(b * 100); } }
+  // × — make it whole (Bertie, 14 Oct): each decimal factor × 10, 100 or 1,000 (its decimal places; money has 2), one whole-number
+  // multiplication, then divide back by the same
+  const placesOf = v => { const s = String(Math.abs(+v)), i = s.indexOf('.'); return i < 0 ? 0 : Math.min(3, s.length - i - 1); };
+  const kOf = v => sp.money ? (padDec(v) ? 100 : 1) : Math.pow(10, placesOf(v)), ka = kOf(sp.a), kb = kOf(sp.b), scale = ka * kb, pence = !!sp.money && scale === 100;
+  const show = (v, k) => sp.money ? (+v).toFixed(2) : String(+v), dpw = k => `${String(k).length - 1} decimal place${k === 10 ? '' : 's'}`, notes = [];
+  let a = sp.a, b = sp.b;
+  if(ka > 1){ notes.push(`${show(a, ka)} × ${num(ka)} = ${num(Math.round(a * ka))} (${dpw(ka)})`); a = Math.round(a * ka); }
+  if(kb > 1){ notes.push(`${show(b, kb)} × ${num(kb)} = ${num(Math.round(b * kb))} (${dpw(kb)})`); b = Math.round(b * kb); }
+  const note = notes.join('; ');
   a = Math.round(a); b = Math.round(b);
   const nz = v => String(v).split('').filter(d => d !== '0').length;
   let top = a, low = b; if(nz(a) < nz(b) || (nz(a) === nz(b) && String(a).length < String(b).length)){ top = b; low = a; }
   const parts = nz(low) > 1 ? String(low).split('').reverse().map((d, k) => ({ d:+d, k, v:top * +d * Math.pow(10, k), lab:`${num(top)} × ${num(+d * Math.pow(10, k))}` })).filter(x => x.d) : [];
   const ans = top * low, W = Math.max(String(ans).length, String(top).length, String(low).length + 1) + 1;
-  return { op:'×', top:[top], low, parts, ans, pence, note, W, unit:pence ? 'p' : (sp.unit || '') };
+  return { op:'×', top:[top], low, parts, ans, pence, scale, money:!!sp.money, note, W, unit:sp.unit || '' };
 }
 function padBoxes(key, rid, n, cls, max){ const C = padCellsOf(key), vals = C[rid] || [];
   return Array.from({ length:n }, (_, c) => `<input class="${cls}" data-wpr="${rid}" data-wpc="${c}" maxlength="${max || 1}" inputmode="numeric" autocomplete="off" value="${esc(vals[c] || '')}" aria-label="${cls === 'wp-d' ? 'digit' : 'small box'}">`).join(''); }
@@ -93,7 +100,7 @@ function padHint(M){
   if(M.op === '+') return 'Add each column from the right; carry into the next column.';
   if(M.op === '−') return `${M.swap ? 'The bigger number goes on top. ' : ''}Take away each column from the right. If the top digit is too small, exchange: take 1 from the next column and write the new numbers in the small boxes.`;
   if(M.op === '÷') return `How many ${num(M.b)}s go into each part, from the left? Write the answer digit above and carry the remainder to the next digit.${M.dp ? ' The answer goes past the point: carry on into the 0s.' : ''}`;
-  if(M.parts.length) return `One line for each part of ${num(M.low)}, then add the lines.`;
+  if(M.parts.length) return `Long multiplication: a line for each digit of ${num(M.low)}, then add the lines.`;
   if(/^10+$/.test(String(M.low))) return `× ${num(M.low)} moves each digit ${String(M.low).length - 1 === 1 ? 'one place' : (String(M.low).length - 1) + ' places'} to the left; the empty places get a 0.`;
   return `Multiply each digit of ${num(M.top[0])} by ${num(M.low)}, from the right, carrying as you go.`;
 }
@@ -104,9 +111,9 @@ function padHtml(sp){
       <select data-wfop aria-label="Operation">${['×', '÷', '+', '−'].map(o => `<option ${sp.op === o ? 'selected' : ''}>${o}</option>`).join('')}</select>
       <input data-wfb inputmode="decimal" autocomplete="off" value="${esc(UI.padFree && UI.padFree.b !== undefined ? UI.padFree.b : '')}" aria-label="Second number" placeholder="second number"><button class="btn small" data-wfgo>Set it out</button></div>` : '';
   const small = M && M.op === '÷' && M.canSmall ? `<label class="wp-small"><input type="checkbox" data-wpsmall ${M.small ? 'checked' : ''}> Make it smaller${M.small ? `: ${num(M.a0)} ÷ ${num(M.b0)} is the same as ${num(M.a)} ÷ ${num(M.b)}` : ` (both end in 0)`}</label>` : '';
-  const pounds = M && M.pence && M.op === '×' && !free ? `<div class="wp-pnd"><span>Answer in pence ÷ 100 =</span><span class="sc-in"><i class="pre">£</i><input data-wpp="1" inputmode="decimal" autocomplete="off" value="${esc(C.pounds || '')}" aria-label="In pounds"></span></div>` : M && M.pence && free ? '<p class="wp-note">The answer is in pence: ÷ 100 for pounds.</p>' : '';
+  const back = M && M.op === '×' && M.scale > 1, pounds = back && !free ? `<div class="wp-pnd"><span>Divide back: answer ÷ ${num(M.scale)} =</span><span class="sc-in">${M.money ? '<i class="pre">£</i>' : ''}<input data-wpp="1" inputmode="decimal" autocomplete="off" value="${esc(C.pounds || '')}" aria-label="Divided back"></span></div>` : back && free ? `<p class="wp-note">Then ÷ ${num(M.scale)} to put the decimal places back.</p>` : '';
   return `<div class="wp-h"><b>Working</b><span>${esc(free ? 'your own sum' : sp.lab)}</span><button class="s2-x" data-wpx="1" aria-label="Close">×</button></div>${form}
-    ${M ? `${M.note ? `<p class="wp-note">${M.op === '×' ? 'Make it pence: ' : 'Work '}${esc(M.note)}</p>` : ''}${small}<p class="wp-note">${esc(padHint(M))}</p>${padBody(sp, M, key)}${M.unit === 'p' && !M.pence ? '<p class="wp-note">In pence.</p>' : ''}${pounds}` : '<p class="wp-note">Type two numbers and choose ×, ÷, + or −. The pad sets the sum out in columns for you to work. Nothing is marked.</p>'}
+    ${M ? `${M.note ? `<p class="wp-note">${M.op === '×' ? 'Make it whole: ' : 'Work '}${esc(M.note)}</p>` : ''}${small}<p class="wp-note">${esc(padHint(M))}</p>${padBody(sp, M, key)}${M.unit === 'p' && !M.pence ? '<p class="wp-note">In pence.</p>' : ''}${pounds}` : '<p class="wp-note">Type two numbers and choose ×, ÷, + or −. The pad sets the sum out in columns for you to work. Nothing is marked.</p>'}
     <div class="wp-act"><button class="dk-link" data-wpclr="1">Clear</button><span class="grow"></span><span class="wp-msg" role="status"></span>${free ? '<button class="btn" data-wpx="2">Close</button>' : '<button class="btn primary" data-wpuse="1">Use this answer ✓</button>'}</div>`;
 }
 /* a row read as a number (blank boxes inside count as 0) */
@@ -132,7 +139,7 @@ function padSnapshot(sp){
   else if(M.op === '−'){ if((C.x || []).some(Boolean)) L.push('  ' + Array.from({ length:W }, (_, c) => (C.x || [])[c] || ' ').join(' ')); L.push(stat(M.top[0])); L.push(stat(M.low, '−')); }
   else { L.push(stat(M.top[0])); L.push(stat(M.low, '×')); }
   L.push('  ' + '-'.repeat(W * 2 - 1)); M.parts.forEach((x, i) => L.push(line(C['p' + i]))); if(M.parts.length) L.push('  ' + '-'.repeat(W * 2 - 1));
-  L.push(line(C.ans)); if(M.pence && M.op === '×') L.push(`÷ 100 = £${C.pounds || ' '}`);
+  L.push(line(C.ans)); if(M.op === '×' && M.scale > 1) L.push(`÷ ${M.scale} = ${M.money ? '£' : ''}${C.pounds || ' '}`);
   return { lab:sp.lab, lines:L };
 }
 
@@ -178,7 +185,7 @@ function bindPad(){
   if(go){ const fa = el.querySelector('[data-wfa]'), fb = el.querySelector('[data-wfb]'), fo = el.querySelector('[data-wfop]');
     const set = () => { const a = padNum(fa.value), b = padNum(fb.value), op = fo.value, msg = el.querySelector('.wp-msg'); UI.padFree = { a:fa.value, b:fb.value, op };
       if(a === null || b === null){ msg.textContent = 'Type two numbers.'; return; } if(op === '÷' && !b){ msg.textContent = 'You can\'t share into 0 groups.'; return; }
-      const money = /[.£]/.test(fa.value + fb.value);
+      const money = /£/.test(fa.value + fb.value);   // a decimal without £ counts its own decimal places
       PAD.sp = op === '+' ? { free:true, op, lines:padDec(a) || padDec(b) ? [Math.round(a * 100), Math.round(b * 100)] : [a, b], unit:padDec(a) || padDec(b) ? 'p' : '', lab:`${fa.value} + ${fb.value}`, a, b }
         : { free:true, op, a, b, money, lab:`${fa.value} ${op} ${fb.value}` };
       padRedraw(); padFocusFirst(); };
@@ -187,7 +194,7 @@ function bindPad(){
   if(use) use.onclick = () => {
     const msg = el.querySelector('.wp-msg'), M = padModel(sp); let v = null;
     if(M.op === '÷'){ const d = padDivValue(key, M); if(d === null){ msg.textContent = 'Fill in the answer above the line first.'; return; } v = String(d); }
-    else if(M.pence && M.op === '×'){ const p = String(C.pounds || '').replace(/[£,\s]/g, ''); const ans = padRowValue(key, 'ans'); if(p === '' || isNaN(+p)){ msg.textContent = ans === null ? 'Work out the answer line first.' : 'Now change the pence to pounds: ÷ 100.'; return; } v = p; }
+    else if(M.op === '×' && M.scale > 1){ const p = String(C.pounds || '').replace(/[£,\s]/g, ''); const ans = padRowValue(key, 'ans'); if(p === '' || isNaN(+p)){ msg.textContent = ans === null ? 'Work out the answer line first.' : `Now divide back: ÷ ${num(M.scale)} puts the decimal places back.`; return; } v = p; }
     else { const ans = padRowValue(key, 'ans'); if(ans === null){ msg.textContent = 'Fill in the answer line first.'; return; } v = String(ans); }
     const t = screen().querySelector(sp.sel); if(!t){ msg.textContent = 'The box has gone: close the pad.'; return; }
     t.value = v; t.dispatchEvent(new Event('input', { bubbles:true }));
@@ -211,7 +218,7 @@ render = function(){ const r = renderPad0.apply(this, arguments); try{ if(S && !
 /* the free pad: a pencil in the top bar, on every screen */
 const PAD_ICON = '<svg class="di" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 6.5l4 4" stroke="currentColor" stroke-width="1.8"/></svg>';
 function openFreePad(){ if(PAD && PAD.free){ closePad(); return; } const f = UI.padFree || {}, a = padNum(f.a), b = padNum(f.b), op = f.op || '×';
-  openPad(a !== null && b !== null ? (op === '+' ? { free:true, op, lines:[a, b], a, b, lab:`${f.a} + ${f.b}` } : { free:true, op, a, b, money:/[.£]/.test(String(f.a) + f.b), lab:`${f.a} ${op} ${f.b}` }) : { free:true, op, a:null, b:null, lab:'' }, null); }
+  openPad(a !== null && b !== null ? (op === '+' ? { free:true, op, lines:[a, b], a, b, lab:`${f.a} + ${f.b}` } : { free:true, op, a, b, money:/£/.test(String(f.a) + f.b), lab:`${f.a} ${op} ${f.b}` }) : { free:true, op, a:null, b:null, lab:'' }, null); }
 (function padTopBar(){ if(typeof IS_DISPLAY !== 'undefined' && IS_DISPLAY) return; const tools = document.querySelector('.dkh-tools'); if(!tools || document.getElementById('padFree')) return;
   tools.insertAdjacentHTML('afterbegin', `<button class="dk-ib pad-ib" id="padFree" title="Working: set out a sum in columns (×, ÷, +, −)" aria-label="Working pad">${PAD_ICON}</button>`);
   document.getElementById('padFree').onclick = openFreePad; })();
@@ -224,4 +231,4 @@ if(typeof recAttemptHtml === 'function'){ const recAttemptHtmlPad0 = recAttemptH
     return h.replace('<div class="att">', '<div class="att">' + pre); }; }
 /* for the tests: the pad's layout for a box */
 function padInfo(sel){ const inp = screen().querySelector(sel), sp = inp && padSpecFor(inp); if(!sp) return null; const M = padModel(sp);
-  return { op:M.op, W:M.W, low:M.low, top:M.top, a:M.a, b:M.b, dp:M.dp, int:M.int, small:M.small, canSmall:M.canSmall, parts:(M.parts || []).map(x => x.v), ans:M.ans, pence:M.pence, pounds:M.pence ? (M.ans / 100).toFixed(2) : null }; }
+  return { op:M.op, W:M.W, low:M.low, top:M.top, a:M.a, b:M.b, dp:M.dp, int:M.int, small:M.small, canSmall:M.canSmall, parts:(M.parts || []).map(x => x.v), ans:M.ans, pence:M.pence, scale:M.scale || 1, pounds:M.pence ? (M.ans / 100).toFixed(2) : null }; }

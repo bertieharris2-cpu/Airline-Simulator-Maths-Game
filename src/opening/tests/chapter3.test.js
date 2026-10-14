@@ -98,7 +98,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
         if(await T() === 'event') await p.click('#nx'); continue; }
       await p.click('[data-o="1"]').catch(() => p.click('[data-o="0"]')); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
     if(t === 'afford3'){ await shot('c3-04-afford3'); const pid = await J('step().pid || taTargetW()'); ok('day 365: the time to afford in weeks, for the cheapest plane he cannot buy yet', !!pid && /How many weeks until we can afford/.test(await txt('.ta-card')), pid);
-      await taw('day 365', 'calc'); await shot('c3-05-afford3-done'); const sk = (await R3()).skills.taw; ok('the weekly sum counts as a Calculate in the skills, and in the pupil record', sk && sk.count === 1 && (await J("rec().entries.some(e => /^taw:/.test(e.key))")), sk);
+      await taw('day 365', 'calc'); await shot('c3-05-afford3-done'); ok('day 365: after the sum comes the plan, not the air show', /Next: the plan/.test(await txt('#nx')) && !/air show/i.test(await txt('#screen')), await txt('#nx')); const sk = (await R3()).skills.taw; ok('the weekly sum counts as a Calculate in the skills, and in the pupil record', sk && sk.count === 1 && (await J("rec().entries.some(e => /^taw:/.test(e.key))")), sk);
       await p.click('#nx'); continue; }
     if(t === 'shop2'){ await shot(`c3-d${day}-shop`);
       if(day === 365){ const has = await p.$$eval('[data-pick]', es => es.map(e => e.getAttribute('data-pick'))); ok('day 365: the A340, 777 and A350 are in the shop, and the jets cost twice as much (787 £12m)', ['a340', 'b777', 'a350'].every(x => has.includes(x)) && (await J("shopOffer(planeById('b787')).price")) === 12000000, has); }
@@ -116,6 +116,11 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
       await p.click('#noBuy'); continue; }
     if(t === 'paint'){ await p.click('#roll'); continue; }
     if(t === 'reveal'){ await p.click('#skipReveal', { timeout:2000 }).catch(() => {}); for(let k = 0; k < 50 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
+    // the shop never opens by itself (Bertie, 14 Oct): the test pupil opens it from the Fleet desk on day 365 and, for Premium, on a plan day after 394 for the A350
+    if(t === 'plan' && ((day === 365 && !seen.shop365) || (day > 394 && TYPE === 'premium' && !seen.buildTa && !seen['shop' + day]))){ seen['shop' + day] = true; if(day === 365) seen.shop365 = true;
+      await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150);
+      if(day === 365){ await shot('c3-04b-fleet-desk'); const so = await J('shopOfferedReport()'); ok('day 365: no air show by itself; the big planes are on the Fleet desk, and the brief says so', !so.scheduled && /A350/.test(await txt('.fs-shop')) && so.brief.some(l => /On the Fleet desk from today: .*A350/.test(l)), [so, await txt('.fs-shop')]); }
+      await p.click('#fleetShop'); await p.waitForTimeout(150); continue; }
     if(t === 'plan'){ await fits('plan ' + day); if(await vis('#s2Edit')){ await p.click('#s2Edit'); await p.waitForTimeout(100); }
       if(day === 365 && !seen.d365){ seen.d365 = true;
         // the overnight rotation to Tokyo, tried on the rented long-haul plane: out on day 1 (lands +9 h), home on day 2

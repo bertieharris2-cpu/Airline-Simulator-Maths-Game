@@ -100,8 +100,8 @@ function startBeatDesk(b){ startBeatBase(b); tankUpgradeNotice(); }
    Part 2: the aircraft performance card ("Service Cost Breakdown") and the per-service fuel sign-off (Desks v2 §3, §7).
    The fuel line is signed off by hand the first time a plane type flies a route, and again when the price it is valued
    at has moved 50p or more (one card a day when several qualify; the model fills the rest). The day's fuel bill and the
-   1,000 × £1.30 worked example are gone: the card teaches one method, make it pence (Bertie, 13 Oct 2026): the price × 100
-   to whole pence, the litres × the pence a line a digit, then ÷ 100 back to pounds.
+   1,000 × £1.30 worked example are gone: the card teaches one method, make it whole (Bertie, 14 Oct 2026): the price × 100
+   to a whole number, one long multiplication of the whole numbers, then ÷ 100 to put the decimal places back.
    ================================================================== */
 const cardKey = (planeId, route) => planeId + '|' + route;
 /* a card's table asks for the fuel line only (the litres and the price are given) */
@@ -174,10 +174,12 @@ const pounds = v => money(Math.round(v * 100) / 100).replace(/\.(\d)$/, '.$10');
 const twoDp = v => '£' + (Math.round(v * 100) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
 /* ---------- the methods (WorkingMethods: litres × price per litre) ---------- */
-const SC_METHODS = [['part', 'Partition price'], ['scale', 'Scale it'], ['pence', 'Make it pence'], ['dp', 'Decimals'], ['formal', 'Formal ×']];
-/* Bertie (13 Oct 2026): one method on the card, make it pence. × 100 to whole pence, multiply (a line for each digit of the
-   pence, then add the lines), ÷ 100 back to pounds. The other methods stay in scRows for older records. */
-function scMethodsOffered(){ return SC_METHODS.filter(([k]) => k === 'pence'); }
+const SC_METHODS = [['part', 'Partition price'], ['scale', 'Scale it'], ['pence', 'Make it pence'], ['dp', 'Decimals'], ['formal', 'Formal ×'], ['whole', 'Make it whole']];
+/* Bertie (14 Oct 2026): the class's standard method for decimals. Make the price a whole number (count the decimal places:
+   × 10, 100 or 1,000), multiply the whole numbers (one long multiplication), then divide back. It replaces "make it pence"
+   with a line for each digit (13 Oct). The other methods stay in scRows for older records. */
+function scMethodsOffered(){ return SC_METHODS.filter(([k]) => k === 'whole'); }
+const scPriceDec = F => (F.P / 100).toFixed(2);
 /* the lines of step 2: the litres × each digit of the pence, units first, as in the column method */
 function scPenceLines(L, P){ const out = []; String(P).split('').reverse().forEach((d, k) => { if(+d) out.push({ d:+d, k, v:+d * Math.pow(10, k) }); }); return out; }
 /* the rows of a method: each { lab, want (pence), unit:'£'|'p'|'n', cls } and the result row */
@@ -193,6 +195,8 @@ function scRows(m, F){
     lines.forEach(x => rows.push({ lab:`${num(L)} × ${num(x.v)}p`, want:L * x.v, unit:'p', cls:'c2', step:2, part:x }));
     if(lines.length > 1) rows.push({ lab:`Add the lines: ${num(L)} × ${num(P)}p`, want:total, unit:'p', cls:'c3', step:2, add:true });
     return { note:`${priceL(F.price)} = ${P}p. Multiply in pence, then change pence to pounds.`, rows, total }; }
+  if(m === 'whole') return { note:`${priceL(F.price)} has 2 decimal places: × 100 makes it a whole number, ${num(P)}.`,
+    rows:[{ lab:`${scPriceDec(F)} × 100`, want:P, unit:'n', cls:'c1', step:1 }, { lab:`${num(L)} × ${num(P)}`, want:total, unit:'n', cls:'c2', step:2, whole:true }], total };
   if(m === 'dp') return { note:`Leave out the decimal point: ${num(L)} × ${P}. ${priceL(F.price)} has 2 decimal places, so the answer has 2.`, rows:[{ lab:`${num(L)} × ${P}`, want:total, unit:'n', cls:'c1' }], total };
   return { note:'Line up the digits in their columns. The answer has pounds and pence.', rows:[], total };
 }
@@ -200,7 +204,7 @@ function scParse(unit, s){ s = String(s || '').replace(/[£,\s]/g, '').replace(/
 function scShow(unit, pence){ return unit === '£' ? twoDp(pence / 100) : unit === 'p' ? num(pence) + 'p' : num(pence); }
 
 /* ---------- the screen ---------- */
-UI.sc = UI.sc || { m:'pence', vals:{}, q:{}, tries:0 };
+UI.sc = UI.sc || { m:'whole', vals:{}, q:{}, tries:0 };
 function cardStampHtml(kind){ const ini = String((S.airline && (S.airline.code || S.airline.flightCode)) || 'CEO').toUpperCase().slice(0, 3); return kind === 'ok' ? `<span class="stamp ok">CHECKED · ${esc(ini)}</span>` : kind === 'q' ? '<span class="stamp q">QUERY</span>' : ''; }
 function svcCardHtml(o){
   const F = o.F, sign = !!o.sign, done = !!o.done, practice = !sign && !!UI.sc.practice, entry = sign && !done || practice, methods = scMethodsOffered(), m = methods.some(x => x[0] === UI.sc.m) ? UI.sc.m : methods[0][0];
@@ -211,6 +215,14 @@ function svcCardHtml(o){
   let frame = '';
   if(m === 'formal' && sign && !done) frame = `<div class="sc-formal">${wkGrid(o.t, o.col, o.row, {})}</div>`;
   else if(m === 'formal') frame = `<div class="sc-step"><span class="sc-sn">Formal ×</span><span>${esc(R.note)}</span></div><div class="sc-eq big"><span>${num(F.L)} × ${F.P}p</span><span>=</span><b>${num(F.L * F.P)}p</b><span>=</span><b>${twoDp(F.fuel)}</b></div>`;
+  else if(m === 'whole'){ const right = UI.sc.right || {}, rowsOf = k => R.rows.map((x, i) => [x, i]).filter(([x]) => x.step === k), stepOk = k => rowsOf(k).every(([x, i]) => right['r' + i] || (!entry));
+    const s1 = stepOk(1), s2 = s1 && stepOk(2);   // a later step names an earlier answer only once that answer is right
+    const rowHtml = ([x, i]) => `<div class="sc-row ${x.cls} ${q['r' + i] ? 'qy' : ''} ${right['r' + i] && entry ? 'rt' : ''}"><span class="sc-l">${x.whole && !s1 ? `${num(F.L)} × your step 1 answer` : x.lab}</span><span>=</span>${box('r' + i, x.want, x.unit)}</div>`;
+    frame = `<div class="sc-pz"><div class="sc-pzs"><div class="sc-step"><span class="sc-sn">Step 1</span><b>Make the price a whole number</b></div><p class="sc-note">${priceL(F.price)} has 2 decimal places, so × 100: the digits move two places to the left.</p><div class="sc-rows">${rowsOf(1).map(rowHtml).join('')}</div></div>
+      <div class="sc-pzs ${entry && !s1 ? 'later' : ''}"><div class="sc-step"><span class="sc-sn">Step 2</span><b>Multiply the whole numbers</b></div><p class="sc-note">One multiplication: the litres × ${s1 ? num(F.P) : 'the whole number from step 1'}. Set it out as long multiplication (the Working pad has the columns).</p>
+        <div class="sc-rows">${rowsOf(2).map(rowHtml).join('')}</div></div>
+      <div class="sc-pzs ${entry && !s2 ? 'later' : ''}"><div class="sc-step"><span class="sc-sn">Step 3</span><b>Divide by 100 to put the 2 decimal places back</b></div><p class="sc-note">${s2 ? num(F.L * F.P) : 'Your step 2 answer'} ÷ 100: the digits move two places to the right. The answer is in pounds and pence.</p><!--SCRES--></div></div>`;
+  }
   else if(m === 'pence'){ const right = UI.sc.right || {}, rowsOf = k => R.rows.map((x, i) => [x, i]).filter(([x]) => x.step === k), stepOk = k => rowsOf(k).every(([x, i]) => right['r' + i] || (!entry)), lines = scPenceLines(F.L, F.P);
     const rowHtml = ([x, i]) => `<div class="sc-row ${x.cls} ${x.add ? 'sc-add' : ''} ${q['r' + i] ? 'qy' : ''} ${right['r' + i] && entry ? 'rt' : ''}"><span class="sc-l">${x.lab}</span><span>=</span>${box('r' + i, x.want, x.unit)}</div>`;
     frame = `<div class="sc-pz"><div class="sc-pzs"><div class="sc-step"><span class="sc-sn">Step 1</span><b>Make the price whole pence</b></div><p class="sc-note">£1 is 100p: × 100 moves the digits two places left.</p><div class="sc-rows">${rowsOf(1).map(rowHtml).join('')}</div></div>
@@ -226,7 +238,7 @@ function svcCardHtml(o){
   }
   const checkBtn = entry && !(m === 'formal' && sign) ? `<button class="btn primary sc-chk" id="scCheck">Check ✓</button>` : '';
   let result = m === 'formal' && sign && !done ? '' : `<div class="sc-total ${q.tot ? 'qy' : ''} ${checkBtn ? 'wc' : ''}"><span>Fuel cost <small>(${num(F.L)} L × ${priceL(F.price)})</small></span>${box('tot', F.L * F.P, '£')}${checkBtn}</div>`;
-  if(m === 'pence' && frame.includes('<!--SCRES-->')){ frame = frame.replace('<!--SCRES-->', result); result = ''; }
+  if((m === 'pence' || m === 'whole') && frame.includes('<!--SCRES-->')){ frame = frame.replace('<!--SCRES-->', result); result = ''; }
   const stamp = done ? cardStampHtml('ok') : sign && UI.sc.queried ? cardStampHtml('q') : '';
   const check = entry && !(m === 'formal' && sign) ? `<div class="sc-act"><span class="sc-msg ${UI.sc.ok ? 'ok' : ''}" role="status">${esc(UI.sc.msg || '')}</span>${(UI.sc.tries || 0) >= 3 ? '<button class="dk-link" id="scShow">Show me</button>' : ''}</div>` : m === 'formal' && sign && !done ? `<div class="sc-act"><button class="btn primary" id="cellCheck">Check ✓</button><span class="msg wk-msg sc-msg" id="ftMsg" role="status">${esc(UI.msg || '')}</span></div>` : '';
   const p1 = `<section class="dk-pnl sc-p1 ${sign ? 'sign' : ''}"><div class="sc-h"><span class="sc-n">1</span><div><h2>Calculate the fuel cost</h2><p>${sign ? 'Sign this line off: the litres × the price, in three steps.' : 'The litres × the price, in three steps.'}</p></div>${stamp}</div>${tabs}<div class="sc-frame">${frame}</div>${result}${check}</section>`;
@@ -261,8 +273,22 @@ function scPenceQuery(R, q, F){
   const P = x.part; if(typed !== null && (typed * 10 === x.want || typed === x.want * 10)) return `Query, step 2: ${num(F.L)} × ${num(P.v)}${P.k ? ` is ${num(F.L)} × ${P.d}, then × ${num(Math.pow(10, P.k))}` : ''}: check how many places the digits move.`;
   return P.k ? `Query, step 2: ${num(F.L)} × ${num(P.v)} is ${num(F.L)} × ${P.d}, then × ${num(Math.pow(10, P.k))} (the digits move ${P.k === 1 ? 'one place' : P.k + ' places'} to the left).` : `Query, step 2: ${num(F.L)} × ${P.d}. Multiply each digit by ${P.d}, carrying as you go.`;
 }
+/* make it whole: what to do next, and what a Query means (Bertie's method, 14 Oct) */
+function scWholeNext(x, F){ if(!x) return 'Fill in every box first.';
+  if(x.tot) return `Steps 1 and 2 are right. Step 3: ${num(F.L * F.P)} ÷ 100 puts the 2 decimal places back.`;
+  if(x.step === 1) return `Step 1: ${priceL(F.price)} has 2 decimal places. × 100 makes it a whole number.`;
+  return `Step 1 is right: ${num(F.P)}. Step 2: multiply the whole numbers, ${num(F.L)} × ${num(F.P)}.`; }
+function scWholeQuery(R, q, F){
+  const i = R.rows.findIndex((x, k) => q['r' + k]), x = R.rows[i], whole = F.L * F.P, typed = x ? scParse(x.unit, UI.sc.vals['r' + i]) : scParse('£', UI.sc.vals.tot);
+  if(!x){ if(typed === whole * 100) return `Query, step 3: that is still the whole-number answer. Divide ${num(whole)} by 100 to put the 2 decimal places back.`;
+    if(typed === whole * 10 || typed * 10 === whole) return 'Query, step 3: the price had 2 decimal places, so ÷ 100: the digits move two places, not one or three.';
+    return `Query, step 3: ${num(whole)} ÷ 100. The last two digits are the pence; the rest are the pounds.`; }
+  if(x.step === 1) return typed === F.P * 10 || typed * 10 === F.P ? `Query, step 1: count the decimal places. ${priceL(F.price)} has 2, so × 100 (two places), not × 10 or × 1,000.` : `Query, step 1: ${scPriceDec(F)} × 100 moves each digit two places to the left, so no decimal point is left.`;
+  if(/\./.test(String(UI.sc.vals['r' + i] || '').replace(/[£,\s]/g, ''))) return `Query, step 2: both numbers are whole now, so the answer is a whole number. ${num(F.L)} × ${num(F.P)}.`;
+  if(typed !== null && (typed * 10 === x.want || typed === x.want * 10)) return `Query, step 2: ${num(F.L)} × ${num(F.P)}. Check the place value of each line of the long multiplication: one line is a column out.`;
+  return `Query, step 2: ${num(F.L)} × ${num(F.P)}. Set it out as long multiplication (the Working pad does the columns), then add the lines.`; }
 /* the answers to the card on screen (the tests type them) */
-function scAnswers(){ const F = UI.sc.F; if(!F) return null; const R = scRows(UI.sc.mUsed || 'pence', F), out = {}; R.rows.forEach((x, i) => { out['r' + i] = x.unit === '£' ? (x.want / 100).toFixed(2) : String(x.want); }); out.tot = (F.L * F.P / 100).toFixed(2); return out; }
+function scAnswers(){ const F = UI.sc.F; if(!F) return null; const R = scRows(UI.sc.mUsed || 'whole', F), out = {}; R.rows.forEach((x, i) => { out['r' + i] = x.unit === '£' ? (x.want / 100).toFixed(2) : String(x.want); }); out.tot = (F.L * F.P / 100).toFixed(2); return out; }
 function firstPaidDay(){ const from = S.day || 1; for(let d = from; d < from + 7; d++) if(!fuelFreeDay(d)) return d; return from; }
 /* the card on screen: o = { uid, k } (model) or { t } (a sign-off) */
 function renderSvcCard(o){
@@ -271,10 +297,10 @@ function renderSvcCard(o){
   const col = sign ? t.cols[0] : null, row = sign ? tRows(t).find(r => r.id === 'fuel') : null, done = sign && !!t.done[cellId('a', 'fuel')];
   if(sign && !done){ t.active = { col:'a', row:'fuel' }; S.rnd.activeTable = t.id; }
   const homeBtn = sign ? '' : '<button class="btn big" id="scBack">&#9664; Back to plan</button>';
-  const bar = deskBar(sign ? (done ? 'Checked. Use this figure in your plan, then the next sum.' : 'Work out this service\'s fuel cost in three steps: make the price pence, multiply, change back to pounds.') : 'One service\'s costs and profit. The fuel line is the price per litre × the litres burned.',
+  const bar = deskBar(sign ? (done ? 'Checked. Use this figure in your plan, then the next sum.' : 'Work out this service\'s fuel cost in three steps: make the price a whole number (× 100), multiply the whole numbers, then ÷ 100.') : 'One service\'s costs and profit. The fuel line is the price per litre × the litres burned.',
     sign ? `${backBtn()}<button class="btn primary big" id="scNext" ${done ? '' : 'disabled'}>${done ? 'Use this figure &#9654;' : 'Sign off the fuel line first'}</button>` : homeBtn);
   screen().innerHTML = shell(deskPage({ title:'Service Cost Breakdown', sub:'Work out the cost and profit for a single service. Use the calculation tools to find the fuel cost, the total operating cost and the projected profit.',
-    cards:[{ ic:'bulb', t:'Work it out', s:sign ? 'Make it pence: × 100, multiply, ÷ 100. Check each step.' : (UI.sc.practice ? 'Practising: your own working, nothing is recorded.' : 'Make it pence: × 100, multiply, ÷ 100. Try it yourself.'), id:'scWork' }, { ic:'back', t:'Back to plan', s:'Return to the operating plan when you\'re ready.', id:'scBackCard' }],
+    cards:[{ ic:'bulb', t:'Work it out', s:sign ? 'Make it whole: × 100, multiply, ÷ 100. Check each step.' : (UI.sc.practice ? 'Practising: your own working, nothing is recorded.' : 'Make it whole: × 100, multiply, ÷ 100. Try it yourself.'), id:'scWork' }, { ic:'back', t:'Back to plan', s:'Return to the operating plan when you\'re ready.', id:'scBackCard' }],
     body:svcCardHtml({ F, sign, done, t, col, row }), cls:'sc-page' }), bar);
   bindSvcCard(o, F, sign, t, col, row, done);
 }
@@ -287,15 +313,15 @@ function bindSvcCard(o, F, sign, t, col, row, done){
   on('scBackCard', () => { if(sign){ goBack(); return; } close(); }); on('scBack', close);
   on('scUse', () => { if(sign){ if(!done) return; UI.justDone = null; resetEntry(); UI.sc = { m:UI.sc.m, vals:{}, q:{}, tries:0 }; render(); return; } close(); });
   on('scNext', () => { UI.justDone = null; resetEntry(); UI.sc = { m:UI.sc.m, vals:{}, q:{}, tries:0 }; render(); });
-  on('scShow', () => { const m = root.querySelector('[data-scm].on'), R = scRows(m ? m.getAttribute('data-scm') : (UI.sc.mUsed || 'pence'), F); R.rows.forEach((x, i) => { UI.sc.vals['r' + i] = scShow(x.unit, x.want).replace(/^£/, ''); }); UI.sc.vals.tot = (F.L * F.P / 100).toFixed(2); UI.sc.msg = 'Here is the working. Check each line, then press Check.'; render(); });
+  on('scShow', () => { const m = root.querySelector('[data-scm].on'), R = scRows(m ? m.getAttribute('data-scm') : (UI.sc.mUsed || 'whole'), F); R.rows.forEach((x, i) => { UI.sc.vals['r' + i] = scShow(x.unit, x.want).replace(/^£/, ''); }); UI.sc.vals.tot = (F.L * F.P / 100).toFixed(2); UI.sc.msg = 'Here is the working. Check each line, then press Check.'; render(); });
   on('scCheck', () => {
-    const mk = (root.querySelector('[data-scm].on') || {}).getAttribute ? root.querySelector('[data-scm].on').getAttribute('data-scm') : (UI.sc.mUsed || 'pence'), R = scRows(mk, F), q = {}, right = UI.sc.right = {}; let blank = false, firstBlank = null;
+    const mk = (root.querySelector('[data-scm].on') || {}).getAttribute ? root.querySelector('[data-scm].on').getAttribute('data-scm') : (UI.sc.mUsed || 'whole'), R = scRows(mk, F), q = {}, right = UI.sc.right = {}; let blank = false, firstBlank = null;
     R.rows.forEach((x, i) => { const v = scParse(x.unit, UI.sc.vals['r' + i]); if(v === null){ blank = true; if(firstBlank === null) firstBlank = x; } else if(v !== x.want) q['r' + i] = true; else right['r' + i] = true; });
     const tv = scParse('£', UI.sc.vals.tot); if(tv === null){ blank = true; if(firstBlank === null) firstBlank = { tot:true }; } else if(tv !== F.L * F.P) q.tot = true;
     UI.sc.q = q;
-    if(blank && !Object.keys(q).length){ UI.sc.ok = false; UI.sc.msg = mk === 'pence' ? scNextStepMsg(firstBlank, F) : 'Fill in every box first.'; render(); return; }
+    if(blank && !Object.keys(q).length){ UI.sc.ok = false; UI.sc.msg = mk === 'whole' ? scWholeNext(firstBlank, F) : mk === 'pence' ? scNextStepMsg(firstBlank, F) : 'Fill in every box first.'; render(); return; }
     if(Object.keys(q).length){ UI.sc.tries = (UI.sc.tries || 0) + 1; UI.sc.queried = true; UI.sc.ok = false;
-      UI.sc.msg = mk === 'pence' ? scPenceQuery(R, q, F) : q.tot && Object.keys(q).length === 1 ? 'Query: the lines are right; check how you added them.' : 'Query: the highlighted line is not right. Look at it again.'; render(); return; }
+      UI.sc.msg = mk === 'whole' ? scWholeQuery(R, q, F) : mk === 'pence' ? scPenceQuery(R, q, F) : q.tot && Object.keys(q).length === 1 ? 'Query: the lines are right; check how you added them.' : 'Query: the highlighted line is not right. Look at it again.'; render(); return; }
     UI.sc.ok = true; UI.sc.queried = false; UI.sc.msg = sign ? '' : 'All correct.';
     if(sign){ const res = checkCell(t, col, row, (F.L * F.P / 100).toFixed(2)); if(res === 'ok'){ cellCorrect(t); if(typeof liveChime === 'function' && typeof opsSoundOn === 'function' && opsSoundOn()) liveChime('ding'); } }
     render(); });
@@ -311,7 +337,7 @@ const workingsDesk0 = R.workings, planDesk0 = R.plan;
 R.workings = st => { if(weekMode() && dayLike()){ let W = null; try{ W = workTables(currentPlan()); }catch(e){} const t = cardInPlay(W); if(t){ renderSvcCard({ t }); return; } } return workingsDesk0(st); };
 R.plan = st => { if(weekMode() && UI.card){ renderSvcCard(UI.card); return; } return planDesk0(st); };
 /* the timeline's "Service costs" button and the aircraft label open the card */
-document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-svccard]'); if(!b) return; const [i, j, k] = b.getAttribute('data-svccard').split('|').map(Number), pl = normPlan(currentPlan()), x = pl.fleet[j]; if(!x || i === 9) return; UI.card = { uid:x.uid, k }; UI.sc = { m:UI.sc.m || 'part', vals:{}, q:{}, tries:0 }; render(); });
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-svccard]'); if(!b) return; const [i, j, k] = b.getAttribute('data-svccard').split('|').map(Number), pl = normPlan(currentPlan()), x = pl.fleet[j]; if(!x || i === 9) return; UI.card = { uid:x.uid, k }; UI.sc = { m:UI.sc.m || 'whole', vals:{}, q:{}, tries:0 }; render(); });
 
 /* ---------- the day's sums as sign-off documents (Desks v2 §3): each is Awaiting check, Checked or Query ---------- */
 function docName(t, r){
@@ -456,7 +482,7 @@ function bindFuelDesk(asView){
   on('fdSignChk', () => { const n = UI.fd.selNow || 0, one = Math.round(blk * P0 * 100), q = {}; let blank = false;
     const v1 = scParse('£', UI.fd.vals.one); if(v1 === null) blank = true; else if(v1 !== one) q.one = true;
     if(n > 1){ const v2 = scParse('£', UI.fd.vals.all); if(v2 === null) blank = true; else if(v2 !== one * n) q.all = true; }
-    UI.fd.q = q; if(Object.keys(q).length){ UI.fd.queried = true; UI.fd.msg = 'Query: look at the highlighted line again.'; render(); return; }
+    UI.fd.q = q; if(Object.keys(q).length){ UI.fd.queried = true; UI.fd.msg = q.one ? `Query: look at the highlighted line again. Make it whole: ${P0.toFixed(2)} × 100 = ${Math.round(P0 * 100)}, multiply by ${num(blk)}, then ÷ 100.` : 'Query: look at the highlighted line again.'; render(); return; }
     if(blank){ UI.fd.msg = 'Fill in each box first.'; render(); return; }
     UI.fd.signed = true; UI.fd.queried = false; UI.fd.msg = ''; render(); });
   on('fdBuy', () => { const n = UI.fd.selNow || 0; if(!n || n > fdMaxBlocks(P0)) return; if(!S.fuelBuySigned && !UI.fd.signed) return;

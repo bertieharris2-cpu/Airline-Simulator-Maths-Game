@@ -87,12 +87,19 @@ The opening is being made excellent before the later campaign continues. `airlin
   - **The hunts** ("Spot the mistake"): the fuel invoice on Mon 21 Apr (three lines; the total, 14,000 L × £2.04, is shown as £29,560) and the year-1 accounts on the 31 August review (New York 200 × £510 shown as £104,000). He taps This is wrong on a line, then types what it should say (with the Working pad); Everything is right counts as missed. A missed invoice costs £1,000 and gets a second look at the start of May (found: £1,000 back). A missed year-1 hunt puts a note on chapter 2's end card: chapter 3's cash forecast starts £1,000 out. Challenges and hunts go into the pupil record.
   - **Tested** by `chapter2.test.js` to the chapter 2 review (31 August 2031), with different choices for `TYPE=value` and `TYPE=premium`. Screenshots are in `docs/screenshots/chapter2/push3-*`. Notes for Fable: `docs/Chapter-2-Push-3-Notes.md`.
 
+**Run-through fixes (14 Oct 2026, Bertie at week three)** (`src/opening/parts/p4zp_runthrough.js` and the decimal texts). Notes: `docs/Run-Through-Fixes-14-Oct.md`.
+- **Decimals are multiplied the way the class is taught:** make it whole (× 10, 100 or 1,000, counting the decimal places), one whole-number multiplication, then divide back. No partition lines. It is the method everywhere a decimal is multiplied: the Service Cost card, the Working pad, Launch Day's *Buying fuel* maths page, the fuel desk's first-order Query, the sign-off hints, the pupil record's notes and the teacher-only day-by-day paths.
+- **The shop is never offered.** No step of any day opens it by itself (not the week or month beats, the days new aircraft arrive, the Mondays while saving, or day 365). It is on the Fleet desk (*Add an aircraft*) and the run board (*Aircraft shop*), always open when there is something to buy.
+  - On a day new aircraft arrive, HQ's brief says so: "On the Fleet desk from today: Saab 340 and ATR 72 …".
+  - The What's new pages that led into the shop (Madrid's jets, Going long, Owning) lead into the plan and say where the planes are.
+  - Saving still counts down, on the Fleet desk. Buying any aircraft on a later day ends the saving.
+
 **Workbook v5.4: chapter 3, Owning, push 1 of 2 (D78–D81, Fable's note of 14 Oct 2026)** (`src/opening/parts/p4zo_ch3money.js`; the beats in `p4zg_chapter2.js`). Notes for Fable: `docs/Chapter-3-Push-1-Notes.md`.
 - **The year.**
   - Chapter 2's end card has **On to chapter 3**. Monday 1 September 2031 is chapter 3's first day: no day flies by itself.
   - Days 365–371 are played one at a time (the Calendar's rows), then months from Monday 8 September to the **chapter 3 review on 31 August 2032**.
   - The chapter's rules (bags, closures, months that pause, the Monday landing fee) carry on from chapter 2.
-- **Day 365:** HQ, *What's new: Buying big planes, and the overdraft*, the bank's **overdraft offer** (accept / decline for now, from the EventOptions rows), **How many weeks until we can afford it?**, the air show (the A340, 777 and A350 are new; prices from the 757 up doubled: 787 £12m), then the plan.
+- **Day 365:** HQ, *What's new: Buying big planes, and the overdraft*, the bank's **overdraft offer** (accept / decline for now, from the EventOptions rows), **How many weeks until we can afford it?**, then the plan. The A340, 777 and A350 are new on the Fleet desk (prices from the 757 up doubled: 787 £12m); the shop opens only when the pupil asks (run-through fixes, 14 Oct).
 - **The overdraft.**
   - Before 1 September the £1,000 reserve holds. From then the floor is −(one week's average profit) when accepted, and £0 while declined.
   - Purchases, rentals and fuel orders that would go below the floor are greyed with the reason. The plan always flies, and there are no free bank top-ups now.
@@ -141,17 +148,17 @@ The opening is being made excellent before the later campaign continues. `airlin
   - The button is off before 9 September and while flights are in the air (it says why).
 - **A Working pad on every sum box.** A **Working** button beside each typed × answer opens a pad with the column method in digit boxes:
   - it covers the fuel desk's first order, the sign-off cards, the estimate and the Service Cost card's lines (and *Add the lines* as a column addition);
-  - typing goes right to left, with a carry strip above each line and one line for each part of the smaller number;
-  - money with pence is worked in pence, then ÷ 100.
+  - typing goes right to left, with a carry strip above each line and one line for each digit of the smaller number;
+  - a decimal is made whole first ("1.47 × 100 = 147 (2 decimal places)": × 10, 100 or 1,000), then the last box divides back (÷ 100 = £…).
   - **Use this answer** fills the box, and the box's own Check decides. What was on the pad goes into the pupil record.
 
 **From Bertie's run-through (first round):**
-- **The fuel cost is one method: make it pence.** The Service Cost card walks it in three boxes:
-  1. the price × 100 to whole pence (£1.47 × 100 = 147p);
-  2. the litres × the pence, a line for each part (230 × 7p, 230 × 40p, 230 × 100p), then add the lines;
-  3. ÷ 100 back to pounds.
-  - A step waiting on the one above is dimmed, and a right line turns green.
-  - A Query names the step and the slip: a shift of one place, a line out by ten, an answer still in pence.
+- **The fuel cost is one method: make it whole** (Bertie's class method, 14 Oct; it replaced *make it pence* with a line for each part). The Service Cost card walks it in three boxes:
+  1. make the price a whole number: £1.47 has 2 decimal places, so 1.47 × 100 = 147;
+  2. multiply the whole numbers, one long multiplication: 230 × 147 = 33,810 (the Working pad has the columns);
+  3. ÷ 100 to put the 2 decimal places back: £338.10.
+  - A step waiting on the one above is dimmed, and a right line turns green. A later step names an earlier answer only once that answer is right.
+  - A Query names the step and the slip: × 10 or × 1,000 in step 1 (count the decimal places), a decimal answer in step 2, an answer not divided back in step 3.
 - **Review questions stand out.** On the Build cards (the week's total, the difference, the average) the question sits in a green box with the thing to find in bold.
 
 **Workbook v5.1 (D75): the pupil record and printout, in both game files** (`src/opening/parts/p4zi_record.js`).
@@ -320,7 +327,7 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Launch day** starts with six identity screens, one decision each, with step dots in the card header: name (1–20 characters) → flight code (two letters suggested from the name; the workbook's `blockedFlightCodes` are refused calmly) → logo (shape × symbol × two colours; it replaces the fin mark in the top bar and on the wall) → the **paint shop** (the hangar stage with the painted Twin Otter; tabs *Colours* / *Stripe & tail* / *Name it* with G- plus four letters, unique across the fleet, and a name with suggestions; *Surprise me*) → the **hangar reveal** (doors, roll-in, shine; Skip; a fade under reduced motion) → the **certificate** (A4 landscape, Print). The HQ boots after the certificate.
 - **First take-off:** a *Take-off* step before live operations on launch day: the painted plane taxis, accelerates and climbs out on the wall, with sound when the teacher has it on; then live operations begin.
 - **The wall** shows the same stage full screen while he works (modes identity, paint, reveal, cert, takeoff) and updates within a moment of each change.
-- **From week 2** the plane shop is an **air show**: one flip card per aircraft (photo or the plain-colour drawing on the front; facts, four bars on one scale, Buy / Rent / Finance on the back), a locked *Coming soon* row, *Not today*. Every new plane goes through the paint shop and a short reveal. The Fleet view shows the planes in their liveries with **Repaint**; **Your airline** on the home menu edits the name, code and logo.
+- **From week 2** the plane shop is an **air show** (opened from the Fleet desk's *Add an aircraft* or the run board's *Aircraft shop*; it never opens by itself since 14 Oct): one flip card per aircraft (photo or the plain-colour drawing on the front; facts, four bars on one scale, Buy / Rent / Finance on the back), a locked *Coming soon* row, *Not today*. Every new plane goes through the paint shop and a short reveal. The Fleet view shows the planes in their liveries with **Repaint**; **Your airline** on the home menu edits the name, code and logo.
 - **Artwork:** `src/opening/assets/aircraft/*.svg`, one painted side view per `artworkId` (dhc6, sf34, at72, e175, e190, narrowbody), inlined by the build as `data-artwork` and painted by `aircraftArt()` (p4q_paint.js). **Photos:** `src/opening/assets/photos/`, named by the Aircraft sheet's `photoFile`, embedded by the build as `data-photos`; openly licensed only, credited on the card and in `data/Photo-Credits.md`. No photos are in yet (the session could not reach Wikimedia Commons).
 - **Real photos (optional):** drop a photo into `src/opening/assets/photos/` named after the aircraft id (`dhc6.jpg`, `sf34.jpg` or `saab340.jpg`, `at72.jpg`, `e175.jpg`, `e190.jpg`, `a220.jpg`, `a320.jpg`, `b737.jpg`; jpg, png or webp, ideally under 150 KB) and rebuild: the showroom card shows the photo instead of the drawing, with the credit from the workbook's Aircraft sheet if one is given there. The Aircraft sheet's `photoFile` column still works too. Photos could not be fetched from the build environment (Wikimedia Commons is blocked there), so none are bundled yet.
 - **Small pictures:** the planner's aircraft tabs, the HQ fleet table and the shop cards show a miniature of each aircraft's own painted drawing (`planeMini`, `p4q_paint.js`), so a Saab, an ATR and a Twin Otter look different at a glance.

@@ -5,8 +5,8 @@
    - The week-2 comparison's second screen is "Buy now or wait?": for each plane the price, the cash now, still to save
      (price − cash), the days to wait (still to save ÷ the average profit a day over the last 7 days, rounded up; 0 when
      affordable) and what waiting costs (the affordable smaller plane's extra profit a day × the days to wait). Buy is
-     greyed with the shortfall while cash < price + reserve (D55). Waiting leaves the plan as it is; the shop comes back on
-     later Mondays with the countdown ("ATR 72: about 9 days at your rate").
+     greyed with the shortfall while cash < price + reserve (D55). Waiting leaves the plan as it is; the Fleet desk shows
+     the countdown ("ATR 72: about 9 days at your rate"). Since 14 Oct the shop never opens by itself (p4zp).
    - The hand sum (timeToAffordSum): (price − cash) ÷ profit a day = days to wait, Calculate the first time (two steps:
      the subtraction, then the division rounded up to whole days), Build after (the figures and the operation).
    ================================================================== */
@@ -154,7 +154,7 @@ function renderBuyOne(st){
     <p class="acx-note">Days to wait use the average profit a day over the last 7 days (${money(f.rate)}).</p></div>`;
   const act = pick === 'buy' ? `Buy the ${esc(shortPlane(p))}` : pick === 'wait' ? `Wait for the ${esc(shortPlane(p))}` : 'Choose: buy now, or wait';
   screen().innerHTML = shell(deskPage({ title:`The ${esc(shortPlane(p))}: buy now, or wait?`, sub:`${money(f.price)} to buy. How long until you can afford it?`, cls:'acq-page bw-page', body }),
-    deskBar(due ? 'Sign off the time to afford first, then choose.' : f.afford ? 'You can buy it now. It is yours for good.' : 'Not enough yet. Wait and save: the shop counts down on Mondays.',
+    deskBar(due ? 'Sign off the time to afford first, then choose.' : f.afford ? 'You can buy it now. It is yours for good.' : 'Not enough yet. Wait and save: the Fleet desk counts down the days.',
       `<button class="btn big" id="noBuy">Not today</button><span class="grow"></span><button class="btn primary big" id="nx" ${pick && !due ? '' : 'disabled'}>${act} &#9654;</button>`));
   if(ask && !st.taOk) taBind(st, f);
   screen().querySelectorAll('[data-bw]').forEach(b => b.onclick = () => { st.pick = b.getAttribute('data-bw').split('|')[1]; render(); });
@@ -172,7 +172,7 @@ acCashBar = function(o){ const h = acCashBarBO0(o); return buyOnlyOn() ? h.repla
 const renderAcCompareBO0 = renderAcCompare;
 renderAcCompare = function(){ renderAcCompareBO0(); if(!buyOnlyOn()) return; const h = screen().querySelector('.ab-hint'); if(h) h.textContent = 'Compare the three aircraft, then choose one. Next: buy it now, or wait and save for it?'; waitBanner(); };
 
-/* ---------- waiting: the countdown, and the shop on later Mondays ---------- */
+/* ---------- waiting: the countdown (the Monday shop below is taken out again by p4zp: the shop is the pupil's to open) ---------- */
 function waitNow(){ const w = S && S.waitFor; if(!w) return null; if(S.fleet.some(f => f.planeId === w.pid && (f.acquired || 0) >= w.from)){ delete S.waitFor; return null; } return w; }
 function waitLine(){ const w = waitNow(); if(!w) return ''; const f = taFig(w.pid);
   return f.afford ? `You can buy the ${f.short} now: ${money(f.cash)} in cash, the price is ${money(f.price)}.` : `Saving for the ${f.short}: ${money(f.still)} still to save · about ${f.days === null ? 'some days' : dayWord(f.days)} at your rate (${money(f.rate)} a day).`; }

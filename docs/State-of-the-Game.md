@@ -10,6 +10,32 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0n. Run-through fixes (14 Oct 2026): decimals the way the class is taught, and no unprompted shop
+
+Bertie played to week three. Two fixes (`p4zp_runthrough.js`, new, after `p4zo`; the decimal texts in place). Notes: `docs/Run-Through-Fixes-14-Oct.md`.
+
+**1. Make it whole, multiply, divide back.** "I've just taught them to do it today by multiplying ... by 1000 or dividing just to get to whole numbers and doing multiplication. So that should be the standard method."
+- **Service Cost card** (`p4y_desks.js`): a new method `whole`, the only one offered (`scMethodsOffered`); the old ones stay in `scRows` for old records.
+  - Step 1 "Make the price a whole number": `1.47 × 100` = [147].
+  - Step 2 "Multiply the whole numbers": one row, `120 × 147` = [17,640] (`whole:true`), with the Working pad's long multiplication. Until step 1 is right, the row reads "120 × your step 1 answer" and the pad button waits.
+  - Step 3 "Divide by 100 to put the 2 decimal places back": the £ total. Until step 2 is right, its note reads "Your step 2 answer ÷ 100".
+  - Queries (`scWholeNext`, `scWholeQuery`): × 10 or × 1,000 in step 1 (count the decimal places); a decimal in step 2 (both numbers are whole now); in step 3 the answer not divided, or ÷ 10 / ÷ 1,000.
+  - `scAnswers()` keys are `r0`, `r1`, `tot`. A Working button no longer pushes a sum box off its panel (`.sc-row:has(> .pad-wrap)`, `.fd-sr:has(> .pad-wrap)`).
+- **Working pad** (`p4zk_pad.js`): a decimal factor counts its decimal places (1–3) and is scaled × 10, 100 or 1,000 (money with pence: × 100). The note reads "Make it whole: 1.47 × 100 = 147 (2 decimal places)"; the last box divides back by the product of the scales. `padInfo` adds `scale`.
+- **Everywhere else a decimal is multiplied:** Launch Day's *Buying fuel* maths page (`p4j_intro.js`: 1.30 × 100 = 130; 1,000 × 130 = 130,000; ÷ 100 = £1,300); the fuel desk's first-order Query; `soMethod` ppl (`p4zc`); `REC_SC_METHOD.whole` and `recSoMethod` (`p4zi`); the record's note for an undivided answer ("46,800 is the whole-number answer: ÷ 100 puts the 2 decimal places back, so the bill is £468"); `pqDecimalWorking` and the practice hint (`p4s`); `wkTutorial`, `wkMethod` and `wkFig` (`p4t`, teacher-only paths).
+- Hunt h2's Query reads the workbook's `pupilChecks` ("Multiply litres by price"); the method words there are Fable's.
+
+**2. The shop is never offered.** "Even though I had just purchased an aircraft it came up with do you want to buy an aircraft? ... They will want more planes. They do not need to be offered them." (Bertie chose: never; Fleet desk only.)
+- `stepsFor` and `daySteps` drop every `shop2` that is not `adHoc`: the week and month beats, the days new aircraft arrive (8, 22, 127, 365), the Mondays while saving (`p4zm`) and day 365 after afford3 (`p4zo`). `openShopNow` (Fleet desk *Add an aircraft*, run board *Aircraft shop*) is the only way in.
+- `INTRO.jets`, `INTRO.longhaul`, `INTRO.owning` (and `INTRO.fleet`): placed before the plan, *Look at the aircraft* gone, and a last line saying the planes are on the Fleet desk.
+- `protoBrief`: on a day `unlocks.planes` is set, "On the Fleet desk from today: … Open Fleet, then Add an aircraft, when you want one." replaces the shop's own "New today" line.
+- afford3's bar: "Signed. The planes are on the Fleet desk (Add an aircraft) whenever you want one. Next: the plan." The saving texts say the Fleet desk counts down.
+- `waitNow`: buying any aircraft on a later day than the saving began ends it.
+- Old saves: `rtShopFix` (a render wrapper) removes a scheduled `shop2` still ahead in today's steps and adds the Fleet desk line to today's brief.
+- For the tests: `shopOfferedReport()`.
+
+**Tests.** `week.test.js` opens the shop from the Fleet desk (day 8, a plan day while saving, from day 22 until the ATR) and checks every HQ for a scheduled shop; chapter 1 still ends on £697,112 (215 checks) and the coasting pupil on £689,806 (218). `fleetshop` 35, `record` 16, `migrate` 27. `chapter2.test.js` rents the 757 from the Fleet desk on day 127; `chapter3.test.js` opens it on day 365 (Premium's 787) and in October (the A350).
+
 ## 0m. Workbook v5.4 (14 Oct 2026): chapter 3 "Owning", push 1 — the year to 31 August 2032, the overdraft, owning and handing back
 
 **Data.** Workbook v5.4 (v5.3 plus Fable's note D81) is installed.
@@ -63,12 +89,12 @@ Also in `p4zg`:
   - `f.returnOn` = the month's last day; `leaseReturnsDue` removes the plane at the next beat (`handBackNow`: fleet, `S.returned`, `S.ch3Log`, news, record).
 - **Time to afford in weeks.**
   - `taFigW` works to the nearest £1,000, with profit a week = the last 28 days ÷ 4. `taCardW`/`taBindW` are the weekly card (Calculate in two steps, or Build).
-  - The **afford3** step comes on day 365 after the overdraft offer and before the air show; the target is the cheapest plane he can't afford.
+  - The **afford3** step comes on day 365 after the overdraft offer and before the plan (since §0n the air show is not a step; *Next: the plan*); the target is the cheapest plane he can't afford.
   - Later, the Buy-or-rent page shows the card (Build once met) and **Save for it**; `waitLine` counts down in weeks.
 - **Missed h1.** `S.ch3Forecast.out` (now £2,000 from the data): `shownCash()` = cash + £2,000 from day 365 until the first month-end audit, which corrects it (`.h1-fix`). There is a fallback if audits are off.
 - **Rotations on a planning page.** `rotOut` returns true when no day is being simulated (`SIM_DAY` null), so the plan and its Service Cost Breakdown show an overnight rotation on its way out; simulated days still alternate. This fixes a plan day on the way home showing the service empty (£0 of tickets).
 - **Day 365.**
-  - `daySteps`: HQ, What's new (`INTRO.owning`), the overdraft offer, afford3, the air show, the plan.
+  - `daySteps`: HQ, What's new (`INTRO.owning`), the overdraft offer, afford3, the plan (the air show only from the Fleet desk, §0n).
   - `routeOpen` keeps two-leg routes shut (Sydney, push 2).
 - **The review.** `chapterReviewItems` adds **The average month** (Build) from chapter 3. `renderChapterReviewBuild` adds the A380 offer card (`offerCardHtml`) and the next investment (`nextInvestment`). The end card names chapter 4 (not built yet).
 - **Other.**
@@ -205,7 +231,7 @@ Also in `p4zg`:
     - `decideHandSums` moves the estimated ticket sum off the sheet onto the Sign-offs page (`soStageItems`).
     - `soSpec` / `soCardHtml` / `soBindCards` draw a two-step card: the estimate or the tenths, then the sum. The first step's tries are the record's working (`recAttempt`).
     - `S.ch2so` records when the first long-haul ticket sum and fuel line were done.
-- **Fuel card (both files, `p4y_desks.js`):** one method, make it pence, in three boxes: × 100, a line a digit then add, ÷ 100. Each Query is specific to its step (`scPenceQuery`, `scNextStepMsg`). `soMethod` and the record name the same method.
+- **Fuel card (both files, `p4y_desks.js`):** one method, make it pence, in three boxes: × 100, a line a digit then add, ÷ 100. Each Query is specific to its step (`scPenceQuery`, `scNextStepMsg`). `soMethod` and the record name the same method. *Replaced on 14 Oct by make it whole (§0n).*
 - **Review cards (both files, `p4zb_decisions.js`):** `rbAskHtml` puts the question in a green box with the thing to find in bold.
 
 **Interpretations (in `docs/Chapter-2-Push-2-Notes.md`):**
@@ -404,7 +430,7 @@ Report: `docs/Desks-v2-Report-Back.md`.
 
 ## 0a. Workbook v4.4 (12 Oct 2026)
 
-Chapter 1 is played a week at a time (D52): the Calendar's `weekPhase` (plan / run / review) drives `p4v_week.js`. Monday: HQ → (showroom, the fleet sums, buy or rent, the paint shop) → (event) → the planning page with Plan Impact → the workings page → Ready → fly → results. Tuesday–Saturday: `weekRun`, one day per step on the operations board (`S.wk` holds the week's rows and Monday's projection), an event card or a sum stops it. Sunday: fly, then `weekReview` (the week7 table, the missed-profit sweep `bestPlanSweep`, `neglectUpdate`). `closeDay` moves to the next Monday, the regular-plan approval after day 28, then the weeks. Money per D53/D55: day costs, list prices, Finance in days, `saveUp` greys Buy. The look is the Dragon Air block at the end of `p1_head.html`. Tests: `week.test.js` (weeks 1–4), `migrate.test.js` (old codes land in the week), `balance.test.js` (re-based). Decisions and the report-back items: `docs/Workbook-v4.4-Report-Back.md`. The day-by-day screens below remain for `teacherDayByDay` and the weeks.
+Chapter 1 is played a week at a time (D52): the Calendar's `weekPhase` (plan / run / review) drives `p4v_week.js`. Monday: HQ → (event) → the planning page (the showroom, the fleet sums, buy or rent and the paint shop only when the pupil opens the shop from the Fleet desk, §0n) with Plan Impact → the workings page → Ready → fly → results. Tuesday–Saturday: `weekRun`, one day per step on the operations board (`S.wk` holds the week's rows and Monday's projection), an event card or a sum stops it. Sunday: fly, then `weekReview` (the week7 table, the missed-profit sweep `bestPlanSweep`, `neglectUpdate`). `closeDay` moves to the next Monday, the regular-plan approval after day 28, then the weeks. Money per D53/D55: day costs, list prices, Finance in days, `saveUp` greys Buy. The look is the Dragon Air block at the end of `p1_head.html`. Tests: `week.test.js` (weeks 1–4), `migrate.test.js` (old codes land in the week), `balance.test.js` (re-based). Decisions and the report-back items: `docs/Workbook-v4.4-Report-Back.md`. The day-by-day screens below remain for `teacherDayByDay` and the weeks.
 
 **The Week 1 planner (UI Widget Design Brief v4.4, 12 Oct 2026; `p4w_planner.js`).** Heathrow is the hub and both routes are open from Launch Day: the aircraft, market, demand and one-service screens are replaced by one intro (`brief1`: the job, the starting position, the five steps, *Open Week 1 Planner*). The planner is one page: the market widgets with the fare chips (`marketWidget`), the aircraft day as the schedule editor (`timelineHtml`, `bindTimeline`: blocks on the 06:00–22:00 timeline, Earlier / Later / Swap route / Remove, drag with a ghost snapped to 10 minutes, arrow keys; `editPlan(i, 'depTo')` moves a service to an absolute time, re-sorts the aircraft's services and lands on the nearest free time), the on-board tiles, the fuel strip (`fuelWidgetHtml`; `autoFuelOrder` places Monday's order) and Plan Impact (`ctxPlanImpact`, ƒ on the figures `hiddenFigs` says are still to do). The sums open in the Maths Dock beside the plan (`sumDockHtml`: structured working, squared paper, formula; `finishSums`), *Test an idea* compares one test plan (`compareHtml`, `planDiff`), the map is `#mapOpen`. No plan rail in week mode (`planRail` returns nothing; the `.ws.norail` grid). Square geometry and the pale surfaces are the block at the end of `p1_head.html`. Everything falls back to the earlier screens when `teacherDayByDay` is on.
 
@@ -429,7 +455,7 @@ Chapter 1 is played a week at a time (D52): the Calendar's `weekPhase` (plan / r
 | 10a | Work it out (the Maths Dock) | Launch Day and every Monday with a sum | The sums one at a time in a pale dock beside the plan; the left of the page is a navy spreadsheet of the stage tables that fills in as the figures are done (the plan, read-only, sits under it; Back changes it): Structured working on Bertie's template (place-value columns Th H T O, one digit a box typed right to left, little carry boxes, green working rows, a number pad), Squared paper, Formula (the model's lines with the last answer masked); Check / Show me; a finished figure is written into Plan Impact; the fare and the snack option chosen in the dock or on the plan once their sums are done; the fuel worked example; a summary; optional practice (teacher setting); *Ready to fly*. Skipped when nothing is typed |
 | 11 | What's new (3 pages) | Days 2, 3, 4 (two), 6, 8, 12, 15; week 4; December | What's new, the maths (worked in a column), your turn ("which sum?"); key words in the dock |
 | 12 | Today's Plan (morning HQ) | Every day, week and month | Headline from the Calendar or Market; the brief (yesterday, what's new, routes opening, the rival, fuel); the standing plan |
-| 13 | The air show (aircraft for sale) | Days 8 and 15, every week | Flip cards: photo or plain drawing, facts, four bars on one scale, Buy / Rent / Finance from the Finance sheet; a locked *Coming soon* row; Look closer or Not today |
+| 13 | The air show (aircraft for sale) | When the pupil opens it: Fleet desk *Add an aircraft*, or the run board's *Aircraft shop* (§0n) | Flip cards: photo or plain drawing, facts, four bars on one scale, Buy / Rent / Finance from the Finance sheet; a locked *Coming soon* row; Look closer or Not today |
 | 13a | Paint your new plane · Roll it out | After buying | The paint shop for the new aircraft (its own registration), then a short reveal |
 | 14 | The sums (fleet) | After choosing an aircraft | Rent or buy = price ÷ rent a day; a full plane = seats × fare; the model's suggested services and extra profit a day |
 | 15 | Buy or rent | After the sums | Buy, Rent or Finance (gated by the Finance sheet's dates and the £1,000 reserve) |

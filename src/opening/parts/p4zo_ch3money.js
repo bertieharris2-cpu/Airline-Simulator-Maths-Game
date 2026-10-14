@@ -236,7 +236,7 @@ function taBindW(st, f){
 }
 PAD_SPECS.unshift(inp => { if(!inp.dataset || !/^ta[12]$/.test(inp.dataset.pad || '') || !UI.taF || UI.taF.unit !== 'week') return null; const f = UI.taF;
   return inp.dataset.pad === 'ta1' ? { op:'−', a:f.price, b:f.cash, lab:`${money(f.price)} − ${money(f.cash)}`, sel:'[data-pad="ta1"]' } : { op:'÷', a:f.still, b:f.rate, lab:`${num(f.still)} ÷ ${num(f.rate)}`, sel:'[data-pad="ta2"]', unit:'weeks' }; });
-/* day 365: the sum on its own page, after the overdraft offer and before the air show (Calendar gatedCalc timeToAffordWeekly) */
+/* day 365: the sum on its own page, after the overdraft offer and before the plan (Calendar gatedCalc timeToAffordWeekly); the shop is on the Fleet desk */
 SHELL_STEPS.push('afford3'); WS_STEPS.push('afford3'); Object.assign(RAIL_LABEL, { afford3:'Time to afford' });
 R.afford3 = st => {
   const pid = st.pid !== undefined ? st.pid : (st.pid = taTargetW()); if(!pid){ next(); return; }
@@ -248,7 +248,7 @@ R.afford3 = st => {
     ${taCardW(st, F)}<section class="dk-pnl"><div class="dk-pnl-h">${ICO2.plane || ''}<h2>The big planes</h2><span class="grow"></span><span class="sub">to the nearest £1,000 · profit a week ${money(F.rate)}</span></div>
     <table class="dk-t"><thead><tr><th>Aircraft</th><th class="num">Seats</th><th class="num">Price</th><th class="num">Still to save</th><th class="num">Weeks to wait</th></tr></thead><tbody>${rows}</tbody></table></section></div>`;
   screen().innerHTML = shell(deskPage({ title:'Owning: how long until we can afford it?', sub:`The ${esc(F.short)} costs ${money(F.price)}. How many weeks of profit until you could buy it?`, cls:'acq-page bw-page', body }),
-    deskBar(st.taOk ? 'Signed. Next: the air show, where you can buy, rent or carry on.' : 'Sign off the time to afford: what is still to save, then how many weeks of profit that takes.', `<button class="btn primary big" id="nx" ${st.taOk ? '' : 'disabled'}>${st.taOk ? 'On to the air show' : 'Sign it off first'} &#9654;</button>`));
+    deskBar(st.taOk ? 'Signed. The planes are on the Fleet desk (Add an aircraft) whenever you want one. Next: the plan.' : 'Sign off the time to afford: what is still to save, then how many weeks of profit that takes.', `<button class="btn primary big" id="nx" ${st.taOk ? '' : 'disabled'}>${st.taOk ? 'Next: the plan' : 'Sign it off first'} &#9654;</button>`));
   if(!st.taOk) taBindW(st, F);
   on('nx', () => { if(!st.taOk) return; st.done = true; UI.justDone = null; advance(); });
 };
@@ -261,7 +261,7 @@ const acquireOD0 = R.acquire;
 R.acquire = st => { acquireOD0(st); if(!ch3Now() || !S.rnd.shopPick || step().t !== 'acquire') return; const p = planeById(S.rnd.shopPick), o = shopOffer(p); if(!o.buyOffered || o.saveUp.afford) return;
   const F = taFigW(p.id); if(!(F.still > 0 && F.rate > 0)) return; if(!st.taLevel) st.taLevel = taMetW() ? 'build' : 'calc'; UI.taF = F;
   const host = screen().querySelector('.terms'); if(!host || screen().querySelector('.ta-card')) return;
-  host.insertAdjacentHTML('beforebegin', taCardW(st, F) + (st.taOk ? `<p class="ta-save">${S.waitFor && S.waitFor.pid === p.id ? `Saving for the ${esc(F.short)}: about ${weekWord(F.weeks)} at your rate.` : `<button class="btn small" id="taSave">Save for the ${esc(F.short)}</button> <span class="muted">The shop will count down the weeks.</span>`}</p>` : ''));
+  host.insertAdjacentHTML('beforebegin', taCardW(st, F) + (st.taOk ? `<p class="ta-save">${S.waitFor && S.waitFor.pid === p.id ? `Saving for the ${esc(F.short)}: about ${weekWord(F.weeks)} at your rate.` : `<button class="btn small" id="taSave">Save for the ${esc(F.short)}</button> <span class="muted">The Fleet desk will count down the weeks.</span>`}</p>` : ''));
   if(!st.taOk) taBindW(st, F);
   on('taSave', () => { S.waitFor = { pid:p.id, from:S.day, price:F.price, days:F.weeks, unit:'week' }; addNews([{ tag:'FLEET', text:`Saving for the ${p.name}: about ${weekWord(F.weeks)} at your rate.` }]); render(); }); };
 /* the countdown line in weeks from chapter 3 */

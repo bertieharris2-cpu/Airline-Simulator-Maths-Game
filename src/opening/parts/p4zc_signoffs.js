@@ -167,8 +167,7 @@ function soMethod(sp){
   const a = sp.a.v, b = sp.b.v;
   if(sp.op === '÷'){ let x = a, y = b, k = 0; while(x % 10 === 0 && y % 10 === 0 && x && y){ x /= 10; y /= 10; k++; }
     return k ? `Make the sum smaller: ${num(a)} ÷ ${num(b)} is the same as ${num(x)} ÷ ${num(y)}. Then short division.` : `Short division: how many ${num(b)}s make ${num(a)}? Write any remainder as a decimal.`; }
-  if(sp.b.f === 'ppl'){ const pounds = Math.floor(b), p10 = Math.floor(Math.round((b - pounds) * 100) / 10) * 10, p1 = Math.round(b * 100) - pounds * 100 - p10;
-    return `Make it pence: ${priceL(b)} × 100 = ${Math.round(b * 100)}p. Multiply ${num(a)} × ${Math.round(b * 100)}p, then ÷ 100 to change the pence back to pounds.`; }
+  if(sp.b.f === 'ppl') return `Make it whole: ${priceL(b)} has 2 decimal places, so ${b.toFixed(2)} × 100 = ${Math.round(b * 100)}. Multiply the whole numbers, ${num(a)} × ${Math.round(b * 100)}, then ÷ 100 to put the decimal places back.`;
   const big = Math.max(a, b), small = Math.min(a, b), round = Math.round(big / 10) * 10, diff = big - round;
   return diff ? `Partition: ${num(small)} × ${num(round)} ${diff > 0 ? '+' : '−'} ${num(small)} × ${num(Math.abs(diff))}, or formal multiplication on the column template.` : `${num(small)} × ${num(big / 10)}, then × 10.`;
 }

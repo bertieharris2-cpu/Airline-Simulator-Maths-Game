@@ -60,7 +60,7 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
     buildDivisor:recNote({ type:'build' }, { kind:'mean', chips:[{ label:'Total' }, { op:'÷' }, { text:'2' }], div:7, divGiven:'2', per:'day' }),
     fallback:recNote({ type:'calc', unit:'£', correct:3420, op:'×', ops:[38, 90] }, { value:2999 }) })`));
   ok('§3 place value: "Right digits; the answer should be ten times bigger — the × 10 shift was missed"', /Right digits; the answer should be ten times bigger — the × 10 shift was missed/.test(N.shift), N.shift);
-  ok('§3 decimal point: "46,800 is pence; the bill is £468"', /^46,800 is pence; the bill is £468\./.test(N.pence), N.pence);
+  ok('§3 decimal point (make it whole): "46,800 is the whole-number answer: ÷ 100 puts the 2 decimal places back, so the bill is £468"', /^46,800 is the whole-number answer: ÷ 100 puts the 2 decimal places back, so the bill is £468\./.test(N.pence), N.pence);
   ok('§3 partial product: "225 × 40p is £90, not £80"', /^225 × 40p is £90, not £80\.$/.test(N.partial), N.partial);
   ok('§3 carry missed / added twice', /carry 1 into the hundreds wasn't added/.test(N.carryMissed) && /added twice/.test(N.carryTwice), [N.carryMissed, N.carryTwice]);
   ok('§3 column misaligned (a partial product not shifted)', /not shifted: 76 should be 760/.test(N.misaligned), N.misaligned);

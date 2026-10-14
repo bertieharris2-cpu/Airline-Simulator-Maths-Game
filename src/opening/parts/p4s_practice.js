@@ -10,8 +10,9 @@ const pqRand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const pqPick = (arr, not) => { const c = arr.filter(x => !(not || []).includes(x)); return c[Math.floor(Math.random() * c.length)]; };
 const pqMoney = v => money(Math.round(v * 100) / 100).replace(/\.00$/, '');
 /* litres × a decimal price, worked as pounds and pence */
-function pqDecimalWorking(L, price){ const p = Math.round(price * 100), pounds = Math.floor(p / 100), pence = p % 100, a = L * pounds, b = L * pence / 100;
-  return [`${num(L)} × £${pounds} = ${pqMoney(a)}`, `${num(L)} × ${pence}p = ${pqMoney(b)}`, `${pqMoney(a)} + ${pqMoney(b)} = ${pqMoney(a + b)}`]; }
+/* make it whole: the price has 2 decimal places, so × 100, one whole-number multiplication, then ÷ 100 */
+function pqDecimalWorking(L, price){ const p = Math.round(price * 100);
+  return [`${(p / 100).toFixed(2)} × 100 = ${p}`, `${num(L)} × ${p} = ${num(L * p)}`, `${num(L * p)} ÷ 100 = ${pqMoney(L * p / 100)}`]; }
 function pqTensWorking(n, x, unit){ const u = v => unit === '£' ? pqMoney(v) : num(v); if(n <= 10) return [`${n} × ${u(x)} = ${u(n * x)}`]; const tens = Math.floor(n / 10) * 10, ones = n - tens;
   return [`${tens} × ${u(x)} = ${u(tens * x)}`, `${ones} × ${u(x)} = ${u(ones * x)}`, `${u(tens * x)} + ${u(ones * x)} = ${u(n * x)}`]; }
 function pqTenthsWorking(n, mult){ const tenth = n / 10, k = Math.round(mult * 10);
@@ -37,7 +38,7 @@ const PRACTICE = {
       const prices = [1.2, 1.3, 1.4, 1.5].filter(x => Math.abs(x - fuelPrice()) > 0.001), L = [500, 1000, 1500, 2000, 2500].filter(x => !made.some(m => m.L === x));
       let q; for(let i = 0; i < 20; i++){ q = { L:pqPick(L), price:pqPick(prices, made.map(m => m.price)) }; if(!(PRACTICE.fuelPrice.avoid || []).some(([a, b]) => a === q.L && Math.abs(b - q.price) < 0.001)) break; } return q; },
     render(q){ return { q:`You buy <b class="mono">${num(q.L)} L</b> of fuel at <b class="mono">${priceL(q.price)}</b> a litre. What does it cost?`, answer:Math.round(q.L * q.price * 100) / 100, kind:'£',
-      hint:`${priceL(q.price)} is £${Math.floor(q.price)} and ${Math.round(q.price * 100) % 100}p. Work out ${num(q.L)} × £${Math.floor(q.price)}, then ${num(q.L)} × ${Math.round(q.price * 100) % 100}p, and add them.`, working:pqDecimalWorking(q.L, q.price) }; } },
+      hint:`${priceL(q.price)} has 2 decimal places. Make it whole: ${q.price.toFixed(2)} × 100 = ${Math.round(q.price * 100)}. Work out ${num(q.L)} × ${Math.round(q.price * 100)}, then ÷ 100.`, working:pqDecimalWorking(q.L, q.price) }; } },
 
   weekend:{ title:'Weekend travellers', log:'Weekend demand: 7 in 10, 6 in 10 and 2 in 10 more',
     make(k, made, own){ const kinds = ['sat', 'sun', 'lei'].filter(x => !made.some(m => m.kind === x)), kind = pqPick(kinds);
