@@ -55,10 +55,10 @@ Chapter 4 now plays from chapter 3's end card to its review on 31 August 2033.
 - **storm3 and ash_cloud3** reuse storm2/ash_cloud2's option rows. Those events' mechanics are chapter 3 push 2, so they are headlines for now.
 - **Red Kite's A380** (March 2033) is its RouteNews item only.
 
-## Not in push 1, and a known slow spot
+## Not in push 1, and the slow month-end (fixed)
 
 - **Not built:** the campaign's screens for the AI and the teacher's rubric (its own brief); a second A380; challenges 5–6.
-- **Slow month-ends.** Chapter 4's month-end audit takes 20–40 seconds, and the screen does not change while it works. The audit runs the best-plan sweep: about 15,000 projections with five aircraft and 28 open routes, and the projections are 96% of the time. Only 7% of them repeat, so caching would not help. Two fixes are next: fewer fare trials per timetable (which changes the best-plan figure, so it needs a balance check against chapters 2–3), and a "checking the month" screen while the sweep runs.
+- **Slow month-ends: fixed (16 Oct).** The month-end audit's best-plan sweep took 34 seconds on a chapter 4 airline (about 15,000 projections). A profile showed 78% of that time was spent turning date strings into day numbers: every demand figure looked up its Market week by reading all 156 weeks' dates again. Remembering each date's day number, the Market week of each day, the route news for each route, and the half-term "+N for the week" lines takes the same sweep to 2.9 seconds, with exactly the same answer. Nothing the game works out has changed, only how often it re-reads the same data.
 
 ## Tests
 

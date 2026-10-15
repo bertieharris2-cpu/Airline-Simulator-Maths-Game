@@ -29,6 +29,7 @@
   - `S.campaign` and `R.ov_campaign` hold the board's letter, the six choices and the portfolio; pictures go in IndexedDB `airline-campaign`.
   - The Project button on HQ shows from `campaignProjectDate` with a big plane in the fleet. The hold disables Start.
   - `campaignDemand(route, day)` multiplies `demandMult`: ×1 until a scored result is stored.
+- **Speed (16 Oct).** The projections remember what they re-read: `dayOfDate` (by date string), `isoOf` (by day), `marketWeekOf` (an index of the Market weeks and a cache by day), `newsOn` (each route's news items, in the sheet's order; the date window and `newsLifted` are still checked on every call) and `ch2DemandAdd` (the half-term lines, read once). The caches live on the functions (`dayOfDate.m` and so on), because `isoOf` is called while the beats are built, before a `const` further down would exist. The chapter 4 month-end sweep went from 34 s to 2.9 s with the same result.
 - **Also in this push.** `p4zt`'s `dsOp` leaves the day's one-off charges (`v.event`) out of `plan_loses_money`, so a payment day no longer reads as a losing plan.
 
 ## 0q. Decision support (Workbook v5.7, D87 and D88, 15 Oct 2026)

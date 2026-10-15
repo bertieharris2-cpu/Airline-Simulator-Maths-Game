@@ -5123,7 +5123,8 @@ function addNews(items){ items.forEach(it => S.log.push(Object.assign({round:S.r
    Routine days are simulated; the pupil is called in for decisions, forecasts and CEO alerts.
    ================================================================== */
 const DAY_MS = 86400000;
-function dayOfDate(iso){ const p = iso.split('-').map(Number); return Math.round((Date.UTC(p[0], p[1]-1, p[2]) - CAL0) / DAY_MS); }
+/* a date string's day number, remembered: the projections ask for the same few hundred dates many thousand times */
+function dayOfDate(iso){ const M = dayOfDate.m || (dayOfDate.m = new Map()); let v = M.get(iso); if(v === undefined){ const p = iso.split('-').map(Number); v = Math.round((Date.UTC(p[0], p[1]-1, p[2]) - CAL0) / DAY_MS); M.set(iso, v); } return v; }
 function beatDay(i){ const r = WORLD.rounds[Math.min(i, WORLD.rounds.length-1)]; return r && r.date ? dayOfDate(r.date) : i; }
 function beatAt(day){ let b = 0; WORLD.rounds.forEach((r, i) => { if(beatDay(i) <= day) b = i; }); return b; }
 function beatStartingOn(day){ const i = WORLD.rounds.findIndex((r, k) => k > 0 && beatDay(k) === day); return i < 0 ? null : i; }
@@ -10084,7 +10085,9 @@ Object.assign(FLAG_ASPECT, { nl:1.5, de:1.67, ch:1, be:1.15, it:1.5, pt:1.5, gr:
 const CAL = WB ? (WB.calendar || []) : [], MARKET = WB ? (WB.market || []) : [], WB_EVENTS = WB ? (WB.events || []) : [];
 function isoOf(day){ const d = calDate(day); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`; }
 function calRow(day){ return CAL.find(c => c.day === day) || null; }
-function marketWeekOf(day){ return MARKET.find(m => { const a = dayOfDate(m.weekStart); return day >= a && day <= a + 6; }) || null; }
+/* [first day, week] for each Market row, made once (the rows never change) */
+function marketWeekOf(day){ let X = marketWeekOf.idx; if(!X || X.length !== MARKET.length){ X = marketWeekOf.idx = MARKET.map(m => [dayOfDate(m.weekStart), m]); X.byDay = new Map(); }
+  if(X.byDay.has(day)) return X.byDay.get(day); let w = null; for(const [a, m] of X) if(day >= a && day <= a + 6){ w = m; break; } X.byDay.set(day, w); return w; }
 function chapterOf(day){ day = day === undefined ? (S ? S.day : 1) : day; return CHAPTERS.find(c => day >= dayOfDate(c.start) && day <= dayOfDate(c.end)) || CHAPTERS[0] || null; }
 function chapterNo(day){ const c = chapterOf(day); return c ? c.chapter : 1; }
 /* Fuel on a day: the Calendar's price in the set-up weeks, then the Market week's. */
@@ -13317,7 +13320,7 @@ function tankUpgradeNotice(){
 }
 
 /* ---------- route news (D56): demand × the multiplier on the listed routes between two dates, by segment ---------- */
-function isoOf(day){ const d = calDate(day); return d.toISOString().slice(0, 10); }
+function isoOf(day){ const M = isoOf.m || (isoOf.m = new Map()); let v = M.get(day); if(v === undefined){ v = calDate(day).toISOString().slice(0, 10); M.set(day, v); } return v; }   // remembered by day
 function newsOn(routeId, day){ const iso = isoOf(day); return (WORLD.routeNews || []).filter(n => n.routes.includes(routeId) && n.start <= iso && iso <= n.end); }
 function demandMultNews(route, day){
   const n = newsOn(route.id, day); if(!n.length) return demandMult0(route, day);
@@ -17055,10 +17058,12 @@ undoEvent = function(){
 };
 const ch2Pick = id => (S && S.ch2pick && S.ch2pick[id]) || null;
 /* half-term: "Geneva +30 for the week" — 30 more people a day on that route, the Market week of the event */
+/* the events' "City +N for the week" lines are read once: [route id, Monday, N] */
 function ch2DemandAdd(route, day){
-  let add = 0; (WB_EVENTS || []).forEach(e => { if(!e.date || e.date < '2031') return; const m = /([A-Z][a-z]+) \+(\d+) for the week/.exec(e.effects || ''); if(!m) return;
-    const r = (WORLD.routes || []).find(x => x.city === m[1]); if(!r || r.id !== route.id) return; const d0 = dayOfDate(e.date), mon = d0 - ((calDate(d0).getUTCDay() + 6) % 7);
-    if(day >= mon && day <= mon + 6) add += +m[2]; });
+  let CH2_ADDS = ch2DemandAdd.adds; if(!CH2_ADDS || CH2_ADDS.n !== (WB_EVENTS || []).length){ CH2_ADDS = ch2DemandAdd.adds = []; CH2_ADDS.n = (WB_EVENTS || []).length;
+    (WB_EVENTS || []).forEach(e => { if(!e.date || e.date < '2031') return; const m = /([A-Z][a-z]+) \+(\d+) for the week/.exec(e.effects || ''); if(!m) return;
+      const r = (WORLD.routes || []).find(x => x.city === m[1]); if(!r) return; const d0 = dayOfDate(e.date); CH2_ADDS.push([r.id, d0 - ((calDate(d0).getUTCDay() + 6) % 7), +m[2]]); }); }
+  let add = 0; for(const [rid, mon, n] of CH2_ADDS) if(rid === route.id && day >= mon && day <= mon + 6) add += n;
   return add;
 }
 const demandAtZ0 = demandAt;
@@ -17070,7 +17075,10 @@ demandAt = function(route, price, n){
 /* ---------- 3. the news: "all" routes, closures, a month's announcements ---------- */
 function newsLifted(n){ return Object.keys(CH2_EV_NEWS).some(ev => CH2_EV_NEWS[ev] === n.id && (CH2_OPT[ev] || []).some(o => o.lift && o.key === ch2Pick(ev))); }
 const newsOnZ0 = newsOn;
-newsOn = function(routeId, day){ const iso = isoOf(day); return (WORLD.routeNews || []).filter(n => (n.routes.includes(routeId) || n.routes.includes('all')) && n.start <= iso && iso <= n.end && !newsLifted(n)); };
+newsOn = function(routeId, day){ const iso = isoOf(day), N = WORLD.routeNews || [];
+  let I = newsOn.idx; if(!I || I.src !== N || I.n !== N.length){ I = newsOn.idx = new Map(); I.src = N; I.n = N.length; }   // each route's items (and 'all'), in the sheet's order, listed once
+  let L = I.get(routeId); if(!L){ L = N.filter(n => n.routes.includes(routeId) || n.routes.includes('all')); I.set(routeId, L); }
+  return L.filter(n => n.start <= iso && iso <= n.end && !newsLifted(n)); };
 function closureOn(routeId, day){ return newsOn(routeId, day).find(n => n.mult === 0) || null; }
 function ch2GroundWhy(f, d){
   const c = closureOn(f.route, d); if(c) return `Grounded: ${c.headline || 'the airport is closed'}`;

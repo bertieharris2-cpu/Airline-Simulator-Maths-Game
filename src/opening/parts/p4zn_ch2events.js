@@ -124,10 +124,12 @@ undoEvent = function(){
 };
 const ch2Pick = id => (S && S.ch2pick && S.ch2pick[id]) || null;
 /* half-term: "Geneva +30 for the week" — 30 more people a day on that route, the Market week of the event */
+/* the events' "City +N for the week" lines are read once: [route id, Monday, N] */
 function ch2DemandAdd(route, day){
-  let add = 0; (WB_EVENTS || []).forEach(e => { if(!e.date || e.date < '2031') return; const m = /([A-Z][a-z]+) \+(\d+) for the week/.exec(e.effects || ''); if(!m) return;
-    const r = (WORLD.routes || []).find(x => x.city === m[1]); if(!r || r.id !== route.id) return; const d0 = dayOfDate(e.date), mon = d0 - ((calDate(d0).getUTCDay() + 6) % 7);
-    if(day >= mon && day <= mon + 6) add += +m[2]; });
+  let CH2_ADDS = ch2DemandAdd.adds; if(!CH2_ADDS || CH2_ADDS.n !== (WB_EVENTS || []).length){ CH2_ADDS = ch2DemandAdd.adds = []; CH2_ADDS.n = (WB_EVENTS || []).length;
+    (WB_EVENTS || []).forEach(e => { if(!e.date || e.date < '2031') return; const m = /([A-Z][a-z]+) \+(\d+) for the week/.exec(e.effects || ''); if(!m) return;
+      const r = (WORLD.routes || []).find(x => x.city === m[1]); if(!r) return; const d0 = dayOfDate(e.date); CH2_ADDS.push([r.id, d0 - ((calDate(d0).getUTCDay() + 6) % 7), +m[2]]); }); }
+  let add = 0; for(const [rid, mon, n] of CH2_ADDS) if(rid === route.id && day >= mon && day <= mon + 6) add += n;
   return add;
 }
 const demandAtZ0 = demandAt;
@@ -139,7 +141,10 @@ demandAt = function(route, price, n){
 /* ---------- 3. the news: "all" routes, closures, a month's announcements ---------- */
 function newsLifted(n){ return Object.keys(CH2_EV_NEWS).some(ev => CH2_EV_NEWS[ev] === n.id && (CH2_OPT[ev] || []).some(o => o.lift && o.key === ch2Pick(ev))); }
 const newsOnZ0 = newsOn;
-newsOn = function(routeId, day){ const iso = isoOf(day); return (WORLD.routeNews || []).filter(n => (n.routes.includes(routeId) || n.routes.includes('all')) && n.start <= iso && iso <= n.end && !newsLifted(n)); };
+newsOn = function(routeId, day){ const iso = isoOf(day), N = WORLD.routeNews || [];
+  let I = newsOn.idx; if(!I || I.src !== N || I.n !== N.length){ I = newsOn.idx = new Map(); I.src = N; I.n = N.length; }   // each route's items (and 'all'), in the sheet's order, listed once
+  let L = I.get(routeId); if(!L){ L = N.filter(n => n.routes.includes(routeId) || n.routes.includes('all')); I.set(routeId, L); }
+  return L.filter(n => n.start <= iso && iso <= n.end && !newsLifted(n)); };
 function closureOn(routeId, day){ return newsOn(routeId, day).find(n => n.mult === 0) || null; }
 function ch2GroundWhy(f, d){
   const c = closureOn(f.route, d); if(c) return `Grounded: ${c.headline || 'the airport is closed'}`;

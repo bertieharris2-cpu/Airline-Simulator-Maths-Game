@@ -14,7 +14,9 @@ Object.assign(FLAG_ASPECT, { nl:1.5, de:1.67, ch:1, be:1.15, it:1.5, pt:1.5, gr:
 const CAL = WB ? (WB.calendar || []) : [], MARKET = WB ? (WB.market || []) : [], WB_EVENTS = WB ? (WB.events || []) : [];
 function isoOf(day){ const d = calDate(day); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`; }
 function calRow(day){ return CAL.find(c => c.day === day) || null; }
-function marketWeekOf(day){ return MARKET.find(m => { const a = dayOfDate(m.weekStart); return day >= a && day <= a + 6; }) || null; }
+/* [first day, week] for each Market row, made once (the rows never change) */
+function marketWeekOf(day){ let X = marketWeekOf.idx; if(!X || X.length !== MARKET.length){ X = marketWeekOf.idx = MARKET.map(m => [dayOfDate(m.weekStart), m]); X.byDay = new Map(); }
+  if(X.byDay.has(day)) return X.byDay.get(day); let w = null; for(const [a, m] of X) if(day >= a && day <= a + 6){ w = m; break; } X.byDay.set(day, w); return w; }
 function chapterOf(day){ day = day === undefined ? (S ? S.day : 1) : day; return CHAPTERS.find(c => day >= dayOfDate(c.start) && day <= dayOfDate(c.end)) || CHAPTERS[0] || null; }
 function chapterNo(day){ const c = chapterOf(day); return c ? c.chapter : 1; }
 /* Fuel on a day: the Calendar's price in the set-up weeks, then the Market week's. */

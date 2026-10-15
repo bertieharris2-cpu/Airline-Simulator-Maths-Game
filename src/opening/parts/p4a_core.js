@@ -555,7 +555,8 @@ function addNews(items){ items.forEach(it => S.log.push(Object.assign({round:S.r
    Routine days are simulated; the pupil is called in for decisions, forecasts and CEO alerts.
    ================================================================== */
 const DAY_MS = 86400000;
-function dayOfDate(iso){ const p = iso.split('-').map(Number); return Math.round((Date.UTC(p[0], p[1]-1, p[2]) - CAL0) / DAY_MS); }
+/* a date string's day number, remembered: the projections ask for the same few hundred dates many thousand times */
+function dayOfDate(iso){ const M = dayOfDate.m || (dayOfDate.m = new Map()); let v = M.get(iso); if(v === undefined){ const p = iso.split('-').map(Number); v = Math.round((Date.UTC(p[0], p[1]-1, p[2]) - CAL0) / DAY_MS); M.set(iso, v); } return v; }
 function beatDay(i){ const r = WORLD.rounds[Math.min(i, WORLD.rounds.length-1)]; return r && r.date ? dayOfDate(r.date) : i; }
 function beatAt(day){ let b = 0; WORLD.rounds.forEach((r, i) => { if(beatDay(i) <= day) b = i; }); return b; }
 function beatStartingOn(day){ const i = WORLD.rounds.findIndex((r, k) => k > 0 && beatDay(k) === day); return i < 0 ? null : i; }

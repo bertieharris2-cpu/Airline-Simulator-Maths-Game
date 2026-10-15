@@ -76,7 +76,7 @@ function tankUpgradeNotice(){
 }
 
 /* ---------- route news (D56): demand × the multiplier on the listed routes between two dates, by segment ---------- */
-function isoOf(day){ const d = calDate(day); return d.toISOString().slice(0, 10); }
+function isoOf(day){ const M = isoOf.m || (isoOf.m = new Map()); let v = M.get(day); if(v === undefined){ v = calDate(day).toISOString().slice(0, 10); M.set(day, v); } return v; }   // remembered by day
 function newsOn(routeId, day){ const iso = isoOf(day); return (WORLD.routeNews || []).filter(n => n.routes.includes(routeId) && n.start <= iso && iso <= n.end); }
 function demandMultNews(route, day){
   const n = newsOn(route.id, day); if(!n.length) return demandMult0(route, day);
