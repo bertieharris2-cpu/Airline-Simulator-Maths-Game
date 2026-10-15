@@ -300,7 +300,7 @@ soSync = function(){ soSyncT0(); if(!S || !S.so || !S.so.weeks || !ch2Now()) ret
   if(!o.tk) Object.values(S.so.weeks).forEach(W => Object.values(W.items).forEach(it => { if(it.lhEst && it.done) o.tk = it.doneDay || S.day; })); };
 /* for the tests: the first step's answer too */
 const soPlanT0 = soPlan;
-soPlan = function(){ const P = soPlanT0(); if(!P || !P.key) return P; const it = soItem(P.key); if(!it || !(it.lhEst || it.rel === 'bagFee')) return P; const sp = soSpec(it); return Object.assign(P, { pre:sp && sp.pre ? String(sp.pre.alt !== undefined ? sp.pre.alt : sp.pre.want) : null }); };
+soPlan = function(){ const P = soPlanT0(); if(!P || !P.key) return P; const it = soItem(P.key); if(!it || it.level !== 'calc' || !(it.lhEst || it.rel === 'bagFee')) return P; const sp = soSpec(it); return Object.assign(P, { pre:sp && sp.pre ? String(sp.pre.alt !== undefined ? sp.pre.alt : sp.pre.want) : null }); };
 
 /* ---------- for the tests and the report ---------- */
 function typeReport(){ const r = routeById('nyc'); return { type:airlineType(), confirmed:!!(S.atype && S.atype.confirmed), rep:S.rep, repExact:S.repExact, factor:repFactor(), fares:r ? r.fares.slice() : [], base:r ? r._fares0.slice() : [], ch2so:S.ch2so || null }; }

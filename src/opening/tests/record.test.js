@@ -1,7 +1,8 @@
 // Run: NODE_PATH=<playwright node_modules> node record.test.js   (env: GAME, OUT, CODE=<save code file> PRINT=<range, e.g. w8> to print a week of a saved run)
-// The pupil record (Workbook v5.1, D75):
-//  1. on Launch Day a long multiplication is typed into the column template digit by digit, one partial product off by a
-//     carry: the record keeps both attempts cell by cell, the Query's note names the line, the second attempt is Checked;
+// The pupil record (Workbook v5.1, D75; on paper from v5.6, D86):
+//  1. on Launch Day the answer box: a sum answered ten times out, then right (a Query with its note, then Checked), and
+//     the profit answered wrong twice (Finance shows it); the record keeps every attempt and the sum's number, and the
+//     printout prints the number in the margin with a ruled box for the working from the book;
 //  2. every error note of the brief's §3 fires on its case (worked from the working, not just the answer);
 //  3. with CODE and PRINT, the record of a saved run prints in both views (HTML and PDF in OUT).
 const { chromium } = require('playwright');
@@ -22,27 +23,33 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
   if(await p.$('#s2Back')){ await p.click('[data-pe="0|add|par|0|0"]'); await p.click('[data-pe="0|add|dub|0|0"]'); await p.click('#s2Back'); await p.waitForTimeout(100); }
   else { await p.click('[data-pe="0|add|par|0|0"]').catch(() => {}); await p.click('[data-pe="0|add|dub|0|0"]').catch(() => {}); }
   await p.waitForTimeout(100); await p.click('#nx'); await p.waitForTimeout(150);
-  for(let k = 0; k < 20 && !(await p.$('.wkb input[data-r]')); k++){ if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ await p.click('#wkTutGo'); continue; } if(await p.$('[data-wpick]')){ const ws = await p.$$('[data-wpick]'); await (ws[1] || ws[0]).click(); await p.waitForTimeout(80); continue; } if(await p.$('[data-summode="grid"]')){ await p.click('[data-summode="grid"]'); continue; } await p.waitForTimeout(100); }
-  ok('the column template is on screen', !!(await p.$('.wkb input[data-r]')), await T());
-  const S0 = JSON.parse(await E(`JSON.stringify((() => { const t = currentTable(), col = t.cols.find(c => c.id === t.active.col), row = tRows(t).find(r => r.id === t.active.row), ops = stackRows(t, col, row);
-    return { a:+wkFig(operandUnit(t, ops[0].id), operandValue(t, col, ops[0].id)).s, b:+wkFig(operandUnit(t, ops[1].id), operandValue(t, col, ops[1].id)).s, op:ops[1].op, rows:Math.max(...[...document.querySelectorAll('.wkb input[data-r]')].map(x => +x.dataset.r)), q:ops.map((x, i) => (i ? x.op + ' ' : '') + x.value).join(' ') }; })())`));
-  const parts = String(S0.b).split('').reverse().map((d, i) => S0.a * +d * Math.pow(10, i)).filter(v => v).slice(0, S0.rows);
-  const typeIn = (rows, ans) => p.evaluate(([rows, ans]) => { const g = document.querySelector('.wkb'), W = +g.style.getPropertyValue('--w');
-    g.querySelectorAll('input[data-r], input[data-cy]').forEach(x => { x.value = ''; });
-    rows.forEach(([r, s]) => String(s).split('').reverse().forEach((d, i) => { const x = g.querySelector(`input[data-r="${r}"][data-c="${W - 1 - i}"]`); if(x) x.value = d; }));
-    const cy = g.querySelector('input[data-cy="0|' + (W - 2) + '"]'); if(cy) cy.value = '1';
-    const A = document.getElementById('cellAns'); A.value = String(ans); A.dispatchEvent(new Event('input')); }, [rows, ans]);
-  const wrong = parts.slice(); wrong[parts.length > 1 ? 1 : 0] -= parts.length > 1 ? 100 : 10;   // a carry missed in one line
-  await typeIn(wrong.map((v, r) => [r, v]).concat([[S0.rows, wrong.reduce((x, y) => x + y, 0)]]), wrong.reduce((x, y) => x + y, 0)); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(150);
-  await typeIn(parts.map((v, r) => [r, v]).concat([[S0.rows, S0.a * S0.b]]), S0.a * S0.b); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(150);
+  // D86 (15 Oct 2026): the pupil works on paper; the game takes the answer. One answer box, two tries, a sum number.
+  for(let k = 0; k < 20 && !(await p.$('.wk-sum.paper #cellAns')); k++){ if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ await p.click('#wkTutGo'); continue; } if(await p.$('[data-wpick]')){ const ws = await p.$$('[data-wpick]'); await (ws[1] || ws[0]).click(); await p.waitForTimeout(80); continue; } if(await p.$('#wkNext')){ await p.click('#wkNext'); continue; } await p.waitForTimeout(100); }
+  ok('the answer box is on screen: no column template, no squared paper, no Working pad', !!(await p.$('.wk-sum.paper #cellAns')) && !(await p.$('.wkb, .wk-grid, [data-summode], .pad-btn')), await T());
+  const head = (await p.textContent('.wk-sum.paper .sum-h')).replace(/\s+/g, ' ').trim(), n1 = +(/^Sum (\d+)/.exec(head) || [])[1];
+  ok('the header is "Sum N · Week W · what it is"', /^Sum \d+ · Week 1 · Sales forecast — /.test(head), head);
+  const S0 = JSON.parse(await E('JSON.stringify(paperPlan())'));
+  await p.fill('#cellAns', String(S0.answer * 10)); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(120);
+  ok('wrong once: the error note from the answer alone, and one more try', /ten times smaller/.test(await p.textContent('#ftMsg')) && /One more try/.test(await p.textContent('#ftMsg')), await p.textContent('#ftMsg'));
+  await p.fill('#cellAns', String(S0.answer)); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(120);
   const e1 = JSON.parse(await E('JSON.stringify(S.record.entries.filter(e => e.type === "calc").pop())'));
-  ok('the record has the sum with two attempts, a Query then Checked', e1 && e1.attempts.length === 2 && !e1.attempts[0].ok && e1.attempts[1].ok && e1.status === 'checked', e1 && { q:e1.question, n:e1.attempts.length, status:e1.status });
-  const lines = a => a.grid.lines.filter(L => L.kind === 'work' && L.text.trim()).map(L => L.text.trim());
-  ok('it keeps the working cell by cell: each working line as typed, the carry, the answer line', e1 && JSON.stringify(lines(e1.attempts[0])) === JSON.stringify(wrong.map(String)) && e1.attempts[0].grid.lines.some(L => L.kind === 'carry') && e1.attempts[1].grid.lines.find(L => L.kind === 'ans').text.trim() === String(S0.a * S0.b), e1 && e1.attempts.map(lines));
-  ok('the Query names the line that is off and the carry', e1 && /is .*not .*carry/.test(e1.attempts[0].note), e1 && e1.attempts[0].note);
-  ok('the entry carries its Bettws codes and method', e1 && e1.codes.length >= 3 && /column template/.test(e1.method), e1 && [e1.codes, e1.method]);
+  ok('the record has the sum with its number and both attempts, a Query then Checked', e1 && e1.n === n1 && e1.attempts.length === 2 && !e1.attempts[0].ok && e1.attempts[1].ok && e1.status === 'checked' && /ten times smaller/.test(e1.attempts[0].note), e1 && { n:e1.n, q:e1.question, tries:e1.attempts.length, status:e1.status, note:e1.attempts[0].note });
+  // the next sums: answered right, until the profit, which is answered wrong twice: Finance fills it in
+  let shownN = null;
+  for(let k = 0; k < 30; k++){ if(await p.$('#wkNext')){ await p.click('#wkNext'); continue; } if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ await p.click('#wkTutGo'); continue; }
+    if(await p.$('[data-wpick]')){ const ws = await p.$$('[data-wpick]'); await (ws[1] || ws[0]).click(); await p.waitForTimeout(80); continue; }
+    if(await p.$('#pbChk')){ const P = JSON.parse(await E('JSON.stringify(paperPlan())')); for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-pbop="${x}"]` : `[data-pbfig="${x}"]`); await p.click('#pbChk'); await p.waitForTimeout(80); continue; }
+    if(await p.$('.wk-sum.paper #cellAns')){ const P = JSON.parse(await E('JSON.stringify(paperPlan())'));
+      if(/profit/.test(P.cell)){ shownN = +(/^Sum (\d+)/.exec((await p.textContent('.wk-sum.paper .sum-h')).trim()) || [])[1]; for(const v of ['1', '2']){ await p.fill('#cellAns', v); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(100); }
+        ok('wrong twice: the figure is shown, stamped Checked by Finance', await p.$('.stamp.fin') !== null); break; }
+      await p.fill('#cellAns', String(P.answer)); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(80); continue; }
+    break; }
+  const e2 = JSON.parse(await E('JSON.stringify(S.record.entries.filter(e => /profit/.test(e.key)).pop())'));
+  ok('the record keeps both wrong attempts and marks the figure as shown', e2 && e2.n === shownN && e2.attempts.length === 3 && e2.attempts[2].shown && e2.status === 'shown', e2 && { n:e2.n, tries:e2.attempts.map(a => a.ok ? 'ok' : a.shown ? 'shown' : 'q'), status:e2.status });
   const html1 = await E('recordPrintHtml({ view:"date", range:"all" })'); fs.writeFileSync(OUT + 'launch-day-record.html', html1);
-  ok('the printout shows the wrong line boxed in red and the second attempt ticked', /class="bad"/.test(html1) && /class="tick">✓/.test(html1) && /class="red note"/.test(html1));
+  ok('the printout: the sum number in the margin, a ruled box "Working (from your book)" under each entry, the Query note, the tick, Finance\'s figure',
+    new RegExp(`class="sn">Sum ${n1}<`).test(html1) && (html1.match(/class="wb"/g) || []).length >= 2 && /Working \(from your book\)/.test(html1) && /class="red note"/.test(html1) && /class="tick">✓/.test(html1) && /Checked by Finance/.test(html1));
+  { const q = await b.newPage(); await q.setContent(html1); await q.pdf({ path:OUT + 'launch-day-record.pdf', format:'A4', printBackground:true }); await q.close(); }
 
   // ---------- 2. the error notes of §3 ----------
   const N = JSON.parse(await E(`JSON.stringify({

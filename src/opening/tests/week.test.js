@@ -7,7 +7,7 @@ const V2 = true;   // the game is the revised Studio (one file since 13 Oct 2026
 const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
-  let modelWide = false, openerSeen = false, newsSeen = false, d67 = null; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [];
+  let modelWide = false, openerSeen = false, newsSeen = false, d67 = null; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [], foLevels = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
@@ -22,7 +22,17 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(60); } return seen; };
   const solveW = async tag => { const seen = []; for(let g = 0; g < 80; g++){ if(await T() !== 'workings') break;
       if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ seen.push('tutorial'); await p.click('#wkTutGo'); continue; }
+      if(await p.$('#pbChk')){ const P = await p.evaluate(() => window.__sim.evalIn('JSON.stringify(paperPlan())')).then(JSON.parse); seen.push(P.cell + ' build');
+        if(!paperB){ paperB = true; await p.click(`[data-pbfig="${P.seq[0]}"]`); await p.click('[data-pbop="+"]'); await p.click(`[data-pbfig="${P.seq[2]}"]`); await p.click('#pbChk'); await p.waitForTimeout(60);
+          ok(`${tag}: a Build with the wrong operation gets a note and one more try (D86)`, /One more try/.test(await p.textContent('#ftMsg')), await p.textContent('#ftMsg')); await shot('paper-build-query'); }
+        for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-pbop="${x}"]` : `[data-pbfig="${x}"]`); await p.click('#pbChk'); await p.waitForTimeout(80); continue; }
       if(await p.$('#cellAns')){ const id = await p.evaluate(() => { const t = window.__sim.currentTable(); return t.id + ':' + t.active.col + '|' + t.active.row; }); seen.push(id);
+        if(!paperQ && await p.$('.wk-sum.paper')){ paperQ = true; await shot('paper-answer-box'); const P = await p.evaluate(() => window.__sim.evalIn('JSON.stringify(paperPlan())')).then(JSON.parse);
+          ok(`${tag}: the answer box: "Sum N · Week W · what it is", the question in black, no column template or pad (D86)`, /^Sum \d+ · Week \d+ · /.test(await p.textContent('.wk-sum.paper .sum-h')) && await vis('.pq .pq-big') && !(await p.$('.wkb, .wk-grid, .sd-tabs, .pad-btn')), await p.textContent('.wk-sum.paper .sum-h'));
+          await p.fill('#cellAns', String(P.answer * 10)); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(60);
+          ok(`${tag}: wrong once: the note from the answer alone (ten times out) and one more try`, /ten times/.test(await p.textContent('#ftMsg')) && /One more try/.test(await p.textContent('#ftMsg')), await p.textContent('#ftMsg')); }
+        else if(!paperFin && /profit/.test(id) && await p.$('.wk-sum.paper')){ paperFin = true; for(const v of ['1', '2']){ await p.fill('#cellAns', v); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(60); }
+          ok(`${tag}: wrong twice: the figure is shown, stamped Checked by Finance, and the sums move on`, await vis('.stamp.fin') && await vis('#wkNext'), await p.textContent('.dock-sum').then(t => t.replace(/\s+/g, ' ').slice(0, 200))); await shot('paper-finance'); continue; }
         await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(80); continue; }
       if(await p.$('.sc-p1.sign #scCheck')){   // a fuel sign-off on the service card: the first is answered wrong once (Query), then right (Checked)
         const key = await p.evaluate(() => window.__sim.evalIn('(UI.sc.F && UI.sc.F.p.id + "|" + UI.sc.F.r.id) || ""')), A = await p.evaluate(() => window.__sim.evalIn('scAnswers()'));
@@ -44,7 +54,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       else { await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
       await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push(P.id + (P.div ? '÷' + P.div : '')); } return done; };
   // v4.9 sign-off cards: Build (tap the figures and the operation) and Calculate (type the answer); the first of each kind is answered wrong once
-  let soWrongB = false, soWrongC = false;
+  let soWrongB = false, soWrongC = false, paperB = false, paperQ = false, paperFin = false;
   const signs = async tag => { const done = []; for(let g = 0; g < 14; g++){ const P = await p.evaluate(() => window.__sim.evalIn('soPlan()')); checks.push('info soPlan ' + tag + ' ' + JSON.stringify(P)); if(!P) break;
       if(P.rb){ await p.click(`[data-rbop="${P.rb.id}|${P.rb.op}"]`); await p.fill(`[data-rbdiv="${P.rb.id}"]`, String(P.rb.div)); await p.click(`[data-rbchk="${P.rb.id}"]`); await p.waitForTimeout(80); done.push('rb:' + P.rb.id + '÷' + P.rb.div); continue; }
       const k = P.key.replace(/"/g, '\\"');
@@ -183,7 +193,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         const pf0 = (await S()).prices.par || 90; await fareTo('par', 100); ok('launch (v2): a fare in the route editor changes the fare', (await S()).prices.par === 100, (await S()).prices); await fareTo('par', pf0);
         const sumK = await p.$$eval('.s2-sum [data-sum]', es => es.map(e => e.getAttribute('data-sum'))); await p.click('#s2Tr'); await p.waitForTimeout(80); await p.click('#s2All'); await p.waitForTimeout(80);
         const drK = await p.$$eval('.s2-dr [data-sum]', es => es.map(e => e.getAttribute('data-sum'))); await p.click('#s2All'); await p.click('#s2DrX'); await p.waitForTimeout(60);
-        ok('launch (v2): ƒ on the figures the sums ask for: profit and fuel in the summary, tickets in the drawer\'s money', sumK.includes('profit') && sumK.includes('fuelCost') && drK.includes('revenue'), { sumK, drK });
+        ok('launch (v2): ƒ on the figures the sums ask for: profit in the summary (fuel is the order, D86), tickets in the drawer\'s money', sumK.includes('profit') && !sumK.includes('fuelCost') && drK.includes('revenue'), { sumK, drK });
         ok('launch (v2): no permanent fuel strip; Fuel is a toolbar button (bought as used in week 1)', !(await vis('.fstrip')) && await vis('.s2-fuel'));
         await setPlan([{ sched:['par', 'dub', 'par'], deps:[420, 640, 1080] }], { par:90, dub:90 }); await v2Checks('launch'); await shot('d1-studio'); }
       else if(s.phase === 'setup'){
@@ -292,7 +302,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       await shot(`d${day}-plan`); ok(`plan ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.evaluate(() => window.__sim.currentPlan().fleet.map(x => x.sched.join('/') + ' ' + (x.deps || []).join(',')))); await p.click('#nx'); continue; }
     if(t === 'workings' && await vis('.so-page')){ await fits('signoffs ' + day); await shot(`d${day}-signoffs`); await signs('work ' + day); await p.waitForTimeout(700); await shot(`d${day}-signoffs-done`); await p.click('#nx'); await p.waitForTimeout(80); continue; }
     if(t === 'workings'){ await fits('workings ' + day); const typed = await solveW(`work ${day}`); await shot(`d${day}-workings`);
-      if(s.phase === 'setup') ok('launch: tickets ×3 then the fare, the other route\'s tickets, a fuel sign-off for each route (Paris 120 L, Dublin 180 L at £1.30), profit, snacks ×2', typed.filter(x => /\|tk_par/.test(x)).length === 3 && typed.some(x => /\|tk_dub/.test(x)) && typed.filter(x => /\|profit/.test(x)).length === 1 && typed.filter(x => /\|snack$/.test(x)).length === 2 && !typed.includes('tutorial') && typed.includes('card:dhc6|par=156.00') && typed.includes('card:dhc6|dub=234.00'), typed);
+      if(s.phase === 'setup') ok('launch: five sums (D86): tickets at three fares, the fare, a worked example then the fuel order, the profit; snacks ×2 as Builds; the other route\'s tickets by the model', typed.filter(x => /\|tk_par$/.test(x)).length === 3 && !typed.some(x => /\|tk_dub/.test(x)) && typed.includes('tutorial') && typed.filter(x => /fuelorder:a\|order$/.test(x)).length === 1 && typed.filter(x => /\|profit$/.test(x)).length === 1 && typed.filter(x => /\|snack build$/.test(x)).length === 2, typed);
       if(s.phase === 'setup') ok('launch: the sums were done in the dock beside the plan', await vis('.dock-sum') && await vis('.ad'));
       ok(`work ${day}: back enabled`, !!(await p.$('#nx')) && await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'fuelDesk'){ await fits('fuelDesk ' + day); await shot(`d${day}-fueldesk`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
@@ -301,10 +311,12 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         ok('day 8: the desk says what an empty tank costs (the day\'s price + 10p)', /day's price \+ 10p/.test(txt)); }
       const n = day === 8 ? 3 : 2, bn = await p.$(`[data-fdb="${n}"]:not([disabled])`);
       if(bn){ await bn.click(); await p.waitForTimeout(60);
-        if(await p.$('#fdSignChk')){ const one = await p.evaluate(() => window.__sim.evalIn('(fuelBlock() * fuelOn(S.day)).toFixed(2)'));
-          await p.fill('[data-fds="one"]', '1'); await p.click('#fdSignChk'); await p.waitForTimeout(60); ok(`day ${day}: the first fuel order is a sign-off; a wrong line is stamped Query`, await vis('.fd-sign .stamp.q'));
-          await p.fill('[data-fds="one"]', one); if(await p.$('[data-fds="all"]')) await p.fill('[data-fds="all"]', (one * n).toFixed(2)); await p.click('#fdSignChk'); await p.waitForTimeout(60);
-          ok(`day ${day}: the order is Checked, then Confirm opens`, await vis('.fd-sign .stamp.ok') && await p.$eval('#fdBuy', e => !e.disabled)); await shot(`d${day}-fueldesk-signed`); }
+        const FO = await p.evaluate(() => window.__sim.evalIn('JSON.stringify(foPlan())')).then(JSON.parse); foLevels.push(day + ':' + (FO && FO.level));
+        if(FO && !FO.signed && FO.level !== 'model'){ ok(`day ${day}: the fuel order is the week's one fuel sum: "Sum N · Week W · Fuel order: ${FO.n} × £…", Confirm waits for it (D86)`, /Fuel order: \d+ × £/.test(await p.textContent('.fd-sign .sum-h')) && await p.$eval('#fdBuy', e => e.disabled), await p.textContent('.fd-sign .sum-h'));
+          if(FO.level === 'build'){ for(const x of FO.seq) await p.click(x === '×' ? '[data-foop="×"]' : `[data-fofig="${x}"]`); await p.click('#foChk'); await p.waitForTimeout(60); }
+          else { await p.fill('#foIn', '1'); await p.click('#foChk'); await p.waitForTimeout(60); ok(`day ${day}: a wrong order is a Query with one more try`, await vis('.fd-sign .stamp.q') && /One more try/.test(await p.textContent('.fd-sign .sc-msg'))); await p.fill('#foIn', FO.answer); await p.click('#foChk'); await p.waitForTimeout(60); }
+          ok(`day ${day}: the order (${FO.level}) is signed, then Confirm opens`, await vis('.fd-sign.ok') && await p.$eval('#fdBuy', e => !e.disabled)); await shot(`d${day}-fueldesk-signed`); }
+        ok(`day ${day}: the desk shows the week's fuel by aircraft and route, worked out by the model`, await vis('.fd-ls') && (await p.$$('.fd-ls tbody tr')).length >= 2);
         const f0 = (await S()).fuel; await p.click('#fdBuy'); await p.waitForTimeout(80); const f1 = (await S()).fuel;
         ok(`day ${day}: the order of ${n} × 1,000 L goes into the tank`, Math.round(f1 - f0) === n * 1000, [f0, f1]); await shot(`d${day}-fueldesk-bought`); }
       await p.click('#nx'); continue; }
@@ -326,9 +338,9 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
         await p.click(`[data-rbfig="tot|${f[0]}"]`); await p.click('[data-rbop="tot|×"]'); await p.click(`[data-rbfig="tot|${f[1]}"]`); await p.click('[data-rbchk="tot"]'); await p.waitForTimeout(60);
         ok('review 7: a wrong operation is a Query with a plain hint', await vis('.rb-card .stamp.q') && /which operation joins amounts together/.test(await p.textContent('.rb-msg')), await p.textContent('.rb-msg'));
         await p.click('[data-rbclr="tot"]'); await p.click(`[data-rbfig="tot|${f[0]}"]`); await p.click('[data-rbop="tot|+"]'); await p.click(`[data-rbfig="tot|${f[1]}"]`); await p.click('[data-rbchk="tot"]'); await p.waitForTimeout(60);
-        ok('review 7: a missing day is named', /isn't in the total yet/.test(await p.textContent('.rb-msg')), await p.textContent('.rb-msg')); await p.click('[data-rbclr="tot"]'); }
+        ok('review 7: wrong twice: Finance fills in the total (two tries, D86)', await vis('[data-rbcard="tot"] .stamp.fin'), await p.textContent('[data-rbcard="tot"]').then(t => t.replace(/\s+/g, ' ').slice(0, 160))); }
       const built = await builds('review ' + day); sums['review ' + day] = built;
-      ok(`review ${day}: the week total, the difference and the mean are Build steps (the game calculates)`, built.includes('tot') && built.includes('diff') && built.some(x => /^mean÷7/.test(x)), built);
+      ok(`review ${day}: the week total, the difference and the mean are Build steps (the game calculates; day 7's total was Finance's after two tries)`, (built.includes('tot') || day === 7) && built.includes('diff') && built.some(x => /^mean÷7/.test(x)), built);
       if(day === 7){ ok('review 7: the mean asks for the divisor and shows the average day', /Average day:/.test(await p.textContent('.rbw-t'))); await shot(`d${day}-review-built`); }
       ok(`review ${day}: seat fill shows seats filled, empty seats and turned away as actuals`, await vis('.st-rv') && (await p.$$('.st-rvf > span')).length === 3, await p.$eval('.st-rv', e => e.textContent.replace(/\s+/g, ' ').slice(0, 160)).catch(() => ''));
       ok(`review ${day}: the missed-profit line`, await vis('.wk-missed'), await p.$eval('.wk-missed', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));
@@ -350,19 +362,19 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   if(process.env.SAVE){ fs.writeFileSync(process.env.SAVE, await p.evaluate(() => window.__sim.saveCode())); checks.push('info save code written to ' + process.env.SAVE); }   // chapter2.test.js starts from this save
   if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t) && !/\(Build\)|^Build:/.test(t));   // Build steps (the reviews, the model's formulas) are not Calculate
     const count = calc.reduce((n, t) => { const m = /^Ticket revenue \(([^)]*)\)/.exec(t); return n + (m ? m[1].split(',').length : 1); }, 0) + 2;   // launch day's three fares count as three
-    if(!CAP) ok('weeks 1–4: about 18 Calculate steps (Launch Day 7, the week-1 tenths 2, then three a week: Fable\'s §4)', count >= 15 && count <= 21, { count, calc });
+    if(!CAP) ok('weeks 1–4: about 13 Calculate steps (D86: Launch Day 5, the week-1 tenths 2, then up to three a week)', count >= 10 && count <= 16, { count, calc });
     ok('the range check is the model\'s now (not logged as a sum)', !(s.handSumLog || []).some(h => h.tools.some(t => /^Range check/.test(t)))); }
   const rows = await p.evaluate(() => window.__sim.evalIn('soLogRows()')), cap = CAP || 3;
   if(rows.length){ ok(`from week 2, no week asks more than ${cap} Calculate sign-offs`, rows.every(r => r.asked.length <= cap), rows.map(r => [r.wk, r.asked.length]));
     const w = n => rows.find(r => r.wk === n) || { asked:[], build:[], model:[] };
-    if(s.day >= 22 && !CAP){ ok('week 2: the time to afford (the Saab) is the Calculate sign-off, with the first fuel order', w(2).asked.some(x => /Time to afford: Saab 340/.test(x)) && w(2).asked.some(x => /first fuel order/.test(x)) && !w(2).asked.some(x => /Rent or buy/.test(x)), w(2).asked);
-      ok('week 3: Amsterdam tickets, Amsterdam flight time and the Saab\'s Amsterdam fuel', w(3).asked.length === 3 && w(3).asked.some(x => /Tickets: Amsterdam/.test(x)) && w(3).asked.some(x => /Flight time: Amsterdam/.test(x)) && w(3).asked.some(x => /Fuel: Saab 340 Amsterdam/.test(x)), w(3).asked);
+    if(s.day >= 22 && !CAP){ ok('week 2: the time to afford (the Saab) is the Calculate sign-off; the fuel order is a Build (the price moved 17p since Launch Day, D86)', w(2).asked.some(x => /Time to afford: Saab 340/.test(x)) && w(2).build.some(x => /fuel order/.test(x)) && !w(2).asked.some(x => /Rent or buy|Fuel:/.test(x)), w(2));
+      ok('week 3: Amsterdam tickets and flight time; no fuel card (fuel is the weekly order, the model\'s this week)', w(3).asked.some(x => /Tickets: Amsterdam/.test(x)) && w(3).asked.some(x => /Flight time: Amsterdam/.test(x)) && !w(3).asked.some(x => /Fuel/.test(x)) && w(3).model.some(x => /fuel order/.test(x)), w(3));
       ok('chapter 1 is buy only: no rent-or-buy sum in any week (it is first met in January)', rows.every(r => !r.asked.concat(r.build).some(x => /Rent or buy/.test(x))), rows.map(r => r.asked.concat(r.build).filter(x => /Rent|afford/.test(x)))); } }
   if(s.day >= 92 && !CAP) ok('month ends: an audit at the start of the 4 Nov and 2 Dec weeks', audits.some(a => a.day === 64) && audits.some(a => a.day === 92), audits);
   if(COAST && s.day >= 64) ok('COAST: the plan unchanged all October brings a board review, and the plan waits for a change', audits.some(a => a.board) && boards.length > 0, { audits, boards });
   if(!COAST && s.day >= 92) ok('Steady: the plan changes each month, so no board review', !audits.some(a => a.board), { audits, changes });
   checks.push('info studio ' + JSON.stringify(studio));
-  checks.push('info audits ' + JSON.stringify(audits)); checks.push('info changes ' + JSON.stringify(changes) + ' boards ' + JSON.stringify(boards));
+  checks.push('info audits ' + JSON.stringify(audits)); checks.push('info fuel order levels ' + JSON.stringify(foLevels)); checks.push('info changes ' + JSON.stringify(changes) + ' boards ' + JSON.stringify(boards));
   checks.push('info week log\n' + rows.map(r => `  wk ${String(r.wk).padStart(2)}  q ${r.qualified}  calc [${r.asked.join('; ')}]  build [${r.build.join('; ')}]  model [${r.model.join('; ')}]${r.carried.length ? '  carried [' + r.carried.join('; ') + ']' : ''}${r.audit ? '  ' + r.audit : ''}`).join('\n'));
   checks.push('info sums ' + JSON.stringify(sums)); checks.push('info handSumLog ' + JSON.stringify(s.handSumLog)); checks.push('info ledger profit ' + JSON.stringify((s.ledger.rev || []).map((v, i) => v == null ? null : Math.round(v - s.ledger.cost[i]))));
   console.log(checks.join('\n')); console.log('OVERFLOW', overflow.length ? overflow : 'none'); console.log('ERRORS', errors.length ? errors : 'none');

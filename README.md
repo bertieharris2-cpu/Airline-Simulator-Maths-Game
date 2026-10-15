@@ -21,6 +21,13 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
+**Working on paper (15 Oct 2026, Workbook v5.6, D86; `src/opening/parts/p4zr_paper.js`).** The pupil works every sum in their book and types only the answer.
+- **Answer box.** Every sum is a box headed "Sum N · Week W · what it is", with the question in black and the answer field; the method is a fold-out reference card.
+- **Two tries.** A wrong answer gets a note and one more try. A second wrong answer is shown, stamped Checked by Finance, and both go in the record.
+- **Fuel is one sum a week:** the order on the fuel desk, blocks × the price of 1,000 L. The desk's "Fuel by route" tab has the rest.
+- **Launch Day has five sums.** The printout numbers each entry and leaves a ruled box for the working.
+- **Switching it off.** `settings.workingOnPaper = 'off'` brings back the on-screen pad. Notes for Fable: `docs/Working-On-Paper-Notes.md`.
+
 **The revised Studio (13 Oct 2026; the game's Studio since the one-file tidy-up).** Bertie's interaction brief: *show what the decision being made now needs; keep everything else one click away*. The dark desk style stays. The Monday plan page has three working states (`src/opening/parts/p4ze_studio2.js`):
 - **The opener** (from week 2): *Last week's regular plan is ready to run again*, with **Keep plan** and **Edit plan**, four figures, the week's timetable (read only), and **Known changes this week**: the fuel price move, a tank that won't cover the week, announced news (each with **Review Paris services**), the board's request, an aircraft with no flights. Keep plan goes on exactly as *Cost your plan* did, so the hand sums, the cap and the audits are unchanged; while the board waits it is held.
 - **The operating plan:** **Active routes** (only the routes flown: fare, demand at that fare, services, seat fill, with *Edit fare*, *View demand*, *+ Service*; two columns from four routes), a toolbar (World report · Try different options · Network map · **Fuel** with a status dot · **Network · N routes** · How it works), the **timetable full width**, and a **summary bar** (seats likely filled, empty seats, turned away, average fare, profit a day, **View trade-offs**).

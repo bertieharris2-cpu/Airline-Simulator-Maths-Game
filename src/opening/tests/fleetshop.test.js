@@ -7,6 +7,8 @@
 // is bought and flies from the next day. Also: the Working pad on the fuel desk (4 × £1,470); the free pad in the top bar
 // (36,000 ÷ 650, Make it smaller; 3,420 − 1,830); and, as from January (buy only switched off), the pay page's sums and
 // the rent-or-buy box's division pad (22,000 ÷ 400 → 220 ÷ 4 = 55).
+// The Working pad is the on-screen mode: this test turns working on paper off (settings.workingOnPaper = 'off'); the paper
+// mode (D86, the answer box and two tries) is covered by week.test.js and record.test.js.
 // Make the save: UPTO=8 SHOTS=0 SAVE=<file> node week.test.js
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os');
@@ -18,7 +20,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
   const errors = [], checks = [], info = {};
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
-  await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
+  await p.evaluate(() => { const st = window.__sim.settings(); st.workingOnPaper = 'off'; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S()), E = src => p.evaluate(s => window.__sim.evalIn(s), src);
   const ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x) : ''));
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };

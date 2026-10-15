@@ -10,6 +10,30 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0p. Working on paper (Workbook v5.6, D86, 15 Oct 2026)
+
+**`p4zr_paper.js`**, after `p4zq`. Reassignment only, so `overrides.txt` stays at 120. Report for Fable: `docs/Working-On-Paper-Notes.md`.
+- **Switch.** `paperOn()` is week mode, the workbook's `workingOnPaper`, and not `settings.workingOnPaper = 'off'`. The Fleet desk test runs with it off, to keep the pad tested.
+- **Answer box.** The dock shows "Sum N · Week W · what it is", the question in black on white (`.pq`), one answer field and a collapsed reference card. There is no grid, pad or template.
+  - Sum numbers live in `S.sumNo {next, keys}`, keyed by `recKey@week`. The record entry stores `n`.
+- **Two tries.**
+  - Wrong once: the note from `recNumNote` (ten times out, not divided back, swapped digits, a carry) and "One more try".
+  - Wrong twice: the right figure, stamped `FIN_STAMP` (Checked by Finance), and a `shown` attempt in the record.
+  - Where it applies: `cellWrong`, `soCalcCheck`/`soBuildCheck`, `rbCheck`, the fuel order, and a capture listener for the inline cards (`PAPER_CHK`).
+- **Fuel.**
+  - No per-service fuel cards: `fuelCardsDue` and `soFuelCands` return nothing.
+  - The week's order on the fuel desk is the one fuel sum: blocks × the price of 1,000 L. Calculate the first time and on a 50p move (`S.fo.last`), otherwise Build once, then the model. Frozen per week in `S.fo.weeks`.
+  - A Calculate order keeps a slot, but gives way (a Build that week) when new relationships fill the cap (`soDecideList` wrapper, `FO_NEW`).
+  - The fuel desk's "Fuel by route" tab shows the week's litres and cost by aircraft and route.
+- **Launch Day.**
+  - The asked sums are the tickets for the first market at three fares, the profit and the fuel order (`TABLES.fuelOrder1`). The fuel order comes after a stepped example of one service and the block price.
+  - The snacks are Builds; Dublin's tickets are the model's.
+- **Record.** The printout puts "Sum N" in the margin, adds a ruled box "Working (from your book)" and shows "Checked by Finance" on shown attempts.
+- **Data.** Workbook v5.6 (also D82–D85, chapter 4: monthly finance, the A380 offer, the Campaign sheet; chapter 4 is not built yet). Workbook v5.7 (D87/D88 settings and PlanTips columns) is installed but not wired in yet.
+- **Tests.**
+  - The cash at each chapter's end is unchanged, except chapter 3: the August 2032 market week that v5.6 added. The table is in the notes.
+  - `chapter3.test.js` now expects v5.5's A380 offer (£20m down, then £1m a month) and an end card that goes on to chapter 4. The chapter 3 review reads the offer from the live Events row.
+
 ## 0o. Teacher milestones and an old save made ready (15 Oct 2026)
 
 **Milestones** (`p4zq_milestones.js`, after `p4zp`; reassignment only, so `overrides.txt` stays at 120). They are for the teacher only, with no effect in the game. Draft list and rules: `docs/Milestones-Draft.md`.

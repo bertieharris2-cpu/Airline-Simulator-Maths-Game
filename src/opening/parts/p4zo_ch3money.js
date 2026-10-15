@@ -301,7 +301,7 @@ chapterReviewItems = function(){ const R0 = chapterReviewItemsOD0(), ch = WORLD.
 function nextInvestment(){ const c = shopPlanes().filter(p => shopOffer(p).buyOffered && shopOffer(p).price >= 1e6).sort((a, b) => shopOffer(b).price - shopOffer(a).price), cant = c.filter(p => !shopOffer(p).saveUp.afford).sort((a, b) => shopOffer(a).price - shopOffer(b).price)[0];
   if(!cant) return c.length ? `You could buy any plane in the shop today: the biggest is the ${c[0].name} at ${money(shopOffer(c[0]).price)}.` : '';
   const f = taFigW(cant.id); return `The next plane you can't afford yet: the ${f.name} at ${money(f.price)}. ${money(f.still)} still to save · about ${f.weeks === null ? 'some weeks' : weekWord(f.weeks)} at ${money(f.rate)} a week.`; }
-function offerCardHtml(){ const nx = nextChapterOf(3), ev = ((WB && WB.eventPreview) || []).find(e => nx && e.date === nx.start); if(!nx) return '';
+function offerCardHtml(){ const nx = nextChapterOf(3), ev = nx ? (WB_EVENTS.find(e => e.date === nx.start && e.status === 'live') || ((WB && WB.eventPreview) || []).find(e => e.date === nx.start)) : null; if(!nx) return '';   // v5.5 made the A380 offer a live event
   return `<section class="dk-pnl ch4-card"><div class="dk-pnl-h">${ICO2.plane || ''}<h2>${esc(ev ? ev.title : `Chapter ${nx.chapter}`)}</h2><span class="grow"></span><span class="sub">chapter ${nx.chapter} · ${esc(dateShort(dayOfDate(nx.start)))} ${calDate(dayOfDate(nx.start)).getUTCFullYear()}</span></div>
     ${ev ? `<p class="wr-l">${esc(ev.effects || ev.text)}</p>` : ''}<p class="wr-l"><b>Next investment.</b> ${esc(nextInvestment())}</p></section>`; }
 const renderChapterReviewBuildOD0 = renderChapterReviewBuild;
