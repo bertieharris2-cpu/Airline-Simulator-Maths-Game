@@ -121,103 +121,121 @@ table.t th{color:var(--soft);font-weight:500;font-size:13px}table.t td.n,table.t
 .blocks{display:flex;gap:6px;flex-wrap:wrap}.blocks button{min-width:84px}.blocks .on{background:var(--blue);border-color:var(--cyan)}
 /* fleet */
 .ac{display:flex;gap:14px;align-items:center}.ac .pic{width:120px;height:70px;border-radius:5px;background:linear-gradient(180deg,#2a5fa8,#0b1a33);display:grid;place-items:center;font-size:38px}
-/* ---------- the second screen: the Operations Wall. Desk = act, wall = observe: darker, finer lines, square panels, light from the top left ---------- */
+/* ---------- the second screen: the Operations Wall. Desk = act, wall = observe ----------
+   One light source, top left. Three levels: 1 background (deep, muted), 2 opportunity (a little brighter, a gold mark),
+   3 significant change (amber, or red for disruption; "New intelligence"; a single 350 ms glow). Square panels; type no heavier than 600. */
 :root{
-  --wall-bg:radial-gradient(circle at 35% -10%,rgba(34,120,210,.16),transparent 42%),linear-gradient(135deg,#020b19,#061a32 55%,#030d1c);
+  --wall-bg-0:#020812; --wall-bg-1:#041426; --wall-bg-2:#071d36;
+  --wall-bg:radial-gradient(circle at 35% -10%,rgba(39,142,240,.16),transparent 42%),linear-gradient(135deg,#020812 0%,#05162a 52%,#020b18 100%);
   --wall-panel:linear-gradient(155deg,#0d3159 0%,#081f3d 48%,#05152b 100%);
   --wall-panel-deep:linear-gradient(160deg,#092643 0%,#051629 100%);
-  --wall-active:linear-gradient(155deg,#123e64 0%,#092743 60%,#06192d 100%);
-  --wline:rgba(110,170,235,.24); --wline2:rgba(110,170,235,.12); --amber:#ffb547; --wsoft:#8ea9cc;
+  --wall-panel-active:linear-gradient(155deg,#123e64 0%,#092743 58%,#06192d 100%);
+  --wline:rgba(65,122,171,.48); --wline2:rgba(53,96,135,.38);
+  --c-cyan:#36C6FF; --c-blue:#278EF0; --c-green:#3CE394; --c-gold:#F2C14E; --c-amber:#FFB547; --c-red:#FF5F5F; --c-soft:#9FBDE3; --c-mute:#6F86A8;
+  --wshadow:0 12px 32px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.025);
+  --wshadow-up:0 18px 48px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.04);
 }
-.wallbtn{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--gold);border-radius:2px;background:rgba(242,193,78,.1);color:var(--gold);font-weight:700}
-.wall{position:fixed;inset:0;background:var(--wall-bg);background-color:#020b19;z-index:20;display:flex;flex-direction:column;color:#eef5ff}
-.wall .wh{flex:0 0 60px;display:flex;align-items:center;gap:18px;padding:0 22px;border-bottom:1px solid var(--wline);background:linear-gradient(180deg,rgba(13,49,89,.5),rgba(3,13,28,.5))}
-.wall .wh h1{margin:0;font-size:18px;font-weight:700;letter-spacing:.24em;white-space:nowrap}
+.wallbtn{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--gold);border-radius:3px;background:rgba(242,193,78,.1);color:var(--gold);font-weight:600}
+.wall{position:fixed;inset:0;background:var(--wall-bg);background-color:var(--wall-bg-0);z-index:20;display:flex;flex-direction:column;color:#eef5ff;font-weight:400}
+.wall b,.wall strong{font-weight:600}
+.wall .mono,.wall .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.wall .wh{flex:0 0 58px;display:flex;align-items:center;gap:18px;padding:0 22px;border-bottom:1px solid var(--wline);background:linear-gradient(180deg,rgba(13,49,89,.45),rgba(2,8,18,.4))}
+.wall .wh h1{margin:0;font-size:17px;font-weight:600;letter-spacing:.24em;white-space:nowrap}
 .wall .wh .sp{flex:1}
-.seg{display:flex;border:1px solid var(--wline)}.seg button{border:0;background:transparent;padding:8px 16px;font-size:12px;font-weight:600;letter-spacing:.16em;color:var(--wsoft)}.seg button.on{background:rgba(54,198,255,.14);color:#fff;box-shadow:inset 0 -2px 0 var(--cyan)}
-.stamp2{font-size:11px;letter-spacing:.18em;color:#7390b8;white-space:nowrap}.stamp2 b{color:#d6e8ff;font-weight:600}
-.wicon{width:36px;height:36px;border:1px solid var(--wline);background:transparent;color:var(--wsoft);font-size:17px}.wicon.on{color:#fff;border-color:var(--cyan)}
-.back{padding:9px 18px;border:1px solid var(--cyan);background:rgba(54,198,255,.1);font-weight:700;font-size:15px;white-space:nowrap}
-.ribbon{flex:0 0 38px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid var(--wline2);background:rgba(2,11,25,.5);font-size:14px;white-space:nowrap;overflow:hidden}
-.ribbon .lbl{color:var(--gold);letter-spacing:.22em;font-size:11px;font-weight:700;margin-right:10px}
-.ribbon button{border:0;border-left:1px solid var(--wline2);background:none;padding:5px 14px;color:#d3e4f8}.ribbon .lbl+button{border-left:0}
-.ribbon button.al{color:#ffd28a}.ribbon button:hover{color:#fff;background:rgba(54,198,255,.08)}
+.seg{display:flex;border:1px solid var(--wline)}.seg button{border:0;background:transparent;padding:8px 16px;font-size:12px;font-weight:500;letter-spacing:.16em;color:var(--c-soft)}.seg button.on{background:rgba(31,111,255,.28);color:#fff;box-shadow:inset 0 -2px 0 var(--c-cyan)}
+.stamp2{font-size:11px;letter-spacing:.12em;color:var(--c-mute);white-space:nowrap}.stamp2 b{color:#d6e8ff;font-weight:500}
+.wicon{width:32px;height:32px;border:1px solid transparent;border-radius:2px;background:transparent;color:var(--c-mute);font-size:18px;line-height:1}.wicon:hover,.wicon.on{color:var(--c-soft);border-color:var(--wline)}
+.back{padding:9px 18px;border:1px solid var(--c-cyan);border-radius:2px;background:rgba(54,198,255,.1);font-weight:600;font-size:15px;white-space:nowrap}
+.ribbon{flex:0 0 36px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid var(--wline2);background:rgba(2,8,18,.45);font-size:14px;white-space:nowrap;overflow:hidden}
+.ribbon .lbl{color:var(--c-gold);letter-spacing:.2em;font-size:11px;font-weight:600;margin-right:8px}
+.ribbon button{border:0;background:none;padding:5px 12px;color:#d3e4f8;font-weight:400}.ribbon .dot{color:var(--c-mute)}
+.ribbon button.bad{color:#ffaaa3}.ribbon button.warn{color:#ffd28a}.ribbon button:hover{color:#fff;background:rgba(54,198,255,.08)}
 .wbody{flex:1;min-height:0;padding:12px 18px 14px;display:grid;grid-template-rows:1fr 252px;gap:10px;overflow:hidden}.wbody.lv{grid-template-rows:1fr auto}
-.wtop{display:grid;grid-template-columns:1.55fr 1fr;gap:10px;min-height:0}
-.wright{display:grid;grid-template-rows:1fr 1fr;gap:10px;min-height:0}.wright.hero{grid-template-rows:1.45fr 1fr}
+.wtop{display:grid;grid-template-columns:1.6fr 1fr;gap:10px;min-height:0}
+.wright{display:grid;grid-template-rows:1fr 1fr;gap:10px;min-height:0}.wright.hero{grid-template-rows:1.3fr 1fr}
 .wbot{display:grid;grid-template-columns:1.25fr 1fr .7fr;gap:10px;min-height:0}
-.wd{background:var(--wall-panel);border:1px solid var(--wline);padding:12px 16px;overflow:hidden;position:relative;display:flex;flex-direction:column;min-height:0}
-.wbot .wd{background:var(--wall-panel-deep)}
-.wd h3{margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.2em;color:#bcd4f2;display:flex;align-items:center;gap:10px;text-transform:uppercase;white-space:nowrap}
-.wd h3 .meta{margin-left:auto;font-weight:400;letter-spacing:.04em;text-transform:none;font-size:12px;color:#7390b8}
-.wd .kick{margin:-2px 0 10px;font-size:11.5px;font-weight:700;letter-spacing:.16em;color:var(--amber);text-transform:uppercase}.wd .kick span{letter-spacing:.02em;text-transform:none;font-weight:600;color:#ffd9a0;font-size:13px}
-.wd.alert{border-color:rgba(255,181,71,.6);box-shadow:inset 3px 0 0 var(--amber)}
-.wd.hero{background:var(--wall-active);border-color:var(--amber);box-shadow:inset 0 2px 0 var(--amber),0 0 30px rgba(255,181,71,.10)}
-.wd.wake{animation:wake 1.2s ease-out 1}
-@keyframes wake{0%{filter:brightness(1)}25%{filter:brightness(1.5);box-shadow:inset 0 2px 0 var(--amber),0 0 50px rgba(255,181,71,.35)}100%{filter:brightness(1)}}
+/* panels: level 1 by default */
+.wd{background:var(--wall-panel);border:1px solid var(--wline);border-radius:0;padding:12px 16px;overflow:hidden;position:relative;display:flex;flex-direction:column;min-height:0;box-shadow:var(--wshadow)}
+.wbot .wd{background:var(--wall-panel-deep);box-shadow:inset 0 1px rgba(255,255,255,.02)}
+.wd h3{margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:.16em;color:#bcd4f2;display:flex;align-items:center;gap:8px;text-transform:uppercase;white-space:nowrap}
+.wd h3 .meta{margin-left:auto;font-weight:400;letter-spacing:.02em;text-transform:none;font-size:12px;color:var(--c-mute)}
+.wd h3 .lv{font-size:10px;letter-spacing:0}
+/* level 2: an opportunity worth a look */
+.wd.l2,.wbot .wd.l2{background:var(--wall-panel);border-color:rgba(242,193,78,.42)}.wd.l2 h3 .lv{color:var(--c-gold)}
+/* level 3: a significant change */
+.wd.l3{border-color:var(--c-amber);box-shadow:inset 3px 0 0 var(--c-amber),var(--wshadow)}.wd.l3.red{border-color:var(--c-red);box-shadow:inset 3px 0 0 var(--c-red),var(--wshadow)}
+.wd.hero{background:var(--wall-panel-active);box-shadow:inset 0 2px 0 var(--c-amber),var(--wshadow-up)}.wd.hero.red{box-shadow:inset 0 2px 0 var(--c-red),var(--wshadow-up)}
+.wd .kick{margin:-2px 0 10px;font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--c-amber);text-transform:uppercase}.wd.red .kick{color:#ff8a82}
+.wd .kick span{letter-spacing:.01em;text-transform:none;font-weight:500;color:#ffe2b5;font-size:13.5px}.wd.red .kick span{color:#ffd0cc}
+.wd.wake{animation:intelligenceWake 350ms ease-out 1}
+@keyframes intelligenceWake{0%{box-shadow:0 0 0 rgba(242,193,78,0)}45%{box-shadow:0 0 26px rgba(242,193,78,.22)}100%{box-shadow:0 0 0 rgba(242,193,78,0)}}
 .wd.hl{animation:hl 1.8s ease-out 1}
-@keyframes hl{0%,35%{outline:2px solid var(--cyan);outline-offset:-2px}100%{outline:2px solid transparent;outline-offset:-2px}}
-.wd .x{position:absolute;right:10px;top:7px;border:0;background:none;color:var(--wsoft);font-size:17px}
-.wd select.arr{margin-left:auto;background:#061a32;color:#eef5ff;border:1px solid var(--wline);font-size:12px;letter-spacing:0;text-transform:none}
+@keyframes hl{0%,35%{outline:2px solid var(--c-cyan);outline-offset:-2px}100%{outline:2px solid transparent;outline-offset:-2px}}
+.wd .x{position:absolute;right:10px;top:7px;border:0;background:none;color:var(--c-soft);font-size:16px}
+.wd select.arr{margin-left:auto;background:#061a32;color:#eef5ff;border:1px solid var(--wline);border-radius:2px;font-size:12px;letter-spacing:0;text-transform:none}
 .wc{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column}
-.lnk{border:0;background:none;color:var(--cyan);padding:0;font-size:13.5px;font-weight:600;white-space:nowrap}.lnk:hover{text-decoration:underline}
+.lnk{border:0;background:none;color:var(--c-cyan);padding:0;font-size:13.5px;font-weight:500;white-space:nowrap}.lnk:hover{text-decoration:underline}
 .wfoot{margin-top:auto;padding-top:8px;display:flex;gap:18px;align-items:center}
-/* map */
-.wd.mapp{padding:0}.wd.mapp h3{position:absolute;left:16px;right:16px;top:12px;z-index:1;margin:0}
+.up{color:var(--c-green)}.dn{color:var(--c-red)}.wa{color:var(--c-amber)}.gd{color:var(--c-gold)}.sf{color:var(--c-soft)}
+/* map: the hero */
+.wd.mapp{padding:0;background:var(--wall-bg-0)}.wd.mapp h3{position:absolute;left:16px;right:16px;top:12px;z-index:1;margin:0}
 .wmap{flex:1;min-height:0}.wmap svg{width:100%;height:100%;display:block}.wmap .city{cursor:pointer}
-.legend{display:flex;gap:14px;font-size:12px;color:#7390b8;margin-left:auto;letter-spacing:.02em;text-transform:none;font-weight:400}.legend i{display:inline-block;width:18px;height:2px;vertical-align:middle;margin-right:6px}
-/* news: editorial tiles divided by thin lines */
-.nws{display:grid;grid-template-columns:repeat(3,1fr);flex:1;min-height:0;border-top:1px solid var(--wline2)}
-.nws article{padding:10px 14px 2px;border-left:1px solid var(--wline2);display:flex;flex-direction:column;gap:6px;min-width:0}.nws article:first-child{border-left:0;padding-left:0}
-.nws .strip{height:26px;display:flex;align-items:center;padding-left:10px;font-size:18px}
-.nws .k{font-size:10.5px;letter-spacing:.18em;font-weight:700;color:var(--cyan)}.nws .k.weather,.nws .k.rival{color:var(--amber)}.nws .k.fuel{color:#c7a6ff}
-.nws b{font-size:15.5px;line-height:1.25;font-weight:600}
-.nws .m{font-size:12.5px;color:var(--wsoft)}.nws .m i{font-style:normal;color:#e6f0ff}
-.feed{position:absolute;top:110px;right:18px;bottom:18px;width:520px;z-index:4;background:var(--wall-active);border:1px solid var(--cyan);padding:14px 18px;box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:auto}
-.feed article{padding:10px 0;border-bottom:1px solid var(--wline2)}.feed b{display:block;font-size:16px}.feed small{color:var(--wsoft)}
-/* fuel */
-.fm{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;flex:1;min-height:0}
-.fm .pr{font-size:46px;font-weight:300;line-height:1}.fm .pr small{font-size:18px;color:var(--wsoft)}
-.fm svg{width:100%;height:100%;max-height:150px}
-.fline{font-size:15.5px}.fline b{font-weight:600}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--c-mute);margin-left:auto;letter-spacing:.02em;text-transform:none;font-weight:400}.legend i{display:inline-block;width:18px;height:2px;vertical-align:middle;margin-right:6px}
+/* news: editorial; category, headline, consequence */
+.nws{display:grid;flex:1;min-height:0;border-top:1px solid var(--wline2)}
+.nws article{padding:10px 14px 4px;border-left:1px solid var(--wline2);display:flex;flex-direction:column;gap:6px;min-width:0}.nws article:first-child{border-left:0;padding-left:0}
+.nws .k{font-size:10.5px;letter-spacing:.14em;font-weight:500;color:var(--c-soft)}.nws .k i{font-style:normal;font-size:15px;margin-right:6px;letter-spacing:0}
+.nws b{font-size:16px;line-height:1.25;font-weight:550}
+.nws .c{font-size:13px;font-weight:500}
+.feed{position:absolute;top:104px;right:18px;bottom:18px;width:540px;z-index:4;background:var(--wall-panel-active);border:1px solid var(--c-cyan);padding:14px 18px;box-shadow:var(--wshadow-up);overflow:auto}
+.feed article{padding:10px 0;border-bottom:1px solid var(--wline2)}.feed b{display:block;font-size:16px;font-weight:550}.feed small{color:var(--c-soft)}
+.feed table{width:100%;border-collapse:collapse}.feed td,.feed th{padding:8px 6px;border-bottom:1px solid var(--wline2);text-align:left}.feed th{color:var(--c-soft);font-weight:500;font-size:12px}
+/* fuel: does fuel need my attention? */
+.fm{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.fm .pr{font-size:38px;font-weight:300;line-height:1}.fm .pr small{font-size:17px;color:var(--c-soft)}.fm .ch{margin-top:6px;font-size:15px;font-weight:500}
+.fm svg{width:100%;height:62px}
+.fl2{margin-top:auto;padding-top:10px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end}.nextwk{padding:8px 12px;border-left:2px solid var(--c-cyan);background:rgba(54,198,255,.06)}.nextwk span{display:block;font-size:10.5px;letter-spacing:.16em;color:var(--c-soft)}.nextwk b{font-size:18px;font-weight:500}.nextwk small{display:block;color:var(--c-soft);font-size:13px;margin-top:2px}
 /* market outlook: signal tiles */
 .sig{display:grid;grid-template-columns:repeat(3,1fr);flex:1;border-top:1px solid var(--wline2)}
-.sig button{text-align:left;border:0;border-left:1px solid var(--wline2);border-bottom:1px solid var(--wline2);background:none;padding:8px 12px;display:grid;grid-template-columns:1fr auto;column-gap:8px;align-content:center}
-.sig button:nth-child(3n+1){border-left:0;padding-left:0}.sig button:hover{background:rgba(54,198,255,.06)}
-.sig b{font-size:15.5px;font-weight:600}.sig .s{font-size:11px;font-weight:700;letter-spacing:.12em}.sig .t{grid-column:1/-1;font-size:12px;color:var(--wsoft);margin-top:2px}
+.sig button{text-align:left;border:0;border-left:1px solid var(--wline2);border-bottom:1px solid var(--wline2);background:none;padding:7px 12px;display:grid;grid-template-columns:1fr auto;column-gap:8px;align-content:center;font-weight:400}
+.sig button:nth-child(3n+1){border-left:0;padding-left:0}.sig button:hover{background:rgba(54,198,255,.06)}.sig button.on{background:rgba(54,198,255,.1);box-shadow:inset 0 -2px 0 var(--c-cyan)}
+.sig b{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}.sig .s{font-size:11px;font-weight:600;letter-spacing:.1em}.sig .t{grid-column:1/-1;font-size:12.5px;color:var(--c-soft);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sig .spk{grid-row:1/3;grid-column:2;display:flex;gap:2px;align-items:flex-end;height:24px}.sig .spk i{width:5px;background:currentColor;opacity:.8}
-.u2{color:#3ce394}.u1{color:#86e3b3}.f0{color:#9fb4cf}.d1{color:#ff8a7a}
+.u2{color:var(--c-green)}.u1{color:#86e3b3}.f0{color:var(--c-soft)}.d1{color:#ff8a7a}
 /* events to watch */
 .watch{display:flex;flex-direction:column;border-top:1px solid var(--wline2)}
-.watch button{display:grid;grid-template-columns:132px 28px 1fr;align-items:center;text-align:left;border:0;border-bottom:1px solid var(--wline2);background:none;padding:9px 0}.watch button:hover{background:rgba(54,198,255,.06)}
-.watch .w{font-size:10.5px;letter-spacing:.18em;font-weight:700;color:#7390b8}.watch .w.now{color:var(--gold)}
-.watch b{font-weight:600}.watch small{display:block;color:var(--wsoft);font-size:12px}
-/* weather */
-.wxs{display:flex;border:1px solid var(--wline2)}.wxs div{flex:1;text-align:center;padding:8px 0 6px;border-left:1px solid var(--wline2)}.wxs div:first-child{border-left:0}
-.wxs b{display:block;font-size:11.5px;letter-spacing:.16em;color:var(--wsoft)}.wxs span{font-size:22px}.wxs div.bad{background:rgba(255,95,95,.10);box-shadow:inset 0 -2px 0 #ff6b5f}.wxs div.bad b{color:#ffb4a8}
-.wxa{margin-top:10px;padding:8px 12px;border-left:3px solid var(--amber);background:rgba(255,181,71,.07);font-size:14px}.wxa b{color:#ffd28a}.wxok{margin-top:10px;color:var(--wsoft)}
+.watch button{display:grid;grid-template-columns:128px 28px 1fr;align-items:center;text-align:left;border:0;border-bottom:1px solid var(--wline2);background:none;padding:9px 0;font-weight:400}.watch button:hover{background:rgba(54,198,255,.06)}
+.watch .w{font-size:10.5px;letter-spacing:.16em;font-weight:500;color:var(--c-mute)}.watch .w.now{color:var(--c-gold)}
+.watch b{font-weight:500}.watch small{display:block;color:var(--c-soft);font-size:12px}
+/* weather: a status strip */
+.wxl{display:flex;flex-direction:column;border-top:1px solid var(--wline2)}.wxl div{display:grid;grid-template-columns:48px 30px 1fr;align-items:center;padding:0;border-bottom:1px solid var(--wline2);font-size:13.5px}
+.wxl b{font-weight:500;letter-spacing:.1em;color:var(--c-soft)}.wxl span{font-size:16px;line-height:24px}.wxl em{font-style:normal;font-size:11px;font-weight:600;letter-spacing:.14em}
+.wxa{margin-top:8px;padding:5px 12px;border-left:3px solid var(--c-red);background:rgba(255,95,95,.08);font-size:14px;line-height:1.35}.wxa span{display:block;font-size:10.5px;letter-spacing:.16em;color:#ff9a92;font-weight:600}
 /* your airline */
-.ya{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ya b{display:block;font-size:32px;font-weight:300;line-height:1.1}.ya span{font-size:12px;color:var(--wsoft)}
-/* shared by the wall's city panel and the Route Intelligence page */
+.ya{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ya b{display:block;font-size:30px;font-weight:300;line-height:1.1}.ya span{font-size:12px;color:var(--c-soft)}
+/* the city briefing */
+.mix{display:flex;flex-direction:column;gap:7px;margin:2px 0 12px}.mix div{display:grid;grid-template-columns:86px 1fr 40px;align-items:center;gap:10px;font-size:11.5px;letter-spacing:.12em;color:var(--c-soft)}.mix i{display:block;height:8px;background:rgba(110,170,235,.12)}.mix u{display:block;height:100%}.mix b{text-align:right;font-size:14px;letter-spacing:0;color:#fff}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px}.facts span{color:var(--c-soft)}
+/* shared with the desk's Route Intelligence page */
 .mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini span{display:block;color:var(--soft);font-size:12px}.mini b{font-size:22px}
 .prof{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin:6px 0;background:var(--wline2)}.prof div{background:#071a33;padding:8px;text-align:center}.prof b{display:block;font-size:22px;font-weight:400}.prof i{display:block;height:4px;margin-top:6px;background:#1b3560;overflow:hidden}.prof i u{display:block;height:100%}
-.todbar{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:66px;margin-top:4px}.todbar div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center}.todbar i{display:block;width:70%;background:#1f6fff}.todbar small{font-size:11px;color:var(--soft);white-space:nowrap}
-.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px}.facts span{color:var(--soft)}
 .tbl{width:100%;border-collapse:collapse;font-size:13.5px}.tbl td,.tbl th{padding:5px 6px;border-bottom:1px solid var(--wline2);text-align:left}.tbl th{color:var(--soft);font-weight:500;font-size:12px}
-/* settings drawer */
-.sbx{position:absolute;right:22px;top:66px;z-index:5;width:320px;background:var(--wall-active);border:1px solid var(--cyan);padding:14px 16px;box-shadow:0 20px 60px rgba(0,0,0,.6)}.sbx label{display:flex;gap:8px;align-items:center;margin:6px 0}
-.sbx h4{margin:12px 0 4px;font-size:11px;letter-spacing:.2em;color:var(--wsoft)}.sbx h4:first-child{margin-top:0}.sbx .btn{border-radius:0}
+/* settings: developer controls, kept small */
+.sbx{position:absolute;right:22px;top:62px;z-index:5;width:320px;background:var(--wall-panel-active);border:1px solid var(--wline);padding:14px 16px;box-shadow:var(--wshadow-up)}.sbx label{display:flex;gap:8px;align-items:center;margin:6px 0}
+.sbx h4{margin:12px 0 4px;font-size:10.5px;letter-spacing:.18em;font-weight:500;color:var(--c-mute)}.sbx h4:first-child{margin-top:0}
 /* live operations */
-.live{display:grid;grid-template-columns:1.35fr 1fr;gap:10px;min-height:0}
-.nextdep{margin:16px 0;padding:12px 16px;border:1px solid var(--wline);border-left:3px solid var(--gold);background:rgba(2,11,25,.35)}.nextdep span{display:block;color:var(--wsoft);font-size:11px;letter-spacing:.18em}.nextdep b{display:block;font-size:22px;font-weight:500;margin:2px 0}.nextdep small{color:var(--wsoft)}
-.today{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:auto;background:var(--wline2)}.today div{background:#061a32;padding:8px 10px}.today span{display:block;color:var(--wsoft);font-size:11.5px}.today b{font-size:20px;font-weight:400}
-.clock{font:300 44px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--gold)}
-.wall .btn{border-radius:0}
-.board{width:100%;border-collapse:collapse;font:500 16px/1.2 ui-monospace,Menlo,Consolas,monospace}
-.board th{color:var(--wsoft);text-align:left;padding:8px;border-bottom:1px solid var(--wline);font:600 11px system-ui;letter-spacing:.16em;text-transform:uppercase}.board td{padding:9px 8px;border-bottom:1px solid var(--wline2)}
-.board .stt{color:var(--wsoft)}.board .stt.bo{color:var(--gold)}.board .stt.de{color:var(--good)}.board .stt.la{color:#5aa2ff}
-/* desk: the wall preview on Home, and the Seasonality & events page */
-.wrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid #15305a;background:none;padding:8px 0}.wrow span{flex:1}.wrow em{font-style:normal;color:var(--cyan);font-size:13px;white-space:nowrap}.wrow.al span{color:#ffd28a}
+.live{display:grid;grid-template-columns:1.4fr 1fr;gap:10px;min-height:0}
+.nextdep{margin:12px 0 0;padding:10px 14px;border:1px solid var(--wline2);border-left:3px solid var(--c-gold);background:rgba(2,8,18,.35)}.nextdep span{display:block;color:var(--c-soft);font-size:10.5px;letter-spacing:.16em}.nextdep b{display:block;font-size:20px;font-weight:500;margin:2px 0}.nextdep small{color:var(--c-soft)}
+.opsfeed{margin-top:12px;flex:1;min-height:0;overflow:hidden;border-top:1px solid var(--wline2)}.opsfeed h4{margin:8px 0 4px;font-size:10.5px;letter-spacing:.16em;font-weight:500;color:var(--c-soft)}
+.opsfeed div{display:grid;grid-template-columns:52px 1fr;padding:4px 0;font-size:13.5px;border-bottom:1px solid rgba(53,96,135,.2)}.opsfeed div:first-of-type{color:#fff}.opsfeed div:not(:first-of-type){color:var(--c-soft)}.opsfeed .t{font-variant-numeric:tabular-nums;color:var(--c-mute)}
+.today{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:10px;background:var(--wline2)}.today div{background:#061a32;padding:8px 10px}.today span{display:block;color:var(--c-soft);font-size:11.5px}.today b{font-size:20px;font-weight:400}
+.clock{font:300 42px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--c-gold)}
+.wall .btn{border-radius:3px}.wall .btn.pri{font-weight:500}
+.board{width:100%;border-collapse:collapse;font:400 15.5px/1.2 ui-monospace,Menlo,Consolas,monospace}
+.board th{color:var(--c-soft);text-align:left;padding:7px 8px;border-bottom:1px solid var(--wline);font:500 10.5px system-ui;letter-spacing:.16em;text-transform:uppercase}.board td{padding:8px;border-bottom:1px solid var(--wline2)}
+.board .stt{color:var(--c-soft)}.board .stt.bo{color:var(--c-gold)}.board .stt.de{color:var(--c-green)}.board .stt.la{color:#7fb6ff}
+/* desk: Outside your airline on Home, and the Seasonality & events page */
+.wrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid #15305a;background:none;padding:8px 0;font-weight:400}.wrow span{flex:1}.wrow em{font-style:normal;color:var(--cyan);font-size:13px;white-space:nowrap}.wrow.bad span{color:#ffaaa3}.wrow.warn span{color:#ffd28a}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.chip{border:1px solid var(--line2);background:#0b1a33;padding:6px 12px;border-radius:2px}.chip.on{background:var(--blue);border-color:var(--cyan)}.chip small{color:var(--soft)}
 .heat{width:100%;border-collapse:collapse;font-size:13px}.heat th{color:var(--soft);font-weight:500;padding:4px;text-align:center}.heat th:first-child{text-align:left}.heat td{padding:0;border:1px solid #071328;text-align:center;height:30px}.heat td:first-child{text-align:left;padding:0 8px;border:0;white-space:nowrap}.heat tr{cursor:pointer}.heat tr.on td:first-child{color:var(--cyan);font-weight:600}.heat td.cur{outline:2px solid #fff;outline-offset:-2px}
 /* the Route Intelligence page */
@@ -245,31 +263,31 @@ const DATA = {
   // open:false = a destination the airline does not fly yet (on the map and the wall, not in the plan).
   home:{ city:'Southampton', code:'SOU', lon:-1.36, lat:50.95 },
   routes:[
-    { id:'par', short:'Fashion week now', city:'Paris', code:'CDG', country:'France', km:300, lon:2.35, lat:48.86, flag:['#0055a4','#fff','#ef4135'], fares:{70:52,80:46,90:40,100:33,110:26}, shares:{early:.32,mid:.16,midday:.08,aft:.14,eve:.30}, flex:.3,
+    { id:'par', short:'👗 Fashion week', city:'Paris', code:'CDG', country:'France', km:300, lon:2.35, lat:48.86, flag:['#0055a4','#fff','#ef4135'], fares:{70:52,80:46,90:40,100:33,110:26}, shares:{early:.32,mid:.16,midday:.08,aft:.14,eve:.30}, flex:.3,
       mix:{ business:.30, leisure:.55, family:.15 }, sens:'Medium', trend:'flat', why:'Steady city breaks; Red Kite Air flies it three times a day.', weekend:1.15,
       months:[80,78,92,100,104,108,118,120,102,98,92,110], events:[['Paris Fashion Week','late Sep – early Oct','+20%','Business'],['Christmas markets','late Nov – Dec','+25%','Leisure']], rival:{ name:'Red Kite Air', fare:95, cut:85, freq:'3 a day', note:'Low cost: cuts fares to fill seats' } },
-    { id:'dub', short:'Half-term 28 Oct', city:'Dublin', code:'DUB', country:'Ireland', km:450, lon:-6.26, lat:53.35, flag:['#169b62','#fff','#ff883e'], fares:{70:85,80:76,90:66,100:47,110:32}, shares:{early:.28,mid:.18,midday:.08,aft:.16,eve:.30}, flex:.3,
+    { id:'dub', short:'👨‍👩‍👧 Half-term', city:'Dublin', code:'DUB', country:'Ireland', km:450, lon:-6.26, lat:53.35, flag:['#169b62','#fff','#ff883e'], fares:{70:85,80:76,90:66,100:47,110:32}, shares:{early:.28,mid:.18,midday:.08,aft:.16,eve:.30}, flex:.3,
       mix:{ business:.25, leisure:.45, family:.30 }, sens:'High', trend:'up', why:'Half-term next week: families visiting relatives.', weekend:1.3,
       months:[85,80,105,98,96,104,120,122,96,108,90,128], events:[['Half-term','28 Oct – 1 Nov','+15%','Families'],['Christmas home visits','20 – 24 Dec','+40%','Families']], rival:{ name:'Celtic Wings', fare:79, freq:'2 a day', note:'Flies the same times as you' } },
-    { id:'ams', short:'Tech conference 7 Oct', city:'Amsterdam', code:'AMS', country:'Netherlands', km:450, lon:4.90, lat:52.37, flag:['#ae1c28','#fff','#21468b'], fares:{70:78,75:74,80:71,85:68,90:65,95:56,100:47,105:40,110:32}, shares:{early:.34,mid:.20,midday:.06,aft:.12,eve:.28}, flex:.25,
+    { id:'ams', short:'💻 Tech conference', city:'Amsterdam', code:'AMS', country:'Netherlands', km:450, lon:4.90, lat:52.37, flag:['#ae1c28','#fff','#21468b'], fares:{70:78,75:74,80:71,85:68,90:65,95:56,100:47,105:40,110:32}, shares:{early:.34,mid:.20,midday:.06,aft:.12,eve:.28}, flex:.25,
       mix:{ business:.45, leisure:.45, family:.10 }, sens:'Medium', trend:'up', why:'A big technology conference in the second week of October.', weekend:.95,
       months:[82,84,96,104,106,104,110,108,104,112,94,100], events:[['Tech conference','7 – 10 Oct','+25%','Business'],['King\'s Day','27 Apr','+30%','Leisure']], rival:{ name:'Red Kite Air', fare:89, freq:'2 a day', note:'Started in August' } },
-    { id:'fra', short:'Book fair mid-Oct', city:'Frankfurt', code:'FRA', country:'Germany', km:675, lon:8.68, lat:50.11, flag:['#000','#dd0000','#ffce00'], fares:{100:51,105:49,110:46,115:44,120:42,125:40,130:38,135:33,140:29}, shares:{early:.38,mid:.18,midday:.06,aft:.10,eve:.28}, flex:.2,
+    { id:'fra', short:'📚 Book fair', city:'Frankfurt', code:'FRA', country:'Germany', km:675, lon:8.68, lat:50.11, flag:['#000','#dd0000','#ffce00'], fares:{100:51,105:49,110:46,115:44,120:42,125:40,130:38,135:33,140:29}, shares:{early:.38,mid:.18,midday:.06,aft:.10,eve:.28}, flex:.2,
       mix:{ business:.65, leisure:.25, family:.10 }, sens:'Low', trend:'up', why:'The book fair in mid-October fills the city\'s hotels.', weekend:.7,
       months:[96,102,106,100,98,94,80,78,104,120,108,92], events:[['Book fair','16 – 20 Oct','+30%','Business'],['Christmas market','late Nov – Dec','+10%','Leisure']], rival:{ name:'Lufthansa', fare:139, freq:'4 a day', note:'Full service; strong with business travellers' } },
-    { id:'mad', short:'Autumn sun', city:'Madrid', code:'MAD', country:'Spain', km:1350, lon:-3.70, lat:40.42, flag:['#aa151b','#f1bf00','#aa151b'], fares:{150:44,170:38,190:31,210:24}, shares:{early:.25,mid:.20,midday:.10,aft:.15,eve:.30}, flex:.35,
+    { id:'mad', short:'☀️ Autumn sun', city:'Madrid', code:'MAD', country:'Spain', km:1350, lon:-3.70, lat:40.42, flag:['#aa151b','#f1bf00','#aa151b'], fares:{150:44,170:38,190:31,210:24}, shares:{early:.25,mid:.20,midday:.10,aft:.15,eve:.30}, flex:.35,
       mix:{ business:.20, leisure:.60, family:.20 }, sens:'High', trend:'flat', why:'Autumn sun; quieter than the summer.', weekend:1.2,
       months:[78,80,98,104,110,124,130,126,108,96,82,90], events:[['Easter','Apr','+20%','Families'],['Summer holidays','Jul – Aug','+30%','Leisure']], rival:{ name:'Iberia', fare:179, freq:'3 a day', note:'Full service' } },
-    { id:'bcn', short:'Festival this week', city:'Barcelona', code:'BCN', country:'Spain', km:1080, lon:2.17, lat:41.39, flag:['#aa151b','#f1bf00','#aa151b'], open:false, fares:{120:58,140:50,160:41,180:32}, shares:{early:.22,mid:.22,midday:.10,aft:.16,eve:.30}, flex:.4,
+    { id:'bcn', short:'🎉 La Mercè', city:'Barcelona', code:'BCN', country:'Spain', km:1080, lon:2.17, lat:41.39, flag:['#aa151b','#f1bf00','#aa151b'], open:false, fares:{120:58,140:50,160:41,180:32}, shares:{early:.22,mid:.22,midday:.10,aft:.16,eve:.30}, flex:.4,
       mix:{ business:.10, leisure:.75, family:.15 }, sens:'High', trend:'up2', why:'La Mercè festival this week, then a long autumn season.', weekend:1.35,
       months:[60,64,80,100,118,140,165,160,124,96,70,74], events:[['La Mercè festival','23 – 26 Sep','+40%','Leisure'],['Summer holidays','Jun – Aug','+60%','Leisure']], rival:{ name:'Red Kite Air', fare:119, freq:'2 a day', note:'Opened in the summer' } },
-    { id:'gva', short:'Ski bookings open', city:'Geneva', code:'GVA', country:'Switzerland', km:780, lon:6.14, lat:46.20, flag:['#d52b1e','#fff','#d52b1e'], open:false, fares:{110:44,130:38,150:31,170:24}, shares:{early:.36,mid:.16,midday:.08,aft:.12,eve:.28}, flex:.25,
+    { id:'gva', short:'⛷️ Ski bookings', city:'Geneva', code:'GVA', country:'Switzerland', km:780, lon:6.14, lat:46.20, flag:['#d52b1e','#fff','#d52b1e'], open:false, fares:{110:44,130:38,150:31,170:24}, shares:{early:.36,mid:.16,midday:.08,aft:.12,eve:.28}, flex:.25,
       mix:{ business:.50, leisure:.40, family:.10 }, sens:'Low', trend:'up', why:'Ski season bookings open in October.', weekend:1.1,
       months:[140,136,110,80,74,82,90,86,84,96,104,132], events:[['Ski season','Dec – Mar','+35%','Leisure'],['Motor show','Mar','+20%','Business']], rival:{ name:'Alpine Air', fare:139, freq:'1 a day', note:'Small regional airline' } },
-    { id:'mun', short:'Oktoberfest to 6 Oct', city:'Munich', code:'MUC', country:'Germany', km:950, lon:11.58, lat:48.14, flag:['#000','#dd0000','#ffce00'], open:false, fares:{110:50,130:44,150:36,170:28}, shares:{early:.30,mid:.20,midday:.08,aft:.14,eve:.28}, flex:.3,
+    { id:'mun', short:'🎪 Oktoberfest', city:'Munich', code:'MUC', country:'Germany', km:950, lon:11.58, lat:48.14, flag:['#000','#dd0000','#ffce00'], open:false, fares:{110:50,130:44,150:36,170:28}, shares:{early:.30,mid:.20,midday:.08,aft:.14,eve:.28}, flex:.3,
       mix:{ business:.40, leisure:.50, family:.10 }, sens:'Medium', trend:'up2', why:'Oktoberfest runs until 6 October.', weekend:1.2,
       months:[84,86,94,98,100,104,112,110,140,108,92,104], events:[['Oktoberfest','21 Sep – 6 Oct','+40%','Leisure'],['Christmas market','Dec','+15%','Leisure']], rival:{ name:'Lufthansa', fare:149, freq:'3 a day', note:'Full service' } },
-    { id:'cph', short:'Autumn demand', city:'Copenhagen', code:'CPH', country:'Denmark', km:1000, lon:12.57, lat:55.68, flag:['#c8102e','#fff','#c8102e'], open:false, fares:{110:38,130:32,150:26,170:20}, shares:{early:.34,mid:.18,midday:.08,aft:.12,eve:.28}, flex:.3,
+    { id:'cph', short:'🚆 New rail competition', city:'Copenhagen', code:'CPH', country:'Denmark', km:1000, lon:12.57, lat:55.68, flag:['#c8102e','#fff','#c8102e'], open:false, fares:{110:38,130:32,150:26,170:20}, shares:{early:.34,mid:.18,midday:.08,aft:.12,eve:.28}, flex:.3,
       mix:{ business:.45, leisure:.45, family:.10 }, sens:'Medium', trend:'down', why:'Quiet autumn; a new rail link takes some travellers.', weekend:.9,
       months:[80,82,90,98,108,118,126,120,104,92,86,96], events:[['Tivoli Christmas','mid-Nov – Dec','+15%','Families']], rival:{ name:'Nordic Sky', fare:119, freq:'2 a day', note:'Cutting flights this winter' } }
   ],
@@ -284,7 +302,7 @@ const DATA = {
   fares:{ par:90, dub:80, ams:90, fra:105, mad:170 },
   // fuel: price a litre each day since launch (35 days), next week's forecast, the tank
   fuelHistory:[1.47,1.47,1.47,1.47,1.47,1.47,1.47,1.52,1.52,1.52,1.52,1.52,1.52,1.52,1.49,1.49,1.49,1.49,1.49,1.49,1.49,1.55,1.55,1.55,1.55,1.55,1.55,1.55,1.58,1.58,1.58,1.58,1.58,1.58,1.58],
-  fuelForecast:{ low:1.60, high:1.76, confidence:'High', headline:'Refinery maintenance in Rotterdam: prices expected to firm next week.' },
+  fuelForecast:{ low:1.60, high:1.76, confidence:'High', headline:'Refinery maintenance in Rotterdam: prices expected to firm next week.', short:'Refinery maintenance may push prices higher.' },
   tank:{ capacity:20000, inTank:2400, block:1000 },
   weeks:[ { wk:1, profit:3210, proj:3400, pax:540, seats:620 }, { wk:2, profit:4050, proj:3900, pax:690, seats:760 },
           { wk:3, profit:3870, proj:4200, pax:812, seats:950 }, { wk:4, profit:4640, proj:4500, pax:930, seats:1064 } ],
@@ -292,11 +310,11 @@ const DATA = {
   news:[ ['Red Kite Air', 'cuts its Paris fare to £85 from Thursday.'], ['Half-term', 'in Dublin next week: more families flying.'], ['Fuel', 'prices are expected to firm: the forecast is £1.60–£1.76.'] ],
   /* the world, for the Intelligence Wall */
   world:{
-    stories:[ { pic:'🎪', bg:'#3a2a55', title:'Oktoberfest crowds fill Munich\'s hotels', when:'Today', tag:'event', means:'More people want to fly to Munich', matters:'Why it matters: <i>Munich demand ↑ leisure</i>' }, { pic:'🛢️', bg:'#4a3a1a', title:'Rotterdam refinery shuts for maintenance', when:'Today', tag:'fuel', means:'Fuel may cost more next week', matters:'Why it matters: <i>fuel price ↑ next week</i>' },
-              { pic:'🎓', bg:'#163a5a', title:'Dublin schools set half-term for 28 October', when:'2 days ago', tag:'event', means:'Families fly to and from Dublin that week', matters:'Why it matters: <i>Dublin families ↑ late Oct</i>' }, { pic:'✈️', bg:'#1a3a2a', title:'Red Kite Air to cut Paris fares from Thursday', when:'Today', tag:'rival', ifs:'rivalCut', means:'Some Paris passengers may choose Red Kite', matters:'Why it matters: <i>Paris passengers ↓</i>' },
-              { pic:'🌧️', bg:'#2a3550', title:'Storm Ciara heads for Ireland on Thursday', when:'Today', tag:'weather', ifs:'storm', means:'Dublin flights may be delayed on Thursday', matters:'Why it matters: <i>Dublin delays Thursday</i>' } ],
-    more:[ { pic:'💻', title:'Amsterdam tech conference sells out', when:'Yesterday', tag:'event', matters:'Amsterdam business demand ↑ 7 – 10 Oct' }, { pic:'📚', title:'Frankfurt book fair expects record crowds', when:'3 days ago', tag:'event', matters:'Frankfurt demand ↑ mid-Oct' },
-            { pic:'🚆', title:'New rail link opens to Copenhagen', when:'Last week', tag:'market', matters:'Copenhagen demand ↓' }, { pic:'⛷️', title:'Alpine resorts open ski bookings', when:'Last week', tag:'event', matters:'Geneva demand ↑ from December' } ],
+    stories:[ { pic:'🎪', bg:'#3a2a55', title:'Oktoberfest crowds fill Munich\'s hotels', when:'Today', tag:'event', means:'More people want to fly to Munich', cons:'Munich demand ↑↑', tone:'good' }, { pic:'🛢️', bg:'#4a3a1a', title:'Rotterdam refinery shuts for maintenance', when:'Today', tag:'fuel', means:'Fuel may cost more next week', cons:'Fuel price ↑ next week', tone:'warn' },
+              { pic:'🎓', bg:'#163a5a', title:'Dublin schools set half-term for 28 October', when:'2 days ago', tag:'event', means:'Families fly to and from Dublin that week', cons:'Dublin: families ↑ late October', tone:'good' }, { pic:'✈️', bg:'#1a3a2a', title:'Red Kite Air to cut Paris fares from Thursday', when:'Today', tag:'rival', ifs:'rivalCut', means:'Some Paris passengers may choose Red Kite', cons:'Paris: some passengers may switch', tone:'warn' },
+              { pic:'🌧️', bg:'#2a3550', title:'Storm Ciara heads for Ireland on Thursday', when:'Today', tag:'weather', ifs:'storm', means:'Dublin flights may be delayed on Thursday', cons:'Dublin: delays possible Thursday', tone:'bad' } ],
+    more:[ { pic:'💻', title:'Amsterdam tech conference sells out', when:'Yesterday', tag:'event', cons:'Amsterdam business demand ↑ 7 – 10 Oct', tone:'good' }, { pic:'📚', title:'Frankfurt book fair expects record crowds', when:'3 days ago', tag:'event', cons:'Frankfurt demand ↑ mid-October', tone:'good' },
+            { pic:'🚆', title:'New rail link opens to Copenhagen', when:'Last week', tag:'market', cons:'Copenhagen demand ↓', tone:'bad' }, { pic:'⛷️', title:'Alpine resorts open ski bookings', when:'Last week', tag:'event', cons:'Geneva demand ↑ from December', tone:'good' } ],
     watch:[ ['NOW','🎪','mun','Oktoberfest','until Sunday 6 October'], ['NEXT WEEK','💻','ams','Tech conference','7 – 10 October'], ['LATER THIS MONTH','👨‍👩‍👧','dub','Half-term','from 28 October'] ],
     weather:{ par:['☀️','⛅','⛅'], dub:['⛅','🌧️','💨'], ams:['🌧️','⛅','⛅'], fra:['⛅','☀️','☀️'], mad:['☀️','☀️','☀️'], bcn:['☀️','☀️','⛅'], gva:['⛅','🌧️','⛅'], mun:['☀️','⛅','🌧️'], cph:['🌧️','🌧️','⛅'] },
     stormWeather:{ dub:['⛅','⛈️','💨'], ams:['🌧️','💨','⛅'] },
@@ -314,7 +332,7 @@ const DATA = {
    STATE and the little model
    ===================================================================== */
 const OPEN = () => DATA.routes.filter(r => r.open !== false);
-const S = { view:'home', wall:false, wmode:'intel', city:null, seen:new Set(), focus:null, hl:null, mapHl:null, newsAll:false, seasonId:'par', routeId:'par', arrange:false, sbx:false, slots:{ r1:'news', r2:'fuel', b1:'outlook', b2:'events', b3:'airline' }, sel:null, strip:null, fares:{ ...DATA.fares }, fleet:JSON.parse(JSON.stringify(DATA.fleet)), done:{},
+const S = { view:'home', wall:false, wmode:'intel', city:null, seen:new Set(), focus:null, hl:null, mapHl:null, newsAll:false, wxAll:false, seasonId:'par', routeId:'par', arrange:false, sbx:false, slots:{ r1:'news', r2:'fuel', b1:'outlook', b2:'events', b3:'airline' }, sel:null, strip:null, fares:{ ...DATA.fares }, fleet:JSON.parse(JSON.stringify(DATA.fleet)), done:{},
   sums:{}, ft:{}, buy:null, bought:0, clock:6 * 60, playing:null };
 const R = id => DATA.routes.find(r => r.id === id), P = t => DATA.planes[t];
 const money = (v, dp) => (v < 0 ? '−' : '') + '£' + Math.abs(v).toLocaleString('en-GB', { minimumFractionDigits:dp || 0, maximumFractionDigits:dp || 0 });
@@ -372,12 +390,13 @@ function shell(body, hint, nextLabel){
 /* =====================================================================
    SCREENS
    ===================================================================== */
-/* Home's view of the wall: one line each, so the wall is where the detail lives */
-function wallPreview(){ const A = alerts(), ch = fuelCh(), ic = { weather:'🌩', fuel:'🛢', rivals:'✈' }, nm = { weather:'Weather', fuel:'Fuel', rivals:'Rivals' };
-  const rows = A.map(a => `<button class="wrow al" data-wallfocus="${a.w}">${ic[a.w]} <span>${a.why}</span><em>${nm[a.w]} ›</em></button>`);
-  if(!A.some(a => a.w === 'fuel')) rows.push(`<button class="wrow" data-wallfocus="fuel">🛢 <span>Fuel £${fuelNow().toFixed(2)}/L, ${ch > 0 ? '▲' : '▼'} ${Math.abs(ch)}% · forecast up next week</span><em>Fuel ›</em></button>`);
-  rows.push(`<button class="wrow" data-wallfocus="news">📰 <span>${DATA.world.stories.filter(x => !x.ifs || DATA.scenario[x.ifs]).length} stories in the news</span><em>News ›</em></button>`);
-  return rows.join(''); }
+/* Home's view of the wall: one short line each; the wall is where the detail lives */
+function wallPreview(){ const A = alerts(), ch = fuelCh(), rows = [], top = DATA.routes.filter(r => r.trend === 'up2')[0];
+  if(DATA.scenario.storm) rows.push(['bad', 'weather', '🌩', 'Dublin weather warning · Thu']);
+  rows.push([Math.abs(ch) >= 5 ? 'warn' : '', 'fuel', '🛢', Math.abs(ch) >= 5 ? `Fuel ${ch > 0 ? '↑' : '↓'} ${Math.abs(ch)}% this week` : 'Fuel ↑ next week']);
+  if(DATA.scenario.rivalCut) rows.push(['warn', 'rivals', '✈', 'Paris rival fare cut · Thu']);
+  if(top) rows.push(['', 'outlook', top.short.split(' ')[0], `${top.city} demand ↑↑`]);
+  return rows.map(([cl, w, ic, t]) => `<button class="wrow ${cl}" data-wallfocus="${w}">${ic} <span>${t}</span><em>›</em></button>`).join(''); }
 const SCREENS = {
 home(){ const M = model(), last = DATA.weeks[DATA.weeks.length - 1], mx = Math.max(...DATA.weeks.map(w => w.profit));
   const steps = [['ft', 'Flight times for the Saab 340'], ['plan', 'Plan the week: routes, fares, timetable'], ['sums', 'Work out this week\'s sums'], ['fuel', 'Buy fuel for the week'], ['review', 'Fly the week, then Sunday\'s review']];
@@ -388,7 +407,7 @@ home(){ const M = model(), last = DATA.weeks[DATA.weeks.length - 1], mx = Math.m
     <section class="pnl"><h2>Profit by week<span class="sub">weeks 1–4</span></h2><div class="spark">${DATA.weeks.map(w => `<div style="height:${Math.round(85 * w.profit / mx)}%"><span class="mono">${money(w.profit)}</span><em>Week ${w.wk}</em></div>`).join('')}</div><p class="soft" style="margin:26px 0 0">Last week: ${money(last.profit)}, ${last.profit >= last.proj ? `${money(last.profit - last.proj)} better than projected` : `${money(last.proj - last.profit)} short of the projection`}. Seats filled ${Math.round(100 * last.pax / last.seats)}%.</p></section></div>
     <div class="grid">
     <section class="pnl"><h2>Today's plan</h2><span class="kl">Projected profit a day</span><div class="big ${M.profit >= 0 ? 'good' : 'bad'} mono">${money(M.profit)}</div><span class="kl" style="margin-top:8px">Seats filled</span><div class="mono">${M.pax} / ${M.seats}</div></section>
-    <section class="pnl"><h2>On the Operations Wall<span class="sub">updated 08:00</span></h2>${wallPreview()}<button class="wallbtn" data-wallfocus="news" style="margin-top:10px">🖥 Open the wall</button></section></div></div>`,
+    <section class="pnl"><h2>Outside your airline<span class="sub">updated 08:00</span></h2>${wallPreview()}<button class="link" data-wallfocus="news" style="margin-top:10px">Open Operations Wall ›</button></section></div></div>`,
   'Start with the flight times, then plan the week.', 'Flight times'); },
 
 ft(){ const types = [...new Set(S.fleet.map(a => a.type))].sort((a, b) => P(a).speed - P(b).speed), ask = ['dhc6|dub', 'sf34|dub'];
@@ -477,10 +496,10 @@ review(){ const D = DATA.lastWeekDays, mx = Math.max(...D.map(d => d[1])), tot =
 
 /* =====================================================================
    THE SECOND SCREEN: the Operations Wall. Desk = act; wall = observe.
-   Before flying it is the Intelligence Wall ("what do I know?"): the big map and five panels.
-   In a quiet week the map is the hero. When something happens (a storm, a sharp fuel move, a rival's fare cut)
-   that panel becomes the second hero: it moves to the top right, grows, and lights up once.
-   While flying it is Live operations: the departures board and the aircraft moving on the map.
+   Intelligence ("what do I know?"): the map is the hero; five panels around it.
+   Each panel has a level: 1 background, 2 an opportunity worth a look, 3 a significant change.
+   The first level-3 change becomes the second hero: it moves to the top right, grows, glows once (350 ms), then settles.
+   Live operations ("what is happening now?"): the same wall, with the aircraft moving and the departures board.
    ===================================================================== */
 const MAPB = { lon0:-16.5, lon1:26.5, lat0:36.5, lat1:60.5 };   // 820 × 520: a little wider than true, so the cities spread out
 function proj(lon, lat, W, H){ return [ (lon - MAPB.lon0) * W / (MAPB.lon1 - MAPB.lon0), (MAPB.lat1 - lat) * H / (MAPB.lat1 - MAPB.lat0) ]; }
@@ -496,91 +515,106 @@ const LAND = [   // rough coastlines, longitude and latitude: enough to say "Eur
   [[-10,35.9],[-5.9,35.8],[-2,35.1],[3,36.8],[10,37.2],[11.1,36.8],[11,33],[-10,33]] ];
 const PLANE = 'M9 0 L-7 -1.3 L-7 1.3 Z M2.5 0 L-2.5 -7 L-4.5 -7 L-2 0 L-4.5 7 L-2.5 7 Z M-5 0 L-8 -3.5 L-9.3 -3.5 L-7.8 0 L-9.3 3.5 L-8 3.5 Z';
 const arcD = (a, b) => { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2 - Math.hypot(b[0] - a[0], b[1] - a[1]) * .2; return `M${a[0].toFixed(1)} ${a[1].toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${b[0].toFixed(1)} ${b[1].toFixed(1)}`; };
-/* what the map marks: events now and next week, and anything the current intelligence is about */
+const SEV = { bad:'#FF5F5F', warn:'#FFB547', event:'#F2C14E', opp:'#3CE394' };
+/* what the map shows on a city: only what is current. One mark a city: disruption, then warning, then event, then strong growth */
 function mapMarks(){ const m = {}, sc = DATA.scenario;
-  DATA.world.watch.filter(w => w[0] !== 'LATER THIS MONTH').forEach(w => { m[w[2]] = { ic:w[1], kind:'event', t:w[3] }; });
-  if(sc.storm) m.dub = { ic:'⛈', kind:'alert', t:'Storm Ciara on Thursday' };
-  if(sc.rivalCut) m.par = { ic:'✂', kind:'alert', t:'Red Kite cuts its fare to £' + R('par').rival.cut };
+  DATA.routes.filter(r => r.trend === 'up2').forEach(r => { m[r.id] = { ic:'▲▲', text:1, kind:'opp', t:'Strong growth' }; });
+  DATA.world.watch.filter(w => w[0] !== 'LATER THIS MONTH').forEach(w => { m[w[2]] = { ic:w[1], kind:'event', t:w[3] + ', ' + w[4] }; });
+  if(sc.rivalCut) m.par = { ic:'£' + R('par').rival.cut, text:1, kind:'warn', t:'Red Kite cuts its fare to £' + R('par').rival.cut };
+  if(sc.storm) m.dub = { ic:'🌩', kind:'bad', t:'Storm Ciara on Thursday' };
   return m; }
 function mapSvg(W, H, o){
   o = o || {}; const M = model(), hp = proj(DATA.home.lon, DATA.home.lat, W, H), flown = new Set(M.flights.map(f => f.rid)), u = 'm' + (o.live ? 'l' : 'i');
-  const p2 = q => proj(q[0], q[1], W, H).map(v => v.toFixed(1)).join(' '), land = LAND.map(poly => poly.map((q, k) => (k ? 'L' : 'M') + p2(q)).join(' ') + ' Z').join(' ');
+  const p2 = q => proj(q[0], q[1], W, H).map(v => v.toFixed(1)).join(' '), shape = poly => poly.map((q, k) => (k ? 'L' : 'M') + p2(q)).join(' ') + ' Z', land = LAND.map(shape).join(' ');
+  const tones = ['#163c66', '#143760', '#173f6a', '#12345b', '#163a63', '#133659'];   // a faint difference between regions
   let grid = ''; for(let lon = -15; lon <= 25; lon += 5){ const x = proj(lon, 0, W, H)[0].toFixed(1); grid += `<line x1="${x}" y1="0" x2="${x}" y2="${H}"/>`; }
   for(let lat = 40; lat <= 60; lat += 5){ const y = proj(0, lat, W, H)[1].toFixed(1); grid += `<line x1="0" y1="${y}" x2="${W}" y2="${y}"/>`; }
+  const kx = W / (MAPB.lon1 - MAPB.lon0) / 70, ky = H / (MAPB.lat1 - MAPB.lat0) / 111;   // pixels a km near 51°N
+  const rings = [500, 1000, 1500].map(km => `<ellipse cx="${hp[0]}" cy="${hp[1]}" rx="${(km * kx).toFixed(1)}" ry="${(km * ky).toFixed(1)}" fill="none" stroke="rgba(242,193,78,.13)" stroke-dasharray="1 5"/><text x="${(hp[0] + km * kx * .71).toFixed(1)}" y="${(hp[1] + km * ky * .71 + 12).toFixed(1)}" fill="rgba(242,193,78,.4)" font-size="10.5">${num(km)} km</text>`).join('');
   const marks = o.marks ? mapMarks() : {}, pos = r => proj(r.lon, r.lat, W, H);
   const lines = DATA.routes.map(r => { const d = arcD(hp, pos(r)); return flown.has(r.id)
-    ? `<path d="${d}" fill="none" stroke="#36c6ff" stroke-width="6" opacity=".16" filter="url(#${u}b)"/><path d="${d}" fill="none" stroke="#5fd4ff" stroke-width="1.8"/>`
-    : `<path d="${d}" fill="none" stroke="#6f86a8" stroke-width="1" stroke-dasharray="2 5" opacity=".75"/>`; }).join('');
-  const deco = o.deco ? DATA.routes.filter(r => flown.has(r.id)).slice(0, 3).map((r, k) => { const d = arcD(hp, pos(r)), b = (k * 6.5).toFixed(1) + 's';
-    return `<g opacity="0"><path d="${PLANE}" fill="#eaf6ff"/><animateMotion dur="18s" begin="${b}" repeatCount="indefinite" rotate="auto" keyPoints="0;1;1" keyTimes="0;.45;1" calcMode="linear" path="${d}"/><animate attributeName="opacity" values="0;.85;.85;0;0" keyTimes="0;.05;.4;.45;1" dur="18s" begin="${b}" repeatCount="indefinite"/></g>`; }).join('') : '';
-  const cities = DATA.routes.map(r => { const [x, y] = pos(r), on = flown.has(r.id), sel = S.city === r.id || S.mapHl === r.id, mk = marks[r.id], al = mk && mk.kind === 'alert';
-    return `<g class="city" data-city="${r.id}"><circle cx="${x}" cy="${y}" r="18" fill="transparent"/>${on ? `<circle cx="${x}" cy="${y}" r="11" fill="#36c6ff" opacity=".22" filter="url(#${u}b)"/>` : ''}
-      ${al ? `<circle cx="${x}" cy="${y}" r="6" fill="none" stroke="#ff9a4a" stroke-width="2"><animate attributeName="r" values="6;22" dur="2.8s" repeatCount="indefinite"/><animate attributeName="opacity" values=".9;0" dur="2.8s" repeatCount="indefinite"/></circle>` : ''}
-      <circle cx="${x}" cy="${y}" r="${on ? 4.5 : 3.5}" fill="${on ? '#bff0ff' : '#0b1a33'}" stroke="${on ? '#36c6ff' : '#8197b8'}" stroke-width="${on ? 1.5 : 1.2}"/>${sel ? `<circle cx="${x}" cy="${y}" r="11" fill="none" stroke="#F2C14E" stroke-width="2"/>` : ''}
+    ? `<path d="${d}" fill="none" stroke="#36C6FF" stroke-width="2.3" style="filter:drop-shadow(0 0 4px rgba(54,198,255,.35))"/>`
+    : `<path d="${d}" fill="none" stroke="#58779A" stroke-width="1.2" stroke-dasharray="5 6" opacity=".45"/>`; }).join('');
+  const deco = o.deco ? DATA.routes.filter(r => flown.has(r.id)).slice(0, 1).map(r => { const d = arcD(hp, pos(r));   // now and then, one aircraft crosses the map
+    return `<g opacity="0"><path d="${PLANE}" fill="#eaf6ff"/><animateMotion dur="26s" begin="2s" repeatCount="indefinite" rotate="auto" keyPoints="0;1;1" keyTimes="0;.3;1" calcMode="linear" path="${d}"/><animate attributeName="opacity" values="0;.8;.8;0;0" keyTimes="0;.03;.27;.3;1" dur="26s" begin="2s" repeatCount="indefinite"/></g>`; }).join('') : '';
+  const cities = DATA.routes.map(r => { const [x, y] = pos(r), on = flown.has(r.id), sel = S.city === r.id || S.mapHl === r.id, mk = marks[r.id], col = mk && mk.kind !== 'opp' ? SEV[mk.kind] : null;
+    const dot = col || (on ? '#36C6FF' : '#58779A'), bw = mk ? (mk.text ? 9 + mk.ic.length * 7.5 : 22) : 0;
+    return `<g class="city" data-city="${r.id}"><title>${r.city}${mk ? ': ' + mk.t : ''}</title><circle cx="${x}" cy="${y}" r="18" fill="transparent"/>
+      ${on || col ? `<circle cx="${x}" cy="${y}" r="10" fill="${dot}" opacity=".22" filter="url(#${u}b)"/>` : ''}
+      ${mk && mk.kind === 'bad' ? `<circle cx="${x}" cy="${y}" r="7" fill="none" stroke="${dot}" stroke-width="1.5" opacity=".7"><animate attributeName="r" values="7;20;7" dur="2.4s" repeatCount="3"/><animate attributeName="opacity" values=".8;0;.7" dur="2.4s" repeatCount="3"/></circle>` : ''}
+      <circle cx="${x}" cy="${y}" r="${on || col ? 4.5 : 3.5}" fill="${on || col ? dot : '#071d36'}" stroke="${on || col ? '#e9f8ff' : dot}" stroke-width="${on || col ? 1 : 1.3}"/>${sel ? `<circle cx="${x}" cy="${y}" r="11" fill="none" stroke="#36C6FF" stroke-width="2"/>` : ''}
       <text x="${x + 10}" y="${y + 4.5}" fill="${on ? '#d6e6fa' : '#8aa0bf'}" font-size="${on ? 13.5 : 12.5}" font-weight="400" letter-spacing=".3">${r.city}</text>
-      ${mk ? `<g transform="translate(${x - 4},${y - 23})"><title>${r.city}: ${mk.t}</title><rect x="-11" y="-11" width="22" height="22" fill="${al ? 'rgba(255,140,60,.28)' : 'rgba(54,198,255,.14)'}" stroke="${al ? '#ffb547' : 'rgba(95,212,255,.7)'}"/><text x="0" y="1" font-size="13" text-anchor="middle" dominant-baseline="central">${mk.ic}</text></g>` : ''}</g>`; }).join('');
-  const planes = (o.planes || []).map(([x, y, lab, ang]) => `<g><circle cx="${x}" cy="${y}" r="14" fill="#F2C14E" opacity=".2" filter="url(#${u}b)"/><path d="${PLANE}" fill="#F2C14E" transform="translate(${x},${y}) rotate(${ang || 0}) scale(1.3)"/><text x="${x + 12}" y="${y - 10}" fill="#F2C14E" font-size="12.5" font-weight="600">${lab || ''}</text></g>`).join('');
+      ${mk ? `<g transform="translate(${(x - 3).toFixed(1)},${(y - 22).toFixed(1)})"><rect x="${-bw / 2}" y="-10" width="${bw}" height="20" fill="rgba(2,8,18,.82)" stroke="${SEV[mk.kind]}" stroke-opacity=".75"/><text x="0" y="1" font-size="${mk.text ? 11.5 : 12.5}" font-weight="600" fill="${SEV[mk.kind]}" text-anchor="middle" dominant-baseline="central">${mk.ic}</text></g>` : ''}</g>`; }).join('');
+  const planes = (o.planes || []).map(([x, y, lab, ang]) => `<g><circle cx="${x}" cy="${y}" r="13" fill="#F2C14E" opacity=".2" filter="url(#${u}b)"/><path d="${PLANE}" fill="#F2C14E" transform="translate(${x},${y}) rotate(${ang || 0}) scale(1.3)"/><text x="${x + 12}" y="${y - 10}" fill="#F2C14E" font-size="12" font-weight="500">${lab || ''}</text></g>`).join('');
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><defs>
-    <radialGradient id="${u}s" cx=".3" cy=".05" r="1.1"><stop offset="0" stop-color="#0b2747"/><stop offset=".55" stop-color="#04132a"/><stop offset="1" stop-color="#020a18"/></radialGradient>
-    <linearGradient id="${u}l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#173c66"/><stop offset="1" stop-color="#0a2140"/></linearGradient>
+    <radialGradient id="${u}s" cx=".3" cy=".02" r="1.1"><stop offset="0" stop-color="#0a2443"/><stop offset=".55" stop-color="#03112a"/><stop offset="1" stop-color="#020812"/></radialGradient>
+    <linearGradient id="${u}l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".07"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient>
     <filter id="${u}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter><clipPath id="${u}c"><rect width="${W}" height="${H}"/></clipPath></defs>
-    <rect width="${W}" height="${H}" fill="url(#${u}s)"/><g clip-path="url(#${u}c)"><g stroke="rgba(120,175,235,.07)" stroke-width="1">${grid}</g>
-    <path d="${land}" fill="none" stroke="#3a8ee6" stroke-width="8" opacity=".10" filter="url(#${u}b)"/><path d="${land}" fill="url(#${u}l)" stroke="rgba(110,175,240,.42)" stroke-width=".8"/></g>
-    ${lines}${deco}${cities}<g><circle cx="${hp[0]}" cy="${hp[1]}" r="20" fill="#F2C14E" opacity=".25" filter="url(#${u}b)"/><circle cx="${hp[0]}" cy="${hp[1]}" r="7" fill="#F2C14E" stroke="#fff6d8" stroke-width="1.5"/><text x="${hp[0] - 14}" y="${hp[1] + 5}" fill="#F2C14E" font-size="14" font-weight="600" text-anchor="end" letter-spacing=".4">${DATA.home.city}</text></g>${planes}</svg>`;
+    <rect width="${W}" height="${H}" fill="url(#${u}s)"/><g clip-path="url(#${u}c)"><g stroke="rgba(120,175,235,.06)" stroke-width="1">${grid}</g>
+    <path d="${land}" fill="none" stroke="#3a8ee6" stroke-width="9" opacity=".09" filter="url(#${u}b)"/>${LAND.map((poly, k) => `<path d="${shape(poly)}" fill="${tones[k % tones.length]}"/>`).join('')}<path d="${land}" fill="url(#${u}l)" stroke="rgba(110,175,240,.4)" stroke-width=".8"/>${o.live ? '' : rings}</g>
+    ${lines}${deco}${cities}<g><circle cx="${hp[0]}" cy="${hp[1]}" r="24" fill="#F2C14E" opacity=".28" filter="url(#${u}b)"/><circle cx="${hp[0]}" cy="${hp[1]}" r="8" fill="#F2C14E" stroke="#fff6d8" stroke-width="1.5"/><text x="${hp[0] - 15}" y="${hp[1] + 5}" fill="#F2C14E" font-size="15" font-weight="600" text-anchor="end" letter-spacing=".5">${DATA.home.city}</text></g>${planes}</svg>`;
 }
 /* the week's intelligence */
 const fuelNow = () => fuelToday() * (DATA.scenario.fuelSpike ? 1.09 : 1), fuelLast = () => DATA.fuelHistory[DATA.fuelHistory.length - 8];
 const fuelCh = () => Math.round(100 * (fuelNow() - fuelLast()) / fuelLast());
 const weatherNow = () => Object.assign({}, DATA.world.weather, DATA.scenario.storm ? DATA.world.stormWeather : {});
-const badWx = w => /⛈️|💨/.test(w.join(''));
-function alerts(){ const A = [], sc = DATA.scenario, ch = fuelCh();   // in order: the first is the hero
-  if(sc.storm) A.push({ w:'weather', why:'Storm Ciara reaches Dublin on Thursday' });
-  if(Math.abs(ch) >= 5) A.push({ w:'fuel', why:`Fuel ${ch > 0 ? 'up' : 'down'} ${Math.abs(ch)}% this week` });
-  if(sc.rivalCut) A.push({ w:'rivals', why:'Red Kite cuts Paris to £' + R('par').rival.cut + ' from Thursday' });
+const wxStatus = w => /⛈️/.test(w.join('')) ? ['WARNING', 'dn', 3] : /💨|🌧️/.test(w.join('')) ? ['WATCH', 'wa', 2] : ['GOOD', 'up', 1];
+const wxWorst = w => w.find(x => /⛈️/.test(x)) || w.find(x => /💨/.test(x)) || w.find(x => /🌧️/.test(x)) || w[0];
+function alerts(){ const A = [], sc = DATA.scenario, ch = fuelCh();   // level 3, in order: the first is the hero
+  if(sc.storm) A.push({ w:'weather', sev:'red', why:'Storm Ciara · Dublin Thursday' });
+  if(Math.abs(ch) >= 5) A.push({ w:'fuel', sev:'amber', why:`Fuel ${ch > 0 ? 'up' : 'down'} ${Math.abs(ch)}% this week` });
+  if(sc.rivalCut) A.push({ w:'rivals', sev:'amber', why:'Red Kite · Paris £' + R('par').rival.cut + ' from Thursday' });
   return A; }
+const level = (id, A) => A.some(a => a.w === id) ? 3 : (id === 'outlook' && DATA.routes.some(r => r.trend === 'up2')) || (id === 'events' && DATA.world.watch.some(w => w[0] === 'NOW')) ? 2 : 1;
 function ribbon(){ const sc = DATA.scenario, ch = fuelCh(), it = [];
-  if(sc.storm) it.push(['🌩', 'Dublin storm Thu', 'weather', 'dub', 1]);
-  it.push(['🛢', Math.abs(ch) >= 5 ? `Fuel ${ch > 0 ? 'up' : 'down'} ${Math.abs(ch)}% this week` : 'Fuel expected ↑ next week', 'fuel', '', Math.abs(ch) >= 5]);
-  if(sc.rivalCut) it.push(['✈', 'Red Kite cuts Paris fare Thu', 'rivals', 'par', 1]);
-  it.push(['🎪', 'Oktoberfest ends Sun', 'events', 'mun', 0], ['💻', 'Amsterdam tech conference next week', 'events', 'ams', 0]);
-  return `<div class="ribbon"><span class="lbl">THIS WEEK</span>${it.map(([ic, t, w, c, al]) => `<button class="${al ? 'al' : ''}" data-focus="${w}" data-fcity="${c}">${ic} ${t}</button>`).join('')}</div>`; }
+  if(sc.storm) it.push(['🌩', 'Dublin storm Thu', 'weather', 'dub', 'bad']);
+  if(Math.abs(ch) >= 5) it.push(['🛢', `Fuel ${ch > 0 ? '↑' : '↓'} ${Math.abs(ch)}% this week`, 'fuel', '', 'warn']);
+  if(sc.rivalCut) it.push(['✈', 'Paris rival fare cut Thu', 'rivals', 'par', 'warn']);
+  it.push(['🎪', 'Munich until Sun', 'events', 'mun', ''], ['💻', 'Amsterdam conference next week', 'events', 'ams', '']);
+  if(Math.abs(ch) < 5) it.push(['🛢', 'Fuel ↑ next week', 'fuel', '', '']);
+  return `<div class="ribbon"><span class="lbl">THIS WEEK</span>${it.map(([ic, t, w, c, cl], k) => `${k ? '<span class="dot">•</span>' : ''}<button class="${cl}" data-focus="${w}" data-fcity="${c}">${ic} ${t}</button>`).join('')}</div>`; }
 const SIG = { up2:['▲▲ STRONG GROWTH', 'u2'], up:['▲ GROWING', 'u1'], flat:['→ STEADY', 'f0'], down:['▼ QUIETER', 'd1'] };
 const arrow = t => t === 'up2' ? ['▲▲', 'up', 'Rising fast'] : t === 'up' ? ['▲', 'up', 'Rising'] : t === 'down' ? ['▼', 'dn', 'Falling'] : ['→', 'fl', 'Steady'];
+const tone = t => t === 'good' ? 'up' : t === 'bad' ? 'dn' : t === 'warn' ? 'wa' : 'sf';
+const storiesNow = () => DATA.world.stories.filter(x => x.ifs && DATA.scenario[x.ifs]).concat(DATA.world.stories.filter(x => !x.ifs));
 const WIDGETS = {
-  news:{ t:'World news', meta:() => 'today', html:k => { const n = k && k[0] === 'b' ? 2 : 3, st = DATA.world.stories.filter(x => x.ifs && DATA.scenario[x.ifs]).concat(DATA.world.stories.filter(x => !x.ifs)).slice(0, n);
-    return `<div class="nws" style="grid-template-columns:repeat(${n},1fr)">${st.map(x => `<article><div class="strip" style="background:linear-gradient(90deg,${x.bg},transparent)">${x.pic}</div><span class="k ${x.tag}">${x.tag.toUpperCase()} · ${x.when.toUpperCase()}</span><b>${x.title}</b><span class="m">${x.matters}</span></article>`).join('')}</div><div class="wfoot" style="padding-top:4px"><button class="lnk" id="newsAll">View all news ›</button></div>`; } },
-  fuel:{ t:'Fuel market', meta:() => 'updated today 07:00', html:() => { const H = DATA.fuelHistory, now = fuelNow(), ch = fuelCh(), F = DATA.fuelForecast;
-    const pts = [0, 7, 14, 21, 28, 34].map(d => H[d]).concat([now]), lo = Math.min(...pts, F.low) - .03, hi = Math.max(...pts, F.high) + .03, W = 300, Hh = 120, x = k => 12 + k * (W - 66) / (pts.length - 1), y = v => 8 + (Hh - 26) * (hi - v) / (hi - lo), xf = W - 14;
-    return `<div class="fm"><div><div class="pr mono">£${now.toFixed(2)}<small>/L</small></div><div style="margin-top:6px;font-size:15px" class="${ch > 0 ? 'bad' : 'good'}">${ch > 0 ? '▲' : '▼'} ${Math.abs(ch)}% <span class="soft">this week</span></div></div>
-      <svg viewBox="0 0 ${W} ${Hh}"><rect x="${xf - 6}" y="${y(F.high)}" width="12" height="${y(F.low) - y(F.high)}" fill="rgba(54,198,255,.22)" stroke="rgba(54,198,255,.5)" stroke-dasharray="2 2"/><path d="${pts.map((v, k) => (k ? 'L' : 'M') + x(k) + ' ' + y(v)).join(' ')}" fill="none" stroke="#5fd4ff" stroke-width="2"/>${pts.map((v, k) => `<circle cx="${x(k)}" cy="${y(v)}" r="${k === pts.length - 1 ? 4 : 2.5}" fill="${k === pts.length - 1 ? '#fff' : '#5fd4ff'}"/>`).join('')}${['W1', 'W2', 'W3', 'W4', 'W5', '', 'Now'].map((l, k) => `<text x="${x(k)}" y="${Hh - 3}" fill="#7390b8" font-size="10.5" text-anchor="middle">${l}</text>`).join('')}<text x="${xf}" y="${Hh - 3}" fill="#5fd4ff" font-size="10.5" text-anchor="middle">Next wk</text></svg></div>
-      <div class="wfoot"><span class="fline">Next week: likely <b>£${F.low.toFixed(2)}–£${F.high.toFixed(2)}</b></span><button class="lnk" style="margin-left:auto" data-goto="fuel">Open Fuel Desk ›</button></div>`; } },
-  outlook:{ t:'Market outlook', meta:() => 'next 3 months', html:() => { const order = ['up2', 'up', 'flat', 'down'], all = DATA.routes.slice().sort((a, b) => order.indexOf(a.trend) - order.indexOf(b.trend));
-    const down = all.find(r => r.trend === 'down'), pick = down && all.indexOf(down) > 5 ? all.slice(0, 5).concat([down]) : all.slice(0, 6);   // always show one quieter market if there is one
+  news:{ t:'World news', meta:() => 'updated this morning', html:k => { const n = k && k[0] === 'b' ? 2 : 3, st = storiesNow().slice(0, n);
+    return `<div class="nws" style="grid-template-columns:repeat(${n},1fr)">${st.map(x => `<article><span class="k"><i>${x.pic}</i>${x.tag.toUpperCase()} · ${x.when.toUpperCase()}</span><b>${x.title}</b><span class="c ${tone(x.tone)}">${x.cons}</span></article>`).join('')}</div>
+      <div class="wfoot" style="padding-top:4px"><button class="lnk" id="newsAll">View all news ›</button></div>`; } },
+  fuel:{ t:'Fuel market', meta:() => 'updated 07:30', html:() => { const H = DATA.fuelHistory, now = fuelNow(), ch = fuelCh(), F = DATA.fuelForecast;
+    const pts = [0, 7, 14, 21, 28, 34].map(d => H[d]).concat([now]), lo = Math.min(...pts) - .02, hi = Math.max(...pts) + .02, W = 260, Hh = 76, x = k => 4 + k * (W - 12) / (pts.length - 1), y = v => 6 + (Hh - 12) * (hi - v) / (hi - lo);
+    return `<div class="fm"><div><div class="pr num">£${now.toFixed(2)}<small>/L</small></div><div class="ch ${ch > 0 ? 'wa' : 'up'}">${ch > 0 ? '▲' : '▼'} <span class="num">${Math.abs(ch)}%</span> <span class="sf" style="font-weight:400">this week</span></div></div>
+      <svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none"><path d="${pts.map((v, k) => (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ')} L${x(pts.length - 1)} ${Hh} L${x(0)} ${Hh} Z" fill="rgba(54,198,255,.05)"/><path d="${pts.map((v, k) => (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ')}" fill="none" stroke="#36C6FF" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="${x(pts.length - 1)}" cy="${y(now)}" r="3.5" fill="#fff"/></svg></div>
+      <div class="fl2"><div class="nextwk"><span>NEXT WEEK</span><b class="num">£${F.low.toFixed(2)}–£${F.high.toFixed(2)}</b><small>${F.short}</small></div><button class="lnk" data-goto="fuel">Open Fuel Desk ›</button></div>`; } },
+  outlook:{ t:'Market outlook', meta:() => 'updated Monday', html:() => { const order = ['up2', 'up', 'flat', 'down'], all = DATA.routes.slice().sort((a, b) => order.indexOf(a.trend) - order.indexOf(b.trend));
+    const down = all.find(r => r.trend === 'down'), pick = down && all.indexOf(down) > 5 ? all.slice(0, 5).concat([down]) : all.slice(0, 6);   // always one quieter market, if there is one
     return `<div class="sig">${pick.map(r => { const s = SIG[r.trend], nx = r.months.slice(9, 12), mx = Math.max(...r.months);
-      return `<button data-route="${r.id}" title="Route intelligence: ${r.city}"><b>${r.city}</b><span class="spk ${s[1]}">${nx.map(v => `<i style="height:${Math.round(24 * v / mx)}px"></i>`).join('')}</span><span class="s ${s[1]}">${s[0]}</span><span class="t">${r.short}</span></button>`; }).join('')}</div>`; } },
-  events:{ t:'Events to watch', meta:() => 'next 4 weeks', html:() => `<div class="watch">${DATA.world.watch.map(([w, ic, id, e, when]) => `<button data-city="${id}"><span class="w ${w === 'NOW' ? 'now' : ''}">${w}</span><span style="font-size:18px">${ic}</span><span><b>${R(id).city} · ${e}</b><small>${when}</small></span></button>`).join('')}</div>
+      return `<button data-city="${r.id}" class="${S.city === r.id ? 'on' : ''}" title="${r.city}: ${r.why}"><b>${r.city}</b><span class="spk ${s[1]}" title="October to December">${nx.map(v => `<i style="height:${Math.round(24 * v / mx)}px"></i>`).join('')}</span><span class="s ${s[1]}">${s[0]}</span><span class="t">${r.short}</span></button>`; }).join('')}</div>`; } },
+  events:{ t:'Events to watch', meta:() => 'next 4 weeks', html:() => `<div class="watch">${DATA.world.watch.map(([w, ic, id, e, when]) => `<button data-city="${id}"><span class="w ${w === 'NOW' ? 'now' : ''}">${w}</span><span style="font-size:17px">${ic}</span><span><b>${R(id).city} · ${e}</b><small>${when}</small></span></button>`).join('')}</div>
     <div class="wfoot"><button class="lnk" data-goto="season">Explore seasonality & events ›</button></div>` },
   airline:{ t:'Your airline', meta:() => 'today', html:() => { const M = model(), busy = M.routes.filter(r => r.n).sort((a, b) => b.away - a.away)[0];
-    return `<div class="ya"><div><b class="mono">${Math.round(100 * M.pax / Math.max(1, M.seats))}%</b><span>seat fill</span></div><div><b class="mono">${M.away}</b><span>turned away</span></div></div><p style="margin:12px 0 0;font-size:14.5px">${busy && busy.away > 20 ? `Capacity pressure: <b>${R(busy.id).city}</b>` : 'Seats and demand in balance'}</p><div class="wfoot"><button class="lnk" data-goto="review">View performance ›</button></div>`; } },
-  weather:{ t:'Weather & disruption', meta:() => 'updated 07:30', html:() => { const W = weatherNow(), ids = OPEN().map(r => r.id), worst = w => w.find(x => /⛈️/.test(x)) || w.find(x => /💨/.test(x)) || w.find(x => /🌧️/.test(x)) || w[0], bad = ids.filter(id => badWx(W[id]));
-    return `<div class="wxs">${ids.map(id => `<div class="${badWx(W[id]) ? 'bad' : ''}"><b>${R(id).code}</b><span>${worst(W[id])}</span></div>`).join('')}</div>
-      ${bad.length ? bad.map(id => `<div class="wxa">⚠ <b>${DATA.scenario.storm && id === 'dub' ? 'Thursday' : 'Mid-week'} — ${R(id).city}</b><br>Strong winds. Delays possible.</div>`).join('') : '<p class="wxok">No disruption expected this week.</p>'}`; } },
+    return `<div class="ya"><div><b class="num">${Math.round(100 * M.pax / Math.max(1, M.seats))}%</b><span>Seats filled</span></div><div><b class="num">${M.away}</b><span>Turned away</span></div></div><p style="margin:12px 0 0;font-size:14px"><span class="sf">Highest pressure:</span> ${busy && busy.away > 20 ? R(busy.id).city : 'none'}</p><div class="wfoot"><button class="lnk" data-goto="review">View performance ›</button></div>`; } },
+  weather:{ t:'Weather & disruption', meta:() => 'updated 08:00', html:() => { const W = weatherNow(), ids = OPEN().map(r => r.id), warn = ids.filter(id => wxStatus(W[id])[2] === 3);
+    return `<div class="wxl">${ids.map(id => { const st = wxStatus(W[id]); return `<div><b>${R(id).code}</b><span>${wxWorst(W[id])}</span><em class="${st[1]}">${st[0]}</em></div>`; }).join('')}</div>
+      ${warn.map(id => `<div class="wxa"><span>THURSDAY · ${R(id).city.toUpperCase()}</span>Strong winds. Delays possible.</div>`).join('')}
+      <div class="wfoot"><button class="lnk" id="wxAll">View weather ›</button></div>`; } },
   rivals:{ t:'Competitor watch', meta:() => 'fares today', html:() => `<table class="tbl"><thead><tr><th>Route</th><th>Rival</th><th>Their fare</th><th>Yours</th></tr></thead><tbody>${OPEN().map(r => { const c = r.rival, cut = DATA.scenario.rivalCut && c.cut;
-    return `<tr title="${c.freq} · ${cut ? 'cuts fares from Thursday' : c.note}" ${cut ? 'style="background:rgba(255,181,71,.08)"' : ''}><td>${r.city}</td><td>${c.name}</td><td class="mono ${cut ? 'goldt' : ''}">£${cut ? c.cut : c.fare}${cut ? ` <small class="soft">was £${c.fare}</small>` : ''}</td><td class="mono">£${fareOf(r.id)}</td></tr>`; }).join('')}</tbody></table>` },
-  airports:{ t:'Airport board', meta:() => 'today', html:() => `<table class="tbl"><thead><tr><th>Airport</th><th>Open</th><th>Fee</th><th>Now</th></tr></thead><tbody>${DATA.world.airports.map(a => `<tr><td>${a[0]}</td><td>${a[1]}</td><td>${a[2]}</td><td class="soft">${a[3]}</td></tr>`).join('')}</tbody></table>` },
-  fleetref:{ t:'Fleet reference', meta:() => '', html:() => `<table class="tbl"><thead><tr><th>Aircraft</th><th>Seats</th><th>Speed</th></tr></thead><tbody>${Object.values(DATA.planes).concat(DATA.shop).map(p => `<tr><td>${p.name}</td><td>${p.seats}</td><td>${p.speed} km/h</td></tr>`).join('')}</tbody></table>` },
-  pulse:{ t:'Customer pulse', meta:() => 'last 7 days', html:() => `<span class="stars" style="font-size:22px">${'★'.repeat(DATA.world.pulse.stars)}<i>${'★'.repeat(5 - DATA.world.pulse.stars)}</i></span>${DATA.world.pulse.quotes.map(q => `<p style="margin:6px 0 0">${q}</p>`).join('')}` },
+    return `<tr title="${c.freq} · ${cut ? 'cuts fares from Thursday' : c.note}" ${cut ? 'style="background:rgba(255,181,71,.08)"' : ''}><td>${r.city}</td><td>${c.name}</td><td class="num ${cut ? 'wa' : ''}">£${cut ? c.cut : c.fare}${cut ? ` <small class="sf">was £${c.fare}</small>` : ''}</td><td class="num">£${fareOf(r.id)}</td></tr>`; }).join('')}</tbody></table>` },
+  airports:{ t:'Airport board', meta:() => 'today', html:() => `<table class="tbl"><thead><tr><th>Airport</th><th>Open</th><th>Fee</th><th>Now</th></tr></thead><tbody>${DATA.world.airports.map(a => `<tr><td>${a[0]}</td><td class="num">${a[1]}</td><td class="num">${a[2]}</td><td class="sf">${a[3]}</td></tr>`).join('')}</tbody></table>` },
+  fleetref:{ t:'Fleet reference', meta:() => '', html:() => `<table class="tbl"><thead><tr><th>Aircraft</th><th>Seats</th><th>Speed</th></tr></thead><tbody>${Object.values(DATA.planes).concat(DATA.shop).map(p => `<tr><td>${p.name}</td><td class="num">${p.seats}</td><td class="num">${p.speed} km/h</td></tr>`).join('')}</tbody></table>` },
+  pulse:{ t:'Customer pulse', meta:() => 'last 7 days', html:() => `<span class="stars" style="font-size:20px">${'★'.repeat(DATA.world.pulse.stars)}<i>${'★'.repeat(5 - DATA.world.pulse.stars)}</i></span>${DATA.world.pulse.quotes.map(q => `<p style="margin:6px 0 0">${q}</p>`).join('')}` },
   bulletin:{ t:'Industry bulletin', meta:() => 'this week', html:() => DATA.world.bulletin.map(b => `<p style="margin:0 0 8px;padding-left:10px;border-left:2px solid var(--wline)">${b}</p>`).join('') }
 };
-/* a city's customer market: takes the right-hand column while a city is picked on the map */
-function cityPanel(id){ const r = R(id), a = arrow(r.trend), s = SIG[r.trend], top = DATA.bands.map(b => [b, r.shares[b.id] / (b.h1 - b.h0)]).sort((x, y) => y[1] - x[1]).slice(0, 2).map(x => x[0].name.toLowerCase());
-  const D = DATA.bands.map(b => r.shares[b.id] / (b.h1 - b.h0)), mx = Math.max(...D), c = r.rival, cut = DATA.scenario.rivalCut && c.cut;
-  return `<div class="wd" style="grid-row:1 / span 2;border-color:var(--cyan);background:var(--wall-active)"><button class="x" data-city="" title="Close: back to the usual panels">✕</button><h3 style="padding-right:30px">${r.city} · customer market <span class="meta">${r.open === false ? 'you do not fly here yet' : 'one of your routes'}</span></h3><div class="wc">
-    <div class="prof">${[['Business', r.mix.business, '#3ce394'], ['Leisure', r.mix.leisure, '#5aa2ff'], ['Families', r.mix.family, '#b48cff']].map(([l, v, cc]) => `<div><b>${Math.round(v * 100)}%</b>${l}<i><u style="width:${Math.round(v * 100)}%;background:${cc}"></u></i></div>`).join('')}</div>
-    <div class="facts" style="margin-top:6px"><span>Signal</span><b class="${s[1]}">${s[0]}</b><span>Strongest demand</span><b>${top.join(' and ')}</b><span>Fare sensitivity</span><b>${r.sens}</b><span>Why</span><span style="color:#fff">${r.why}</span></div>
-    <div style="margin-top:10px;font-size:12px;color:var(--wsoft);letter-spacing:.06em">WHEN PEOPLE WANT TO FLY</div><div class="todbar">${DATA.bands.map((b, k) => `<div><i style="height:${Math.round(100 * D[k] / mx)}%;${D[k] === mx ? 'background:var(--gold)' : ''}"></i><small>${b.name}</small></div>`).join('')}</div>
-    <div class="facts" style="margin-top:8px"><span>Rival</span><b>${c.name}: £${cut ? c.cut : c.fare}, ${c.freq}${cut ? ' <span class="goldt">(cut from £' + c.fare + ')</span>' : ''}</b><span>Your fare</span><b>${r.open === false ? 'not flown' : '£' + fareOf(id)}</b></div></div>
-    <div class="wfoot"><button class="lnk" data-route="${id}">Route intelligence ›</button><button class="lnk" data-goto="season" data-sid="${id}">Seasonality & events ›</button></div></div>`; }
+/* a city's briefing: takes the right-hand column while a city is picked on the map */
+function cityPanel(id){ const r = R(id), a = arrow(r.trend), s = SIG[r.trend], MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const top = DATA.bands.map(b => [b, r.shares[b.id] / (b.h1 - b.h0)]).sort((x, y) => y[1] - x[1]).slice(0, 2).map(x => x[0].name.toLowerCase());
+  const best = r.months.map((v, k) => [v, k]).sort((x, y) => y[0] - x[0]).slice(0, 2).sort((x, y) => x[1] - y[1]).map(x => MON[x[1]]), c = r.rival, cut = DATA.scenario.rivalCut && c.cut;
+  return `<div class="wd" style="grid-row:1 / span 2;border-color:var(--c-cyan);background:var(--wall-panel-active);box-shadow:var(--wshadow-up)"><button class="x" data-city="" title="Close: back to the usual panels">✕</button>
+    <h3 style="padding-right:30px">${r.city} · customer market <span class="meta">${r.open === false ? 'not flown yet' : 'one of your routes'}</span></h3><div class="wc">
+    <div class="mix">${[['BUSINESS', r.mix.business, '#3CE394'], ['LEISURE', r.mix.leisure, '#36C6FF'], ['FAMILIES', r.mix.family, '#b48cff']].map(([l, v, cc]) => `<div>${l}<i><u style="width:${Math.round(v * 100)}%;background:${cc}"></u></i><b class="num">${Math.round(v * 100)}%</b></div>`).join('')}</div>
+    <div class="facts"><span>Strongest times</span><b>${top[0][0].toUpperCase() + top[0].slice(1)} + ${top[1]}</b><span>Fare sensitivity</span><b>${r.sens}</b><span>Trend</span><b class="${s[1]}">${a[0]} ${a[2]}</b><span>Busiest months</span><b>${best.join(' · ')}</b>
+      <span>Why now?</span><span style="color:#fff">${r.why}</span>${cut ? `<span>Rival</span><b class="wa">${c.name} now £${c.cut}</b>` : ''}</div></div>
+    <div class="wfoot"><button class="lnk" data-route="${id}">Open full Route Intelligence ›</button><button class="lnk" style="color:var(--c-soft)" data-goto="season" data-sid="${id}">Seasonality ›</button></div></div>`; }
 /* which panel goes where: the hero takes the top right; other woken panels take the place of one that can wait */
 function boardSlots(){
   const A = alerts(), slots = Object.assign({}, S.slots), note = {}, hero = A.length ? A[0].w : null, where = w => Object.keys(slots).find(k => slots[k] === w), woke = w => A.some(a => a.w === w);
@@ -591,41 +625,50 @@ function boardSlots(){
 }
 function wallIntel(){
   const { A, slots, note, hero } = boardSlots(); S._fresh = [];
-  const cell = k => { const id = slots[k], W = WIDGETS[id], a = A.find(x => x.w === id), isHero = id === hero && k === 'r1', key = a ? a.w + ':' + a.why : '', fresh = a && !S.seen.has(key);
+  const cell = k => { const id = slots[k], W = WIDGETS[id], a = A.find(x => x.w === id), lv = level(id, A), isHero = id === hero && k === 'r1', key = a ? a.w + ':' + a.why : '', fresh = a && !S.seen.has(key);
     if(fresh) S._fresh.push(key);
     const meta = S.arrange ? `<select class="arr" data-slot="${k}">${Object.keys(WIDGETS).map(w => `<option value="${w}" ${w === id ? 'selected' : ''}>${WIDGETS[w].t}</option>`).join('')}</select>`
       : `<span class="meta">${note[k] ? `in place of ${note[k]} for now` : W.meta()}</span>${note.focus === k ? '<button class="x" data-unfocus="1" title="Put back">✕</button>' : ''}`;
-    return `<div class="wd ${isHero ? 'hero' : a ? 'alert' : ''} ${fresh ? 'wake' : ''} ${S.hl === id ? 'hl' : ''}" data-w="${id}"><h3 ${note.focus === k ? 'style="padding-right:26px"' : ''}>${W.t}${meta}</h3>${a ? `<div class="kick">⚠ ${isHero || fresh ? 'New intelligence · ' : ''}<span>${a.why}</span></div>` : ''}<div class="wc">${W.html(k)}</div></div>`; };
-  return `${ribbon()}<div class="wbody"><div class="wtop"><div class="wd mapp"><h3>Network<span class="legend"><span><i style="background:#5fd4ff"></i>Our routes</span><span><i style="background:repeating-linear-gradient(90deg,#8197b8 0 2px,transparent 2px 7px)"></i>Not flown yet</span><span>Click a city</span></span></h3><div class="wmap">${mapSvg(820, 520, { marks:true, deco:true })}</div></div>
+    const cls = ['wd', 'l' + lv, a && a.sev === 'red' ? 'red' : '', isHero ? 'hero' : '', fresh ? 'wake' : '', S.hl === id ? 'hl' : ''].join(' ');
+    return `<div class="${cls}" data-w="${id}"><h3 ${note.focus === k ? 'style="padding-right:26px"' : ''}>${lv === 3 ? `<span class="lv" style="color:${a.sev === 'red' ? 'var(--c-red)' : 'var(--c-amber)'}">⚠</span>` : lv === 2 ? '<span class="lv" title="Worth a look">◆</span>' : ''}${W.t}${meta}</h3>${a ? `<div class="kick">${isHero || fresh ? '⚠ New intelligence · ' : ''}<span>${a.why}</span></div>` : ''}<div class="wc">${W.html(k)}</div></div>`; };
+  const W = weatherNow(), D3 = ['Today', 'Wednesday', 'Saturday'];
+  return `${ribbon()}<div class="wbody"><div class="wtop"><div class="wd mapp"><h3>Network<span class="legend"><span><i style="background:#36C6FF"></i>Our routes</span><span><i style="background:repeating-linear-gradient(90deg,#58779A 0 5px,transparent 5px 11px)"></i>Not flown yet</span><span><i style="background:none;border-top:1px dotted rgba(242,193,78,.6)"></i>Distance from home</span></span></h3><div class="wmap">${mapSvg(820, 520, { marks:true, deco:true })}</div></div>
     <div class="wright ${hero && !S.city ? 'hero' : ''}">${S.city ? cityPanel(S.city) : cell('r1') + cell('r2')}</div></div><div class="wbot">${cell('b1')}${cell('b2')}${cell('b3')}</div></div>
-    ${S.newsAll ? `<div class="feed"><div class="wd" style="padding:0;border:0;background:none;overflow:visible"><h3>World news · all stories<button class="x" id="newsClose" style="top:-4px;right:-4px">✕</button></h3></div>${DATA.world.stories.filter(x => !x.ifs || DATA.scenario[x.ifs]).concat(DATA.world.more).map(x => `<article><small>${x.tag.toUpperCase()} · ${x.when.toUpperCase()}</small><b>${x.pic} ${x.title}</b><small>${x.matters}</small></article>`).join('')}</div>` : ''}`;
+    ${S.newsAll ? `<div class="feed"><div class="wd" style="padding:0;border:0;background:none;box-shadow:none;overflow:visible"><h3>World news · all stories<button class="x" id="feedClose" style="top:-4px;right:-4px">✕</button></h3></div>${storiesNow().concat(DATA.world.more).map(x => `<article><small>${x.pic} ${x.tag.toUpperCase()} · ${x.when.toUpperCase()}</small><b>${x.title}</b><small class="${tone(x.tone)}">${x.cons}</small></article>`).join('')}</div>` : ''}
+    ${S.wxAll ? `<div class="feed"><div class="wd" style="padding:0;border:0;background:none;box-shadow:none;overflow:visible"><h3>Weather · this week<span class="meta">updated 08:00</span><button class="x" id="feedClose" style="top:-4px;right:-4px">✕</button></h3></div><table><thead><tr><th>Airport</th>${D3.map(d => `<th>${d}</th>`).join('')}<th>Status</th></tr></thead><tbody>${DATA.routes.map(r => { const st = wxStatus(W[r.id]); return `<tr><td>${r.city} <small class="sf">${r.code}</small></td>${W[r.id].map(i => `<td style="font-size:20px">${i}</td>`).join('')}<td class="${st[1]}" style="font-size:11.5px;letter-spacing:.14em;font-weight:600">${st[0]}</td></tr>`; }).join('')}</tbody></table>` : ''}`;
 }
 function wallLive(){ const M = model(), now = S.clock, W = 820, H = 520, hp = proj(DATA.home.lon, DATA.home.lat, W, H), code = f => DATA.airline.code + (100 + f.ai * 10 + f.fi);
   const rows = M.flights.slice().sort((a, b) => a.dep - b.dep).map(f => { const len = tripMin(f.type, f.rid), leg = Math.round(legH(f.type, f.rid) * 60);
-    const st = now < f.dep - 30 ? ['On time', ''] : now < f.dep ? ['Boarding', 'bo'] : now < f.dep + leg ? ['Departed', 'de'] : now < f.dep + len ? ['At ' + R(f.rid).city, 'la'] : ['Back home', 'la'];
+    const st = now < f.dep - 30 ? ['On time', ''] : now < f.dep - 10 ? ['Boarding', 'bo'] : now < f.dep ? ['Gate closed', 'bo'] : now < f.dep + leg ? ['Departed', 'de'] : now < f.dep + len ? ['At ' + R(f.rid).city, 'la'] : ['Back home', 'la'];
     return `<tr><td>${hm(f.dep)}</td><td>${code(f)}</td><td>${R(f.rid).city.toUpperCase()}</td><td style="font-family:system-ui">${P(f.type).name}</td><td>${f.pax}/${f.seats}</td><td class="stt ${st[1]}">${st[0]}</td></tr>`; }).join('');
   const planes = M.flights.map(f => { const leg = Math.round(legH(f.type, f.rid) * 60), len = tripMin(f.type, f.rid), p = proj(R(f.rid).lon, R(f.rid).lat, W, H); let k = null, back = false;
     if(now >= f.dep && now < f.dep + leg) k = (now - f.dep) / leg; else if(now >= f.dep + leg + DATA.turnaroundMin && now < f.dep + len){ k = 1 - (now - f.dep - leg - DATA.turnaroundMin) / leg; back = true; }
     if(k === null) return null; const mx = (hp[0] + p[0]) / 2, my = (hp[1] + p[1]) / 2 - Math.hypot(p[0] - hp[0], p[1] - hp[1]) * .2, u = 1 - k;
     const dx = 2 * u * (mx - hp[0]) + 2 * k * (p[0] - mx), dy = 2 * u * (my - hp[1]) + 2 * k * (p[1] - my), ang = Math.atan2(dy, dx) * 180 / Math.PI + (back ? 180 : 0);
     return [u * u * hp[0] + 2 * u * k * mx + k * k * p[0], u * u * hp[1] + 2 * u * k * my + k * k * p[1], code(f), ang]; }).filter(Boolean);
+  // the operations feed: what has just happened, newest first (from the timetable; nothing new is simulated)
+  const ev = []; M.flights.forEach(f => { const leg = Math.round(legH(f.type, f.rid) * 60), len = tripMin(f.type, f.rid), c = code(f), city = R(f.rid).city;
+    ev.push([f.dep - 30, `${c} boarding for ${city}: ${f.pax} passengers`], [f.dep - 10, `${c} gate closed`], [f.dep, `${c} departed for ${city}`], [f.dep + leg, `${c} landed in ${city}`],
+            [f.dep + leg + DATA.turnaroundMin, `${c} left ${city} for home`], [f.dep + len, `${c} back at ${DATA.home.city}`]); });
+  const feed = ev.filter(e => e[0] <= now).sort((a, b) => b[0] - a[0]).slice(0, 6);
   const done = now >= DATA.dayEnd * 60, prof = Math.round(M.profit * Math.max(0, Math.min(1, (now - DATA.dayStart * 60) / ((DATA.dayEnd - DATA.dayStart) * 60))));
   const back = M.flights.filter(f => now >= f.dep + tripMin(f.type, f.rid)), off = M.flights.filter(f => now >= f.dep), fuelNowL = M.flights.reduce((t, f) => t + f.fuelL * Math.max(0, Math.min(1, (now - f.dep) / tripMin(f.type, f.rid))), 0);
   const nx = M.flights.filter(f => f.dep > now).sort((a, b) => a.dep - b.dep)[0];
   return `<div class="wbody lv"><div class="live"><div class="wd mapp"><h3>In the air<span class="meta">${planes.length ? planes.length + ' aircraft flying now' : 'nothing in the air just now'}</span></h3><div class="wmap">${mapSvg(W, H, { planes, live:true })}</div></div>
     <div class="wd"><h3>Departures<span class="meta">${DATA.today.long}</span></h3><table class="board"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th>Aircraft</th><th>Booked</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
-      ${nx ? `<div class="nextdep"><span>NEXT DEPARTURE</span><b>${hm(nx.dep)} ${code(nx)} to ${R(nx.rid).city}</b><small>${nx.pax} booked on the ${P(nx.type).name} · ${nx.dep - now > 30 ? 'boarding at ' + hm(nx.dep - 30) : 'boarding now'}</small></div>` : ''}
-      <div class="today"><div><span>Flights off</span><b class="mono">${off.length} of ${M.flights.length}</b></div><div><span>Back home</span><b class="mono">${back.length}</b></div><div><span>Passengers flown</span><b class="mono">${off.reduce((t, f) => t + f.pax, 0)}</b></div><div><span>Fuel burned</span><b class="mono">${num(Math.round(fuelNowL / 10) * 10)} L</b></div></div></div></div>
+      ${nx ? `<div class="nextdep"><span>NEXT DEPARTURE</span><b class="num">${hm(nx.dep)} ${code(nx)} to ${R(nx.rid).city}</b><small>${nx.pax} booked on the ${P(nx.type).name} · ${nx.dep - now > 30 ? 'boarding at ' + hm(nx.dep - 30) : 'boarding now'}</small></div>` : ''}
+      <div class="opsfeed"><h4>OPERATIONS FEED</h4>${feed.length ? feed.map(e => `<div><span class="t">${hm(e[0])}</span><span>${e[1]}</span></div>`).join('') : '<div><span class="t"></span><span>The first flight boards at ' + hm(Math.min(...M.flights.map(f => f.dep)) - 30) + '.</span></div>'}</div>
+      <div class="today"><div><span>Flights off</span><b class="num">${off.length} of ${M.flights.length}</b></div><div><span>Back home</span><b class="num">${back.length}</b></div><div><span>Passengers flown</span><b class="num">${off.reduce((t, f) => t + f.pax, 0)}</b></div><div><span>Fuel burned</span><b class="num">${num(Math.round(fuelNowL / 10) * 10)} L</b></div></div></div></div>
     <div class="wd" style="flex-direction:row;align-items:center;gap:16px;background:var(--wall-panel-deep)"><span class="clock">${hm(now)}</span><button class="btn pri" id="wPlay">${S.playing ? '❚❚ Pause' : done ? '↺ Run again' : '▶ Run the day'}</button><button class="btn" id="wReset">06:00</button>
-      <span class="soft">Profit so far today: <b class="goldt mono">${money(prof)}</b></span>${done ? '<button class="btn go" id="wReview" style="margin-left:auto">The day is done: Sunday\'s review ▶</button>' : ''}</div></div>`; }
+      <span class="sf">Profit so far today: <b class="gd num">${money(prof)}</b></span>${done ? '<button class="btn go" id="wReview" style="margin-left:auto">The day is done: Sunday\'s review ▶</button>' : ''}</div></div>`; }
 function wallHtml(){
   const sc = DATA.scenario, live = S.wmode === 'live';
   return `<div class="wall"><div class="wh"><h1>OPERATIONS WALL</h1><div class="seg"><button data-wmode="intel" class="${live ? '' : 'on'}">INTELLIGENCE</button><button data-wmode="live" class="${live ? 'on' : ''}">LIVE OPERATIONS</button></div><span class="sp"></span>
-    <span class="stamp2">${live ? 'LIVE · <b>' + hm(S.clock) + '</b>' : 'INTELLIGENCE UPDATED <b>08:00</b>'}</span><button class="wicon ${S.sbx ? 'on' : ''}" id="wSet" title="Wall settings">⚙</button><button class="back" id="wClose">◀ Return to desk</button></div>
+    <span class="stamp2">${live ? 'LIVE · <b class="num">' + hm(S.clock) + '</b>' : 'Intelligence updated <b>08:00</b>'}</span><button class="wicon ${S.sbx ? 'on' : ''}" id="wSet" title="Developer controls: arrange, sandbox">⋯</button><button class="back" id="wClose">◀ Return to desk</button></div>
     ${live ? wallLive() : wallIntel()}
-    ${S.sbx ? `<div class="sbx"><h4>WALL SETTINGS</h4>${live ? '<p class="soft" style="margin:0">Nothing to arrange on Live operations.</p>' : `<button class="btn ${S.arrange ? 'pri' : ''}" id="wArr">${S.arrange ? 'Done arranging' : 'Arrange the panels'}</button>`}
-      <h4>SANDBOX ONLY: THIS WEEK'S SITUATION</h4><label><input type="checkbox" data-sc="storm" ${sc.storm ? 'checked' : ''}> A storm heads for Dublin</label><label><input type="checkbox" data-sc="fuelSpike" ${sc.fuelSpike ? 'checked' : ''}> Fuel jumps 9% overnight</label><label><input type="checkbox" data-sc="rivalCut" ${sc.rivalCut ? 'checked' : ''}> Red Kite cuts its Paris fare</label>
-      <button class="btn" id="wReplay" style="margin-top:6px">Replay the wake-up</button><p class="soft" style="margin:8px 0 0;font-size:12.5px">The first thing that happens becomes the hero: it moves to the top right and grows. Others get an amber edge, or take the place of a panel that can wait.</p></div>` : ''}</div>`;
+    ${S.sbx ? `<div class="sbx"><h4>ARRANGE</h4>${live ? '<p class="sf" style="margin:0">Nothing to arrange on Live operations.</p>' : `<button class="btn ${S.arrange ? 'pri' : ''}" id="wArr">${S.arrange ? 'Done arranging' : 'Arrange the panels'}</button>`}
+      <h4>SANDBOX: THIS WEEK'S SITUATION</h4><label><input type="checkbox" data-sc="storm" ${sc.storm ? 'checked' : ''}> A storm heads for Dublin</label><label><input type="checkbox" data-sc="fuelSpike" ${sc.fuelSpike ? 'checked' : ''}> Fuel jumps 9% overnight</label><label><input type="checkbox" data-sc="rivalCut" ${sc.rivalCut ? 'checked' : ''}> Red Kite cuts its Paris fare</label>
+      <button class="btn" id="wReplay" style="margin-top:6px">Replay the wake-up</button><p class="sf" style="margin:8px 0 0;font-size:12.5px">The first change becomes the hero (top right). Others get an amber edge, or take the place of a panel that can wait.</p></div>` : ''}</div>`;
 }
 
 /* =====================================================================
@@ -697,7 +740,7 @@ function stopClock(){ if(S.playing){ clearInterval(S.playing); S.playing = null;
 function runClock(){ stopClock(); if(S.clock >= DATA.dayEnd * 60) S.clock = DATA.dayStart * 60;
   S.playing = setInterval(() => { S.clock += 5; if(S.clock >= DATA.dayEnd * 60){ S.clock = DATA.dayEnd * 60; stopClock(); } render(); }, 120); }
 function openWall(mode){ S.wall = true; if(mode) S.wmode = mode; if(S.wmode !== 'live') stopClock(); render(); }
-function closeWall(){ S.wall = false; S.arrange = false; S.sbx = false; S.focus = null; S.mapHl = null; S.newsAll = false; stopClock(); render(); }
+function closeWall(){ S.wall = false; S.arrange = false; S.sbx = false; S.focus = null; S.mapHl = null; S.newsAll = false; S.wxAll = false; stopClock(); render(); }
 function bind(){
   const $$ = s => document.querySelectorAll(s), on = (s, f) => $$(s).forEach(e => e.addEventListener('click', ev => f(e, ev)));
   on('[data-go]', e => { S.view = e.dataset.go; render(); });
@@ -710,10 +753,10 @@ function bind(){
   on('#wArr', () => { S.arrange = !S.arrange; render(); }); on('#wSet', () => { S.sbx = !S.sbx; render(); }); on('#wReplay', () => { S.seen.clear(); S.sbx = false; render(); });
   on('[data-focus]', e => { S.focus = e.dataset.focus; S.hl = e.dataset.focus; S.mapHl = e.dataset.fcity || null; S.city = null; render(); });   // the ribbon: light up its panel, and its city
   on('[data-unfocus]', () => { S.focus = null; S.mapHl = null; render(); });
-  on('#newsAll', () => { S.newsAll = true; render(); }); on('#newsClose', () => { S.newsAll = false; render(); });
+  on('#newsAll', () => { S.newsAll = true; S.wxAll = false; render(); }); on('#wxAll', () => { S.wxAll = true; S.newsAll = false; render(); }); on('#feedClose', () => { S.newsAll = S.wxAll = false; render(); });
   on('[data-goto]', e => { if(e.dataset.sid) S.seasonId = e.dataset.sid; S.view = e.dataset.goto; closeWall(); });
   on('[data-sid]', e => { S.seasonId = e.dataset.sid; render(); });
-  on('[data-wallfocus]', e => { const w = e.dataset.wallfocus; S.focus = ['news', 'fuel'].includes(w) ? null : w; S.hl = w; S.wmode = 'intel'; openWall(); });
+  on('[data-wallfocus]', e => { const w = e.dataset.wallfocus; S.city = null; S.focus = ['news', 'fuel'].includes(w) ? null : w; S.hl = w; S.wmode = 'intel'; openWall(); });
   $$('[data-sc]').forEach(c => c.addEventListener('change', () => { DATA.scenario[c.dataset.sc] = c.checked; render(); }));
   $$('select.arr').forEach(sl => { sl.addEventListener('click', ev => ev.stopPropagation()); sl.addEventListener('change', () => { const k = sl.dataset.slot, v = sl.value, other = Object.keys(S.slots).find(z => z !== k && S.slots[z] === v);
     if(other) S.slots[other] = S.slots[k]; S.slots[k] = v; if(k === 'r1') S.city = null; render(); }); });   // picking a panel already on the wall swaps the two
