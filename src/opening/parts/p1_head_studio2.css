@@ -327,3 +327,13 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .cp-pics{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.cp-pics figure{margin:0;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#8fb0da}.cp-pics img{max-width:180px;max-height:130px;border:1px solid rgba(159,180,211,.4)}
 .cp-page .dp-body{overflow-y:auto}
 .acq-page .dp-body{overflow-y:auto;overflow-x:hidden;padding-right:4px}
+/* ---------- D89 fuel storage: the storage line, the price of a block, Fill, the fuel farm ---------- */
+.fd-r.fs-cap b small{font-weight:500;color:#9fbde3;font-size:13px}
+.fs-pb{color:#fff}.fd-ord .dk-pnl-h h2,.fs-sub{white-space:nowrap}
+.fd-b.fs-fill{border-color:#5BE08A;color:#5BE08A}
+.fs-farm-l{display:flex;align-items:center;gap:8px;margin:6px 0 2px;padding:6px 10px;border:1px solid rgba(242,193,78,.55);border-radius:4px;background:rgba(242,193,78,.08);color:#F2C14E;font-size:14px}
+.fs-farm-l svg{width:18px;height:18px;flex:none}.fs-farm-l span{flex:1}.fs-farm-l .dk-link{white-space:nowrap}
+.fs-dlg{width:56%;max-height:100%;overflow-y:auto}.fs-dlg p{color:#d6e6ff;font-size:15px;line-height:1.45;margin:0 0 8px}
+.fs-dlg .fs-sum{margin:10px 0}.fs-dlg .fs-ans{margin:4px 0;color:#fff}
+.fs-dlg .good{color:#5BE08A}.fs-dlg .bad{color:#ff7b7b}
+.fs-btns{display:flex;gap:10px;margin-top:10px}

@@ -7,7 +7,7 @@ const V2 = true;   // the game is the revised Studio (one file since 13 Oct 2026
 const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
 (async () => {
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
-  let modelWide = false, openerSeen = false, newsSeen = false, d67 = null; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [], foLevels = [];
+  let modelWide = false, openerSeen = false, newsSeen = false, d67 = null; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [], foLevels = [], caps = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
@@ -279,7 +279,6 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
           ok('day 8: the card has one method, make it whole, in three steps (1.47 × 100, one whole-number multiplication, ÷ 100)', !(await vis('[data-scm]')) && /Make the price a whole number/.test(await p.textContent('.sc-p1')) && /1\.47 × 100/.test(await p.textContent('.sc-p1')) && /Multiply the whole numbers/.test(await p.textContent('.sc-p1')) && /120 × 147/.test(await p.textContent('.sc-p1')) && !/120 × 7p|a line for each part/i.test(await p.textContent('.sc-p1')) && /Divide by 100 to put the 2 decimal places back/.test(await p.textContent('.sc-p1')), (await p.textContent('.sc-p1')).replace(/\s+/g, ' ').slice(0, 300));
           await p.click('#scBack'); await p.waitForTimeout(100); ok('day 8: Back to plan returns to the planner', await vis('.ad'), await T()); }
         if(await p.$('#mapOpen')){ await p.click('#mapOpen'); ok('day 8: the network map is a button away, with the destinations, the rival\'s fares and the demand', await vis('#hqMap') && (await p.$$('.net-dest tbody tr')).length >= 2); await shot(`d${day}-map`); await p.click('[data-nav="plan"]'); await p.waitForTimeout(60); } }
-      if(day === 29) ok('day 29: the storage upgrade: the tank holds 20,000 L from today', await p.evaluate(() => window.__sim.evalIn('tankCapacity()')) === 20000, await p.evaluate(() => window.__sim.evalIn('tankCapacity()')));
       if(day === 8 || day === 22){ await (V2 ? v2Checks : studioChecks)('day ' + day); await shot(`d${day}-studio`); }
       if(planned3 && !delChk && !(d67 && d67.day === day)){ delChk = true;   // three aircraft: the pressed flight's buttons stay on screen, and Delete removes it
         await toPlan(); const blks = await p.$$('.ad-blk[data-tl]'), n0 = blks.length; await blks[n0 - 1].click(); await p.waitForTimeout(150);
@@ -306,6 +305,9 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       if(s.phase === 'setup') ok('launch: the sums were done in the dock beside the plan', await vis('.dock-sum') && await vis('.ad'));
       ok(`work ${day}: back enabled`, !!(await p.$('#nx')) && await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
     if(t === 'fuelDesk'){ await fits('fuelDesk ' + day); await shot(`d${day}-fueldesk`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
+      { const R = JSON.parse(await p.evaluate(() => window.__sim.evalIn('JSON.stringify(fuelStoreReport())'))), m = txt.match(/Storage ?([\d,]+) L(?: \(fuel farm\))? — (about \w+ weeks?|less than a week) of flying/);   // D89: the storage line, each Monday
+        caps.push([day, R.cap, R.block, R.log.length ? R.log[R.log.length - 1].week : null]);
+        ok(`day ${day}: the desk's storage line "Storage ${R.cap.toLocaleString('en-GB')} L — ${m ? m[2] : '?'} of flying" (D89)`, !!m && +m[1].replace(/,/g, '') === R.cap && R.block === 1000 && (day !== 8 || R.cap === 8000), [R.cap, R.block, m && m[0]]); }
       if(day === 8){ ok('day 8: the fuel desk shows next week\'s band £1.60–£1.76 at high confidence, and today\'s £1.47', /£1\.60 – £1\.76/.test(txt) && /High/.test(txt) && /£1\.47 \/ L/.test(txt), (txt.match(/Next week's forecast.{0,60}/) || [''])[0]);
         ok('day 8: the scenario table has a row for each point of the band', (await p.$$('.fd-t tbody tr')).length >= 4, (await p.$$('.fd-t tbody tr')).length);
         ok('day 8: the desk says what an empty tank costs (the day\'s price + 10p)', /day's price \+ 10p/.test(txt)); }
@@ -370,6 +372,9 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     if(s.day >= 22 && !CAP){ ok('week 2: the time to afford (the Saab) is the Calculate sign-off; the fuel order is a Build (the price moved 17p since Launch Day, D86)', w(2).asked.some(x => /Time to afford: Saab 340/.test(x)) && w(2).build.some(x => /fuel order/.test(x)) && !w(2).asked.some(x => /Rent or buy|Fuel:/.test(x)), w(2));
       ok('week 3: Amsterdam tickets and flight time; no fuel card (fuel is the weekly order, the model\'s this week)', w(3).asked.some(x => /Tickets: Amsterdam/.test(x)) && w(3).asked.some(x => /Flight time: Amsterdam/.test(x)) && !w(3).asked.some(x => /Fuel/.test(x)) && w(3).model.some(x => /fuel order/.test(x)), w(3));
       ok('chapter 1 is buy only: no rent-or-buy sum in any week (it is first met in January)', rows.every(r => !r.asked.concat(r.build).some(x => /Rent or buy/.test(x))), rows.map(r => r.asked.concat(r.build).filter(x => /Rent|afford/.test(x)))); } }
+  if(s.day >= 92){ const R = JSON.parse(await p.evaluate(() => window.__sim.evalIn('JSON.stringify(fuelStoreReport())')));
+    ok('D89: the tank grows with the fleet: 8,000 L in week 2, then three weeks of the standing plan rounded up to ten blocks, never shrinking (no storage upgrade on day 29)',
+      caps.length > 3 && caps[0][1] === 8000 && caps.every((c, i) => !i || c[1] >= caps[i - 1][1]) && R.log.length >= 1 && R.log.every(g => g.to % 10000 === 0 && g.to >= 3 * g.week && g.to - 10000 < 3 * g.week) && R.cap > 8000, { caps, log:R.log }); }
   if(s.day >= 92 && !CAP) ok('month ends: an audit at the start of the 4 Nov and 2 Dec weeks', audits.some(a => a.day === 64) && audits.some(a => a.day === 92), audits);
   if(COAST && s.day >= 64) ok('COAST: the plan unchanged all October brings a board review, and the plan waits for a change', audits.some(a => a.board) && boards.length > 0, { audits, boards });
   if(!COAST && s.day >= 92) ok('Steady: the plan changes each month, so no board review', !audits.some(a => a.board), { audits, changes });

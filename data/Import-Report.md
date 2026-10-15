@@ -8,12 +8,12 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 138 | 138 live, 9 placeholder |
+| Settings | 140 | 140 live, 9 placeholder |
 | Archetypes | 5 | 2 later, 5 live |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved to Routes |
 | Aircraft | 15 | 15 live, 1 note row, 1 removed |
-| Finance | 15 | 15 live, 2 note row |
+| Finance | 16 | 16 live, 2 note row |
 | Airports | 1 | 1 later, 1 live, 3 removed |
 | Calendar | 49 | 49 live |
 | Market | 156 | 260 later, 156 live |
@@ -125,6 +125,19 @@ The Settings rows and PlanTips columns these read, as loaded.
 - `planImprovedBanner`: True
 - `whatWasItWorth`: change per unit × units = a day; × 7 = a week
 - **PlanTips:** peak_unserved (priority 1, Change the times), service_weak (priority 2, Change the times), turned_away (priority 2, Change the fare | Change the number of services), fare_too_high (priority 2, Change the fare), fare_too_low (priority 3, Change the fare), idle_plane (priority 3, Change the number of services), long_leg_warning (priority 3, Change the aircraft), range_fail (priority 1, Change the aircraft), all_good (priority 9), general_tradeoff (priority 9), fare_lower_fills (priority 3, Change the fare), weekend_only_news (priority 1, Change the number of services), plane_unused (priority 1, Change the number of services | Change the aircraft), loss_making_service (priority 1, Change the times | Change the fare | Change the number of services), plan_loses_money (priority 0).
+
+## Fuel storage (D89) touches
+
+The Settings rows and the Finance row these read, as loaded.
+
+- `fuelLotSize`: 1000
+- `tankCapacity`: 8000
+- `tankWeeksOfFuel`: 3
+- `fuelFarm`: chapter 3: buy storage
+- **Block sizes:** 1,000 L; 10,000 L from 2031-01-06; 100,000 L from 2031-09-01.
+- `tankUpgradeDay`: withdrawn (not loaded).
+- `tankCapacityUpgraded`: withdrawn (not loaded).
+- **Fuel farm:** 1,500,000 L for £2,000,000 from 2031-09-01; stage 2 3,000,000 L for £3,000,000 more from 2032-09-06.
 
 ## Identity and photos (CR5)
 

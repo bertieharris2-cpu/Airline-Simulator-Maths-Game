@@ -66,6 +66,13 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
   await shot('c4-03-summer-results'); await p.click('#nx'); await p.waitForTimeout(200);
 
   // ---------- chapter 4 ----------
+  // D89: the fuel farm on the Fuel desk: open it, Build "is it worth it?" when asked, then buy it or say not now
+  const farm = async buy => { if(!(await p.$('#fsFarmOpen'))) return null; const line = await txt('.fs-farm-l'); await p.click('#fsFarmOpen'); await p.waitForTimeout(120);
+    const R0 = JSON.parse(await E('JSON.stringify(fuelStoreReport())')), dlg = await txt('.fs-dlg'), c0 = (await S()).cash;
+    if(await p.$('#fsChk')){ for(const s of ['[data-fsfig="L"]', '[data-fsop="×"]', '[data-fsfig="R"]']) await p.click(s); await p.click('#fsChk'); await p.waitForTimeout(100); }
+    const sum = await txt('.fs-sum'), canBuy = !!(await p.$('#fsBuy:not([disabled])'));
+    if(buy && canBuy){ await p.click('#fsBuy'); await p.waitForTimeout(120); } else if(await p.$('#fsNot')){ await p.click('#fsNot'); await p.waitForTimeout(100); }
+    return { line, dlg, sum, canBuy, R0, R1:JSON.parse(await E('JSON.stringify(fuelStoreReport())')), paid:Math.round(c0 - (await S()).cash) }; };
   const seen = {}; let cash0 = null;
   for(let i = 0; i < 1500; i++){ const t = await T(); s = await S(); const day = s.day;
     if(day >= UPTO && t === 'hq'){ checks.push('stopped at hq day ' + day); break; }
@@ -129,6 +136,9 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
       const en = await p.$eval('#nx', e => !e.disabled).catch(() => false); ok(`plan ${day}: continue enabled`, en); if(!en){ await shot(`c4-d${day}-plan-stuck`); break; } await p.click('#nx'); continue; }
     if(t === 'workings' && await vis('.so-page')){ await signs(); await p.waitForTimeout(300); await p.click('#nx'); await p.waitForTimeout(80); continue; }
     if(t === 'workings'){ await solveW(); await p.click('#nx'); continue; }
+    if(t === 'fuelDesk' && !seen.farm2 && day >= 736){ seen.farm2 = true; const F = await farm(TYPE === 'value'); info.farm2 = F && { line:F.line, sum:F.sum, R1:F.R1, paid:F.paid };   // D89
+      if(TYPE === 'value') ok('D89: from 6 September 2032 the second stage: 3,000,000 L in all for £3,000,000; the worth line is the model\'s now (1,500,000 more × 60p = £900,000); Value buys it', F && /the second stage, 3,000,000 L in all for £3,000,000/.test(F.line) && /1,500,000 × 60p = £900,000/.test(F.sum) && !/Build it from the figures/.test(F.dlg) && F.paid === 3000000 && F.R1.farm.stage === 2 && F.R1.cap === Math.max(3000000, F.R1.fleetCap), F && [F.line, F.sum, F.paid, F.R1.cap]);
+      else ok('D89: Premium has no farm, so stage 1 is still on offer (1,500,000 L for £2,000,000)', F && /1,500,000 L for £2,000,000/.test(F.line), F && F.line); }
     if(t === 'fuelDesk'){ const bn = await p.$('[data-fdb="2"]:not([disabled])'); if(bn){ await bn.click(); await p.waitForTimeout(60);
         if(await p.$('#foChk')){ const FO = JSON.parse(await E('JSON.stringify(foPlan())')); if(FO.level === 'build'){ for(const x of FO.seq) await p.click(x === '×' ? '[data-foop="×"]' : `[data-fofig="${x}"]`); } else await p.fill('#foIn', FO.answer); await p.click('#foChk'); await p.waitForTimeout(60); }
         if(await p.$('#fdBuy:not([disabled])')) await p.click('#fdBuy'); await p.waitForTimeout(80); } await p.click('#nx'); continue; }

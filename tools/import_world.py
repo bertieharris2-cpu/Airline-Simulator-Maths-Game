@@ -154,6 +154,16 @@ if 'blockedFlightCodes' in settings: settings['blockedFlightCodes'] = [w.upper()
 if isinstance(settings.get('forecastConfidenceLevels'), str): settings['forecastConfidenceLevels'] = [w.strip() for w in settings['forecastConfidenceLevels'].split('|') if w.strip()]
 for k in ('crewMechanicFromDate', 'crewFromDate'):   # crew duty waits for the airline-type choice (D51)
     if settings.get(k): settings[k] = date(settings[k]).isoformat()
+# v5.8 (D89): fuelLotSize is a schedule, "1000 | 10000 from 2031-01-06 | 100000 from 2031-09-01". fuelLotSize keeps the first size;
+# fuelLotSchedule lists each size with the date it starts. A value of "withdrawn" drops the row (tankUpgradeDay, tankCapacityUpgraded).
+if isinstance(settings.get('fuelLotSize'), str):
+    sched = []
+    for part in [x.strip() for x in settings['fuelLotSize'].split('|') if x.strip()]:
+        m_ = re.match(r'^([\d,]+)(?:\s+from\s+(\d{4}-\d{2}-\d{2}))?$', part)
+        if not m_: issue('error', 'Settings', f'fuelLotSize: "{part}" is not "N" or "N from YYYY-MM-DD".'); continue
+        sched.append({'size': int(m_.group(1).replace(',', '')), 'from': m_.group(2)})
+    if sched: settings['fuelLotSize'] = sched[0]['size']; settings['fuelLotSchedule'] = sched
+for k in [k for k, v in settings.items() if v == 'withdrawn']: del settings[k]
 CH1_END = dt.date(2030, 12, 28)   # chapter 1's review date; rows dated on or before it must be live (see "Chapter 1 touches")
 
 arche = live('Archetypes', sheet(wb, 'Archetypes'))
@@ -197,6 +207,17 @@ aircraft_preview = [{'id': AIRCRAFT_IDS.get(a['id'], a['id']), 'name': a['name']
                     for a in all_aircraft if a.get('id') and a.get('status') in ('placeholder', 'later')]
 
 finance_rows = live('Finance', sheet(wb, 'Finance'))
+# v5.8 (D89): the fuelFarm row is fuel storage to buy, not a plane. Its capacities and second stage are read from the notes.
+farm_row = next((f for f in finance_rows if f.get('aircraftId') == 'fuelFarm'), None)
+finance_rows = [f for f in finance_rows if f.get('aircraftId') != 'fuelFarm']
+fuel_farm = None
+if farm_row:
+    n_ = str(farm_row.get('notes') or '')
+    c1 = re.search(r'([\d,]{7,}) L', n_); s2 = re.search(r'second stage of ([\d,]+) L for £([\d.]+)m from (\d{4}-\d{2}-\d{2})', n_)
+    fuel_farm = {'price': farm_row.get('cashPrice'), 'from': str(farm_row.get('buyFrom'))[:10], 'litres': int(c1.group(1).replace(',', '')) if c1 else None, 'notes': n_,
+                 'stage2': {'litres': int(s2.group(1).replace(',', '')), 'price': round(float(s2.group(2)) * 1e6), 'from': s2.group(3)} if s2 else None}
+    if not c1: issue('error', 'Finance', 'fuelFarm: no capacity ("1,500,000 L") in the notes.')
+    if not s2: issue('check', 'Finance', 'fuelFarm: no second stage ("a second stage of 3,000,000 L for £3m from 2032-09-06") in the notes; chapter 4 has no stage 2.')
 TUTORIAL = {'dhc6', 'saab340', 'atr72', 'e175', 'e190'}      # launch-deal finance is paid by the day; from the A220 by the week
 def fin_num(v): return v if isinstance(v, (int, float)) else None
 finance = [{'aircraft': AIRCRAFT_IDS.get(f['aircraftId'], f['aircraftId']), 'cashPrice': f['cashPrice'], 'leaseDaily': f['leaseDaily'],
@@ -360,7 +381,7 @@ else:
 
 world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isoformat(), 'loaded': sorted(LOAD),
          'settings': settings, 'archetypes': archetypes, 'routes': routes, 'routeCatalogue': catalogue,
-         'aircraft': aircraft, 'finance': finance, 'airports': airports, 'calendar': calendar, 'market': market,
+         'aircraft': aircraft, 'finance': finance, 'fuelFarm': fuel_farm, 'airports': airports, 'calendar': calendar, 'market': market,
          'events': events, 'challenges': challenges, 'mechanics': mechanics,
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
          'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips, 'teacherMilestones': teacherMilestones,
@@ -671,6 +692,20 @@ for t in planTips:
     if not t.get('action') and t['id'] not in ('all_good', 'general_tradeoff'): issue('check', 'PlanTips', f'{t["id"]} has no action: the operations check (D87) needs a button for it.')
 t57.append('- **PlanTips:** ' + ', '.join(f'{t["id"]} (priority {t["priority"]}{", " + str(t["experiment"]) if t.get("experiment") and t["experiment"] != "—" else ""})' for t in planTips) + '.')
 out += ['', '## Decision support (D87) and what a change was worth (D88) touches', '', 'The Settings rows and PlanTips columns these read, as loaded.', ''] + t57
+
+# v5.8 touches: fuel storage grows with the fleet (D89)
+NEEDED_V58 = ['fuelLotSize', 'tankCapacity', 'tankWeeksOfFuel', 'fuelFarm']
+t58 = []
+for k in NEEDED_V58:
+    st_ = settings_status.get(k)
+    if st_ is None: t58.append(f'- **Settings:** `{k}` is not on the sheet.')
+    elif st_ not in LOAD: t58.append(f'- **Settings:** `{k}` is `{st_}`: not loaded.')
+    else: t58.append(f'- `{k}`: {settings.get(k)}')
+if settings.get('fuelLotSchedule'): t58.append('- **Block sizes:** ' + '; '.join(f'{x["size"]:,} L' + (f' from {x["from"]}' if x['from'] else '') for x in settings['fuelLotSchedule']) + '.')
+for k in ('tankUpgradeDay', 'tankCapacityUpgraded'):
+    if settings_status.get(k) and k not in settings: t58.append(f'- `{k}`: withdrawn (not loaded).')
+t58.append('- **Fuel farm:** ' + (f'{fuel_farm["litres"]:,} L for £{fuel_farm["price"]:,} from {fuel_farm["from"]}' + (f'; stage 2 {fuel_farm["stage2"]["litres"]:,} L for £{fuel_farm["stage2"]["price"]:,} more from {fuel_farm["stage2"]["from"]}' if fuel_farm.get('stage2') else '') if fuel_farm else 'no row') + '.')
+out += ['', '## Fuel storage (D89) touches', '', 'The Settings rows and the Finance row these read, as loaded.', ''] + t58
 
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'
