@@ -16,6 +16,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
 const CODE = process.env.CODE || path.join(os.tmpdir(), `airline-ch2-end-${TYPE}.txt`);
 if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=${TYPE} SAVE=${CODE} node chapter2.test.js`); process.exit(1); }
 (async () => {
+  const ftpSeen = [];
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
   const errors = [], checks = [], overflow = [], info = {};
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
@@ -124,6 +125,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
     if(t === 'paint'){ await p.click('#roll'); continue; }
     if(t === 'reveal'){ await p.click('#skipReveal', { timeout:2000 }).catch(() => {}); for(let k = 0; k < 50 && await p.$eval('#nx', e => e.hidden); k++) await p.waitForTimeout(100); await p.click('#nx'); continue; }
     // the shop never opens by itself (Bertie, 14 Oct): the test pupil opens it from the Fleet desk on day 365 and, for Premium, on a plan day after 394 for the A350
+    if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.fill(`[data-ftpin="${P.next.key}"]`, String(P.next.answer)); await p.click(`[data-ftpchk="${P.next.key}"]`); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } continue; }   // flight times before the timetable
     if(t === 'plan' && ((day === 365 && !seen.shop365) || (day > 394 && TYPE === 'premium' && !seen.buildTa && !seen['shop' + day]))){ seen['shop' + day] = true; if(day === 365) seen.shop365 = true;
       await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150);
       if(day === 365){ await shot('c3-04b-fleet-desk'); const so = await J('shopOfferedReport()'); ok('day 365: no air show by itself; the big planes are on the Fleet desk, and the brief says so', !so.scheduled && /A350/.test(await txt('.fs-shop')) && so.brief.some(l => /On the Fleet desk from today: .*A350/.test(l)), [so, await txt('.fs-shop')]); }

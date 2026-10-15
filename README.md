@@ -21,6 +21,8 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
+**Bertie's run-through, 16 Oct (`src/opening/parts/p4zv_flightplan.js`).** Flight times come before the timetable: a page of each aircraft against each new route, two worked out (distance ÷ speed) and the difference between the aircraft in words. The demand strip shows a bar for each part of the day with the busiest in gold. The sums no longer ask about a route with no passengers that day; an empty Mon–Fri lane says when its flights are Sat–Sun only. Notes: `docs/Flight-Times-Notes.md`.
+
 **Fuel storage grows with the fleet (16 Oct 2026, Workbook v5.8, D89; `src/opening/parts/p4zu_fuelstore.js`).** The tank keeps up with the airline, so filling up before a rise works in every chapter.
 - **Storage.** 8,000 L in week 2, then three weeks of the plan's fuel, rounded up to ten blocks; it never shrinks. The Fuel desk reads "Storage 40,000 L — about three weeks of flying".
 - **Blocks.** 1,000 L in chapter 1, 10,000 L from 6 January 2031, 100,000 L from 1 September 2031. The Monday sum stays blocks × the price of a block, and a Fill button buys as much as the tank and cash allow.

@@ -10,6 +10,14 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0t. Bertie's run-through: flight times first, the demand strip, no "0 × £90" (16 Oct 2026)
+
+**`p4zv_flightplan.js`**, after `p4zu`. Reassignment only. Notes: `docs/Flight-Times-Notes.md`.
+- **Sums.** A `decideHandSums` wrapper drops revenue routes with no passengers on the plan's day. A `soWorkCands` wrapper drops flight-time cards, and ticket cards for such routes.
+- **Lanes.** `ftLaneNotes` (after `R.plan`) rewrites an empty lane whose aircraft flies on the other day type, and flags the Sat–Sun view.
+- **Flight times.** `S.ftp = {seen, asked, log}`. `ftNew` lists the aircraft-type × open-route pairs not yet seen. An `R.plan` wrapper renders `renderFtp` while any are new. `ftPage` chooses two to ask (the slowest and fastest on one route when there are two types). `ftCheck` checks the answer (two tries, record `ftp:<pid>|<rid>`, `soTouch('flightTime')`). `ftpPlan()` is for the tests.
+- **Demand strip.** `stripHtml` is reassigned: bars by band (people an hour), the busiest in gold, and "Busiest: …" in the label.
+
 ## 0s. Fuel storage grows with the fleet (Workbook v5.8, D89, 16 Oct 2026)
 
 **`p4zu_fuelstore.js`**, after `p4zs`. Reassignment only, so `overrides.txt` stays at 120. Notes for Fable: `docs/Fuel-Storage-Notes.md`.

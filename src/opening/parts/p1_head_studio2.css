@@ -337,3 +337,21 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .fs-dlg .fs-sum{margin:10px 0}.fs-dlg .fs-ans{margin:4px 0;color:#fff}
 .fs-dlg .good{color:#5BE08A}.fs-dlg .bad{color:#ff7b7b}
 .fs-btns{display:flex;gap:10px;margin-top:10px}
+/* ---------- flight times before the timetable; the demand strip by part of the day; weekend-only lanes ---------- */
+.ftp-page .dp-body{overflow-y:auto}
+.ft-pnl{padding-bottom:12px}.ft-t{width:100%;margin-top:6px}.ft-t th,.ft-t td{padding:8px 12px;vertical-align:top;text-align:left}
+.ft-t thead th{font-size:14px;color:#fff}.ft-t thead th small,.ft-t tbody th small{display:block;font-weight:500;color:#9fbde3;font-size:12.5px}
+.ft-c{display:flex;align-items:center;gap:6px;color:#fff;font-weight:600}
+.ft-m{color:#DCE8F6;font-size:15px}.ft-no{color:#6f86a8;font-style:italic}
+.ft-a{background:rgba(54,198,255,.06);border:1px solid rgba(54,198,255,.35);min-width:250px}.ft-a.ok{color:#fff;font-weight:600}.ft-a p{margin:4px 0;color:#fff}
+.ft-in{display:flex;gap:8px;align-items:center}.ft-in .sc-in{width:150px}
+.ft-note{margin:10px 16px 0;color:#9fbde3;font-size:14px}.ft-cmp{margin:8px 16px 0;padding:8px 12px;border-left:4px solid #F2C14E;background:rgba(242,193,78,.08);color:#fff;font-size:15px;line-height:1.45}
+.st-strip.dmw .st-sb{height:78px}
+.st-band.dm .dm-bar{position:absolute;left:12%;right:12%;bottom:18px;max-height:calc(100% - 38px);background:rgba(90,162,255,.32);border-radius:3px 3px 0 0;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.st-band.dm .dm-lk{display:block;width:100%;background:#5aa2ff}
+.st-band.dm.top .dm-bar{background:rgba(242,193,78,.35);box-shadow:0 0 0 1px #F2C14E}.st-band.dm.top .dm-lk{background:#F2C14E}
+.st-band.dm .dm-n{position:absolute;right:6px;top:3px;font-size:13px;font-weight:700;color:#fff}.st-band.dm.top .dm-n{color:#F2C14E}
+.st-band.dm .dm-l{position:absolute;left:6px;bottom:2px;font-size:11.5px;color:#9fbde3;white-space:nowrap}
+.dm-top{color:#F2C14E;font-weight:700;font-size:13px}.dm-key i.lk{background:#5aa2ff}.dm-key i.fx{background:rgba(90,162,255,.32);border:0}
+.ad-none.ft-other{color:#F2C14E}.ad-none .dk-link{margin-left:6px}
+.ft-we{margin-left:10px;padding:3px 8px;border:1px solid rgba(242,193,78,.6);border-radius:3px;color:#F2C14E;font-size:12.5px;white-space:nowrap}

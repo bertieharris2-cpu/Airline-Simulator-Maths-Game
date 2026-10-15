@@ -16,6 +16,7 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
 const SHOTS = process.env.SHOTS !== '0', CODE = process.env.CODE || path.join(os.tmpdir(), 'airline-d8.txt');
 if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8 SHOTS=0 SAVE=${CODE} node week.test.js`); process.exit(1); }
 (async () => {
+  const ftpSeen = [];
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:1680, height:940 } })).newPage();
   const errors = [], checks = [], info = {};
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
@@ -86,6 +87,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
         await shot('fs-04-back-on-board'); }
       continue; }
     if(t === 'event'){ await p.click('[data-o="1"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
+    if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.fill(`[data-ftpin="${P.next.key}"]`, String(P.next.answer)); await p.click(`[data-ftpchk="${P.next.key}"]`); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } continue; }   // flight times before the timetable
     if(t === 'plan'){
       if(day === 8 && !planShop){ const so = JSON.parse(await E('JSON.stringify(shopOfferedReport())')); ok('day 8: no shop step by itself: HQ goes straight to the plan, and the brief names the Fleet desk', !so.scheduled && so.brief.some(l => /On the Fleet desk from today/.test(l)), so);
         await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150); await shot('fs-01-fleet-panel');

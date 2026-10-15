@@ -15,6 +15,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
 const CODE = process.env.CODE || path.join(os.tmpdir(), 'airline-ch1-end.txt'), TYPE = process.env.TYPE || 'value';   // the airline type chosen on day 127
 if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=200 SHOTS=0 SAVE=${CODE} node week.test.js`); process.exit(1); }
 (async () => {
+  const ftpSeen = [];
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
   const errors = [], checks = [], overflow = [], info = {};
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
@@ -139,6 +140,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
         if(P.id === 'h2'){ const bt = await p.$('.hunt-fix .pad-btn'); if(bt){ await bt.click(); await p.waitForTimeout(80); const I = await E(`JSON.stringify(padInfo('[data-pad="hunt"]'))`).then(JSON.parse); ok('hunt h2: the Working pad sets out 14,000 × £2.04 in pence', I && I.op === '×' && I.pence && +I.pounds === 28560, I); await p.keyboard.press('Escape'); } }
         await p.fill('[data-pad="hunt"]', String(P.right)); await p.click('#huntChk'); await p.waitForTimeout(80); ok(`hunt ${P.id}${P.recheck ? ' (second look)' : ''}: found and fixed`, /Found/.test(await txt('.hunt-msg')), await txt('.hunt-msg')); }
       info.hunts.push({ id:P.id, day, recheck:P.recheck, miss }); await shot(`c2-d${day}-hunt-${P.id}-done`); await p.click('#nx'); await p.waitForTimeout(100); continue; }
+    if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.fill(`[data-ftpin="${P.next.key}"]`, String(P.next.answer)); await p.click(`[data-ftpchk="${P.next.key}"]`); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } continue; }   // flight times before the timetable
     if(t === 'plan' && day === 212 && !seen.april){ seen.april = true; await shot('c2-d212-april-opener'); const x = await txt('#screen'), wr = await E('worldReportHtml()');
       ok("April's plan: the ash cloud is on the known changes as All routes · nothing flies (announced 7 April, inside the month)", /All routes · nothing flies/.test(x), (x.match(/Known changes.{0,400}/) || [''])[0]);
       ok('the World report: Announced for April, with All routes · nothing flies', /Announced for April/.test(wr) && /All routes · nothing flies/.test(wr), (wr.replace(/<[^>]+>/g, ' ').match(/Announced.{0,200}/) || [''])[0]); }

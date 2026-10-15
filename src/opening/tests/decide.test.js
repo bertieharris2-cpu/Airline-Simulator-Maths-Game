@@ -13,6 +13,7 @@ const path = require('path'), fs = require('fs'), os = require('os');
 const ROOT = path.resolve(__dirname, '../../..'), FILE = 'file://' + path.resolve(ROOT, process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-decide') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process.env.SHOTS !== '0';
 (async () => {
+  const ftpSeen = [];
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:W, height:H } })).newPage();
   const errors = [], checks = [], info = {};
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
@@ -61,6 +62,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
     if(t === 'milestone'){ await p.click('#msGo'); return t; }
     if(t === 'sim'){ if(await p.$('#skipSim')) await p.click('#skipSim').catch(() => {}); await p.waitForTimeout(300); return t; }
     if(t === 'shop2'){ await p.click('#skipShop'); return t; }
+    if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.fill(`[data-ftpin="${P.next.key}"]`, String(P.next.answer)); await p.click(`[data-ftpchk="${P.next.key}"]`); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } return t; }   // flight times before the timetable
     if(t === 'plan'){ await p.click('#nx'); return t; }
     return t; };
   const blockBox = sel => p.$eval(sel, e => { const r = e.getBoundingClientRect(), ln = e.closest('.ad-lane'), lr = ln.getBoundingClientRect(); return { x:r.x, y:r.y, w:r.width, h:r.height, lx:lr.x, lw:lr.width, s0:+ln.dataset.s0, span:+ln.dataset.span, dep:+e.dataset.dep }; });
