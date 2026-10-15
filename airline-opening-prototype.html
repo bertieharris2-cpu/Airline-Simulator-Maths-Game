@@ -4138,6 +4138,7 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .sc-row > .pad-wrap .sc-in input,.fd-sr > .pad-wrap .sc-in input{min-width:0;width:118px}
 /* teacher milestones (15 Oct): the sign-off log's table, four columns */
 .ms-log td:nth-child(1){width:16%}.ms-log td:nth-child(2){width:36%}.ms-log td:nth-child(4){width:1%;white-space:nowrap}.ms-log thead tr:first-child th{font-size:13px;padding-top:10px}
+.sc-in input::placeholder{color:#6f84a6;opacity:.55;font-weight:400}
 </style>
 </head>
 <body>
@@ -13359,7 +13360,7 @@ function scRows(m, F){
   if(m === 'dp') return { note:`Leave out the decimal point: ${num(L)} × ${P}. ${priceL(F.price)} has 2 decimal places, so the answer has 2.`, rows:[{ lab:`${num(L)} × ${P}`, want:total, unit:'n', cls:'c1' }], total };
   return { note:'Line up the digits in their columns. The answer has pounds and pence.', rows:[], total };
 }
-function scParse(unit, s){ s = String(s || '').replace(/[£,\s]/g, '').replace(/p$/i, ''); if(s === '') return null; const v = parseFloat(s); if(isNaN(v)) return null; return unit === '£' ? Math.round(v * 100) : Math.round(v); }
+function scParse(unit, s){ s = String(s || '').trim(); if(/^£?\s*\d+,\d{1,2}$/.test(s)) s = s.replace(',', '.'); s = s.replace(/[£,\s]/g, '').replace(/p$/i, ''); if(s === '') return null; const v = parseFloat(s); if(isNaN(v)) return null; return unit === '£' ? Math.round(v * 100) : Math.round(v); }
 function scShow(unit, pence){ return unit === '£' ? twoDp(pence / 100) : unit === 'p' ? num(pence) + 'p' : num(pence); }
 
 /* ---------- the screen ---------- */
@@ -13369,7 +13370,7 @@ function svcCardHtml(o){
   const F = o.F, sign = !!o.sign, done = !!o.done, practice = !sign && !!UI.sc.practice, entry = sign && !done || practice, methods = scMethodsOffered(), m = methods.some(x => x[0] === UI.sc.m) ? UI.sc.m : methods[0][0];
   const R = scRows(m, F), city = F.r.city, code = tlCode(F.r), home = homeData(), q = UI.sc.q || {}, vals = UI.sc.vals || {};
   UI.sc.F = F; UI.sc.mUsed = m;
-  const box = (key, want, unit) => entry ? `<span class="sc-in ${unit === 'p' ? 'pc' : ''} ${q[key] ? 'qy' : ''}">${unit === '£' ? '<i class="pre">£</i>' : ''}<input data-sc="${key}" data-unit="${unit}" inputmode="decimal" autocomplete="off" value="${esc(vals[key] || '')}" aria-label="${key === 'tot' ? 'Fuel cost' : 'Line ' + (+key.slice(1) + 1)}">${unit === 'p' ? '<i class="suf">p</i>' : ''}</span>` : `<b class="sc-v">${scShow(unit, want)}</b>`;
+  const box = (key, want, unit) => entry ? `<span class="sc-in ${unit === 'p' ? 'pc' : ''} ${q[key] ? 'qy' : ''}">${unit === '£' ? '<i class="pre">£</i>' : ''}<input data-sc="${key}" data-unit="${unit}" inputmode="decimal" autocomplete="off" value="${esc(vals[key] || '')}"${unit === '£' ? ' placeholder="0.00"' : ''} aria-label="${key === 'tot' ? 'Fuel cost' : 'Line ' + (+key.slice(1) + 1)}">${unit === 'p' ? '<i class="suf">p</i>' : ''}</span>` : `<b class="sc-v">${scShow(unit, want)}</b>`;
   const tabs = methods.length < 2 ? '' : `<div class="sc-tabs" role="tablist">${methods.map(([k, l]) => `<button role="tab" class="${k === m ? 'on' : ''}" data-scm="${k}" aria-selected="${k === m}">${l}</button>`).join('')}</div>`;
   let frame = '';
   if(m === 'formal' && sign && !done) frame = `<div class="sc-formal">${wkGrid(o.t, o.col, o.row, {})}</div>`;
@@ -16442,7 +16443,7 @@ function padHtml(sp){
       <select data-wfop aria-label="Operation">${['×', '÷', '+', '−'].map(o => `<option ${sp.op === o ? 'selected' : ''}>${o}</option>`).join('')}</select>
       <input data-wfb inputmode="decimal" autocomplete="off" value="${esc(UI.padFree && UI.padFree.b !== undefined ? UI.padFree.b : '')}" aria-label="Second number" placeholder="second number"><button class="btn small" data-wfgo>Set it out</button></div>` : '';
   const small = M && M.op === '÷' && M.canSmall ? `<label class="wp-small"><input type="checkbox" data-wpsmall ${M.small ? 'checked' : ''}> Make it smaller${M.small ? `: ${num(M.a0)} ÷ ${num(M.b0)} is the same as ${num(M.a)} ÷ ${num(M.b)}` : ` (both end in 0)`}</label>` : '';
-  const back = M && M.op === '×' && M.scale > 1, pounds = back && !free ? `<div class="wp-pnd"><span>Divide back: answer ÷ ${num(M.scale)} =</span><span class="sc-in">${M.money ? '<i class="pre">£</i>' : ''}<input data-wpp="1" inputmode="decimal" autocomplete="off" value="${esc(C.pounds || '')}" aria-label="Divided back"></span></div>` : back && free ? `<p class="wp-note">Then ÷ ${num(M.scale)} to put the decimal places back.</p>` : '';
+  const back = M && M.op === '×' && M.scale > 1, dpN = back ? String(M.scale).length - 1 : 0, pounds = back ? `<div class="wp-pnd"><span>Divide back: answer ÷ ${num(M.scale)} =</span><span class="sc-in">${M.money ? '<i class="pre">£</i>' : ''}<input data-wpp="1" inputmode="decimal" autocomplete="off" value="${esc(C.pounds || '')}" placeholder="0.${'0'.repeat(dpN)}" aria-label="Divided back"></span></div><p class="wp-note">Type the decimal point with the <b>.</b> key: ${dpN} digit${dpN === 1 ? '' : 's'} after it${M.money && dpN === 2 ? ' (the pence)' : ''}, like ${dpN === 1 ? '12.5' : dpN === 2 ? '12.50' : '12.500'}.</p>` : '';
   return `<div class="wp-h"><b>Working</b><span>${esc(free ? 'your own sum' : sp.lab)}</span><button class="s2-x" data-wpx="1" aria-label="Close">×</button></div>${form}
     ${M ? `${M.note ? `<p class="wp-note">${M.op === '×' ? 'Make it whole: ' : 'Work '}${esc(M.note)}</p>` : ''}${small}<p class="wp-note">${esc(padHint(M))}</p>${padBody(sp, M, key)}${M.unit === 'p' && !M.pence ? '<p class="wp-note">In pence.</p>' : ''}${pounds}` : '<p class="wp-note">Type two numbers and choose ×, ÷, + or −. The pad sets the sum out in columns for you to work. Nothing is marked.</p>'}
     <div class="wp-act"><button class="dk-link" data-wpclr="1">Clear</button><span class="grow"></span><span class="wp-msg" role="status"></span>${free ? '<button class="btn" data-wpx="2">Close</button>' : '<button class="btn primary" data-wpuse="1">Use this answer ✓</button>'}</div>`;
@@ -16525,7 +16526,7 @@ function bindPad(){
   if(use) use.onclick = () => {
     const msg = el.querySelector('.wp-msg'), M = padModel(sp); let v = null;
     if(M.op === '÷'){ const d = padDivValue(key, M); if(d === null){ msg.textContent = 'Fill in the answer above the line first.'; return; } v = String(d); }
-    else if(M.op === '×' && M.scale > 1){ const p = String(C.pounds || '').replace(/[£,\s]/g, ''); const ans = padRowValue(key, 'ans'); if(p === '' || isNaN(+p)){ msg.textContent = ans === null ? 'Work out the answer line first.' : `Now divide back: ÷ ${num(M.scale)} puts the decimal places back.`; return; } v = p; }
+    else if(M.op === '×' && M.scale > 1){ let p = String(C.pounds || '').trim(); if(/^£?\s*\d+,\d{1,2}$/.test(p)) p = p.replace(',', '.'); p = p.replace(/[£,\s]/g, ''); const ans = padRowValue(key, 'ans'); if(p === '' || isNaN(+p)){ msg.textContent = ans === null ? 'Work out the answer line first.' : `Now divide back: ÷ ${num(M.scale)} puts the decimal places back.`; return; } v = p; }
     else { const ans = padRowValue(key, 'ans'); if(ans === null){ msg.textContent = 'Fill in the answer line first.'; return; } v = String(ans); }
     const t = screen().querySelector(sp.sel); if(!t){ msg.textContent = 'The box has gone: close the pad.'; return; }
     t.value = v; t.dispatchEvent(new Event('input', { bubbles:true }));

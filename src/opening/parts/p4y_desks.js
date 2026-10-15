@@ -200,7 +200,7 @@ function scRows(m, F){
   if(m === 'dp') return { note:`Leave out the decimal point: ${num(L)} × ${P}. ${priceL(F.price)} has 2 decimal places, so the answer has 2.`, rows:[{ lab:`${num(L)} × ${P}`, want:total, unit:'n', cls:'c1' }], total };
   return { note:'Line up the digits in their columns. The answer has pounds and pence.', rows:[], total };
 }
-function scParse(unit, s){ s = String(s || '').replace(/[£,\s]/g, '').replace(/p$/i, ''); if(s === '') return null; const v = parseFloat(s); if(isNaN(v)) return null; return unit === '£' ? Math.round(v * 100) : Math.round(v); }
+function scParse(unit, s){ s = String(s || '').trim(); if(/^£?\s*\d+,\d{1,2}$/.test(s)) s = s.replace(',', '.'); s = s.replace(/[£,\s]/g, '').replace(/p$/i, ''); if(s === '') return null; const v = parseFloat(s); if(isNaN(v)) return null; return unit === '£' ? Math.round(v * 100) : Math.round(v); }
 function scShow(unit, pence){ return unit === '£' ? twoDp(pence / 100) : unit === 'p' ? num(pence) + 'p' : num(pence); }
 
 /* ---------- the screen ---------- */
@@ -210,7 +210,7 @@ function svcCardHtml(o){
   const F = o.F, sign = !!o.sign, done = !!o.done, practice = !sign && !!UI.sc.practice, entry = sign && !done || practice, methods = scMethodsOffered(), m = methods.some(x => x[0] === UI.sc.m) ? UI.sc.m : methods[0][0];
   const R = scRows(m, F), city = F.r.city, code = tlCode(F.r), home = homeData(), q = UI.sc.q || {}, vals = UI.sc.vals || {};
   UI.sc.F = F; UI.sc.mUsed = m;
-  const box = (key, want, unit) => entry ? `<span class="sc-in ${unit === 'p' ? 'pc' : ''} ${q[key] ? 'qy' : ''}">${unit === '£' ? '<i class="pre">£</i>' : ''}<input data-sc="${key}" data-unit="${unit}" inputmode="decimal" autocomplete="off" value="${esc(vals[key] || '')}" aria-label="${key === 'tot' ? 'Fuel cost' : 'Line ' + (+key.slice(1) + 1)}">${unit === 'p' ? '<i class="suf">p</i>' : ''}</span>` : `<b class="sc-v">${scShow(unit, want)}</b>`;
+  const box = (key, want, unit) => entry ? `<span class="sc-in ${unit === 'p' ? 'pc' : ''} ${q[key] ? 'qy' : ''}">${unit === '£' ? '<i class="pre">£</i>' : ''}<input data-sc="${key}" data-unit="${unit}" inputmode="decimal" autocomplete="off" value="${esc(vals[key] || '')}"${unit === '£' ? ' placeholder="0.00"' : ''} aria-label="${key === 'tot' ? 'Fuel cost' : 'Line ' + (+key.slice(1) + 1)}">${unit === 'p' ? '<i class="suf">p</i>' : ''}</span>` : `<b class="sc-v">${scShow(unit, want)}</b>`;
   const tabs = methods.length < 2 ? '' : `<div class="sc-tabs" role="tablist">${methods.map(([k, l]) => `<button role="tab" class="${k === m ? 'on' : ''}" data-scm="${k}" aria-selected="${k === m}">${l}</button>`).join('')}</div>`;
   let frame = '';
   if(m === 'formal' && sign && !done) frame = `<div class="sc-formal">${wkGrid(o.t, o.col, o.row, {})}</div>`;
