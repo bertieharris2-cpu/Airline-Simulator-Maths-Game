@@ -68,3 +68,17 @@ Questions for Fable:
 1. Are the thresholds right for the pace of each chapter? Chapter 1 plays a week at a time, chapters 2–3 a month at a time.
 2. Should any milestone wait for later chapters? For example, Close the gap is hard while a pupil has one plane.
 3. A new milestone needs code (a measure the game knows). Name it and what it should look at.
+
+## Chapters 2 and 3 (test runs, 15 Oct)
+
+Every end-of-chapter cash figure is unchanged, with 0 failures:
+
+| Run | Checks | Cash |
+| --- | --- | --- |
+| Chapter 2, Value | 108 | £13,591,851 |
+| Chapter 2, Premium | 102 | £13,312,048 |
+| Chapter 3, Value | 63 | £28,212,563 |
+| Chapter 3, Premium | 73 | £19,821,669 |
+
+- **Chapter 2:** the Value pupil also reaches Captain's challenge (twice), Spot the mistake, Long haul full, Close the gap and Shrink the gap.
+- **Chapter 3:** buying a plane without saving for it first is not counted as Saved and bought.
