@@ -29,6 +29,7 @@
   - `S.campaign` and `R.ov_campaign` hold the board's letter, the six choices and the portfolio; pictures go in IndexedDB `airline-campaign`.
   - The Project button on HQ shows from `campaignProjectDate` with a big plane in the fleet. The hold disables Start.
   - `campaignDemand(route, day)` multiplies `demandMult`: ×1 until a scored result is stored.
+- **Also in this push.** `p4zt`'s `dsOp` leaves the day's one-off charges (`v.event`) out of `plan_loses_money`, so a payment day no longer reads as a losing plan.
 
 ## 0q. Decision support (Workbook v5.7, D87 and D88, 15 Oct 2026)
 

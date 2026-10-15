@@ -18328,6 +18328,8 @@ const dsPlanPage = () => S && step() && step().t === 'plan' && typeof UI.s2 === 
 /* ---------- 1. the tips: the three new conditions, the workbook's buttons and experiments ---------- */
 [['plane_unused', 1, '{plane} has no flights. It costs £{dayCost} a day parked.'], ['loss_making_service', 1, '{band} {route} loses £{loss} a trip.'],
  ['plan_loses_money', 0, 'This plan loses £{loss} a day. The biggest opportunity is {topTip}.']].forEach(r => { if(!PLAN_TIPS_DEFAULT.some(x => x[0] === r[0])) PLAN_TIPS_DEFAULT.push(r); });
+/* the plan's own day: the projection without the day's one-off charges (a finance payment on the 1st, an event's bill), which are not the plan losing money */
+const dsOp = L => L && L.v ? L.v.profit + (L.v.event || 0) : 0;
 const DS_WB = (() => { try{ return Object.fromEntries(((WB && WB.planTips) || []).map(t => [t.id, t])); }catch(e){ return {}; } })();
 const dsPlanTips0 = planTipsFor;
 planTipsFor = function(pl, L, opts){
@@ -18347,8 +18349,8 @@ planTipsFor = function(pl, L, opts){
   const base = dsPlanTips0(pl, L, Object.assign({}, opts, { all:true })).filter(h => !['all_good', 'general_tradeoff'].includes(h.id)).filter(h => !(h.id === 'idle_plane' && [...unused].some(n => h.text.startsWith(n) && /all day/.test(h.text))));
   let list = base.concat(extra);
   // the whole plan loses money: priority 0, naming the biggest opportunity among the others
-  if(L && L.v && L.v.profit < -0.5 && pl.fleet.some(x => x.sched.length)){ const top = list.slice().sort((a, b) => a.priority - b.priority || (b.weight || 0) - (a.weight || 0))[0];
-    list.push({ id:'plan_loses_money', priority:T.plan_loses_money.priority, weight:1e9, text:fillTip(T.plan_loses_money.message, { loss:num(Math.round(-L.v.profit)), topTip:top ? dsPhrase(dsTarget(Object.assign({}, top), pl, L)) : 'a new plan' }) }); }
+  if(L && L.v && dsOp(L) < -0.5 && pl.fleet.some(x => x.sched.length)){ const top = list.slice().sort((a, b) => a.priority - b.priority || (b.weight || 0) - (a.weight || 0))[0];
+    list.push({ id:'plan_loses_money', priority:T.plan_loses_money.priority, weight:1e9, text:fillTip(T.plan_loses_money.message, { loss:num(Math.round(-dsOp(L))), topTip:top ? dsPhrase(dsTarget(Object.assign({}, top), pl, L)) : 'a new plan' }) }); }
   list = list.sort((a, b) => a.priority - b.priority || (b.weight || 0) - (a.weight || 0));
   if(!list.length) return dsPlanTips0(pl, L, opts);
   if(opts.all) return list;
@@ -18423,11 +18425,11 @@ function dsTips(pl, L, opts){
   const v = dryRun(() => { const cur = L.v.profit;
     let hits = planTipsFor(pl, L, Object.assign({}, opts, { all:true })).filter(h => !['all_good', 'general_tradeoff'].includes(h.id)).map(h => dsTarget(Object.assign({}, h), pl, L));
     const seen = new Set(); hits = hits.filter(h => { const k = [h.id, h.route, h.uid, h.k].join('|'); if(seen.has(k)) return false; seen.add(k); return true; });
-    let budget = 8; hits.slice().sort((a, b) => a.priority - b.priority || (b.weight || 0) - (a.weight || 0)).forEach(h => { if(h.id === 'plan_loses_money'){ h.stake = Math.round(-cur); return; } if(budget-- <= 0 || h.priority > 3){ h.stake = 0; return; } h.stake = Math.round(dsStake(h, pl, cur) || 0); });
+    let budget = 8; hits.slice().sort((a, b) => a.priority - b.priority || (b.weight || 0) - (a.weight || 0)).forEach(h => { if(h.id === 'plan_loses_money'){ h.stake = Math.round(-dsOp(L)); return; } if(budget-- <= 0 || h.priority > 3){ h.stake = 0; return; } h.stake = Math.round(dsStake(h, pl, cur) || 0); });
     hits.forEach(h => { const a = DS_ACT[h.id] || ['timetable', 'Show me']; h.action = { kind:a[0], label:a[1] }; h.exps = dsExps(h.id); });
     const lose = hits.find(h => h.id === 'plan_loses_money'), others = hits.filter(h => h !== lose).sort(dsRank);
     if(lose){ const top = others[0]; lose.top = top || null; const T = planTipTable().find(t => t.id === 'plan_loses_money');
-      lose.text = fillTip(T.message, { loss:num(Math.round(-cur)), topTip:top ? dsPhrase(top) : 'a new plan' });
+      lose.text = fillTip(T.message, { loss:num(Math.round(-dsOp(L))), topTip:top ? dsPhrase(top) : 'a new plan' });
       if(top){ Object.assign(lose, { route:top.route, band:top.band, uid:top.uid, k:top.k, dep:top.dep, exps:top.exps }); lose.action = { kind:top.action.kind, label:['timetable', 'select'].includes(top.action.kind) ? 'Show me on the timetable' : top.action.label, of:top.id }; } else lose.action = { kind:'timetable', label:'Show me' }; }
     return (lose ? [lose] : []).concat(others); });
   UI.dsCache = { key, v }; return v;

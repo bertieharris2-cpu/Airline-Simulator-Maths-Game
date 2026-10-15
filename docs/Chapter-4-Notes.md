@@ -19,7 +19,7 @@ Chapter 4 now plays from chapter 3's end card to its review on 31 August 2033.
   - The payments come on the first of each month: "Finance: A380 £1,000,000 (month 1 of 40)".
   - The fleet shows "on finance: £1,000,000 a month, 39 of 40 payments to go".
 - **Each month's review** has a "Does the A380 fill?" panel, month by month.
-- **The A380 launch project.** From 4 October a Project button on HQ opens the board's letter, the choices and the portfolio (text, and pictures kept in the browser). "Hold the airline while I work" stops the run until the pupil lets it fly on. "Send to the board" keeps the launch date for the result to apply from.
+- **The A380 launch project.** From 4 October (on HQ from 1 November, the first month start after it) a Project button opens the board's letter, the choices and the portfolio (text, and pictures kept in the browser). "Hold the airline while I work" stops the run until the pupil lets it fly on. "Send to the board" keeps the launch date for the result to apply from.
 - **The review on 31 August 2033** has hunt h5: the A380's finance line shows one payment too many.
 
 ## Report back
@@ -28,8 +28,8 @@ Chapter 4 now plays from chapter 3's end card to its review on 31 August 2033.
 | --- | --- |
 | The deposit on 6 Sep and the first payment on 1 Oct 2032 | **Yes.** Cash falls by £20,000,000 on 6 September. The charges list has 40 payments, the first on Friday 1 October 2032 (day 761), then the first of each month. By the review there have been 11 (October to August). |
 | Hong Kong at £830 carrying 442 of 500 at three stars, and 500 at 4½ | **500 at 4½: yes. 442 at three stars: no.** The game's demand at £830 is 480 (the Routes sheet's demandAtFare). From October, with Hong Kong's growth ×1.15, 552 want to fly, so an A380 fills even at three stars. The "58 short" in the route's story does not come out of the sheet's numbers. What should make it 442 (a factor we have not got)? |
-| The 747 path against Balance Report §2, within £50 | **Yes, within £1 a day** on Hong Kong, for both the 747 and the A380 at 3★ and 4½★. That holds once the conditions match the report: fuel at £2.35 and no on-board sales or airline-type extras. In play the figures differ for three reasons. The Market sheet's fuel on 1 October 2032 is £2.49. A plane earns on-board sales (747 about £1,840 a day, A380 about £2,300). A Value airline adds bag fees (about £1,600 and £2,000). |
-| The Project button present and the pause working | **Yes.** It shows on HQ from 4 October 2032 once a big plane is in the fleet. Hold disables Start; letting it fly on enables it again; the choices and words are kept in the save. |
+| The 747 path against Balance Report §2, within £50 | **Yes:** within £1 a day on Hong Kong, for both the 747 and the A380 at 3★ and 4½★, and within £22 on Los Angeles. That holds once the conditions match the report: fuel at £2.35 and no on-board sales or airline-type extras. In play the figures differ for three reasons. The Market sheet's fuel on 1 October 2032 is £2.49. A plane earns on-board sales (747 about £1,840 a day, A380 about £2,300). A Value airline adds bag fees (about £1,600 and £2,000). |
+| The Project button present and the pause working | **Yes.** It is open from 4 October 2032 once a big plane is in the fleet. The months start on the 1st, so the pupil first sees it on HQ on 1 November. Hold disables Start; letting it fly on enables it again; the choices and words are kept in the save. |
 | h5 on 31 Aug 2033 | **Yes**, before the year-3 accounts. Value finds it ("Found and fixed"). Premium misses it, and one more payment is added after the 40th ("Repayments run a month longer"). |
 
 ## How each rule is read (please check)
@@ -58,8 +58,25 @@ Chapter 4 now plays from chapter 3's end card to its review on 31 August 2033.
 ## Not in push 1, and a known slow spot
 
 - **Not built:** the campaign's screens for the AI and the teacher's rubric (its own brief); a second A380; challenges 5–6.
-- **Slow month-ends.** Chapter 4 month-end audits take 20–40 seconds. The audit runs the best-plan sweep, about 12,000 projections with five aircraft, each slower than in chapter 1. It is the same code as chapters 2–3, but the fleet is bigger. A faster sweep is the next thing to fix: fewer fare trials per timetable, and caching the projections.
+- **Slow month-ends.** Chapter 4's month-end audit takes 20–40 seconds, and the screen does not change while it works. The audit runs the best-plan sweep: about 15,000 projections with five aircraft and 28 open routes, and the projections are 96% of the time. Only 7% of them repeat, so caching would not help. Two fixes are next: fewer fare trials per timetable (which changes the best-plan figure, so it needs a balance check against chapters 2–3), and a "checking the month" screen while the sweep runs.
 
 ## Tests
 
-<!--TESTS-->
+All runs on the built game, with chapter 4 in.
+
+| Run | Checks | End cash |
+| --- | --- | --- |
+| `chapter4.test.js` Value (takes the A380) | 58 ok, 0 fail | £46,175,525 on 31 August 2033 |
+| `chapter4.test.js` Premium (takes the 747) | 57 ok, 0 fail | £40,040,997 on 31 August 2033 |
+| `week.test.js`, the Steady pupil to the chapter 1 review | 229 ok, 0 fail | £697,112 (the same) |
+| `week.test.js` COAST | 232 ok, 0 fail | £689,806 (the same) |
+| `chapter2.test.js` Value · Premium | 106 · 100 ok, 0 fail | £13,591,851 · £13,312,048 (the same) |
+| `chapter3.test.js` Value · Premium | 62 · 72 ok, 0 fail | £28,219,358 · £19,822,524 (the same) |
+| `decide` · `fleetshop` · `migrate` · `record` · `milestones` | 35 · 35 · 31 · 17 · 27 ok | |
+
+- **Chapters 1–3 are unchanged.** Chapter 4's code only acts from 1 September 2032, so every earlier chapter ends on the same cash.
+- **Fixed on the way.**
+  - The 747's pay page asked the rent-or-buy sum before the finance sum; the offer's pay page now skips it for both planes.
+  - The month review's "Does it fill?" panel grew a row a month and pushed the fuel panel off the screen. It is now one line for the month, rows for the last four months and a list of the earlier ones.
+  - On the first of a month, the review's tips said "This plan loses £750,317 a day": the day's projection carried the £1,000,000 payment. The operations check (D87) now leaves a day's one-off charges (a payment, an event's bill) out of "this plan loses money".
+- **Test change.** `week.test.js` waits for the paint shop's reveal the way the chapter tests do, so a slow machine no longer times it out.
