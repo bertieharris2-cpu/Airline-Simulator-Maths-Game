@@ -21,6 +21,14 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
+**Decision support (15 Oct 2026, Workbook v5.7, D87 and D88; `src/opening/parts/p4zt_decide.js`).** The plan page turns the tips into actions.
+- **The operations check.** The one or two tips with the most money at stake each get a button: Show me on the timetable, Find work for this aircraft, Test fare. Keep plan goes quiet ("Run anyway") while a serious one shows.
+- **Moving flights.** A dragged flight shows its seats filling, and a line after each change gives seats and profit before and after.
+- **What was it worth?** One line for each change; the first of each kind is a Build.
+- **Sunday.** The review says how good the plan was in words, names the biggest missed opportunity and opens next week's plan on it.
+- **Help me investigate** runs a one-variable experiment: predict, change, compare, use.
+- **The teacher panel** has the Planning support dial and the best-plan figures. Notes for Fable: `docs/Decision-Support-Notes.md`.
+
 **Working on paper (15 Oct 2026, Workbook v5.6, D86; `src/opening/parts/p4zr_paper.js`).** The pupil works every sum in their book and types only the answer.
 - **Answer box.** Every sum is a box headed "Sum N · Week W · what it is", with the question in black and the answer field; the method is a fold-out reference card.
 - **Two tries.** A wrong answer gets a note and one more try. A second wrong answer is shown, stamped Checked by Finance, and both go in the record.

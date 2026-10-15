@@ -261,3 +261,48 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .fd-ls table td,.fd-ls table th{padding:3px 6px}
 /* D86: the answer boxes and sum headers make a full week of sign-offs taller than the page: the body scrolls, never under the bar */
 .so-page .dp-body{overflow-y:auto;overflow-x:hidden;padding-right:4px}
+/* ---------- D87 decision support: the operations check, the improved banner, the worth line, the highlight, the experiments ---------- */
+.actbar.ds-bar .ab-hint{font-size:14.5px}
+.ds-hint{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ds-tip{display:flex;align-items:center;gap:10px;min-width:0;padding:3px 8px;border-left:3px solid #F5B740;background:rgba(245,183,64,.10);border-radius:3px}
+.ds-tip.hot{border-left-color:#FF8A3D;background:rgba(255,138,61,.14)}
+.ds-ti{flex:none;color:#F5B740;display:inline-flex}.ds-ti svg{width:18px;height:18px}
+.ds-tt{flex:1;min-width:0;color:#FFF2D6;line-height:1.25}
+.ds-tip .btn{flex:none;height:32px;padding:0 14px;font-size:14px;white-space:nowrap}
+.ds-tip .btn.ds-act{background:linear-gradient(180deg,#F5B740,#E09A1E);color:#1B1300;border-color:#F5B740;font-weight:700}
+.ds-tip .btn.ds-act2{background:transparent;color:#FFE3A8;border:1px solid rgba(245,183,64,.6)}
+.actbar .btn.ds-quiet,.s2-oact .btn.ds-quiet{background:transparent!important;border:1px solid rgba(159,180,211,.55)!important;color:#C9D6EA!important;box-shadow:none!important;min-width:0!important}
+.ds-imp{display:flex;align-items:center;gap:8px;color:#BDF5CF}.ds-imp svg{width:18px;height:18px;color:#5BE08A}
+.ds-worth-l{display:flex;align-items:center;gap:8px;color:#E6F0FF}.ds-worth-l .fx{font-style:italic;color:#8fb0da}
+.ds-wb{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.ds-wq{color:#FFF2D6;margin-right:4px}
+.ds-wbar{display:inline-flex;align-items:center;gap:4px;min-width:90px;min-height:30px;padding:2px 8px;border:1px dashed rgba(159,180,211,.6);border-radius:3px}
+.ds-wb .rb-chip{height:30px;padding:0 10px;font-size:13px}.ds-wop{height:30px;width:30px;font-size:16px;background:#12305C;color:#fff;border:1px solid rgba(159,180,211,.5);border-radius:3px;cursor:pointer}
+.ds-oc{margin:8px 0 6px;display:flex;flex-direction:column;gap:4px}.ds-oc .kl{font-size:12px;color:#F5B740;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.s2-tt .ad-blk.ds-hl{outline:2px solid #F5B740;outline-offset:1px;animation:dsPulse 1.2s ease-in-out 4}
+.ds-band{position:absolute;top:0;bottom:0;background:rgba(245,183,64,.16);border-left:1px dashed rgba(245,183,64,.7);border-right:1px dashed rgba(245,183,64,.7);pointer-events:none;z-index:0}
+.ds-pulse{outline:2px solid #F5B740;animation:dsPulse 1.2s ease-in-out 4}.st-row.ds-row{background:rgba(245,183,64,.08)}
+@keyframes dsPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,183,64,.0)}50%{box-shadow:0 0 0 6px rgba(245,183,64,.35)}}
+.s2-tt{position:relative}.ds-flash{position:absolute;z-index:30;padding:6px 12px;background:#0B2147;border:1px solid #F5B740;color:#FFF2D6;font-size:14px;border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,.5);white-space:nowrap;animation:dsFade 2.6s ease forwards;pointer-events:none}
+@keyframes dsFade{0%{opacity:0;transform:translateY(4px)}10%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0}}
+.ad-blk.ds-full .st-bs{font-weight:700}
+.ds-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0}.ds-chl{font-size:13px;color:#C9D6EA;width:100%}
+.ds-chip{display:inline-flex;flex-direction:column;align-items:center;padding:3px 9px;background:#0E2A52;border:1px solid rgba(159,180,211,.45);color:#fff;border-radius:3px;cursor:pointer;font-size:13px}
+.ds-chip b{font-size:12px}.ds-chip.on{border-color:#F5B740}.ds-chip.fill-good b{color:#5BE08A}.ds-chip.fill-mid b{color:#F5B740}.ds-chip.fill-low b{color:#FF7A7A}
+.ds-full-tag{font-style:normal;font-size:10.5px;font-weight:700;color:#1B1300;background:#5BE08A;border-radius:2px;padding:0 4px;margin-left:4px}
+.ds-miss .ds-mw{margin:0;font-size:15px}.ds-miss .ds-big{margin:0;font-size:14.5px;line-height:1.35}.ds-wk{display:flex;gap:6px;align-items:flex-start;margin:0;font-size:14px}.ds-wk svg{width:16px;height:16px;flex:none;color:#5BE08A}
+.ds-fixr{display:flex;gap:8px;flex-wrap:wrap}.ds-fix{background:linear-gradient(180deg,#F5B740,#E09A1E);color:#1B1300;border-color:#F5B740;font-weight:700}
+.ds-inv svg{width:15px;height:15px;vertical-align:-2px}
+.dx{display:flex;flex-direction:column;gap:12px;max-width:1100px}.dx-steps{display:flex;gap:6px}.dx-steps span{padding:4px 12px;border:1px solid rgba(159,180,211,.4);color:#8fb0da;border-radius:3px;font-size:14px}.dx-steps span.on{color:#fff;border-color:#2F8CFF;background:rgba(47,140,255,.15)}
+.dx-b{padding:16px 20px;display:flex;flex-direction:column;gap:12px}.dx-b h2{margin:0;font-size:21px;color:#fff}
+.dx-issue{display:flex;gap:8px;margin:0;padding:6px 10px;border-left:3px solid #F5B740;background:rgba(245,183,64,.1);color:#FFF2D6}.dx-issue svg{width:18px;height:18px;flex:none;color:#F5B740}
+.dx-opts,.dx-ctl{display:flex;flex-wrap:wrap;gap:8px}.dx-pred{display:flex;flex-direction:column;gap:10px}.dx-pred > div{display:flex;align-items:center;gap:8px}.dx-pred span{width:120px;color:#C9D6EA}
+.dx .btn.on{background:#2F8CFF;border-color:#2F8CFF;color:#fff}.dx-lock{margin:0;color:#BDD4F2;font-size:14.5px}.dx-lock svg{width:15px;height:15px;vertical-align:-2px}
+.dx-model{display:flex;align-items:baseline;gap:12px}.dx-model b{font-size:26px;color:#fff}.dx-cmp{margin:0;font-size:20px;color:#fff}.dx-you{margin:0;font-size:16px;color:#C9D6EA}.dx-worth{margin:0}
+.dx-rt select{margin-left:6px}
+.ds-tip .btn.ds-act,.actbar .ds-tip .btn.ds-act{background:linear-gradient(180deg,#F5B740,#E09A1E)!important;color:#1B1300!important;border:1px solid #F5B740!important;font-weight:700}
+.ds-tip.head{background:rgba(255,138,61,.08)}.ds-tip.head .ds-tt{font-weight:600}
+.actbar.ds-bar{padding-top:4px;padding-bottom:4px}.actbar.ds-bar .ds-tip{padding:1px 8px}.actbar.ds-bar .ds-tip .btn{height:27px;padding:0 12px;font-size:13.5px}.actbar.ds-bar .ds-tt{font-size:14px;line-height:1.2}
+.ds-oc .ds-tip{padding:5px 10px}
+.ds-hint.two{gap:2px}.ds-hint.two .ds-imp,.ds-hint.two .ds-worth-l{font-size:13.5px;line-height:1.2}.ds-hint.two .ds-tip .btn{height:25px}
+.ds-fix svg,.ds-fixr svg{width:16px;height:16px;vertical-align:-3px}
+.ds-sumi{flex:1;min-width:0;align-self:center;margin-left:10px;font-size:13.5px;line-height:1.25}.ds-sumi .ds-imp,.ds-sumi .ds-worth-l{align-items:flex-start}

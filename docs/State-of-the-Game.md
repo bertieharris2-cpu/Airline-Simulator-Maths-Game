@@ -10,6 +10,31 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0q. Decision support (Workbook v5.7, D87 and D88, 15 Oct 2026)
+
+**`p4zt_decide.js`**, after `p4zr`. Reassignment only, so `overrides.txt` stays at 120. Notes for Fable: `docs/Decision-Support-Notes.md`. Test: `decide.test.js`, on NBN's and Gubby's saves.
+- **Tips.**
+  - `PLAN_TIPS_DEFAULT` gains `plane_unused`, `loss_making_service` and `plan_loses_money`.
+  - A `planTipsFor` wrapper adds their conditions and drops `idle_plane` for a plane with no flights.
+  - `dsTarget` reads each tip's route, band, aircraft and flight.
+  - `dsStake` prices it from the engine's own alternatives (`dsAlt` on cloned plans, inside `dryRun`).
+  - `dsTips` ranks by priority, then stake, and is cached on the plan key.
+- **The check (`dsCheck`, `dsAfterPlan` on an `R.plan` wrapper).**
+  - The opener card holds two lines above Keep plan; on the plan, the bar holds one.
+  - The action buttons go through `dsDo`: select the flight, shade the band, pick out the aircraft's row, or open the fare editor.
+  - The go buttons are quiet ("Run anyway" in the opener) while a priority 0–1 tip shows.
+  - `S.ds.log` records the actions, the runs anyway and the fixes.
+- **Changes.**
+  - A `setPlan` wrapper on the plan page records the before and after: the floating line, and D88's `dsWorth` (fare, time, service). The first change of each kind is a Build (`S.ds.built`).
+  - A `bindTimeline` wrapper updates a dragged block's label from `dsFillAt`.
+  - Plan improved and the worth line go in the summary bar. `dsChips` puts the fare chips in the route and flight editors.
+- **Review.**
+  - An `R.weekReview` wrapper rewrites `.wk-missed` in words (`dsMissedWords`) and names the biggest missed opportunity.
+  - "Fix next week's {route} plan" sets `S.dsFix`; an `s2State` wrapper opens the next Monday on it. The audit letter's `.so-miss` is words too.
+  - `S.ds.reviews` keeps the figures for the teacher.
+- **Experiments.** `R.ov_investigate` steps through choose → predict → change one thing → model → compare → use. `planningSupport` is per pupil in `S.ds.level`. The log is `S.ds.exps`.
+- **Teacher and printout.** `dsTeacherRender` (the dial, review figures, check log and experiments) is chained on `soTeacherRender`. A `recordPrintHtml` wrapper adds Experiments and Plan quality by week.
+
 ## 0p. Working on paper (Workbook v5.6, D86, 15 Oct 2026)
 
 **`p4zr_paper.js`**, after `p4zq`. Reassignment only, so `overrides.txt` stays at 120. Report for Fable: `docs/Working-On-Paper-Notes.md`.
