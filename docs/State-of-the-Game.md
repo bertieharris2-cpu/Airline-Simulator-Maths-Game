@@ -10,6 +10,15 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0u. The Intelligence Wall (17 Oct 2026)
+
+**`p4zw_intelwall.js`**, after `p4zv`; the CSS at the end of `p1_head_studio2.css`. Reassignment only (`renderDisplay` is wrapped). Notes: `docs/Intelligence-Wall-Notes.md`.
+- **When.** The wall's idle mode (`wallMode() === 'live'`, the pupil planning) gets the class `mode-intel`: the boards, status strip and ticker are hidden; the map keeps its grid area; `#wRibbon`, `#wRight` and `#wBottom` are appended to `#wall` once. Every other mode is as before.
+- **Data.** `wiStories` (route news on or announced, the market week's headlines, the calendar's, the log), `wiFuel` (`fuelOn` today and a week ago, five weeks, the market forecast), `wiSignal` (`demandMultNews` over the next four weeks against today), `wiEvents` (route news within four weeks, by when it starts), `wiWeather` (the market week's weather text matched to cities, the day's event), `wiRivals` (`competitorPrice` against the fare), the last `S.history` entry for Your airline.
+- **Levels and the hero.** `wiAlerts` (weather red; fuel ±5% or a short tank, amber; the rival undercutting, amber). `wiSlots` moves the first alert's panel to the top right and lets others take a slot that can wait. `WI.seen` keeps a woken panel from glowing twice.
+- **Map.** `wallMap.render` is wrapped to add weather cells and one mark a city (`wiMarks`) with a hit area; the map takes pointer capture to pan, so a city click is read at pointerdown and acted on at pointerup if the pointer did not move. In `mode-intel` the routes are cyan, offers slate and dashed, the land `--land` set on `.mworld` (a `<use>` instance takes inherited custom properties, not class selectors).
+- **Tests.** `decide` 35, `migrate` 31, `week` 95 to day 15, a browser probe on three saved games. `liveops.test.js` stops at the same stale launch step before and after.
+
 ## 0t. Bertie's run-through: flight times first, the demand strip, no "0 × £90" (16 Oct 2026)
 
 **`p4zv_flightplan.js`**, after `p4zu`. Reassignment only. Notes: `docs/Flight-Times-Notes.md`.
