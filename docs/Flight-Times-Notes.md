@@ -25,4 +25,16 @@
 
 ## Tests
 
-<!--TESTS-->
+All runs on the built game, chapters 1 to 4 chained from new saves. No end cash changed: the sums are on paper and change nothing in the airline.
+
+| Run | Checks | End cash |
+| --- | --- | --- |
+| `week.test.js` Steady · COAST | 244 · 247 ok, 0 fail | £697,112 · £689,806 |
+| `chapter2.test.js` Value · Premium | 109 · 103 ok, 0 fail | £13,614,407 · £13,334,810 |
+| `chapter3.test.js` Value · Premium | 66 · 76 ok, 0 fail | £26,453,508 · £20,022,536 |
+| `chapter4.test.js` Value · Premium | 59 · 58 ok, 0 fail | £41,528,288 · £40,501,774 |
+| `decide` · `fleetshop` · `migrate` · `record` · `milestones` | 35 · 35 · 31 · 17 · 27 ok | |
+
+- **Steady pupil.** Flight-times pages on 16 September (Amsterdam and Frankfurt open; then the Saab joins) and 23 September (Madrid), five sums in all.
+- **The week test.** It now checks the Flight times page and no flight-time cards among the sums. Weeks 1–4 have about 13 Calculate steps besides the flight times.
+- **The other tests** fill in the page when it appears.

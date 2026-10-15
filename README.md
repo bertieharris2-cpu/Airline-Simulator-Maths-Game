@@ -21,6 +21,8 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
+**UI sandbox (16 Oct 2026): `ui-sandbox/airline-ui-sandbox.html`.** A small stand-alone file for trying out the interface. It is set in week 5 of chapter 1 with sample data: fuel prices since launch, four weeks of results, two aircraft and five routes. The screens link up: Home, Operating Plan, Flight times, Sums, Fuel, Fleet and Last week. The second screen, the Operations Wall with a departures board and a map, opens from the monitor button or the W key. A small model makes the figures move as the plan changes. The data is at the top of the file.
+
 **Bertie's run-through, 16 Oct (`src/opening/parts/p4zv_flightplan.js`).** Flight times come before the timetable: a page of each aircraft against each new route, two worked out (distance ÷ speed) and the difference between the aircraft in words. The demand strip shows a bar for each part of the day with the busiest in gold. The sums no longer ask about a route with no passengers that day; an empty Mon–Fri lane says when its flights are Sat–Sun only. Notes: `docs/Flight-Times-Notes.md`.
 
 **Fuel storage grows with the fleet (16 Oct 2026, Workbook v5.8, D89; `src/opening/parts/p4zu_fuelstore.js`).** The tank keeps up with the airline, so filling up before a rise works in every chapter.

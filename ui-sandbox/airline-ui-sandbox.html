@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Airline UI Sandbox</title>
+<!--
+  AIRLINE UI SANDBOX (16 Oct 2026). A small, stand-alone copy of the game's key screens for trying out the interface.
+  Week 5 of chapter 1 (Monday 30 September 2030). Sample data, not the game's: change anything in DATA below.
+  Screens: Home · Operating Plan · Flight times · Sums · Fuel · Fleet · Last week, and the second screen (the Operations
+  Wall the class sees): the monitor button or the W key. Everything is in this one file; it works offline.
+-->
+<style>
+:root{
+  --bg:#050d1d; --panel:#0b1a33; --panel2:#0e2142; --line:#1c3f73; --line2:#2b5c9e;
+  --ink:#eaf2ff; --soft:#9fbde3; --mute:#6f86a8; --cyan:#36c6ff; --blue:#1f6fff; --gold:#F2C14E;
+  --good:#3ce394; --mid:#ffb547; --bad:#ff5f5f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{cursor:default;opacity:.45}
+.mono{font-variant-numeric:tabular-nums}
+.app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:78px 1fr 64px;height:100vh;min-width:1100px}
+/* header */
+.hd{grid-column:1/3;display:flex;align-items:stretch;background:linear-gradient(90deg,#071630,#0b2147);border-bottom:1px solid var(--line)}
+.logo{width:220px;display:flex;align-items:center;gap:12px;padding:0 18px;border-right:1px solid var(--line)}
+.logo .badge{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#2a4f8a,#0b1a33);display:grid;place-items:center;color:var(--gold);font-size:22px}
+.logo b{display:block;letter-spacing:.12em;font-size:16px}.logo small{display:block;color:var(--soft);font-size:9.5px;letter-spacing:.25em}
+.hd-sp{flex:1}
+.hd-tools{display:flex;align-items:center;gap:8px;padding:0 16px}
+.ic{width:38px;height:38px;border:1px solid var(--line2);border-radius:6px;background:#0d2550;display:grid;place-items:center;font-size:17px}
+.ic.on{background:var(--blue);border-color:var(--cyan)}
+.hd-cell{display:flex;flex-direction:column;justify-content:center;padding:0 22px;border-left:1px solid var(--line);min-width:150px}
+.hd-cell small{color:var(--soft);font-size:13px}.hd-cell b{font-size:21px}
+.hd-cell .gold{color:var(--gold);font-size:26px}
+.stars{color:var(--gold);font-size:19px;letter-spacing:2px}.stars i{font-style:normal;color:#4b6487}
+/* nav */
+.nav{background:#071328;border-right:1px solid var(--line);display:flex;flex-direction:column}
+.nav button{display:flex;align-items:center;gap:12px;text-align:left;padding:13px 18px;border:0;border-bottom:1px solid #12284d;background:none}
+.nav button .ni{width:24px;text-align:center;font-size:18px;opacity:.85}
+.nav button b{display:block;font-weight:600}.nav button small{display:block;color:var(--soft);font-size:12px}
+.nav button.on{background:linear-gradient(90deg,#1f6fff,#1a4f9e);box-shadow:inset 4px 0 0 var(--cyan)}
+.nav button .tick{margin-left:auto;color:var(--good);font-size:14px}
+.nav .art{margin-top:auto;height:150px;background:linear-gradient(180deg,#0b1a33,#3a2a55 60%,#c77b3b);position:relative;overflow:hidden}
+.nav .art::after{content:"✈";position:absolute;left:18px;bottom:22px;font-size:46px;color:#fff;opacity:.85;transform:rotate(-8deg)}
+/* main */
+.main{overflow:auto;padding:18px 22px}
+.ttl{display:flex;align-items:baseline;gap:14px;margin:0 0 12px}.ttl h1{margin:0;font-size:30px}.ttl p{margin:0;color:var(--soft)}
+.tag{font-size:11px;letter-spacing:.12em;padding:2px 8px;border:1px solid var(--cyan);border-radius:3px;color:var(--cyan)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g21{grid-template-columns:2fr 1fr}
+.pnl{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+.pnl h2{margin:0 0 10px;font-size:17px;display:flex;align-items:center;gap:10px}.pnl h2 .sub{margin-left:auto;font-weight:400;font-size:13px;color:var(--soft)}
+.kl{display:block;color:var(--soft);font-size:12.5px}
+.big{font-size:26px;font-weight:700}
+.good{color:var(--good)}.bad{color:var(--bad)}.goldt{color:var(--gold)}.soft{color:var(--soft)}
+table.t{width:100%;border-collapse:collapse}table.t th,table.t td{padding:7px 8px;border-bottom:1px solid #15305a;text-align:left}
+table.t th{color:var(--soft);font-weight:500;font-size:13px}table.t td.n,table.t th.n{text-align:right}
+.btn{border:1px solid var(--line2);background:#0d2550;border-radius:5px;padding:7px 14px}
+.btn.pri{background:var(--blue);border-color:var(--cyan);font-weight:600}
+.btn.go{background:#15a05a;border-color:#3ce394;font-weight:700}
+.link{border:0;background:none;color:var(--cyan);padding:0;font-weight:600}
+/* action bar */
+.bar{grid-column:2/3;display:flex;align-items:center;gap:12px;padding:0 18px;background:#071630;border-top:1px solid var(--line)}
+.bar .i{width:26px;height:26px;border:1px solid var(--soft);border-radius:50%;display:grid;place-items:center;font-style:italic;color:var(--soft)}
+.bar p{flex:1;margin:0;color:var(--ink)}
+.bar .btn{padding:10px 22px;font-size:16px}
+/* home */
+.todo li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #15305a;list-style:none}
+.todo{margin:0;padding:0}.todo .st{width:22px;height:22px;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center;font-size:12px}
+.todo .st.done{background:var(--good);border-color:var(--good);color:#04121f}.todo .st.now{border-color:var(--gold)}
+.news p{margin:0 0 8px;padding-left:10px;border-left:3px solid var(--line2)}.news p b{color:var(--gold)}
+.spark{display:flex;align-items:flex-end;gap:10px;height:110px;padding-top:8px}
+.spark div{flex:1;background:#2b6fd6;border-radius:3px 3px 0 0;position:relative}.spark div span{position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:12px}
+.spark div em{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:11.5px;color:var(--soft);font-style:normal}
+/* plan */
+.rt td{vertical-align:middle}.flag{display:inline-block;width:22px;height:15px;border-radius:2px;margin-right:6px;vertical-align:-2px}
+.fare{border:1px solid var(--line2);background:#0d2550;border-radius:4px;padding:3px 12px;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.chip{border:1px solid var(--line2);background:#0d2550;border-radius:4px;padding:3px 9px;text-align:center;min-width:58px}
+.chip b{display:block}.chip small{color:var(--soft);font-size:11px}.chip.on{background:var(--blue);border-color:var(--cyan)}
+.fillbar{display:inline-block;width:120px;height:7px;background:#1b3560;border-radius:4px;vertical-align:middle;overflow:hidden}.fillbar i{display:block;height:100%;background:var(--good)}
+.tt{position:relative}
+.axis{display:grid;grid-template-columns:200px 1fr;margin:4px 0}.axis .ticks{position:relative;height:18px}.axis .ticks span{position:absolute;transform:translateX(-50%);font-size:12px;color:var(--soft)}
+.lane{display:grid;grid-template-columns:200px 1fr;gap:0;margin-bottom:8px}
+.lane .who{padding:6px 10px;border:1px solid var(--line);border-right:0;background:#0a1830;border-radius:5px 0 0 5px}
+.lane .who b{display:block}.lane .who small{color:var(--soft)}
+.lane select{margin-top:4px;width:100%;background:#0d2550;color:var(--ink);border:1px dashed var(--line2);border-radius:4px;padding:3px}
+.track{position:relative;height:62px;border:1px solid var(--line);background:repeating-linear-gradient(90deg,#0a1830 0,#0a1830 calc(12.5% - 1px),#13284a calc(12.5% - 1px),#13284a 12.5%);border-radius:0 5px 5px 0}
+.blk{position:absolute;top:6px;bottom:6px;border-radius:4px;background:#123a74;border:1px solid #2b5c9e;border-left:4px solid var(--fc);padding:3px 7px;font-size:12.5px;overflow:hidden;white-space:nowrap;text-align:left}
+.blk b{display:block}.blk.on{background:#1a4f9e;border-color:var(--cyan);box-shadow:0 0 0 2px rgba(54,198,255,.45)}
+.blk.f-good{--fc:var(--good)}.blk.f-mid{--fc:var(--mid)}.blk.f-low{--fc:var(--bad)}
+.none{position:absolute;left:12px;top:20px;color:var(--soft)}
+.selbox{display:flex;gap:8px;align-items:center;margin:4px 0 8px 200px;padding:8px 12px;border:1px solid var(--cyan);border-radius:5px;background:#0b2147}
+.strip{display:grid;grid-template-columns:200px 1fr;margin-bottom:6px}
+.strip .lbl{padding-right:10px;font-size:12.5px;color:var(--soft)}.strip .lbl b{display:block;color:#fff;font-size:14px}.strip .lbl .busy{color:var(--gold);font-weight:700}
+.bands{position:relative;height:84px;border:1px solid var(--line);background:#071630}
+.band{position:absolute;top:0;bottom:0;border-right:1px solid var(--line)}
+.band .bar2{position:absolute;left:12%;right:12%;bottom:18px;background:rgba(90,162,255,.32);border-radius:3px 3px 0 0;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.band .bar2 i{display:block;background:#5aa2ff}
+.band.top .bar2{background:rgba(242,193,78,.35);box-shadow:0 0 0 1px var(--gold)}.band.top .bar2 i{background:var(--gold)}
+.band .n{position:absolute;right:6px;top:3px;font-weight:700;font-size:13px}.band.top .n{color:var(--gold)}
+.band .l{position:absolute;left:6px;bottom:2px;font-size:11.5px;color:var(--soft)}
+.sum{display:flex;gap:26px;align-items:center;padding:10px 16px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;margin-top:10px}
+.sum .k{font-size:12.5px;color:var(--soft)}.sum b{font-size:20px}
+/* sums */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.card .hd2{display:flex;gap:10px;align-items:center}.card .num{width:28px;height:28px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-weight:700}
+.card h3{margin:0;font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+.sumno{display:inline-block;background:var(--blue);padding:1px 7px;border-radius:3px;font-size:12px;font-weight:700;margin:6px 6px 0 0}
+.q{background:#fff;color:#000;border-radius:4px;padding:14px;text-align:center;margin:10px 0}.q .big2{font-size:28px;font-weight:800}
+.ans{display:flex;gap:10px;align-items:center}.ans .in{display:flex;align-items:center;background:#fff;color:#000;border-radius:4px;padding:0 10px;height:46px;width:220px;font-size:20px}
+.ans input{border:0;outline:0;font:inherit;width:100%;text-align:right}
+.msg{min-height:20px;margin-top:6px;font-size:14px;color:var(--mid)}
+.stamp{display:inline-block;border:2px solid var(--good);color:var(--good);border-radius:4px;padding:1px 8px;font-weight:800;font-size:11.5px;letter-spacing:.1em;transform:rotate(-4deg)}
+.stamp.fin{border-color:var(--gold);color:var(--gold)}
+/* fuel */
+.fchart{width:100%;height:230px}
+.tank{width:90px;height:150px;border:2px solid var(--line2);border-radius:12px 12px 6px 6px;position:relative;overflow:hidden;background:#071630}
+.tank i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,#36c6ff,#1f6fff)}
+.blocks{display:flex;gap:6px;flex-wrap:wrap}.blocks button{min-width:84px}.blocks .on{background:var(--blue);border-color:var(--cyan)}
+/* fleet */
+.ac{display:flex;gap:14px;align-items:center}.ac .pic{width:120px;height:70px;border-radius:5px;background:linear-gradient(180deg,#2a5fa8,#0b1a33);display:grid;place-items:center;font-size:38px}
+/* the second screen */
+.wall{position:fixed;inset:0;background:#02070f;z-index:20;display:grid;grid-template-rows:90px 1fr 70px;color:#fff}
+.wall .wh{display:flex;align-items:center;gap:20px;padding:0 30px;border-bottom:2px solid #f2c14e55}
+.wall .wh h1{margin:0;font-size:34px;letter-spacing:.08em}.wall .clock{margin-left:auto;font:700 48px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--gold)}
+.wall .wb{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;padding:24px 30px;overflow:hidden}
+.board{width:100%;border-collapse:collapse;font:600 20px/1.2 ui-monospace,Menlo,Consolas,monospace}
+.board th{color:#9fbde3;text-align:left;padding:8px;border-bottom:2px solid #1c3f73;font:500 14px system-ui}.board td{padding:10px 8px;border-bottom:1px solid #12284d}
+.board .stt{color:#9fbde3}.board .stt.bo{color:var(--gold)}.board .stt.de{color:var(--good)}.board .stt.la{color:#5aa2ff}
+.wall .wf{display:flex;align-items:center;gap:14px;padding:0 30px;border-top:1px solid #1c3f73}
+.map{background:#061226;border:1px solid #1c3f73;border-radius:8px;position:relative}
+.map svg{width:100%;height:100%}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* =====================================================================
+   DATA: sample figures for week 5. Change anything here and press F5.
+   ===================================================================== */
+const DATA = {
+  airline:{ name:'DRAGON AIR', code:'DA', cash:19052, stars:3 },
+  today:{ week:5, label:'Mon 30 Sep 2030', long:'Monday 30 September 2030' },
+  dayStart:6, dayEnd:22, turnaroundMin:45, landingFee:50,
+  bands:[ { id:'early', name:'Early', h0:6, h1:9 }, { id:'mid', name:'Mid-morning', h0:9, h1:12 }, { id:'midday', name:'Midday', h0:12, h1:14 },
+          { id:'aft', name:'Afternoon', h0:14, h1:17 }, { id:'eve', name:'Evening', h0:17, h1:22 } ],
+  // people who want to fly each day at each fare; share of them in each part of the day; flex = could fly at any time
+  routes:[
+    { id:'par', city:'Paris', code:'CDG', km:300, flag:['#0055a4','#fff','#ef4135'], fares:{70:52,80:46,90:40,100:33,110:26}, shares:{early:.32,mid:.16,midday:.08,aft:.14,eve:.30}, flex:.3 },
+    { id:'dub', city:'Dublin', code:'DUB', km:450, flag:['#169b62','#fff','#ff883e'], fares:{70:85,80:76,90:66,100:47,110:32}, shares:{early:.28,mid:.18,midday:.08,aft:.16,eve:.30}, flex:.3 },
+    { id:'ams', city:'Amsterdam', code:'AMS', km:450, flag:['#ae1c28','#fff','#21468b'], fares:{70:78,75:74,80:71,85:68,90:65,95:56,100:47,105:40,110:32}, shares:{early:.34,mid:.20,midday:.06,aft:.12,eve:.28}, flex:.25 },
+    { id:'fra', city:'Frankfurt', code:'FRA', km:675, flag:['#000','#dd0000','#ffce00'], fares:{100:51,105:49,110:46,115:44,120:42,125:40,130:38,135:33,140:29}, shares:{early:.38,mid:.18,midday:.06,aft:.10,eve:.28}, flex:.2 },
+    { id:'mad', city:'Madrid', code:'MAD', km:1350, flag:['#aa151b','#f1bf00','#aa151b'], fares:{150:44,170:38,190:31,210:24}, shares:{early:.25,mid:.20,midday:.10,aft:.15,eve:.30}, flex:.35 }
+  ],
+  planes:{
+    dhc6:{ name:'Twin Otter', seats:19, speed:300, range:1400, dayCost:900, hourCost:220, fuelLph:120, icon:'🛩️' },
+    sf34:{ name:'Saab 340', seats:34, speed:450, range:1700, dayCost:1040, hourCost:200, fuelLph:200, icon:'✈️' }
+  },
+  shop:[ { id:'at72', name:'ATR 72', seats:70, speed:450, price:280000, dayCost:1600, note:'A very efficient turboprop for short, busy routes.' },
+         { id:'e190', name:'Embraer E190', seats:100, speed:800, price:300000, dayCost:2650, note:'Your first jet: fast, quiet and 100 seats.' } ],
+  fleet:[ { reg:'G-DRAG', type:'dhc6', flights:[ ['dub',360], ['dub',620], ['par',1080] ] },
+          { reg:'G-DRAA', type:'sf34', flights:[ ['ams',400], ['fra',800] ] } ],
+  fares:{ par:90, dub:80, ams:90, fra:105, mad:170 },
+  // fuel: price a litre each day since launch (35 days), next week's forecast, the tank
+  fuelHistory:[1.47,1.47,1.47,1.47,1.47,1.47,1.47,1.52,1.52,1.52,1.52,1.52,1.52,1.52,1.49,1.49,1.49,1.49,1.49,1.49,1.49,1.55,1.55,1.55,1.55,1.55,1.55,1.55,1.58,1.58,1.58,1.58,1.58,1.58,1.58],
+  fuelForecast:{ low:1.60, high:1.76, confidence:'High', headline:'Refinery maintenance in Rotterdam: prices expected to firm next week.' },
+  tank:{ capacity:20000, inTank:2400, block:1000 },
+  weeks:[ { wk:1, profit:3210, proj:3400, pax:540, seats:620 }, { wk:2, profit:4050, proj:3900, pax:690, seats:760 },
+          { wk:3, profit:3870, proj:4200, pax:812, seats:950 }, { wk:4, profit:4640, proj:4500, pax:930, seats:1064 } ],
+  lastWeekDays:[ ['Mon',610], ['Tue',590], ['Wed',570], ['Thu',640], ['Fri',760], ['Sat',820], ['Sun',650] ],
+  news:[ ['Red Kite Air', 'cuts its Paris fare to £85 from Thursday.'], ['Half-term', 'in Dublin next week: more families flying.'], ['Fuel', 'prices are expected to firm: the forecast is £1.60–£1.76.'] ]
+};
+
+/* =====================================================================
+   STATE and the little model
+   ===================================================================== */
+const S = { view:'home', wall:false, sel:null, strip:null, fares:{ ...DATA.fares }, fleet:JSON.parse(JSON.stringify(DATA.fleet)), done:{},
+  sums:{}, ft:{}, buy:null, bought:0, clock:6 * 60, playing:null };
+const R = id => DATA.routes.find(r => r.id === id), P = t => DATA.planes[t];
+const money = (v, dp) => (v < 0 ? '−' : '') + '£' + Math.abs(v).toLocaleString('en-GB', { minimumFractionDigits:dp || 0, maximumFractionDigits:dp || 0 });
+const num = v => Number(v).toLocaleString('en-GB');
+const hm = m => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(Math.round(m % 60)).padStart(2, '0')}`;
+const dur = h => { const m = Math.round(h * 60), a = Math.floor(m / 60), b = m % 60; return `${a ? a + ' h' : ''}${a && b ? ' ' : ''}${b ? b + ' min' : ''}` || '0 min'; };
+const legH = (t, rid) => R(rid).km / P(t).speed;
+const tripMin = (t, rid) => Math.round(legH(t, rid) * 60) * 2 + DATA.turnaroundMin;
+const bandOf = m => DATA.bands.find(b => m >= b.h0 * 60 && m < b.h1 * 60) || DATA.bands[DATA.bands.length - 1];
+const fuelToday = () => DATA.fuelHistory[DATA.fuelHistory.length - 1];
+const demand = rid => { const r = R(rid), f = S.fares[rid]; return r.fares[f] !== undefined ? r.fares[f] : 0; };
+
+/* one day of the plan: each flight's passengers, tickets and costs */
+function model(){
+  const flights = []; S.fleet.forEach((a, ai) => a.flights.forEach(([rid, dep], fi) => flights.push({ ai, fi, rid, dep, type:a.type, reg:a.reg, seats:P(a.type).seats })));
+  const byRoute = {};
+  flights.forEach(f => (byRoute[f.rid] = byRoute[f.rid] || []).push(f));
+  const routes = DATA.routes.map(r => {
+    const D = demand(r.id), fl = byRoute[r.id] || [], must = D * (1 - r.flex), flex = D * r.flex;
+    fl.forEach(f => { const b = bandOf(f.dep), inBand = fl.filter(g => bandOf(g.dep) === b).length; f.pax = Math.min(f.seats, Math.round(must * r.shares[b.id] / inBand)); });
+    let left = Math.round(flex); fl.slice().sort((a, b) => (b.seats - b.pax) - (a.seats - a.pax)).forEach(f => { const add = Math.min(f.seats - f.pax, Math.round(left / Math.max(1, fl.length))); f.pax += add; });
+    const pax = fl.reduce((t, f) => t + f.pax, 0), seats = fl.reduce((t, f) => t + f.seats, 0);
+    return { id:r.id, D, n:fl.length, pax, seats, tk:pax * S.fares[r.id], away:Math.max(0, D - pax) };
+  });
+  const price = fuelToday();
+  flights.forEach(f => { const h = legH(f.type, f.rid) * 2, p = P(f.type); f.h = h; f.fuelL = Math.round(p.fuelLph * h); f.cost = Math.round(f.fuelL * price + p.hourCost * h + DATA.landingFee * 2); f.tk = f.pax * S.fares[f.rid]; });
+  const rev = routes.reduce((t, r) => t + r.tk, 0), dayCosts = S.fleet.reduce((t, a) => t + P(a.type).dayCost, 0), fcost = flights.reduce((t, f) => t + f.cost, 0);
+  const pax = flights.reduce((t, f) => t + f.pax, 0), seats = flights.reduce((t, f) => t + f.seats, 0), fuelL = flights.reduce((t, f) => t + f.fuelL, 0);
+  return { flights, routes, rev, costs:fcost + dayCosts, profit:rev - fcost - dayCosts, pax, seats, fuelL, away:routes.reduce((t, r) => t + r.away, 0) };
+}
+/* where a new flight can go: the first time from 06:00 that fits */
+function freeSlot(ai, rid){ const a = S.fleet[ai], len = tripMin(a.type, rid), taken = a.flights.map(([r, d]) => [d, d + tripMin(a.type, r)]).sort((x, y) => x[0] - y[0]);
+  for(let t = DATA.dayStart * 60; t + len <= DATA.dayEnd * 60; t += 20){ if(taken.every(([s, e]) => t + len <= s || t >= e)) return t; } return null; }
+
+/* =====================================================================
+   SHELL: header, nav, the action bar
+   ===================================================================== */
+const NAV = [ ['home', '⌂', 'Home', 'Overview'], ['plan', '✈', 'Operating Plan', 'Routes & schedule'], ['ft', '⏱', 'Flight times', 'Before the timetable'],
+  ['sums', '✎', 'Sums', 'Work it out'], ['fuel', '⛽', 'Fuel', 'Prices & supply'], ['fleet', '🛩', 'Fleet', 'Aircraft'], ['review', '▤', 'Last week', 'How it went'] ];
+const FLOW = ['home', 'ft', 'plan', 'sums', 'fuel', 'review'];
+function shell(body, hint, nextLabel){
+  const i = FLOW.indexOf(S.view), next = i >= 0 && i < FLOW.length - 1 ? FLOW[i + 1] : null, prev = i > 0 ? FLOW[i - 1] : null, M = model();
+  return `<div class="app">
+  <header class="hd"><div class="logo"><span class="badge">★</span><div><b>${DATA.airline.name}</b><small>PEOPLE · PLACES · POSSIBILITIES</small></div></div><div class="hd-sp"></div>
+    <div class="hd-tools"><button class="ic ${S.wall ? 'on' : ''}" id="wallBtn" title="Second screen: the Operations Wall (W)">🖥</button></div>
+    <div class="hd-cell"><small>Week ${DATA.today.week}</small><b>${DATA.today.label}</b></div>
+    <div class="hd-cell"><small>Reputation</small><span class="stars">${'★'.repeat(DATA.airline.stars)}<i>${'★'.repeat(5 - DATA.airline.stars)}</i></span></div>
+    <div class="hd-cell"><small>Cash balance</small><b class="gold mono">${money(DATA.airline.cash - S.bought)}</b></div></header>
+  <nav class="nav">${NAV.map(([id, ic, t, s]) => `<button data-go="${id}" class="${S.view === id ? 'on' : ''}"><span class="ni">${ic}</span><span><b>${t}</b><small>${s}</small></span>${S.done[id] ? '<span class="tick">✓</span>' : ''}</button>`).join('')}<div class="art"></div></nav>
+  <main class="main">${body}</main>
+  <footer class="bar"><span class="i">i</span><p>${hint}</p>${prev ? `<button class="btn" data-go="${prev}">◀ Back</button>` : ''}${next ? `<button class="btn pri" data-next="${next}">${nextLabel || 'Next'} ▶</button>` : ''}</footer></div>`;
+}
+
+/* =====================================================================
+   SCREENS
+   ===================================================================== */
+const SCREENS = {
+home(){ const M = model(), last = DATA.weeks[DATA.weeks.length - 1], mx = Math.max(...DATA.weeks.map(w => w.profit));
+  const steps = [['ft', 'Flight times for the Saab 340'], ['plan', 'Plan the week: routes, fares, timetable'], ['sums', 'Work out this week\'s sums'], ['fuel', 'Buy fuel for the week'], ['review', 'Fly the week, then Sunday\'s review']];
+  const firstOpen = steps.find(s => !S.done[s[0]]);
+  return shell(`<div class="ttl"><h1>Good morning, Dragon Air</h1><p>${DATA.today.long} · week ${DATA.today.week}</p></div>
+  <div class="grid g21"><div class="grid">
+    <section class="pnl"><h2>This week<span class="sub">${steps.filter(s => S.done[s[0]]).length} of ${steps.length} done</span></h2><ul class="todo">${steps.map(([id, t]) => `<li><span class="st ${S.done[id] ? 'done' : firstOpen && firstOpen[0] === id ? 'now' : ''}">${S.done[id] ? '✓' : ''}</span><span style="flex:1">${t}</span><button class="link" data-go="${id}">Open</button></li>`).join('')}</ul></section>
+    <section class="pnl"><h2>Profit by week<span class="sub">weeks 1–4</span></h2><div class="spark">${DATA.weeks.map(w => `<div style="height:${Math.round(85 * w.profit / mx)}%"><span class="mono">${money(w.profit)}</span><em>Week ${w.wk}</em></div>`).join('')}</div><p class="soft" style="margin:26px 0 0">Last week: ${money(last.profit)}, ${last.profit >= last.proj ? `${money(last.profit - last.proj)} better than projected` : `${money(last.proj - last.profit)} short of the projection`}. Seats filled ${Math.round(100 * last.pax / last.seats)}%.</p></section></div>
+    <div class="grid">
+    <section class="pnl"><h2>Today's plan</h2><span class="kl">Projected profit a day</span><div class="big ${M.profit >= 0 ? 'good' : 'bad'} mono">${money(M.profit)}</div><span class="kl" style="margin-top:8px">Seats filled</span><div class="mono">${M.pax} / ${M.seats}</div></section>
+    <section class="pnl news"><h2>News</h2>${DATA.news.map(([a, b]) => `<p><b>${a}</b> ${b}</p>`).join('')}</section>
+    <section class="pnl"><h2>Fuel</h2><span class="kl">Today</span><div class="big mono">£${fuelToday().toFixed(2)} / L</div><span class="kl">Next week ${'£' + DATA.fuelForecast.low.toFixed(2)}–${'£' + DATA.fuelForecast.high.toFixed(2)}</span></section></div></div>`,
+  'Start with the flight times, then plan the week.', 'Flight times'); },
+
+ft(){ const types = [...new Set(S.fleet.map(a => a.type))].sort((a, b) => P(a).speed - P(b).speed), ask = ['dhc6|dub', 'sf34|dub'];
+  const cell = (t, rid) => { const k = t + '|' + rid, h = legH(t, rid), A = S.ft[k] || (S.ft[k] = { v:'', tries:0, done:false, shown:false, msg:'' });
+    if(R(rid).km > P(t).range) return '<td class="soft">too far</td>';
+    if(!ask.includes(k)) return `<td>${dur(h)} <span class="soft" title="The model worked this out">ƒ</span></td>`;
+    if(A.done) return `<td><b>${dur(h)}</b> <span class="soft">(${+h.toFixed(2)} h)</span> <span class="stamp ${A.shown ? 'fin' : ''}">${A.shown ? 'CHECKED BY FINANCE' : 'CHECKED · DA'}</span></td>`;
+    return `<td style="background:#0b2147"><span class="sumno">Sum ${ask.indexOf(k) + 1}</span><div class="mono" style="margin:6px 0">${num(R(rid).km)} km ÷ ${P(t).speed} km/h =</div><div class="ans"><span class="in" style="width:140px"><input data-ft="${k}" value="${A.v}" inputmode="decimal" aria-label="Hours"><span style="color:#555">h</span></span><button class="btn pri" data-ftchk="${k}">Check ✓</button></div><div class="msg">${A.msg}</div></td>`; };
+  const left = ask.filter(k => !S.ft[k] || !S.ft[k].done).length, lo = P(types[0]), hi = P(types[types.length - 1]), a = legH(types[0], 'dub'), b = legH(types[types.length - 1], 'dub');
+  if(!left) S.done.ft = true;
+  return shell(`<div class="ttl"><h1>Flight times</h1><p>Before the timetable: how long each of your aircraft takes to fly each route.</p></div>
+  <section class="pnl"><h2>How long each aircraft takes<span class="sub">time in the air, one way: distance ÷ speed</span></h2>
+  <table class="t"><thead><tr><th>Route</th>${types.map(t => `<th>${P(t).name}<br><small class="soft">${P(t).speed} km/h</small></th>`).join('')}</tr></thead>
+  <tbody>${DATA.routes.map(r => `<tr><th><span class="flag" style="background:linear-gradient(90deg,${r.flag[0]} 33%,${r.flag[1]} 33% 66%,${r.flag[2]} 66%)"></span>${r.city} <small class="soft">${num(r.km)} km</small></th>${types.map(t => cell(t, r.id)).join('')}</tr>`).join('')}</tbody></table>
+  <p style="margin:14px 0 0;padding:10px 14px;border-left:4px solid var(--gold);background:rgba(242,193,78,.08)">The ${hi.name} flies at ${hi.speed} km/h and the ${lo.name} at ${lo.speed} km/h. To Dublin that is ${dur(b)} against ${dur(a)}: ${dur(a - b)} less each way, ${dur(2 * (a - b))} on a return trip, so the faster aircraft fits more flights into a day.</p></section>`,
+  left ? 'Work out the two marked flight times in your book, then type the answers.' : 'Now plan the timetable: a faster aircraft fits more flights into a day.', 'On to the timetable'); },
+
+plan(){ const M = model(), sel = S.sel, selF = sel ? S.fleet[sel[0]].flights[sel[1]] : null, sid = S.strip || (selF ? selF[0] : null);
+  const span = (DATA.dayEnd - DATA.dayStart) * 60, X = m => 100 * (m - DATA.dayStart * 60) / span;
+  const routesT = `<section class="pnl"><h2>Active routes<span class="sub">${M.routes.filter(r => r.n).length} routes · ${M.flights.length} flights a day</span></h2><table class="t rt"><thead><tr><th>Route</th><th>Fare</th><th class="n">People</th><th class="n">Flights</th><th>Seats filled</th><th></th></tr></thead><tbody>
+    ${DATA.routes.map(r => { const x = M.routes.find(z => z.id === r.id), pct = x.seats ? Math.round(100 * x.pax / x.seats) : 0, open = S.fareOpen === r.id;
+      return `<tr><td><span class="flag" style="background:linear-gradient(90deg,${r.flag[0]} 33%,${r.flag[1]} 33% 66%,${r.flag[2]} 66%)"></span><b>${r.city}</b> <small class="soft">${r.code}</small></td>
+      <td><button class="fare" data-fare="${r.id}">${money(S.fares[r.id])}</button>${open ? `<div class="chips">${Object.keys(r.fares).map(f => `<button class="chip ${+f === S.fares[r.id] ? 'on' : ''}" data-setfare="${r.id}|${f}"><b>£${f}</b><small>${r.fares[f]} people</small></button>`).join('')}</div>` : ''}</td>
+      <td class="n mono">${x.D}</td><td class="n mono">${x.n}</td><td>${x.n ? `<span class="fillbar"><i style="width:${pct}%;background:${pct >= 80 ? 'var(--good)' : pct >= 50 ? 'var(--mid)' : 'var(--bad)'}"></i></span> <span class="mono">${pct}%</span>` : '<span class="soft">no flights</span>'}</td>
+      <td><button class="link" data-strip="${r.id}">View demand</button></td></tr>`; }).join('')}</tbody></table></section>`;
+  // the demand strip
+  const R0 = sid ? [R(sid)] : DATA.routes.filter(r => M.routes.find(z => z.id === r.id).n), bands = DATA.bands.map(b => { let lock = 0, flex = 0;
+    R0.forEach(r => { const D = demand(r.id); lock += D * (1 - r.flex) * r.shares[b.id]; flex += D * r.flex * r.shares[b.id]; }); const per = (lock + flex) / (b.h1 - b.h0); return { b, lock:Math.round(lock), flex:Math.round(flex), per }; });
+  const mx = Math.max(1e-9, ...bands.map(x => x.per)), top = bands.slice().sort((a, b) => b.per - a.per)[0];
+  const strip = `<div class="strip"><div class="lbl"><b>${sid ? R(sid).city : 'All your routes'}</b>${sid ? `at ${money(S.fares[sid])}` : 'at your fares'}: people who want to fly<br><span class="busy">Busiest: ${top.b.name}, ${hm(top.b.h0 * 60)}–${hm(top.b.h1 * 60)}</span>${sid ? ' <button class="link" data-strip="">All</button>' : ''}</div>
+    <div class="bands">${bands.map(x => `<div class="band ${x === top ? 'top' : ''}" style="left:${X(x.b.h0 * 60)}%;width:${X(x.b.h1 * 60) - X(x.b.h0 * 60)}%" title="${x.b.name}: ${x.lock} must fly then, ${x.flex} any time"><div class="bar2" style="height:${Math.max(4, Math.round(70 * x.per / mx))}%"><i style="height:${Math.round(100 * x.lock / Math.max(1, x.lock + x.flex))}%"></i></div><span class="n mono">${x.lock + x.flex}</span><span class="l">${x.b.name}</span></div>`).join('')}</div></div>`;
+  const ticks = []; for(let h = DATA.dayStart; h <= DATA.dayEnd; h += 2) ticks.push(`<span style="left:${X(h * 60)}%">${hm(h * 60)}</span>`);
+  const lanes = S.fleet.map((a, ai) => { const p = P(a.type);
+    return `<div class="lane"><div class="who"><b>${p.icon} ${p.name}</b><small>${a.reg} · ${p.seats} seats</small><select data-add="${ai}"><option value="">+ Add flight…</option>${DATA.routes.filter(r => r.km <= p.range).map(r => `<option value="${r.id}">${r.city} · ${dur(legH(a.type, r.id))} each way</option>`).join('')}</select></div>
+      <div class="track">${a.flights.length ? a.flights.map(([rid, dep], fi) => { const f = M.flights.find(z => z.ai === ai && z.fi === fi), len = tripMin(a.type, rid), pct = f.pax / f.seats, on = sel && sel[0] === ai && sel[1] === fi;
+        return `<button class="blk ${pct >= .8 ? 'f-good' : pct >= .5 ? 'f-mid' : 'f-low'} ${on ? 'on' : ''}" data-blk="${ai}|${fi}" style="left:${X(dep)}%;width:${X(dep + len) - X(dep)}%"><b>${hm(dep)}–${hm(dep + len)}</b>${R(rid).city} · ${f.pax}/${f.seats}</button>`; }).join('') : '<span class="none">No flights yet: add one from the menu.</span>'}</div></div>`; }).join('');
+  const selBox = selF ? `<div class="selbox"><b>${R(selF[0]).city} ${hm(selF[1])}</b><span class="soft">${S.fleet[sel[0]].reg}</span><button class="btn" data-move="-20">◀ 20 min earlier</button><button class="btn" data-move="20">20 min later ▶</button><button class="btn" data-del="1">Remove</button><button class="link" data-unsel="1">Done</button></div>` : '';
+  return shell(`<div class="ttl"><h1>Operating Plan</h1><p>The week of ${DATA.today.label.replace('Mon ', 'Monday ')} · Monday to Friday</p></div>
+  ${routesT}<section class="pnl" style="margin-top:14px"><h2>Aircraft timetable<span class="sub">each block is one return trip: out, a ${DATA.turnaroundMin}-minute turnaround, and back</span></h2>${strip}
+    <div class="axis"><span></span><div class="ticks">${ticks.join('')}</div></div>${lanes}${selBox}</section>
+  <div class="sum"><span><span class="k">Seats filled</span><br><b class="mono">${M.pax} / ${M.seats}</b></span><span><span class="k">Turned away</span><br><b class="mono">${M.away}</b> <small class="soft">a day</small></span><span><span class="k">Ticket money</span><br><b class="mono">${money(M.rev)}</b></span><span><span class="k">Costs</span><br><b class="mono">${money(M.costs)}</b></span><span><span class="k">Projected profit</span><br><b class="mono ${M.profit >= 0 ? 'good' : 'bad'}">${money(M.profit)}</b> <small class="soft">a day</small></span></div>`,
+  'Press a fare to see the people at each fare. Add flights from the menus; press a flight to move or remove it.', 'Work out the sums'); },
+
+sums(){ const M = model(), ams = M.routes.find(r => r.id === 'ams'), blk = DATA.tank.block, per = Math.round(blk * fuelToday() * 100) / 100, need = Math.max(0, M.fuelL * 5 - DATA.tank.inTank), n = Math.ceil(need / blk);
+  const list = [ { k:'tk', title:'Tickets — Amsterdam', ask:`The ticket money from Amsterdam on a day of this plan.`, q:`${ams.pax} × ${money(S.fares.ams)}`, ans:ams.pax * S.fares.ams, pre:'£' },
+                 { k:'fo', title:'Fuel order', ask:`${n} blocks of ${num(blk)} L at ${money(per, 2)} a block (${num(blk)} L × £${fuelToday().toFixed(2)}).`, q:`${n} × ${money(per, 2)}`, ans:Math.round(n * per * 100) / 100, pre:'£' },
+                 { k:'pr', title:'Profit a day', ask:'The ticket money take away the costs.', q:`${money(M.rev)} − ${money(M.costs)}`, ans:M.profit, pre:'£' } ];
+  const card = (s, i) => { const A = S.sums[s.k] || (S.sums[s.k] = { v:'', tries:0, done:false, shown:false, msg:'' });
+    return `<div class="card"><div class="hd2"><span class="num">${i + 1}</span><h3>${s.title}</h3><span style="margin-left:auto" class="tag">CALCULATE</span></div><span class="sumno">Sum ${i + 3}</span><span class="soft">Week ${DATA.today.week} · ${s.title}</span>
+      <div class="q"><div class="soft" style="color:#555">${s.ask}</div><div class="big2">${s.q} = ${A.done ? `<span style="color:#0a7a3e">${money(s.ans, s.k === 'fo' ? 2 : 0)}</span>` : '?'}</div></div>
+      ${A.done ? `<span class="stamp ${A.shown ? 'fin' : ''}">${A.shown ? 'CHECKED BY FINANCE' : 'CHECKED · DA'}</span>` : `<p class="soft" style="margin:0 0 8px">Work it out in your book. Write <b>Sum ${i + 3}</b> beside your working.</p><div class="ans"><span class="in"><span style="color:#555">£</span><input data-sum="${s.k}" value="${A.v}" inputmode="decimal" aria-label="${s.title}"></span><button class="btn pri" data-sumchk="${s.k}">Check ✓</button></div><div class="msg">${A.msg}</div>`}</div>`; };
+  S._sums = list; const left = list.filter(s => !S.sums[s.k] || !S.sums[s.k].done).length; if(!left) S.done.sums = true;
+  return shell(`<div class="ttl"><h1>This week's sums</h1><p>Three to work out; the model does the rest.</p></div><div class="grid g3">${list.map(card).join('')}</div>`,
+    left ? `Work out each sum, then type the answer. ${left} left.` : 'All signed. Now buy the week\'s fuel.', 'Buy fuel'); },
+
+fuel(){ const H = DATA.fuelHistory, F = DATA.fuelForecast, T = DATA.tank, M = model(), week = M.fuelL * 5, P0 = fuelToday(), blk = T.block, per = Math.round(blk * P0 * 100) / 100;
+  const W = 700, Hh = 220, l = 46, r = 20, t = 12, b = 26, n = H.length + 7, lo = Math.min(...H, F.low) - .05, hi = Math.max(...H, F.high) + .05, x = i => l + (W - l - r) * i / (n - 1), y = v => t + (Hh - t - b) * (hi - v) / (hi - lo);
+  const line = H.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' '), yt = []; for(let v = Math.ceil(lo * 10) / 10; v <= hi; v = Math.round((v + .1) * 10) / 10) yt.push(v);
+  const chart = `<svg class="fchart" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Fuel price since launch">${yt.map(v => `<line x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}" stroke="#1c3f73"/><text x="${l - 6}" y="${y(v) + 4}" text-anchor="end" fill="#9fbde3" font-size="11">£${v.toFixed(2)}</text>`).join('')}
+    <rect x="${x(H.length)}" y="${y(F.high)}" width="${x(n - 1) - x(H.length)}" height="${y(F.low) - y(F.high)}" fill="rgba(54,198,255,.18)" stroke="#36c6ff" stroke-dasharray="4 3"/><text x="${(x(H.length) + x(n - 1)) / 2}" y="${y(F.high) - 6}" text-anchor="middle" fill="#9fbde3" font-size="11">Next week</text>
+    <path d="${line}" fill="none" stroke="#36c6ff" stroke-width="2.5"/><circle cx="${x(H.length - 1)}" cy="${y(P0)}" r="5" fill="#F2C14E"/>${[0, 7, 14, 21, 28].map((d, k) => `<text x="${x(d)}" y="${Hh - 6}" fill="#9fbde3" font-size="11">Week ${k + 1}</text>`).join('')}</svg>`;
+  const space = T.capacity - T.inTank, max = Math.floor(Math.min(space, (DATA.airline.cash - S.bought) / P0) / blk), sel = S.buy === null ? Math.min(max, Math.ceil(Math.max(0, week - T.inTank) / blk)) : S.buy;
+  return shell(`<div class="ttl"><h1>Fuel</h1><p>Watch the market, secure fuel and manage your storage.</p></div>
+  <div class="grid g21"><section class="pnl"><h2>Jet fuel price <span class="sub">£ a litre since launch</span></h2>${chart}<p class="soft" style="margin:4px 0 0">Today £${P0.toFixed(2)} a litre. ${F.headline} Forecast £${F.low.toFixed(2)}–£${F.high.toFixed(2)}, ${F.confidence.toLowerCase()} confidence.</p></section>
+  <div class="grid"><section class="pnl"><h2>Your position</h2><div style="display:flex;gap:16px;align-items:center"><div class="tank"><i style="height:${Math.round(100 * T.inTank / T.capacity)}%"></i></div><table class="t"><tbody>
+    <tr><td>Storage</td><td class="n mono">${num(T.capacity)} L <small class="soft">— ${(w => w < 1 ? 'less than a week' : `about ${Math.round(w * 2) / 2} week${Math.round(w * 2) / 2 === 1 ? '' : 's'}`)(T.capacity / Math.max(1, week))} of flying</small></td></tr><tr><td>In the tank</td><td class="n mono">${num(T.inTank)} L</td></tr>
+    <tr><td>This week's flying</td><td class="n mono">${num(week)} L</td></tr><tr><td>${week > T.inTank ? 'Short' : 'Spare'}</td><td class="n mono ${week > T.inTank ? 'bad' : 'good'}">${num(Math.abs(week - T.inTank))} L</td></tr></tbody></table></div></section>
+  <section class="pnl"><h2>Order<span class="sub">£${P0.toFixed(2)} / L · ${money(per)} per ${num(blk)} L</span></h2><div class="blocks">${[0, 2, 4, 6, 8, 10].filter(k => k <= max).map(k => `<button class="btn ${k === sel ? 'on' : ''}" data-buy="${k}">${num(k * blk)} L</button>`).join('')}<button class="btn" data-buy="${max}" style="border-color:var(--good);color:var(--good)">Fill: ${num(max * blk)} L</button></div>
+    <p style="margin:10px 0 4px">${sel} × ${money(per)} = <b class="mono">${money(sel * per, 2)}</b></p><button class="btn go" id="fuelBuy" ${sel ? '' : 'disabled'}>✓ Confirm purchase</button>${S.done.fuel ? ' <span class="good">Bought.</span>' : ''}</section></div></div>`,
+  'Buy the week\'s fuel in blocks, or buy more before the price rises.', 'Fly the week'); },
+
+fleet(){ return shell(`<div class="ttl"><h1>Fleet</h1><p>Your aircraft, and what you could add.</p></div>
+  <div class="grid g2"><section class="pnl"><h2>Your aircraft</h2>${S.fleet.map(a => { const p = P(a.type); return `<div class="ac" style="margin-bottom:12px"><div class="pic">${p.icon}</div><div><b>${p.name}</b> <span class="soft">${a.reg}</span><br><span class="soft">${p.seats} seats · ${p.speed} km/h · range ${num(p.range)} km · ${money(p.dayCost)} a day</span><br>${a.flights.length} flights a day</div></div>`; }).join('')}</section>
+  <section class="pnl"><h2>The showroom</h2>${DATA.shop.map(s => { const cash = DATA.airline.cash - S.bought, rate = DATA.weeks[DATA.weeks.length - 1].profit, wks = Math.ceil((s.price - cash) / rate);
+    return `<div class="ac" style="margin-bottom:12px"><div class="pic">✈️</div><div style="flex:1"><b>${s.name}</b> <span class="goldt">${money(s.price)}</span><br><span class="soft">${s.seats} seats · ${s.speed} km/h · ${money(s.dayCost)} a day</span><br><small class="soft">${s.note}</small><br><small>${cash >= s.price ? 'You can buy it now.' : `${money(s.price - cash)} short: about ${wks} weeks at last week's profit.`}</small></div></div>`; }).join('')}</section></div>`,
+  'Compare your aircraft with the showroom.'); },
+
+review(){ const D = DATA.lastWeekDays, mx = Math.max(...D.map(d => d[1])), tot = D.reduce((t, d) => t + d[1], 0), w = DATA.weeks[DATA.weeks.length - 1], best = D.slice().sort((a, b) => b[1] - a[1])[0];
+  S.done.review = true;
+  return shell(`<div class="ttl"><h1>How did week 4 go?</h1><p>Profit ${money(tot)} · passengers ${w.pax} of ${w.seats} seats.</p></div>
+  <div class="grid g21"><section class="pnl"><h2>Profit each day</h2><div class="spark" style="height:180px">${D.map(([d, v]) => `<div style="height:${Math.round(85 * v / mx)}%;${d === best[0] ? 'background:var(--gold)' : ''}"><span class="mono">${money(v)}</span><em>${d}</em></div>`).join('')}</div><p class="soft" style="margin:26px 0 0">Best day: ${best[0]} (${money(best[1])}). Weekends were busier.</p></section>
+  <div class="grid"><section class="pnl"><h2>The week</h2><table class="t"><tbody><tr><td>Total profit</td><td class="n mono">${money(tot)}</td></tr><tr><td>Projected</td><td class="n mono">${money(w.proj)}</td></tr><tr><td>Difference</td><td class="n mono ${tot >= w.proj ? 'good' : 'bad'}">${money(tot - w.proj)}</td></tr><tr><td>Average a day</td><td class="n mono">${money(Math.round(tot / 7))}</td></tr><tr><td>Seats filled</td><td class="n mono">${Math.round(100 * w.pax / w.seats)}%</td></tr></tbody></table></section>
+  <section class="pnl"><h2>What would help</h2><p style="margin:0">A large improvement is available: the early Frankfurt peak has no flight. <button class="link" data-go="plan">Fix next week's plan</button></p></section></div></div>`,
+  'Sunday\'s review of last week.'); }
+};
+
+/* the second screen: the Operations Wall, a departures board and a map, with a clock you can run */
+function wallHtml(){ const M = model(), now = S.clock, rows = M.flights.slice().sort((a, b) => a.dep - b.dep).map(f => { const len = tripMin(f.type, f.rid), leg = Math.round(legH(f.type, f.rid) * 60);
+    const st = now < f.dep - 30 ? ['On time', ''] : now < f.dep ? ['Boarding', 'bo'] : now < f.dep + leg ? ['Departed', 'de'] : now < f.dep + len ? ['At ' + R(f.rid).city, 'la'] : ['Back home', 'la'];
+    return `<tr><td>${hm(f.dep)}</td><td>${DATA.airline.code}${100 + f.ai * 10 + f.fi}</td><td>${R(f.rid).city.toUpperCase()}</td><td>${P(f.type).name}</td><td class="mono">${f.pax}/${f.seats}</td><td class="stt ${st[1]}">${st[0]}</td></tr>`; }).join('');
+  const home = [215, 210], pos = { par:[330, 250], dub:[150, 150], ams:[340, 170], fra:[420, 230], mad:[200, 380] };
+  const planes = M.flights.map(f => { const leg = Math.round(legH(f.type, f.rid) * 60), len = tripMin(f.type, f.rid), p = pos[f.rid]; let k = null;
+    if(now >= f.dep && now < f.dep + leg) k = (now - f.dep) / leg; else if(now >= f.dep + leg + DATA.turnaroundMin && now < f.dep + len) k = 1 - (now - f.dep - leg - DATA.turnaroundMin) / leg;
+    return k === null ? '' : `<text x="${home[0] + (p[0] - home[0]) * k}" y="${home[1] + (p[1] - home[1]) * k}" font-size="22" text-anchor="middle">✈</text>`; }).join('');
+  return `<div class="wall"><div class="wh"><h1>${DATA.airline.name} · OPERATIONS</h1><span class="soft">${DATA.today.long}</span><span class="clock">${hm(now)}</span></div>
+    <div class="wb"><table class="board"><thead><tr><th>Time</th><th>Flight</th><th>To</th><th>Aircraft</th><th>Booked</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="map"><svg viewBox="0 0 520 440"><rect width="520" height="440" fill="#061226"/>${Object.entries(pos).map(([id, p]) => `<line x1="${home[0]}" y1="${home[1]}" x2="${p[0]}" y2="${p[1]}" stroke="#1c3f73" stroke-dasharray="5 4"/><circle cx="${p[0]}" cy="${p[1]}" r="6" fill="#36c6ff"/><text x="${p[0] + 10}" y="${p[1] + 4}" fill="#9fbde3" font-size="14">${R(id).city}</text>`).join('')}
+      <circle cx="${home[0]}" cy="${home[1]}" r="9" fill="#F2C14E"/><text x="${home[0] - 12}" y="${home[1] + 26}" fill="#F2C14E" font-size="14">Home</text>${planes}</svg></div></div>
+    <div class="wf"><button class="btn pri" id="wPlay">${S.playing ? '❚❚ Pause' : '▶ Run the day'}</button><button class="btn" id="wReset">06:00</button><span class="soft">Profit so far today: <b class="goldt mono">${money(Math.round(model().profit * Math.max(0, Math.min(1, (now - 360) / 960))))}</b></span><span style="margin-left:auto" class="soft">W or the monitor button: back to the desk</span><button class="btn" id="wClose">Close ✕</button></div></div>`; }
+
+/* =====================================================================
+   RENDER and the clicks
+   ===================================================================== */
+function render(){ document.getElementById('app').innerHTML = SCREENS[S.view]() + (S.wall ? wallHtml() : ''); bind(); }
+function check(A, ans, dp, done){ const v = parseFloat(String(A.v).replace(/[£,\s]/g, '')); if(isNaN(v)){ A.msg = 'Type a number.'; return; }
+  if(Math.abs(v - ans) <= (dp === 2 ? 0.005 : dp === 'h' ? 0.05 : 0.5)){ A.done = true; A.msg = ''; done && done(); return; }
+  A.tries++; if(A.tries >= 2){ A.done = true; A.shown = true; A.msg = ''; return; }
+  A.msg = `Query: ${v > ans ? 'too big' : 'too small'}. One more try.`; }
+function bind(){
+  const $$ = s => document.querySelectorAll(s), on = (s, f) => $$(s).forEach(e => e.addEventListener('click', ev => f(e, ev)));
+  on('[data-go]', e => { S.view = e.dataset.go; render(); });
+  on('[data-next]', e => { S.done[S.view] = S.done[S.view] || ['home', 'plan', 'fleet'].includes(S.view); S.view = e.dataset.next; render(); });
+  on('#wallBtn', () => { S.wall = !S.wall; render(); }); on('#wClose', () => { S.wall = false; render(); });
+  on('#wReset', () => { S.clock = 360; render(); });
+  on('#wPlay', () => { if(S.playing){ clearInterval(S.playing); S.playing = null; render(); return; }
+    S.playing = setInterval(() => { S.clock += 5; if(S.clock >= 22 * 60){ S.clock = 22 * 60; clearInterval(S.playing); S.playing = null; } render(); }, 120); render(); });
+  // plan
+  on('[data-fare]', e => { S.fareOpen = S.fareOpen === e.dataset.fare ? null : e.dataset.fare; render(); });
+  on('[data-setfare]', e => { const [rid, f] = e.dataset.setfare.split('|'); S.fares[rid] = +f; S.strip = rid; render(); });
+  on('[data-strip]', e => { S.strip = e.dataset.strip || null; render(); });
+  on('[data-blk]', e => { S.sel = e.dataset.blk.split('|').map(Number); S.strip = S.fleet[S.sel[0]].flights[S.sel[1]][0]; render(); });
+  on('[data-unsel]', () => { S.sel = null; render(); });
+  on('[data-del]', () => { const [ai, fi] = S.sel; S.fleet[ai].flights.splice(fi, 1); S.sel = null; render(); });
+  on('[data-move]', e => { const [ai, fi] = S.sel, a = S.fleet[ai], f = a.flights[fi], d = f[1] + +e.dataset.move, len = tripMin(a.type, f[0]);
+    if(d < DATA.dayStart * 60 || d + len > DATA.dayEnd * 60) return; if(a.flights.some((g, k) => k !== fi && !(d + len <= g[1] || d >= g[1] + tripMin(a.type, g[0])))) return; f[1] = d; render(); });
+  $$('[data-add]').forEach(s => s.addEventListener('change', () => { const ai = +s.dataset.add, rid = s.value; if(!rid) return; const t = freeSlot(ai, rid);
+    if(t === null){ alert('That flight does not fit in this aircraft\'s day.'); render(); return; } S.fleet[ai].flights.push([rid, t]); S.fleet[ai].flights.sort((a, b) => a[1] - b[1]); S.sel = [ai, S.fleet[ai].flights.findIndex(f => f[0] === rid && f[1] === t)]; S.strip = rid; render(); }));
+  // flight times and sums
+  $$('[data-ft]').forEach(i => i.addEventListener('input', () => { S.ft[i.dataset.ft].v = i.value; }));
+  on('[data-ftchk]', e => { const k = e.dataset.ftchk, [t, rid] = k.split('|'); check(S.ft[k], legH(t, rid), 'h'); render(); });
+  $$('[data-sum]').forEach(i => i.addEventListener('input', () => { S.sums[i.dataset.sum].v = i.value; }));
+  on('[data-sumchk]', e => { const k = e.dataset.sumchk, s = S._sums.find(x => x.k === k); check(S.sums[k], s.ans, k === 'fo' ? 2 : 0); render(); });
+  $$('input').forEach(i => i.addEventListener('keydown', ev => { if(ev.key === 'Enter'){ const b = i.closest('.ans').querySelector('button'); if(b) b.click(); } }));
+  // fuel
+  on('[data-buy]', e => { S.buy = +e.dataset.buy; render(); });
+  on('#fuelBuy', () => { const P0 = fuelToday(), n = S.buy === null ? 0 : S.buy; const sel = document.querySelector('.blocks .on'); const k = sel ? +sel.dataset.buy : n;
+    DATA.tank.inTank += k * DATA.tank.block; S.bought += Math.round(k * DATA.tank.block * P0 * 100) / 100; S.buy = 0; S.done.fuel = true; render(); });
+}
+document.addEventListener('keydown', e => { if((e.key === 'w' || e.key === 'W') && !/INPUT|SELECT/.test(document.activeElement.tagName)){ S.wall = !S.wall; render(); } });
+render();
+</script>
+</body>
+</html>
