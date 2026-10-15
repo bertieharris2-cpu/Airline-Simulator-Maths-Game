@@ -298,6 +298,14 @@ if 'WorkingMethods' not in wb.sheetnames: issue('error', 'WorkingMethods', 'no W
 planTips = [{'id': r['tipId'], 'condition': r.get('condition'), 'threshold': r.get('threshold'), 'message': r.get('message (route, band, numbers filled by the engine)') or r.get('message'),
              'priority': r.get('priority'), 'status': r.get('status')} for r in live('PlanTips', opt_sheet('PlanTips')) if r.get('tipId')]
 if 'PlanTips' not in wb.sheetnames: issue('check', 'PlanTips', 'no PlanTips sheet: the Operating Plan Studio uses its own copy of the tips.')
+# 15 Oct (Bertie): teacher milestones against coasting. The game has a draft list (docs/Milestones-Draft.md); each row of a
+# Milestones sheet overrides the draft's title, teacher words, threshold or chapters, matched on milestoneId.
+MS_IDS = ['fareTest', 'fullPlane', 'onTarget', 'newsReader', 'firstToFly', 'fuelAhead', 'cleanSheet', 'closeGap', 'shrinkGap', 'neverCoast', 'longHaulFull', 'spotMistake', 'captain', 'savedBought']
+teacherMilestones = [{'id': r['milestoneId'], 'chapters': r.get('chapters'), 'title': r.get('title'), 'teacherWords': r.get('teacherWords'), 'threshold': r.get('threshold'), 'status': r.get('status')}
+                     for r in live('Milestones', opt_sheet('Milestones')) if r.get('milestoneId')]
+if 'Milestones' not in wb.sheetnames: issue('check', 'Milestones', 'no Milestones sheet yet: the teacher panel uses the draft list in the game (docs/Milestones-Draft.md).')
+for m in teacherMilestones:
+    if m['id'] not in MS_IDS: issue('error', 'Milestones', f'{m["id"]}: the game cannot measure this milestone (it knows {", ".join(MS_IDS)}).')
 # v4.5 (D56): route news, a demand multiplier on named routes between two dates (announced the week before, or a surprise)
 routeNews = [{'id': r['newsId'], 'announce': r['announceDate'], 'start': r['startDate'], 'end': r['endDate'], 'kind': r.get('kind'),
               'routes': words(r.get('routes') or ''), 'mult': r['demandMultiplier'], 'segment': r.get('segment') or 'all', 'announced': bool(r.get('announced')),
@@ -346,7 +354,7 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'aircraft': aircraft, 'finance': finance, 'airports': airports, 'calendar': calendar, 'market': market,
          'events': events, 'challenges': challenges, 'mechanics': mechanics,
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
-         'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips,
+         'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips, 'teacherMilestones': teacherMilestones,
          'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview}
 
 

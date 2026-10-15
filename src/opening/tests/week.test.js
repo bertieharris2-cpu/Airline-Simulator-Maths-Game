@@ -340,6 +340,13 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   }catch(e){ checks.push('FAIL exception ' + e.message.split('\n')[0] + ' (test line ' + ((String(e.stack).match(/week\.test\.js:(\d+)/) || [])[1] || '?') + ', ' + await T().catch(() => '?') + ')'); await shot('exception'); }
   const s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
   ok('no day puts the shop in front of the pupil by itself (week, month and arrival days alike)', !shopSelf.length, shopSelf);
+  // teacher milestones (15 Oct): the Steady pupil reaches more than the coasting one; each run leaves its list for the other to compare
+  const MS = await p.evaluate(() => window.__sim.evalIn('JSON.stringify(msReport())')).then(JSON.parse).catch(() => null);
+  if(MS && s.day >= 118){ const mine = require('os').tmpdir() + `/airline-ms-${COAST ? 'coast' : 'steady'}.json`, other = require('os').tmpdir() + `/airline-ms-${COAST ? 'steady' : 'coast'}.json`; fs.writeFileSync(mine, JSON.stringify(MS, null, 1));
+    checks.push('info milestones ' + JSON.stringify(Object.fromEntries(Object.entries(MS.got).map(([k, g]) => [k, g.times]))));
+    if(COAST) ok('milestones, coasting pupil: First to fly (Amsterdam) but not Never coasting', !!MS.got['1:firstToFly'] && !MS.got['1:neverCoast'], [Object.keys(MS.got), MS.ended]);
+    else ok('milestones, Steady pupil: Fare tester, First to fly, Clean sheet, Saved and bought and Never coasting', ['fareTest', 'firstToFly', 'cleanSheet', 'savedBought', 'neverCoast'].every(k => MS.got['1:' + k]), [Object.keys(MS.got), MS.ended]);
+    if(fs.existsSync(other)){ const n = Object.keys(MS.got).length, o = Object.keys(JSON.parse(fs.readFileSync(other, 'utf8')).got).length; ok('the Steady pupil reaches more milestones than the coasting one', COAST ? o > n : n > o, { steady:COAST ? o : n, coast:COAST ? n : o }); } }
   if(process.env.SAVE){ fs.writeFileSync(process.env.SAVE, await p.evaluate(() => window.__sim.saveCode())); checks.push('info save code written to ' + process.env.SAVE); }   // chapter2.test.js starts from this save
   if(s.day >= 28){ const calc = (s.handSumLog || []).filter(h => h.day <= 28).flatMap(h => h.tools).filter(t => !/^Practice/.test(t) && !/\(Build\)|^Build:/.test(t));   // Build steps (the reviews, the model's formulas) are not Calculate
     const count = calc.reduce((n, t) => { const m = /^Ticket revenue \(([^)]*)\)/.exec(t); return n + (m ? m[1].split(',').length : 1); }, 0) + 2;   // launch day's three fares count as three

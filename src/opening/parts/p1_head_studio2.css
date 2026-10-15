@@ -243,3 +243,5 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 /* run-through fixes (14 Oct): a Working button beside a sum box widens its column instead of running off the panel */
 .sc-row:has(> .pad-wrap){grid-template-columns:minmax(0,1fr) auto auto}.fd-sr:has(> .pad-wrap){grid-template-columns:minmax(0,1fr) auto}
 .sc-row > .pad-wrap .sc-in input,.fd-sr > .pad-wrap .sc-in input{min-width:0;width:118px}
+/* teacher milestones (15 Oct): the sign-off log's table, four columns */
+.ms-log td:nth-child(1){width:16%}.ms-log td:nth-child(2){width:36%}.ms-log td:nth-child(4){width:1%;white-space:nowrap}.ms-log thead tr:first-child th{font-size:13px;padding-top:10px}

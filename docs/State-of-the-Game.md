@@ -10,6 +10,33 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0o. Teacher milestones and an old save made ready (15 Oct 2026)
+
+**Milestones** (`p4zq_milestones.js`, after `p4zp`; reassignment only, so `overrides.txt` stays at 120). They are for the teacher only, with no effect in the game. Draft list and rules: `docs/Milestones-Draft.md`.
+- **Data:**
+  - `MS_DEFAULT` has 14 rows: `{id, chapters, title, words, threshold}`.
+  - `msTable()` merges rows from `WB.teacherMilestones`. `tools/import_world.py` reads an optional `Milestones` sheet into that key and reports an id the game can't measure as an error.
+- **State:** `S.ms = {got:{'<ch>:<id>':{day, times, evidence, lastEvidence, periods}}, awarded:{key:day}, ended:{ch:{changes, gap, idleBoards, max}}, last, credited}`.
+- **When milestones are worked out:**
+  - A `closeDay` wrapper runs `recDecisionNow()` (it runs only once per period), then `msEval()`. That function:
+    1. judges each new decision entry (`msEvalEntry`);
+    2. scans the audits, hunts and challenges (`msEvalState`);
+    3. at a chapter's review, decides Never coasting (`msEndChapter`). A `render` wrapper also runs this on `chapterReview` and `protoEnd`.
+  - An `acquirePlane` wrapper copies `S.waitFor` before the purchase clears it, for Saved and bought.
+  - `msEval()` does nothing while `QUIET` is set, so dry runs are skipped.
+  - A save made before 15 Oct is evaluated once over its record when it is loaded. Its old purchases can't count as Saved and bought.
+- **Counted change (`msCounted`):** the plan signature `msSig` (flights with route, time and days; fares flown; on board) differs from both entries before it, and no board audit falls inside the entry. Entries are judged only inside a chapter's start-to-review window (`msChapterOf`), which leaves out the holiday.
+- **Teacher panel:** `msTeacherRender`, chained on `soTeacherRender`, inserts a `.tsec` after the Pupil record section. It reuses the `.so-log` table and `data-msaw` ticks. **Printout:** a `recordPrintHtml` wrapper adds a Milestones table filtered by `recRange`.
+- **Tests:**
+  - `milestones.test.js` (27 checks) covers each rule and guard on made-up weeks, the sheet override, Awarded in the code, the panel and the printout, and nothing on the pupil's screen.
+  - The chapter runs: `week.test.js` (Steady pupil against the coasting one), `chapter2.test.js` (the challenges and the hunt) and `chapter3.test.js` (buying without saving isn't Saved and bought).
+
+**gubby airlines** (`docs/saves/`): an early-October code saved on Thu 5 Sep, in the Departure times briefing.
+- **The problem:** the code loads, but its old 09:00, 12:20 and 15:40 times lose about £600 a day, and the migration puts a Thursday save that has sums on the board.
+- **The ready code:** Thursday is a planning day again, starting with *Departure times* and *A second route: Dublin*. Cash, fleet, fares and history are as saved.
+- **The test:** `migrate.test.js` loads the original (from `fixtures/gubby-ASIM5.txt`) and plays the ready code through Sunday's review to Monday.
+- **Not changed:** other codes saved before their departure times would also land on the board with the old times. The general migration rule is unchanged.
+
 ## 0n. Run-through fixes (14 Oct 2026): decimals the way the class is taught, and no unprompted shop
 
 Bertie played to week three. Two fixes (`p4zp_runthrough.js`, new, after `p4zo`; the decimal texts in place). Notes: `docs/Run-Through-Fixes-14-Oct.md`.

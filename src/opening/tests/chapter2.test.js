@@ -220,6 +220,8 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
     checks.push('stopped at ' + t + ' day ' + day); await shot('c2-stop'); break; }
   s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
   if(process.env.SAVE){ fs.writeFileSync(process.env.SAVE, await p.evaluate(() => window.__sim.saveCode())); checks.push('info save code written to ' + process.env.SAVE); }
+  { const MS = JSON.parse(await E('JSON.stringify(msReport())')); checks.push('info milestones ' + JSON.stringify(Object.fromEntries(Object.entries(MS.got).map(([k, g]) => [k, g.times]))));   // teacher milestones (15 Oct)
+    if(s.day >= 364) ok("milestones, chapter 2: the Captain's challenges won and the fuel invoice's mistake found are both there for the teacher", MS.got['2:captain'] && MS.got['2:captain'].times === 2 && !!MS.got['2:spotMistake'], Object.keys(MS.got)); }
   const HH = (s.history || []).filter(h => h.from >= 127), wk19 = HH.filter(h => h.from >= 127 && h.to <= 133);
   ok('the opening week flew a day at a time (days 127–133)', wk19.length === 7 && wk19.every(h => h.type === 'day'), wk19.map(h => h.from));
   if(s.day >= 148) ok('then the weeks (13 and 20 January)', HH.some(h => h.type === 'week' && h.from === 134) && HH.some(h => h.type === 'week' && h.from === 141), HH.map(h => h.type + ' ' + h.from));

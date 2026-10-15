@@ -209,6 +209,8 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
     checks.push('stopped at ' + t + ' day ' + day); await shot('c3-stop'); break; }
   s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
   if(process.env.SAVE){ fs.writeFileSync(process.env.SAVE, await p.evaluate(() => window.__sim.saveCode())); checks.push('info save code written to ' + process.env.SAVE); }
+  { const MS = JSON.parse(await E('JSON.stringify(msReport())')); checks.push('info milestones ' + JSON.stringify(Object.fromEntries(Object.entries(MS.got).map(([k, g]) => [k, g.times]))));   // teacher milestones (15 Oct)
+    ok('milestones, chapter 3: buying a plane without saving for it first is not Saved and bought', !MS.got['3:savedBought'], MS.got['3:savedBought']); }
   const HH = (s.history || []).filter(h => h.from >= 365), wk = HH.filter(h => h.from <= 371);
   ok('the set-up week flew a day at a time (days 365–371)', wk.length === 7 && wk.every(h => h.type === 'day'), wk.map(h => h.from));
   if(s.day >= 396) ok('then months from 8 September (8–30 Sep, then 1 Oct)', HH.some(h => h.type === 'month' && h.from === 372 && h.to === 394) && HH.some(h => h.type === 'month' && h.from === 395), HH.filter(h => h.type === 'month').map(h => h.from + '–' + h.to));

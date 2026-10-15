@@ -87,6 +87,20 @@ The opening is being made excellent before the later campaign continues. `airlin
   - **The hunts** ("Spot the mistake"): the fuel invoice on Mon 21 Apr (three lines; the total, 14,000 L × £2.04, is shown as £29,560) and the year-1 accounts on the 31 August review (New York 200 × £510 shown as £104,000). He taps This is wrong on a line, then types what it should say (with the Working pad); Everything is right counts as missed. A missed invoice costs £1,000 and gets a second look at the start of May (found: £1,000 back). A missed year-1 hunt puts a note on chapter 2's end card: chapter 3's cash forecast starts £1,000 out. Challenges and hunts go into the pupil record.
   - **Tested** by `chapter2.test.js` to the chapter 2 review (31 August 2031), with different choices for `TYPE=value` and `TYPE=premium`. Screenshots are in `docs/screenshots/chapter2/push3-*`. Notes for Fable: `docs/Chapter-2-Push-3-Notes.md`.
 
+**Teacher milestones (15 Oct 2026)** (`src/opening/parts/p4zq_milestones.js`). The draft list and the rules are in `docs/Milestones-Draft.md`.
+- **What they are for:** to reward pupils who keep improving the plan rather than coasting on one. Bertie gives the rewards outside the game.
+- **What the pupil sees:** nothing. No money or stars change.
+- **Where the teacher sees them:**
+  - The teacher panel has a **Milestones** section below *Pupil record*, one table for each chapter played. Each milestone shows when it was first reached, how many times since, and one line of evidence, with an **Awarded** tick that is kept in the save code.
+  - The record printout has a Milestones table.
+- **The draft list (14 milestones):** Fare tester, Full plane, On target, News reader, First to fly, Fuel ahead, Clean sheet, Close the gap, Shrink the gap, Never coasting, Long haul full, Spot the mistake, Captain's challenge, Saved and bought.
+- **How they are judged:** from the weekly decision record, the history, the month audits, first-attempt sign-offs, the hunts and the challenges.
+  - A change counts only if the plan differs from both of the two periods before it, so moving a fare back and forth counts once.
+  - A change made while the board waits doesn't count, and the Christmas holiday isn't judged.
+- **Fable's part:** a `Milestones` sheet (read by `tools/import_world.py`) can override the title, words, threshold or chapters of any row.
+
+**Old save codes:** `docs/saves/` holds codes made ready for the current game. The first is gubby airlines (Thu 5 Sep), which now starts with a planning day.
+
 **Run-through fixes (14 Oct 2026, Bertie at week three)** (`src/opening/parts/p4zp_runthrough.js` and the decimal texts). Notes: `docs/Run-Through-Fixes-14-Oct.md`.
 - **Decimals are multiplied the way the class is taught:** make it whole (× 10, 100 or 1,000, counting the decimal places), one whole-number multiplication, then divide back. No partition lines. It is the method everywhere a decimal is multiplied: the Service Cost card, the Working pad, Launch Day's *Buying fuel* maths page, the fuel desk's first-order Query, the sign-off hints, the pupil record's notes and the teacher-only day-by-day paths.
 - **The shop is never offered.** No step of any day opens it by itself (not the week or month beats, the days new aircraft arrive, the Mondays while saving, or day 365). It is on the Fleet desk (*Add an aircraft*) and the run board (*Aircraft shop*), always open when there is something to buy.
