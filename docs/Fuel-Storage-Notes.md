@@ -22,7 +22,7 @@ The tank was sized for the opening week and the fleet outgrew it. Now it keeps u
 
 ## How each rule is read (please check)
 
-1. **When the tank grows.** At the start of each beat from week 3: each Monday while the airline plans by the week, the 1st of each month once it plans by the month. The litres are the standing plan's for the next seven days, day by day, so days off count. Week 2 keeps 8,000 L, as the note says.
+1. **When the tank grows.** Once a beat from week 3: at its start, or when the Fuel desk opens (weeks 2–4 start their Monday plans by older code). So it is each Monday while the airline plans by the week, and each month's plan once it plans by the month. The litres are the plan's for the next seven days, day by day, so days off count. Week 2 keeps 8,000 L, as the note says.
 2. **"Rounded up to ten blocks"** means up to a multiple of ten blocks: 10,000 L steps in chapter 1, 100,000 L in chapter 2 and 1,000,000 L from 1 September 2031. That makes the chapter 3 tank big. Our Value airline flies about 99,000 L a week, and three weeks (297,000 L) rounds up to 1,000,000 L, about ten weeks of flying. A Steady airline at 500,000 L a week would get 2,000,000 L, more than the farm. Did you mean ten blocks, or one block (100,000 L steps in chapter 3, which would give 300,000 L and 1,500,000 L)?
 3. **A save from before v5.8** keeps what its tank held (20,000 L from day 29) and grows at its next plan.
 4. **The farm's "shock".** The rise is the forecast's expected rise (the middle of next week's band minus today) when that is 20p or more. Otherwise it is a typical shock, 60p, your example; the October spikes in the Market sheet are 97p, 64p and 67p. A Settings row `fuelShockRise` would change the 60p.

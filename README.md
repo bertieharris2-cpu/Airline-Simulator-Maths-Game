@@ -21,6 +21,11 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
+**Fuel storage grows with the fleet (16 Oct 2026, Workbook v5.8, D89; `src/opening/parts/p4zu_fuelstore.js`).** The tank keeps up with the airline, so filling up before a rise works in every chapter.
+- **Storage.** 8,000 L in week 2, then three weeks of the plan's fuel, rounded up to ten blocks; it never shrinks. The Fuel desk reads "Storage 40,000 L — about three weeks of flying".
+- **Blocks.** 1,000 L in chapter 1, 10,000 L from 6 January 2031, 100,000 L from 1 September 2031. The Monday sum stays blocks × the price of a block, and a Fill button buys as much as the tank and cash allow.
+- **The fuel farm (chapter 3).** 1,500,000 L for £2,000,000, with an "is it worth it?" Build (litres × a shock's rise, against the price); a second stage in chapter 4. Notes for Fable: `docs/Fuel-Storage-Notes.md`.
+
 **Chapter 4, "The ultimate plane" (15 Oct 2026, Workbook v5.5/v5.6, D82–D85; `src/opening/parts/p4zs_ch4.js`).** Push 1 plays from chapter 3's end to the review on 31 August 2033.
 - **The end of the summer.** 1–5 September 2032 fly as one run, then chapter 4 opens on Monday 6 September.
 - **The offer.** The A380 and the 747 side by side on Hong Kong and Los Angeles: the best fare, "Does it fill?" with 20 seats lit, and the profit a day before and after the payments. Take one, or neither.

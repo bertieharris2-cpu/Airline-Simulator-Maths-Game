@@ -19062,8 +19062,8 @@ if(typeof REC_REL !== 'undefined') REC_REL.finance = 'finance: deposit and month
 if(typeof PAPER_REL !== 'undefined') PAPER_REL.finance = 'finance: deposit and monthly payments';
 /* ==================================================================
    FUEL STORAGE GROWS WITH THE FLEET (Workbook v5.8, D89; Fable's note "Fuel storage that grows with the fleet", 15 Oct)
-   - Capacity: 8,000 L in week 2 (tankCapacity). From week 3, at the start of each beat (the Monday plan, or the 1st of a
-     month) the tank becomes max(what it holds, tankWeeksOfFuel × the standing plan's litres for the next seven days,
+   - Capacity: 8,000 L in week 2 (tankCapacity). From week 3, once a beat (at its start, or when the Fuel desk opens: the
+     Monday plan, or each month's plan) the tank becomes max(what it holds, tankWeeksOfFuel × the standing plan's litres for the next seven days,
      rounded up to ten blocks). It never shrinks. tankUpgradeDay / tankCapacityUpgraded are withdrawn: no "storage upgrade".
    - The block (fuelLotSchedule): 1,000 L; 10,000 L from 6 Jan 2031; 100,000 L from 1 Sep 2031. The Monday order sum stays
      blocks × the price of a block, and the desk shows the price of a block ("£21,700 per 10,000 L").
@@ -19092,11 +19092,12 @@ function fsWeekLitres(day){ const pl = currentPlan(), d0 = day || S.day || 1;
 function fsTarget(week){ const unit = 10 * fuelBlock(); return Math.ceil((WBS().tankWeeksOfFuel || 3) * week / unit - 1e-9) * unit; }
 function fsGrow(){
   if(!S || !weekMode() || (typeof QUIET !== 'undefined' && QUIET)) return; const day = S.day || 1; if(day <= deskFrom()) return;   // week 2 keeps 8,000 L
-  const F = fsS(); if(F.at === day) return; F.at = day;
+  const F = fsS(), key = S.round + ':' + day; if(F.at === key) return; F.at = key;   // once a beat
   const week = fsWeekLitres(day), want = fsTarget(week); if(want <= F.cap) return;
   const was = F.cap; F.cap = want; F.log.push({ day, from:was, to:want, week });
   if(want > (F.farm ? F.farm.litres : 0)) addNews([{ tag:'FUEL', text:`Storage: your tank now holds ${num(want)} L, ${fsWeeksWord(want / Math.max(1, week))} of flying.`, cls:'good' }]);
 }
+/* at the start of each beat, and when the Fuel desk opens (weeks 2–4 start their Monday plans by the older round code, not startBeat) */
 const startBeatFS = startBeat;
 startBeat = function(b){ startBeatFS(b); try{ fsGrow(); }catch(e){} };
 
@@ -19105,6 +19106,7 @@ function fsStorageWords(){ const cap = tankCapacity(), need = fdNeed(S.day || 1)
   return { cap, farm:!!(F.farm && F.farm.litres >= cap), text:`${num(cap)} L${F.farm && F.farm.litres >= cap ? ' (fuel farm)' : ''}`, weeks:week > 0 ? fsWeeksWord(cap / week) + ' of flying' : '' }; }
 const fdHtmlFS0 = fuelDeskHtml;
 fuelDeskHtml = function(asView){
+  if(weekMode()) try{ fsGrow(); }catch(e){}
   let h = fdHtmlFS0(asView); if(!weekMode()) return h;
   const W = fsStorageWords(), P0 = fuelOn(S.day || 1), blk = fuelBlock(), per = Math.round(blk * P0 * 100) / 100, max = fdMaxBlocks(P0);
   h = h.replace(/<div class="fd-r ?"><span>Storage capacity<\/span><b>[^<]*<\/b><\/div>/, `<div class="fd-r fs-cap"><span>Storage</span><b>${W.text}${W.weeks ? ` <small>— ${W.weeks}</small>` : ''}</b></div>`);

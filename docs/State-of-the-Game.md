@@ -10,6 +10,15 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0s. Fuel storage grows with the fleet (Workbook v5.8, D89, 16 Oct 2026)
+
+**`p4zu_fuelstore.js`**, after `p4zs`. Reassignment only, so `overrides.txt` stays at 120. Notes for Fable: `docs/Fuel-Storage-Notes.md`.
+- **Importer.** `fuelLotSize` is a schedule: the first size stays in `fuelLotSize`, and `fuelLotSchedule` lists each size with its start date. Rows whose value is "withdrawn" (`tankUpgradeDay`, `tankCapacityUpgraded`) are dropped. The Finance sheet's `fuelFarm` row is kept out of the aircraft finance rows and read into `WB.fuelFarm` (litres, price, from, and `stage2` from the notes).
+- **Capacity.** `S.fs = {cap, log, farm, built, worth, at}`. `fsGrow` runs once a beat (`startBeat` wrapper, and when the Fuel desk opens, since weeks 2–4 start their Monday plans by the older round code). It sets `cap` to max(cap, `tankWeeksOfFuel` × `fsWeekLitres`, rounded up to ten blocks), never lower, and not before week 3. `tankCapacity` is max(`cap`, the farm). A save from before v5.8 starts from what its tank held. `tankUpgradeNotice` is now empty.
+- **Blocks.** `fuelBlock` reads `fsBlockAt(fuelDay())`, so the order sum (`foFigures`), `fdMaxBlocks` and the desk follow the date.
+- **The desk.** A `fuelDeskHtml` wrapper writes the storage row ("Storage 40,000 L — about three weeks of flying"), the price of a block in the order panel, the Fill button (`data-fdfill`) and the farm line. A `renderFuelDesk` wrapper puts the block size in the bar.
+- **The farm.** `fsFarmNext` gives stage 1 from `WB.fuelFarm.from` and stage 2 from `stage2.from`. `fsFarmDialog` and `fsFarmBind` hold the worth Build (litres × `fsRise`: the forecast's rise if 20p or more, else `fuelShockRise` or 60p), with two tries and the record entry `farm:N`, and the buy-only purchase. `fuelStoreReport()` is for the tests.
+
 ## 0r. Chapter 4 "The ultimate plane", push 1 (Workbook v5.5/v5.6, D82–D85, 15 Oct 2026)
 
 **`p4zs_ch4.js`**, after `p4zt`. Reassignment only, so `overrides.txt` stays at 120. Notes for Fable: `docs/Chapter-4-Notes.md`. Test: `chapter4.test.js`, from chapter 3's end card (Value takes the A380; Premium takes the 747).
