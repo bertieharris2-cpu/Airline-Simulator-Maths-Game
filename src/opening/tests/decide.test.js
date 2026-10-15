@@ -144,6 +144,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
     await shot('ds-11-review'); const fixed = await p.$eval('#dsFix', e => !e.disabled).catch(() => false); ok('Fix next week\'s plan is enabled once the accounts are signed', fixed);
     if(fixed){ const want = await J('({ route:S.wk ? null : null })'); await p.click('#dsFix'); await p.waitForTimeout(300);
       for(let g = 0; g < 30 && await T() !== 'plan'; g++) await stepOn(); await p.waitForTimeout(400);
+      if(await p.$('.ftp-page')){ await stepOn(); await p.waitForTimeout(400); }   // flight times first, then the plan opens on the fix
       const R3 = await J('dsReport()'); info.fix = { s2:R3.s2, sel:R3.sel, log:R3.log.slice(-3) };
       ok('Fix next week\'s plan: the next Monday opens on the plan (not the opener), with the route (or the aircraft) picked out', await T() === 'plan' && R3.s2.mode === 'plan' && (R3.s2.focus === (fixTip.tip && R3.log.find(x => x.what === 'fix') ? R3.log.find(x => x.what === 'fix').route : R3.s2.focus) || R3.sel) && R3.log.some(x => x.what === 'fix'), info.fix);
       await shot('ds-12-next-monday'); }
