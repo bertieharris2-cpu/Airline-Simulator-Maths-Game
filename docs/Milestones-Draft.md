@@ -46,8 +46,10 @@ The code is `src/opening/parts/p4zq_milestones.js`; the tests are `src/opening/t
 
 | Pupil | Milestones reached |
 | --- | --- |
-| The Steady pupil (changes a fare in each month's first week) | *(filled in from the run)* |
-| The coasting pupil (the same plan from day 22) | *(filled in from the run)* |
+| The Steady pupil (changes a fare in each month's first week) | 9: Full plane (10 times), Saved and bought (2), On target (5), First to fly, Clean sheet, News reader, Fare tester (3), Shrink the gap and **Never coasting** (5 new plans, the longest stretch 28 days) |
+| The coasting pupil (the same plan from day 22) | 7: Full plane (7), Saved and bought (2), On target (3), First to fly, Clean sheet, News reader, Shrink the gap; **no Fare tester and no Never coasting** (82 days without a new plan, one board review) |
+
+Both runs end on the same cash as before (£697,112 and £689,806): milestones change nothing in the game. Most of what the coasting pupil reaches comes from its first three weeks, before day 22, when it still made changes.
 
 ## For Fable: the Milestones sheet
 
