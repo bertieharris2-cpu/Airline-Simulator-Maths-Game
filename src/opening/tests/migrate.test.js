@@ -103,6 +103,14 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
     await fresh(); await loadViaPanel(v5); const a1 = await S(); await fresh(); await loadViaPanel(v5); const a2 = await S();
     ok('loading the same old code twice lands in the same place', a1.si === a2.si && JSON.stringify(a1.steps) === JSON.stringify(a2.steps) && a1.cash === a2.cash); }
 
+  // 6. gubby airlines (Bertie, 15 Oct): an early-October code saved on Thu 5 Sep in the Departure times briefing, and the ready code made from it
+  { await fresh(); await loadViaPanel(FIX('gubby-ASIM5.txt')); const s = await S();
+    ok('gubby: the original loads (day 4, £8,220, Paris ×3 at £90) and goes to the board, as any Thursday save with sums does', s.airline.name === 'gubby airlines' && s.day === 4 && s.cash === 8220 && s.migrated.landedStep === 'weekRun', [s.day, s.cash, s.migrated.landedStep]);
+    await fresh(); await loadViaPanel(fs.readFileSync(path.join(__dirname, '../../../docs/saves/gubby-airlines-ready-15-Oct.txt'), 'utf8').trim()); const g = await S();
+    ok('gubby ready code: Thu 5 Sep HQ, then Departure times and A second route: Dublin, then the planning day', g.day === 4 && await T() === 'hq' && g.steps.map(x => x.t + (x.key ? ':' + x.key : '')).join(',') === 'hq,intro:times,intro:route,event,plan,workings,ready,fly,results' && g.cash === 8220, g.steps.map(x => x.t + (x.key ? ':' + x.key : '')));
+    const r = await playDay('gubby', true); checks.push('info gubby played ' + JSON.stringify(r.seen));
+    ok('gubby ready code: the planning day, the board and Sunday\'s review play through to Monday 9 Sep', r.seen.includes('intro') && r.seen.includes('weekReview') && r.seen.includes('next-day hq') && (await S()).day === 8, [(await S()).day, r.seen.slice(0, 14)]); }
+
   console.log(checks.join('\n')); console.log('ERRORS', errors.length ? errors : 'none');
   await b.close();
 })();
