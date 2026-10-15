@@ -297,7 +297,10 @@ workingMethods = [{'relationship': r['relationship'], 'level': r['level'], 'wher
 if 'WorkingMethods' not in wb.sheetnames: issue('error', 'WorkingMethods', 'no WorkingMethods sheet: the workbench has no methods to offer.')
 # v4.10 (D66): the Operating Plan Studio's live tips, each a condition the game checks on the projected plan
 planTips = [{'id': r['tipId'], 'condition': r.get('condition'), 'threshold': r.get('threshold'), 'message': r.get('message (route, band, numbers filled by the engine)') or r.get('message'),
-             'priority': r.get('priority'), 'status': r.get('status')} for r in live('PlanTips', opt_sheet('PlanTips')) if r.get('tipId')]
+             'priority': r.get('priority'), 'status': r.get('status'),
+             # v5.7 (D87): the button the tip offers, how the engine prices it, and the guided experiments it leads to
+             'action': r.get('action (what the button opens)') or r.get('action'), 'moneyAtStake': r.get('moneyAtStake (rule)') or r.get('moneyAtStake'),
+             'experiment': r.get('experiment (guided)') or r.get('experiment')} for r in live('PlanTips', opt_sheet('PlanTips')) if r.get('tipId')]
 if 'PlanTips' not in wb.sheetnames: issue('check', 'PlanTips', 'no PlanTips sheet: the Operating Plan Studio uses its own copy of the tips.')
 # 15 Oct (Bertie): teacher milestones against coasting. The game has a draft list (docs/Milestones-Draft.md); each row of a
 # Milestones sheet overrides the draft's title, teacher words, threshold or chapters, matched on milestoneId.
@@ -655,6 +658,19 @@ for k in NEEDED_V56:
 t56.append('- **Finance:** ' + ', '.join(f'{f["aircraft"]} £{f["financeDeposit"]:,} + £{f["financePayment"]:,} × {f["financeCount"]} a {f["paymentUnit"]}' for f in finance if f.get('financeDeposit') and f.get('paymentUnit') == 'month') + '.')
 t56.append('- **Campaign:** ' + (', '.join(f'{k} ({v["status"]})' for k, v in campaign.items()) or 'no rows') + '.')
 out += ['', '## Working on paper (D86) and chapter 4 (D82–D85) touches', '', 'The Settings rows these read, as loaded.', ''] + t56
+
+# v5.7 touches: decision support (D87) and what a change was worth (D88)
+NEEDED_V57 = ['operationsCheck', 'blockPreview', 'missedProfitDisplay', 'reviewFixLink', 'planningSupport', 'experimentFlow', 'helpMeInvestigate', 'planImprovedBanner', 'whatWasItWorth']
+t57 = []
+for k in NEEDED_V57:
+    st_ = settings_status.get(k)
+    if st_ is None: t57.append(f'- **Settings:** `{k}` is not on the sheet.')
+    elif st_ not in LOAD: t57.append(f'- **Settings:** `{k}` is `{st_}`: not loaded.')
+    else: t57.append(f'- `{k}`: {settings.get(k)}')
+for t in planTips:
+    if not t.get('action') and t['id'] not in ('all_good', 'general_tradeoff'): issue('check', 'PlanTips', f'{t["id"]} has no action: the operations check (D87) needs a button for it.')
+t57.append('- **PlanTips:** ' + ', '.join(f'{t["id"]} (priority {t["priority"]}{", " + str(t["experiment"]) if t.get("experiment") and t["experiment"] != "—" else ""})' for t in planTips) + '.')
+out += ['', '## Decision support (D87) and what a change was worth (D88) touches', '', 'The Settings rows and PlanTips columns these read, as loaded.', ''] + t57
 
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'

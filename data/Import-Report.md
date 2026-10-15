@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 129 | 129 live, 9 placeholder |
+| Settings | 138 | 138 live, 9 placeholder |
 | Archetypes | 5 | 2 later, 5 live |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved to Routes |
@@ -24,7 +24,7 @@
 | Chapters | 4 | 2 later, 4 live, 1 note row |
 | HandSumRules | 12 | 12 live, 1 note row |
 | Catering | 4 | 4 live, 1 note row |
-| PlanTips | 12 | 12 live, 1 note row |
+| PlanTips | 15 | 15 live, 2 note row |
 | Milestones | 0 |  |
 | RouteNews | 71 | 71 live, 1 note row |
 | Livery | 35 | 35 live, 1 note row |
@@ -110,6 +110,21 @@ The Settings rows these read, as loaded.
 - `campaignProjectDate`: 2032-10-04
 - **Finance:** b757 £1,000,000 + £50,000 × 40 a month, b787 £4,000,000 + £200,000 × 40 a month, a340 £2,000,000 + £200,000 × 40 a month, b777 £8,000,000 + £400,000 × 40 a month, a350 £10,000,000 + £500,000 × 40 a month, b747 £16,000,000 + £600,000 × 40 a month, a380 £20,000,000 + £1,000,000 × 40 a month.
 - **Campaign:** project (live), brief (live), choices (live), portfolio (live), aiSignals (live), focusGroup (live), reach (placeholder), funnel (placeholder), honesty (live), teacherOverride (live).
+
+## Decision support (D87) and what a change was worth (D88) touches
+
+The Settings rows and PlanTips columns these read, as loaded.
+
+- `operationsCheck`: True
+- `blockPreview`: True
+- `missedProfitDisplay`: words for the pupil; figures for the teacher
+- `reviewFixLink`: True
+- `planningSupport`: guided
+- `experimentFlow`: choose variable → predict → change one thing → model → compare → decide
+- `helpMeInvestigate`: True
+- `planImprovedBanner`: True
+- `whatWasItWorth`: change per unit × units = a day; × 7 = a week
+- **PlanTips:** peak_unserved (priority 1, Change the times), service_weak (priority 2, Change the times), turned_away (priority 2, Change the fare | Change the number of services), fare_too_high (priority 2, Change the fare), fare_too_low (priority 3, Change the fare), idle_plane (priority 3, Change the number of services), long_leg_warning (priority 3, Change the aircraft), range_fail (priority 1, Change the aircraft), all_good (priority 9), general_tradeoff (priority 9), fare_lower_fills (priority 3, Change the fare), weekend_only_news (priority 1, Change the number of services), plane_unused (priority 1, Change the number of services | Change the aircraft), loss_making_service (priority 1, Change the times | Change the fare | Change the number of services), plan_loses_money (priority 0).
 
 ## Identity and photos (CR5)
 
