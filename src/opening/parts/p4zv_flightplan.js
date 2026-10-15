@@ -61,7 +61,7 @@ function ftPage(){
     if(types.length > 1){ const lo = types[0], hi = types[types.length - 1], both = rid => flies(lo, rid) && flies(hi, rid) && (can(lo, rid) || can(hi, rid)),   // one route, both aircraft (even if one has met it)
         r = rids.find(rid => both(rid) && nice(lo, rid) && nice(hi, rid)) || rids.find(both); if(r) pick = [lo + '|' + r, hi + '|' + r]; }
     if(pick.length < 2){ const order = fresh.slice().sort((a, b) => { const [pa, ra] = a.split('|'), [pb, rb] = b.split('|'); return (nice(pb, rb) ? 1 : 0) - (nice(pa, ra) ? 1 : 0); });
-      order.forEach(k => { if(pick.length < 2 && !pick.includes(k) && !(pick.length && pick[0].split('|')[1] === k.split('|')[1] && types.length < 2)) pick.push(k); }); }
+      order.forEach(k => { if(pick.length < (types.length > 1 ? 2 : 1) && !pick.includes(k)) pick.push(k); }); }   // one aircraft type: one sum (nothing to compare)
     A = F.asked[key] = pick.map(k => ({ k, v:'', tries:0, done:false, shown:false, msg:'', q:false }));
   }
   return { fresh, rids, types, items:A, key };
