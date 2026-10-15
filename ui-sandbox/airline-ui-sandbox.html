@@ -137,18 +137,22 @@ table.t th{color:var(--soft);font-weight:500;font-size:13px}table.t td.n,table.t
 }
 .wallbtn{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--gold);border-radius:3px;background:rgba(242,193,78,.1);color:var(--gold);font-weight:600}
 .wall{position:fixed;inset:0;background:var(--wall-bg);background-color:var(--wall-bg-0);z-index:20;display:flex;flex-direction:column;color:#eef5ff;font-weight:400}
+.wall::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 112%,rgba(31,111,255,.14),transparent 55%),linear-gradient(rgba(120,175,235,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(120,175,235,.028) 1px,transparent 1px);background-size:100% 100%,56px 56px,56px 56px}
+.wall>*{position:relative;z-index:1}
 .wall b,.wall strong{font-weight:600}
 .wall .mono,.wall .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
-.wall .wh{flex:0 0 58px;display:flex;align-items:center;gap:18px;padding:0 22px;border-bottom:1px solid var(--wline);background:linear-gradient(180deg,rgba(13,49,89,.45),rgba(2,8,18,.4))}
-.wall .wh h1{margin:0;font-size:17px;font-weight:600;letter-spacing:.24em;white-space:nowrap}
+.wall .wh{flex:0 0 58px;display:flex;align-items:center;gap:18px;padding:0 22px;border-bottom:1px solid rgba(54,198,255,.28);box-shadow:0 1px 0 rgba(54,198,255,.06),0 8px 30px rgba(0,0,0,.25);background:linear-gradient(180deg,rgba(13,49,89,.45),rgba(2,8,18,.4))}
+.wall .wh h1{margin:0;font-size:17px;font-weight:600;letter-spacing:.24em;white-space:nowrap;display:flex;align-items:center}
+.wall .wh h1::before{content:"";width:9px;height:9px;margin-right:14px;background:var(--c-cyan);box-shadow:0 0 10px var(--c-cyan),0 0 2px #fff inset}.wall.lv .wh h1::before{background:var(--c-gold);box-shadow:0 0 10px var(--c-gold),0 0 2px #fff inset}
 .wall .wh .sp{flex:1}
-.seg{display:flex;border:1px solid var(--wline)}.seg button{border:0;background:transparent;padding:8px 16px;font-size:12px;font-weight:500;letter-spacing:.16em;color:var(--c-soft)}.seg button.on{background:rgba(31,111,255,.28);color:#fff;box-shadow:inset 0 -2px 0 var(--c-cyan)}
+.seg{display:flex;border:1px solid var(--wline)}.seg button{border:0;background:transparent;padding:8px 16px;font-size:12px;font-weight:500;letter-spacing:.16em;color:var(--c-soft)}.seg button.on{background:rgba(31,111,255,.28);color:#fff;box-shadow:inset 0 -2px 0 var(--c-cyan),0 0 22px rgba(54,198,255,.22)}
 .stamp2{font-size:11px;letter-spacing:.12em;color:var(--c-mute);white-space:nowrap}.stamp2 b{color:#d6e8ff;font-weight:500}
 .wicon{width:32px;height:32px;border:1px solid transparent;border-radius:2px;background:transparent;color:var(--c-mute);font-size:18px;line-height:1}.wicon:hover,.wicon.on{color:var(--c-soft);border-color:var(--wline)}
 .back{padding:9px 18px;border:1px solid var(--c-cyan);border-radius:2px;background:rgba(54,198,255,.1);font-weight:600;font-size:15px;white-space:nowrap}
 .ribbon{flex:0 0 36px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid var(--wline2);background:rgba(2,8,18,.45);font-size:14px;white-space:nowrap;overflow:hidden}
 .ribbon .lbl{color:var(--c-gold);letter-spacing:.2em;font-size:11px;font-weight:600;margin-right:8px}
-.ribbon button{border:0;background:none;padding:5px 12px;color:#d3e4f8;font-weight:400}.ribbon .dot{color:var(--c-mute)}
+.ribbon button{border:1px solid rgba(65,122,171,.28);border-radius:2px;background:rgba(7,29,54,.5);padding:3px 11px 3px 9px;margin-right:8px;color:#d3e4f8;font-weight:400;display:inline-flex;align-items:center;gap:8px}
+.ribbon button::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c-cyan);box-shadow:0 0 6px rgba(54,198,255,.8)}.ribbon button.warn::before{background:var(--c-amber);box-shadow:0 0 6px var(--c-amber)}.ribbon button.bad::before{background:var(--c-red);box-shadow:0 0 7px var(--c-red)}.ribbon .dot{display:none}
 .ribbon button.bad{color:#ffaaa3}.ribbon button.warn{color:#ffd28a}.ribbon button:hover{color:#fff;background:rgba(54,198,255,.08)}
 .wbody{flex:1;min-height:0;padding:12px 18px 14px;display:grid;grid-template-rows:1fr 252px;gap:10px;overflow:hidden}.wbody.lv{grid-template-rows:1fr auto}
 .wtop{display:grid;grid-template-columns:1.6fr 1fr;gap:10px;min-height:0}
@@ -157,7 +161,13 @@ table.t th{color:var(--soft);font-weight:500;font-size:13px}table.t td.n,table.t
 /* panels: level 1 by default */
 .wd{background:var(--wall-panel);border:1px solid var(--wline);border-radius:0;padding:12px 16px;overflow:hidden;position:relative;display:flex;flex-direction:column;min-height:0;box-shadow:var(--wshadow)}
 .wbot .wd{background:var(--wall-panel-deep);box-shadow:inset 0 1px rgba(255,255,255,.02)}
+.wd::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,rgba(150,205,255,.45),rgba(150,205,255,.08) 55%,transparent);pointer-events:none}
+.wd::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 0 0,rgba(54,198,255,.09),transparent 48%)}
+.wd.l2::after{background:radial-gradient(circle at 0 0,rgba(242,193,78,.10),transparent 48%)}.wd.l3::after{background:radial-gradient(circle at 100% 0,rgba(255,181,71,.16),transparent 50%)}.wd.l3.red::after{background:radial-gradient(circle at 100% 0,rgba(255,95,95,.18),transparent 50%)}
+.wd.hero::after{background:radial-gradient(circle at 100% 0,rgba(255,181,71,.22),transparent 55%),radial-gradient(circle at 0 100%,rgba(255,181,71,.06),transparent 40%)}.wd.hero.red::after{background:radial-gradient(circle at 100% 0,rgba(255,95,95,.24),transparent 55%),radial-gradient(circle at 0 100%,rgba(255,95,95,.06),transparent 40%)}
+.wd>*{position:relative;z-index:1}
 .wd h3{margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:.16em;color:#bcd4f2;display:flex;align-items:center;gap:8px;text-transform:uppercase;white-space:nowrap}
+.wd h3::before{content:"";width:3px;height:12px;background:var(--c-cyan);opacity:.75;box-shadow:0 0 8px rgba(54,198,255,.6)}.wd.l2 h3::before{background:var(--c-gold);box-shadow:0 0 8px rgba(242,193,78,.6)}.wd.l3 h3::before{background:var(--c-amber);box-shadow:0 0 8px rgba(255,181,71,.7)}.wd.l3.red h3::before{background:var(--c-red);box-shadow:0 0 8px rgba(255,95,95,.7)}
 .wd h3 .meta{margin-left:auto;font-weight:400;letter-spacing:.02em;text-transform:none;font-size:12px;color:var(--c-mute)}
 .wd h3 .lv{font-size:10px;letter-spacing:0}
 /* level 2: an opportunity worth a look */
@@ -171,20 +181,20 @@ table.t th{color:var(--soft);font-weight:500;font-size:13px}table.t td.n,table.t
 @keyframes intelligenceWake{0%{box-shadow:0 0 0 rgba(242,193,78,0)}45%{box-shadow:0 0 26px rgba(242,193,78,.22)}100%{box-shadow:0 0 0 rgba(242,193,78,0)}}
 .wd.hl{animation:hl 1.8s ease-out 1}
 @keyframes hl{0%,35%{outline:2px solid var(--c-cyan);outline-offset:-2px}100%{outline:2px solid transparent;outline-offset:-2px}}
-.wd .x{position:absolute;right:10px;top:7px;border:0;background:none;color:var(--c-soft);font-size:16px}
+.wd .x{position:absolute;right:10px;top:7px;z-index:3;border:0;background:none;color:var(--c-soft);font-size:16px}
 .wd select.arr{margin-left:auto;background:#061a32;color:#eef5ff;border:1px solid var(--wline);border-radius:2px;font-size:12px;letter-spacing:0;text-transform:none}
 .wc{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column}
 .lnk{border:0;background:none;color:var(--c-cyan);padding:0;font-size:13.5px;font-weight:500;white-space:nowrap}.lnk:hover{text-decoration:underline}
 .wfoot{margin-top:auto;padding-top:8px;display:flex;gap:18px;align-items:center}
 .up{color:var(--c-green)}.dn{color:var(--c-red)}.wa{color:var(--c-amber)}.gd{color:var(--c-gold)}.sf{color:var(--c-soft)}
 /* map: the hero */
-.wd.mapp{padding:0;background:var(--wall-bg-0)}.wd.mapp h3{position:absolute;left:16px;right:16px;top:12px;z-index:1;margin:0}
+.wd.mapp{padding:0;background:var(--wall-bg-0)}.wd.mapp::after{display:none}.wd.mapp h3::before{display:none}.wd.mapp h3{position:absolute;left:16px;right:16px;top:12px;z-index:1;margin:0}
 .wmap{flex:1;min-height:0}.wmap svg{width:100%;height:100%;display:block}.wmap .city{cursor:pointer}
 .legend{display:flex;gap:14px;font-size:12px;color:var(--c-mute);margin-left:auto;letter-spacing:.02em;text-transform:none;font-weight:400}.legend i{display:inline-block;width:18px;height:2px;vertical-align:middle;margin-right:6px}
 /* news: editorial; category, headline, consequence */
 .nws{display:grid;flex:1;min-height:0;border-top:1px solid var(--wline2)}
 .nws article{padding:10px 14px 4px;border-left:1px solid var(--wline2);display:flex;flex-direction:column;gap:6px;min-width:0}.nws article:first-child{border-left:0;padding-left:0}
-.nws .k{font-size:10.5px;letter-spacing:.14em;font-weight:500;color:var(--c-soft)}.nws .k i{font-style:normal;font-size:15px;margin-right:6px;letter-spacing:0}
+.nws .k{font-size:10.5px;letter-spacing:.14em;font-weight:500;color:var(--c-soft);border-left:2px solid currentColor;padding-left:8px;display:flex;align-items:center}.nws .k.weather{color:#ff8a82}.nws .k.rival{color:var(--c-amber)}.nws .k.fuel{color:#c7a6ff}.nws .k.event{color:var(--c-gold)}.nws .k.market{color:var(--c-cyan)}.nws .k i{font-style:normal;font-size:15px;margin-right:6px;letter-spacing:0}
 .nws b{font-size:16px;line-height:1.25;font-weight:550}
 .nws .c{font-size:13px;font-weight:500}
 .feed{position:absolute;top:104px;right:18px;bottom:18px;width:540px;z-index:4;background:var(--wall-panel-active);border:1px solid var(--c-cyan);padding:14px 18px;box-shadow:var(--wshadow-up);overflow:auto}
@@ -199,8 +209,9 @@ table.t th{color:var(--soft);font-weight:500;font-size:13px}table.t td.n,table.t
 .sig{display:grid;grid-template-columns:repeat(3,1fr);flex:1;border-top:1px solid var(--wline2)}
 .sig button{text-align:left;border:0;border-left:1px solid var(--wline2);border-bottom:1px solid var(--wline2);background:none;padding:7px 12px;display:grid;grid-template-columns:1fr auto;column-gap:8px;align-content:center;font-weight:400}
 .sig button:nth-child(3n+1){border-left:0;padding-left:0}.sig button:hover{background:rgba(54,198,255,.06)}.sig button.on{background:rgba(54,198,255,.1);box-shadow:inset 0 -2px 0 var(--c-cyan)}
-.sig b{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}.sig .s{font-size:11px;font-weight:600;letter-spacing:.1em}.sig .t{grid-column:1/-1;font-size:12.5px;color:var(--c-soft);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sig .spk{grid-row:1/3;grid-column:2;display:flex;gap:2px;align-items:flex-end;height:24px}.sig .spk i{width:5px;background:currentColor;opacity:.8}
+.sig button.u2{box-shadow:inset 3px 0 0 var(--c-green)}.sig button.u1{box-shadow:inset 3px 0 0 rgba(60,227,148,.5)}.sig button.d1{box-shadow:inset 3px 0 0 #ff8a7a}.sig button.on{box-shadow:inset 3px 0 0 var(--c-cyan),inset 0 -2px 0 var(--c-cyan)}.sig button{padding-left:10px!important}
+.sig b{font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}.sig .s{font-size:11px;font-weight:600;letter-spacing:.08em;white-space:nowrap}.sig .t{grid-column:1/-1;font-size:12.5px;color:var(--c-soft);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sig .spk{grid-row:1/3;grid-column:2;display:flex;gap:2px;align-items:flex-end;height:22px;margin-left:2px}.sig .spk i{width:5px;background:currentColor;opacity:.8}
 .u2{color:var(--c-green)}.u1{color:#86e3b3}.f0{color:var(--c-soft)}.d1{color:#ff8a7a}
 /* events to watch */
 .watch{display:flex;flex-direction:column;border-top:1px solid var(--wline2)}
@@ -209,13 +220,14 @@ table.t th{color:var(--soft);font-weight:500;font-size:13px}table.t td.n,table.t
 .watch b{font-weight:500}.watch small{display:block;color:var(--c-soft);font-size:12px}
 /* weather: a status strip */
 .wxl{display:flex;flex-direction:column;border-top:1px solid var(--wline2)}.wxl div{display:grid;grid-template-columns:48px 30px 1fr;align-items:center;padding:0;border-bottom:1px solid var(--wline2);font-size:13.5px}
-.wxl b{font-weight:500;letter-spacing:.1em;color:var(--c-soft)}.wxl span{font-size:16px;line-height:24px}.wxl em{font-style:normal;font-size:11px;font-weight:600;letter-spacing:.14em}
+.wxl b{font-weight:500;letter-spacing:.1em;color:var(--c-soft)}.wxl span{font-size:17px;line-height:26px}.wxl em{font-style:normal;font-size:10px;font-weight:600;letter-spacing:.14em;justify-self:start;padding:1px 8px;border:1px solid currentColor;border-radius:2px;opacity:.9}
 .wxa{margin-top:8px;padding:5px 12px;border-left:3px solid var(--c-red);background:rgba(255,95,95,.08);font-size:14px;line-height:1.35}.wxa span{display:block;font-size:10.5px;letter-spacing:.16em;color:#ff9a92;font-weight:600}
 /* your airline */
-.ya{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ya b{display:block;font-size:30px;font-weight:300;line-height:1.1}.ya span{font-size:12px;color:var(--c-soft)}
+.ya{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}.ya svg{width:74px;height:74px;display:block}.ya b{display:block;font-size:30px;font-weight:300;line-height:1.1}.ya span{font-size:12px;color:var(--c-soft)}
 /* the city briefing */
 .mix{display:flex;flex-direction:column;gap:7px;margin:2px 0 12px}.mix div{display:grid;grid-template-columns:86px 1fr 40px;align-items:center;gap:10px;font-size:11.5px;letter-spacing:.12em;color:var(--c-soft)}.mix i{display:block;height:8px;background:rgba(110,170,235,.12)}.mix u{display:block;height:100%}.mix b{text-align:right;font-size:14px;letter-spacing:0;color:#fff}
 .facts{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px}.facts span{color:var(--c-soft)}
+.todbar{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:88px}.todbar div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center}.todbar i{display:block;width:70%;background:linear-gradient(180deg,#36C6FF,#1f6fff)}.todbar small{font-size:11px;color:var(--c-soft);white-space:nowrap;margin-top:4px}
 /* shared with the desk's Route Intelligence page */
 .mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini span{display:block;color:var(--soft);font-size:12px}.mini b{font-size:22px}
 .prof{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin:6px 0;background:var(--wline2)}.prof div{background:#071a33;padding:8px;text-align:center}.prof b{display:block;font-size:22px;font-weight:400}.prof i{display:block;height:4px;margin-top:6px;background:#1b3560;overflow:hidden}.prof i u{display:block;height:100%}
@@ -229,7 +241,7 @@ table.t th{color:var(--soft);font-weight:500;font-size:13px}table.t td.n,table.t
 .opsfeed{margin-top:12px;flex:1;min-height:0;overflow:hidden;border-top:1px solid var(--wline2)}.opsfeed h4{margin:8px 0 4px;font-size:10.5px;letter-spacing:.16em;font-weight:500;color:var(--c-soft)}
 .opsfeed div{display:grid;grid-template-columns:52px 1fr;padding:4px 0;font-size:13.5px;border-bottom:1px solid rgba(53,96,135,.2)}.opsfeed div:first-of-type{color:#fff}.opsfeed div:not(:first-of-type){color:var(--c-soft)}.opsfeed .t{font-variant-numeric:tabular-nums;color:var(--c-mute)}
 .today{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:10px;background:var(--wline2)}.today div{background:#061a32;padding:8px 10px}.today span{display:block;color:var(--c-soft);font-size:11.5px}.today b{font-size:20px;font-weight:400}
-.clock{font:300 42px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--c-gold)}
+.clock{font:300 42px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--c-gold);text-shadow:0 0 18px rgba(242,193,78,.45)}
 .wall .btn{border-radius:3px}.wall .btn.pri{font-weight:500}
 .board{width:100%;border-collapse:collapse;font:400 15.5px/1.2 ui-monospace,Menlo,Consolas,monospace}
 .board th{color:var(--c-soft);text-align:left;padding:7px 8px;border-bottom:1px solid var(--wline);font:500 10.5px system-ui;letter-spacing:.16em;text-transform:uppercase}.board td{padding:8px;border-bottom:1px solid var(--wline2)}
@@ -532,8 +544,12 @@ function mapSvg(W, H, o){
   const kx = W / (MAPB.lon1 - MAPB.lon0) / 70, ky = H / (MAPB.lat1 - MAPB.lat0) / 111;   // pixels a km near 51°N
   const rings = [500, 1000, 1500].map(km => `<ellipse cx="${hp[0]}" cy="${hp[1]}" rx="${(km * kx).toFixed(1)}" ry="${(km * ky).toFixed(1)}" fill="none" stroke="rgba(242,193,78,.13)" stroke-dasharray="1 5"/><text x="${(hp[0] + km * kx * .71).toFixed(1)}" y="${(hp[1] + km * ky * .71 + 12).toFixed(1)}" fill="rgba(242,193,78,.4)" font-size="10.5">${num(km)} km</text>`).join('');
   const marks = o.marks ? mapMarks() : {}, pos = r => proj(r.lon, r.lat, W, H);
+  let gl = ''; for(let lat = 40; lat <= 60; lat += 5){ const y = proj(0, lat, W, H)[1]; gl += `<text x="6" y="${(y - 3).toFixed(1)}" fill="rgba(140,180,225,.35)" font-size="9.5">${lat}°N</text>`; }
+  for(let lon = -15; lon <= 25; lon += 5){ const x = proj(lon, 0, W, H)[0]; gl += `<text x="${(x + 3).toFixed(1)}" y="${H - 5}" fill="rgba(140,180,225,.35)" font-size="9.5">${Math.abs(lon)}°${lon < 0 ? 'W' : lon ? 'E' : ''}</text>`; }
+  const wxc = o.marks ? OPEN().map(r => { const st = wxStatus(weatherNow()[r.id]); if(st[2] === 1) return ''; const [x, y] = pos(r), red = st[2] === 3;   // weather cells: where the trouble is
+    return `<circle cx="${x}" cy="${y}" r="${red ? 72 : 44}" fill="url(#${u}${red ? 'wr' : 'wa'})"/>`; }).join('') : '';
   const lines = DATA.routes.map(r => { const d = arcD(hp, pos(r)); return flown.has(r.id)
-    ? `<path d="${d}" fill="none" stroke="#36C6FF" stroke-width="2.3" style="filter:drop-shadow(0 0 4px rgba(54,198,255,.35))"/>`
+    ? `<path d="${d}" fill="none" stroke="#36C6FF" stroke-width="7" opacity=".14" filter="url(#${u}b)"/><path d="${d}" fill="none" stroke="#36C6FF" stroke-width="2.3" style="filter:drop-shadow(0 0 4px rgba(54,198,255,.35))"/>${o.live ? '' : `<path d="${d}" fill="none" stroke="rgba(235,250,255,.55)" stroke-width="1.6" stroke-dasharray="3 15" stroke-linecap="round"><animate attributeName="stroke-dashoffset" from="18" to="0" dur="3.2s" repeatCount="indefinite"/></path>`}`
     : `<path d="${d}" fill="none" stroke="#58779A" stroke-width="1.2" stroke-dasharray="5 6" opacity=".45"/>`; }).join('');
   const deco = o.deco ? DATA.routes.filter(r => flown.has(r.id)).slice(0, 1).map(r => { const d = arcD(hp, pos(r));   // now and then, one aircraft crosses the map
     return `<g opacity="0"><path d="${PLANE}" fill="#eaf6ff"/><animateMotion dur="26s" begin="2s" repeatCount="indefinite" rotate="auto" keyPoints="0;1;1" keyTimes="0;.3;1" calcMode="linear" path="${d}"/><animate attributeName="opacity" values="0;.8;.8;0;0" keyTimes="0;.03;.27;.3;1" dur="26s" begin="2s" repeatCount="indefinite"/></g>`; }).join('') : '';
@@ -545,14 +561,19 @@ function mapSvg(W, H, o){
       <circle cx="${x}" cy="${y}" r="${on || col ? 4.5 : 3.5}" fill="${on || col ? dot : '#071d36'}" stroke="${on || col ? '#e9f8ff' : dot}" stroke-width="${on || col ? 1 : 1.3}"/>${sel ? `<circle cx="${x}" cy="${y}" r="11" fill="none" stroke="#36C6FF" stroke-width="2"/>` : ''}
       <text x="${x + 10}" y="${y + 4.5}" fill="${on ? '#d6e6fa' : '#8aa0bf'}" font-size="${on ? 13.5 : 12.5}" font-weight="400" letter-spacing=".3">${r.city}</text>
       ${mk ? `<g transform="translate(${(x - 3).toFixed(1)},${(y - 22).toFixed(1)})"><rect x="${-bw / 2}" y="-10" width="${bw}" height="20" fill="rgba(2,8,18,.82)" stroke="${SEV[mk.kind]}" stroke-opacity=".75"/><text x="0" y="1" font-size="${mk.text ? 11.5 : 12.5}" font-weight="600" fill="${SEV[mk.kind]}" text-anchor="middle" dominant-baseline="central">${mk.ic}</text></g>` : ''}</g>`; }).join('');
-  const planes = (o.planes || []).map(([x, y, lab, ang]) => `<g><circle cx="${x}" cy="${y}" r="13" fill="#F2C14E" opacity=".2" filter="url(#${u}b)"/><path d="${PLANE}" fill="#F2C14E" transform="translate(${x},${y}) rotate(${ang || 0}) scale(1.3)"/><text x="${x + 12}" y="${y - 10}" fill="#F2C14E" font-size="12" font-weight="500">${lab || ''}</text></g>`).join('');
+  const planes = (o.planes || []).map(([x, y, lab, ang, tx, ty]) => `<g>${tx !== undefined ? `<line x1="${tx}" y1="${ty}" x2="${x}" y2="${y}" stroke="rgba(242,193,78,.45)" stroke-width="2.5" stroke-linecap="round"/>` : ''}<circle cx="${x}" cy="${y}" r="13" fill="#F2C14E" opacity=".2" filter="url(#${u}b)"/><path d="${PLANE}" fill="#F2C14E" transform="translate(${x},${y}) rotate(${ang || 0}) scale(1.3)"/><text x="${x + 12}" y="${y - 10}" fill="#F2C14E" font-size="12" font-weight="500">${lab || ''}</text></g>`).join('');
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><defs>
     <radialGradient id="${u}s" cx=".3" cy=".02" r="1.1"><stop offset="0" stop-color="#0a2443"/><stop offset=".55" stop-color="#03112a"/><stop offset="1" stop-color="#020812"/></radialGradient>
     <linearGradient id="${u}l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".07"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient>
-    <filter id="${u}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter><clipPath id="${u}c"><rect width="${W}" height="${H}"/></clipPath></defs>
-    <rect width="${W}" height="${H}" fill="url(#${u}s)"/><g clip-path="url(#${u}c)"><g stroke="rgba(120,175,235,.06)" stroke-width="1">${grid}</g>
-    <path d="${land}" fill="none" stroke="#3a8ee6" stroke-width="9" opacity=".09" filter="url(#${u}b)"/>${LAND.map((poly, k) => `<path d="${shape(poly)}" fill="${tones[k % tones.length]}"/>`).join('')}<path d="${land}" fill="url(#${u}l)" stroke="rgba(110,175,240,.4)" stroke-width=".8"/>${o.live ? '' : rings}</g>
-    ${lines}${deco}${cities}<g><circle cx="${hp[0]}" cy="${hp[1]}" r="24" fill="#F2C14E" opacity=".28" filter="url(#${u}b)"/><circle cx="${hp[0]}" cy="${hp[1]}" r="8" fill="#F2C14E" stroke="#fff6d8" stroke-width="1.5"/><text x="${hp[0] - 15}" y="${hp[1] + 5}" fill="#F2C14E" font-size="15" font-weight="600" text-anchor="end" letter-spacing=".5">${DATA.home.city}</text></g>${planes}</svg>`;
+    <filter id="${u}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter><clipPath id="${u}c"><rect width="${W}" height="${H}"/></clipPath>
+    <filter id="${u}t" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="3" seed="7" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .5  0 0 0 0 .75  0 0 0 0 1  0 0 0 .06 0" result="c"/><feComposite in="c" in2="SourceGraphic" operator="in"/></filter>
+    <radialGradient id="${u}v" cx=".5" cy=".5" r=".72"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
+    <radialGradient id="${u}wr"><stop offset="0" stop-color="#FF5F5F" stop-opacity=".4"/><stop offset=".5" stop-color="#FF5F5F" stop-opacity=".14"/><stop offset="1" stop-color="#FF5F5F" stop-opacity="0"/></radialGradient>
+    <radialGradient id="${u}wa"><stop offset="0" stop-color="#FFB547" stop-opacity=".22"/><stop offset="1" stop-color="#FFB547" stop-opacity="0"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${u}s)"/><g clip-path="url(#${u}c)"><g stroke="rgba(120,175,235,.06)" stroke-width="1">${grid}</g>${gl}
+    <path d="${land}" fill="none" stroke="#000" stroke-width="5" opacity=".35" filter="url(#${u}b)"/><path d="${land}" fill="none" stroke="#3a8ee6" stroke-width="9" opacity=".09" filter="url(#${u}b)"/>${LAND.map((poly, k) => `<path d="${shape(poly)}" fill="${tones[k % tones.length]}"/>`).join('')}<path d="${land}" fill="#fff" filter="url(#${u}t)"/><path d="${land}" fill="url(#${u}l)" stroke="rgba(150,205,255,.5)" stroke-width=".8"/>${o.live ? '' : rings}${wxc}</g>
+    ${lines}${deco}${cities}<g><circle cx="${hp[0]}" cy="${hp[1]}" r="24" fill="#F2C14E" opacity=".28" filter="url(#${u}b)"/><circle cx="${hp[0]}" cy="${hp[1]}" r="8" fill="#F2C14E" stroke="#fff6d8" stroke-width="1.5"/><text x="${hp[0] - 15}" y="${hp[1] + 5}" fill="#F2C14E" font-size="15" font-weight="600" text-anchor="end" letter-spacing=".5">${DATA.home.city}</text></g>${planes}
+    <rect width="${W}" height="${H}" fill="url(#${u}v)" pointer-events="none"/>${o.live ? '' : `<text x="${W - 12}" y="${H - 22}" fill="rgba(159,189,227,.45)" font-size="10" text-anchor="end" letter-spacing="1.5">${DATA.home.code} · 50°57′N 1°22′W</text>`}</svg>`;
 }
 /* the week's intelligence */
 const fuelNow = () => fuelToday() * (DATA.scenario.fuelSpike ? 1.09 : 1), fuelLast = () => DATA.fuelHistory[DATA.fuelHistory.length - 8];
@@ -584,16 +605,17 @@ const WIDGETS = {
   fuel:{ t:'Fuel market', meta:() => 'updated 07:30', html:() => { const H = DATA.fuelHistory, now = fuelNow(), ch = fuelCh(), F = DATA.fuelForecast;
     const pts = [0, 7, 14, 21, 28, 34].map(d => H[d]).concat([now]), lo = Math.min(...pts) - .02, hi = Math.max(...pts) + .02, W = 260, Hh = 76, x = k => 4 + k * (W - 12) / (pts.length - 1), y = v => 6 + (Hh - 12) * (hi - v) / (hi - lo);
     return `<div class="fm"><div><div class="pr num">£${now.toFixed(2)}<small>/L</small></div><div class="ch ${ch > 0 ? 'wa' : 'up'}">${ch > 0 ? '▲' : '▼'} <span class="num">${Math.abs(ch)}%</span> <span class="sf" style="font-weight:400">this week</span></div></div>
-      <svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none"><path d="${pts.map((v, k) => (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ')} L${x(pts.length - 1)} ${Hh} L${x(0)} ${Hh} Z" fill="rgba(54,198,255,.05)"/><path d="${pts.map((v, k) => (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ')}" fill="none" stroke="#36C6FF" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="${x(pts.length - 1)}" cy="${y(now)}" r="3.5" fill="#fff"/></svg></div>
+      <svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none"><defs><linearGradient id="fgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#36C6FF" stop-opacity=".3"/><stop offset="1" stop-color="#36C6FF" stop-opacity="0"/></linearGradient></defs><path d="${pts.map((v, k) => (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ')} L${x(pts.length - 1)} ${Hh} L${x(0)} ${Hh} Z" fill="url(#fgr)"/><path d="${pts.map((v, k) => (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ')}" fill="none" stroke="#36C6FF" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="${x(pts.length - 1)}" cy="${y(now)}" r="7" fill="#fff" opacity=".25"/><circle cx="${x(pts.length - 1)}" cy="${y(now)}" r="3.5" fill="#fff"/></svg></div>
       <div class="fl2"><div class="nextwk"><span>NEXT WEEK</span><b class="num">£${F.low.toFixed(2)}–£${F.high.toFixed(2)}</b><small>${F.short}</small></div><button class="lnk" data-goto="fuel">Open Fuel Desk ›</button></div>`; } },
   outlook:{ t:'Market outlook', meta:() => 'updated Monday', html:() => { const order = ['up2', 'up', 'flat', 'down'], all = DATA.routes.slice().sort((a, b) => order.indexOf(a.trend) - order.indexOf(b.trend));
     const down = all.find(r => r.trend === 'down'), pick = down && all.indexOf(down) > 5 ? all.slice(0, 5).concat([down]) : all.slice(0, 6);   // always one quieter market, if there is one
     return `<div class="sig">${pick.map(r => { const s = SIG[r.trend], nx = r.months.slice(9, 12), mx = Math.max(...r.months);
-      return `<button data-city="${r.id}" class="${S.city === r.id ? 'on' : ''}" title="${r.city}: ${r.why}"><b>${r.city}</b><span class="spk ${s[1]}" title="October to December">${nx.map(v => `<i style="height:${Math.round(24 * v / mx)}px"></i>`).join('')}</span><span class="s ${s[1]}">${s[0]}</span><span class="t">${r.short}</span></button>`; }).join('')}</div>`; } },
+      return `<button data-city="${r.id}" class="${s[1]} ${S.city === r.id ? 'on' : ''}" title="${r.city}: ${r.why}"><b>${r.city}</b><span class="spk ${s[1]}" title="October to December">${nx.map(v => `<i style="height:${Math.round(24 * v / mx)}px"></i>`).join('')}</span><span class="s ${s[1]}">${s[0]}</span><span class="t">${r.short}</span></button>`; }).join('')}</div>`; } },
   events:{ t:'Events to watch', meta:() => 'next 4 weeks', html:() => `<div class="watch">${DATA.world.watch.map(([w, ic, id, e, when]) => `<button data-city="${id}"><span class="w ${w === 'NOW' ? 'now' : ''}">${w}</span><span style="font-size:17px">${ic}</span><span><b>${R(id).city} · ${e}</b><small>${when}</small></span></button>`).join('')}</div>
     <div class="wfoot"><button class="lnk" data-goto="season">Explore seasonality & events ›</button></div>` },
   airline:{ t:'Your airline', meta:() => 'today', html:() => { const M = model(), busy = M.routes.filter(r => r.n).sort((a, b) => b.away - a.away)[0];
-    return `<div class="ya"><div><b class="num">${Math.round(100 * M.pax / Math.max(1, M.seats))}%</b><span>Seats filled</span></div><div><b class="num">${M.away}</b><span>Turned away</span></div></div><p style="margin:12px 0 0;font-size:14px"><span class="sf">Highest pressure:</span> ${busy && busy.away > 20 ? R(busy.id).city : 'none'}</p><div class="wfoot"><button class="lnk" data-goto="review">View performance ›</button></div>`; } },
+    const pct = Math.round(100 * M.pax / Math.max(1, M.seats)), C = 2 * Math.PI * 30;
+    return `<div class="ya"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="30" fill="none" stroke="rgba(110,170,235,.14)" stroke-width="6"/><circle cx="37" cy="37" r="30" fill="none" stroke="${pct >= 85 ? '#3CE394' : '#36C6FF'}" stroke-width="6" stroke-linecap="butt" stroke-dasharray="${(C * pct / 100).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 37 37)" style="filter:drop-shadow(0 0 4px rgba(54,198,255,.5))"/><text x="37" y="42" fill="#fff" font-size="17" text-anchor="middle" font-weight="300">${pct}%</text></svg><div><span>Seats filled</span><b class="num" style="font-size:22px;margin:2px 0 6px">${M.pax} <small class="sf" style="font-size:12px">of ${M.seats}</small></b><span>Turned away</span><b class="num" style="font-size:22px">${M.away}</b></div></div><p style="margin:12px 0 0;font-size:14px"><span class="sf">Highest pressure:</span> ${busy && busy.away > 20 ? R(busy.id).city : 'none'}</p><div class="wfoot"><button class="lnk" data-goto="review">View performance ›</button></div>`; } },
   weather:{ t:'Weather & disruption', meta:() => 'updated 08:00', html:() => { const W = weatherNow(), ids = OPEN().map(r => r.id), warn = ids.filter(id => wxStatus(W[id])[2] === 3);
     return `<div class="wxl">${ids.map(id => { const st = wxStatus(W[id]); return `<div><b>${R(id).code}</b><span>${wxWorst(W[id])}</span><em class="${st[1]}">${st[0]}</em></div>`; }).join('')}</div>
       ${warn.map(id => `<div class="wxa"><span>THURSDAY · ${R(id).city.toUpperCase()}</span>Strong winds. Delays possible.</div>`).join('')}
@@ -613,7 +635,8 @@ function cityPanel(id){ const r = R(id), a = arrow(r.trend), s = SIG[r.trend], M
     <h3 style="padding-right:30px">${r.city} · customer market <span class="meta">${r.open === false ? 'not flown yet' : 'one of your routes'}</span></h3><div class="wc">
     <div class="mix">${[['BUSINESS', r.mix.business, '#3CE394'], ['LEISURE', r.mix.leisure, '#36C6FF'], ['FAMILIES', r.mix.family, '#b48cff']].map(([l, v, cc]) => `<div>${l}<i><u style="width:${Math.round(v * 100)}%;background:${cc}"></u></i><b class="num">${Math.round(v * 100)}%</b></div>`).join('')}</div>
     <div class="facts"><span>Strongest times</span><b>${top[0][0].toUpperCase() + top[0].slice(1)} + ${top[1]}</b><span>Fare sensitivity</span><b>${r.sens}</b><span>Trend</span><b class="${s[1]}">${a[0]} ${a[2]}</b><span>Busiest months</span><b>${best.join(' · ')}</b>
-      <span>Why now?</span><span style="color:#fff">${r.why}</span>${cut ? `<span>Rival</span><b class="wa">${c.name} now £${c.cut}</b>` : ''}</div></div>
+      <span>Why now?</span><span style="color:#fff">${r.why}</span>${cut ? `<span>Rival</span><b class="wa">${c.name} now £${c.cut}</b>` : ''}</div>
+    <div style="margin-top:auto;padding-top:14px"><div style="font-size:10.5px;letter-spacing:.16em;color:var(--c-soft);margin-bottom:4px">WHEN PEOPLE WANT TO FLY <span style="letter-spacing:0;color:var(--c-mute)">· people an hour</span></div><div class="todbar">${(D => { const mx = Math.max(...D); return DATA.bands.map((b, k) => `<div><i style="height:${Math.round(100 * D[k] / mx)}%;${D[k] === mx ? 'background:var(--c-gold);box-shadow:0 0 10px rgba(242,193,78,.5)' : ''}"></i><small>${b.name}</small></div>`).join(''); })(DATA.bands.map(b => r.shares[b.id] / (b.h1 - b.h0)))}</div></div></div>
     <div class="wfoot"><button class="lnk" data-route="${id}">Open full Route Intelligence ›</button><button class="lnk" style="color:var(--c-soft)" data-goto="season" data-sid="${id}">Seasonality ›</button></div></div>`; }
 /* which panel goes where: the hero takes the top right; other woken panels take the place of one that can wait */
 function boardSlots(){
@@ -645,7 +668,8 @@ function wallLive(){ const M = model(), now = S.clock, W = 820, H = 520, hp = pr
     if(now >= f.dep && now < f.dep + leg) k = (now - f.dep) / leg; else if(now >= f.dep + leg + DATA.turnaroundMin && now < f.dep + len){ k = 1 - (now - f.dep - leg - DATA.turnaroundMin) / leg; back = true; }
     if(k === null) return null; const mx = (hp[0] + p[0]) / 2, my = (hp[1] + p[1]) / 2 - Math.hypot(p[0] - hp[0], p[1] - hp[1]) * .2, u = 1 - k;
     const dx = 2 * u * (mx - hp[0]) + 2 * k * (p[0] - mx), dy = 2 * u * (my - hp[1]) + 2 * k * (p[1] - my), ang = Math.atan2(dy, dx) * 180 / Math.PI + (back ? 180 : 0);
-    return [u * u * hp[0] + 2 * u * k * mx + k * k * p[0], u * u * hp[1] + 2 * u * k * my + k * k * p[1], code(f), ang]; }).filter(Boolean);
+    const at = t => { const v = 1 - t; return [v * v * hp[0] + 2 * v * t * mx + t * t * p[0], v * v * hp[1] + 2 * v * t * my + t * t * p[1]]; }, here = at(k), tail = at(Math.max(0, Math.min(1, k + (back ? .07 : -.07))));
+    return [here[0], here[1], code(f), ang, tail[0], tail[1]]; }).filter(Boolean);
   // the operations feed: what has just happened, newest first (from the timetable; nothing new is simulated)
   const ev = []; M.flights.forEach(f => { const leg = Math.round(legH(f.type, f.rid) * 60), len = tripMin(f.type, f.rid), c = code(f), city = R(f.rid).city;
     ev.push([f.dep - 30, `${c} boarding for ${city}: ${f.pax} passengers`], [f.dep - 10, `${c} gate closed`], [f.dep, `${c} departed for ${city}`], [f.dep + leg, `${c} landed in ${city}`],
@@ -663,7 +687,7 @@ function wallLive(){ const M = model(), now = S.clock, W = 820, H = 520, hp = pr
       <span class="sf">Profit so far today: <b class="gd num">${money(prof)}</b></span>${done ? '<button class="btn go" id="wReview" style="margin-left:auto">The day is done: Sunday\'s review ▶</button>' : ''}</div></div>`; }
 function wallHtml(){
   const sc = DATA.scenario, live = S.wmode === 'live';
-  return `<div class="wall"><div class="wh"><h1>OPERATIONS WALL</h1><div class="seg"><button data-wmode="intel" class="${live ? '' : 'on'}">INTELLIGENCE</button><button data-wmode="live" class="${live ? 'on' : ''}">LIVE OPERATIONS</button></div><span class="sp"></span>
+  return `<div class="wall ${live ? 'lv' : ''}"><div class="wh"><h1>OPERATIONS WALL</h1><div class="seg"><button data-wmode="intel" class="${live ? '' : 'on'}">INTELLIGENCE</button><button data-wmode="live" class="${live ? 'on' : ''}">LIVE OPERATIONS</button></div><span class="sp"></span>
     <span class="stamp2">${live ? 'LIVE · <b class="num">' + hm(S.clock) + '</b>' : 'Intelligence updated <b>08:00</b>'}</span><button class="wicon ${S.sbx ? 'on' : ''}" id="wSet" title="Developer controls: arrange, sandbox">⋯</button><button class="back" id="wClose">◀ Return to desk</button></div>
     ${live ? wallLive() : wallIntel()}
     ${S.sbx ? `<div class="sbx"><h4>ARRANGE</h4>${live ? '<p class="sf" style="margin:0">Nothing to arrange on Live operations.</p>' : `<button class="btn ${S.arrange ? 'pri' : ''}" id="wArr">${S.arrange ? 'Done arranging' : 'Arrange the panels'}</button>`}
