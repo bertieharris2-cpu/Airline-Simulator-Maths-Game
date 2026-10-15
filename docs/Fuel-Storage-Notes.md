@@ -16,9 +16,9 @@ The tank was sized for the opening week and the fleet outgrew it. Now it keeps u
 
 | Fable asked us to confirm | Result |
 | --- | --- |
-| The capacity line on the desk each Monday | <!--R1--> |
-| The block size changing on the two dates, the order sum reading blocks × price per block | <!--R2--> |
-| The farm purchase in chapter 3 with its sum | <!--R3--> |
+| The capacity line on the desk each Monday | **Yes.** "Your position" reads e.g. "Storage 40,000 L — about three weeks of flying" every Monday (each month's plan later). The Steady airline: 8,000 L in week 2, 20,000 L in week 3 (4,900 L a week), 40,000 L from 7 October (12,820 L a week), 300,000 L on 6 January 2031 (99,085 L a week), 1,000,000 L on 1 September 2031. |
+| The block size changing on the two dates, the order sum reading blocks × price per block | **Yes.** On 6 January 2031 the desk shows "£21,700 per 10,000 L" and the Monday sum reads "2 × £21,700". From 1 September 2031 it shows "£224,000 per 100,000 L". The Fill button buys as many blocks as the tank and the cash allow. |
+| The farm purchase in chapter 3 with its sum | **Yes.** On 1 September 2031 the desk offers "A fuel farm is for sale: 1,500,000 L for £2,000,000". Its sum is a Build: 1,500,000 × 60p = £900,000 saved in one shock; £2,000,000 ÷ £900,000 = 2.2, so it pays for itself in about two shocks. Value buys it: £2,000,000 goes, and storage is 1,500,000 L. Premium says not now and the offer stays. On 6 September 2032 Value buys the second stage (3,000,000 L for £3,000,000, the model's worth line). Premium still sees stage one. |
 
 ## How each rule is read (please check)
 
@@ -32,4 +32,16 @@ The tank was sized for the opening week and the fleet outgrew it. Now it keeps u
 
 ## Tests
 
-<!--TESTS-->
+All runs on the built game, chapters 1 to 4 chained from new saves.
+
+| Run | Checks | End cash (before D89) |
+| --- | --- | --- |
+| `week.test.js` Steady · COAST, chapter 1 | 243 · 246 ok, 0 fail | £697,112 · £689,806 (the same) |
+| `chapter2.test.js` Value · Premium | 109 · 103 ok, 0 fail | £13,614,407 · £13,334,810 (£13,591,851 · £13,312,048) |
+| `chapter3.test.js` Value · Premium | 66 · 76 ok, 0 fail | £26,453,508 · £20,022,536 (£28,219,358 · £19,822,524) |
+| `chapter4.test.js` Value · Premium | 59 · 58 ok, 0 fail | £41,528,288 · £40,501,774 (£46,175,525 · £40,040,997) |
+| `decide` · `fleetshop` · `migrate` · `record` · `milestones` | 35 · 35 · 31 · 17 · 27 ok | |
+
+- **Chapter 1 is unchanged.** The test pupils buy two or three blocks a week, which a bigger tank does not change.
+- **From chapter 2 the cash moves.** The tests buy two blocks, now of 10,000 L and then 100,000 L, so more fuel is bought ahead at the week's price. Value also pays £2,000,000 for the farm in chapter 3 and £3,000,000 for the second stage in chapter 4.
+- **Test changes.** `week.test.js` checks the storage line and the growth instead of the 30 September upgrade. The chapter tests check the blocks, the order sum, the farm and its sum.
