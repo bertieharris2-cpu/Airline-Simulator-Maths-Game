@@ -74,6 +74,7 @@ All runs on the built game, with chapter 4 in.
 | `chapter3.test.js` Value · Premium | 62 · 72 ok, 0 fail | £28,219,358 · £19,822,524 (the same) |
 | `decide` · `fleetshop` · `migrate` · `record` · `milestones` | 35 · 35 · 31 · 17 · 27 ok | |
 
+- **After the speed-up (16 Oct)** every run above was repeated, chapters 1 to 4 chained from new saves: the same checks pass and every chapter ends on exactly the same cash. A chapter 4 test run (a year of months) now takes about 2½ minutes; it took about 25 before.
 - **Chapters 1–3 are unchanged.** Chapter 4's code only acts from 1 September 2032, so every earlier chapter ends on the same cash.
 - **Fixed on the way.**
   - The 747's pay page asked the rent-or-buy sum before the finance sum; the offer's pay page now skips it for both planes.
