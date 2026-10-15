@@ -21,6 +21,14 @@ Decisions from data first; one gated, multi-step calculation per round at Welsh 
 
 The opening is being made excellent before the later campaign continues. `airline-opening-prototype.html` is self-contained like the full game, and keeps its **own saves** (it never shares a save with the full game).
 
+**Chapter 4, "The ultimate plane" (15 Oct 2026, Workbook v5.5/v5.6, D82–D85; `src/opening/parts/p4zs_ch4.js`).** Push 1 plays from chapter 3's end to the review on 31 August 2033.
+- **The end of the summer.** 1–5 September 2032 fly as one run, then chapter 4 opens on Monday 6 September.
+- **The offer.** The A380 and the 747 side by side on Hong Kong and Los Angeles: the best fare, "Does it fill?" with 20 seats lit, and the profit a day before and after the payments. Take one, or neither.
+- **Finance by the month.** £20,000,000 down, then £1,000,000 on the first of each month for 40 months. The finance sum, (price − deposit) ÷ months, is a Calculate the first time and a Build after.
+- **Each month's review** has a "Does the A380 fill?" panel.
+- **The A380 launch project.** The board's letter, the choices and the portfolio, from 4 October 2032; "Hold the airline while I work" pauses the run. The AI and rubric screens come later.
+- **Hunt h5** at the review: one payment too many on the finance line. Notes for Fable: `docs/Chapter-4-Notes.md`.
+
 **Decision support (15 Oct 2026, Workbook v5.7, D87 and D88; `src/opening/parts/p4zt_decide.js`).** The plan page turns the tips into actions.
 - **The operations check.** The one or two tips with the most money at stake each get a button: Show me on the timetable, Find work for this aircraft, Test fare. Keep plan goes quiet ("Run anyway") while a serious one shows.
 - **Moving flights.** A dragged flight shows its seats filling, and a line after each change gives seats and profit before and after.

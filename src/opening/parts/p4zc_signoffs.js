@@ -258,7 +258,7 @@ R.workings = st => {
 /* the comparison path's rent-or-buy as Build (a third aircraft type and after): a sign-off page before Rent · Finance · Buy */
 const acquireSo0 = R.acquire;
 R.acquire = st => {
-  if(soOn() && S.rnd.acChoice && S.rnd.acChoice.pid === S.rnd.shopPick){ const pid = S.rnd.acChoice.pid, it = soItem('rb|' + pid) || soAcquireItem(pid);
+  if(soOn() && st.rbDue !== false && S.rnd.acChoice && S.rnd.acChoice.pid === S.rnd.shopPick){ const pid = S.rnd.acChoice.pid, it = soItem('rb|' + pid) || soAcquireItem(pid);
     if(it && it.level === 'build' && !st.soPassed){ const p = planeById(it.plane);
       screen().innerHTML = shell(deskPage({ title:`How should we get the ${esc(shortPlane(p))}?`, sub:'First, when does renting cost more than buying?', cls:'so-page', body:`<div class="so-grid one">${soCardHtml(it, st, 1)}</div>` }),
         deskBar(it.done ? 'Signed. Next, choose how to pay.' : 'Build the sum: the price, the operation, the rent a day. The game works it out.', `<button class="btn primary big" id="nx" ${it.done ? '' : 'disabled'}>${it.done ? 'Next: rent, finance or buy' : 'Build the sum first'} &#9654;</button>`));

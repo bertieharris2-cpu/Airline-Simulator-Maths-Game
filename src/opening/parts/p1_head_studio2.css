@@ -306,3 +306,24 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .ds-hint.two{gap:2px}.ds-hint.two .ds-imp,.ds-hint.two .ds-worth-l{font-size:13.5px;line-height:1.2}.ds-hint.two .ds-tip .btn{height:25px}
 .ds-fix svg,.ds-fixr svg{width:16px;height:16px;vertical-align:-3px}
 .ds-sumi{flex:1;min-width:0;align-self:center;margin-left:10px;font-size:13.5px;line-height:1.25}.ds-sumi .ds-imp,.ds-sumi .ds-worth-l{align-items:flex-start}
+/* ---------- chapter 4: the A380 offer, does it fill?, the finance card, the campaign project ---------- */
+.off4-page .dp-body{overflow-y:auto;overflow-x:hidden;padding-right:4px}
+.off4{display:flex;flex-direction:column;gap:10px}.off4 .acq-lead{margin:0;font-size:16px;color:#DCE8F6}
+.off4-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.off4-col{padding:0 0 10px}.off4-col .dk-pnl-h{padding:8px 14px}.off4-col .dk-pnl-h h2{font-size:19px}
+.off4 .acq-r{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:5px 14px;border-top:1px solid rgba(159,180,211,.15);font-size:14.5px;color:#C9D6EA}
+.off4 .acq-r b{color:#fff;text-align:right}.off4 .acq-r b small{display:block;font-weight:400;font-size:12.5px;color:#8fb0da}.off4 .acq-r b.good{color:#5BE08A}.off4 .acq-r b.bad{color:#FF7A7A}
+.off4-r{margin:8px 14px 0;padding:8px 0 4px;border-top:1px solid rgba(159,180,211,.3)}.off4-r h3{margin:0 0 4px;font-size:16px;color:#fff;letter-spacing:.02em;text-transform:none}.off4-r h3 small{font-weight:400;color:#8fb0da;font-size:13px}
+.off4-r .acq-r{padding:4px 0}.off4-q{margin:0 0 4px;font-size:14.5px;color:#FFE3A8}.off4 .acq-n{margin:6px 14px 0;font-size:13.5px;color:#BDF5CF}
+.off4-opts{display:flex;gap:10px;flex-wrap:wrap}.off4-opts .btn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left}.off4-opts .btn small{font-size:13px;font-weight:400;opacity:.85;letter-spacing:0;text-transform:none}
+.fill4{display:flex;align-items:center;gap:10px;font-size:14px;color:#DCE8F6}.fill4 b{color:#fff}
+.fill4-p{display:grid;grid-template-columns:repeat(20,1fr);gap:2px;width:200px;flex:none}.fill4-p i{height:13px;border-radius:2px;background:rgba(159,180,211,.22)}.fill4-p i.on{background:#5BE08A}
+.fill4-b{padding:6px 16px 4px}.fill4-l{margin:0 0 6px;font-size:14px;color:#DCE8F6}.fill4-l b{color:#fff}.fill4-t{border-collapse:collapse;font-size:13.5px;color:#DCE8F6}.fill4-t td{padding:2px 10px 2px 0;vertical-align:middle;white-space:nowrap}.fill4-t td.r{text-align:right;font-weight:700;color:#fff}.fill4-p.s{display:inline-grid;grid-template-columns:repeat(10,1fr);width:110px;vertical-align:middle}.fill4-p.s i{height:10px}.fill4-b .small{margin:4px 0 0;font-size:12.5px;line-height:1.4}
+.fin-card .acq-in{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.fin-card .so-pre{padding:6px 14px}.fin-card .so-pre.later{opacity:.55}
+.cp{display:flex;flex-direction:column;gap:12px;max-width:1180px}.cp .dk-pnl{padding:12px 16px}.cp h2{margin:0 0 6px;font-size:19px;color:#fff}
+.cp-letter{margin:0;font-size:16px;line-height:1.45;color:#FFF2D6;font-style:italic}
+.cp-chs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.cp-ch{display:flex;flex-direction:column;gap:4px;font-size:14px;color:#C9D6EA}.cp-ch select,.cp-ch input{height:34px}
+.cp-pf{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:14px;color:#C9D6EA}.cp-pf textarea{width:100%;font:inherit;font-size:15px;padding:6px 8px;background:#0B2147;color:#fff;border:1px solid rgba(159,180,211,.4);border-radius:3px}
+.cp-pics{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.cp-pics figure{margin:0;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#8fb0da}.cp-pics img{max-width:180px;max-height:130px;border:1px solid rgba(159,180,211,.4)}
+.cp-page .dp-body{overflow-y:auto}
+.acq-page .dp-body{overflow-y:auto;overflow-x:hidden;padding-right:4px}

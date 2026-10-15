@@ -10,6 +10,26 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0r. Chapter 4 "The ultimate plane", push 1 (Workbook v5.5/v5.6, D82–D85, 15 Oct 2026)
+
+**`p4zs_ch4.js`**, after `p4zt`. Reassignment only, so `overrides.txt` stays at 120. Notes for Fable: `docs/Chapter-4-Notes.md`. Test: `chapter4.test.js`, from chapter 3's end card (Value takes the A380; Premium takes the 747).
+- **Beats.** `ch4PatchBeats` (on a `buildBeats` wrapper) makes 1–5 September 2032 one gap run, "The end of the summer", with `PW`, `planWord` and `closeWord` wrappers ("Fly 1–5 September", "On to chapter 4"). 6–12 September are days; months follow from 13 September to the review on 31 August 2033.
+- **Monthly finance.**
+  - A `shopOffer` wrapper gives a monthly plane `monthly`, `left` and a guide `daily` (payment × 12 ÷ 365), used only in projections.
+  - The `acquirePlane` wrapper puts the 40 payments on the charges ledger (`finSchedule`): the first of each month from the month after the deposit, each with `fin` = the plane's uid.
+  - The `payFinanceDay` wrapper leaves a monthly plane's `left` alone. `termsWord` reads "on finance: £1,000,000 a month, N of 40 payments to go" from `finPaid`.
+- **The pay page.** A `renderAcPay` wrapper adds the finance card (`finCardHtml`/`finBind`): (price − deposit), then ÷ months, with the check line. It is a Calculate the first time and a Build after, with D86's two tries, sum numbers and record entry `fin:<plane>`. The step `{t:'acquire', pick:'finance', rbDue:false}` skips the rent-or-buy sum, in `p4zb` and in `p4zc`'s sign-off page.
+- **The offer page.** An `R.event` wrapper renders `a380_offer` (`renderA380Offer`): the A380 and the 747 on Hong Kong and Los Angeles.
+  - `bigFares` and `bigBest` work out each plane's own day in a dry run (with it, minus without it; overnight rotations averaged over two days).
+  - `fillHtml` lights 20 seats for passengers ÷ seats.
+  - Taking a plane goes to the pay page with Finance chosen; "Neither" leaves both in the shop.
+- **Does it fill?** `fill4Note` (on a `closeDay` wrapper) keeps the big plane's month in `S.fill4`. An `R.review` wrapper adds the month-by-month panel.
+- **Hunt h5.** `huntList`, `huntSpec` and `huntConsequence` wrappers add h5 to the 31 August 2033 review: the finance line shows one payment too many. Missing it adds one more payment after the last.
+- **The campaign (hooks only).**
+  - `S.campaign` and `R.ov_campaign` hold the board's letter, the six choices and the portfolio; pictures go in IndexedDB `airline-campaign`.
+  - The Project button on HQ shows from `campaignProjectDate` with a big plane in the fleet. The hold disables Start.
+  - `campaignDemand(route, day)` multiplies `demandMult`: ×1 until a scored result is stored.
+
 ## 0q. Decision support (Workbook v5.7, D87 and D88, 15 Oct 2026)
 
 **`p4zt_decide.js`**, after `p4zr`. Reassignment only, so `overrides.txt` stays at 120. Notes for Fable: `docs/Decision-Support-Notes.md`. Test: `decide.test.js`, on NBN's and Gubby's saves.
