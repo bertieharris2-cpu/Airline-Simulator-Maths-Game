@@ -200,8 +200,9 @@ finance_rows = live('Finance', sheet(wb, 'Finance'))
 TUTORIAL = {'dhc6', 'saab340', 'atr72', 'e175', 'e190'}      # launch-deal finance is paid by the day; from the A220 by the week
 def fin_num(v): return v if isinstance(v, (int, float)) else None
 finance = [{'aircraft': AIRCRAFT_IDS.get(f['aircraftId'], f['aircraftId']), 'cashPrice': f['cashPrice'], 'leaseDaily': f['leaseDaily'],
-            'financeDeposit': f['financeDeposit'], 'financePayment': f['financeWeeklyPayment'], 'financeCount': f['financeWeeks'],
-            'paymentUnit': 'day' if f['aircraftId'] in TUTORIAL else 'week', 'financeTotalPaid': fin_num(f['financeTotalPaid']),
+            'financeDeposit': f['financeDeposit'], 'financePayment': f.get('monthlyPayment', f.get('financeWeeklyPayment')), 'financeCount': f.get('months', f.get('financeWeeks')),
+            # v5.5 (D83): finance is monthly from chapter 4 (deposit, then 40 round monthly payments); before v5.5 the sheet was weekly
+            'paymentUnit': 'day' if f['aircraftId'] in TUTORIAL else 'month' if 'monthlyPayment' in f and f.get('months') != 52 else 'week', 'financeTotalPaid': fin_num(f['financeTotalPaid']),
             'leaseFrom': f['leaseFrom'], 'buyFrom': f['buyFrom'], 'financeFrom': f['financeFrom'], 'notes': f['notes'], 'status': f['status']}
            for f in finance_rows]
 
@@ -306,6 +307,11 @@ teacherMilestones = [{'id': r['milestoneId'], 'chapters': r.get('chapters'), 'ti
 if 'Milestones' not in wb.sheetnames: issue('check', 'Milestones', 'no Milestones sheet yet: the teacher panel uses the draft list in the game (docs/Milestones-Draft.md).')
 for m in teacherMilestones:
     if m['id'] not in MS_IDS: issue('error', 'Milestones', f'{m["id"]}: the game cannot measure this milestone (it knows {", ".join(MS_IDS)}).')
+# v5.5 (D82): the A380 launch campaign. One row per field; the game reads the structure (choices, portfolio, signals) and
+# stores the pupil's work. Placeholder rows (reach, funnel) are loaded too: the campaign's hooks show them as 'to be tuned'.
+campaign = {r['field']: {'value': r.get('value'), 'notes': r.get('notes'), 'status': r.get('status')}
+            for r in opt_sheet('Campaign') if r.get('field') and r.get('status') in (LOAD | {'placeholder'})}
+if 'Campaign' not in wb.sheetnames: issue('note', 'Campaign', 'no Campaign sheet: the chapter-4 Project button has no brief.')
 # v4.5 (D56): route news, a demand multiplier on named routes between two dates (announced the week before, or a surprise)
 routeNews = [{'id': r['newsId'], 'announce': r['announceDate'], 'start': r['startDate'], 'end': r['endDate'], 'kind': r.get('kind'),
               'routes': words(r.get('routes') or ''), 'mult': r['demandMultiplier'], 'segment': r.get('segment') or 'all', 'announced': bool(r.get('announced')),
@@ -355,7 +361,7 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'events': events, 'challenges': challenges, 'mechanics': mechanics,
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
          'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips, 'teacherMilestones': teacherMilestones,
-         'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview}
+         'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview, 'campaign': campaign}
 
 
 # ---------- checks ----------
@@ -445,7 +451,7 @@ for grp in sorted({r['unlockDay'] for r in routes}):
     both = ', '.join(f"{x['city']} {x['km']} km" for x in rs)
     for r in rs:
         t = (r['story'] or '').lower()
-        if re.search(r'\bshort\b', t) and r['km'] > lo:
+        if re.search(r'(?<![0-9] )\bshort\b', t) and r['km'] > lo:      # '58 short' is a seat count, not the distance
             issue('error', 'Routes', f'{r["id"]}: the story says "short", but it is the longer of the routes opening on day {grp} ({both}). The game shows the story next to the flight time.')
         if re.search(r'\blong(er)?\b', t) and r['km'] < hi:
             issue('error', 'Routes', f'{r["id"]}: the story says "longer", but it is the shorter of the routes opening on day {grp} ({both}). The game shows the story next to the flight time.')
@@ -484,8 +490,11 @@ for c in all_cal:
 for f in finance_rows:
     if AIRCRAFT_IDS.get(f['aircraftId'], f['aircraftId']) not in plane_ids: issue('error', 'Finance', f'"{f["aircraftId"]}" is not on the Aircraft sheet.')
     tot = fin_num(f['financeTotalPaid'])
-    if tot is not None and f['financeDeposit'] + f['financeWeeklyPayment'] * f['financeWeeks'] != tot:
-        issue('check', 'Finance', f'{f["aircraftId"]}: deposit + payment × {f["financeWeeks"]} = {f["financeDeposit"] + f["financeWeeklyPayment"] * f["financeWeeks"]:,}, but financeTotalPaid says {tot:,} (rounded to £1,000 as the note says).')
+    pay_, n_ = f.get('monthlyPayment', f.get('financeWeeklyPayment')), f.get('months', f.get('financeWeeks'))
+    if tot is not None and isinstance(pay_, (int, float)) and isinstance(n_, (int, float)) and f['financeDeposit'] + pay_ * n_ != tot:
+        issue('check', 'Finance', f'{f["aircraftId"]}: deposit + payment × {n_} = {f["financeDeposit"] + pay_ * n_:,}, but financeTotalPaid says {tot:,} (rounded to £1,000 as the note says).')
+    if 'monthlyPayment' in f and f.get('months') == 52 and f.get('financeDeposit'):
+        issue('check', 'Finance', f'{f["aircraftId"]}: the column is monthlyPayment now (D83) but the row still reads £{f["monthlyPayment"]:,} × 52, the weekly terms. The game keeps it weekly until the row has monthly terms (finance opens in chapter 4).')
     if f['leaseDaily'] and f['cashPrice'] and f['aircraftId'] not in TUTORIAL and f['cashPrice'] / f['leaseDaily'] != 2000:
         issue('check', 'Finance', f'{f["aircraftId"]}: price ÷ lease a day = {f["cashPrice"] / f["leaseDaily"]:g}, not the 2,000 days of Settings leaseRule (F4 revised with D78).')
 # EventOptions (v5.4): the event exists, options run 1..n, a fixed cash price only before eventCostScaleFromDay and a share from then
@@ -633,6 +642,19 @@ for k in NEEDED_CH3:
 t3.append(f'- **EventOptions:** {sum(len(v) for v in eventOptions.values())} option rows for {len(eventOptions)} events ({", ".join(sorted(eventOptions))}).')
 t3.append(f'- **Two-leg routes:** ' + (', '.join(f'{r["id"]} ({" + ".join(format(l["km"], ",") + " km" for l in r["legs"])}, {r["rotationDays"]} days)' for r in routes if r.get('legs')) or 'none') + '.')
 out += ['', '## Chapter 3 touches', '', 'The Settings rows chapter 3 reads (D78–D81), as loaded.', ''] + t3
+
+# v5.5 / v5.6 touches: the rules D82–D86 read from Settings, and whether each is live
+NEEDED_V56 = ['workingOnPaper', 'twoTriesRule', 'sumNumbering', 'launchDaySums', 'fuelHandSum', 'signOffCapPerWeek',
+              'financeFromDate', 'financeShape', 'chapter4SetUpDays', 'a380FillQuestion', 'campaignProjectDate']
+t56 = []
+for k in NEEDED_V56:
+    st_ = settings_status.get(k)
+    if st_ is None: t56.append(f'- **Settings:** `{k}` is not on the sheet.')
+    elif st_ not in LOAD: t56.append(f'- **Settings:** `{k}` is `{st_}`: not loaded.')
+    else: t56.append(f'- `{k}`: {settings.get(k)}')
+t56.append('- **Finance:** ' + ', '.join(f'{f["aircraft"]} £{f["financeDeposit"]:,} + £{f["financePayment"]:,} × {f["financeCount"]} a {f["paymentUnit"]}' for f in finance if f.get('financeDeposit') and f.get('paymentUnit') == 'month') + '.')
+t56.append('- **Campaign:** ' + (', '.join(f'{k} ({v["status"]})' for k, v in campaign.items()) or 'no rows') + '.')
+out += ['', '## Working on paper (D86) and chapter 4 (D82–D85) touches', '', 'The Settings rows these read, as loaded.', ''] + t56
 
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'
