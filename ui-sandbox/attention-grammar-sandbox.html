@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attention grammar sandbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- Attention grammar (Fable's brief, 16 Oct 2026): a sandbox to try the screens before the game ----------
+   Colour is a role: cyan = current/interactive, gold = the unknown and the result, green = success, red = a problem,
+   pale mono = every ordinary figure. Type: Plex Sans for the interface, Plex Mono for figures. Signals: focus rail,
+   local spotlight, active datum, change pulse, cause→effect line, result plate, status eyebrow, progressive reveal. */
+:root{
+  --bg:#050d1d; --panel:#0b1a33; --inset:#102548; --dim:#081426; --line:#1c3f73; --line2:#2b5c9e;
+  --ink:#eaf2ff; --soft:#9fbde3; --mute:#6f86a8; --fig:#d9e6f8;
+  --cyan:#36c6ff; --gold:#F2C14E; --good:#3ce394; --bad:#ff5f5f; --kite:#e0302e;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans)}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--fig)}
+.app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:72px 1fr 64px;height:100vh;min-width:1180px}
+.hd{grid-column:1/3;display:flex;align-items:stretch;background:linear-gradient(90deg,#071630,#0b2147);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:12px;padding:0 20px;width:420px;border-right:1px solid var(--line)}
+.logo .badge{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2a4b8a,#0b1a33);border:1px solid var(--line2);display:grid;place-items:center;color:var(--gold);font-size:20px}
+.logo b{display:block;font-size:17px;letter-spacing:.08em;font-weight:600}.logo small{display:block;font-size:10.5px;letter-spacing:.24em;color:var(--soft)}
+.hd-sp{flex:1}
+.hd-cal{display:flex;flex-direction:column;justify-content:center;padding:0 24px;border-left:1px solid var(--line)}.hd-cal small{font-size:12px;color:var(--soft)}.hd-cal b{font-size:19px;font-weight:600}
+.hd-cash{display:flex;flex-direction:column;justify-content:center;padding:0 24px;border-left:1px solid var(--line)}.hd-cash small{font-size:12px;color:var(--soft)}.hd-cash b{font-family:var(--mono);font-size:24px;color:var(--gold);font-weight:600}
+.nav{display:flex;flex-direction:column;background:#061227;border-right:1px solid var(--line)}
+.nav button{display:flex;align-items:center;gap:12px;padding:13px 16px;text-align:left;border-bottom:1px solid var(--line);color:var(--soft)}
+.nav button b{display:block;font-size:15px;font-weight:500;color:var(--ink)}.nav button small{display:block;font-size:11.5px;color:var(--mute)}
+.nav button.on{background:linear-gradient(90deg,#123a74,#0e2d5c);box-shadow:inset 3px 0 0 var(--cyan)}
+.nav .ni{width:26px;text-align:center;font-size:17px}
+.main{min-width:0;min-height:0;overflow:auto;padding:16px 22px}
+.bar{grid-column:2/3;display:flex;align-items:center;gap:14px;padding:0 22px;border-top:1px solid var(--line);background:#071630}
+.bar p{flex:1;margin:0;color:var(--soft)}
+.btn{padding:9px 16px;border:1px solid var(--line2);border-radius:4px;background:#0a1c3a;color:var(--ink);font-weight:500}
+.btn.pri{background:#1f6fff;border-color:#4a8dff;color:#fff}
+.btn.quiet{border-color:rgba(159,180,211,.4);color:var(--soft)}
+.btn:disabled{opacity:.4}
+.tabs{display:flex;gap:4px;margin:0 0 14px;flex-wrap:wrap}
+.tabs button{padding:6px 12px;border:1px solid var(--line);border-radius:4px;background:#0a1c3a;color:var(--soft);font-size:13px}
+.tabs button.on{color:#fff;border-color:var(--cyan);box-shadow:inset 0 -2px 0 var(--cyan)}
+h1{margin:0 0 4px;font-size:32px;font-weight:600;line-height:1.15}
+.crumb{font-size:13px;color:var(--mute);margin-bottom:2px}
+.eyebrow{display:inline-block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);font-weight:600}
+.eyebrow.gold{color:var(--gold)}.eyebrow.mute{color:var(--mute)}.eyebrow.kite{color:var(--kite)}
+.pnl{background:var(--panel);border:1px solid var(--line);padding:14px 16px}
+.pnl h2{margin:0 0 8px;font-size:17px;font-weight:550}
+.pnl.active{background:var(--inset);border-color:var(--line2);box-shadow:inset 3px 0 0 var(--cyan)}
+.pnl.dim{background:var(--dim);border-color:#142d55;color:var(--soft)}
+.pnl.dim h2{color:var(--soft)}
+.rail{box-shadow:inset 3px 0 0 var(--cyan)}
+.two{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;align-items:start}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th{text-align:left;font-weight:500;color:var(--mute);font-size:12px;letter-spacing:.04em;padding:6px 8px;border-bottom:1px solid var(--line)}
+table.t td{padding:7px 8px;border-bottom:1px solid #15335f}
+table.t td.n,table.t th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--fig)}
+table.t tr.hl td{background:rgba(54,198,255,.06)}
+.pulse{animation:pulse .45s ease-out}
+@keyframes pulse{0%{background:rgba(242,193,78,.0)}30%{background:rgba(242,193,78,.35)}100%{background:rgba(242,193,78,0)}}
+.flash-good{animation:good .6s ease-out}
+@keyframes good{0%{color:var(--good);text-shadow:0 0 12px rgba(60,227,148,.8)}100%{color:inherit;text-shadow:none}}
+/* ---------- the calculation instrument ---------- */
+.inst{background:var(--panel);border:1px solid var(--line2);box-shadow:inset 3px 0 0 var(--cyan);padding:14px 18px 16px;max-width:620px}
+.inst .name{font-size:22px;font-weight:600;margin:2px 0 0}
+.inst .ctx{color:var(--soft);font-size:14px;margin:2px 0 10px}
+.inst .rel{font-size:14px;color:var(--soft);margin:0 0 6px}.inst .rel b{color:var(--ink);font-weight:500}
+.inst .sum{font-family:var(--mono);font-size:30px;color:var(--fig);margin:4px 0 2px;letter-spacing:.02em;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.inst .sum .q{color:var(--gold);font-weight:600;border-bottom:2px solid var(--gold);padding:0 6px;min-width:1.2em;text-align:center}
+.inst .sum .q.done{color:var(--fig);border-bottom-color:transparent}
+.inst .meta{font-size:12px;color:var(--mute);margin:0 0 10px}
+.inst .ans{display:flex;align-items:center;gap:10px;margin:8px 0 4px}
+.inst input{font:600 22px var(--mono);width:170px;padding:7px 12px;background:#071630;border:1.5px solid var(--line2);color:#fff;border-radius:3px;outline:none}
+.inst input:focus,.inst.working input{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(54,198,255,.22)}
+.inst .note{color:var(--mute);font-size:13px;margin:4px 0 0}.inst .note.q{color:var(--bad)}
+.inst .help{display:flex;gap:14px;margin-top:10px}.inst .help button{color:var(--cyan);font-size:13.5px;border-bottom:1px dotted rgba(54,198,255,.5)}
+.inst .hint{margin:8px 0 0;padding:8px 12px;border-left:2px solid var(--line2);color:var(--soft);font-size:14px}
+.inst.confirmed{box-shadow:inset 3px 0 0 var(--good)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{padding:5px 11px;border:1px solid var(--line2);border-radius:3px;background:#0a1c3a;font-size:13.5px}.chip b{font-family:var(--mono);color:var(--fig);margin-left:6px;font-weight:500}
+.chip.used{opacity:.35}
+.ops{display:flex;gap:6px}.ops button{width:34px;height:34px;border:1px solid var(--line2);border-radius:3px;background:#0a1c3a;font-size:16px}
+.slot{display:inline-block;min-width:1.4em;padding:0 8px;border-bottom:2px dashed rgba(159,189,227,.5);text-align:center;color:var(--soft)}
+.slot.f{border-bottom-style:solid;color:var(--fig)}
+.fly{position:fixed;z-index:50;font:600 22px var(--mono);color:var(--good);pointer-events:none;transition:all .7s cubic-bezier(.3,.7,.3,1)}
+/* ---------- result plate ---------- */
+.plate{background:linear-gradient(180deg,#12305c,#0d2448);border:1px solid var(--line2);padding:14px 18px;box-shadow:inset 3px 0 0 var(--gold)}
+.plate .big{display:flex;gap:28px;flex-wrap:wrap;margin:6px 0 2px}.plate .big div{display:flex;flex-direction:column}.plate .big small{font-size:12px;color:var(--soft)}
+.plate .big b{font-family:var(--mono);font-size:24px;font-weight:600;color:var(--fig)}.plate .big b.gold{color:var(--gold)}
+/* ---------- decision cards ---------- */
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
+.opt{background:var(--panel);border:1px solid var(--line);padding:14px 16px;text-align:left;transition:opacity .3s,transform .3s}
+.opt h3{margin:0 0 4px;font-size:17px;font-weight:550}.opt p{margin:0;color:var(--soft);font-size:14px}.opt .cost{display:block;margin-top:8px;font-family:var(--mono);color:var(--fig);font-size:13.5px}
+.opt.on{background:var(--inset);border-color:var(--line2);box-shadow:inset 3px 0 0 var(--cyan)}
+.opt.off{opacity:.42;transform:scale(.985)}
+.kite{display:inline-flex;align-items:center;gap:8px}
+.kite svg{width:26px;height:26px}
+.kite b{font-weight:600;letter-spacing:.02em}
+/* ---------- apron / fuel ---------- */
+.apron{position:relative;background:radial-gradient(120% 90% at 50% 100%,#10264c 0%,#071630 60%,#050d1d 100%);border:1px solid var(--line);padding:18px 18px 10px;overflow:hidden}
+.apron:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 59px,rgba(54,198,255,.05) 59px 60px),repeating-linear-gradient(0deg,transparent 0 59px,rgba(54,198,255,.05) 59px 60px);pointer-events:none}
+.planes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;position:relative}
+.ac{background:rgba(6,18,38,.6);border:1px solid var(--line);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.ac.on{border-color:var(--line2);background:rgba(16,37,72,.75);box-shadow:inset 3px 0 0 var(--cyan)}
+.ac svg.sil{width:100%;height:70px;display:block}
+.ac h3{margin:0;font-size:15px;font-weight:550}.ac small{color:var(--soft);font-size:12.5px}
+.gauge{height:14px;border:1px solid var(--line2);background:#071630;position:relative;border-radius:2px;overflow:hidden}
+.gauge i{position:absolute;inset:0;width:0;background:linear-gradient(90deg,#1f6fff,#36c6ff);transition:width 1.1s ease-out}
+.gauge.full i{background:linear-gradient(90deg,#c43c3c,#ff5f5f)}
+.tag{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13.5px;color:var(--fig)}.tag b{color:var(--gold);font-weight:600}
+.routes{display:flex;gap:8px;margin:10px 0 0;position:relative}.routes button{padding:6px 12px;border:1px solid var(--line2);border-radius:3px;background:#0a1c3a;font-size:13.5px}.routes button.on{border-color:var(--cyan);color:#fff;box-shadow:inset 0 -2px 0 var(--cyan)}
+/* ---------- studio ---------- */
+.tl{display:grid;grid-template-columns:150px 1fr;gap:0;border:1px solid var(--line);background:#0a1b39}
+.tl .lane{display:contents}.tl .lab{padding:10px 12px;border-right:1px solid var(--line);font-size:13.5px}.tl .lab b{display:block;font-weight:550}.tl .lab small{color:var(--mute)}
+.tl .track{position:relative;height:66px;background:repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),#15335f calc(12.5% - 1px) 12.5%)}
+.blk{position:absolute;top:10px;height:46px;padding:4px 8px;background:#15386f;border:1px solid var(--line2);font-size:12px;line-height:1.3;color:var(--fig);white-space:nowrap;overflow:hidden;text-align:left}
+.blk b{display:block;font-family:var(--mono);font-weight:500}
+.blk.on{background:#1b4b8f;border-color:var(--cyan);box-shadow:inset 3px 0 0 var(--cyan),0 0 0 1px rgba(54,198,255,.35)}
+.sumbar{display:flex;gap:26px;align-items:center;padding:10px 14px;background:var(--panel);border:1px solid var(--line);margin-top:12px}
+.sumbar div{display:flex;flex-direction:column}.sumbar small{font-size:12px;color:var(--mute)}.sumbar b{font-family:var(--mono);font-weight:500;color:var(--fig);font-size:16px}
+.sumbar b.gold{color:var(--gold);font-weight:600}
+.grammar td{vertical-align:top}
+.sw{display:inline-block;width:14px;height:14px;border-radius:2px;vertical-align:-2px;margin-right:6px}
+.ex{display:inline-block;padding:4px 10px;border:1px solid var(--line);background:var(--panel);margin:2px 6px 2px 0}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.white{background:#fff;color:#0b1a33;padding:14px;border-radius:6px;text-align:center}.white h3{margin:0 0 6px;font-size:17px;color:#1b2a4a}.white .s{font-size:26px;font-weight:700}
+@media (prefers-reduced-motion:reduce){.pulse,.flash-good,.fly,.gauge i,.opt{animation:none;transition:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+/* ---------- state ---------- */
+const S = { view:'inst', instState:'input', instVal:'', instNote:'', hint:0, show:false, build:[], kite:'decision', kiteVal:'', kiteNote:'', kiteHint:0, fuelRoute:null, fuelAc:'dhc6', apronStep:0, sel:1, launchStep:0, launchVals:{}, launchDone:{} };
+const NAV = [ ['inst', '✎', 'The instrument', 'One sum, three states'], ['build', '▦', 'A Build', 'Chips into the expression'], ['kite', '✈', 'Red Kite', 'Decision → sum → result'], ['launch', '1', 'Launch Day', 'Four sums, fuel in the costs'], ['fuel', '⛽', 'Fuel desk', 'First visit'], ['studio', '◫', 'Studio', 'One dominant region'], ['grammar', '≡', 'The grammar', 'Colours, type, signals'], ['before', '⇄', 'Before / after', 'The old card and the new'] ];
+const num = n => n.toLocaleString('en-GB'), money = n => '£' + num(Math.round(n));
+const KITE = `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 L37 12 L37 21 L20 37 L3 21 L3 12 Z" fill="#e0302e"/><path d="M8 20 C13 17 16 19 19 24 C21 17 27 13 33 12 C30 16 28 20 27 24 C25 29 20 31 16 30 L19 27 C15 26 11 23 8 20 Z" fill="#fff"/></svg>`;
+const kiteName = () => `<span class="kite">${KITE}<b>Red Kite Air</b></span>`;
+/* small aircraft silhouettes for the apron (not the game's drawings) */
+const SIL = { dhc6:`<svg class="sil" viewBox="0 0 240 70"><path d="M20 44 C20 36 40 32 70 31 L170 31 C196 32 214 36 224 42 L224 46 C210 50 190 53 170 54 L50 54 C34 54 22 50 20 44 Z" fill="#c9d6ea"/><path d="M60 20 L200 20 L200 24 L60 24 Z" fill="#9fbde3"/><path d="M168 31 L190 6 L210 6 L204 31 Z" fill="#9fbde3"/><circle cx="80" cy="21" r="9" fill="#0b1a33" stroke="#9fbde3" stroke-width="2"/><circle cx="140" cy="21" r="9" fill="#0b1a33" stroke="#9fbde3" stroke-width="2"/><circle cx="60" cy="62" r="5" fill="#2A3442"/><circle cx="160" cy="62" r="5" fill="#2A3442"/></svg>`,
+  sf34:`<svg class="sil" viewBox="0 0 240 70"><path d="M14 42 C14 34 36 30 70 29 L176 29 C200 30 218 34 228 41 L228 45 C214 50 192 53 170 54 L48 54 C30 54 16 49 14 42 Z" fill="#c9d6ea"/><path d="M70 40 L200 40 L200 45 L70 45 Z" fill="#9fbde3"/><path d="M172 29 L192 4 L214 4 L208 29 Z" fill="#9fbde3"/><circle cx="98" cy="42" r="10" fill="#0b1a33" stroke="#9fbde3" stroke-width="2"/><circle cx="58" cy="62" r="5" fill="#2A3442"/><circle cx="150" cy="62" r="5" fill="#2A3442"/></svg>`,
+  jet:`<svg class="sil" viewBox="0 0 240 70"><path d="M10 40 C10 30 36 26 74 25 L180 25 C206 26 222 32 232 39 L232 44 C218 50 194 54 170 55 L44 55 C26 55 12 48 10 40 Z" fill="#c9d6ea"/><path d="M84 52 L178 48 L182 56 L96 60 Z" fill="#9fbde3"/><path d="M176 25 L198 2 L222 2 L214 25 Z" fill="#9fbde3"/><rect x="92" y="50" width="52" height="16" rx="7" fill="#0b1a33" stroke="#9fbde3" stroke-width="2"/><circle cx="50" cy="64" r="5" fill="#2A3442"/><circle cx="158" cy="66" r="5" fill="#2A3442"/></svg>` };
+const FUEL = { dhc6:{ name:'DHC-6 Twin Otter', seats:19, per:20 }, sf34:{ name:'Saab 340', seats:34, per:34 }, jet:{ name:'Airbus A320', seats:150, per:220 } };
+const ROUTES = { par:['Paris', 300], dub:['Dublin', 450], mad:['Madrid', 1350] };
+const PRICE = 1.30;
+
+/* ---------- shared pieces ---------- */
+function shell(body, hint, actions){
+  return `<div class="app">
+  <header class="hd"><div class="logo"><span class="badge">★</span><div><b>DRAGON AIR</b><small>PEOPLE · PLACES · POSSIBILITIES</small></div></div><div class="hd-sp"></div>
+    <div class="hd-cal"><small>Week 1</small><b>Thu 5 Sep 2030</b></div><div class="hd-cash"><small>Cash balance</small><b>£8,989</b></div></header>
+  <nav class="nav">${NAV.map(([id, ic, t, s]) => `<button data-go="${id}" class="${S.view === id ? 'on' : ''}"><span class="ni">${ic}</span><span><b>${t}</b><small>${s}</small></span></button>`).join('')}</nav>
+  <main class="main">${body}</main>
+  <footer class="bar"><p>${hint || ''}</p>${actions || ''}</footer></div>`;
+}
+const eyebrow = (t, cls) => `<span class="eyebrow ${cls || ''}">${t}</span>`;
+function instrument(o){
+  // o: { name, ctx, rel, a, op, b, unit, answer, state, val, note, hint, hints:[], showHow, meta, id }
+  const st = o.state, done = st === 'confirmed';
+  const sum = `<div class="sum"><span>${o.a}</span><span>${o.op}</span><span>${o.b}</span><span>=</span><span class="q ${done ? 'done flash-good' : ''}" id="${o.id}-q">${done ? o.answerText : '?'}</span></div>`;
+  const ans = done ? `<p class="note" style="color:var(--good)">✓ Checked. Written to ${o.goes}.</p>`
+    : `<div class="ans"><input id="${o.id}-in" inputmode="decimal" value="${o.val || ''}" placeholder="${o.unit || ''}" aria-label="Your answer"><button class="btn pri" data-check="${o.id}">Check ✓</button></div>${o.note ? `<p class="note q">${o.note}</p>` : '<p class="note">Work it out in your book, then type the answer.</p>'}`;
+  const hints = o.hints || [], shown = Math.min(o.hint || 0, hints.length);
+  const help = done ? '' : `<div class="help">${shown < hints.length ? `<button data-hint="${o.id}">Give me a hint</button>` : ''}${o.showHow ? `<button data-how="${o.id}">Show me how</button>` : ''}</div>${hints.slice(0, shown).map(h => `<p class="hint">${h}</p>`).join('')}${o.howOpen ? `<p class="hint"><b>The class method for a decimal:</b> make it whole, multiply, divide back. ${o.how}</p>` : ''}`;
+  return `<section class="inst ${st}" id="${o.id}">${eyebrow(done ? 'Checked' : 'Work it out', done ? 'gold' : '')}<p class="name">${o.name}</p><p class="ctx">${o.ctx}</p>${o.rel ? `<p class="rel">${o.rel}</p>` : ''}${sum}<p class="meta">${o.meta || ''}</p>${ans}${help}</section>`;
+}
+function flyTo(fromId, toId, text){
+  const a = document.getElementById(fromId), b = document.getElementById(toId); if(!a || !b) return;
+  const r0 = a.getBoundingClientRect(), r1 = b.getBoundingClientRect(), el = document.createElement('div'); el.className = 'fly'; el.textContent = text; el.style.left = r0.left + 'px'; el.style.top = r0.top + 'px'; document.body.appendChild(el);
+  requestAnimationFrame(() => { el.style.left = r1.left + 'px'; el.style.top = r1.top + 'px'; el.style.opacity = '.2'; el.style.transform = 'scale(.8)'; });
+  setTimeout(() => { el.remove(); b.classList.add('pulse'); setTimeout(() => b.classList.remove('pulse'), 500); }, 720);
+}
+
+/* ---------- 1. the instrument: cabin sales ---------- */
+const INST = { id:'cab', name:'Cabin sales', ctx:'16 passengers buying snacks · £5 each', rel:'Cabin sales = <b>passengers buying</b> × <b>snack price</b>', a:'16', op:'×', b:'£5', unit:'£', answer:80, answerText:'£80', meta:'Sum 7 · Week 1', goes:'the cost sheet',
+  hints:['16 × 5 is 16 × 10, then halve it: 160 → 80.', '16 lots of £5. Count in fives, or think 10 fives and 6 fives.'], showHow:false };
+function instView(){
+  const o = Object.assign({}, INST, { state:S.instState, val:S.instVal, note:S.instNote, hint:S.hint });
+  const row = (lab, v, id, hl) => `<tr class="${hl ? 'hl' : ''}"><td>${lab}</td><td class="n" id="${id || ''}">${v}</td></tr>`;
+  const cab = S.instState === 'confirmed' ? '£80' : '<span style="color:var(--mute)">—</span>';
+  return shell(`<div class="crumb">Dragon Air HQ · Cost</div><h1>What will your airline do this week?</h1>
+  <div class="tabs"><button data-set="instState=input" class="${S.instState === 'input' ? 'on' : ''}">INPUT</button><button data-set="instState=working" class="${S.instState === 'working' ? 'on' : ''}">WORKING</button><button data-set="instState=confirmed" class="${S.instState === 'confirmed' ? 'on' : ''}">CONFIRMED</button><span style="color:var(--mute);font-size:13px;align-self:center;margin-left:8px">the three states; or just type 80 and press Check</span></div>
+  <div class="two"><div>${instrument(o)}</div>
+  <section class="pnl dim"><h2>Your figures <span style="float:right;font-size:12px;color:var(--mute);font-weight:400">the sheet fills in as each figure is worked out</span></h2>
+    <table class="t"><tr><th>Your plan</th><th class="n">Paris ×1 at £100 · Dublin ×2 at £90</th></tr>
+    ${row('Paris tickets', '£1,900')}${row('Dublin tickets', '£2,880')}${row('Cabin sales', cab, 'cab-cell', S.instState !== 'confirmed')}${row('Total revenue', S.instState === 'confirmed' ? '£4,860' : '—')}${row('Fuel (week 1, launch deal)', '£1,560')}${row('Red Kite Air is undercutting you', '£300')}${row('Total costs', '£3,924')}${row('Profit', S.instState === 'confirmed' ? '£936' : '—')}</table></section></div>`,
+  'The sum sits where its answer is useful: the cost sheet waits for it. The sheet is quieter than the task.', `<button class="btn quiet">◀ Back</button><button class="btn pri" ${S.instState === 'confirmed' ? '' : 'disabled'}>Work out the figures ▶</button>`);
+}
+
+/* ---------- 2. a Build ---------- */
+const BUILD = { figs:[['fare', 'Fare', '£90'], ['buy', 'Passengers buying snacks', '16'], ['fly', 'Passengers flying', '38'], ['price', 'Snack price', '£5']], right:['buy', '×', 'price'] };
+function buildView(){
+  const toks = S.build, ok = toks.join(' ') === BUILD.right.join(' ') || toks.join(' ') === ['price', '×', 'buy'].join(' '), done = S.buildDone;
+  const lab = t => { const f = BUILD.figs.find(x => x[0] === t); return f ? `${f[2]}` : t; };
+  const slots = [0, 1, 2].map(i => `<span class="slot ${toks[i] ? 'f' : ''}">${toks[i] ? lab(toks[i]) : (i === 1 ? 'op' : '…')}</span>`).join(' ');
+  return shell(`<div class="crumb">Dragon Air HQ · Cost</div><h1>What will your airline do this week?</h1>
+  <div class="two"><div><section class="inst ${done ? 'confirmed' : 'working'}">${eyebrow(done ? 'Checked' : 'Build it', done ? 'gold' : '')}<p class="name">Cabin sales</p><p class="ctx">Snacks at £5 · 3 in 10 passengers buy · stock costs £1 an item</p>
+    <p class="rel">Cabin sales = <b>passengers buying snacks</b> × <b>snack price</b></p>
+    <div class="sum">${slots}<span>=</span><span class="q ${done ? 'done flash-good' : ''}">${done ? '£80' : '?'}</span></div><p class="meta">Sum 7 · Week 1 · tap two figures and the operation; the game works it out</p>
+    ${done ? '<p class="note" style="color:var(--good)">✓ Checked. £80 written to the cost sheet.</p>' : `<div class="chips">${BUILD.figs.map(([k, n, v]) => `<button class="chip ${toks.includes(k) ? 'used' : ''}" data-fig="${k}">${n}<b>${v}</b></button>`).join('')}</div>
+    <div class="ans"><div class="ops">${['+', '−', '×', '÷'].map(o => `<button data-op="${o}">${o}</button>`).join('')}</div><button class="btn quiet" data-undo="1">Undo</button><span style="flex:1"></span><button class="btn pri" data-bcheck="1" ${toks.length === 3 ? '' : 'disabled'}>Check ✓</button></div>${S.buildNote ? `<p class="note q">${S.buildNote}</p>` : ''}
+    <div class="help"><button data-bhint="1">Give me a hint</button></div>${S.buildHint ? '<p class="hint">The relationship says who × what: the passengers who buy, times the price each pays. The fare and the passengers flying are not part of it.</p>' : ''}`}</section></div>
+  <section class="pnl dim"><h2>Your figures</h2><table class="t"><tr><td>Paris tickets</td><td class="n">£1,900</td></tr><tr><td>Dublin tickets</td><td class="n">£2,880</td></tr><tr class="hl"><td>Cabin sales</td><td class="n">${done ? '£80' : '—'}</td></tr><tr><td>Total revenue</td><td class="n">${done ? '£4,860' : '—'}</td></tr></table></section></div>`,
+  'A Build: the chips slot into the expression, so it reads as constructing the model, not answering a question. Same panel, same states.', '<button class="btn quiet">◀ Back</button><button class="btn pri" disabled>Work out the figures ▶</button>');
+}
+
+/* ---------- 3. Red Kite sequence ---------- */
+function kiteView(){
+  const st = S.kite, chosen = st !== 'decision', conf = st === 'confirmed' || st === 'result';
+  const opts = [['match', 'Match their price', 'Dublin fare becomes £50 next round', 'Nothing today'], ['hold', 'Hold your price', 'Keep your fare; fewer people book', 'Nothing today'], ['adv', 'Advertise', 'Posters all over London', '£300 today']];
+  const cards = `<div class="opts">${opts.map(([k, t, p, c]) => `<button class="opt ${chosen ? (k === 'adv' ? 'on' : 'off') : ''}" data-choose="${k}"><h3>${t}</h3><p>${p}</p><span class="cost">${c}</span></button>`).join('')}</div>`;
+  const stayCell = conf ? '50' : '<span class="q" style="color:var(--gold)">?</span>';
+  const table = `<section class="pnl ${chosen && !conf ? 'dim' : ''}" style="margin-top:12px">${eyebrow('Model', 'mute')}<h2>What the model says about Dublin today</h2>
+    <table class="t"><tr><th></th><th class="n">Your fare</th><th class="n">Want to fly</th><th class="n">Stay with you</th><th class="n">Tickets</th><th class="n">Profit today</th></tr>
+    <tr class="${chosen ? '' : ''}"><td>Match their price</td><td class="n">£50</td><td class="n">96</td><td class="n">96</td><td class="n">£1,900</td><td class="n" style="color:var(--bad)">−£73</td></tr>
+    <tr><td>Hold your price</td><td class="n">£90</td><td class="n">62</td><td class="n">50</td><td class="n">£2,880</td><td class="n">£931</td></tr>
+    <tr class="${chosen ? 'hl' : ''}"><td>Advertise (£300)</td><td class="n">£90</td><td class="n">62</td><td class="n" id="stay-cell">${stayCell}</td><td class="n">${conf ? '£2,880' : '—'}</td><td class="n">${conf ? '£631' : '—'}</td></tr></table>
+    <p style="margin:6px 0 0;font-size:12.5px;color:var(--mute)">${kiteName()} at £50: for every £10 you charge above them, 1 in 10 of your passengers switch.</p></section>`;
+  let task = '';
+  if(st === 'chosen' || st === 'working') task = instrument({ id:'stay', name:'What happens if you advertise?', ctx:'62 passengers want Dublin at £90 · 8 in 10 stay with you', rel:'Stay with you = <b>passengers at £90</b> × <b>share who stay</b>', a:'62', op:'×', b:'0.8', unit:'passengers', answer:49.6, answerText:'50', meta:'Sum 9 · Week 1', goes:'the model', state:st === 'working' ? 'working' : 'input', val:S.kiteVal, note:S.kiteNote, hint:S.kiteHint,
+    hints:['0.8 is 8 tenths: try 62 × 8, then ÷ 10.', '62 is about 60, and 8 in 10 of 60 is 48, so expect about 50.'], showHow:true, howOpen:S.kiteHow, how:'0.8 × 10 = 8. 62 × 8 = 496. 496 ÷ 10 = 49.6, which is 50 passengers.' });
+  if(st === 'confirmed') task = instrument({ id:'stay', name:'What happens if you advertise?', ctx:'62 passengers want Dublin at £90 · 8 in 10 stay with you', a:'62', op:'×', b:'0.8', answerText:'50', meta:'Sum 9 · Week 1', goes:'the model', state:'confirmed' }) + `<p style="margin:10px 0 0"><button class="btn pri" data-set="kite=result">Confirm: advertise ▶</button></p>`;
+  if(st === 'result') task = `<section class="plate">${eyebrow('Advertising result', 'gold')}<div class="big"><div><small>Passengers who stay</small><b>50</b></div><div><small>Projected profit today</small><b class="gold">£631</b></div><div><small>Campaign cost</small><b>£300</b></div><div><small>Reputation</small><b style="color:var(--good)">+½ ★</b></div></div><p style="margin:8px 0 0;color:var(--soft);font-size:14px">Your posters worked. The result is never smaller than the choice that led to it.</p><p style="margin:8px 0 0"><button class="btn quiet" data-set="kite=decision">Change your mind</button></p></section>`;
+  return shell(`<div class="crumb">Dragon Air HQ · Plan</div><div style="display:flex;align-items:center;gap:14px"><h1>${kiteName()} is undercutting you</h1></div>
+  <p style="margin:2px 0 0;color:var(--soft)">${eyebrow('Decision')} &nbsp; Red Kite Air is selling Dublin at £50 from today until Sunday.</p>
+  ${cards}${task}${table}
+  <div class="tabs" style="margin-top:12px"><span style="color:var(--mute);font-size:13px;align-self:center;margin-right:6px">Step through:</span>${['decision', 'chosen', 'working', 'confirmed', 'result'].map(k => `<button data-set="kite=${k}" class="${st === k ? 'on' : ''}">${k.toUpperCase()}</button>`).join('')}</div>`,
+  st === 'decision' ? 'Choose, then work out what happens. The model shows the answer only once you have.' : st === 'result' ? 'Decided. The plate is the task now; the cards have stepped back.' : 'The chosen card keeps the rail; the others recede. The sum is here, on the decision, not on another page.',
+  `<button class="btn quiet">◀ Back</button><button class="btn pri" ${st === 'result' ? '' : 'disabled'}>Back to Work it out ▶</button>`);
+}
+
+/* ---------- 4. Launch Day: four sums, fuel in the costs ---------- */
+const LAUNCH = [
+  { id:'l1', name:'Paris tickets at £80', ctx:'38 passengers · £80 each', a:'38', op:'×', b:'£80', unit:'£', answer:3040, answerText:'£3,040', hints:['38 × 80 is 38 × 8, then × 10.'] },
+  { id:'l2', name:'Paris tickets at £90', ctx:'38 passengers · £90 each', a:'38', op:'×', b:'£90', unit:'£', answer:3420, answerText:'£3,420', hints:['38 × 90: 38 × 9 = 342, then × 10.'] },
+  { id:'l3', name:'Paris tickets at £100', ctx:'33 passengers · £100 each', a:'33', op:'×', b:'£100', unit:'£', answer:3300, answerText:'£3,300', hints:['× 100 moves every digit two places.'] },
+  { id:'l4', name:'Profit', ctx:'Revenue £5,130 · costs £2,875', a:'£5,130', op:'−', b:'£2,875', unit:'£', answer:2255, answerText:'£2,255', hints:['Take 3,000 off, then put 125 back: 5,130 − 3,000 + 125.'] } ];
+function launchView(){
+  const k = Math.min(S.launchStep, LAUNCH.length - 1), cur = LAUNCH[k], allDone = S.launchStep >= LAUNCH.length;
+  const o = Object.assign({}, cur, { state: allDone ? 'confirmed' : (S.launchVals[cur.id] ? 'working' : 'input'), val:S.launchVals[cur.id] || '', note:S.launchNote, hint:S.launchHint, meta:`Sum ${k + 1} of 4 · Launch Day`, goes:'your figures' });
+  const v = id => S.launchDone[id] ? `<span class="flash-good">${LAUNCH.find(x => x.id === id).answerText}</span>` : '<span style="color:var(--mute)">—</span>';
+  return shell(`<div class="crumb">Dragon Air HQ · Work it out</div><h1>Build your first operating plan</h1>
+  <div class="two"><div>${instrument(o)}${allDone ? '<p style="margin:10px 0 0;color:var(--good)">All four sums checked. Fuel was worked out by the model: it is in the costs, with ƒ behind it.</p>' : ''}</div>
+  <section class="pnl dim"><h2>Your figures <span style="float:right;font-size:12px;color:var(--mute);font-weight:400">the sheet fills in as each figure is worked out</span></h2>
+    <table class="t"><tr><th></th><th class="n">£80 <small style="color:var(--mute)">55 want</small></th><th class="n">£90 <small style="color:var(--mute)">50 want</small></th><th class="n">£100 <small style="color:var(--mute)">44 want</small></th></tr>
+    <tr><td>Paris passengers</td><td class="n">38</td><td class="n">38</td><td class="n">33</td></tr>
+    <tr><td>Paris tickets</td><td class="n" id="cell-l1">${v('l1')}</td><td class="n" id="cell-l2">${v('l2')}</td><td class="n" id="cell-l3">${v('l3')}</td></tr></table>
+    <table class="t" style="margin-top:12px"><tr><th>This week's costs</th><th class="n"></th></tr>
+    <tr><td>Fuel · 5 days from Wed 4 Sep <span class="mono" style="font-size:12px;color:var(--mute)">ƒ 480 L a day at £1.30</span></td><td class="n">£3,120</td></tr>
+    <tr><td>Flying, airport, crew</td><td class="n">£2,875</td></tr>
+    <tr><td>Snacks <span style="font-size:12px;color:var(--mute)">a Build, later today</span></td><td class="n">—</td></tr>
+    <tr class="${k === 3 && !allDone ? 'hl' : ''}"><td><b>Profit on the £90 plan</b></td><td class="n" id="cell-l4">${v('l4')}</td></tr></table>
+    <p style="margin:8px 0 0;font-size:12.5px;color:var(--mute)">Fuel is charged from Launch Day as a cost the model has worked out (D94). The first fuel <i>sum</i> waits for the Fuel desk in week 2.</p></section></div>`,
+  'Four hand sums on Launch Day: tickets at three fares, then profit. No worked example unless the method is new.', `<button class="btn quiet">◀ Back</button><button class="btn pri" ${allDone ? '' : 'disabled'}>Work out the figures ▶</button>`);
+}
+
+/* ---------- 5. Fuel desk first visit ---------- */
+function fuelView(){
+  const r = S.fuelRoute, km = r ? ROUTES[r][1] : 0;
+  const litres = k => Math.round(FUEL[k].per * km / 100 * 2), cost = k => litres(k) * PRICE;
+  const ac = Object.keys(FUEL).map(k => { const L = r ? litres(k) : 0, pct = r ? Math.min(100, L / 60) : 0; return `<div class="ac ${S.fuelAc === k ? 'on' : ''}" data-ac="${k}">${SIL[k]}<h3>${FUEL[k].name}</h3><small>${FUEL[k].seats} seats · burns ${FUEL[k].per} L per 100 km</small>
+    <div class="gauge ${pct >= 100 ? 'full' : ''}"><i style="width:${pct}%"></i></div><div class="tag"><span>${r ? num(L) + ' L' : '— L'}</span><b>${r ? money(cost(k)) : '—'}</b></div></div>`; }).join('');
+  const steps = ['Tap a route. Each plane fills with the fuel it needs there and back; the price tag fills beside it.', 'A Twin Otter to Paris and a jet to Madrid fill by very different amounts: a thirsty plane visibly costs more.', 'Litres per seat appears only on the aircraft comparison, as a row of seats with a fuel bar. Everywhere else, total litres.'];
+  const sumPart = r ? `<div style="margin-top:14px">${instrument({ id:'fuel1', name:'One flight\'s fuel', ctx:`${FUEL[S.fuelAc].name} to ${ROUTES[r][0]} and back · ${num(litres(S.fuelAc))} L at £1.30 a litre`, rel:'Fuel cost = <b>litres</b> × <b>price a litre</b>', a:num(litres(S.fuelAc)) + ' L', op:'×', b:'£1.30', unit:'£', answer:cost(S.fuelAc), answerText:money(cost(S.fuelAc)), meta:'Sum 12 · Week 2 · the one decimal example', goes:'the fuel order', state:S.fuelDone ? 'confirmed' : (S.fuelVal ? 'working' : 'input'), val:S.fuelVal, note:S.fuelNote, hint:S.fuelHint, hints:['£1.30 has 2 decimal places: × 100 makes it 130. Multiply, then ÷ 100.'], showHow:true, howOpen:S.fuelHow, how:`${num(litres(S.fuelAc))} × 130 = ${num(litres(S.fuelAc) * 130)}, then ÷ 100 = ${money(cost(S.fuelAc))}.` })}</div>` : '';
+  return shell(`<div class="crumb">Dragon Air HQ · Fuel</div><h1>Fuel Procurement</h1><p style="margin:0 0 10px;color:var(--soft)">${eyebrow('First visit')} &nbsp; Every flight burns fuel. Different aircraft on different routes burn different amounts, and litres become pounds.</p>
+  <div class="two"><div><div class="apron"><div class="planes">${ac}</div><div class="routes">${Object.entries(ROUTES).map(([k, [n, d]]) => `<button data-route="${k}" class="${r === k ? 'on' : ''}">${n} <span class="mono" style="font-size:12px;color:var(--mute)">${num(d)} km</span></button>`).join('')}<span style="flex:1"></span><span class="mono" style="font-size:13px;align-self:center;color:var(--soft)">Jet fuel today <b style="color:var(--fig)">£1.30</b> / L</span></div></div>${sumPart}</div>
+  <section class="pnl dim"><h2>What this shows</h2><ol style="margin:0;padding-left:18px;color:var(--soft);font-size:14px;line-height:1.5">${steps.map(s => `<li style="margin:4px 0">${s}</li>`).join('')}</ol>
+  <p style="margin:10px 0 0;font-size:12.5px;color:var(--mute)">Buying in 1,000 L blocks is its own later beat: the tank filling block by block. Not on this screen.</p></section></div>`,
+  r ? `Tap another plane to see its fuel on ${ROUTES[r][0]}; the sum below is for the selected one.` : 'Tap a route to fill the gauges. Only after the picture does the first calculation appear.', `<button class="btn quiet">◀ Back</button><button class="btn pri" ${S.fuelDone ? '' : 'disabled'}>Order the week's fuel ▶</button>`);
+}
+
+/* ---------- 6. Studio: one dominant region ---------- */
+function studioView(){
+  const blocks = [[0, 2, 'Paris', '06:00–08:45', '19/19 · £100'], [1, 26, 'Dublin', '09:50–13:35', '19/19 · £90'], [2, 60, 'Paris', '15:00–17:45', '19/19 · £100']];
+  return shell(`<div class="crumb">Dragon Air HQ · Operating Plan</div><h1>Operating Plan Studio</h1>
+  <div class="two" style="grid-template-columns:minmax(0,2.2fr) minmax(0,1fr)">
+    <section class="pnl active">${eyebrow('Timetable')}<h2 style="margin-top:2px">Aircraft timetable <span style="font-size:12px;color:var(--mute);font-weight:400;margin-left:8px">06:00–22:00 · each block is one service</span></h2>
+      <div class="tl"><div class="lane"><div class="lab"><b>Twin Otter</b><small>G-DRAG · 19 seats</small></div><div class="track">${blocks.map(([i, x, c, t, s]) => `<div class="blk ${S.sel === i ? 'on' : ''}" data-sel="${i}" style="left:${x}%;width:19%"><b>${t}</b>${c} · ${s}</div>`).join('')}</div></div></div>
+      <div style="display:flex;justify-content:space-between;margin:6px 0 0 150px;font-size:12px;color:var(--mute)"><span>06:00</span><span>08:00</span><span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span><span>18:00</span><span>20:00</span><span>22:00</span></div>
+      <div class="sumbar"><span class="eyebrow mute">Plan summary</span><div><small>Seats likely filled</small><b>57 / 57</b></div><div><small>Turned away</small><b>68 a day</b></div><div><small>Average fare</small><b>£97</b></div><div><small>Projected profit</small><b class="gold" id="st-profit">£1,160 a day</b></div></div></section>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <section class="pnl rail">${eyebrow('Selected flight')}<h2 style="margin-top:2px">${blocks[S.sel][2]} <span class="mono" style="font-weight:400;font-size:14px">${blocks[S.sel][3]}</span></h2><p style="margin:0 0 8px;color:var(--soft);font-size:14px">19/19 seats · ready again ${S.sel === 1 ? '13:35' : S.sel === 0 ? '08:45' : '17:45'} · Twin Otter</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn">◀ Earlier</button><button class="btn">Later ▶</button><button class="btn quiet">Fare £${S.sel === 1 ? 90 : 100} ▾</button><button class="btn quiet">Remove</button></div>
+        <p style="margin:10px 0 0;font-size:13px;color:var(--soft)">Full, ${S.sel === 1 ? 43 : 25} turned away. Seats filled at each fare: <span class="mono">£70 19 · £80 19 · £90 19 · £100 19 · £110 17</span></p></section>
+      <section class="pnl dim"><h2>Routes</h2><table class="t"><tr><td>Dublin</td><td class="n">£90</td><td class="n">62 want</td><td class="n">1 flight</td></tr><tr><td>Paris</td><td class="n">£100</td><td class="n">44 want</td><td class="n">2 flights</td></tr></table></section>
+      <section class="pnl dim"><h2>Trade-offs <span style="font-size:12px;color:var(--mute);font-weight:400">2</span></h2><p style="margin:0;font-size:13.5px;color:var(--soft)">This timetable leaves the evening Dublin peak unserved: about 11 people want to fly then. <button class="btn quiet" style="padding:3px 8px;font-size:12.5px">Show me</button></p></section></div></div>`,
+  'One dominant region (the timetable, lit), one secondary (the selected flight, with the rail), support in pale type. Tap a flight to move the rail.', '<button class="btn quiet">◀ Back</button><button class="btn pri">Cost your plan ▶</button>');
+}
+
+/* ---------- 7. the grammar reference ---------- */
+function grammarView(){
+  const sig = [['Focus rail', 'A 3 px cyan line beside the thing being worked on', '<span class="ex rail">the selected flight</span>'], ['Local spotlight', 'The active region lighter; neighbours darker. Never a modal', '<span class="ex" style="background:var(--inset);border-color:var(--line2)">active</span><span class="ex" style="background:var(--dim);color:var(--soft)">neighbour</span>'], ['Active datum', 'One accent on the single figure that matters', '<span class="ex mono">62 × 0.8 = <b style="color:var(--gold);border-bottom:2px solid var(--gold)">?</b></span>'], ['Change pulse', 'Only the affected figures illuminate for 300–500 ms', '<button class="ex mono" data-pulse="1">tap me: £1,160</button>'], ['Cause → effect', 'A faint line from the changed input to the output', '<span class="ex">fare £90</span><span style="color:var(--mute)">⟶</span><span class="ex mono">revenue £2,880</span>'], ['Result plate', 'The outcome takes a clean, brighter strip when a decision completes', '<span class="ex" style="box-shadow:inset 3px 0 0 var(--gold);background:#12305c">ADVERTISING RESULT · 50 stay</span>'], ['Status eyebrow', 'Tiny spaced uppercase label naming the kind of thing', `${eyebrow('Decision')} &nbsp; ${eyebrow('Work it out')} &nbsp; ${eyebrow('Model', 'mute')} &nbsp; ${eyebrow('Result', 'gold')}`], ['Progressive reveal', 'The core first; Why?, How?, Give me a hint reveal the rest', '<span class="ex" style="color:var(--cyan)">Give me a hint</span><span class="ex" style="color:var(--cyan)">Show me how</span>']];
+  const col = [['Cyan', 'var(--cyan)', 'Current and interactive: the rail, the selected thing, a control', 'Headings, figures'], ['Gold', 'var(--gold)', 'The unknown and the result', 'Ordinary figures, labels, buttons'], ['Green', 'var(--good)', 'Success: a tick, a plan improved', 'Decoration'], ['Red', 'var(--bad)', 'A problem: a loss, a query', 'Emphasis'], ['Red Kite red', 'var(--kite)', 'Only the rival\'s logo, tail and a thin rule', 'Anything else'], ['Pale mono', 'var(--fig)', 'Every ordinary figure', '—']];
+  const type = [['Screen title', '32 px · 600', 'Once per screen', 'font-size:32px;font-weight:600'], ['The thing to do now', '22–26 px · 600', 'The sum, the choice, the result', 'font-size:24px;font-weight:600'], ['Section title / option name', '17 px · 550', 'Panel and card headings', 'font-size:17px;font-weight:550'], ['Body and table figures', '14–15 px · 400', 'Readable from a classroom seat', 'font-size:15px'], ['Support', '12–13 px · 400 muted', 'Notes, sources; eyebrows 10.5 px spaced', 'font-size:12.5px;color:var(--mute)']];
+  return shell(`<h1>The attention grammar</h1><p style="margin:0 0 12px;color:var(--soft)">Eight signals, reused everywhere, so the pupil learns them once. The test for any screen: can you tell within two seconds what to look at first?</p>
+  <div class="two"><section class="pnl"><h2>Signals</h2><table class="t grammar">${sig.map(([n, d, e]) => `<tr><td style="width:150px"><b style="font-weight:550">${n}</b></td><td style="color:var(--soft)">${d}</td><td style="width:260px">${e}</td></tr>`).join('')}</table></section>
+  <div style="display:flex;flex-direction:column;gap:12px"><section class="pnl"><h2>Colour roles</h2><table class="t grammar">${col.map(([n, c, r, nv]) => `<tr><td><span class="sw" style="background:${c}"></span>${n}</td><td style="color:var(--soft)">${r}</td><td style="color:var(--mute);font-size:12.5px">never: ${nv}</td></tr>`).join('')}</table></section>
+  <section class="pnl"><h2>Type roles · Plex Sans and Plex Mono</h2>${type.map(([n, s, u, css]) => `<div style="display:flex;align-items:baseline;gap:14px;padding:5px 0;border-bottom:1px solid #15335f"><span style="${css};min-width:280px;line-height:1.2">${n}</span><span class="mono" style="font-size:12px;color:var(--mute);min-width:130px">${s}</span><span style="font-size:12.5px;color:var(--soft)">${u}</span></div>`).join('')}<p style="margin:8px 0 0;font-size:12.5px;color:var(--mute)">At most three sizes on a screen plus the title. Bold is rationed. Nothing pure white but a figure just confirmed.</p></section></div></div>`,
+  'Colour is a role, not a decoration. One accent at a time on any panel.', '');
+}
+
+/* ---------- 8. before / after ---------- */
+function beforeView(){
+  return shell(`<h1>Before and after: the question card</h1><p style="margin:0 0 12px;color:var(--soft)">The same sum as the game shows it today (left) and as the instrument (right).</p>
+  <div class="cmp"><section class="pnl"><span class="eyebrow mute">Today</span><div class="white" style="margin-top:8px"><p style="margin:0 0 6px;font-size:12px;color:#4a5a78">Snacks at £5 · 3 in 10 passengers buy · stock costs £1 an item</p><p style="margin:0 0 8px;font-size:14px">Cabin sales = Passengers buying snacks × Snack price</p><div class="s">Cabin sales = ?</div></div><p style="margin:10px 0 0;font-size:13px;color:var(--soft)">Build it: tap the two figures and the operation. The game works it out.</p><div style="margin-top:8px;padding:10px;border:1px solid var(--line2);color:var(--mute);font-size:13px">Tap a figure, the operation, then a figure <span style="float:right;color:#fff;font-weight:700">= ?</span></div>
+    <p style="margin:12px 0 0;font-size:13px;color:var(--mute)">The white card is the brightest thing on the screen and leaves the simulator's world; the ? is bold white, not the one gold element; three type sizes compete inside it.</p></section>
+  <section class="pnl"><span class="eyebrow mute">The instrument</span><div style="margin-top:8px">${instrument({ id:'ba', name:'Cabin sales', ctx:'16 passengers buying snacks · £5 each', rel:'Cabin sales = <b>passengers buying</b> × <b>snack price</b>', a:'16', op:'×', b:'£5', unit:'£', meta:'Sum 7 · Week 1', state:'input', hints:['16 × 5 is 16 × 10, then halve it.'] })}</div>
+    <p style="margin:12px 0 0;font-size:13px;color:var(--mute)">Dark panel in the game's navy, the rail on the left, the relationship as the hero, the unknown in gold. The frame never changes between INPUT, WORKING and CONFIRMED.</p></section></div>`, 'Nothing pure white on the dark interface except, sparingly, a figure the pupil just confirmed.', '');
+}
+
+const SCREENS = { inst:instView, build:buildView, kite:kiteView, launch:launchView, fuel:fuelView, studio:studioView, grammar:grammarView, before:beforeView };
+function render(){ document.getElementById('app').innerHTML = SCREENS[S.view](); bind(); }
+function setv(expr){ const [k, v] = expr.split('='); S[k] = v; if(k === 'kite'){ if(v === 'decision'){ S.kiteVal = ''; S.kiteNote = ''; S.kiteHint = 0; } } }
+function checkNum(val, answer, tol){ const n = parseFloat(String(val).replace(/[£,\s]/g, '')); return Number.isFinite(n) && Math.abs(n - answer) <= (tol || 0.5); }
+function bind(){
+  const q = (s, f) => document.querySelectorAll(s).forEach(f);
+  q('[data-go]', b => b.onclick = () => { S.view = b.getAttribute('data-go'); render(); });
+  q('[data-set]', b => b.onclick = () => { setv(b.getAttribute('data-set')); render(); });
+  q('[data-pulse]', b => b.onclick = () => { b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse'); });
+  // the instrument
+  q('[data-check]', b => b.onclick = () => { const id = b.getAttribute('data-check'), inp = document.getElementById(id + '-in'), v = inp ? inp.value : '';
+    if(id === 'cab'){ S.instVal = v; if(checkNum(v, 80)){ S.instState = 'confirmed'; S.instNote = ''; render(); flyTo('cab-q', 'cab-cell', '£80'); } else { S.instState = 'working'; S.instNote = 'Query: 16 lots of £5. One more try.'; render(); } }
+    if(id === 'stay'){ S.kiteVal = v; if(checkNum(v, 49.6, 0.7)){ S.kite = 'confirmed'; S.kiteNote = ''; render(); flyTo('stay-q', 'stay-cell', '50'); } else { S.kite = 'working'; S.kiteNote = 'Query: 8 in 10 of 62. Try 62 × 8 first. One more try.'; render(); } }
+    if(/^l\d$/.test(id)){ const o = LAUNCH.find(x => x.id === id); S.launchVals[id] = v; if(checkNum(v, o.answer)){ S.launchDone[id] = true; S.launchNote = ''; S.launchHint = 0; S.launchStep++; render(); flyTo(id + '-q', 'cell-' + id, o.answerText); } else { S.launchNote = 'Query: one more try.'; render(); } }
+    if(id === 'fuel1'){ const r = S.fuelRoute, L = Math.round(FUEL[S.fuelAc].per * ROUTES[r][1] / 100 * 2); S.fuelVal = v; if(checkNum(v, L * PRICE, 0.6)){ S.fuelDone = true; S.fuelNote = ''; render(); } else { S.fuelNote = 'Query: make £1.30 whole first (× 100), multiply, then divide back. One more try.'; render(); } } });
+  q('[data-hint]', b => b.onclick = () => { const id = b.getAttribute('data-hint'); if(id === 'cab') S.hint++; if(id === 'stay') S.kiteHint++; if(/^l\d$/.test(id)) S.launchHint = (S.launchHint || 0) + 1; if(id === 'fuel1') S.fuelHint = (S.fuelHint || 0) + 1; render(); });
+  q('[data-how]', b => b.onclick = () => { const id = b.getAttribute('data-how'); if(id === 'stay') S.kiteHow = !S.kiteHow; if(id === 'fuel1') S.fuelHow = !S.fuelHow; render(); });
+  q('.inst input', i => { i.onkeydown = e => { if(e.key === 'Enter'){ const btn = i.parentElement.querySelector('[data-check]'); if(btn) btn.click(); } }; i.oninput = () => { if(i.closest('.inst').classList.contains('input')) i.closest('.inst').classList.replace('input', 'working'); }; if(i.closest('.inst').classList.contains('working') || i.closest('.inst').classList.contains('input')) setTimeout(() => i.focus(), 0); });
+  // the Build
+  q('[data-fig]', b => b.onclick = () => { if(S.build.length % 2 === 1){ S.buildNote = 'Put the operation between the figures.'; render(); return; } if(S.build.length < 3){ S.build.push(b.getAttribute('data-fig')); S.buildNote = ''; render(); } });
+  q('[data-op]', b => b.onclick = () => { if(S.build.length !== 1){ S.buildNote = 'Start with a figure.'; render(); return; } S.build.push(b.getAttribute('data-op')); render(); });
+  q('[data-undo]', b => b.onclick = () => { S.build.pop(); S.buildNote = ''; render(); });
+  q('[data-bhint]', b => b.onclick = () => { S.buildHint = true; render(); });
+  q('[data-bcheck]', b => b.onclick = () => { const k = S.build.join(' '); if(k === 'buy × price' || k === 'price × buy'){ S.buildDone = true; S.buildNote = ''; } else { S.buildNote = S.build.includes('fare') || S.build.includes('fly') ? 'Query: the fare and the passengers flying are not part of it. Use who buys, and the price each pays.' : 'Query: the same thing happens for each passenger who buys: which operation repeats it?'; S.build = []; } render(); });
+  // Red Kite
+  q('[data-choose]', b => b.onclick = () => { if(S.kite === 'decision'){ S.kite = 'chosen'; render(); } });
+  // fuel
+  q('[data-route]', b => b.onclick = () => { S.fuelRoute = b.getAttribute('data-route'); S.fuelDone = false; S.fuelVal = ''; S.fuelNote = ''; render(); });
+  q('[data-ac]', b => b.onclick = () => { S.fuelAc = b.getAttribute('data-ac'); S.fuelDone = false; S.fuelVal = ''; S.fuelNote = ''; render(); });
+  // studio
+  q('[data-sel]', b => b.onclick = () => { S.sel = +b.getAttribute('data-sel'); render(); const p = document.getElementById('st-profit'); if(p){ p.classList.add('pulse'); setTimeout(() => p.classList.remove('pulse'), 500); } });
+}
+render();
+</script>
+</body>
+</html>

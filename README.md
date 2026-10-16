@@ -380,6 +380,9 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### The attention grammar sandbox (16 Oct 2026)
+*Fable's brief "Attention grammar" (D94, D95): a small set of visual signals instead of size and weight, one calculation instrument for every sum, sums on the decision screen, fuel charged from day one and introduced visually at the Fuel desk. Tried first in `ui-sandbox/attention-grammar-sandbox.html` (open it in a browser; nothing in the game changes until Bertie has chosen).* Its screens: the instrument in its three states with the figure flying into the sheet; a Build; the Red Kite sequence (decision, chosen, working, confirmed, result plate); Launch Day with four sums and fuel in the costs; the Fuel desk's first visit (gauges and price tags per aircraft and route); a Studio screen with one dominant region and the rail; the grammar's signals, colour roles and type roles; and the old white card beside the instrument.
+
 ### Overlapping text, the right aircraft, more logo choices (16 Oct 2026)
 *Bertie: text overlapping on several screens; "if I bought a Saab, am I customising a plane that looks like a Saab?"; more logo options. Notes and the full list of fixes in `docs/Overlaps-Aircraft-Logos.md`.*
 
