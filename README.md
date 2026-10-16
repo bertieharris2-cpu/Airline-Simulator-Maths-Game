@@ -380,6 +380,37 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### The Pazzaz pass on the UI sandbox (16 Oct 2026)
+*Bertie's brief "Pazzaz Pass: visual system and motion": "electrically alive, but calm". The desk takes the wall's light (gradients lit from the top left, square panels, a 1px light line), and there are no monospace figures (tabular lining figures in the normal typeface). Light and motion say where I am, what I am working on, what changed, what my action affected and whether the system accepted it. In `ui-sandbox/airline-ui-sandbox.html` only; the game is unchanged.* Bertie's own pass is the commit "Bertie's Pazzaz pass". The second pass on top of it:
+- **Motion that survives a redraw.** The sandbox redraws the whole screen on every click, so on their own a block could not glide, a bar could not grow and every slow loop restarted. Now:
+  - moving things (`data-k`) start where they were and travel to where they are now: flight blocks, seat bars, demand bars and the fuel level;
+  - a changed figure (`data-v`) lights once: green better, red worse. The plan's profit also shows the change for a moment (▼ £280);
+  - one-off effects (`data-fx`: the result pop, the stamp, the shimmer, the arrival) keep their place if the screen redraws mid-way;
+  - the slow loops carry the page's age (`--loop`), so the header aircraft and the breathing lights carry on.
+- **The answer becomes data.** The Sums page opens with the **Operating model**: a gap waits for each sum ("? waiting for Sum 3"). A right answer:
+  1. pops green, and the stamp comes in;
+  2. flies along a thin line into its gap;
+  3. lights as it lands, labelled "✓ Sum 3 · worked out by you".
+
+  A Finance answer travels in gold and stays still. Flight times light their own cell.
+- **Focus light from the page's state.**
+  - Only the sum being worked on has the cyan rail, the lit `?` and the cursor. Typing in another moves it there.
+  - The routes panel is lit while a fare is open, the timetable while a flight is selected, and the order while fuel is still to buy.
+  - A wrong answer turns the field amber, with the answer selected so it can be retyped.
+  - A redraw keeps the cursor where the pupil is typing.
+- **Calmer where the brief asks.**
+  - The sweep under each question is gone.
+  - Only the current sum's `?` breathes.
+  - The badge is lit rather than flashing.
+  - The fuel shimmer runs once, when fuel is bought.
+- **Fuel.** A taller tank with a gold line for this week's flying. The order shows as a dashed block above the fuel before you confirm; on Confirm the level rises into it.
+- **The plan.** A move that is refused flashes the block amber and says why ("It would overlap the 06:00 flight to Dublin"). A flight that does not fit says so on the page instead of in a pop-up box.
+- **Charts and the header.**
+  - Charts rise or draw in when a page opens, and the seasonality chart again when the route changes.
+  - The header aircraft flies along its line about every 27 seconds.
+- **The wall.** The map's flows and crossing aircraft keep their place across clicks, and the storm ring pulses three times from when the storm appears. On Live operations, boarding breathes and statuses and the feed light as they change.
+- **Reduced motion.** The computer's setting is honoured, and the ◐ button (or M) previews it. There is no drift, header aircraft, breathing, flying answer or map animation, and changes are immediate. The state still shows in colours, rails and words.
+
 ### The attention grammar sandbox (16 Oct 2026)
 *Fable's brief "Attention grammar" (D94, D95): a small set of visual signals instead of size and weight, one calculation instrument for every sum, sums on the decision screen, fuel charged from day one and introduced visually at the Fuel desk. Tried first in `ui-sandbox/attention-grammar-sandbox.html` (open it in a browser; nothing in the game changes until Bertie has chosen).* Its screens: the instrument in its three states with the figure flying into the sheet; a Build; the Red Kite sequence (decision, chosen, working, confirmed, result plate); Launch Day with four sums and fuel in the costs; the Fuel desk's first visit (gauges and price tags per aircraft and route); a Studio screen with one dominant region and the rail; the grammar's signals, colour roles and type roles; and the old white card beside the instrument.
 
