@@ -1051,11 +1051,11 @@ table.fx td.enter.on button{color:var(--open)}
 .rb.turn,.rb.home{background:repeating-linear-gradient(135deg,rgba(255,200,61,.22) 0 8px,rgba(255,200,61,.1) 8px 16px);border:1px solid rgba(255,200,61,.55);color:#ffe9a8}
 @keyframes rbIn{from{opacity:.3;transform:scaleX(.2)}to{opacity:1;transform:none}}
 .rot-marks{position:relative;height:66px;margin-top:4px}
-.rm{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:14px;color:var(--muted);white-space:nowrap;border-left:0}
-.rm::before{content:'';position:absolute;top:-8px;left:50%;width:2px;height:8px;background:#9fe3ff}
-.rm b{font-size:18px;color:#fff}
-.rm.low{top:30px}
-.rm.ready b{color:#7fe0ff}.rm.ready{color:#9fe3ff;font-weight:700}
+.rot-marks .rm{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:14px;color:var(--muted);white-space:nowrap;border-left:0}
+.rot-marks .rm::before{content:'';position:absolute;top:-8px;left:50%;width:2px;height:8px;background:#9fe3ff}
+.rot-marks .rm b{font-size:18px;color:#fff}
+.rot-marks .rm.low{top:30px}
+.rot-marks .rm.ready b{color:#7fe0ff}.rot-marks .rm.ready{color:#9fe3ff;font-weight:700}
 .rot-note{margin-top:14px;padding:16px 22px;background:var(--surface);border:1px solid rgba(127,200,255,.3);border-left:3px solid var(--sel);box-shadow:var(--lift)}
 .rot-note h3{margin:0 0 8px;font-size:calc(26px * var(--tz));text-transform:none;letter-spacing:0;color:#fff;font-family:var(--sans)}
 .rot-note p{margin:4px 0;font-size:calc(20px * var(--tz))}
@@ -1777,7 +1777,7 @@ td.c.flash,b.flash{animation:cellFlash 1.6s ease-out}
 .rot-stages li.on{color:#fff;border-color:var(--cy);background:rgba(99,216,255,.10)}.rot-stages li.on i{color:var(--cy);background:rgba(99,216,255,.2)}
 .rb.out,.rb.back{background:linear-gradient(180deg,#1E8BEA,#1565C8)!important;border-color:rgba(150,215,255,.55)!important}
 .rb.turn,.rb.home{background:repeating-linear-gradient(135deg,#1B2735 0 6px,#26354A 6px 12px)!important;border-color:rgba(165,185,205,.45)!important}
-.rm.ready b{color:var(--green)!important}
+.rot-marks .rm.ready b{color:var(--green)!important}
 .ready-big{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:18px 22px;border:1px solid rgba(86,230,166,.5);background:linear-gradient(145deg,rgba(86,230,166,.12),rgba(4,16,31,.4) 60%)}
 .ready-big .label{color:var(--green);font-size:15px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
 .ready-big b{font-size:72px;line-height:1;font-weight:600;color:#fff}

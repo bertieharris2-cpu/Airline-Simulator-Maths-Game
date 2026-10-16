@@ -1051,11 +1051,11 @@ table.fx td.enter.on button{color:var(--open)}
 .rb.turn,.rb.home{background:repeating-linear-gradient(135deg,rgba(255,200,61,.22) 0 8px,rgba(255,200,61,.1) 8px 16px);border:1px solid rgba(255,200,61,.55);color:#ffe9a8}
 @keyframes rbIn{from{opacity:.3;transform:scaleX(.2)}to{opacity:1;transform:none}}
 .rot-marks{position:relative;height:66px;margin-top:4px}
-.rm{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:14px;color:var(--muted);white-space:nowrap;border-left:0}
-.rm::before{content:'';position:absolute;top:-8px;left:50%;width:2px;height:8px;background:#9fe3ff}
-.rm b{font-size:18px;color:#fff}
-.rm.low{top:30px}
-.rm.ready b{color:#7fe0ff}.rm.ready{color:#9fe3ff;font-weight:700}
+.rot-marks .rm{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:14px;color:var(--muted);white-space:nowrap;border-left:0}
+.rot-marks .rm::before{content:'';position:absolute;top:-8px;left:50%;width:2px;height:8px;background:#9fe3ff}
+.rot-marks .rm b{font-size:18px;color:#fff}
+.rot-marks .rm.low{top:30px}
+.rot-marks .rm.ready b{color:#7fe0ff}.rot-marks .rm.ready{color:#9fe3ff;font-weight:700}
 .rot-note{margin-top:14px;padding:16px 22px;background:var(--surface);border:1px solid rgba(127,200,255,.3);border-left:3px solid var(--sel);box-shadow:var(--lift)}
 .rot-note h3{margin:0 0 8px;font-size:calc(26px * var(--tz));text-transform:none;letter-spacing:0;color:#fff;font-family:var(--sans)}
 .rot-note p{margin:4px 0;font-size:calc(20px * var(--tz))}
@@ -1777,7 +1777,7 @@ td.c.flash,b.flash{animation:cellFlash 1.6s ease-out}
 .rot-stages li.on{color:#fff;border-color:var(--cy);background:rgba(99,216,255,.10)}.rot-stages li.on i{color:var(--cy);background:rgba(99,216,255,.2)}
 .rb.out,.rb.back{background:linear-gradient(180deg,#1E8BEA,#1565C8)!important;border-color:rgba(150,215,255,.55)!important}
 .rb.turn,.rb.home{background:repeating-linear-gradient(135deg,#1B2735 0 6px,#26354A 6px 12px)!important;border-color:rgba(165,185,205,.45)!important}
-.rm.ready b{color:var(--green)!important}
+.rot-marks .rm.ready b{color:var(--green)!important}
 .ready-big{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:18px 22px;border:1px solid rgba(86,230,166,.5);background:linear-gradient(145deg,rgba(86,230,166,.12),rgba(4,16,31,.4) 60%)}
 .ready-big .label{color:var(--green);font-size:15px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
 .ready-big b{font-size:72px;line-height:1;font-weight:600;color:#fff}
@@ -4402,6 +4402,151 @@ body.desk .acx-col > .btn.acx-go{position:sticky;bottom:8px;flex:none;z-index:2;
 /* the air show's cards: taller where the screen allows, and the back scrolls if its prices still need more room ("Tap to turn back" was cut) */
 @media (min-height:880px){.showroom.many .show-card,.showroom.many .show-card .sc-inner{min-height:292px}}
 .show-card .sc-back{overflow-y:auto;scrollbar-width:thin}
+
+/* =====================================================================
+   NIGHT OPS (17 Oct 2026): the style lab's look, brought into the game (Bertie: Night Ops, the blue background,
+   Segoe, and from Glass Cockpit the thin lines, magenta for what to work out and green when it is confirmed).
+   Every rule is under html.no, which p4zz_nightops.js sets, so the older look is one class away.
+   Colour roles: cyan = what I am working on now; blue = an action; magenta = a target, something to work out;
+   green = confirmed; gold = money and value; amber = a warning; red = a problem.
+   Motion: blocks glide, bars grow, a changed figure lights once, an answer flies into its cell. Reduced motion
+   (the teacher's switch or the computer's setting, body.rm) turns all of it off; the state stays in colour and words.
+   ===================================================================== */
+html.no{--no-cyan:#36C6FF;--no-blue:#278EF0;--no-mag:#FF4FD8;--no-green:#2BFF88;--no-gold:#F2C14E;--no-amber:#FFB547;--no-red:#FF5F5F;
+  --no-ink:#EAF2FF;--no-soft:#9FBDE3;--no-mute:#6F86A8;--no-line:rgba(130,195,255,.2);--no-line2:rgba(130,195,255,.11);
+  --no-panel:linear-gradient(180deg,rgba(11,35,64,.94),rgba(6,22,42,.94));--no-panel-active:linear-gradient(160deg,#123E64,#092743 58%,#06192D);
+  --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif;--mono:var(--sans)}
+html.no,html.no body{font-family:var(--sans);font-variant-numeric:tabular-nums lining-nums;font-feature-settings:"tnum" 1,"lnum" 1}
+html.no .mono,html.no .num{font-family:inherit;font-variant-numeric:tabular-nums lining-nums}
+/* no computer-style figures anywhere: the wall board, the working pad, the model's note */
+html.no .w-board,html.no .w-board *,html.no .om-e,html.no .st-bars .fch small{font-family:var(--sans)}
+html.no .wp-s,html.no .wp-d,html.no .wp-c,html.no .wp-bdv,html.no .wp-bc b,html.no .wp-rm,html.no .wp-pt,html.no .wp-mult span,html.no .wp-mult input,html.no .wp-free input{font-family:var(--sans);font-variant-numeric:tabular-nums lining-nums}
+
+/* ---------- the room: deep blue, lit from the upper left ---------- */
+html.no body{background:radial-gradient(circle at 58% -14%,rgba(39,142,240,.17),transparent 40%),radial-gradient(circle at 102% 88%,rgba(31,111,255,.09),transparent 42%),linear-gradient(135deg,#03101f,#06182f 55%,#041226)}
+
+/* ---------- the header, the nav, the action bar: thin lines, a light line along the top ---------- */
+html.no .dkbar{border-bottom:1px solid rgba(54,198,255,.24);box-shadow:none}
+html.no .dk-cell{border-left-color:var(--no-line)}
+html.no .lnav .nv{transition:background .2s ease,color .2s ease,box-shadow .2s ease;border-bottom-color:var(--no-line2)}
+html.no .lnav .nv:hover:not(.on):not(.locked){background:linear-gradient(90deg,rgba(54,198,255,.07),transparent)}
+html.no .lnav .nv.on{background:linear-gradient(100deg,#1677e7 0%,#195eb9 72%,#124582 100%);box-shadow:inset 3px 0 0 var(--no-cyan),0 0 22px rgba(31,111,255,.12)}
+html.no .actbar{background:linear-gradient(180deg,rgba(8,32,61,.96),rgba(6,23,47,.96));border:1px solid var(--no-line);box-shadow:none}
+
+/* ---------- panels as instruments: hairline borders, flat light, a 1px light line along the top ---------- */
+html.no .dk-pnl,html.no .dock,html.no .s2-sum,html.no .ft2,html.no .wk-sum .pq{position:relative;border-color:var(--no-line);box-shadow:none}
+html.no .dk-pnl::after,html.no .dock::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;pointer-events:none;background:linear-gradient(90deg,rgba(151,207,255,.32),rgba(151,207,255,.06) 50%,transparent)}
+html.no .s2-tt.focus,html.no .s2-routes.focus{border-color:rgba(54,198,255,.6);box-shadow:inset 2px 0 0 var(--no-cyan),0 0 24px rgba(54,198,255,.08)}
+
+/* ---------- buttons: a tiny physical response ---------- */
+html.no .btn{transition:transform .14s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease,filter .18s ease}
+html.no .btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,0,0,.2),0 0 14px rgba(54,198,255,.1)}
+html.no .btn:active:not(:disabled){transform:translateY(0);filter:brightness(.92)}
+html.no .btn.go:not(:disabled),html.no .btn.green:not(:disabled){box-shadow:0 0 18px rgba(43,255,136,.14)}
+
+/* ---------- the Maths Dock: a dark instrument, not a white card ---------- */
+html.no .dock-sum,html.no .dock-sum.pale{background:var(--no-panel);color:var(--no-ink);border:1px solid rgba(54,198,255,.5);box-shadow:inset 2px 0 0 var(--no-cyan),0 0 26px rgba(54,198,255,.07)}
+html.no .dock-sum .dk-h{border-bottom-color:var(--no-line)}
+html.no .dock-sum .dk-t,html.no .dock-sum b,html.no .dock-sum h3{color:var(--no-ink)}
+html.no .dock-sum .muted,html.no .dock-sum .small,html.no .dock-sum .kl,html.no .dock-sum .sum-h{color:var(--no-soft)}
+html.no .dock-sum .sum-h b{color:#fff}
+html.no .wk-sum .pq,html.no .dock .pq,html.no .pq{background:radial-gradient(circle at 50% 120%,rgba(31,111,255,.12),transparent 46%),linear-gradient(160deg,#0a2140,#061527 70%,#041121)!important;color:var(--no-ink)!important;border:1px solid rgba(54,198,255,.4);border-radius:2px;box-shadow:inset 0 1px rgba(255,255,255,.03),0 0 22px rgba(54,198,255,.06)}
+html.no .pq .kl,html.no .pq .pq-q{color:var(--no-soft)!important}
+html.no .pq .stamp.ok{color:var(--no-green);border-color:var(--no-green)}html.no .pq .stamp.fin{color:var(--no-gold);border-color:var(--no-gold)}
+html.no .pq .pq-big{color:#F3F8FF;font-family:var(--sans);font-weight:600;letter-spacing:-.01em}
+html.no .no-q{color:var(--no-mag);font-weight:600;text-shadow:0 0 12px rgba(255,79,216,.45)}
+html.no .no-q.breathe{animation:noQ 4s ease-in-out infinite;animation-delay:var(--loop,0s)}
+@keyframes noQ{0%,100%{text-shadow:0 0 10px rgba(255,79,216,.3)}50%{text-shadow:0 0 22px rgba(255,79,216,.68)}}
+html.no .no-res{display:inline-block;color:var(--no-green);text-shadow:0 0 14px rgba(43,255,136,.38)}
+html.no .no-res.fin{color:var(--no-gold);text-shadow:0 0 12px rgba(242,193,78,.25)}
+html.no .no-res.pop{animation:noPop .55s cubic-bezier(.18,.85,.26,1.2) both}
+@keyframes noPop{0%{transform:scale(.86);opacity:.2}52%{transform:scale(1.06);opacity:1;text-shadow:0 0 24px rgba(43,255,136,.6)}100%{transform:scale(1)}}
+/* the answer field: dark, recessed, a cyan caret; amber after a query */
+html.no .sd-ans .answer,html.no .so-card .sc-in,html.no .sc-in{background:linear-gradient(180deg,#08192f,#061325);border:1px solid rgba(130,195,255,.4);border-radius:2px;color:#f2f7ff;box-shadow:inset 0 4px 12px rgba(0,0,0,.25);transition:border-color .18s ease,box-shadow .18s ease}
+html.no .sd-ans .answer input,html.no .sc-in input{background:transparent;color:#fff;caret-color:var(--no-cyan);font-family:var(--sans)}
+html.no .sd-ans .answer .unit,html.no .sc-in .unit{color:var(--no-soft)}
+html.no .sd-ans .answer:focus-within,html.no .sc-in:focus-within{border-color:var(--no-cyan);box-shadow:inset 0 4px 12px rgba(0,0,0,.2),0 0 18px rgba(54,198,255,.12)}
+html.no .sd-ans .answer.query,html.no .sc-in.query,html.no .sc-in.qy{border-color:var(--no-amber);box-shadow:inset 0 4px 12px rgba(0,0,0,.22),0 0 14px rgba(255,181,71,.14)}
+html.no .dock-sum .msg,html.no .dock-sum .wk-msg{color:var(--no-amber)}html.no .dock-sum .msg.ok{color:var(--no-green)}
+html.no .dock-sum .pq-book,html.no .dock-sum .pq-fin{color:var(--no-soft)}html.no .dock-sum .pq-fin{color:#ffd88a}
+html.no .dock-sum .pq-ref{border-color:var(--no-line);background:rgba(2,10,24,.35);color:var(--no-soft)}
+html.no .dock-sum .sd-written{color:var(--no-green)}
+/* stamps: green when confirmed, gold when Finance filled it in; they arrive once */
+html.no .stamp.ok,html.no .stamp:not(.fin):not(.warn){border-color:var(--no-green);color:var(--no-green)}
+html.no .stamp.fin{border-color:var(--no-gold);color:var(--no-gold)}
+html.no .stamp.pop{animation:noStamp .36s cubic-bezier(.2,.9,.25,1.2) both}
+@keyframes noStamp{from{transform:rotate(-8deg) scale(.7);opacity:0}to{opacity:1}}
+/* the figure sheet: the cell being worked on is lit; a new figure arrives green */
+html.no .ft2 table.fx td.c.on button,html.no .ft2 td.c.enter.on button{border-color:var(--no-cyan);box-shadow:0 0 14px rgba(54,198,255,.18)}
+html.no td.c.no-arrive{animation:noArrive 1.4s ease-out both}
+html.no td.no-await,html.no td.no-await *{color:transparent!important;text-shadow:none!important}
+@keyframes noArrive{0%{background-color:rgba(43,255,136,.22);box-shadow:inset 0 0 0 1px var(--no-green)}35%{background-color:rgba(43,255,136,.16);box-shadow:inset 0 0 0 1px var(--no-green),0 0 18px rgba(43,255,136,.25)}100%{background-color:transparent;box-shadow:inset 0 0 0 1px transparent}}
+/* the boarding pass for a confirmed sum */
+html.no .no-pass{display:flex;margin:10px 0 2px;border-radius:3px;background:linear-gradient(155deg,#e9f1fb,#d6e3f2);color:#10233c;box-shadow:0 8px 20px rgba(0,0,0,.3);overflow:hidden;position:relative;text-align:left}
+html.no .no-pass.pop{animation:noPrint .55s cubic-bezier(.2,.8,.25,1) both}
+@keyframes noPrint{from{clip-path:inset(0 0 100% 0);transform:translateY(-6px)}to{clip-path:inset(0 0 0 0);transform:none}}
+html.no .no-pass .bp-m{flex:1;padding:8px 12px 9px;min-width:0}
+html.no .no-pass .bp-a{display:block;font-size:10px;font-weight:600;letter-spacing:.16em;color:#2b5c9e}
+html.no .no-pass .bp-r{display:flex;gap:16px;margin:4px 0 2px}html.no .no-pass .bp-r span{min-width:0}
+html.no .no-pass small{display:block;font-size:9.5px;letter-spacing:.14em;color:#5a7290;text-transform:uppercase}
+html.no .no-pass .bp-r b{display:block;color:#10233c;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.no .no-pass .bp-r .res b{font-size:19px;color:#0b7a46}html.no .no-pass.fin .bp-r .res b{color:#9a6a00}
+html.no .no-pass .bp-to{display:block;font-size:11.5px;color:#3d5878;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.no .no-pass .bp-s{flex:none;width:84px;padding:8px 10px 30px;border-left:2px dashed rgba(16,35,60,.3);position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
+html.no .no-pass .bp-s::before,html.no .no-pass .bp-s::after{content:"";position:absolute;left:-8px;width:14px;height:14px;border-radius:50%;background:#071c37}html.no .no-pass .bp-s::before{top:-7px}html.no .no-pass .bp-s::after{bottom:-7px}
+html.no .no-pass .bp-s b{color:#10233c;font-size:13px}
+html.no .no-pass .bp-bar{width:60px;height:18px;margin-top:2px;background:repeating-linear-gradient(90deg,#10233c 0 2px,transparent 2px 3px,#10233c 3px 4px,transparent 4px 6px,#10233c 6px 9px,transparent 9px 10px)}
+html.no .no-pass .stamp{position:absolute!important;right:98px;top:9px;bottom:auto;left:auto;margin:0!important;background:rgba(233,241,251,.9);border-color:#0b7a46;color:#0b7a46;font-size:9.5px;padding:1px 5px;transform:rotate(-8deg)}
+html.no .no-pass.fin .stamp{border-color:#9a6a00;color:#9a6a00}
+/* the answer travelling to its cell */
+.no-fly{position:fixed;z-index:90;pointer-events:none;padding:1px 10px;border:1px solid #2BFF88;border-radius:2px;background:rgba(5,30,24,.92);color:#2BFF88;font:600 19px/1.4 "Segoe UI",system-ui,sans-serif;white-space:nowrap;box-shadow:0 0 22px rgba(43,255,136,.35);transition:transform .7s cubic-bezier(.45,.05,.25,1)}
+.no-fly.fin{border-color:#F2C14E;color:#F2C14E;background:rgba(30,24,5,.92);box-shadow:0 0 22px rgba(242,193,78,.3)}
+.no-trail{position:fixed;z-index:89;height:1px;transform-origin:0 50%;pointer-events:none;background:linear-gradient(90deg,rgba(43,255,136,0),rgba(43,255,136,.75));animation:noTrail 1s ease-out both}
+.no-trail.fin{background:linear-gradient(90deg,rgba(242,193,78,0),rgba(242,193,78,.75))}
+@keyframes noTrail{0%{transform:var(--r) scaleX(0);opacity:1}65%{transform:var(--r) scaleX(1);opacity:1}100%{transform:var(--r) scaleX(1);opacity:0}}
+
+/* ---------- the Operating Plan Studio ---------- */
+/* figures that changed light once: green better, red worse, cyan just changed */
+html.no .no-chg{--chg:rgba(54,198,255,.75);animation:noChg 1.1s ease-out both}html.no .no-chg.up{--chg:rgba(43,255,136,.8)}html.no .no-chg.dn{--chg:rgba(255,95,95,.75)}
+@keyframes noChg{0%{text-shadow:0 0 0 transparent}18%{color:#fff;text-shadow:0 0 16px var(--chg),0 0 2px var(--chg)}100%{text-shadow:0 0 0 transparent}}
+/* seat bars grow; flights glide when they move */
+html.no .st-bf i{transition:width .38s cubic-bezier(.2,.75,.25,1)}
+html.no .s2-blk{transition:left .34s cubic-bezier(.2,.75,.25,1),width .34s ease,box-shadow .18s ease,border-color .18s ease}
+html.no .s2-blk.dragging{transition:none}
+html.no .s2-blk.on{animation:noSel 3.8s ease-in-out infinite;animation-delay:var(--loop,0s)}
+@keyframes noSel{0%,100%{box-shadow:0 0 0 1px rgba(54,198,255,.5),0 0 14px rgba(54,198,255,.08)}50%{box-shadow:0 0 0 1px rgba(54,198,255,.75),0 0 24px rgba(54,198,255,.18)}}
+/* flight strips: each flight as an air-traffic-control strip */
+html.no .s2-tt .s2-blk{background:linear-gradient(180deg,#e8e2cf,#d9d2bb)!important;border:1px solid #9c9478!important;border-left:5px solid var(--no-fc,#3CE394)!important;color:#1b2430;box-shadow:0 3px 8px rgba(0,0,0,.35);border-radius:2px}
+html.no .s2-tt .s2-blk.fill-good{--no-fc:#2BD47B}html.no .s2-tt .s2-blk.fill-mid{--no-fc:#F0A43A}html.no .s2-tt .s2-blk.fill-low{--no-fc:#E8574F}
+html.no .s2-tt .s2-blk *{color:#1b2430}html.no .s2-tt .s2-blk .st-bt b{color:#0d1722}
+html.no .s2-tt .s2-blk .s2-bfare{color:#41505f}
+html.no .s2-tt .s2-blk .st-bf{background:rgba(27,36,48,.15)}html.no .s2-tt .s2-blk .st-bf i{background:var(--no-fc,#2BD47B)}
+html.no .s2-tt .s2-blk.on{background:linear-gradient(180deg,#f6f1e1,#e7e0c9)!important;border-color:var(--no-cyan)!important;border-left-color:var(--no-fc,#3CE394)!important}
+html.no .s2-tt .s2-blk.ovn{background:repeating-linear-gradient(135deg,#e8e2cf 0 10px,#ddd5bd 10px 20px)!important;border-right:2px dashed var(--no-cyan)!important}
+html.no .s2-tt .s2-blk.hl{box-shadow:0 0 0 2px rgba(242,193,78,.7),0 3px 8px rgba(0,0,0,.35)}
+html.no .s2-tt .s2-blk.over{border-color:var(--no-red)!important}
+html.no .s2-tt .s2-blk .no-cs{position:absolute;right:6px;top:3px;font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#5a6470}
+html.no .s2-tt .ad-blk.ghost{opacity:.35;background:repeating-linear-gradient(135deg,rgba(232,226,207,.5) 0 6px,rgba(232,226,207,.2) 6px 12px)}
+html.no .s2-tt .s2-blk.clash{border-color:var(--no-amber);box-shadow:0 0 0 2px rgba(255,181,71,.7),0 10px 24px rgba(0,0,0,.45)}
+/* the tip while a flight is dragged: what the move does, before you let go */
+#noTip{position:fixed;z-index:95;pointer-events:none;max-width:320px;padding:9px 12px;border:1px solid rgba(54,198,255,.55);border-radius:2px;background:rgba(7,28,55,.94);color:#e8f2ff;font:13px/1.45 "Segoe UI",system-ui,sans-serif;font-variant-numeric:tabular-nums;box-shadow:0 14px 34px rgba(0,0,0,.45);opacity:0;transition:none}
+#noTip.on{opacity:1;transition:opacity .12s ease}#noTip b{font-size:14px}#noTip .up{color:#2BFF88}#noTip .dn{color:#FF5F5F}#noTip .wa{color:#FFB547}#noTip .sf{color:#9FBDE3}
+/* the fare preview */
+html.no .no-ghost{display:inline-block;margin-left:8px;padding:0 6px;border:1px dashed currentColor;border-radius:2px;font-size:12.5px;font-weight:600;color:var(--no-cyan)}
+html.no .no-ghost.up{color:var(--no-green)}html.no .no-ghost.dn{color:var(--no-red)}
+
+/* ---------- notices: a glass card at the bottom right ---------- */
+.toast.no-t{position:fixed;left:auto;right:18px;bottom:84px;top:auto;transform:none;z-index:96;display:flex;align-items:center;gap:10px;min-width:260px;max-width:420px;padding:10px 14px;border:1px solid rgba(65,122,171,.55);border-left:3px solid #2BFF88;border-radius:2px;background:rgba(8,32,61,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#eaf4ff;font:13.5px/1.4 "Segoe UI",system-ui,sans-serif;box-shadow:0 12px 30px rgba(0,0,0,.45);animation:noToast .28s cubic-bezier(.2,.8,.25,1) both}
+.toast.no-t.info{border-left-color:#36C6FF}.toast.no-t.au{border-left-color:#F2C14E}.toast.no-t.warn{border-left-color:#FFB547}
+.toast.no-t svg{width:18px;height:18px;flex:none;color:#2BFF88}.toast.no-t.info svg{color:#36C6FF}.toast.no-t.au svg{color:#F2C14E}.toast.no-t.warn svg{color:#FFB547}
+@keyframes noToast{from{opacity:0;transform:translateX(24px)}}
+
+/* ---------- screens arrive; reduced motion stops all of it ---------- */
+html.no .shell-main.no-in{animation:noIn .24s cubic-bezier(.2,.75,.25,1) both}
+@keyframes noIn{from{opacity:.78;transform:translateY(4px)}to{opacity:1;transform:none}}
+html.no body.rm *,html.no body.rm *::before,html.no body.rm *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+html.no body.rm .no-fly,html.no body.rm .no-trail{display:none}
+@media (prefers-reduced-motion:reduce){html.no *,html.no *::before,html.no *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}.no-fly,.no-trail{display:none}}
 </style>
 </head>
 <body>
@@ -19805,6 +19950,169 @@ const bindPaint0 = bindPaint;
 bindPaint = function(f, st){ bindPaint0(f, st); const stage = screen().querySelector('.hangar .art');
   screen().querySelectorAll('[data-lt]').forEach(b => b.onclick = () => { S.airline.lettering = b.getAttribute('data-lt'); b.closest('.pchoices').querySelectorAll('.chc').forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
     if(repaintArt(stage, f) && typeof glintArt === 'function') glintArt(screen()); if(typeof publishSoon === 'function') publishSoon(); }); };
+
+/* ==================================================================
+   NIGHT OPS (16 Oct 2026): the style lab's look and motion, brought into the game. First the Operating Plan Studio
+   and the sums (Bertie: "start with the plan and sums"). The styles are in p1_head_nightops.css, under html.no.
+   Nothing here changes a figure, a step or the save code: it decorates what the game has drawn, after each render.
+   - After every render, noDecorate() marks the new page (the ? to work out, a queried answer, the moving parts),
+     then noSettle(): a moved flight glides from where it was, seat bars grow, a changed figure lights once.
+   - A sum just confirmed: the result pops (green, or gold when Finance filled it in), a boarding pass prints with the
+     stamp, and the answer flies into its cell in the figure sheet, which lights as it arrives. A notice says so, and
+     a chime plays if the teacher has sound on.
+   - Dragging a flight shows what the move would do before you let go: the game's own move worked out on a copy,
+     and only the figures the plan summary already shows (never a figure the pupil has still to work out).
+   - Reduced motion (the teacher's switch or the computer's setting): no movement; the state stays in colour and words.
+   Everything is in one block, so no name here can clash with the rest of the game; shared functions are reassigned.
+   ================================================================== */
+{
+document.documentElement.classList.add('no');
+const NO_T0 = performance.now(), noPrev = {}, noFx = {};
+const noRM = () => { try{ return reducedMotion(); }catch(e){ return false; } };
+const noFxAdd = (key, cls, ms, delay) => { noFx[key] = { cls, t0:performance.now() + (delay || 0), ms }; };   // starts after delay, lasts ms
+const noNum = t => { const m = String(t).replace(/[£,\s]/g, '').replace('−', '-').match(/-?\d+(\.\d+)?/); return m ? +m[0] : null; };
+const noSnd = kind => { try{ if(typeof liveChime === 'function') liveChime(kind); }catch(e){} };
+const noIcon = { check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>', info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>', clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', warn:'<path d="M12 3.5 21.5 20h-19z"/><path d="M12 10v4.5M12 17.5h.01"/>' };
+const noSvg = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${noIcon[n] || noIcon.info}</svg>`;
+
+/* ---------- notices: the game's toast, as a glass card with an icon and a colour for its kind ---------- */
+const noToast0 = toast;
+toast = function(msg, kind){
+  noToast0(msg); const t = [...document.querySelectorAll('.toast')].pop(); if(!t) return;
+  const k = kind || (/^(That|The |One aircraft|Every aircraft|No aircraft|Service \d)/.test(String(msg)) ? 'warn' : 'info');
+  t.classList.add('no-t', k); t.insertAdjacentHTML('afterbegin', noSvg(k === 'warn' ? 'warn' : k === 'info' ? 'info' : 'check'));
+};
+const noNote = (msg, kind) => { try{ toast(msg, kind || 'ok'); }catch(e){} };
+
+/* ---------- after each render: mark the page, then let it settle ---------- */
+let noView = '', noLastDone = null, noMove = null;
+const noRender0 = render;
+render = function(){
+  const r = noRender0.apply(this, arguments);
+  try{ noAfter(); }catch(e){ /* decoration never stops the game */ }
+  return r;
+};
+function noAfter(){
+  const root = screen(); if(!root) return;
+  const st = typeof step === 'function' ? step() : null, view = (UI.view || '') + '|' + (st ? st.t : '') + '|' + (S.overlay ? S.overlay.type : '');
+  const main = root.querySelector('.shell-main');
+  if(view !== noView && main && !noRM()) main.classList.add('no-in');
+  noView = view;
+  noDecorate(root);
+  noSettle(root);
+  if(UI.justDone && UI.justDone !== noLastDone){ noLastDone = UI.justDone; noSumDone(root, UI.justDone); }
+  if(!UI.justDone) noLastDone = null;
+}
+/* the ? to work out is magenta (and breathes on the sum being worked on); a queried answer field turns amber */
+function noDecorate(root){
+  root.querySelectorAll('.pq .pq-big, .fd-sign .pq-big').forEach(p => { if(p.querySelector('.no-q')) return;
+    const w = document.createTreeWalker(p, NodeFilter.SHOW_TEXT); let last = null; while(w.nextNode()) if(w.currentNode.nodeValue.includes('?')) last = w.currentNode;
+    if(!last) return; const v = last.nodeValue, at = v.lastIndexOf('?'), sp = document.createElement('span');
+    sp.className = 'no-q' + (p.closest('.dock-sum') ? ' breathe' : ''); sp.textContent = '?';
+    const after = last.splitText(at); after.nodeValue = after.nodeValue.slice(1); last.parentNode.insertBefore(sp, after); });
+  const msg = root.querySelector('#ftMsg'), ans = root.querySelector('.sd-ans .answer');
+  if(msg && ans) ans.classList.toggle('query', /^Query/.test(msg.textContent.trim()));
+  // the Studio: the panel being worked in is lit, the figures carry keys so a change can light
+  const tt = root.querySelector('.s2-tt'); if(tt) tt.classList.toggle('focus', !!root.querySelector('.s2-tt .ad-blk.on'));
+  const rt = root.querySelector('.s2-routes'); if(rt) rt.classList.toggle('focus', !!(UI.s2 && UI.s2.route));
+  root.querySelectorAll('.s2-sum .s2-si').forEach(si => { const l = si.querySelector('small'), b = si.querySelector('b'); if(!l || !b) return;
+    const k = l.textContent.trim(); b.dataset.nov = 'sum:' + k; b.dataset.nogood = /filled|profit/i.test(k) ? 'up' : /empty|turned/i.test(k) ? 'down' : ''; });
+  root.querySelectorAll('.s2-r[data-s2r]').forEach(r => { const id = r.dataset.s2r, bar = r.querySelector('.st-bf i'), pct = r.querySelector('.s2-fl b'), n = r.querySelectorAll('.s2-n');
+    if(bar){ bar.dataset.nok = 'rf:' + id; } if(pct){ pct.dataset.nov = 'rp:' + id; pct.dataset.nogood = 'up'; } if(n[0]) n[0].dataset.nov = 'rd:' + id; if(n[1]) n[1].dataset.nov = 'rs:' + id; });
+}
+const noFlying = () => { try{ return step().t === 'fly'; }catch(e){ return false; } };   // while the week flies the cash changes with every landing: no flash then
+function noSettle(root){
+  const now = performance.now(), RM = noRM(), swaps = [];
+  // seat bars grow from their last width
+  root.querySelectorAll('[data-nok]').forEach(el => { const k = el.dataset.nok, to = el.style.width, was = noPrev['k:' + k];
+    if(!RM && was !== undefined && was !== to){ el.style.width = was; swaps.push([el, 'width', to]); } noPrev['k:' + k] = to; });
+  // the flight that was just moved glides from where it was (its time, the arrows, Earlier / Later, or a drag)
+  if(noMove && !RM){ const el = root.querySelector('.s2-tt .ad-blk.on'); if(el && noMove.left !== undefined){ const to = el.style.left; el.style.left = noMove.left + '%'; swaps.push([el, 'left', to]); } }
+  noMove = null;
+  if(swaps.length){ root.offsetWidth; swaps.forEach(([el, p, to]) => { el.style[p] = to; }); }
+  // a figure that changed lights once: green better, red worse, cyan just changed
+  root.querySelectorAll('[data-nov]').forEach(el => { const k = el.dataset.nov, t = el.textContent.trim(), was = noPrev['v:' + k];
+    if(was !== undefined && was !== t){ const a = noNum(was), b = noNum(t), g = el.dataset.nogood, up = a !== null && b !== null && b > a;
+      noFxAdd('v:' + k, 'no-chg ' + (!g || a === null || b === null || a === b ? '' : up === (g === 'up') ? 'up' : 'dn'), 1100); }
+    noPrev['v:' + k] = t; });
+  // the cash in the header lights when it changes (its text is never touched)
+  const cash = document.getElementById('cCash'); if(cash){ const t = cash.textContent; if(noPrev.cash !== undefined && noPrev.cash !== t && !RM && !noFlying()){ cash.classList.remove('no-chg'); void cash.offsetWidth; cash.classList.add('no-chg', noNum(t) > noNum(noPrev.cash) ? 'up' : 'dn'); } noPrev.cash = t; }
+  if(RM) return;
+  Object.keys(noFx).forEach(k => { const f = noFx[k], t = now - f.t0; if(t > f.ms){ delete noFx[k]; return; }
+    const sel = k.startsWith('v:') ? `[data-nov="${k.slice(2).replace(/"/g, '\\"')}"]` : `[data-nofx="${k}"]`;
+    root.querySelectorAll(sel).forEach(el => { f.cls.split(' ').filter(Boolean).forEach(c => el.classList.add(c)); el.style.animationDelay = `${Math.round(-t)}ms`; }); });
+}
+
+/* ---------- a sum just confirmed: CALCULATION → RESULT → THE FIGURE SHEET ---------- */
+function noSumDone(root, jd){
+  const dock = root.querySelector('.dock-sum'), card = dock && dock.querySelector('.pq.done'); if(!card) return;
+  const big = card.querySelector('.pq-big'), stamp = card.querySelector('.stamp'), fin = !!(stamp && stamp.classList.contains('fin'));
+  // the result: the figure after the last =
+  let res = null; if(big && !big.querySelector('.no-res')){ const h = big.innerHTML, at = h.lastIndexOf('='); if(at > 0){ big.innerHTML = h.slice(0, at + 1) + ' <span class="no-res' + (fin ? ' fin' : '') + '">' + h.slice(at + 1).trim() + '</span>'; res = big.querySelector('.no-res'); } }
+  const head = dock.querySelector('.sum-h'), n = head && head.querySelector('b') ? head.querySelector('b').textContent.replace(/\D/g, '') : '', what = head ? head.textContent.split('·').pop().trim() : '';
+  const cell = root.querySelector(`.ft2[data-tbl="${jd.table}"] [data-cellv="${jd.cell}"]`) || root.querySelector(`[data-cellv="${jd.cell}"]`);
+  const rowName = cell && cell.closest('tr') && cell.closest('tr').querySelector('th') ? cell.closest('tr').querySelector('th').textContent.replace("What's in this?", '').trim() : what;
+  const val = res ? res.textContent.trim() : '';
+  // the boarding pass, with the stamp moved onto it
+  if(stamp && val){ const pass = document.createElement('div'); pass.className = 'no-pass' + (fin ? ' fin' : '');
+    pass.innerHTML = `<div class="bp-m"><span class="bp-a">★ ${(S.airline && S.airline.name ? String(S.airline.name) : 'Airline').toUpperCase().replace(/[<>&]/g, '')} · BOARDING PASS</span><div class="bp-r"><span><small>Sum</small><b>${n || '—'}</b></span><span class="res"><small>${what.replace(/[<>&]/g, '')}</small><b>${val.replace(/[<>&]/g, '')}</b></span></div><span class="bp-to">✓ Into your figures: ${rowName.replace(/[<>&]/g, '')}</span></div><div class="bp-s"><small>Gate</small><b>SHEET</b><div class="bp-bar"></div></div>`;
+    pass.appendChild(stamp); card.insertAdjacentElement('afterend', pass); if(!noRM()) pass.classList.add('pop'); }
+  if(noRM()){ if(cell) cell.classList.add('no-arrive'); noNote(`Sum ${n} ${fin ? 'checked by Finance' : 'confirmed'}: ${val} → your figures`, fin ? 'au' : 'ok'); if(!fin) noSnd('good'); return; }
+  if(res && !fin) res.classList.add('pop');
+  if(!fin) noSnd('good');
+  noNote(`Sum ${n} ${fin ? 'checked by Finance' : 'confirmed'}: <b>${val}</b> → your figures`.replace(/<\/?b>/g, ''), fin ? 'au' : 'ok');
+  if(!res || !cell) return;
+  cell.classList.add('no-await');   // the sheet's figure waits for the answer to arrive
+  setTimeout(() => { if(!res.isConnected || !cell.isConnected){ cell.classList.remove('no-await'); return; }
+    const a = res.getBoundingClientRect(), b = cell.getBoundingClientRect(), chip = document.createElement('div'), trail = document.createElement('div');
+    chip.className = 'no-fly' + (fin ? ' fin' : ''); chip.textContent = val; document.body.appendChild(chip);
+    const c = chip.getBoundingClientRect(), x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = b.left + b.width / 2, y1 = b.top + b.height / 2;
+    chip.style.left = (x0 - c.width / 2) + 'px'; chip.style.top = (y0 - c.height / 2) + 'px';
+    trail.className = 'no-trail' + (fin ? ' fin' : ''); trail.style.left = x0 + 'px'; trail.style.top = y0 + 'px'; trail.style.width = Math.hypot(x1 - x0, y1 - y0) + 'px'; trail.style.setProperty('--r', `rotate(${Math.atan2(y1 - y0, x1 - x0)}rad)`); document.body.appendChild(trail);
+    chip.getBoundingClientRect(); chip.style.transform = `translate(${x1 - x0}px,${y1 - y0}px) scale(.85)`;
+    setTimeout(() => { chip.remove(); if(cell.isConnected){ cell.classList.remove('no-arrive', 'no-await'); void cell.offsetWidth; cell.classList.add('no-arrive'); } }, 720);
+    setTimeout(() => trail.remove(), 1100); }, fin ? 250 : 520);
+}
+
+/* ---------- the Studio: a moved flight remembers where it was, so it can glide ---------- */
+const noMoveService0 = moveService;
+moveService = function(i, j, k, dep){
+  try{ const el = screen().querySelector(`.s2-tt [data-tl="${i}|${j}|${k}"]`), lane = el && el.closest('.ad-lane');
+    if(el && lane){ const a = el.getBoundingClientRect(), L = lane.getBoundingClientRect(); noMove = { left:100 * (a.left - L.left) / Math.max(1, L.width) }; } }catch(e){ noMove = null; }
+  return noMoveService0.apply(this, arguments);
+};
+/* the move worked out on a copy: the game's own editPlan, with its commit and its notices held back */
+function noTry(i, j, k, dep){
+  const keepSet = setPlan, keepToast = toast, keepSel = UI.tlSel; let got = null;
+  try{ setPlan = (ii, nx) => { got = nx; }; toast = () => {}; editPlan(i, 'depTo', k, dep, j); }catch(e){ got = null; }
+  finally{ setPlan = keepSet; toast = keepToast; UI.tlSel = keepSel; }
+  if(!got) return null;
+  try{ const we = UI.s2 && UI.s2.dt === 'weekend' && flightDaysOn(); return we ? withDay(satOf(S.day || 1), () => planLines(got)) : planLines(got); }catch(e){ return null; }
+}
+const noFig = L => { const F = s2Fill(L.services || []); return { sold:F.sold, seats:F.seats, pct:F.pct, away:L.nos || 0, profit:L.v ? Math.round(L.v.profit) : null }; };
+let noTipBase = null;
+const noBindTimeline0 = bindTimeline;
+bindTimeline = function(){
+  noBindTimeline0.apply(this, arguments);
+  const root = screen(); if(!root.querySelector('.s2-tt')) return;
+  let tip = document.getElementById('noTip'); if(!tip){ tip = document.createElement('div'); tip.id = 'noTip'; document.body.appendChild(tip); }
+  const profitShown = !root.querySelector('.s2-sum [data-sum="profit"]');
+  root.querySelectorAll('.s2-tt .ad-blk[data-tl]').forEach(b => {
+    b.addEventListener('pointermove', e => { const g = tlDrag; if(!g || g.b !== b || !g.moved) return;
+      const [i, j, k] = b.getAttribute('data-tl').split('|').map(Number), dep = clamp(g.dep0 + g.dm, g.s0, g.s0 + g.span - g.trip);
+      tip.style.left = Math.min(innerWidth - 330, e.clientX + 16) + 'px'; tip.style.top = Math.max(8, e.clientY - 86) + 'px'; tip.classList.add('on');
+      if(g.noDep === dep) return; g.noDep = dep;
+      if(!noTipBase){ try{ const we = UI.s2 && UI.s2.dt === 'weekend' && flightDaysOn(), pl = currentPlan(); noTipBase = noFig(we ? withDay(satOf(S.day || 1), () => planLines(pl)) : planLines(pl)); }catch(err){ noTipBase = null; } }
+      const clash = b.classList.contains('clash'), L = clash ? null : noTry(i, j, k, dep), F = L ? noFig(L) : null, B = noTipBase;
+      const d = (x, y, good) => x === y ? '<span class="sf">no change</span>' : `<span class="${(y > x) === good ? 'up' : 'dn'}">${y > x ? '▲' : '▼'} ${num(Math.abs(y - x))}</span>`;
+      tip.innerHTML = clash ? `<b>${fmtTime(dep)}</b><br><span class="wa">⚠ It would overlap another flight on this aircraft.</span>`
+        : !F || !B ? `<b>${fmtTime(dep)}</b> <span class="sf">· let go to move it here</span>`
+        : `<b>Leaves ${fmtTime(dep)}</b><br>Seats filled ${num(F.sold)} / ${num(F.seats)} ${d(B.sold, F.sold, true)}<br>Turned away ${num(F.away)} ${d(B.away, F.away, false)}${profitShown && F.profit !== null && B.profit !== null ? `<br>Projected profit ${money(F.profit)} ${F.profit === B.profit ? '<span class="sf">no change</span>' : `<span class="${F.profit > B.profit ? 'up' : 'dn'}">${F.profit > B.profit ? '▲' : '▼'} ${money(Math.abs(F.profit - B.profit))}</span>`}` : ''}`; });
+    const off = () => { tip.classList.remove('on'); noTipBase = null; };
+    b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off);
+  });
+};
+}
 /* ==================================================================
    OPERATIONS WALL (IWB) and the shared map. The wall shows the situation, the HQ shows the numbers
    and the decisions. Both are drawn from the same state S (one game, two views).

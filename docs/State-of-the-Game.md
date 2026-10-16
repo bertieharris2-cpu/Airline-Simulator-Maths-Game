@@ -10,6 +10,18 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0w. Night Ops in the game: the plan and the sums (16 Oct 2026)
+
+**`p4zz_nightops.js`**, after `p4zy` (before `p4c_display`, so `window.__sim.render` is the wrapped one), and **`p1_head_nightops.css`**, joined after `p1_head_studio2.css`. Reassignment only (`overrides.txt` stays at 120); everything in the JS is inside one block, and every CSS rule is under `html.no` (the certificate print copies the page's CSS, so there are no bare `body` or `*` rules). README: "Night Ops in the game".
+- **How it hooks in.**
+  - `render` is wrapped last, so it is outermost. After the game draws, `noDecorate()` marks the page (the `?` as `.no-q`, `.answer.query` from `#ftMsg`, `data-nov`/`data-nok` keys on the plan summary and the route rows, `.focus` on the panel being worked in). Then `noSettle()` runs the motion: bars grow from their last width, a moved flight glides from its last left, and a changed figure gets `.no-chg` with a negative `animation-delay`, so a redraw does not restart it.
+  - A confirmed sum is detected from `UI.justDone` changing. `noSumDone()` wraps the result as `.no-res`, inserts `.no-pass` after `.pq.done` (the stamp is moved into it) and flies `.no-fly` to `.ft2[data-tbl] [data-cellv]`. The cell is `.no-await` (text transparent) until the chip lands.
+  - `toast` is wrapped: the same single `div.toast` and its text, plus `no-t`, a kind and an icon.
+  - `moveService` is wrapped to record the block's on-screen left for the glide.
+  - `bindTimeline` is wrapped to add a `pointermove` on each `.s2-tt` block. It reads `tlDrag`, works out the move with the game's own `editPlan` while `setPlan` and `toast` are held back (`UI.tlSel` restored), then `planLines` (`withDay` on the weekend view). The tip is `#noTip`. The profit line is left out while `.s2-sum [data-sum="profit"]` (the hidden-profit button) is on the page.
+- **Bug fixed (verified):** `body.rm` (reduced motion, `applyMotion()` in `p4q_paint.js`) matched the rotation marks' `.rm` rules in `p1_head.html`: `position:absolute; transform:translateX(-50%)` on `body` made it the containing block of the fixed `#control`, so the canvas sat at `left:0`, shifted half a screen left, and `.rm b` set every `<b>` to 18px white. The rules are now `.rot-marks .rm…`.
+- **Not changed:** the text of `#cCash` (only a class), `.toast`'s text, the `.pq`/`.sum-h` text the tests read, and the drag code's own `.dragging`/`.clash`/`.st-bs` handling.
+
 ## 0v. Overlaps, the right aircraft, more logo choices (16 Oct 2026)
 
 **`p4zx_fit.js`** and **`p4zy_paint2.js`**, after `p4zw`; CSS at the end of `p1_head_studio2.css`; drawings from `tools/aircraft_art.py`. Reassignment only (`overrides.txt` stays at 120). Notes: `docs/Overlaps-Aircraft-Logos.md`.

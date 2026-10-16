@@ -1,0 +1,145 @@
+
+/* =====================================================================
+   NIGHT OPS (17 Oct 2026): the style lab's look, brought into the game (Bertie: Night Ops, the blue background,
+   Segoe, and from Glass Cockpit the thin lines, magenta for what to work out and green when it is confirmed).
+   Every rule is under html.no, which p4zz_nightops.js sets, so the older look is one class away.
+   Colour roles: cyan = what I am working on now; blue = an action; magenta = a target, something to work out;
+   green = confirmed; gold = money and value; amber = a warning; red = a problem.
+   Motion: blocks glide, bars grow, a changed figure lights once, an answer flies into its cell. Reduced motion
+   (the teacher's switch or the computer's setting, body.rm) turns all of it off; the state stays in colour and words.
+   ===================================================================== */
+html.no{--no-cyan:#36C6FF;--no-blue:#278EF0;--no-mag:#FF4FD8;--no-green:#2BFF88;--no-gold:#F2C14E;--no-amber:#FFB547;--no-red:#FF5F5F;
+  --no-ink:#EAF2FF;--no-soft:#9FBDE3;--no-mute:#6F86A8;--no-line:rgba(130,195,255,.2);--no-line2:rgba(130,195,255,.11);
+  --no-panel:linear-gradient(180deg,rgba(11,35,64,.94),rgba(6,22,42,.94));--no-panel-active:linear-gradient(160deg,#123E64,#092743 58%,#06192D);
+  --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif;--mono:var(--sans)}
+html.no,html.no body{font-family:var(--sans);font-variant-numeric:tabular-nums lining-nums;font-feature-settings:"tnum" 1,"lnum" 1}
+html.no .mono,html.no .num{font-family:inherit;font-variant-numeric:tabular-nums lining-nums}
+/* no computer-style figures anywhere: the wall board, the working pad, the model's note */
+html.no .w-board,html.no .w-board *,html.no .om-e,html.no .st-bars .fch small{font-family:var(--sans)}
+html.no .wp-s,html.no .wp-d,html.no .wp-c,html.no .wp-bdv,html.no .wp-bc b,html.no .wp-rm,html.no .wp-pt,html.no .wp-mult span,html.no .wp-mult input,html.no .wp-free input{font-family:var(--sans);font-variant-numeric:tabular-nums lining-nums}
+
+/* ---------- the room: deep blue, lit from the upper left ---------- */
+html.no body{background:radial-gradient(circle at 58% -14%,rgba(39,142,240,.17),transparent 40%),radial-gradient(circle at 102% 88%,rgba(31,111,255,.09),transparent 42%),linear-gradient(135deg,#03101f,#06182f 55%,#041226)}
+
+/* ---------- the header, the nav, the action bar: thin lines, a light line along the top ---------- */
+html.no .dkbar{border-bottom:1px solid rgba(54,198,255,.24);box-shadow:none}
+html.no .dk-cell{border-left-color:var(--no-line)}
+html.no .lnav .nv{transition:background .2s ease,color .2s ease,box-shadow .2s ease;border-bottom-color:var(--no-line2)}
+html.no .lnav .nv:hover:not(.on):not(.locked){background:linear-gradient(90deg,rgba(54,198,255,.07),transparent)}
+html.no .lnav .nv.on{background:linear-gradient(100deg,#1677e7 0%,#195eb9 72%,#124582 100%);box-shadow:inset 3px 0 0 var(--no-cyan),0 0 22px rgba(31,111,255,.12)}
+html.no .actbar{background:linear-gradient(180deg,rgba(8,32,61,.96),rgba(6,23,47,.96));border:1px solid var(--no-line);box-shadow:none}
+
+/* ---------- panels as instruments: hairline borders, flat light, a 1px light line along the top ---------- */
+html.no .dk-pnl,html.no .dock,html.no .s2-sum,html.no .ft2,html.no .wk-sum .pq{position:relative;border-color:var(--no-line);box-shadow:none}
+html.no .dk-pnl::after,html.no .dock::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;pointer-events:none;background:linear-gradient(90deg,rgba(151,207,255,.32),rgba(151,207,255,.06) 50%,transparent)}
+html.no .s2-tt.focus,html.no .s2-routes.focus{border-color:rgba(54,198,255,.6);box-shadow:inset 2px 0 0 var(--no-cyan),0 0 24px rgba(54,198,255,.08)}
+
+/* ---------- buttons: a tiny physical response ---------- */
+html.no .btn{transition:transform .14s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease,filter .18s ease}
+html.no .btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,0,0,.2),0 0 14px rgba(54,198,255,.1)}
+html.no .btn:active:not(:disabled){transform:translateY(0);filter:brightness(.92)}
+html.no .btn.go:not(:disabled),html.no .btn.green:not(:disabled){box-shadow:0 0 18px rgba(43,255,136,.14)}
+
+/* ---------- the Maths Dock: a dark instrument, not a white card ---------- */
+html.no .dock-sum,html.no .dock-sum.pale{background:var(--no-panel);color:var(--no-ink);border:1px solid rgba(54,198,255,.5);box-shadow:inset 2px 0 0 var(--no-cyan),0 0 26px rgba(54,198,255,.07)}
+html.no .dock-sum .dk-h{border-bottom-color:var(--no-line)}
+html.no .dock-sum .dk-t,html.no .dock-sum b,html.no .dock-sum h3{color:var(--no-ink)}
+html.no .dock-sum .muted,html.no .dock-sum .small,html.no .dock-sum .kl,html.no .dock-sum .sum-h{color:var(--no-soft)}
+html.no .dock-sum .sum-h b{color:#fff}
+html.no .wk-sum .pq,html.no .dock .pq,html.no .pq{background:radial-gradient(circle at 50% 120%,rgba(31,111,255,.12),transparent 46%),linear-gradient(160deg,#0a2140,#061527 70%,#041121)!important;color:var(--no-ink)!important;border:1px solid rgba(54,198,255,.4);border-radius:2px;box-shadow:inset 0 1px rgba(255,255,255,.03),0 0 22px rgba(54,198,255,.06)}
+html.no .pq .kl,html.no .pq .pq-q{color:var(--no-soft)!important}
+html.no .pq .stamp.ok{color:var(--no-green);border-color:var(--no-green)}html.no .pq .stamp.fin{color:var(--no-gold);border-color:var(--no-gold)}
+html.no .pq .pq-big{color:#F3F8FF;font-family:var(--sans);font-weight:600;letter-spacing:-.01em}
+html.no .no-q{color:var(--no-mag);font-weight:600;text-shadow:0 0 12px rgba(255,79,216,.45)}
+html.no .no-q.breathe{animation:noQ 4s ease-in-out infinite;animation-delay:var(--loop,0s)}
+@keyframes noQ{0%,100%{text-shadow:0 0 10px rgba(255,79,216,.3)}50%{text-shadow:0 0 22px rgba(255,79,216,.68)}}
+html.no .no-res{display:inline-block;color:var(--no-green);text-shadow:0 0 14px rgba(43,255,136,.38)}
+html.no .no-res.fin{color:var(--no-gold);text-shadow:0 0 12px rgba(242,193,78,.25)}
+html.no .no-res.pop{animation:noPop .55s cubic-bezier(.18,.85,.26,1.2) both}
+@keyframes noPop{0%{transform:scale(.86);opacity:.2}52%{transform:scale(1.06);opacity:1;text-shadow:0 0 24px rgba(43,255,136,.6)}100%{transform:scale(1)}}
+/* the answer field: dark, recessed, a cyan caret; amber after a query */
+html.no .sd-ans .answer,html.no .so-card .sc-in,html.no .sc-in{background:linear-gradient(180deg,#08192f,#061325);border:1px solid rgba(130,195,255,.4);border-radius:2px;color:#f2f7ff;box-shadow:inset 0 4px 12px rgba(0,0,0,.25);transition:border-color .18s ease,box-shadow .18s ease}
+html.no .sd-ans .answer input,html.no .sc-in input{background:transparent;color:#fff;caret-color:var(--no-cyan);font-family:var(--sans)}
+html.no .sd-ans .answer .unit,html.no .sc-in .unit{color:var(--no-soft)}
+html.no .sd-ans .answer:focus-within,html.no .sc-in:focus-within{border-color:var(--no-cyan);box-shadow:inset 0 4px 12px rgba(0,0,0,.2),0 0 18px rgba(54,198,255,.12)}
+html.no .sd-ans .answer.query,html.no .sc-in.query,html.no .sc-in.qy{border-color:var(--no-amber);box-shadow:inset 0 4px 12px rgba(0,0,0,.22),0 0 14px rgba(255,181,71,.14)}
+html.no .dock-sum .msg,html.no .dock-sum .wk-msg{color:var(--no-amber)}html.no .dock-sum .msg.ok{color:var(--no-green)}
+html.no .dock-sum .pq-book,html.no .dock-sum .pq-fin{color:var(--no-soft)}html.no .dock-sum .pq-fin{color:#ffd88a}
+html.no .dock-sum .pq-ref{border-color:var(--no-line);background:rgba(2,10,24,.35);color:var(--no-soft)}
+html.no .dock-sum .sd-written{color:var(--no-green)}
+/* stamps: green when confirmed, gold when Finance filled it in; they arrive once */
+html.no .stamp.ok,html.no .stamp:not(.fin):not(.warn){border-color:var(--no-green);color:var(--no-green)}
+html.no .stamp.fin{border-color:var(--no-gold);color:var(--no-gold)}
+html.no .stamp.pop{animation:noStamp .36s cubic-bezier(.2,.9,.25,1.2) both}
+@keyframes noStamp{from{transform:rotate(-8deg) scale(.7);opacity:0}to{opacity:1}}
+/* the figure sheet: the cell being worked on is lit; a new figure arrives green */
+html.no .ft2 table.fx td.c.on button,html.no .ft2 td.c.enter.on button{border-color:var(--no-cyan);box-shadow:0 0 14px rgba(54,198,255,.18)}
+html.no td.c.no-arrive{animation:noArrive 1.4s ease-out both}
+html.no td.no-await,html.no td.no-await *{color:transparent!important;text-shadow:none!important}
+@keyframes noArrive{0%{background-color:rgba(43,255,136,.22);box-shadow:inset 0 0 0 1px var(--no-green)}35%{background-color:rgba(43,255,136,.16);box-shadow:inset 0 0 0 1px var(--no-green),0 0 18px rgba(43,255,136,.25)}100%{background-color:transparent;box-shadow:inset 0 0 0 1px transparent}}
+/* the boarding pass for a confirmed sum */
+html.no .no-pass{display:flex;margin:10px 0 2px;border-radius:3px;background:linear-gradient(155deg,#e9f1fb,#d6e3f2);color:#10233c;box-shadow:0 8px 20px rgba(0,0,0,.3);overflow:hidden;position:relative;text-align:left}
+html.no .no-pass.pop{animation:noPrint .55s cubic-bezier(.2,.8,.25,1) both}
+@keyframes noPrint{from{clip-path:inset(0 0 100% 0);transform:translateY(-6px)}to{clip-path:inset(0 0 0 0);transform:none}}
+html.no .no-pass .bp-m{flex:1;padding:8px 12px 9px;min-width:0}
+html.no .no-pass .bp-a{display:block;font-size:10px;font-weight:600;letter-spacing:.16em;color:#2b5c9e}
+html.no .no-pass .bp-r{display:flex;gap:16px;margin:4px 0 2px}html.no .no-pass .bp-r span{min-width:0}
+html.no .no-pass small{display:block;font-size:9.5px;letter-spacing:.14em;color:#5a7290;text-transform:uppercase}
+html.no .no-pass .bp-r b{display:block;color:#10233c;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.no .no-pass .bp-r .res b{font-size:19px;color:#0b7a46}html.no .no-pass.fin .bp-r .res b{color:#9a6a00}
+html.no .no-pass .bp-to{display:block;font-size:11.5px;color:#3d5878;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.no .no-pass .bp-s{flex:none;width:84px;padding:8px 10px 30px;border-left:2px dashed rgba(16,35,60,.3);position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
+html.no .no-pass .bp-s::before,html.no .no-pass .bp-s::after{content:"";position:absolute;left:-8px;width:14px;height:14px;border-radius:50%;background:#071c37}html.no .no-pass .bp-s::before{top:-7px}html.no .no-pass .bp-s::after{bottom:-7px}
+html.no .no-pass .bp-s b{color:#10233c;font-size:13px}
+html.no .no-pass .bp-bar{width:60px;height:18px;margin-top:2px;background:repeating-linear-gradient(90deg,#10233c 0 2px,transparent 2px 3px,#10233c 3px 4px,transparent 4px 6px,#10233c 6px 9px,transparent 9px 10px)}
+html.no .no-pass .stamp{position:absolute!important;right:98px;top:9px;bottom:auto;left:auto;margin:0!important;background:rgba(233,241,251,.9);border-color:#0b7a46;color:#0b7a46;font-size:9.5px;padding:1px 5px;transform:rotate(-8deg)}
+html.no .no-pass.fin .stamp{border-color:#9a6a00;color:#9a6a00}
+/* the answer travelling to its cell */
+.no-fly{position:fixed;z-index:90;pointer-events:none;padding:1px 10px;border:1px solid #2BFF88;border-radius:2px;background:rgba(5,30,24,.92);color:#2BFF88;font:600 19px/1.4 "Segoe UI",system-ui,sans-serif;white-space:nowrap;box-shadow:0 0 22px rgba(43,255,136,.35);transition:transform .7s cubic-bezier(.45,.05,.25,1)}
+.no-fly.fin{border-color:#F2C14E;color:#F2C14E;background:rgba(30,24,5,.92);box-shadow:0 0 22px rgba(242,193,78,.3)}
+.no-trail{position:fixed;z-index:89;height:1px;transform-origin:0 50%;pointer-events:none;background:linear-gradient(90deg,rgba(43,255,136,0),rgba(43,255,136,.75));animation:noTrail 1s ease-out both}
+.no-trail.fin{background:linear-gradient(90deg,rgba(242,193,78,0),rgba(242,193,78,.75))}
+@keyframes noTrail{0%{transform:var(--r) scaleX(0);opacity:1}65%{transform:var(--r) scaleX(1);opacity:1}100%{transform:var(--r) scaleX(1);opacity:0}}
+
+/* ---------- the Operating Plan Studio ---------- */
+/* figures that changed light once: green better, red worse, cyan just changed */
+html.no .no-chg{--chg:rgba(54,198,255,.75);animation:noChg 1.1s ease-out both}html.no .no-chg.up{--chg:rgba(43,255,136,.8)}html.no .no-chg.dn{--chg:rgba(255,95,95,.75)}
+@keyframes noChg{0%{text-shadow:0 0 0 transparent}18%{color:#fff;text-shadow:0 0 16px var(--chg),0 0 2px var(--chg)}100%{text-shadow:0 0 0 transparent}}
+/* seat bars grow; flights glide when they move */
+html.no .st-bf i{transition:width .38s cubic-bezier(.2,.75,.25,1)}
+html.no .s2-blk{transition:left .34s cubic-bezier(.2,.75,.25,1),width .34s ease,box-shadow .18s ease,border-color .18s ease}
+html.no .s2-blk.dragging{transition:none}
+html.no .s2-blk.on{animation:noSel 3.8s ease-in-out infinite;animation-delay:var(--loop,0s)}
+@keyframes noSel{0%,100%{box-shadow:0 0 0 1px rgba(54,198,255,.5),0 0 14px rgba(54,198,255,.08)}50%{box-shadow:0 0 0 1px rgba(54,198,255,.75),0 0 24px rgba(54,198,255,.18)}}
+/* flight strips: each flight as an air-traffic-control strip */
+html.no .s2-tt .s2-blk{background:linear-gradient(180deg,#e8e2cf,#d9d2bb)!important;border:1px solid #9c9478!important;border-left:5px solid var(--no-fc,#3CE394)!important;color:#1b2430;box-shadow:0 3px 8px rgba(0,0,0,.35);border-radius:2px}
+html.no .s2-tt .s2-blk.fill-good{--no-fc:#2BD47B}html.no .s2-tt .s2-blk.fill-mid{--no-fc:#F0A43A}html.no .s2-tt .s2-blk.fill-low{--no-fc:#E8574F}
+html.no .s2-tt .s2-blk *{color:#1b2430}html.no .s2-tt .s2-blk .st-bt b{color:#0d1722}
+html.no .s2-tt .s2-blk .s2-bfare{color:#41505f}
+html.no .s2-tt .s2-blk .st-bf{background:rgba(27,36,48,.15)}html.no .s2-tt .s2-blk .st-bf i{background:var(--no-fc,#2BD47B)}
+html.no .s2-tt .s2-blk.on{background:linear-gradient(180deg,#f6f1e1,#e7e0c9)!important;border-color:var(--no-cyan)!important;border-left-color:var(--no-fc,#3CE394)!important}
+html.no .s2-tt .s2-blk.ovn{background:repeating-linear-gradient(135deg,#e8e2cf 0 10px,#ddd5bd 10px 20px)!important;border-right:2px dashed var(--no-cyan)!important}
+html.no .s2-tt .s2-blk.hl{box-shadow:0 0 0 2px rgba(242,193,78,.7),0 3px 8px rgba(0,0,0,.35)}
+html.no .s2-tt .s2-blk.over{border-color:var(--no-red)!important}
+html.no .s2-tt .s2-blk .no-cs{position:absolute;right:6px;top:3px;font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#5a6470}
+html.no .s2-tt .ad-blk.ghost{opacity:.35;background:repeating-linear-gradient(135deg,rgba(232,226,207,.5) 0 6px,rgba(232,226,207,.2) 6px 12px)}
+html.no .s2-tt .s2-blk.clash{border-color:var(--no-amber);box-shadow:0 0 0 2px rgba(255,181,71,.7),0 10px 24px rgba(0,0,0,.45)}
+/* the tip while a flight is dragged: what the move does, before you let go */
+#noTip{position:fixed;z-index:95;pointer-events:none;max-width:320px;padding:9px 12px;border:1px solid rgba(54,198,255,.55);border-radius:2px;background:rgba(7,28,55,.94);color:#e8f2ff;font:13px/1.45 "Segoe UI",system-ui,sans-serif;font-variant-numeric:tabular-nums;box-shadow:0 14px 34px rgba(0,0,0,.45);opacity:0;transition:none}
+#noTip.on{opacity:1;transition:opacity .12s ease}#noTip b{font-size:14px}#noTip .up{color:#2BFF88}#noTip .dn{color:#FF5F5F}#noTip .wa{color:#FFB547}#noTip .sf{color:#9FBDE3}
+/* the fare preview */
+html.no .no-ghost{display:inline-block;margin-left:8px;padding:0 6px;border:1px dashed currentColor;border-radius:2px;font-size:12.5px;font-weight:600;color:var(--no-cyan)}
+html.no .no-ghost.up{color:var(--no-green)}html.no .no-ghost.dn{color:var(--no-red)}
+
+/* ---------- notices: a glass card at the bottom right ---------- */
+.toast.no-t{position:fixed;left:auto;right:18px;bottom:84px;top:auto;transform:none;z-index:96;display:flex;align-items:center;gap:10px;min-width:260px;max-width:420px;padding:10px 14px;border:1px solid rgba(65,122,171,.55);border-left:3px solid #2BFF88;border-radius:2px;background:rgba(8,32,61,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#eaf4ff;font:13.5px/1.4 "Segoe UI",system-ui,sans-serif;box-shadow:0 12px 30px rgba(0,0,0,.45);animation:noToast .28s cubic-bezier(.2,.8,.25,1) both}
+.toast.no-t.info{border-left-color:#36C6FF}.toast.no-t.au{border-left-color:#F2C14E}.toast.no-t.warn{border-left-color:#FFB547}
+.toast.no-t svg{width:18px;height:18px;flex:none;color:#2BFF88}.toast.no-t.info svg{color:#36C6FF}.toast.no-t.au svg{color:#F2C14E}.toast.no-t.warn svg{color:#FFB547}
+@keyframes noToast{from{opacity:0;transform:translateX(24px)}}
+
+/* ---------- screens arrive; reduced motion stops all of it ---------- */
+html.no .shell-main.no-in{animation:noIn .24s cubic-bezier(.2,.75,.25,1) both}
+@keyframes noIn{from{opacity:.78;transform:translateY(4px)}to{opacity:1;transform:none}}
+html.no body.rm *,html.no body.rm *::before,html.no body.rm *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+html.no body.rm .no-fly,html.no body.rm .no-trail{display:none}
+@media (prefers-reduced-motion:reduce){html.no *,html.no *::before,html.no *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}.no-fly,.no-trail{display:none}}

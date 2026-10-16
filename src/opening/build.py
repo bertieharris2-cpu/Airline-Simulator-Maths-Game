@@ -1,7 +1,8 @@
 """Builds the game from the parts in this folder:
 
     airline-opening-prototype.html   the game: the revised Operating Plan Studio (p4ze + p1_head_studio2.css), Days (p4zf),
-                                     chapter 2 (p4zg, p4zh, p4zj) and the Working pad (p4zk). One file (Bertie, 13 Oct 2026).
+                                     chapter 2 (p4zg, p4zh, p4zj), the Working pad (p4zk) and, last, the Night Ops
+                                     look (p4zz + p1_head_nightops.css). One file (Bertie, 13 Oct 2026).
 
     python3 src/opening/build.py
 
@@ -60,5 +61,5 @@ def build(name, js_list, css='', ovr='overrides.txt'):
     print('built %s,' % name, len(out), 'bytes; JSON + syntax OK')
 
 # one game: the shared parts, then the revised Studio, Days, chapter 2 and the Working pad, then the display part
-GAME = JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js', 'p4zk_pad.js', 'p4zl_fleetshop.js', 'p4zm_buyonly.js', 'p4zn_ch2events.js', 'p4zo_ch3money.js', 'p4zp_runthrough.js', 'p4zq_milestones.js', 'p4zr_paper.js', 'p4zt_decide.js', 'p4zs_ch4.js', 'p4zu_fuelstore.js', 'p4zv_flightplan.js', 'p4zw_intelwall.js', 'p4zx_fit.js', 'p4zy_paint2.js'] + JS[-1:]
-build('airline-opening-prototype.html', GAME, r('parts', 'p1_head_studio2.css'))
+GAME = JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js', 'p4zk_pad.js', 'p4zl_fleetshop.js', 'p4zm_buyonly.js', 'p4zn_ch2events.js', 'p4zo_ch3money.js', 'p4zp_runthrough.js', 'p4zq_milestones.js', 'p4zr_paper.js', 'p4zt_decide.js', 'p4zs_ch4.js', 'p4zu_fuelstore.js', 'p4zv_flightplan.js', 'p4zw_intelwall.js', 'p4zx_fit.js', 'p4zy_paint2.js', 'p4zz_nightops.js'] + JS[-1:]
+build('airline-opening-prototype.html', GAME, r('parts', 'p1_head_studio2.css') + r('parts', 'p1_head_nightops.css'))

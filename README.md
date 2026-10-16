@@ -380,6 +380,31 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Night Ops in the game: the plan and the sums (16 Oct 2026)
+*Bertie chose Night Ops from the style lab, with Glass Cockpit's thin lines, magenta and green, the Segoe typeface, and a blue background. "Start bringing it into the game… start with the plan and sums." This stage covers the Operating Plan Studio and the sums. The other desks get the type, panels and buttons now; their instruments come next. Nothing here changes a figure, a step or a save code.* Two new parts: `p1_head_nightops.css` (every rule under `html.no`) and `p4zz_nightops.js` (one block; it decorates each page after the game draws it, using reassignment only, so `overrides.txt` stays at 120).
+- **Everywhere:**
+  - Segoe, with figures that line up and no monospace digits;
+  - the deep blue background with soft light;
+  - panels with a thin light line on top;
+  - buttons that lift slightly under the pointer;
+  - a quick fade-in when the page changes (only then, not on every redraw);
+  - notices as a card at the bottom right with an icon, amber for a warning;
+  - the header's cash lights green or red once when it changes (not while the week flies).
+- **The sums:**
+  - the question is a dark instrument, not a white card. The `?` is magenta and breathes slowly on the sum being worked on;
+  - the answer box is a dark recessed field with a cyan caret, and turns amber with a Query;
+  - when the answer is right, it pops green (gold when Finance filled it in), and a boarding pass prints under it with the stamp: Sum N, what it is, the figure and the row it goes into;
+  - the answer then flies across into its cell in Your figures. The cell stays empty until it lands, then lights;
+  - a notice says "Sum N confirmed: £X → your figures", with a quiet chime if the teacher has sound on.
+- **The Operating Plan Studio:**
+  - the timetable's flights are cream air-traffic flight strips, with a coloured edge for how full they are;
+  - the selected flight breathes a cyan outline, and the panel being worked in has a cyan rail;
+  - a flight moved with Earlier, Later or its time glides to its new place;
+  - seat-fill bars grow or shrink, and a plan-summary figure that changes lights once: green better, red worse;
+  - **dragging a flight shows what the move would do before you let go:** seats filled, people turned away and the profit, against the plan now. It uses the game's own move, worked out on a copy. The profit appears only when the plan summary already shows it, so nothing the pupil still has to work out is given away. An overlap says so instead.
+- **Reduced motion** (the teacher's switch or the computer's setting): no movement, no flying answer and no breathing. Every state still shows in colour, outline and words.
+- **Fixed on the way (an older bug):** with reduced motion on, the whole screen slid half off to the left and every bold word turned 18px and white. The rotation marks' class `.rm` had the same name as the reduced-motion class on `body`. Those rules now apply only inside `.rot-marks`.
+
 ### The style lab in the UI sandbox (16 Oct 2026)
 *Bertie: "I'd rather experiment with different styles… intuitive but professional and sleek", then "build the style lab with all of them". In `ui-sandbox/airline-ui-sandbox.html` only; the game is unchanged.* Open the lab with the **Style lab** button at the bottom left, or press **L**. Every choice is remembered on that computer, and **Reset** puts everything back. With every switch off, the sandbox is exactly the Pazzaz version below.
 - **Four looks:**
