@@ -19453,7 +19453,8 @@ stripHtml = function(pl, id){
 const WI = { on:false, city:null, focus:null, hl:null, hlCity:null, seen:new Set(), slots:{ r1:'news', r2:'fuel', b1:'outlook', b2:'events', b3:'airline' } };
 const WI_SEV = { bad:'#FF5F5F', warn:'#FFB547', event:'#F2C14E', opp:'#3CE394' };
 const WI_ICON = { sport:'🏉', political:'🏛', economic:'💼', culture:'🎭', health:'🏥', nature:'🌊', rival:'✈' };
-const WI_KIND = { sport:'Big match', political:'Strike', economic:'Conference', culture:'Festival', health:'Health alert', nature:'Weather', rival:'Rival fare' };
+const WI_KIND = { sport:'Big match', political:'Strike', economic:'Conference', culture:'Festival', health:'Health alert', nature:'Weather', rival:'Rival fare' }, WI_KIND_UP = { political:'New rules', economic:'Boom', health:'All clear', nature:'Fine weather' };
+function wiKind(n){ return (n.mult >= 1 && WI_KIND_UP[n.kind]) || WI_KIND[n.kind] || 'News'; }
 const WI_SIG = { up2:['▲▲ STRONG GROWTH', 'u2'], up:['▲ GROWING', 'u1'], flat:['→ STEADY', 'f0'], down:['▼ QUIETER', 'd1'] };
 function wiDay(){ return S && S.day ? S.day : 1; }
 function wiRoutes(){ const d = wiDay(); return WORLD.routes.filter(r => routeOpen(r, d)); }
@@ -19461,42 +19462,47 @@ function wiDateS(iso){ return dateShort(dayOfDate(iso)).replace(/^\w+ /, ''); }
 function wiRange(n){ const a = wiDateS(n.start), b = wiDateS(n.end); return a === b ? a : `${a} – ${b}`; }
 /* ---------- what the wall knows ---------- */
 function wiFuel(){ const d = wiDay(), now = fuelOn(d), last = fuelOn(Math.max(1, d - 7)), m = fdMarket(d);
-  return { now, last, ch: last ? Math.round(100 * (now - last) / last) : 0, lo:m.forecastLow, hi:m.forecastHigh, head:m.fuelHeadline || '', conf:String(m.forecastConfidence || ''),
-    hist:[28, 21, 14, 7, 0].map(k => fuelOn(Math.max(1, d - k))), short: S.phase === 'round' && typeof fuelNeeded === 'function' && fuelNeeded() > S.fuel }; }
+  const mid = m.forecastLow !== undefined && m.forecastLow !== null ? (m.forecastLow + m.forecastHigh) / 2 : null;
+  return { now, last, ch: last ? Math.round(100 * (now - last) / last) : 0, lo:m.forecastLow, hi:m.forecastHigh, dir: mid === null ? '' : mid > now + .005 ? '↑' : mid < now - .005 ? '↓' : '→', head:m.fuelHeadline || '', conf:String(m.forecastConfidence || ''),
+    hist:[28, 21, 14, 7, 0].map(k => fuelOn(Math.max(1, d - k))), short: S.phase === 'round' && step().t === 'ready' && typeof fuelNeeded === 'function' && fuelNeeded() > S.fuel }; }
 function wiWeather(){ const d = wiDay(), m = fdMarket(d), s = String(m.weather || 'Clear'), ev = typeof weatherNow === 'function' ? weatherNow() : null, lv = {}, home = homeData();
   const warn = /storm|gale|snow|ash|icy/i.test(s), watch = /fog|thunder|heat/i.test(s), all = /europe|again/i.test(s) || new RegExp(home.city, 'i').test(s) || /london/i.test(s);
-  const hit = r => all || new RegExp(r.city, 'i').test(s) || (/irish sea/i.test(s) && r.country === 'Ireland') || (/alps/i.test(s) && /Switzerland|Austria/.test(r.country || ''));
-  wiRoutes().forEach(r => { lv[r.id] = warn && hit(r) ? 3 : (warn || watch) && hit(r) ? 2 : 1; });
+  const R = wiRoutes(), named = r => new RegExp(r.city, 'i').test(s) || (/irish sea/i.test(s) && r.country === 'Ireland') || (/alps/i.test(s) && /Switzerland|Austria/.test(r.country || '')), any = R.some(named);
+  const hit = r => all || !any || named(r);   // a warning that names no place is everyone's
+  R.forEach(r => { lv[r.id] = warn && hit(r) ? 3 : (warn || watch) && hit(r) ? 2 : 1; });
   if(ev && S.rnd && S.rnd.focusRoute && lv[S.rnd.focusRoute] !== undefined) lv[S.rnd.focusRoute] = 3;
-  const top = Math.max(1, ...Object.values(lv)); return { text: ev || s, lv, top }; }
+  const own = ownedRoutes(), top = Math.max(1, ...Object.values(lv)), mine = Math.max(1, ...own.map(id => lv[id] || 1));
+  return { text: ev || s, lv, top, mine: own.length ? mine : top }; }
 function wiRivals(){ return ownedRoutes().map(id => { const r = routeById(id), c = competitorPrice(r), f = fareOf(id); return c === undefined || c === null ? null : { r, c, f, cut: c < f }; }).filter(Boolean); }
 /* the route news the pupil can know about: on now, or announced */
 function wiNews(within){ const d = wiDay(), iso = isoOf(d), e = isoOf(d + within - 1);
   return (WORLD.routeNews || []).filter(n => n.status !== 'off' && n.routes && n.routes.length && n.end >= iso && n.start <= e && (n.start <= iso || (n.announced && n.announce <= iso))).sort((a, b) => a.start < b.start ? -1 : a.start > b.start ? 1 : 0); }
 function wiNext(r){ return wiNews(28).find(n => n.routes.includes(r.id)) || null; }
-function wiShort(n){ return (WI_ICON[n.kind] || '📰') + ' ' + (WI_KIND[n.kind] || 'News') + ' · ' + wiDateS(n.start); }
+function wiShort(n){ return (WI_ICON[n.kind] || '📰') + ' ' + wiKind(n) + ' · ' + wiDateS(n.start); }
 /* demand over the next four weeks against today, on the same weekday: the market signal */
-function wiSignal(r){ const d = wiDay(), f = typeof demandMultNews === 'function' ? demandMultNews : () => 1, base = f(r, d) || 1, pts = [7, 14, 21, 28].map(k => f(r, d + k) / base), avg = pts.reduce((a, b) => a + b, 0) / 4;
-  return { t: avg >= 1.25 ? 'up2' : avg >= 1.08 ? 'up' : avg <= .92 ? 'down' : 'flat', pts }; }
+function wiSignal(r){ const d = wiDay(), f = typeof demandMultNews === 'function' ? demandMultNews : () => 1, f0 = typeof demandMult0 === 'function' ? demandMult0 : f, wk = (a, g) => { let t = 0; for(let k = 0; k < 7; k++) t += g(r, a + k) || 0; return t / 7; };
+  const M = wiSignal.m || (wiSignal.m = new Map()), key = r.id + '|' + d + '|' + (S.rnd && S.rnd.weekMods ? JSON.stringify(S.rnd.weekMods) : ''); if(M.has(key)) return M.get(key);
+  const base = wk(d, f0) || 1, pts = [7, 14, 21, 28].map(k => wk(d + k, f) / base), avg = pts.reduce((a, b) => a + b, 0) / 4, out = { t: avg >= 1.25 ? 'up2' : avg >= 1.08 ? 'up' : avg <= .92 ? 'down' : 'flat', pts };
+  if(M.size > 400) M.clear(); M.set(key, out); return out; }
 function wiEvents(){ const d = wiDay(), iso = isoOf(d), e7 = isoOf(d + 6), e14 = isoOf(d + 13);
   return wiNews(28).map(n => ({ n, r:routeById(n.routes[0]), w: n.start <= iso ? 'NOW' : n.start <= e7 ? 'THIS WEEK' : n.start <= e14 ? 'NEXT WEEK' : 'LATER THIS MONTH' })).filter(x => x.r).slice(0, 4); }
 function wiStories(){ const d = wiDay(), iso = isoOf(d), F = wiFuel(), m = fdMarket(d), cal = calRow(d), out = [], seen = new Set(), add = x => { if(x.title && !seen.has(x.title)){ seen.add(x.title); out.push(x); } };
   wiNews(14).forEach(n => { const r = routeById(n.routes[0]); if(!r) return; const up = n.mult > 1;
     add({ ic:WI_ICON[n.kind] || '📰', tag: n.kind === 'rival' ? 'RIVAL' : 'EVENT', when: n.start <= iso ? 'NOW' : wiDateS(n.start).toUpperCase(), title:n.headline, cons:`${r.city} demand ${up ? (n.mult >= 1.5 ? '↑↑' : '↑') : '↓'}${n.segment && n.segment !== 'all' ? ' ' + n.segment : ''}`, tone: up ? 'good' : 'bad', city:r.id }); });
-  if(F.lo !== undefined && F.lo !== null && F.head) add({ ic:'🛢', tag:'FUEL', when:'THIS WEEK', title:F.head, cons:`Fuel ${F.lo > F.now ? '↑' : '↓'} next week: ${priceL(F.lo)}–${priceL(F.hi)}`, tone: F.lo > F.now ? 'warn' : 'good' });
+  if(F.lo !== undefined && F.lo !== null && F.head) add({ ic:'🛢', tag:'FUEL', when:'THIS WEEK', title:F.head, cons:`Fuel ${F.dir} next week: ${priceL(F.lo)}–${priceL(F.hi)}`, tone: F.dir === '↑' ? 'warn' : F.dir === '↓' ? 'good' : '' });
   if(m.headline) add({ ic:'📰', tag:'MARKET', when:'THIS WEEK', title:m.headline, cons:'', tone:'' });
   (cal && cal.headlines || []).forEach(h => add({ ic:'📰', tag:'TODAY', when:'TODAY', title:h, cons:'', tone:'' }));
-  (S.log || []).slice(-3).reverse().forEach(n => add({ ic:'📰', tag:n.tag || 'NEWS', when:'RECENT', title:n.text, cons:'', tone: n.cls === 'good' ? 'good' : n.cls === 'warn' ? 'warn' : '' }));
+  (S.log || []).filter(n => n.round === S.round).slice(-1).forEach(n => add({ ic:'📰', tag:n.tag || 'NEWS', when:'RECENT', title:n.text, cons:'', tone: n.cls === 'good' ? 'good' : n.cls === 'warn' ? 'warn' : '' }));
   const weather = out.filter(x => x.tone === 'bad'), rest = out.filter(x => x.tone !== 'bad'); return weather.concat(rest); }
 function wiAlerts(){ const A = [], W = wiWeather(), F = wiFuel(), rv = wiRivals().filter(x => x.cut);
-  if(W.top === 3) A.push({ w:'weather', sev:'red', why:W.text });
+  if(W.mine === 3) A.push({ w:'weather', sev:'red', why:W.text });
   if(Math.abs(F.ch) >= 5) A.push({ w:'fuel', sev:'amber', why:`Fuel ${F.ch > 0 ? 'up' : 'down'} ${Math.abs(F.ch)}% this week` }); else if(F.short) A.push({ w:'fuel', sev:'amber', why:"The tank won't cover today's flights" });
   if(rv.length) A.push({ w:'rivals', sev:'amber', why:`${WORLD.rival} · ${rv[0].r.city} ${money(rv[0].c)}` });
   return A; }
-function wiLevel(id, A){ if(A.some(a => a.w === id)) return 3; if(id === 'outlook' && wiRoutes().some(r => wiSignal(r).t === 'up2')) return 2; if(id === 'events' && wiEvents().some(x => x.w === 'NOW')) return 2; return 1; }
+function wiLevel(id, A){ if(A.some(a => a.w === id)) return 3; if(id === 'weather' && wiWeather().top >= 2) return 2; if(id === 'outlook' && wiRoutes().some(r => wiSignal(r).t === 'up2')) return 2; if(id === 'events' && wiEvents().some(x => x.w === 'NOW')) return 2; return 1; }
 /* one mark a city: disruption, then a rival's fare, then an event, then strong growth */
 function wiMarks(){ const out = {}, W = wiWeather(), d = wiDay(), e7 = isoOf(d + 6);
-  wiRoutes().forEach(r => { if(wiSignal(r).t === 'up2') out[r.id] = { ic:'▲▲', text:1, kind:'opp' }; const n = wiNext(r); if(n && n.start <= e7) out[r.id] = { ic:WI_ICON[n.kind] || '📰', kind:'event' }; });
+  const own = ownedRoutes(); let others = 0; wiRoutes().forEach(r => { if(wiSignal(r).t === 'up2' && (own.includes(r.id) || others++ < 2)) out[r.id] = { ic:'▲▲', text:1, kind:'opp' }; const n = wiNext(r); if(n && n.start <= e7) out[r.id] = { ic:WI_ICON[n.kind] || '📰', kind: n.mult < 1 ? 'warn' : 'event' }; });
   wiRivals().filter(x => x.cut).forEach(x => { out[x.r.id] = { ic:money(x.c), text:1, kind:'warn' }; });
   Object.keys(W.lv).forEach(id => { if(W.lv[id] === 3) out[id] = { ic:'🌩', kind:'bad' }; });
   return out; }
@@ -19509,18 +19515,18 @@ const WI_PANELS = {
     return `<div class="wi-fm"><div><div class="pr">${priceL(F.now)}<small>/L</small></div><div class="ch ${F.ch > 0 ? 'wa' : F.ch < 0 ? 'up' : 'sf'}">${F.ch > 0 ? '▲' : F.ch < 0 ? '▼' : '■'} ${Math.abs(F.ch)}% <span class="wi-sf">this week</span></div></div>
       <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="wi-fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#36C6FF" stop-opacity=".3"/><stop offset="1" stop-color="#36C6FF" stop-opacity="0"/></linearGradient></defs><path d="${line} L${x(pts.length - 1)} ${H} L${x(0)} ${H} Z" fill="url(#wi-fg)"/><path d="${line}" fill="none" stroke="#36C6FF" stroke-width="2.5" vector-effect="non-scaling-stroke"/><circle cx="${x(pts.length - 1)}" cy="${y(F.now)}" r="8" fill="#fff" opacity=".25"/><circle cx="${x(pts.length - 1)}" cy="${y(F.now)}" r="4" fill="#fff"/></svg></div>
       ${F.lo !== undefined && F.lo !== null ? `<div class="wi-nextwk"><span>NEXT WEEK</span><b>${priceL(F.lo)}–${priceL(F.hi)}</b><small>${esc(F.head || (F.conf ? F.conf + ' confidence' : ''))}</small></div>` : '<div class="wi-nextwk"><span>NEXT WEEK</span><small>No forecast this week.</small></div>'}`; } },
-  outlook:{ t:'Market outlook', meta:() => 'next 4 weeks', html:() => { const order = ['up2', 'up', 'flat', 'down'], all = wiRoutes().map(r => ({ r, s:wiSignal(r) })).sort((a, b) => order.indexOf(a.s.t) - order.indexOf(b.s.t));
-    const down = all.find(x => x.s.t === 'down'), pick = down && all.indexOf(down) > 5 ? all.slice(0, 5).concat([down]) : all.slice(0, 6);
+  outlook:{ t:'Market outlook', meta:() => 'next 4 weeks', html:() => { const order = ['up2', 'up', 'flat', 'down'], own = ownedRoutes(), by = (a, b) => order.indexOf(a.s.t) - order.indexOf(b.s.t), all = wiRoutes().map(r => ({ r, s:wiSignal(r) }));
+    const mine = all.filter(x => own.includes(x.r.id)).sort(by), rest = all.filter(x => !own.includes(x.r.id)).filter(x => x.s.t !== 'flat').sort(by), pick = mine.concat(rest).slice(0, 6);
     return `<div class="wi-sig">${pick.map(({ r, s }) => { const g = WI_SIG[s.t], n = wiNext(r), a = r.arch, mx = Math.max(1, ...s.pts);
-      return `<button data-wcity="${r.id}" class="${g[1]} ${WI.city === r.id ? 'on' : ''}"><b>${esc(r.city)}</b><span class="spk ${g[1]}">${s.pts.slice(0, 3).map(v => `<i style="height:${Math.round(26 * v / mx)}px"></i>`).join('')}</span><span class="s ${g[1]}">${g[0]}</span><span class="t">${n ? esc(wiShort(n)) : a && a.season ? esc(seasonOf(wiDay()).replace(/^\w/, c => c.toUpperCase())) + (a.season[seasonOf(wiDay())] > 1 ? ': busier' : a.season[seasonOf(wiDay())] < 1 ? ': quieter' : '') : esc(r.band === 'long' ? 'Long haul' : 'Steady route')}</span></button>`; }).join('')}</div>`; } },
+      return `<button data-wcity="${r.id}" class="${g[1]} ${WI.city === r.id ? 'on' : ''}"><b>${esc(r.city)}</b><span class="spk ${g[1]}">${s.pts.slice(0, 3).map(v => `<i style="height:${Math.round(26 * v / mx)}px"></i>`).join('')}</span><span class="s ${g[1]}">${g[0]}</span><span class="t">${n ? esc(wiShort(n)) : esc((own.includes(r.id) ? '' : 'Not flown · ') + seasonOf(wiDay()).replace(/^\w/, c => c.toUpperCase()))}</span></button>`; }).join('')}</div>`; } },
   events:{ t:'Events to watch', meta:() => 'next 4 weeks', html:() => { const E = wiEvents();
-    return `<div class="wi-watch">${E.map(x => `<button data-wcity="${x.r.id}"><span class="w ${x.w === 'NOW' ? 'now' : ''}">${x.w}</span><span class="i">${WI_ICON[x.n.kind] || '📰'}</span><span><b>${esc(x.r.city)} · ${esc(WI_KIND[x.n.kind] || 'News')} <em class="${x.n.mult > 1 ? 'up' : 'dn'}">${x.n.mult > 1 ? (x.n.mult >= 1.5 ? '↑↑' : '↑') : '↓'}</em></b><small>${esc(wiRange(x.n))}</small></span></button>`).join('') || '<p class="wi-sf">Nothing announced for the next four weeks.</p>'}</div>`; } },
+    return `<div class="wi-watch">${E.map(x => `<button data-wcity="${x.r.id}"><span class="w ${x.w === 'NOW' ? 'now' : ''}">${x.w}</span><span class="i">${WI_ICON[x.n.kind] || '📰'}</span><span><b>${esc(x.r.city)} · ${esc(wiKind(x.n))} <em class="${x.n.mult > 1 ? 'up' : 'dn'}">${x.n.mult > 1 ? (x.n.mult >= 1.5 ? '↑↑' : '↑') : '↓'}</em></b><small>${esc(wiRange(x.n))}</small></span></button>`).join('') || '<p class="wi-sf">Nothing announced for the next four weeks.</p>'}</div>`; } },
   airline:{ t:'Your airline', meta:() => { const h = lastDay(); return h ? esc(periodShort(h)) : 'no flights yet'; }, html:() => { const h = lastDay(); if(!h || !h.seats) return '<p class="wi-sf">The first figures arrive when the first flight lands.</p>';
     const pct = Math.round(100 * (h.pax || 0) / h.seats), R = h.routes || {}, ids = Object.keys(R).filter(id => R[id].want !== undefined), away = ids.reduce((t, id) => t + Math.max(0, R[id].want - R[id].pax), 0), top = ids.slice().sort((a, b) => (R[b].want - R[b].pax) - (R[a].want - R[a].pax))[0], C = 2 * Math.PI * 34;
     return `<div class="wi-ya"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" fill="none" stroke="rgba(110,170,235,.14)" stroke-width="7"/><circle cx="42" cy="42" r="34" fill="none" stroke="${pct >= 85 ? '#3CE394' : '#36C6FF'}" stroke-width="7" stroke-dasharray="${(C * pct / 100).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 42 42)"/><text x="42" y="48" fill="#fff" font-size="19" text-anchor="middle" font-weight="300">${pct}%</text></svg>
       <div><span>Seats filled</span><b>${num(h.pax || 0)} <small>of ${num(h.seats)}</small></b>${ids.length ? `<span>Turned away</span><b>${num(away)}</b>` : `<span>Profit</span><b class="${(h.profit || 0) >= 0 ? 'up' : 'dn'}">${money(Math.round(h.profit || 0))}</b>`}</div></div>
       <p class="wi-line"><span class="wi-sf">Highest pressure:</span> ${top && R[top].want - R[top].pax > 0 ? esc(routeById(top).city) : 'none'}</p>`; } },
-  weather:{ t:'Weather & disruption', meta:() => 'this week', html:() => { const W = wiWeather(), ids = ownedRoutes().length ? ownedRoutes() : wiRoutes().map(r => r.id), ST = { 1:['GOOD', 'up', '☀'], 2:['WATCH', 'wa', '🌧'], 3:['WARNING', 'dn', '🌩'] };
+  weather:{ t:'Weather & disruption', meta:() => 'this week', html:() => { const W = wiWeather(), own = ownedRoutes(), ids = (own.length ? own : wiRoutes().map(r => r.id)).concat(Object.keys(W.lv).filter(id => W.lv[id] > 1 && !own.includes(id))), ST = { 1:['GOOD', 'up', '☀'], 2:['WATCH', 'wa', '🌧'], 3:['WARNING', 'dn', '🌩'] };
     return `<div class="wi-wxl">${ids.map(id => { const r = routeById(id), st = ST[W.lv[id] || 1]; return `<div><b>${esc(r.code || r.city.slice(0, 3).toUpperCase())}</b><span>${st[2]}</span><em class="${st[1]}">${st[0]}</em></div>`; }).join('')}</div>
       ${W.top >= 2 ? `<div class="wi-wxa ${W.top === 3 ? 'bad' : ''}"><span>${W.top === 3 ? 'WARNING' : 'WATCH'}</span>${esc(W.text)}${W.top === 3 ? '. Delays possible.' : ''}</div>` : '<p class="wi-sf" style="margin-top:14px">No disruption expected this week.</p>'}`; } },
   rivals:{ t:'Competitor watch', meta:() => 'fares today', html:() => { const rv = wiRivals(); if(!rv.length) return `<p class="wi-sf">${esc(WORLD.rival || 'The rival')} is not flying your routes yet.</p>`;
@@ -19547,13 +19553,16 @@ function wiCell(k, B, fresh){ const id = B.slots[k], P = WI_PANELS[id], a = B.A.
   return `<div class="${cls}" data-w="${id}"><h3>${lv === 3 ? '<span class="lv">⚠</span>' : lv === 2 ? '<span class="lv gd">◆</span>' : ''}${P.t}<span class="meta">${B.note[k] ? `in place of ${B.note[k]} for now` : P.meta()}</span>${B.note.focus === k ? '<button class="x" data-wiclose="1" title="Put back">✕</button>' : ''}</h3>${a ? `<div class="kick">${isHero || isFresh ? '⚠ New intelligence · ' : ''}<span>${esc(a.why)}</span></div>` : ''}<div class="wc">${P.html(k)}</div></div>`; }
 function wiRibbonHtml(A){ const F = wiFuel(), it = A.map(a => ({ ic: a.w === 'weather' ? '🌩' : a.w === 'fuel' ? '🛢' : '✈', t:a.why, w:a.w, c: a.w === 'weather' && S.rnd && S.rnd.focusRoute ? S.rnd.focusRoute : '', cls: a.sev === 'red' ? 'bad' : 'warn' }));
   wiEvents().slice(0, 3).forEach(x => it.push({ ic:WI_ICON[x.n.kind] || '📰', t:`${x.r.city} ${x.w === 'NOW' ? 'now' : wiDateS(x.n.start)}`, w:'events', c:x.r.id, cls:'' }));
-  if(F.lo !== undefined && F.lo !== null && Math.abs(F.ch) < 5) it.push({ ic:'🛢', t:`Fuel ${F.lo > F.now ? '↑' : '↓'} next week`, w:'fuel', c:'', cls:'' });
+  if(F.lo !== undefined && F.lo !== null && Math.abs(F.ch) < 5) it.push({ ic:'🛢', t:`Fuel ${F.dir} next week`, w:'fuel', c:'', cls:'' });
   return `<span class="wi-lbl">THIS WEEK</span>${it.map(x => `<button class="${x.cls}" data-wfocus="${x.w}" data-wfcity="${x.c || ''}">${x.ic} ${esc(x.t)}</button>`).join('')}`; }
 function wiEnsure(){ const wall = $('wall'); if($('wRibbon')) return;
   ['wRibbon', 'wRight', 'wBottom'].forEach(id => { const d = document.createElement('div'); d.id = id; d.className = 'wi-' + id.slice(1).toLowerCase(); wall.appendChild(d); });
   const mh = document.createElement('div'); mh.className = 'wi-mh'; mh.innerHTML = '<b>NETWORK</b><span class="legend"><span><i class="a"></i>Our routes</span><span><i class="c"></i>Open to you</span><span>Click a city</span></span>'; $('wMap').appendChild(mh);
   // the map takes pointer capture to pan, so a click on a city arrives on the svg: read the city at pointerdown, act at pointerup if the pointer did not move
-  const map = $('wMap'); map.addEventListener('pointerdown', e => { const c = e.target.closest && e.target.closest('[data-wcity]'); WI._pd = c && WI.on ? { id:c.getAttribute('data-wcity'), x:e.clientX, y:e.clientY } : null; }, true);
+  const map = $('wMap'); map.addEventListener('pointerdown', e => { WI._pd = null; if(!WI.on || !wallMap) return; const svg = map.querySelector('svg'); if(!svg) return;
+    const rc = svg.getBoundingClientRect(), fx = svg.clientWidth / (rc.width || 1), x = (e.clientX - rc.left) * fx, y = (e.clientY - rc.top) * fx, M = wallMap, toS = q => [M.cam.tx + q[0] * M.cam.k, M.cam.ty + q[1] * M.cam.k];
+    let best = null, bd = 22 * M.ui; wiRoutes().forEach(r => { const q = toS([mx(r.lon), my(r.lat)]), dd = Math.hypot(q[0] - x, q[1] - y); if(dd < bd){ bd = dd; best = r.id; } });
+    if(best) WI._pd = { id:best, x:e.clientX, y:e.clientY }; }, true);
   map.addEventListener('pointerup', e => { const d = WI._pd; WI._pd = null; if(!d || !WI.on || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 8) return; WI.city = WI.city === d.id ? null : d.id; WI.hlCity = null; renderDisplay(); });
   document.addEventListener('click', e => { if(!WI.on || !e.target.closest || e.target.closest('#wMap')) return;
     const c = e.target.closest('[data-wcity]'); if(c){ const id = c.getAttribute('data-wcity'); WI.city = WI.city === id ? null : id; WI.hlCity = null; renderDisplay(); return; }
@@ -19578,11 +19587,11 @@ function wiDrawMarks(M){ const root = $('wMap'), svg = root && root.querySelecto
   wiRoutes().forEach(r => { const q = toS([mx(r.lon), my(r.lat)]), lv = W.lv[r.id] || 1;
     if(lv > 1) el('circle', { cx:q[0].toFixed(1), cy:q[1].toFixed(1), r:((lv === 3 ? 70 : 44) * ui).toFixed(1), fill:`url(#wi-${lv === 3 ? 'wr' : 'wa'})`, 'pointer-events':'none' }, lines);
     const g = el('g', { 'class':'wi-city', 'data-wcity':r.id, transform:`translate(${q[0].toFixed(1)} ${q[1].toFixed(1)})` }, marks);
-    el('circle', { r:(30 * ui).toFixed(1), fill:'transparent' }, g);
+    el('circle', { r:(16 * ui).toFixed(1), fill:'transparent' }, g);
     if(WI.city === r.id || WI.hlCity === r.id) el('circle', { r:(13 * ui).toFixed(1), fill:'none', stroke:'#36C6FF', 'stroke-width':2.5 }, g);
     const mk = X[r.id]; if(!mk) return; const H = 22 * ui, a = (typeof FLAG_ASPECT !== 'undefined' && FLAG_ASPECT[r.flag]) || 1.5, bw = (mk.text ? 12 + mk.ic.length * 9 : 28) * ui;
     const b = el('g', { 'class':'wi-badge ' + mk.kind, transform:`translate(${(H * a / 2 + 8 * ui).toFixed(1)} ${(-H * 1.1 - H / 2).toFixed(1)})` }, g);
-    if(mk.kind === 'bad'){ const p = el('circle', { cx:(-H * a / 2 - 8 * ui).toFixed(1), cy:(H * 1.1 + H / 2).toFixed(1), r:8 * ui, fill:'none', stroke:'#FF5F5F', 'stroke-width':1.5, opacity:.7 }, g); el('animate', { attributeName:'r', values:`${8 * ui};${24 * ui};${8 * ui}`, dur:'2.4s', repeatCount:'3' }, p); el('animate', { attributeName:'opacity', values:'.8;0;.7', dur:'2.4s', repeatCount:'3' }, p); }
+    if(mk.kind === 'bad'){ const p = el('circle', { cx:0, cy:0, r:8 * ui, fill:'none', stroke:'#FF5F5F', 'stroke-width':1.5, opacity:.7 }, g); el('animate', { attributeName:'r', values:`${8 * ui};${24 * ui};${8 * ui}`, dur:'2.4s', repeatCount:'3' }, p); el('animate', { attributeName:'opacity', values:'.8;0;.7', dur:'2.4s', repeatCount:'3' }, p); }
     el('rect', { x:0, y:(-13 * ui).toFixed(1), width:bw.toFixed(1), height:(26 * ui).toFixed(1), fill:'rgba(2,8,18,.85)', stroke:WI_SEV[mk.kind], 'stroke-opacity':.8 }, b);
     const t = el('text', { x:(bw / 2).toFixed(1), y:1, 'text-anchor':'middle', 'dominant-baseline':'central', 'font-size':Math.round((mk.text ? 14 : 16) * ui), 'font-weight':600, fill:WI_SEV[mk.kind] }, b); t.textContent = mk.ic; }); }
 /* the wall's idle mode is the Intelligence Wall; every other mode is as before */

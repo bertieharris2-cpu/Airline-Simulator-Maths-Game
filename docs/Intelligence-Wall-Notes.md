@@ -18,18 +18,18 @@ The Operations Wall now has two faces. While the pupil flies, it is live operati
 | --- | --- |
 | World news | Route news that is on now or announced (the RouteNews sheet, by `announce`, `start`, `end`), with a consequence line from the route, the multiplier and the segment ("Dublin demand ↑↑ leisure"); the Market week's `headline` and `fuelHeadline`; today's Calendar `headlines`; the last three log entries. Weather and disruption stories come first. |
 | Fuel market | `fuelOn(day)` today and a week ago (the change in %), the last five weeks as a line, the Market week's `forecastLow`–`forecastHigh` and `fuelHeadline`. |
-| Market outlook | One tile per open route. The signal is the average of `demandMultNews(route, day + 7, 14, 21, 28)` against today: ▲▲ at 1.25 or more, ▲ at 1.08, ▼ at 0.92 or less, → otherwise. The tag is the next route news for the route (icon, kind, date) or the season and whether the archetype says busier or quieter. Three bars show the three weeks ahead. |
+| Market outlook | The routes flown first, then the strongest signals among the other open routes, six tiles. The signal is the mean of `demandMultNews` over each of the next four weeks against this week's normal level (`demandMult0`, without this week's news): ▲▲ at 1.25 or more, ▲ at 1.08, ▼ at 0.92 or less, → otherwise. The tag is the next route news for the route (icon, kind, date) or the season ("Not flown · Autumn" for a route not flown). Three bars show the three weeks ahead. |
 | Events to watch | Route news on or announced within four weeks: NOW, THIS WEEK, NEXT WEEK, LATER THIS MONTH, with the city, the kind, the dates and the demand arrow. Surprises (not announced) appear only once they start. |
 | Your airline | The last period in `S.history`: seats filled (a ring), turned away (want − pax summed over the routes of a day entry; a week entry shows the profit instead), and the route with the most turned away. |
-| Weather & disruption | The Market week's `weather` text read for storms, gales, snow, ash and ice (WARNING, red) or fog, thunder and heat (WATCH, amber), matched to the city named in it ("Irish Sea" is Dublin, "Alps" is Geneva, "Europe" or the home city is everyone); the day's event (storm, fog, ash) is a warning on its focus route. Shown when it wakes, or when a ribbon item asks for it. |
+| Weather & disruption | The Market week's `weather` text read for storms, gales, snow, ash and ice (WARNING, red) or fog, thunder and heat (WATCH, amber), matched to the city named in it ("Irish Sea" is Dublin, "Alps" is Geneva, "Europe", "London" or the home city is everyone; a text that names no place is everyone's); the day's event (storm, fog, ash) is a warning on its focus route. The strip lists the routes flown and any route the weather touches. Shown when it wakes, or when a ribbon item asks for it. |
 | Competitor watch | `competitorPrice(route)` against the pupil's fare on each route flown. Shown when the rival undercuts, or when a ribbon item asks for it. |
 | The ribbon | The level-3 changes, then up to three events, then the fuel forecast's direction. |
-| Map marks | One a city, in this order of precedence: a weather warning (🌩, red), the rival's fare when it undercuts (amber), an event on now or starting this week (its icon, gold), strong growth (▲▲, green). Weather cells (a soft red or amber glow) over airports on warning or watch. |
+| Map marks | One a city, in this order of precedence: a weather warning (🌩, red), the rival's fare when it undercuts (amber), an event on now or starting this week (its icon: gold when it raises demand, amber when it lowers it), strong growth (▲▲, green: the routes flown and at most two others). Weather cells (a soft red or amber glow) over airports on warning or watch. A click goes to the nearest city within a dot's reach. |
 
 ## What wakes a panel (level 3)
 
-1. **Weather:** the Market week's weather is a warning for a route, or the day's event is weather. Red.
-2. **Fuel:** the price has moved 5% or more on last week; or the tank won't cover today's flights. Amber.
+1. **Weather:** the Market week's weather is a warning for a route the pupil flies, or the day's event is weather. Red. (A warning on a route not flown is level 2: the mark and the cell show, the panel is worth a look.)
+2. **Fuel:** the price has moved 5% or more on last week; or, at Ready (after the Fuel desk), the tank won't cover today's flights. Amber.
 3. **Rivals:** the rival is selling a route the pupil flies for less than the pupil's fare. Amber.
 
 The first of these in that order is the hero. A woken panel glows once; the wall remembers what it has shown, so the same change does not glow again.
@@ -40,6 +40,10 @@ The first of these in that order is the hero. A woken panel glows once; the wall
 - **The signal thresholds** (1.25 / 1.08 / 0.92) were chosen on the sandbox data. On the workbook's route news the multipliers are 0.4 to 2, so ▲▲ and ▼ appear mostly in event weeks; between events most routes read → steady with the season's word. Is that the right amount of movement?
 - **Market outlook's tag.** It names the next event by kind and date ("🏉 Big match · 5 Oct"), not by headline, so it fits a tile. The headline is in World news and Events to watch.
 - **Busiest season** comes from the archetype's season multipliers (four seasons), not months. A monthly curve would need a sheet.
+
+## The run-through
+
+See `docs/Intelligence-Wall-Runthrough.md` (16 Oct): chapter 1 day by day against the workbook, the chapter ends, the functions, the fixes and the data limits.
 
 ## Tests
 

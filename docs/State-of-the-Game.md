@@ -18,6 +18,7 @@
 - **Levels and the hero.** `wiAlerts` (weather red; fuel ±5% or a short tank, amber; the rival undercutting, amber). `wiSlots` moves the first alert's panel to the top right and lets others take a slot that can wait. `WI.seen` keeps a woken panel from glowing twice.
 - **Map.** `wallMap.render` is wrapped to add weather cells and one mark a city (`wiMarks`) with a hit area; the map takes pointer capture to pan, so a city click is read at pointerdown and acted on at pointerup if the pointer did not move. In `mode-intel` the routes are cyan, offers slate and dashed, the land `--land` set on `.mworld` (a `<use>` instance takes inherited custom properties, not class selectors).
 - **Tests.** `decide` 35, `migrate` 31, `week` 95 to day 15, a browser probe on three saved games. `liveops.test.js` stops at the same stale launch step before and after.
+- **Run-through (16 Oct).** The wall read on eleven Monday states of chapter 1, the four chapter ends and three pupil saves, against the workbook: `docs/Intelligence-Wall-Runthrough.md`. Fixes: a weather text naming no place is everyone's; a warning on a route not flown is level 2; the short-tank alert only at Ready; the forecast arrow from the band's middle; `wiSignal` averages each coming week against this week's `demandMult0` (cached by route and day); demand-lowering events amber; outlook flown-first; nearest-city clicks.
 
 ## 0t. Bertie's run-through: flight times first, the demand strip, no "0 × £90" (16 Oct 2026)
 
