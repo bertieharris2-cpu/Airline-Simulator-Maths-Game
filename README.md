@@ -380,6 +380,34 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### The style lab in the UI sandbox (16 Oct 2026)
+*Bertie: "I'd rather experiment with different styles… intuitive but professional and sleek", then "build the style lab with all of them". In `ui-sandbox/airline-ui-sandbox.html` only; the game is unchanged.* Open the lab with the **Style lab** button at the bottom left, or press **L**. Every choice is remembered on that computer, and **Reset** puts everything back. With every switch off, the sandbox is exactly the Pazzaz version below.
+- **Four looks:**
+  - **Night Ops:** the look so far.
+  - **Airport Signage:** charcoal and signage yellow, flat and bold.
+  - **Glass Cockpit:** near-black with thin lines. Cyan means selected, green engaged, magenta something to work out.
+  - **Day Ops:** light and clean. The wall stays dark, as the control room.
+- **Three typefaces:** Segoe (as now), and Inter or Barlow built into the file, so it still works offline. Both have plain zeros, figures that line up, and two weights.
+- **Instruments:**
+  - a split-flap departures board on Live operations, whose letters flip as flights board and depart;
+  - a flight-progress bar in the header: the week as one flight (Times, Plan, Sums, Fuel, Fly, Review) with the plane at your step. Each step's label opens it;
+  - rolling figures: money rolls digit by digit to its new value;
+  - boarding-pass results for confirmed sums;
+  - air traffic control flight strips on the timetable;
+  - three cockpit gauges on Home: seats filled, profit against target, days of fuel.
+- **Intuitive:**
+  - drag a flight along its lane (20-minute steps). The profit changes as you drag, and an overlap is refused with the reason;
+  - point at a fare to see its people and profit before choosing, or at a fuel amount to see it in the tank;
+  - a spotlight on a page's first visit dims everything but the one thing to do;
+  - confirmation notices at the bottom right;
+  - hover cards for routes and cities.
+- **Finish:** line icons instead of emoji, the game's own aircraft drawings in Dragon Air's colours, frosted glass, and a calm layout (fewer, bigger things; detail on hover).
+- **Excitement:**
+  - "Fly the week" first calls the day's departures on a flipping board;
+  - Sunday's review counts its figures up one by one, then stamps a verdict;
+  - quiet sounds (off to start): a click, an accept chime, the board's flaps.
+- **Reduced motion** still works over all of it: no reel, flaps or rolling, and each change is shown at once.
+
 ### The Pazzaz pass on the UI sandbox (16 Oct 2026)
 *Bertie's brief "Pazzaz Pass: visual system and motion": "electrically alive, but calm". The desk takes the wall's light (gradients lit from the top left, square panels, a 1px light line), and there are no monospace figures (tabular lining figures in the normal typeface). Light and motion say where I am, what I am working on, what changed, what my action affected and whether the system accepted it. In `ui-sandbox/airline-ui-sandbox.html` only; the game is unchanged.* Bertie's own pass is the commit "Bertie's Pazzaz pass". The second pass on top of it:
 - **Motion that survives a redraw.** The sandbox redraws the whole screen on every click, so on their own a block could not glide, a bar could not grow and every slow loop restarted. Now:
