@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Airline UI Sandbox</title>
+<title>Airline UI Sandbox — Pazzaz Pass</title>
 <!--
   AIRLINE UI SANDBOX (16 Oct 2026). A small, stand-alone copy of the game's key screens for trying out the interface.
   Week 5 of chapter 1 (Monday 30 September 2030). Sample data, not the game's: change anything in DATA below.
@@ -255,6 +255,269 @@ table.t th{color:var(--soft);font-weight:500;font-size:13px}table.t td.n,table.t
 .rhead{display:flex;align-items:center;gap:14px;margin-bottom:12px}.rhead .bigflag{width:64px;height:44px;border-radius:3px}.rhead h1{margin:0;font-size:34px}.rhead h1 small{font-size:22px;color:var(--soft);font-weight:500}
 .ri{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:12px}.ri .pnl{min-height:0}.ri svg{width:100%;max-height:190px;display:block}.ri .lg{font-size:12.5px;color:var(--soft);margin:-4px 0 6px}
 .notice{border:1px solid var(--gold);background:rgba(242,193,78,.06)}.notice li{margin:4px 0}
+
+/* =====================================================================
+   PAZZAZ PASS — 16 Oct 2026
+   The desk now shares the Wall's depth language. Motion is purposeful:
+   focus, state change and cause/effect only. No dotted/slashed-zero mono.
+   ===================================================================== */
+:root{
+  --desk-bg-0:#020812;
+  --desk-bg-1:#05162a;
+  --desk-bg-2:#082542;
+  --desk-panel:linear-gradient(155deg,#0d3159 0%,#081f3d 48%,#05152b 100%);
+  --desk-panel-deep:linear-gradient(160deg,#092643 0%,#051629 100%);
+  --desk-panel-active:linear-gradient(155deg,#123e64 0%,#092743 58%,#06192d 100%);
+  --desk-line:rgba(65,122,171,.46);
+  --desk-line-soft:rgba(53,96,135,.34);
+  --glow-cyan:0 0 20px rgba(54,198,255,.18);
+  --glow-gold:0 0 22px rgba(242,193,78,.18);
+  --glow-green:0 0 20px rgba(60,227,148,.18);
+  --glow-red:0 0 22px rgba(255,95,95,.18);
+}
+
+html,body{
+  font-family:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  background:
+    radial-gradient(circle at 58% -14%,rgba(39,142,240,.15),transparent 38%),
+    radial-gradient(circle at 102% 88%,rgba(31,111,255,.08),transparent 42%),
+    linear-gradient(135deg,var(--desk-bg-0),var(--desk-bg-1) 55%,#020b18);
+}
+/* Numeric alignment without changing to a technical face. */
+.mono,.num,.clock,.board,.board td{
+  font-family:inherit!important;
+  font-variant-numeric:tabular-nums lining-nums!important;
+  font-feature-settings:"tnum" 1,"lnum" 1!important;
+  font-variant-ligatures:none;
+}
+
+/* Ambient background light: almost imperceptible, slow enough not to distract. */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 28% 18%,rgba(54,198,255,.055),transparent 34%),
+    radial-gradient(ellipse at 84% 68%,rgba(31,111,255,.035),transparent 38%);
+  animation:ambientDrift 18s ease-in-out infinite alternate;
+}
+@keyframes ambientDrift{
+  from{transform:translate3d(-1.2%,0,0) scale(1);opacity:.78}
+  to{transform:translate3d(1.2%,1%,0) scale(1.025);opacity:1}
+}
+
+.app{position:relative;z-index:1;background:transparent}
+
+/* ---------- header: active system, not a static bar ---------- */
+.hd{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 36% -65%,rgba(79,176,255,.22),transparent 52%),
+    linear-gradient(100deg,#06142d 0%,#0b2a50 48%,#071832 100%);
+  border-bottom:1px solid rgba(54,198,255,.28);
+  box-shadow:0 8px 28px rgba(0,0,0,.28),inset 0 -1px rgba(255,255,255,.025);
+}
+.hd::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(110deg,transparent 0 42%,rgba(95,190,255,.055) 48%,transparent 54%),
+    linear-gradient(rgba(120,175,235,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,175,235,.025) 1px,transparent 1px);
+  background-size:100% 100%,42px 42px,42px 42px;
+}
+.hd::after{
+  content:"";position:absolute;left:220px;right:0;bottom:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,rgba(54,198,255,.14) 18%,rgba(54,198,255,.75) 50%,rgba(54,198,255,.12) 82%,transparent 100%);
+  background-size:240px 1px;
+  animation:headerScan 9s linear infinite;
+}
+@keyframes headerScan{from{background-position:-240px 0}to{background-position:calc(100vw + 240px) 0}}
+.logo{position:relative;background:linear-gradient(150deg,rgba(9,37,72,.88),rgba(4,18,39,.94));border-right-color:rgba(54,198,255,.18)}
+.logo .badge{
+  position:relative;border-radius:2px;
+  background:radial-gradient(circle at 35% 28%,#315b98 0%,#122d55 52%,#07172f 100%);
+  border:1px solid rgba(76,153,216,.42);
+  box-shadow:0 8px 18px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.08),0 0 18px rgba(31,111,255,.08);
+  animation:badgeBreathe 8s ease-in-out infinite;
+}
+@keyframes badgeBreathe{0%,82%,100%{box-shadow:0 8px 18px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.08),0 0 18px rgba(31,111,255,.06)}88%{box-shadow:0 8px 18px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.08),0 0 28px rgba(242,193,78,.22)}}
+.hd-sp{position:relative;overflow:hidden;min-width:180px}
+.hd-sp::before{
+  content:"";position:absolute;left:8%;right:5%;top:52%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(90,175,240,.45) 18%,rgba(90,175,240,.2) 72%,transparent);
+  transform:rotate(-7deg);transform-origin:center;opacity:.72;
+}
+.hd-sp::after{
+  content:"✈";position:absolute;top:21px;left:-42px;color:#f1f8ff;font-size:20px;
+  text-shadow:0 0 12px rgba(109,201,255,.8);filter:drop-shadow(0 5px 7px rgba(0,0,0,.3));
+  transform:rotate(-7deg);animation:headerPlane 27s linear infinite;
+}
+@keyframes headerPlane{0%,5%{left:-42px;opacity:0}9%{opacity:.9}44%{left:75%;opacity:.9}50%,100%{left:112%;opacity:0}}
+.hd-cell{border-left-color:rgba(65,122,171,.38);background:linear-gradient(180deg,rgba(12,43,79,.16),rgba(1,8,18,.05))}
+.hd-cell b{font-weight:580;letter-spacing:-.01em}.hd-cell .gold{font-weight:600;text-shadow:0 0 16px rgba(242,193,78,.18)}
+.ic{border-radius:2px;background:linear-gradient(155deg,#10355f,#081d3a);transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease,background .18s ease}
+.ic:hover{border-color:rgba(54,198,255,.68);box-shadow:var(--glow-cyan);transform:translateY(-1px)}
+.ic.on{box-shadow:inset 0 -2px var(--cyan),var(--glow-cyan)}
+.wallbtn{transition:background .18s ease,box-shadow .18s ease,transform .18s ease}.wallbtn:hover{transform:translateY(-1px);background:rgba(242,193,78,.15);box-shadow:var(--glow-gold)}
+
+/* ---------- navigation ---------- */
+.nav{background:linear-gradient(180deg,#06142a 0%,#07172e 60%,#08162a 100%);border-right-color:rgba(65,122,171,.36);box-shadow:12px 0 28px rgba(0,0,0,.12)}
+.nav button{position:relative;transition:background .2s ease,color .2s ease,box-shadow .2s ease;padding-top:14px;padding-bottom:14px}
+.nav button:hover:not(.on){background:linear-gradient(90deg,rgba(31,111,255,.07),rgba(31,111,255,0));color:#fff}
+.nav button.on{
+  background:linear-gradient(100deg,#1677e7 0%,#195eb9 72%,#124582 100%);
+  box-shadow:inset 4px 0 0 var(--cyan),inset 0 1px rgba(255,255,255,.08),0 0 24px rgba(31,111,255,.10);
+}
+.nav button.on::after{content:"";position:absolute;right:0;top:16%;bottom:16%;width:1px;background:var(--cyan);box-shadow:0 0 10px var(--cyan);opacity:.65}
+.nav button b{font-weight:560}.nav .art{filter:saturate(.9) brightness(.9)}
+
+/* ---------- stage ---------- */
+.main{
+  position:relative;
+  background:
+    radial-gradient(circle at 12% 0%,rgba(54,198,255,.055),transparent 28%),
+    radial-gradient(circle at 88% 70%,rgba(31,111,255,.035),transparent 38%);
+}
+.main::before{content:"";position:fixed;left:220px;right:0;top:78px;height:1px;pointer-events:none;background:linear-gradient(90deg,rgba(54,198,255,.16),transparent 52%)}
+.main.screen-in{animation:screenIn .24s cubic-bezier(.2,.75,.25,1) both}
+@keyframes screenIn{from{opacity:.78;transform:translateY(4px)}to{opacity:1;transform:none}}
+.ttl{margin-bottom:14px;align-items:flex-end}.ttl h1{font-size:31px;font-weight:590;letter-spacing:-.025em;line-height:1.05;text-shadow:0 2px 16px rgba(0,0,0,.24)}.ttl p{font-size:14px;padding-bottom:2px}
+.tag{border-radius:2px;background:rgba(54,198,255,.055);box-shadow:inset 0 0 14px rgba(54,198,255,.025);font-weight:520}
+
+/* ---------- panel depth + focus lighting ---------- */
+.pnl,.card,.sum{
+  position:relative;
+  background:var(--desk-panel);
+  border:1px solid var(--desk-line);
+  border-radius:2px;
+  box-shadow:0 10px 28px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.028);
+}
+.pnl::before,.card::before,.sum::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(151,207,255,.40),rgba(151,207,255,.08) 58%,transparent);
+}
+.pnl{transition:border-color .22s ease,box-shadow .22s ease,filter .22s ease;background .22s ease}
+.pnl:focus-within,.card:focus-within{
+  border-color:rgba(54,198,255,.68);
+  box-shadow:inset 3px 0 0 var(--cyan),0 0 24px rgba(54,198,255,.09),0 14px 30px rgba(0,0,0,.18);
+}
+.pnl h2{font-weight:565;letter-spacing:-.008em}.pnl h2::before{content:"";width:3px;height:13px;background:rgba(54,198,255,.76);box-shadow:0 0 9px rgba(54,198,255,.34);flex:none}.pnl h2 .sub{font-weight:400}
+.big{font-weight:590;letter-spacing:-.025em}.kl{letter-spacing:.015em}
+
+/* Data tables should feel like live instruments, not printed grids. */
+table.t th,table.t td{border-bottom-color:rgba(53,96,135,.34);transition:background .18s ease,color .18s ease}
+table.t tbody tr:hover td{background:rgba(54,198,255,.035)}
+table.t th{font-weight:470;letter-spacing:.015em}
+
+/* ---------- buttons: tiny mechanical response ---------- */
+.btn,.fare,.chip{
+  border-radius:2px;
+  background:linear-gradient(155deg,#10355f,#081d3a);
+  border-color:rgba(65,122,171,.58);
+  transition:transform .14s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease,filter .18s ease;
+}
+.btn:hover,.fare:hover,.chip:hover{transform:translateY(-1px);border-color:rgba(54,198,255,.78);box-shadow:0 5px 16px rgba(0,0,0,.18),0 0 14px rgba(54,198,255,.08)}
+.btn:active,.fare:active,.chip:active{transform:translateY(0);filter:brightness(.92)}
+.btn.pri{background:linear-gradient(155deg,#278ef0,#175fbe 62%,#104b96);border-color:#52c6ff;font-weight:560;box-shadow:0 0 18px rgba(31,111,255,.11),inset 0 1px rgba(255,255,255,.08)}
+.btn.pri:hover{box-shadow:0 7px 20px rgba(0,0,0,.22),0 0 22px rgba(54,198,255,.18)}
+.btn.go{background:linear-gradient(155deg,#22ba73,#128653 64%,#0b6941);font-weight:600;border-color:#4ce79d;box-shadow:0 0 20px rgba(60,227,148,.12)}
+.btn.go:hover{box-shadow:0 7px 20px rgba(0,0,0,.22),0 0 24px rgba(60,227,148,.22)}
+.link{font-weight:520;text-underline-offset:3px}.link:hover{text-decoration:underline;text-decoration-thickness:1px}
+
+/* ---------- footer/action rail ---------- */
+.bar{
+  background:linear-gradient(180deg,#08203d,#06172f);
+  border-top-color:rgba(54,198,255,.28);
+  box-shadow:0 -8px 24px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.02);
+}
+.bar .i{border-color:rgba(159,189,227,.55);box-shadow:0 0 12px rgba(54,198,255,.06)}
+.bar p{font-size:14px;color:#dcecff}
+
+/* ---------- Home: current item and data arriving ---------- */
+.todo li{position:relative;border-bottom-color:rgba(53,96,135,.32);transition:background .18s ease}.todo li:hover{background:rgba(54,198,255,.025)}
+.todo .st{border-radius:50%;transition:box-shadow .2s ease,border-color .2s ease,background .2s ease}
+.todo .st.now{border-color:var(--gold);box-shadow:0 0 0 4px rgba(242,193,78,.055),0 0 14px rgba(242,193,78,.16);animation:taskBeacon 4s ease-in-out infinite}
+@keyframes taskBeacon{0%,74%,100%{box-shadow:0 0 0 4px rgba(242,193,78,.04),0 0 10px rgba(242,193,78,.10)}82%{box-shadow:0 0 0 7px rgba(242,193,78,.02),0 0 20px rgba(242,193,78,.20)}}
+.spark div{border-radius:1px 1px 0 0;background:linear-gradient(180deg,#3c8aee,#1d5fbd 72%,#16498f);transform-origin:bottom;animation:barRise .58s cubic-bezier(.2,.75,.25,1) both;box-shadow:inset 0 1px rgba(255,255,255,.08),0 0 10px rgba(31,111,255,.05)}
+.spark div:nth-child(2){animation-delay:.06s}.spark div:nth-child(3){animation-delay:.12s}.spark div:nth-child(4){animation-delay:.18s}
+@keyframes barRise{from{transform:scaleY(.08);opacity:.4}to{transform:scaleY(1);opacity:1}}
+.wrow{transition:background .18s ease,padding-left .18s ease}.wrow:hover{background:rgba(54,198,255,.035);padding-left:5px}
+
+/* ---------- plan / timetable ---------- */
+.flag{border-radius:1px}.fare{font-weight:600}.chip{font-weight:500}.chip.on{background:linear-gradient(155deg,#278ef0,#175fbe);box-shadow:inset 0 -2px 0 var(--cyan),0 0 14px rgba(54,198,255,.12)}
+.fillbar{border-radius:1px;background:#102d51;box-shadow:inset 0 1px 4px rgba(0,0,0,.35)}.fillbar i{background:linear-gradient(90deg,#1eaf72,#4ce6a0);transition:width .38s cubic-bezier(.2,.75,.25,1);box-shadow:2px 0 8px rgba(60,227,148,.22)}
+.lane .who{border-radius:2px 0 0 2px;background:linear-gradient(155deg,#0b294c,#071b35)}
+.lane select{border-radius:2px;background:#092544;transition:border-color .18s ease,box-shadow .18s ease}.lane select:focus{outline:none;border-style:solid;border-color:var(--cyan);box-shadow:0 0 0 2px rgba(54,198,255,.10)}
+.track{border-radius:0 2px 2px 0;background:repeating-linear-gradient(90deg,#071c34 0,#071c34 calc(12.5% - 1px),#123052 calc(12.5% - 1px),#123052 12.5%);box-shadow:inset 0 0 18px rgba(0,0,0,.22)}
+.blk{border-radius:2px;background:linear-gradient(155deg,#164987,#103764);transition:left .34s cubic-bezier(.2,.75,.25,1),width .34s ease,background .18s ease,box-shadow .18s ease,border-color .18s ease}
+.blk.on{background:linear-gradient(155deg,#1d66b4,#174983);box-shadow:inset 0 1px rgba(255,255,255,.06),0 0 0 1px rgba(54,198,255,.5),0 0 22px rgba(54,198,255,.13);animation:selectedBreath 3.8s ease-in-out infinite}
+@keyframes selectedBreath{0%,100%{box-shadow:inset 0 1px rgba(255,255,255,.06),0 0 0 1px rgba(54,198,255,.48),0 0 15px rgba(54,198,255,.08)}50%{box-shadow:inset 0 1px rgba(255,255,255,.07),0 0 0 1px rgba(54,198,255,.7),0 0 24px rgba(54,198,255,.16)}}
+.selbox{border-radius:2px;background:var(--desk-panel-active);box-shadow:inset 3px 0 0 var(--cyan),0 0 20px rgba(54,198,255,.08)}
+.bands{background:linear-gradient(180deg,#071a31,#061527);box-shadow:inset 0 0 20px rgba(0,0,0,.18)}
+.band .bar2{border-radius:1px 1px 0 0}.band.top .bar2{box-shadow:0 0 0 1px var(--gold),0 0 16px rgba(242,193,78,.10)}
+.sum{border-radius:2px;background:linear-gradient(155deg,#10345d,#09223f 58%,#06172e)}
+
+/* ---------- calculations: one coherent cockpit instrument ---------- */
+.card{
+  border-radius:2px;padding:16px 18px;
+  background:
+    radial-gradient(circle at 8% 0%,rgba(54,198,255,.075),transparent 34%),
+    linear-gradient(155deg,#0d3159,#081f3d 50%,#05152b);
+  border-left:3px solid rgba(54,198,255,.75);
+}
+.card .hd2{min-height:32px}.card .num{border-radius:2px;background:linear-gradient(155deg,#278ef0,#1459ad);font-weight:600;box-shadow:0 0 14px rgba(31,111,255,.12)}
+.card h3{font-size:15px;font-weight:560;letter-spacing:.10em}
+.sumno{background:rgba(31,111,255,.18);color:#88ccff;border:1px solid rgba(54,198,255,.42);border-radius:2px;font-weight:560;letter-spacing:.06em}
+.q{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 120%,rgba(31,111,255,.12),transparent 44%),
+    linear-gradient(155deg,#091c35,#061426 68%,#04101f)!important;
+  color:var(--ink)!important;
+  border:1px solid rgba(65,122,171,.60);
+  border-left:3px solid var(--cyan);
+  border-radius:2px;
+  padding:18px 18px 20px;
+  box-shadow:inset 0 1px rgba(255,255,255,.025),0 9px 22px rgba(0,0,0,.14);
+}
+.q::after{content:"";position:absolute;left:-20%;right:-20%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.32;animation:instrumentSweep 7s ease-in-out infinite}
+@keyframes instrumentSweep{0%,70%,100%{transform:translateX(-42%);opacity:.08}82%{transform:translateX(42%);opacity:.42}}
+.q .soft{color:#9fbde3!important;font-size:13px;letter-spacing:.01em}.q .big2{font-size:29px;font-weight:560;letter-spacing:-.025em;margin-top:8px;color:#f3f8ff}
+.unknown{display:inline-block;color:var(--gold);font-weight:650;text-shadow:0 0 16px rgba(242,193,78,.38);animation:unknownBreathe 2.8s ease-in-out infinite}
+@keyframes unknownBreathe{0%,100%{text-shadow:0 0 10px rgba(242,193,78,.24)}50%{text-shadow:0 0 22px rgba(242,193,78,.50)}}
+.calc-result{display:inline-block;color:var(--good);font-weight:650;text-shadow:0 0 18px rgba(60,227,148,.28);animation:resultPop .55s cubic-bezier(.18,.85,.26,1.2) both}
+@keyframes resultPop{0%{transform:scale(.86);opacity:.2;text-shadow:0 0 0 rgba(60,227,148,0)}52%{transform:scale(1.06);opacity:1;text-shadow:0 0 24px rgba(60,227,148,.55)}100%{transform:scale(1);text-shadow:0 0 14px rgba(60,227,148,.24)}}
+.ans{gap:9px}.ans .in{
+  background:linear-gradient(180deg,#08192f,#061325)!important;color:#f2f7ff!important;border:1px solid rgba(65,122,171,.68);border-radius:2px;height:46px;
+  box-shadow:inset 0 4px 12px rgba(0,0,0,.22);transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.ans .in:focus-within{border-color:var(--cyan);background:#081d38!important;box-shadow:inset 0 4px 12px rgba(0,0,0,.18),0 0 0 2px rgba(54,198,255,.08),0 0 18px rgba(54,198,255,.10)}
+.ans input{color:#fff;background:transparent!important;caret-color:var(--cyan)}
+.msg{font-size:13.5px}.stamp{border-radius:2px;font-weight:650;transform:rotate(-2deg);animation:stampIn .34s cubic-bezier(.2,.9,.25,1.2) both;box-shadow:0 0 12px rgba(60,227,148,.10)}
+@keyframes stampIn{from{transform:rotate(-6deg) scale(.76);opacity:0}to{transform:rotate(-2deg) scale(1);opacity:1}}
+
+/* ---------- fuel: make the instrument feel physically alive ---------- */
+.tank{border-radius:5px 5px 2px 2px;background:linear-gradient(180deg,#071d34,#04111f);box-shadow:inset 0 0 20px rgba(0,0,0,.28),0 8px 20px rgba(0,0,0,.18);overflow:hidden}
+.tank i{transition:height .7s cubic-bezier(.2,.75,.25,1);box-shadow:inset 0 6px 12px rgba(255,255,255,.06),0 -2px 12px rgba(54,198,255,.35)}
+.tank i::after{content:"";position:absolute;left:-35%;top:0;width:170%;height:2px;background:linear-gradient(90deg,transparent,rgba(190,239,255,.8),transparent);opacity:.35;animation:fuelShimmer 6s ease-in-out infinite;pointer-events:none}
+@keyframes fuelShimmer{0%,100%{transform:translateX(-18%);opacity:.16}50%{transform:translateX(18%);opacity:.44}}
+.blocks button{transition:transform .15s ease,box-shadow .18s ease}.blocks .on{box-shadow:0 0 16px rgba(54,198,255,.14)}
+.fchart path,.fchart polyline{filter:drop-shadow(0 0 4px rgba(54,198,255,.12))}
+
+/* ---------- fleet / references ---------- */
+.ac .pic{border-radius:2px;background:radial-gradient(circle at 30% 10%,rgba(97,181,255,.24),transparent 42%),linear-gradient(155deg,#164c82,#0b2748 62%,#06182e);box-shadow:inset 0 1px rgba(255,255,255,.05),0 9px 24px rgba(0,0,0,.18)}
+.notice{background:linear-gradient(155deg,rgba(242,193,78,.075),rgba(242,193,78,.025));box-shadow:inset 3px 0 0 var(--gold),0 10px 26px rgba(0,0,0,.12)}
+
+/* Cause/effect: freshly completed results briefly illuminate when they appear. */
+.good,.goldt,.bad{transition:color .2s ease,text-shadow .2s ease}
+.card .good,.sum .good{ text-shadow:0 0 12px rgba(60,227,148,.16)}
+.card .goldt,.sum .goldt{ text-shadow:0 0 12px rgba(242,193,78,.16)}
+
+/* Keep motion optional and respectful. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
+}
+
 </style>
 </head>
 <body>
@@ -469,7 +732,7 @@ sums(){ const M = model(), ams = M.routes.find(r => r.id === 'ams'), blk = DATA.
                  { k:'pr', title:'Profit a day', ask:'The ticket money take away the costs.', q:`${money(M.rev)} − ${money(M.costs)}`, ans:M.profit, pre:'£' } ];
   const card = (s, i) => { const A = S.sums[s.k] || (S.sums[s.k] = { v:'', tries:0, done:false, shown:false, msg:'' });
     return `<div class="card"><div class="hd2"><span class="num">${i + 1}</span><h3>${s.title}</h3><span style="margin-left:auto" class="tag">CALCULATE</span></div><span class="sumno">Sum ${i + 3}</span><span class="soft">Week ${DATA.today.week} · ${s.title}</span>
-      <div class="q"><div class="soft" style="color:#555">${s.ask}</div><div class="big2">${s.q} = ${A.done ? `<span style="color:#0a7a3e">${money(s.ans, s.k === 'fo' ? 2 : 0)}</span>` : '?'}</div></div>
+      <div class="q"><div class="soft" style="color:#555">${s.ask}</div><div class="big2">${s.q} = ${A.done ? `<span class="calc-result">${money(s.ans, s.k === 'fo' ? 2 : 0)}</span>` : '<span class="unknown">?</span>'}</div></div>
       ${A.done ? `<span class="stamp ${A.shown ? 'fin' : ''}">${A.shown ? 'CHECKED BY FINANCE' : 'CHECKED · DA'}</span>` : `<p class="soft" style="margin:0 0 8px">Work it out in your book. Write <b>Sum ${i + 3}</b> beside your working.</p><div class="ans"><span class="in"><span style="color:#555">£</span><input data-sum="${s.k}" value="${A.v}" inputmode="decimal" aria-label="${s.title}"></span><button class="btn pri" data-sumchk="${s.k}">Check ✓</button></div><div class="msg">${A.msg}</div>`}</div>`; };
   S._sums = list; const left = list.filter(s => !S.sums[s.k] || !S.sums[s.k].done).length; if(!left) S.done.sums = true;
   return shell(`<div class="ttl"><h1>This week's sums</h1><p>Three to work out; the model does the rest.</p></div><div class="grid g3">${list.map(card).join('')}</div>`,
@@ -755,7 +1018,8 @@ const pad2 = h => String(h).padStart(2, '0');
 /* =====================================================================
    RENDER and the clicks
    ===================================================================== */
-function render(){ const y = S.wall ? (document.querySelector('.wbody') || {}).scrollTop : 0; document.getElementById('app').innerHTML = SCREENS[S.view]() + (S.wall ? wallHtml() : ''); (S._fresh || []).forEach(k => S.seen.add(k)); S._fresh = []; S.hl = null; bind(); if(y) document.querySelector('.wbody').scrollTop = y; }
+let __visualState = '';
+function render(){ const y = S.wall ? (document.querySelector('.wbody') || {}).scrollTop : 0, vk = S.view + '|' + (S.wall ? S.wmode : 'desk'), changed = vk !== __visualState; document.getElementById('app').innerHTML = SCREENS[S.view]() + (S.wall ? wallHtml() : ''); (S._fresh || []).forEach(k => S.seen.add(k)); S._fresh = []; S.hl = null; bind(); if(y && document.querySelector('.wbody')) document.querySelector('.wbody').scrollTop = y; if(changed){ const stage = document.querySelector(S.wall ? '.wall' : '.main'); if(stage) requestAnimationFrame(() => stage.classList.add('screen-in')); } __visualState = vk; }
 function check(A, ans, dp, done){ const v = parseFloat(String(A.v).replace(/[£,\s]/g, '')); if(isNaN(v)){ A.msg = 'Type a number.'; return; }
   if(Math.abs(v - ans) <= (dp === 2 ? 0.005 : dp === 'h' ? 0.05 : 0.5)){ A.done = true; A.msg = ''; done && done(); return; }
   A.tries++; if(A.tries >= 2){ A.done = true; A.shown = true; A.msg = ''; return; }
