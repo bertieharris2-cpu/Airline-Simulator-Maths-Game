@@ -259,6 +259,16 @@ function s2StopRoute(id){
 }
 
 /* ---------- binding ---------- */
+/* the flight's editor sits over the plan page, not inside the timetable (which hides whatever runs past its edge):
+   below the flight when it fits, else above it, else as low as the page allows */
+function s2PopPlace(){
+  const root = screen(), pop = $('s2Pop'), blk = root.querySelector('.s2-tt .ad-blk.on'), tt = root.querySelector('.s2-tt'), page = tt && tt.parentElement;
+  if(!pop || !blk || !page) return; if(pop.parentElement !== page) page.appendChild(pop);
+  const b = blk.getBoundingClientRect(), h = page.getBoundingClientRect(), sc = h.width / Math.max(1, page.offsetWidth) || 1, pw = pop.offsetWidth, ph = pop.offsetHeight, H = page.offsetHeight;
+  const below = (b.bottom - h.top) / sc + 6, above = (b.top - h.top) / sc - ph - 6;
+  const top = below + ph <= H - 4 ? below : above >= 4 ? above : Math.max(4, H - ph - 4);
+  pop.style.top = top + 'px'; pop.style.left = clamp((b.left - h.left) / sc, 8, Math.max(8, page.offsetWidth - pw - 8)) + 'px';
+}
 function bindStudio(pl){
   const root = screen(), U = UI.s2, go = o => { Object.assign(UI.s2, o); render(); };
   bindPlanEditor(); bindTimeline();
@@ -296,11 +306,7 @@ function bindStudio(pl){
   root.querySelectorAll('[data-s2rt]').forEach(s => s.onchange = () => { const [j, k] = s.getAttribute('data-s2rt').split('|').map(Number); s2SetRoute(j, k, s.value); });
   root.querySelectorAll('[data-s2fr]').forEach(s => s.onchange = () => editPlan(0, 'fareTo', s.getAttribute('data-s2fr'), +s.value));
   root.querySelectorAll('[data-s2ac]').forEach(s => s.onchange = () => { if(s.value === '') return; const [j, k] = s.getAttribute('data-s2ac').split('|').map(Number); s2SetPlane(j, k, +s.value); });
-  const pop = $('s2Pop'), blk = root.querySelector('.s2-tt .ad-blk.on'), host = root.querySelector('.s2-tt');
-  if(pop && blk && host){ const place = () => { const b = blk.getBoundingClientRect(), h = host.getBoundingClientRect(), sc = h.width / Math.max(1, host.offsetWidth) || 1, pw = pop.offsetWidth, ph = pop.offsetHeight;
-      let top = (b.bottom - h.top) / sc + 6; if(top + ph > host.offsetHeight - 4) top = (b.top - h.top) / sc - ph - 6; if(top < 4) top = 4;
-      pop.style.top = top + 'px'; pop.style.left = clamp((b.left - h.left) / sc, 8, Math.max(8, host.offsetWidth - pw - 8)) + 'px'; };
-    place(); const ad = root.querySelector('.s2-tt .st-ad'); if(ad) ad.addEventListener('scroll', place, { passive:true }); }
+  if($('s2Pop') && root.querySelector('.s2-tt .ad-blk.on')){ s2PopPlace(); const ad = root.querySelector('.s2-tt .st-ad'); if(ad) ad.addEventListener('scroll', s2PopPlace, { passive:true }); }
   // the strip follows a hovered route row
   root.querySelectorAll('.s2-r').forEach(r => { const id = r.getAttribute('data-s2r');
     r.onmouseenter = () => { const s = $('stStrip'); if(s) s.innerHTML = stripHtml(pl, id); };

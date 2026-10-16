@@ -305,9 +305,9 @@ function protoIntel(){
 }
 function evidenceHtml(h, ids){
   if(!ids.length) return '<div class="pb"><p class="muted">No routes yet.</p></div>';
-  return `<div class="pb"><table class="hq-t rt ev"><thead><tr><th>Route</th><th class="num">Wanted</th><th class="num">Seats</th><th class="num">Travelled</th><th class="num">No seat</th><th class="num">Fare</th><th class="num">Revenue</th><th class="num">Route profit</th></tr></thead><tbody>${ids.map(id => {
+  return `<div class="pb"><table class="hq-t rt ev"><thead><tr><th>Route</th><th class="num">Wanted</th><th class="num">Seats</th><th class="num">Flew</th><th class="num">No seat</th><th class="num">Fare</th><th class="num">Revenue</th><th class="num">Route profit</th></tr></thead><tbody>${ids.map(id => {
     const r = routeById(id), x = h && h.routes && h.routes[id];
-    if(!x) return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td colspan="7" class="muted">New today: no results yet</td></tr>`;
+    if(!x) return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td colspan="4" class="muted">New today: no results yet</td><td class="ev-x"></td><td class="ev-x"></td><td class="ev-x"></td></tr>`;
     const miss = Math.max(0, (x.want || x.pax) - x.pax);
     return `<tr><td>${flagSvg(r.flag, 18)} ${esc(r.city)}</td><td class="num">${x.want || '—'}</td><td class="num">${x.seats}</td><td class="num">${x.pax}</td><td class="num ${miss ? 'orange' : ''}">${miss}</td><td class="num">${money(x.fare)}</td><td class="num">${money(Math.round(x.rev))}</td><td class="num ${x.profit >= 0 ? 'green' : 'red'}">${money(Math.round(x.profit))}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
@@ -865,7 +865,7 @@ function todayCard(mode){
 function renderOverview(mode){
   const wide = innerWidth >= 1600 && innerHeight >= 880, h = lastDay(), warn = intelSituations().length + protoIntel().filter(x => x.warn).length;
   const mapP = `<section class="hp p-map">${hqHead('Network', '', `<span class="layers">${MAP_LAYERS.map(l => `<button class="ptab" data-layer="${l[0]}" aria-pressed="${UI.mapLayer === l[0]}">${l[1]}</button>`).join('')}</span>`)}<div class="hq-map" id="hqMap"></div></section>`;
-  const fbT = ['fb', 'Passenger Feedback', feedbackHtml], alT = ['al', 'Alerts & Messages', intelHtml, warn || ''];
+  const fbT = ['fb', 'Feedback', feedbackHtml], alT = ['al', 'Alerts', intelHtml, warn || ''];   // short names: the two tabs share a narrow panel
   const fbP = mode === 'results' || mode === 'live' ? tabbedPanel('p-fb', 'fbr', [fbT, alT]) : tabbedPanel('p-fb', 'fbm', [alT, fbT]);
   UI.mapLayer = UI.mapLayer || 'routes';
   screen().innerHTML = shell(`<div class="ov ${wide ? 'wide' : 'compact'}">${kpiRow(mode)}${mapP}<section class="hp p-td">${todayCard(mode)}</section>

@@ -500,6 +500,7 @@ function bindFuelDesk(asView){
 }
 R.fuelDesk = () => renderFuelDesk(false);
 WS_STEPS.push('fuelDesk'); SHELL_STEPS.push('fuelDesk');   // the desk sits in the Monday workspace: the plan is a press away
+Object.assign(RAIL_LABEL, { fuelDesk:'Buy fuel' });   // Home's step list read "undefined" for it
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-nav="plan"]'); if(!b || !S || step().t !== 'fuelDesk' || UI.view) return;
   const i = S.steps.findIndex(x => x.t === 'plan'); if(i >= 0){ e.stopPropagation(); e.preventDefault(); jumpTo(i); } }, true);
 

@@ -10,6 +10,28 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0v. Overlaps, the right aircraft, more logo choices (16 Oct 2026)
+
+**`p4zx_fit.js`** and **`p4zy_paint2.js`**, after `p4zw`; CSS at the end of `p1_head_studio2.css`; drawings from `tools/aircraft_art.py`. Reassignment only (`overrides.txt` stays at 120). Notes: `docs/Overlaps-Aircraft-Logos.md`.
+- **Overlap scanner.** `tests/overlap/scan.js` (in the page), `hook.js` (preload for any test: scan after each click) and `desks.js` (every desk, the teacher panel and the wall of a list of saves).
+- **Plan screen.**
+  - The decision-support class on the action bar is `ds-abar`. `ds-bar` was already the demand strip's fixed-height class.
+  - The worth Build is a `.ds-wstrip` before `.s2-sum`.
+  - `s2PopPlace()` moves `#s2Pop` into the plan page and places it after `dsChips`.
+- **Maps.** `makeMap` is wrapped: after each `render`, `fitMapLabels` hides colliding labels by rank (flown, home, offer, dim). It gives a colliding offer `mk-min` (dot only) and hides labels outside the map.
+- **Other screens.**
+  - Home: `finChart` sizes its left margin and date spacing from the labels. Today's Plan scrolls with sticky actions. Live Operations is a fixed table without the flight column.
+  - The Network grid has explicit areas.
+  - The Fuel desk's columns scroll.
+  - On the wall, `wiWeather().wide` (weather everywhere) gives one "All routes" row, marks on the routes flown only, and at most eight rows.
+  - `RAIL_LABEL.fuelDesk` is "Buy fuel".
+- **Aircraft.** `artIdOf` is reassigned: the sheet's `artworkId`, else `ART_FOR` by id, else by name, else the Twin Otter.
+- **Logo.**
+  - `SHAPE40` and `SYM40` gain entries, and `LIV.logoShapes` gains four.
+  - `logoMark` is reassigned for styles (ring, outline, split with a unique clip id) and initials. The solid style with a symbol uses the original.
+  - `R.logo` is wrapped to add the symbols, the initials box and the style row.
+- **Lettering.** `S.airline.lettering` is applied by wrapping `aircraftArt` (the string), `repaintArt` (in place) and `livKey`. It is chosen on the paint shop's Name tab (`paintTabHtml`/`bindPaint` wrapped).
+
 ## 0u. The Intelligence Wall (17 Oct 2026)
 
 **`p4zw_intelwall.js`**, after `p4zv`; the CSS at the end of `p1_head_studio2.css`. Reassignment only (`renderDisplay` is wrapped). Notes: `docs/Intelligence-Wall-Notes.md`.

@@ -155,18 +155,21 @@ function finBuckets(n, type){
 function finChart(o){
   o = o || {}; const hist = o.buckets || finBuckets(o.n || 14);
   if(!hist.length) return `<p class="muted fc-empty">The chart starts after the first flight lands.</p>`;
-  const W = o.w || 640, H = o.h || 250, L = o.big ? 108 : 74, R = 12, T = 14, B = o.big ? 40 : 34;
+  const W = o.w || 640, H = o.h || 250, R = 12, T = 14, B = o.big ? 40 : 34, cwid = (o.big ? 18 : 14) * 0.62;   // cwid: a character of the axis text, roughly
   let ymax = Math.max(1, ...hist.map(h => Math.max(h.revenue, h.costs, h.profit))), ymin = Math.min(0, ...hist.map(h => h.profit));
   const stp = niceStep((ymax - ymin) / 4); ymax = Math.ceil(ymax/stp)*stp; ymin = Math.floor(ymin/stp)*stp;
+  // the left margin fits the longest money label (it cut "£15,000,000" to ",000,000")
+  const L = Math.max(o.big ? 108 : 74, Math.ceil(12 + cwid * Math.max(money(Math.round(ymax)).length, money(Math.round(ymin)).length)));
   const n = hist.length, bw = (W-L-R)/Math.max(n, 7), y = v => T + (H-T-B)*(1 - (v-ymin)/((ymax-ymin)||1)), x0 = i => L + bw*i;
   let g = '';
   for(let v = ymin; v <= ymax + 1e-9; v += stp) g += `<line x1="${L}" x2="${W-R}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" class="grid${v===0?' zero':''}"/><text x="${L-8}" y="${(y(v)+5).toFixed(1)}" class="ax" text-anchor="end">${money(Math.round(v))}</text>`;
-  const cw = Math.min(o.big ? 34 : 22, bw*0.34), every = n > 20 ? 7 : n > 10 ? 2 : 1;
+  // dates along the bottom: as many as fit without touching (they ran together on Home's narrow chart)
+  const lw = cwid * Math.max(...hist.map(h => String(h.label || '').length)) + 10, cw = Math.min(o.big ? 34 : 22, bw*0.34), every = Math.max(n > 20 ? 7 : n > 10 ? 2 : 1, Math.ceil(lw / bw));
   hist.forEach((h, i) => {
     const cx = x0(i) + bw/2, y0 = y(0);
     g += `<rect class="b rev" x="${(cx-cw-1).toFixed(1)}" y="${y(h.revenue).toFixed(1)}" width="${cw.toFixed(1)}" height="${Math.max(0, y0-y(h.revenue)).toFixed(1)}" rx="2"/>`;
     g += `<rect class="b cost" x="${(cx+1).toFixed(1)}" y="${y(h.costs).toFixed(1)}" width="${cw.toFixed(1)}" height="${Math.max(0, y0-y(h.costs)).toFixed(1)}" rx="2"/>`;
-    if((n-1-i) % every === 0) g += `<text x="${cx.toFixed(1)}" y="${H-10}" class="ax" text-anchor="middle">${esc(h.label)}</text>`;
+    if((n-1-i) % every === 0){ const end = cx + lw / 2 > W; g += `<text x="${(end ? W - 2 : cx).toFixed(1)}" y="${H-10}" class="ax" text-anchor="${end ? 'end' : 'middle'}">${esc(h.label)}</text>`; }
     g += `<rect class="hov" x="${x0(i).toFixed(1)}" y="${T}" width="${bw.toFixed(1)}" height="${H-T-B}" data-tip="${esc(h.tip+'|'+money(h.revenue)+'|'+money(h.costs)+'|'+money(h.profit))}"/>`;
   });
   if(n > 1) g += `<polyline class="pl" points="${hist.map((h,i) => (x0(i)+bw/2).toFixed(1)+','+y(h.profit).toFixed(1)).join(' ')}"/>`;

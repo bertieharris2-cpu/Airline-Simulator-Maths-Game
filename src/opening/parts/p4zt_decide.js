@@ -182,11 +182,12 @@ function dsAfterPlan(){
   const sum = U.mode !== 'opener' ? root.querySelector('.s2-sum > .grow') : null, side = imp || (W && W.line && W.done ? dsWorthLineHtml(W) : '');
   if(sum && side && !(W && !W.done && W.build)) sum.insertAdjacentHTML('beforebegin', `<span class="ds-sumi">${side}</span>`);
   const rows = [];
-  if(W && !W.done && W.build) rows.push(dsWorthBuildHtml(W));
+  // the worth Build has its own strip above the plan summary (the bar holds one line: it spilled over the summary when it carried the Build)
+  if(W && !W.done && W.build){ const sumBar = root.querySelector('.s2-sum'); if(sumBar) sumBar.insertAdjacentHTML('beforebegin', `<div class="ds-wstrip" role="group" aria-label="What was it worth?">${dsWorthBuildHtml(W)}</div>`); else rows.push(dsWorthBuildHtml(W)); }
   else if(!sum && imp) rows.push(imp);
   else if(!sum && W && W.line && W.done) rows.push(dsWorthLineHtml(W));
   if(U.mode !== 'opener' && tips[0] && (hot || !rows.length)) rows.push(dsOneRow(tips));
-  if(hint && rows.length){ hint.innerHTML = `<span class="ds-hint ${rows.length > 1 ? 'two' : ''}">${rows.join('')}</span>`; hint.closest('.actbar').classList.add('ds-bar'); }
+  if(hint && rows.length){ hint.innerHTML = `<span class="ds-hint ${rows.length > 1 ? 'two' : ''}">${rows.join('')}</span>`; hint.closest('.actbar').classList.add('ds-abar'); }
   root.querySelectorAll('[data-dsact]').forEach(b => b.onclick = e => { e.stopPropagation(); dsDo(UI.dsShown[+b.getAttribute('data-dsact')], 'check'); });
   // Run anyway is logged with what the check showed
   [nx, keep].forEach(b => { if(!b || b.dsWrapped) return; b.dsWrapped = true; b.addEventListener('click', () => { if(b.disabled || !UI.dsShown || !UI.dsShown.length) return; dsS().log.push({ day:S.day, wk:weekNo(S.day || 1), id:UI.dsShown.map(h => h.id).join(','), what:'run', from:'check' }); dsKeepWeek(); }, true); });
@@ -195,6 +196,7 @@ function dsAfterPlan(){
   dsHighlight(root, pl);
   dsFlashShow(root);
   dsChips(root, pl, L);
+  if(typeof s2PopPlace === 'function') s2PopPlace();   // the chips and the strip change the sizes the flight's editor was placed by
   // Help me investigate (planningSupport), beside the model's own button
   const tools = root.querySelector('.s2-tools .plw-tools'); if(tools && dsOn('helpMeInvestigate') && !$('dsInv') && !(S.phase === 'setup')) tools.insertAdjacentHTML('afterbegin', `<button class="btn small ds-inv" id="dsInv" title="Choose one thing to test, predict what will happen, then compare">${ICO2.bulb} Help me investigate</button>`);
   const ideaB = $('ideaOpen'); if(ideaB && /Try different options/.test(ideaB.textContent)) ideaB.textContent = 'Operations Model';

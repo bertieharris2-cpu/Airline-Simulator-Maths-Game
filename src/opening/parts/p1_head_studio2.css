@@ -262,7 +262,7 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 /* D86: the answer boxes and sum headers make a full week of sign-offs taller than the page: the body scrolls, never under the bar */
 .so-page .dp-body{overflow-y:auto;overflow-x:hidden;padding-right:4px}
 /* ---------- D87 decision support: the operations check, the improved banner, the worth line, the highlight, the experiments ---------- */
-.actbar.ds-bar .ab-hint{font-size:14.5px}
+.actbar.ds-abar .ab-hint{font-size:14.5px}
 .ds-hint{display:flex;flex-direction:column;gap:4px;min-width:0}
 .ds-tip{display:flex;align-items:center;gap:10px;min-width:0;padding:3px 8px;border-left:3px solid #F5B740;background:rgba(245,183,64,.10);border-radius:3px}
 .ds-tip.hot{border-left-color:#FF8A3D;background:rgba(255,138,61,.14)}
@@ -301,7 +301,7 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .dx-rt select{margin-left:6px}
 .ds-tip .btn.ds-act,.actbar .ds-tip .btn.ds-act{background:linear-gradient(180deg,#F5B740,#E09A1E)!important;color:#1B1300!important;border:1px solid #F5B740!important;font-weight:700}
 .ds-tip.head{background:rgba(255,138,61,.08)}.ds-tip.head .ds-tt{font-weight:600}
-.actbar.ds-bar{padding-top:4px;padding-bottom:4px}.actbar.ds-bar .ds-tip{padding:1px 8px}.actbar.ds-bar .ds-tip .btn{height:27px;padding:0 12px;font-size:13.5px}.actbar.ds-bar .ds-tt{font-size:14px;line-height:1.2}
+.actbar.ds-abar{padding-top:4px;padding-bottom:4px}.actbar.ds-abar .ds-tip{padding:1px 8px}.actbar.ds-abar .ds-tip .btn{height:27px;padding:0 12px;font-size:13.5px}.actbar.ds-abar .ds-tt{font-size:14px;line-height:1.2}
 .ds-oc .ds-tip{padding:5px 10px}
 .ds-hint.two{gap:2px}.ds-hint.two .ds-imp,.ds-hint.two .ds-worth-l{font-size:13.5px;line-height:1.2}.ds-hint.two .ds-tip .btn{height:25px}
 .ds-fix svg,.ds-fixr svg{width:16px;height:16px;vertical-align:-3px}
@@ -453,3 +453,59 @@ body.desk .s2-trb{padding:6px 14px;font-size:15px}
 .wi-when{margin-top:auto;padding-top:14px}.wi-when .wi-sf{font-size:12px;letter-spacing:.16em}.wi-when .wi-sf span{letter-spacing:0;color:#6F86A8}
 .wi-todbar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;height:96px;margin-top:6px}.wi-todbar div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center}.wi-todbar i{display:block;width:70%;background:linear-gradient(180deg,#36C6FF,#1f6fff)}.wi-todbar small{font-size:12px;color:#9FBDE3;white-space:nowrap;margin-top:4px}
 @media (prefers-reduced-motion: reduce){ .wi-p.wake,.wi-p.hl{animation:none!important} }
+/* ---------- overlap fixes (16 Oct 2026): the worth Build has its own strip above the plan summary ---------- */
+.ds-wstrip{flex:none;display:flex;align-items:center;padding:6px 12px;background:linear-gradient(180deg,#0f2448,#0b1d3c);border:1px solid #1f467e;border-left:3px solid #F5B740}
+.ds-wstrip .ds-wb{gap:6px 8px;font-size:14px}.ds-wstrip .ds-wq{flex:0 1 auto;margin-right:6px;line-height:1.3}.ds-wstrip .ds-wq b{color:#FFE3A8}
+.ds-wstrip .sc-msg{flex-basis:100%;font-size:13.5px;color:#FFD39A}
+/* the axis's first and last times sit inside the timetable (centred, the last one was cut to "22:") */
+.ad-ticks span:first-child{transform:none}.ad-ticks span:last-child{transform:translateX(-100%)}
+.mapsvg text.lbl-off{display:none}
+/* an answer box with a word after it ("days", "weeks", "hours", "bags") keeps the figure clear of the word (it read "4days") */
+.sc-in:has(> i.suf) input{padding-right:58px}.sc-in.pc:has(> i.suf) input{padding-right:24px}
+.sc-in i.suf{right:10px}
+/* the wall's weather list: weather everywhere reads "All routes" once (it listed all 24 routes over the header and the fuel panel) */
+.wi-wxl .wi-wxall{grid-template-columns:auto 34px 1fr;gap:10px;padding-left:2px}.wi-wxl .wi-wxall b{color:#E6F0FF}
+.mapsvg .marker.mk-min > line.leader,.mapsvg .marker.mk-min > g{display:none}
+/* the wall's airline name in the airline's colour, lifted so a dark livery colour stays readable on the dark wall */
+.w-brand b{color:color-mix(in srgb,var(--c1) 55%,#fff)}
+/* Home's Live Operations table fits its panel at every size (the status words were cut off on the board screen) */
+.ov .hq-t.lo{table-layout:fixed;width:100%}
+.ov .hq-t.lo td,.ov .hq-t.lo th{padding-left:5px;padding-right:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov .hq-t.lo th:first-child,.ov .hq-t.lo td:first-child{width:64px}.ov .hq-t.lo th:nth-child(2),.ov .hq-t.lo td:nth-child(2){display:none}
+.ov .hq-t.lo th:nth-child(4),.ov .hq-t.lo td:nth-child(4){width:58px}.ov .hq-t.lo th:nth-child(5),.ov .hq-t.lo td:nth-child(5){width:104px}
+/* the Alerts and Passenger Feedback tabs share the panel's width (the second tab ran off the edge) */
+.ov .p-fb .phead.tabs{min-width:0;overflow:hidden}.ov .p-fb .phead.tabs .ptab{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:12.5px;letter-spacing:.03em;padding-left:6px;padding-right:6px}
+/* Home's Today's Plan: a long plan scrolls inside the panel and the day's buttons stay in view at its foot
+   (in chapter 4 "Plan January" and the A380 project button were cut off below the panel) */
+.ov .p-td .pb.td2{overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+.ov .p-td .td2 .td-act{position:sticky;bottom:-8px;z-index:2;margin-top:auto;padding-top:8px;padding-bottom:8px;background:#08162e;box-shadow:0 -10px 12px -6px #08162e}
+.ov .p-td .td-act #cpOpen{min-height:40px;font-size:15px;letter-spacing:.03em;padding:6px 14px}
+.ov .p-td .dr-rcp{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr)}.ov .p-td .dr-rcp > div{min-width:0}.ov .p-td .dr-rcp b{font-size:clamp(13px,.82vw,20px);white-space:nowrap}
+/* the Network desk: map and route performance on the left, the destinations on the right and scrolling
+   (the map took Home's grid area "mp", which this grid lacks, and was squeezed to its title; the destinations ran off the screen) */
+.vw.net{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);grid-template-rows:minmax(0,1.15fr) minmax(0,1fr)}
+.vw.net > .p-map{grid-area:1 / 1 / 2 / 2}.vw.net > .hp:not(.p-map):not(.net-dest){grid-area:2 / 1 / 3 / 2}
+.vw.net > .net-dest{grid-area:1 / 2 / 3 / 3;margin-top:0;overflow-y:auto;scrollbar-width:thin}
+.vw.net > .net-dest thead th{position:sticky;top:0;z-index:1;background:#0a1b39}
+/* the Fuel desk's two columns scroll inside the desk when the week's order card is long (on a laptop in chapter 2
+   "Confirm purchase" sat below the screen and the column ran under the bar) */
+.fd > .fd-l,.fd > .fd-rc{overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;padding-right:2px}
+/* the logo step with more choices: smaller symbol chips in more columns, the style row, the initials box */
+.logo-ctl.lg-more{gap:10px}.logo-ctl.lg-more .grp h3{margin-bottom:4px}
+.logo-ctl .pchoices.many{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:5px}
+.logo-ctl .pchoices.many .chc{padding:4px 2px;min-height:0}.logo-ctl .pchoices.many .chc svg{width:28px;height:28px}.logo-ctl .pchoices.many .chc span{font-size:11px}
+.logo-ctl .lg-style .pchoices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.logo-ctl .lg-style .chc svg{width:34px;height:34px}
+.lg-in{font:inherit;font-size:20px;font-weight:800;letter-spacing:.2em;width:120px;text-transform:uppercase;padding:4px 10px;color:#fff;background:#0a1a35;border:1.5px solid var(--dk-cyan,#36c6ff);border-radius:4px}
+.lt-row .chc.lt svg{width:100%;height:30px}
+.logo-ctl.lg-more .pchoices[data-k="shape"]{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.logo-ctl.lg-more .pchoices[data-k="shape"] .chc{padding:4px 2px;min-height:0}.logo-ctl.lg-more .pchoices[data-k="shape"] .chc svg{width:26px;height:26px}.logo-ctl.lg-more .pchoices .chc span{font-size:12px}
+.logo-ctl.lg-more .lg-style .chc{padding:3px 2px;min-height:0}.logo-ctl.lg-more .lg-style .chc svg{width:28px;height:28px}
+.logo-ctl.lg-more{min-height:0;overflow-y:auto;scrollbar-width:thin;padding-right:2px}.logo-grid{min-height:0}
+/* Home's route table: a "New today" row's three spare cells are the columns Home hides (they made three empty columns) */
+.ov table.ev td.ev-x{display:none}
+/* "Which aircraft should we add?": a column with an extra note keeps its Choose button in view (it was cut at the foot) */
+.acx-col{overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+body.desk .acx-col > .btn.acx-go{position:sticky;bottom:8px;flex:none;z-index:2;box-shadow:0 8px 0 0 #08162f,0 -8px 12px -4px #08162f}
+/* the air show's cards: taller where the screen allows, and the back scrolls if its prices still need more room ("Tap to turn back" was cut) */
+@media (min-height:880px){.showroom.many .show-card,.showroom.many .show-card .sc-inner{min-height:292px}}
+.show-card .sc-back{overflow-y:auto;scrollbar-width:thin}

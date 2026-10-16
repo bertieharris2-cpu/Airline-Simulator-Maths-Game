@@ -374,11 +374,42 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **First take-off:** a *Take-off* step before live operations on launch day: the painted plane taxis, accelerates and climbs out on the wall, with sound when the teacher has it on; then live operations begin.
 - **The wall** shows the same stage full screen while he works (modes identity, paint, reveal, cert, takeoff) and updates within a moment of each change.
 - **From week 2** the plane shop is an **air show** (opened from the Fleet desk's *Add an aircraft* or the run board's *Aircraft shop*; it never opens by itself since 14 Oct): one flip card per aircraft (photo or the plain-colour drawing on the front; facts, four bars on one scale, Buy / Rent / Finance on the back), a locked *Coming soon* row, *Not today*. Every new plane goes through the paint shop and a short reveal. The Fleet view shows the planes in their liveries with **Repaint**; **Your airline** on the home menu edits the name, code and logo.
-- **Artwork:** `src/opening/assets/aircraft/*.svg`, one painted side view per `artworkId` (dhc6, sf34, at72, e175, e190, narrowbody), inlined by the build as `data-artwork` and painted by `aircraftArt()` (p4q_paint.js). **Photos:** `src/opening/assets/photos/`, named by the Aircraft sheet's `photoFile`, embedded by the build as `data-photos`; openly licensed only, credited on the card and in `data/Photo-Credits.md`. No photos are in yet (the session could not reach Wikimedia Commons).
+- **Artwork:** `src/opening/assets/aircraft/*.svg`, one painted side view per `artworkId` (dhc6, sf34, at72, e175, e190, narrowbody; since 16 Oct also b757, widebody, widebody4, b747, a380), inlined by the build as `data-artwork` and painted by `aircraftArt()` (p4q_paint.js). **Photos:** `src/opening/assets/photos/`, named by the Aircraft sheet's `photoFile`, embedded by the build as `data-photos`; openly licensed only, credited on the card and in `data/Photo-Credits.md`. No photos are in yet (the session could not reach Wikimedia Commons).
 - **Real photos (optional):** drop a photo into `src/opening/assets/photos/` named after the aircraft id (`dhc6.jpg`, `sf34.jpg` or `saab340.jpg`, `at72.jpg`, `e175.jpg`, `e190.jpg`, `a220.jpg`, `a320.jpg`, `b737.jpg`; jpg, png or webp, ideally under 150 KB) and rebuild: the showroom card shows the photo instead of the drawing, with the credit from the workbook's Aircraft sheet if one is given there. The Aircraft sheet's `photoFile` column still works too. Photos could not be fetched from the build environment (Wikimedia Commons is blocked there), so none are bundled yet.
 - **Small pictures:** the planner's aircraft tabs, the HQ fleet table and the shop cards show a miniature of each aircraft's own painted drawing (`planeMini`, `p4q_paint.js`), so a Saab, an ATR and a Twin Otter look different at a glance.
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
+
+### Overlapping text, the right aircraft, more logo choices (16 Oct 2026)
+*Bertie: text overlapping on several screens; "if I bought a Saab, am I customising a plane that looks like a Saab?"; more logo options. Notes and the full list of fixes in `docs/Overlaps-Aircraft-Logos.md`.*
+
+- **The overlap check.**
+  - **The scanner** (`src/opening/tests/overlap/scan.js`) runs in the page. It lists text and buttons that overlap where both can be seen, text cut by a box that hides its edges, and text off the screen.
+  - **Two ways to run it.** `overlap/hook.js` runs it after every click of any test (`node -r ./overlap/hook.js week.test.js`). `overlap/desks.js` opens every desk, the teacher panel and the wall of a list of saves.
+  - **Where it ran.** Launch Day, chapters 1 to 4, the desks and the wall, at 1366 × 768, 1897 × 991 and 1920 × 1080.
+- **The fixes.** CSS at the end of `p1_head_studio2.css`, plus `parts/p4zx_fit.js`:
+  - The Plan screen's bottom bar shared a class name with an old fixed-height style, so it spilled over the Plan Summary. Its class is renamed, and the "what was it worth" Build has its own strip above the Plan Summary.
+  - The flight's editor sits over the page and is placed after its chips.
+  - Map names no longer land on each other: the routes flown first, then the home base, then cities on offer, and a crowded offer shows its dot only.
+  - The Network desk's grid is mended, and the Fuel desk's columns scroll.
+  - Home's Today's Plan keeps its buttons in view, its finance chart fits its labels, and Live Operations and the tabs fit.
+  - Weather everywhere reads "All routes" once on the wall.
+  - Answer boxes keep room for "days".
+- **The right aircraft.** Five more drawings, made by `tools/aircraft_art.py` with the same layers as the hand-drawn ones:
+  - `b757`;
+  - `widebody` (787, A350, 777);
+  - `widebody4` (A340);
+  - `b747`;
+  - `a380`.
+
+  `p4zy_paint2.js` maps each type to its drawing when the Aircraft sheet's `artworkId` is empty (the build prints "11 aircraft drawings").
+- **More logo choices** (`p4zy_paint2.js`):
+  - **Shapes:** eight (diamond, hexagon, badge and oval added).
+  - **Symbols:** eighteen (wing, dragon, plane, globe, crown, bird, lightning, sun, mountain, heart, compass and initials added).
+  - **Styles:** solid, ring, outline and two-tone.
+  - **Lettering of the airline's name on every aircraft:** classic, bold, script or outline, on the paint shop's Name tab.
+
+  These are saved as `S.airline.logo.style`, `S.airline.logo.text` and `S.airline.lettering`. An old save keeps its logo.
 
 ### The Intelligence Wall (17 Oct 2026)
 *The Operations Wall before flying: "what do I know?". Desk = act, wall = observe. Designed in the UI sandbox, then merged into the game (`src/opening/parts/p4zw_intelwall.js`, the CSS at the end of `p1_head_studio2.css`). Notes in `docs/Intelligence-Wall-Notes.md`.*

@@ -1,0 +1,49 @@
+<!-- The 757: a long, slim narrow-body on tall legs, port side, nose left. Box 0 0 1200 440. Drawn by tools/aircraft_art.py with the same layers and markers as dhc6.svg. -->
+<defs>
+  <clipPath id="fus@U"><path d="M44 256 C44 236 84 222 150 214 L214 198 C236 190 262 186 310 186 L900 186 C980 188 1050 204 1110 230 L1116 242 C1054 256 966 272 860 290 C826 296 780 298 730 298 L210 298 C126 298 70 282 44 256 Z"/></clipPath>
+  <clipPath id="fin@U"><path d="M868 190 L966 60 C974 48 994 44 1016 44 L1058 46 C1070 48 1074 56 1075 66 L1092 226 C1044 208 956 196 868 190 Z"/></clipPath>
+  <clipPath id="whole@U"><path d="M44 256 C44 236 84 222 150 214 L214 198 C236 190 262 186 310 186 L900 186 C980 188 1050 204 1110 230 L1116 242 C1054 256 966 272 860 290 C826 296 780 298 730 298 L210 298 C126 298 70 282 44 256 Z"/><path d="M868 190 L966 60 C974 48 994 44 1016 44 L1058 46 C1070 48 1074 56 1075 66 L1092 226 C1044 208 956 196 868 190 Z"/></clipPath>
+  <linearGradient id="shadeV@U" x1="0" y1="186" x2="0" y2="298" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".22" stop-color="#fff" stop-opacity=".08"/><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient>
+  <linearGradient id="shadeFin@U" x1="868" y1="0" x2="1092" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  <linearGradient id="shadeS@U" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+  <linearGradient id="glintG@U" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".65"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <radialGradient id="shadow@U"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+</defs>
+<g class="art-plane">
+  <ellipse class="art-shadow" cx="600" cy="392" rx="570" ry="22" fill="url(#shadow@U)"/>
+  <rect x="206" y="294" width="8" height="58" fill="#2A3442"/><circle cx="210" cy="358" r="18" fill="#171C24"/><circle cx="210" cy="358" r="7" fill="#9AA5B1"/><rect x="650" y="296" width="12" height="58" fill="#2A3442"/><circle cx="640" cy="364" r="24" fill="#171C24"/><circle cx="640" cy="364" r="10" fill="#9AA5B1"/><circle cx="686" cy="364" r="24" fill="#171C24"/><circle cx="686" cy="364" r="10" fill="#9AA5B1"/>
+  <path class="p-body" d="M770 190 C810 186 846 172 878 150 L868 190 Z"/>
+  <path class="p-body" d="M868 190 L966 60 C974 48 994 44 1016 44 L1058 46 C1070 48 1074 56 1075 66 L1092 226 C1044 208 956 196 868 190 Z"/>
+  <g clip-path="url(#fin@U)"><g transform="translate(40 2) scale(1 0.98)">
+    <polygon class="p-second tl tl-stripe" points="900,230 968,44 1002,44 934,230"/>
+    <polygon class="p-second tl tl-star" points="975,82 984,104 1008,105 989,120 996,143 975,130 954,143 961,120 942,105 966,104"/>
+    <path class="p-second tl tl-chevron" d="M922 170 L972 92 L1024 170 L1000 170 L972 126 L946 170 Z"/>
+    <path class="p-second tl tl-wave" d="M850 150 C900 120 940 170 990 130 C1010 116 1030 112 1050 116 L1050 150 C1030 146 1012 150 994 162 C944 200 902 152 850 182 Z"/>
+    <g class="tl tl-circle"><circle class="p-second" cx="978" cy="112" r="30"/><circle class="p-body" cx="978" cy="112" r="13"/></g>
+    <path class="p-second tl tl-arrow" d="M978 64 L1010 110 L990 110 L990 160 L966 160 L966 110 L946 110 Z"/>
+    <g class="tl tl-logo" transform="translate(936 66) scale(2.1)">@LOGO</g>
+  </g></g>
+  <path d="M868 190 L966 60 C974 48 994 44 1016 44 L1058 46 C1070 48 1074 56 1075 66 L1092 226 C1044 208 956 196 868 190 Z" fill="url(#shadeFin@U)"/>
+  <path class="p-line" d="M868 190 L966 60 C974 48 994 44 1016 44 L1058 46 C1070 48 1074 56 1075 66 L1092 226 C1044 208 956 196 868 190 Z"/>
+  <path d="M1054 56 L1078 218" stroke="rgba(8,20,34,.45)" stroke-width="1.6" fill="none"/>
+  <path class="p-body" d="M968 244 L1146 234 C1158 234 1158 244 1146 246 L968 254 Z"/><path class="p-line" d="M968 244 L1146 234 C1158 234 1158 244 1146 246 L968 254 Z"/>
+  <g clip-path="url(#fus@U)">
+    <rect class="p-body" x="30" y="176" width="1160" height="132"/>
+    <rect class="p-belly" x="30" y="262" width="1160" height="60"/>
+    <rect class="p-second st st-thin" x="50" y="248" width="1110" height="8"/>
+    <g class="st st-band"><rect class="p-second" x="50" y="244" width="1110" height="18"/><rect class="p-second" x="50" y="266" width="1110" height="4" opacity=".8"/></g>
+    <path class="p-second st st-swoosh" d="M50 290 C420 290 720 274 1120 196 L1120 228 C720 304 420 314 50 312 Z"/>
+    <rect x="30" y="176" width="1160" height="132" fill="url(#shadeV@U)"/>
+  </g>
+  <path class="p-line" d="M44 256 C44 236 84 222 150 214 L214 198 C236 190 262 186 310 186 L900 186 C980 188 1050 204 1110 230 L1116 242 C1054 256 966 272 860 290 C826 296 780 298 730 298 L210 298 C126 298 70 282 44 256 Z"/>
+  
+  <path class="p-glass" d="M168 214 L208 196 C222 190 240 188 258 188 L262 214 Z"/><path d="M176 210 L208 198 L222 196 L194 210 Z" fill="#fff" opacity=".35"/>
+  <g class="p-glass"><rect x="317" y="214" width="11" height="15" rx="3"/><rect x="334" y="214" width="11" height="15" rx="3"/><rect x="351" y="214" width="11" height="15" rx="3"/><rect x="368" y="214" width="11" height="15" rx="3"/><rect x="385" y="214" width="11" height="15" rx="3"/><rect x="402" y="214" width="11" height="15" rx="3"/><rect x="419" y="214" width="11" height="15" rx="3"/><rect x="436" y="214" width="11" height="15" rx="3"/><rect x="453" y="214" width="11" height="15" rx="3"/><rect x="470" y="214" width="11" height="15" rx="3"/><rect x="487" y="214" width="11" height="15" rx="3"/><rect x="504" y="214" width="11" height="15" rx="3"/><rect x="521" y="214" width="11" height="15" rx="3"/><rect x="538" y="214" width="11" height="15" rx="3"/><rect x="555" y="214" width="11" height="15" rx="3"/><rect x="572" y="214" width="11" height="15" rx="3"/><rect x="589" y="214" width="11" height="15" rx="3"/><rect x="606" y="214" width="11" height="15" rx="3"/><rect x="623" y="214" width="11" height="15" rx="3"/><rect x="691" y="214" width="11" height="15" rx="3"/><rect x="708" y="214" width="11" height="15" rx="3"/><rect x="725" y="214" width="11" height="15" rx="3"/><rect x="742" y="214" width="11" height="15" rx="3"/><rect x="759" y="214" width="11" height="15" rx="3"/><rect x="776" y="214" width="11" height="15" rx="3"/><rect x="793" y="214" width="11" height="15" rx="3"/><rect x="810" y="214" width="11" height="15" rx="3"/><rect x="827" y="214" width="11" height="15" rx="3"/></g>
+  <rect x="272" y="196" width="32" height="94" rx="6" class="p-line"/><rect x="648" y="196" width="30" height="94" rx="6" class="p-line"/><rect x="858" y="198" width="30" height="88" rx="6" class="p-line"/>
+  <text class="t-name" x="456" y="208" text-anchor="middle" font-weight="700" font-size="19" letter-spacing="3" fill="@NAMEFILL">@NAME</text><text class="t-reg" x="986" y="264" text-anchor="middle" font-weight="700" font-size="16" letter-spacing="1" fill="@REGFILL">@REG</text><text class="t-pname" x="196" y="286" text-anchor="middle" font-style="italic" font-size="12" fill="@PNAMEFILL">@PNAME</text>
+  <path class="p-body" d="M400 290 L700 284 C730 286 738 306 704 310 L444 318 C410 318 396 304 400 290 Z"/><path d="M400 290 L700 284 C730 286 738 306 704 310 L444 318 C410 318 396 304 400 290 Z" fill="url(#shadeS@U)"/><path class="p-line" d="M400 290 L700 284 C730 286 738 306 704 310 L444 318 C410 318 396 304 400 290 Z"/>
+  <rect x="440" y="292" width="80" height="12" fill="#2A3442" opacity=".7"/>
+  <path class="p-engine" d="M330 292 C330 268 358 256 400 256 L556 258 C592 260 606 280 606 306 C606 334 592 352 556 354 L400 356 C358 356 330 344 330 318 Z"/><path d="M330 292 C330 268 358 256 400 256 L556 258 C592 260 606 280 606 306 C606 334 592 352 556 354 L400 356 C358 356 330 344 330 318 Z" fill="url(#shadeS@U)"/><path class="p-line" d="M330 292 C330 268 358 256 400 256 L556 258 C592 260 606 280 606 306 C606 334 592 352 556 354 L400 356 C358 356 330 344 330 318 Z"/>
+  <circle cx="352" cy="305" r="40" fill="#171C24"/><g class="fan"><line x1="352" y1="305" x2="388.8" y2="305.0" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="383.9" y2="323.4" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="370.4" y2="336.9" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="352.0" y2="341.8" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="333.6" y2="336.9" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="320.1" y2="323.4" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="315.2" y2="305.0" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="320.1" y2="286.6" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="333.6" y2="273.1" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="352.0" y2="268.2" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="370.4" y2="273.1" stroke="#9AA5B1" stroke-width="2.2"/><line x1="352" y1="305" x2="383.9" y2="286.6" stroke="#9AA5B1" stroke-width="2.2"/></g><circle cx="352" cy="305" r="11.2" class="p-second"/><circle cx="352" cy="305" r="40" fill="none" stroke="#C9CFD8" stroke-width="3"/>
+  <g clip-path="url(#whole@U)"><rect class="glint" x="-200" y="0" width="220" height="360" fill="url(#glintG@U)"/></g>
+</g>
