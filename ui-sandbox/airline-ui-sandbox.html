@@ -962,6 +962,65 @@ html[data-look="day"] .chg{animation-name:chgLight}@keyframes chgLight{0%{text-s
 .wall-open #labBtn span{display:none}.wall-open #labBtn{left:auto;right:14px}.wall-open #labp{left:auto;right:14px}
 .grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.g21{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
 .lab-drag .blk{user-select:none;-webkit-user-select:none}
+/* ----- Night Ops + Cockpit: Night Ops, with the cockpit's two signals. Magenta = a target: something to work out or aim for.
+   Green = engaged: confirmed, and the fuel in the tank. Gold stays for money, cyan for where you are working ----- */
+html[data-look="nightcockpit"]{--good:#2BFF88;--c-green:#2BFF88;--tgt:#FF4FD8}
+html[data-look="nightcockpit"] .unknown{color:var(--tgt);text-shadow:0 0 12px rgba(255,79,216,.45)}
+html[data-look="nightcockpit"] .card.focus .unknown,html[data-look="nightcockpit"] td.ask .unknown{animation-name:tgtBreathe}
+@keyframes tgtBreathe{0%,100%{text-shadow:0 0 10px rgba(255,79,216,.3)}50%{text-shadow:0 0 22px rgba(255,79,216,.65)}}
+html[data-look="nightcockpit"] .mc.wait{border-color:rgba(255,79,216,.55);background:rgba(255,79,216,.045)}html[data-look="nightcockpit"] .mc.wait b{color:var(--tgt)}html[data-look="nightcockpit"] .mc.wait small{color:#ff9be9}
+html[data-look="nightcockpit"] .calc-result{color:#2BFF88;text-shadow:0 0 14px rgba(43,255,136,.4)}html[data-look="nightcockpit"] .card .tag.ok{color:#2BFF88;border-color:rgba(43,255,136,.6);background:rgba(43,255,136,.06)}
+html[data-look="nightcockpit"] .card.done{border-left-color:rgba(43,255,136,.6)}html[data-look="nightcockpit"] .stamp:not(.fin){border-color:#2BFF88;color:#2BFF88}
+html[data-look="nightcockpit"] .gauge .needle path{fill:#2BFF88;filter:drop-shadow(0 0 3px rgba(43,255,136,.8))}html[data-look="nightcockpit"] .gauge .tgt{stroke:var(--tgt)}
+html[data-look="nightcockpit"] .tank i{background:linear-gradient(180deg,#2BFF88,#0c8a49);box-shadow:0 -2px 12px rgba(43,255,136,.35)}
+html[data-look="nightcockpit"] .band.top .bar2{background:rgba(255,79,216,.2);box-shadow:0 0 0 1px var(--tgt),0 0 16px rgba(255,79,216,.12)}html[data-look="nightcockpit"] .band.top .bar2 i{background:var(--tgt)}html[data-look="nightcockpit"] .band.top .n,html[data-look="nightcockpit"] .strip .lbl .busy{color:var(--tgt)}
+html[data-look="nightcockpit"] .spark div.best{background:var(--tgt)!important;box-shadow:0 0 18px rgba(255,79,216,.45)}
+html[data-look="nightcockpit"] .verdict .vst:not(.dn){border-color:#2BFF88;color:#2BFF88}
+html[data-look="nightcockpit"] .fillbar i{background:linear-gradient(90deg,#14b866,#2BFF88)}
+html[data-look="nightcockpit"] .lab-flap .board .stt.de,html[data-look="nightcockpit"].lab-flap .board .stt.de{color:#2BFF88}
+/* ===== Glass Cockpit ingredients, mixed into a look (html.mix-<name>) ===== */
+html.mix-thin .pnl,html.mix-thin .card,html.mix-thin .sum,html.mix-thin .mc,html.mix-thin .q,html.mix-thin .selbox{box-shadow:none;border-color:rgba(130,195,255,.2)}
+html.mix-thin .pnl,html.mix-thin .sum{background:linear-gradient(180deg,rgba(10,32,58,.9),rgba(6,21,40,.9))}html.mix-thin .card{background:linear-gradient(180deg,rgba(10,32,58,.9),rgba(6,21,40,.9))}
+html.mix-thin .pnl::before,html.mix-thin .card::before,html.mix-thin .sum::before{background:linear-gradient(90deg,rgba(151,207,255,.22),transparent 45%)}
+html.mix-thin .pnl.focus,html.mix-thin .card.focus{box-shadow:inset 2px 0 0 var(--cyan);border-color:rgba(54,198,255,.55)}
+html.mix-thin table.t th,html.mix-thin table.t td{border-bottom-color:rgba(130,195,255,.1)}html.mix-thin .todo li,html.mix-thin .wrow{border-bottom-color:rgba(130,195,255,.1)}
+html.mix-thin .ico{stroke-width:1.35}html.mix-thin .pnl h2::before{width:2px}
+html.mix-thin .hd,html.mix-thin .bar{box-shadow:none;border-color:rgba(130,195,255,.18)}html.mix-thin .nav{box-shadow:none;border-right-color:rgba(130,195,255,.14)}html.mix-thin .nav button{border-bottom-color:rgba(130,195,255,.07)}
+html.mix-thin .nav button.on{box-shadow:inset 2px 0 0 var(--cyan)}
+html.mix-thin .track{background:repeating-linear-gradient(90deg,rgba(4,14,28,.6) 0,rgba(4,14,28,.6) calc(12.5% - 1px),rgba(130,195,255,.12) calc(12.5% - 1px),rgba(130,195,255,.12) 12.5%);border-color:rgba(130,195,255,.16);box-shadow:none}
+html.mix-thin .lane .who,html.mix-thin .bands{border-color:rgba(130,195,255,.16);box-shadow:none}html.mix-thin .blk:not(.on){border-width:1px;border-left-width:3px}
+html.mix-thin .fillbar{height:4px;box-shadow:none}html.mix-thin .ans .in{box-shadow:none;border-color:rgba(130,195,255,.35)}
+html.mix-thin .btn,html.mix-thin .fare,html.mix-thin .chip{box-shadow:none;border-color:rgba(130,195,255,.35)}
+html.mix-thin .wd{box-shadow:none;border-color:rgba(130,195,255,.18)}html.mix-thin .wd::after{display:none}
+html.mix-brackets .pnl::before,html.mix-brackets .card::before,html.mix-brackets .sum::before{left:-1px;top:-1px;right:auto;width:14px;height:14px;background:none;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan)}
+html.mix-brackets .pnl::after,html.mix-brackets .card::after{content:"";position:absolute;right:-1px;bottom:-1px;width:14px;height:14px;border-right:2px solid rgba(54,198,255,.55);border-bottom:2px solid rgba(54,198,255,.55);pointer-events:none}
+html.mix-brackets .wd::before{left:-1px;top:-1px;right:auto;width:14px;height:14px;background:none;border-top:2px solid var(--c-cyan);border-left:2px solid var(--c-cyan)}
+html.mix-magenta{--tgt:#FF4FD8}
+html.mix-magenta .unknown{color:var(--tgt);text-shadow:0 0 12px rgba(255,79,216,.45)}html.mix-magenta .card.focus .unknown,html.mix-magenta td.ask .unknown{animation-name:tgtBreathe}
+@keyframes tgtBreathe{0%,100%{text-shadow:0 0 10px rgba(255,79,216,.3)}50%{text-shadow:0 0 22px rgba(255,79,216,.65)}}
+html.mix-magenta .mc.wait{border-color:rgba(255,79,216,.55);background:rgba(255,79,216,.045)}html.mix-magenta .mc.wait b{color:var(--tgt)}html.mix-magenta .mc.wait small{color:#ff9be9}
+html.mix-magenta .gauge .tgt{stroke:var(--tgt)}html.mix-magenta .band.top .bar2{background:rgba(255,79,216,.2);box-shadow:0 0 0 1px var(--tgt),0 0 16px rgba(255,79,216,.12)}html.mix-magenta .band.top .bar2 i{background:var(--tgt)}
+html.mix-magenta .band.top .n,html.mix-magenta .strip .lbl .busy{color:var(--tgt)}html.mix-magenta .spark div.best{background:var(--tgt)!important;box-shadow:0 0 18px rgba(255,79,216,.45)}
+html.mix-magenta #hc .spk i.pk{background:var(--tgt)}
+html.mix-green{--good:#2BFF88;--c-green:#2BFF88}
+html.mix-green .calc-result{color:#2BFF88;text-shadow:0 0 14px rgba(43,255,136,.4)}html.mix-green .card .tag.ok{color:#2BFF88;border-color:rgba(43,255,136,.6);background:rgba(43,255,136,.06)}
+html.mix-green .card.done{border-left-color:rgba(43,255,136,.6)}html.mix-green .stamp:not(.fin){border-color:#2BFF88;color:#2BFF88}html.mix-green .bpass .stamp:not(.fin){color:#0b7a46;border-color:#0b7a46}
+html.mix-green .gauge .needle path{fill:#2BFF88;filter:drop-shadow(0 0 3px rgba(43,255,136,.8))}
+html.mix-green .tank i{background:linear-gradient(180deg,#2BFF88,#0c8a49);box-shadow:0 -2px 12px rgba(43,255,136,.35)}
+html.mix-green .fillbar i{background:linear-gradient(90deg,#14b866,#2BFF88)}html.mix-green .verdict .vst:not(.dn){border-color:#2BFF88;color:#2BFF88}
+html.mix-green.lab-flap .board .stt.de{color:#2BFF88}
+html.mix-dark,html.mix-dark body{background:#020406}html.mix-dark body::before{opacity:.35}
+html.mix-dark{--desk-panel:linear-gradient(180deg,#0a1016,#070b10);--desk-panel-active:linear-gradient(180deg,#0d151d,#091017);--wall-panel:linear-gradient(180deg,#0a1016,#070b10);--wall-panel-deep:#06090c}
+html.mix-dark .hd,html.mix-dark .logo{background:#04070a}html.mix-dark .hd::before{background:none}html.mix-dark .nav{background:#04070a}html.mix-dark .bar{background:#04070a}html.mix-dark .main{background:none}
+html.mix-dark .pnl,html.mix-dark .sum,html.mix-dark .card{background:linear-gradient(180deg,#0a1016,#070b10)}html.mix-dark .q{background:#020406!important}html.mix-dark .mc{background:#020406}
+html.mix-dark .nav button.on{background:linear-gradient(90deg,rgba(54,198,255,.16),transparent)}html.mix-dark .wall{background:#020406}html.mix-dark .lane .who{background:#070b10}
+html.mix-labels .pnl h2{text-transform:uppercase;letter-spacing:.14em;font-size:13px;color:var(--cyan);font-weight:600}html.mix-labels .pnl h2 .sub{text-transform:none;letter-spacing:0}
+html.mix-labels .nav button b{text-transform:uppercase;letter-spacing:.08em;font-size:13px}html.mix-labels .hd-cell small{text-transform:uppercase;letter-spacing:.14em;font-size:10.5px}html.mix-labels table.t th{text-transform:uppercase;letter-spacing:.12em;font-size:11px}
+html.mix-labels .card h3{color:var(--cyan)}
+html.mix-outline .btn.pri,html.mix-outline .chip.on,html.mix-outline .blocks .on{background:rgba(54,198,255,.08);border-color:var(--cyan);color:var(--cyan);box-shadow:none}
+html.mix-outline .btn.go{background:rgba(43,255,136,.07);border-color:var(--good);color:var(--good);box-shadow:0 0 12px rgba(43,255,136,.12)}
+html.mix-outline .btn,html.mix-outline .fare,html.mix-outline .chip{background:transparent}html.mix-outline .wallbtn{background:transparent}
+html.mix-outline .nav button.on{background:linear-gradient(90deg,rgba(54,198,255,.14),transparent);color:var(--cyan)}html.mix-outline .nav button.on small{color:#9fd8ff}
 </style>
 </head>
 <body>
@@ -1642,6 +1701,7 @@ function toggleRM(){ S.rm = !S.rm; document.documentElement.classList.toggle('rm
    ===================================================================== */
 const LAB_KEY = 'airline-style-lab-1';
 const LOOKS = [ ['night', 'Night Ops', 'Deep blue and cyan light: the look so far', ['#05162a', '#0d3159', '#36c6ff', '#F2C14E']],
+  ['nightcockpit', 'Night Ops + Cockpit', 'Night Ops, with cockpit magenta for what to work out and green for what is confirmed', ['#05162a', '#0d3159', '#FF4FD8', '#2BFF88']],
   ['signage', 'Airport Signage', 'Charcoal and signage yellow: bold, flat, clear on a board', ['#0f1113', '#24272d', '#FFD200', '#ffffff']],
   ['cockpit', 'Glass Cockpit', 'Near-black and thin lines: cyan selected, green engaged, magenta to work out', ['#020304', '#0a0f14', '#19E6FF', '#FF4FD8']],
   ['day', 'Day Ops', 'Light and clean, like business software (the wall stays dark: it is the control room)', ['#eef2f7', '#ffffff', '#1f6fff', '#0f1f33']] ];
@@ -1665,12 +1725,18 @@ const LAB_ITEMS = [
   ['Excitement', [ ['show', 'Flying the week', 'The board flips and the day\'s flights are called before they fly'],
     ['report', 'Match report', 'Sunday\'s figures count up, then a verdict stamp'],
     ['sound', 'Quiet sounds', 'A soft click, an accept chime, the board\'s flaps (off to start)'] ]] ];
-const LAB = { look:'night', font:'system', on:{}, coached:[] };
-function labDefaults(){ LAB.look = 'night'; LAB.font = 'system'; LAB.coached = []; LAB_ITEMS.forEach(g => g[1].forEach(([k]) => { LAB.on[k] = !['sound', 'calm'].includes(k); })); }
-labDefaults(); try { const s = JSON.parse(localStorage.getItem(LAB_KEY) || 'null'); if(s){ LAB.look = s.look || LAB.look; LAB.font = s.font || LAB.font; Object.assign(LAB.on, s.on || {}); LAB.coached = s.coached || []; } } catch(e){}
+/* Glass Cockpit, taken apart: each ingredient can be mixed into any look (made for Night Ops). Hold C to see the look without them */
+const MIX = [ ['thin', 'Thin lines', 'Hairline borders and rules, flat panels, finer icons'], ['brackets', 'Corner brackets', 'A cyan bracket at the corners of each panel'],
+  ['magenta', 'Magenta targets', 'Magenta for what to work out or aim for: the ?, the waiting gaps, targets, the busiest time'],
+  ['green', 'Green when confirmed', 'Cockpit green for confirmed answers, the needles and the fuel in the tank'],
+  ['dark', 'Darker background', 'Near-black instead of deep blue'], ['labels', 'Instrument labels', 'Small capitals, spaced, in cyan for panel titles and the menu'],
+  ['outline', 'Outline buttons', 'Buttons drawn as lines rather than filled'] ];
+const LAB = { look:'night', font:'system', on:{}, mix:{}, coached:[] };
+function labDefaults(){ LAB.look = 'night'; LAB.font = 'system'; LAB.coached = []; LAB_ITEMS.forEach(g => g[1].forEach(([k]) => { LAB.on[k] = !['sound', 'calm'].includes(k); })); MIX.forEach(([k]) => { LAB.mix[k] = ['thin', 'magenta', 'green'].includes(k); }); }
+labDefaults(); try { const s = JSON.parse(localStorage.getItem(LAB_KEY) || 'null'); if(s){ LAB.look = s.look || LAB.look; LAB.font = s.font || LAB.font; Object.assign(LAB.on, s.on || {}); Object.assign(LAB.mix, s.mix || {}); LAB.coached = s.coached || []; } } catch(e){}
 const lab = k => !!LAB.on[k];
 function labSave(){ try { localStorage.setItem(LAB_KEY, JSON.stringify(LAB)); } catch(e){} }
-function labApply(){ const h = document.documentElement; h.dataset.look = LAB.look; h.dataset.font = LAB.font; Object.keys(LAB.on).forEach(k => h.classList.toggle('lab-' + k, lab(k))); }
+function labApply(bare){ const h = document.documentElement; h.dataset.look = LAB.look; h.dataset.font = LAB.font; Object.keys(LAB.on).forEach(k => h.classList.toggle('lab-' + k, lab(k))); MIX.forEach(([k]) => h.classList.toggle('mix-' + k, !bare && !!LAB.mix[k])); }
 const callsign = (ai, fi) => DATA.airline.code + (100 + ai * 10 + fi);
 
 /* ---------- line icons: one set, 24 × 24, drawn with the text colour ---------- */
@@ -1850,11 +1916,12 @@ function hideSpot(){ const sp = document.getElementById('spot'); if(sp) sp.hidde
 function labPanel(){ const p = document.getElementById('labp');
   p.innerHTML = `<button class="lx" data-lab="close" title="Close (L)">✕</button><h3>${IC('lab')} Style lab</h3><p class="lsub">Try looks and instruments, then keep what works. Remembered on this computer. L opens and closes this.</p>
   <h4>Look</h4><div class="looks">${LOOKS.map(([id, t, d, sw]) => `<button class="${LAB.look === id ? 'on' : ''}" data-look="${id}"><span class="sw">${sw.map(c => `<i style="background:${c}"></i>`).join('')}</span><b>${t}</b><small>${d}</small></button>`).join('')}</div>
+  <h4>Mix in from Glass Cockpit <span style="letter-spacing:0;text-transform:none;font-weight:400">· hold C to compare</span></h4>${MIX.map(([k, t, d]) => `<div class="tg ${LAB.mix[k] ? 'on' : ''}" data-mix="${k}" role="switch" aria-checked="${!!LAB.mix[k]}" tabindex="0"><b>${t}</b><span class="sl"></span><small>${d}</small></div>`).join('')}
   <h4>Typeface</h4><div class="fonts">${FONTS.map(([id, t, fam]) => `<button class="${LAB.font === id ? 'on' : ''}" data-font="${id}"><b style='font-family:${fam}'>£19,052</b><small>${t}</small></button>`).join('')}</div>
   ${LAB_ITEMS.map(([g, items]) => `<h4>${g}</h4>${items.map(([k, t, d]) => `<div class="tg ${lab(k) ? 'on' : ''}" data-tog="${k}" role="switch" aria-checked="${lab(k)}" tabindex="0"><b>${t}</b><span class="sl"></span><small>${d}</small></div>`).join('')}`).join('')}
   <div class="lfoot"><button data-lab="all">All on</button><button data-lab="none">All off</button><button data-lab="tips">Show the tips again</button><button data-lab="reset">Reset</button></div>`; }
 function toggleLab(open){ const p = document.getElementById('labp'); p.hidden = open === undefined ? !p.hidden : !open; if(!p.hidden) labPanel(); }
-function labChange(b){ if(b.dataset.look) LAB.look = b.dataset.look; else if(b.dataset.font) LAB.font = b.dataset.font; else if(b.dataset.tog){ const k = b.dataset.tog; LAB.on[k] = !lab(k); if(k === 'sound' && lab(k)) setTimeout(() => snd('ok'), 30); }
+function labChange(b){ if(b.dataset.mix) LAB.mix[b.dataset.mix] = !LAB.mix[b.dataset.mix]; else if(b.dataset.look) LAB.look = b.dataset.look; else if(b.dataset.font) LAB.font = b.dataset.font; else if(b.dataset.tog){ const k = b.dataset.tog; LAB.on[k] = !lab(k); if(k === 'sound' && lab(k)) setTimeout(() => snd('ok'), 30); }
   else { const a = b.dataset.lab; if(a === 'close'){ toggleLab(false); return; } if(a === 'all' || a === 'none') Object.keys(LAB.on).forEach(k => { LAB.on[k] = a === 'all' && k !== 'sound'; }); if(a === 'tips') LAB.coached = []; if(a === 'reset') labDefaults(); }
   labSave(); labApply(); labPanel(); render(); if(b.dataset.lab === 'tips') setTimeout(maybeSpot, 50); }
 function labInit(){
@@ -1862,8 +1929,11 @@ function labInit(){
     <div id="spot" hidden><div class="hole"></div><div class="scard"><small>NEW HERE</small><p></p><button class="btn pri">Got it</button></div></div><div id="reel" hidden></div>`);
   labApply();
   document.getElementById('labBtn').addEventListener('click', () => toggleLab());
-  document.getElementById('labp').addEventListener('click', e => { const b = e.target.closest('[data-look],[data-font],[data-tog],[data-lab]'); if(b) labChange(b); });
-  document.getElementById('labp').addEventListener('keydown', e => { if((e.key === 'Enter' || e.key === ' ') && e.target.dataset.tog){ e.preventDefault(); labChange(e.target); } });
+  document.getElementById('labp').addEventListener('click', e => { const b = e.target.closest('[data-look],[data-font],[data-tog],[data-lab],[data-mix]'); if(b) labChange(b); });
+  document.getElementById('labp').addEventListener('keydown', e => { if((e.key === 'Enter' || e.key === ' ') && (e.target.dataset.tog || e.target.dataset.mix)){ e.preventDefault(); labChange(e.target); } });
+  // hold C: the look without the cockpit ingredients, to compare
+  document.addEventListener('keydown', e => { if((e.key === 'c' || e.key === 'C') && !e.repeat && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) labApply(true); });
+  document.addEventListener('keyup', e => { if(e.key === 'c' || e.key === 'C') labApply(); });
   document.getElementById('spot').addEventListener('click', hideSpot);
   let HC_EL = null, HC_T = 0;   // hover cards: one listener for the whole page
   document.addEventListener('mouseover', e => { const t = lab('hover') && e.target.closest ? e.target.closest('[data-hc]') : null; if(t === HC_EL) return; HC_EL = t; clearTimeout(HC_T); if(!t){ if(!e.target.closest || !e.target.closest('[data-setfare]')) hcHide(); return; }

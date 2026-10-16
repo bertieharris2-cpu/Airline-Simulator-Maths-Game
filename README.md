@@ -387,6 +387,16 @@ The opening is being made excellent before the later campaign continues. `airlin
   - **Airport Signage:** charcoal and signage yellow, flat and bold.
   - **Glass Cockpit:** near-black with thin lines. Cyan means selected, green engaged, magenta something to work out.
   - **Day Ops:** light and clean. The wall stays dark, as the control room.
+- **Glass Cockpit, taken apart:** seven ingredients that can each be mixed into a look (made for Night Ops):
+  - thin lines;
+  - corner brackets;
+  - magenta targets (the `?`, the waiting gaps, targets, the busiest time);
+  - green when confirmed (results, needles, the fuel in the tank);
+  - a darker background;
+  - instrument labels;
+  - outline buttons.
+
+  Hold **C** to see the look without them. Thin lines, magenta and green start switched on.
 - **Three typefaces:** Segoe (as now), and Inter or Barlow built into the file, so it still works offline. Both have plain zeros, figures that line up, and two weights.
 - **Instruments:**
   - a split-flap departures board on Live operations, whose letters flip as flights board and depart;
