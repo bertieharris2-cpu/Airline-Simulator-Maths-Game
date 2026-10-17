@@ -44,14 +44,15 @@ stripHtml = function(pl, id){
   if(!rid) return dsAllHtml(pl, flown, tabs);
   const D = dsShape(pl, rid); if(!D) return '';
   const F = sel ? D.fl.find(x => x.uid === sel.uid && x.trip === sel.k) : null, C = F ? dsCatch(D, F) : null;
-  const mx = Math.max(1, D.flex, ...D.bands.map(o => o.want)), H = v => `${Math.max(v > 0 ? 3 : 0, Math.round(100 * v / mx))}%`;
+  // the bands share one scale and the Any time bar (its own box, with its number) another: on one scale a band of 7 beside 69 any-time passengers was a sliver
+  const mx = Math.max(1, ...D.bands.map(o => o.want)), H = v => `${Math.max(v > 0 ? 6 : 0, Math.round(92 * v / mx))}%`, HA = v => `${v > 0 ? 92 : 0}%`;
   const s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => 100 * (Math.max(s0, Math.min(e0, m)) - s0) / span, hm = h => `${pad(h)}:00`;
   const shade = b => !F ? 'idle' : b === F.band ? 'lit' : D.served.has(b) ? 'other' : 'dim';
   const cols = D.bands.map(o => { const w = X(o.h1 * 60) - X(o.h0 * 60), sh = shade(o.b), mvCls = !F ? 'idle' : o.to === F.band ? 'lit' : o.to ? 'other' : 'dim';
     const tip = `${BAND_SHORT[o.b]} ${hm(o.h0)}–${hm(o.h1)}: ${o.want} must fly then` + (o.move ? `; with no flight then, ${o.move} will take the nearest flight instead` : '');
     return `<div class="ds-col ${sh}" style="left:${X(o.h0 * 60).toFixed(2)}%;width:${w.toFixed(2)}%" title="${esc(tip)}"><span class="ds-n">${num(o.want)}</span><div class="ds-area"><div class="ds-stack" style="height:${H(o.want)}">${o.move ? `<i class="ds-mv ${mvCls}" style="height:${(100 * o.move / Math.max(1, o.want)).toFixed(1)}%"></i>` : ''}<i class="ds-lk"></i></div></div><span class="ds-l">${esc(BAND_SHORT[o.b])}</span></div>`; }).join('');
   const anyLit = C ? C.flex : 0, anyOther = C ? Math.min(D.flex, C.othersFlex) : 0;
-  const any = `<div class="ds-any ${F ? 'sel' : ''}" title="${num(D.flex)} will fly at any time"><span class="ds-n">${num(D.flex)}</span><div class="ds-area"><div class="ds-stack" style="height:${H(D.flex)}">${F ? `<i class="ds-af other" style="height:${(100 * anyOther / Math.max(1, D.flex)).toFixed(1)}%"></i><i class="ds-af lit" style="height:${(100 * anyLit / Math.max(1, D.flex)).toFixed(1)}%"></i>` : '<i class="ds-af idle" style="height:100%"></i>'}</div></div><span class="ds-l">Any time</span></div>`;
+  const any = `<div class="ds-any ${F ? 'sel' : ''}" title="${num(D.flex)} will fly at any time"><span class="ds-n">${num(D.flex)}</span><div class="ds-area"><div class="ds-stack" style="height:${HA(D.flex)}">${F ? `<i class="ds-af other" style="height:${(100 * anyOther / Math.max(1, D.flex)).toFixed(1)}%"></i><i class="ds-af lit" style="height:${(100 * anyLit / Math.max(1, D.flex)).toFixed(1)}%"></i>` : '<i class="ds-af idle" style="height:100%"></i>'}</div></div><span class="ds-l">Any time</span></div>`;
   const seats = F ? F.seats : 0, word = F ? DS_WORD[F.band] || F.band : '';
   const parts = F ? [C.lock ? `the ${word} passengers` : null, C.flex ? "those who'll fly any time" : null, C.adapt ? `some who'd rather go ${C.dir}` : null].filter(Boolean) : [];
   const list = parts.length > 2 ? parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1] : parts.length === 2 ? parts.join(' and ') : parts[0] || 'no one';
@@ -67,14 +68,20 @@ stripHtml = function(pl, id){
 function dsAllHtml(pl, flown, tabs){
   const Ds = flown.map(r => dsShape(pl, r)).filter(Boolean), W = Ds.reduce((t, D) => t + D.W, 0), flex = Ds.reduce((t, D) => t + D.flex, 0);
   const bands = BANDS.map(b => { const [h0, h1] = bandHours(b); return { b, h0, h1, want:Ds.reduce((t, D) => t + D.bands.find(o => o.b === b).want, 0) }; });
-  const mx = Math.max(1, flex, ...bands.map(o => o.want)), H = v => `${Math.max(v > 0 ? 3 : 0, Math.round(100 * v / mx))}%`;
+  const mx = Math.max(1, ...bands.map(o => o.want)), H = v => `${Math.max(v > 0 ? 6 : 0, Math.round(92 * v / mx))}%`, HA = v => `${v > 0 ? 92 : 0}%`;
   const s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => 100 * (Math.max(s0, Math.min(e0, m)) - s0) / span;
   const cols = bands.map(o => `<div class="ds-col idle" style="left:${X(o.h0 * 60).toFixed(2)}%;width:${(X(o.h1 * 60) - X(o.h0 * 60)).toFixed(2)}%"><span class="ds-n">${num(o.want)}</span><div class="ds-area"><div class="ds-stack" style="height:${H(o.want)}"><i class="ds-lk"></i></div></div><span class="ds-l">${esc(BAND_SHORT[o.b])}</span></div>`).join('');
   return `<div class="st-strip ds3" data-strip=""><div class="st-sl"><b>All routes at your fares: ${num(W)} want to fly</b><span class="st-key ds-key"><span><i class="lk"></i>must fly at that time</span><span><i class="fx"></i>will fly any time</span></span>${tabs}</div>
-    <div class="st-sb ds-sb">${cols}</div><div class="ds-any"><span class="ds-n">${num(flex)}</span><div class="ds-area"><div class="ds-stack" style="height:${H(flex)}"><i class="ds-af idle" style="height:100%"></i></div></div><span class="ds-l">Any time</span></div>
+    <div class="st-sb ds-sb">${cols}</div><div class="ds-any"><span class="ds-n">${num(flex)}</span><div class="ds-area"><div class="ds-stack" style="height:${HA(flex)}"><i class="ds-af idle" style="height:100%"></i></div></div><span class="ds-l">Any time</span></div>
     <p class="ds-cap">Choose a route to see its shape; select a flight to see what it can catch.</p></div>`;
 }
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-dstab]'); if(!b) return; UI.dsTab = b.getAttribute('data-dstab'); if(UI.s2) UI.s2.strip = null; render(); });
+/* turned away means no seat: on a full route, the people its flights could catch less its seats; those who wanted a time with no
+   flight are named apart (Marrakech, one E175 at 06:00: 98 want, 87 can be caught, 80 seats: 7 turned away, 11 wanted another time) */
+const s3Chips0 = dsChips;
+dsChips = function(root, pl){ const r = s3Chips0.apply(this, arguments); try{ root.querySelectorAll('.ds-chips[data-dsch] .ds-chl:not([data-s3])').forEach(l => {
+    const D = dsShape(pl, l.parentNode.getAttribute('data-dsch')); if(!D) return; const stay = D.bands.reduce((t, o) => t + (o.stay || 0), 0), seats = D.fl.reduce((t, x) => t + (x.seats || 0), 0), away = Math.max(0, D.W - stay - seats);
+    l.dataset.s3 = '1'; l.textContent = `Full, ${num(away)} turned away${stay ? ` (${num(stay)} more wanted a time with no flight)` : ''}. Seats filled at each fare:`; }); }catch(e){} return r; };
 window.__ds = { shape:(rid) => { const D = dsShape(currentPlan(), rid); return D && { W:D.W, flex:D.flex, bands:D.bands, adaptTo:D.adaptTo, flights:D.fl.map(x => ({ dep:x.dep, band:x.band, seats:x.seats, sold:x.sold, catch:dsCatch(D, x).total })) }; } };
 
 /* ---------- 2. the Studio: the route list folds to one line; one fixed bar for the selected flight ---------- */
@@ -188,7 +195,12 @@ ftNew = function(){
 const ftPage0 = ftPage;
 ftPage = function(){
   const P = ftPage0(); if(!P) return P;
-  if(P.items.length && P.items[0].lvl === undefined){ const lv = ftLevel(), want = lv === 'build' ? 1 : Math.max(1, 2 - ftDone()); P.items.splice(want); P.items.forEach(x => { x.lvl = lv; x.h = ''; x.m = 0; x.seq = []; }); }
+  if(P.items.length && P.items[0].lvl === undefined){ const lv = ftLevel(), want = lv === 'build' ? 1 : Math.max(1, 2 - ftDone());
+    // never a pair the airline already knows: the page used to compare one route by the slowest and the fastest aircraft even when
+    // one of them had flown it (the Twin Otter to Dublin, asked again when a Saab arrived)
+    const keep = P.items.filter(x => P.fresh.includes(x.k)), nice = k => { const [a, b] = k.split('|'); return ftNice(ftHours(planeById(a), routeById(b))) ? 0 : 1; };
+    P.fresh.filter(k => !keep.some(x => x.k === k)).sort((a, b) => nice(a) - nice(b)).slice(0, Math.max(0, want - keep.length)).forEach(k => keep.push({ k, v:'', tries:0, done:false, shown:false, msg:'', q:false }));
+    P.items.splice(0, P.items.length, ...keep.slice(0, want)); P.items.forEach(x => { x.lvl = lv; x.h = ''; x.m = 0; x.seq = []; }); }
   return P;
 };
 const FT_WORD = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
@@ -376,6 +388,7 @@ finChart = function(o){
   const months = s3Periods('month').length > 0, weeks = s3Periods('week').length > 0; if(!weeks && !months) return s3Fin0.apply(this, arguments);
   const tabs = [['weeks', 'Weeks']].concat(months ? [['months', 'Months']] : [['days', 'This week by day']]), t = tabs.some(x => x[0] === UI.wgTab) ? UI.wgTab : 'weeks';
   const body = t === 'days' ? s3Fin0.apply(this, arguments) : s3Graph(t === 'months' ? 'month' : 'week', o);
+  setTimeout(() => document.querySelectorAll('.phead[data-status="BY DAY"], .phead[data-status="BY WEEK"], .phead[data-status="BY MONTH"]').forEach(h => { const sec = h.closest('section'); if(sec && sec.querySelector('.s3g-w')) h.dataset.status = { weeks:'BY WEEK', months:'BY MONTH', days:'BY DAY' }[t]; }), 0);   // the panel's label follows the tab
   return `<div class="s3g-w"><div class="s3g-tabs" role="tablist">${tabs.map(([k, l]) => `<button data-wgtab="${k}" aria-selected="${t === k}">${l}</button>`).join('')}</div>${body}</div>`;
 };
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-wgtab]'); if(!b) return; UI.wgTab = b.getAttribute('data-wgtab'); try{ render(); }catch(err){} try{ if(typeof renderDisplay === 'function' && (typeof wallView !== 'undefined' && wallView || IS_DISPLAY)) renderDisplay(); }catch(err){} });
@@ -475,7 +488,8 @@ function wcBind(){
   const strip = () => { S.steps = S.steps.filter(x => !['fleetSums', 'acquire'].includes(x.t)); };
   const choice = () => { if(F.c) S.rnd.acChoice = { pid, rid:F.C.rid, fare:F.c.b.fare, n:F.c.b.n, deps:F.c.b.deps, extra:F.c.extra, own:Math.round(F.c.b.own) }; S.rnd.shopPick = pid; };
   on('wcBuy', () => { const f = typeof taFig === 'function' ? taFig(pid) : null; if(f && !f.afford) return; choice(); strip(); const uid = acquirePlane(F.p, 'buy'); if(F.c && typeof acApplyChoice === 'function') acApplyChoice(uid); UI.wc = null; delete S.rnd.shopPick; UI.justDone = null; advance(); });
-  on('wcGet', () => { choice(); strip(); const k = S.steps.findIndex(x => x.t === 'shop2'); S.steps.splice(k + 1, 0, { t:'acquire' }); UI.wc = null; UI.justDone = null; advance(); });
+  on('wcGet', () => { choice(); strip(); const k = S.steps.findIndex(x => x.t === 'shop2'), show = UI.wc.from === 'show';   // from the air show, the rent-or-buy sum still comes first (the full plane is signed here)
+    S.steps.splice(k + 1, 0, ...(show ? [{ t:'fleetSums' }, { t:'acquire' }] : [{ t:'acquire' }])); UI.wc = null; UI.justDone = null; advance(); });
   on('wcWait', () => { if(ta && !ta.st.taOk) return; const f = typeof taFig === 'function' ? taFig(pid) : { price:F.o.price, days:null }; S.waitFor = { pid, from:S.day, price:f.price, days:f.days };
     addNews([{ tag:'FLEET', text:`Saving for the ${F.p.name}${f.days !== null && f.days !== undefined ? `: about ${dayWord(f.days)} at your rate` : ''}.` }]);
     try{ rec().pend.events.push({ day:S.day, title:'Aircraft', choice:`wait for the ${F.p.name}`, cost:0 }); }catch(e){}
@@ -525,17 +539,18 @@ function cuStripHtml(){
   const d = S.day || 1, G = cuGroups(), up = G.filter(g => g.at > d), next = up.find(g => g.from <= d) || up[0]; if(!next) return '';
   const after = up.filter(g => g !== next), later = [after[0]], ch = (WB.chapters || []).find(c => c.start && isoDay(c.start) > d), big = ch && after.find(g => g.at >= isoDay(ch.start) && g !== after[0]);
   if(big) later.push(big);
-  const item = (g, cls) => `<span class="cu-i ${cls}">${cuSil(false, g.lines.join(' · '))}<span><b>${esc(g.when.startsWith('Week') ? dateShort(g.at) : g.when)}</b> · ${esc(g.lines.join(' · '))}</span></span>`;
+  // NEXT is shown whole; LATER keeps each item's first line (the rest is in the silhouette's tooltip) and gives way first when space is short
+  const item = (g, cls) => `<span class="cu-i ${cls}">${cuSil(false, g.lines.join(' · '))}<span><b>${esc(g.when.startsWith('Week') ? dateShort(g.at) : g.when)}</b> · ${esc(cls === 'later' ? g.lines[0] : g.lines.join(' · '))}</span></span>`;
   return `<div class="cu" role="note" aria-label="Coming up"><span class="cu-k">NOW</span><span class="cu-i now">${cuSil(true)}<span>${esc(cuNowLine())}</span></span>
     <span class="cu-k">NEXT</span>${item(next, 'next')}${later.filter(Boolean).length ? `<span class="cu-k">LATER</span>${later.filter(Boolean).map(g => item(g, 'later')).join('')}` : ''}</div>`;
 }
 const isoDay = iso => { const t = Date.parse(String(iso).slice(0, 10) + 'T00:00:00Z'); return isNaN(t) ? 1e9 : Math.round((t - calDate(0).getTime()) / 86400000); };
 function cuNextWeekLine(){
-  if(WBS().comingUp === undefined) return ''; const d = S.day || 1, G = cuGroups().filter(g => g.at > d && g.at <= d + 8), items = G.flatMap(g => g.lines.map(l => l.replace(/^Week \d+: /, '')));
+  if(WBS().comingUp === undefined) return ''; const d = S.day || 1, G = cuGroups().filter(g => g.at > d && g.at <= d + 7), items = G.flatMap(g => g.lines.map(l => l.replace(/^Week \d+: /, '')));
   const wk = weekNo(d) + 1, M = (WORLD.market || WB.market || []).find(m => m.week === wk - 1) || null, fh = M && M.fuelHeadline ? String(M.fuelHeadline).replace(/\.$/, '') : '';
-  const parts = []; if(items.length) parts.push(items.map(x => x.charAt(0).toLowerCase() + x.slice(1)).join(', ') + (/ (open|opens)$/.test(items[items.length - 1]) ? '' : ''));
-  if(fh) parts.push(`the fuel desk: ${fh.charAt(0).toLowerCase() + fh.slice(1)}`);
-  return parts.length ? `Next week: ${parts.join('; and ')}.` : '';
+  // the Roadmap's own words, one item after another ("Medium haul — Madrid, and your first jets"), then the fuel desk's headline in quotes
+  const what = items.map(x => x.replace(': ', ' — ')).join('; ');
+  return what || fh ? `${what ? `Next week: ${what}.` : ''}${fh ? `${what ? ' ' : ''}Fuel desk: “${fh}.”` : ''}` : '';
 }
 const cuRender0 = render;
 render = function(){ const r = cuRender0.apply(this, arguments); try{

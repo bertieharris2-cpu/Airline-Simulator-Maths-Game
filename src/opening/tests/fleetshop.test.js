@@ -21,7 +21,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
   const errors = [], checks = [], info = {};
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
-  await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.workingOnPaper = 'off'; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
+  await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.workingOnPaper = 'off'; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; st.dailyColour = false; });   // the purchase-day check compares two days' costs, so no daily colour (a Wednesday tailwind saves fuel)
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S()), E = src => p.evaluate(s => window.__sim.evalIn(s), src);
   const ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x) : ''));
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };
@@ -56,6 +56,24 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
     if(t === 'intro'){ for(let pg = 0; pg < 3; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')){ for(let k = 0; k < 3; k++){ const a = await E('practiceAnswer()'); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } }
       const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
     if(t === 'shop2' && !boardShop && !planShop){ ok('day 8: the shop is not offered by itself (Bertie, 14 Oct: the Fleet desk only)', false, (await S()).steps.map(x => x.t)); await p.click('#skipShop'); await p.waitForTimeout(100); continue; }
+    // D101: Choose the Saab opens its worth check in place; Wait asks how long it takes to afford (with the division pad); Back, then the Twin Otter, bought now
+    const wcFull = async () => { const pid = await p.evaluate(() => window.__wc.open()); if(await p.$('[data-wcin]')){ await p.fill('[data-wcin]', String(await p.evaluate(id => window.__wc.answer(id), pid))); await p.click(`[data-wcchk="${pid}"]`); await p.waitForTimeout(100); } return pid; };
+    if(t === 'shop2' && boardShop && !rented && await vis('.wc')){ const pid = await wcFull();
+      if(pid === 'sf34' && !info.taDone){ await shot('fs-02c-worth-check'); await p.click('#wcAskWait'); await p.waitForTimeout(100); const F = JSON.parse(await E('JSON.stringify(UI.taF)')), all = await txt('#screen');
+        ok('chapter 1 is buy only: the worth check offers Buy it now (greyed) or Wait, no Rent or Finance', !(await vis('[data-terms]')) && !/a day to rent|Finance, down/.test(all) && await vis('.ta-card'), all.slice(0, 160));
+        if(await p.$('[data-pad="ta1"]')){ await p.fill('[data-pad="ta1"]', String(F.still)); await p.click('#ta1Chk'); await p.waitForTimeout(60); }
+        if(await p.$('[data-pad="ta2"]') && !divPad){ divPad = true; const bt = await p.$('.ta-card .pad-btn'); ok('the days-to-wait box has a Working button', !!bt);
+          if(bt){ await bt.click(); await p.waitForTimeout(80); const I = JSON.parse(await E(`JSON.stringify(padInfo('[data-pad="ta2"]'))`));
+            ok(`the pad sets out ${F.still} ÷ ${F.rate} as a bus stop, with the multiples of ${F.rate} to fill and two decimal places`, I && I.op === '÷' && I.a === F.still && I.b === F.rate && I.dp === 2 && await vis('.wpop .wp-bus') && (await p.$$('.wpop [data-wpm]')).length === 8, I);
+            const q = (I.ans.toFixed(I.dp)).replace('.', '').padStart(I.int + I.dp, ' '); for(let c = 0; c < q.length; c++) if(q[c] !== ' ' && !(c < I.int - 1 && q[c] === '0')) await p.fill(`.wpop [data-wpr="q"][data-wpc="${c}"]`, q[c]);
+            await shot('fs-02b-division-pad'); await p.click('.wpop [data-wpuse]'); await p.waitForTimeout(60);
+            ok(`Use this answer puts ${I.ans.toFixed(2)} in the box`, +(await p.$eval('[data-pad="ta2"]', e => e.value)) === +I.ans.toFixed(2), await p.$eval('[data-pad="ta2"]', e => e.value));
+            await p.click('#ta2Chk'); await p.waitForTimeout(60); ok('a decimal number of days is a Query: round up', /round up/.test(await txt('.ta-card')), await txt('.ta-card .sc-msg')); } }
+        if(await p.$('[data-pad="ta2"]')){ await p.fill('[data-pad="ta2"]', String(F.days)); await p.click('#ta2Chk'); await p.waitForTimeout(80); }
+        ok(`the time to afford is signed: (${F.price} − ${F.cash}) ÷ ${F.rate} → ${F.days} days`, await vis('.ta-card.ok'), F); await shot('fs-03-buy-or-wait'); info.taDone = true;
+        await p.click('#wcNoWait'); await p.waitForTimeout(80); await p.click('[data-wcpick="dhc6"]'); await p.waitForTimeout(120); continue; }
+      const tw = await p.$('#wcBuy:not([disabled])'); ok('the second Twin Otter can be bought now', pid === 'dhc6' && !!tw, pid);
+      if(tw){ await tw.click(); await p.waitForTimeout(100); rented = { day:(await S()).day }; } else break; continue; }
     if(t === 'shop2' && boardShop && !rented){ await shot('fs-02-shop-from-board'); ok('the shop opened from the board is the comparison (one aircraft)', await vis('[data-acc="sf34"]'));
       if(await p.$('[data-actab="where"]')) await p.click('[data-actab="where"]'); await p.click('[data-acc="sf34"]'); await p.waitForTimeout(150); continue; }
     if(t === 'acquire' && await vis('.so-page')){ await signs(); await p.click('#nx'); continue; }
@@ -87,7 +105,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
         await shot('fs-04-back-on-board'); }
       continue; }
     if(t === 'event'){ await p.click('[data-o="1"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
-    if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.fill(`[data-ftpin="${P.next.key}"]`, String(P.next.answer)); await p.click(`[data-ftpchk="${P.next.key}"]`); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } continue; }   // flight times before the timetable
+    if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.evaluate(() => window.__tk.answer(true)); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } continue; }   // flight times before the timetable
     if(t === 'plan'){
       if(day === 8 && !planShop){ const so = JSON.parse(await E('JSON.stringify(shopOfferedReport())')); ok('day 8: no shop step by itself: HQ goes straight to the plan, and the brief names the Fleet desk', !so.scheduled && so.brief.some(l => /On the Fleet desk from today/.test(l)), so);
         await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150); await shot('fs-01-fleet-panel');
@@ -144,6 +162,8 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
     if(t === 'plan' && !rentShop){ rentShop = true; await p.click('[data-nav="fleet"]'); await p.waitForTimeout(150); await p.click('#fleetShop'); await p.waitForTimeout(150); continue; }
     if(t === 'intro'){ for(let pg = 0; pg < 3; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')){ for(let k = 0; k < 3; k++){ const a = await E('practiceAnswer()'); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } }
       const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
+    if(t === 'shop2' && await vis('.wc')){ const pid = await p.evaluate(() => window.__wc.open()); if(await p.$('[data-wcin]')){ await p.fill('[data-wcin]', String(await p.evaluate(id => window.__wc.answer(id), pid))); await p.click(`[data-wcchk="${pid}"]`); await p.waitForTimeout(100); }
+      ok('once renting opens, the worth check leads to the pay page: Get it now (rent, finance or buy)', await vis('#wcGet')); await p.click('#wcGet'); await p.waitForTimeout(150); continue; }
     if(t === 'shop2'){ if(await p.$('[data-actab="where"]')) await p.click('[data-actab="where"]'); await p.click('[data-acc="sf34"]'); await p.waitForTimeout(150); continue; }
     if(t === 'acquire' && await vis('.so-page')){ await signs(); await p.click('#nx'); continue; }
     if(t === 'acquire'){ const o = JSON.parse(await E('JSON.stringify(shopOffer(planeById("sf34")))')), m = v => '£' + Math.round(v).toLocaleString('en-GB'), pay = await txt('.acq');

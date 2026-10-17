@@ -14,6 +14,9 @@ const fs = require('fs'), path = require('path');
 const ROOT = path.resolve(__dirname, '../../..');
 const WE = require(path.join(ROOT, 'src/opening/engine/world-engine.js'));
 const W = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/opening/parts/p2_data.html'), 'utf8').match(/id="data-workbook">(.*?)<\/script>/s)[1]);
+// Screens brief 3 (D101, Settings adaptToOnlyFlight): a band with no service on the route sends this share of its time-locked passengers
+// to the nearest service. The reports all predate it, so they run with it off; the rule's own check is at the end.
+const ADAPT = W.settings.adaptToOnlyFlight; W.settings.adaptToOnlyFlight = 0;
 const FUEL = 1.2, MORNING = '07:00', EVENING = '18:00', hm0 = WE.home(W, 'LHR', 'T5');
 // Workbook v4.4 (12 Oct 2026): the tutorial aircraft cost more per day (D55) and chapter 1 has no second-crew charge (D51, crew duty
 // from Settings crewMechanicFromDate). The earlier reports' figures are re-based: report − the day-cost rise + the second crew the
@@ -185,6 +188,11 @@ console.log('Threshold placements (people at a fare)');
 const ppl = (r, f, m) => WE.roundSchool(R(r).demandAtFare[String(f)] * (m || 1));
 [['dub', 90, 62], ['dub', 100, 44], ['dub', 110, 30], ['par', 90, 50], ['par', 120, 20], ['ams', 90, 76], ['ams', 100, 56], ['fra', 120, 50], ['gva', 110, 70, 1.4], ['bcn', 140, 59, 1.1], ['mad', 170, 100], ['mad', 150, 140]]
   .forEach(([r, f, n, m]) => ok(`${r} £${f}${m ? ' ×' + m : ''} → ${n}`, ppl(r, f, m) === n, ppl(r, f, m)));
+
+console.log('D101: one flight on a route catches some of the people who wanted another time');
+{ const pax = d => d.trips.reduce((a, t) => a + t.pax, 0), one = () => pax(day('at72', [{ route:'mad', dep:'06:30', fare:180 }], {}, 1.7)), off = one(); W.settings.adaptToOnlyFlight = ADAPT; const on = one(), two = pax(day('at72', [{ route:'mad', dep:'06:30', fare:180 }, { route:'mad', dep:'13:50', fare:180 }], {}, 1.7)); W.settings.adaptToOnlyFlight = 0;
+  ok(`adaptToOnlyFlight ${ADAPT}: Madrid's lone 06:30 ATR at £180 carries more (${off} → ${on}), never over its ${P('at72').seats} seats`, ADAPT > 0 && on > off && on <= P('at72').seats, [off, on]);
+  ok('a second service the other side of the day still carries more than one alone', two > on, [on, two]); }
 
 console.log(fails ? `${fails} FAILED` : `All Balance Report figures reproduced (${noted} known differences noted above).`);
 process.exit(fails ? 1 : 0);

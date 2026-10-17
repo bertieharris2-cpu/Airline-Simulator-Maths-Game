@@ -127,7 +127,7 @@ function servicePlan(pl, uid, k){
   pl = normPlan(JSON.parse(JSON.stringify(pl))); const x = pl.fleet.find(z => z.uid === uid) || pl.fleet[0], j = pl.fleet.indexOf(x), deps = x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(pl, j);
   return Object.assign({}, pl, { onboard:'none', fleet:pl.fleet.map(z => z === x ? { uid:z.uid, planeId:z.planeId, sched:[z.sched[k]], deps:[deps[k]] } : { uid:z.uid, planeId:z.planeId, sched:[], deps:null }) });
 }
-const shortPlane = p => p.name.replace(/^DHC-6 /, '').replace(/^Embraer /, 'E-').replace(/^Airbus /, '').replace(/^Boeing /, '');
+const shortPlane = p => p.name.replace(/^DHC-6 /, '').replace(/^Embraer /, '').replace(/^Airbus /, '').replace(/^Boeing /, '');
 function cardStage(c, pl){ const p = planeById(c.planeId), r = routeById(c.route);
   return { id:'fc|' + c.key, card:c, opts:[{ id:'a', label:`${shortPlane(p)} · ${homeData().code}–${tlCode(r)}`, sub:`one service · fuel at ${priceL(c.price)}`, plan:servicePlan(pl, c.uid, c.k), pick:null, word:'' }], rowIds:['fuelL', 'ppl', 'fuel'], fuelAt:c.price }; }
 /* Launch Day: the cards go after the tickets, before the profit */

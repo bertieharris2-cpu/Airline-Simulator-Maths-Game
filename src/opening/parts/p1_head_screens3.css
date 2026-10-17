@@ -244,7 +244,7 @@ body.rm .wc-mr.fresh,body.rm .wc-coins.go i,body.rm .wc-mr b.flash{animation:non
 .cu{display:flex;align-items:center;gap:10px;min-height:38px;padding:4px 12px;margin:0 0 8px;border:1px solid rgba(130,195,255,.2);background:linear-gradient(180deg,rgba(11,35,64,.9),rgba(6,22,42,.9));font-size:13px;color:#CFE0F7;overflow:hidden;white-space:nowrap}
 .cu-k{font-size:10.5px;letter-spacing:.16em;font-weight:700;color:#9FBDE3}
 .cu-i{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
-.cu-i.now{flex:none}.cu-i.next{flex:1 1 auto;min-width:160px}
+.cu-i.now{flex:0 1 auto;min-width:120px}.cu-i.next{flex:0 0 auto;max-width:46%}.cu-i.later{flex:0 1 auto;min-width:60px}
 .cu-i > span{overflow:hidden;text-overflow:ellipsis}
 .cu-i b{color:#EAF2FF;font-weight:600}
 .cu-i.now{color:#EAF2FF}
@@ -253,7 +253,7 @@ body.rm .wc-mr.fresh,body.rm .wc-coins.go i,body.rm .wc-mr b.flash{animation:non
 .cu-sil.on{color:#36C6FF}
 .cu-nw{margin:10px 2px 0;font-size:14px;color:#EAF2FF;border-top:1px solid rgba(130,195,255,.15);padding-top:8px}
 .kpis:has(> .cu){flex-wrap:wrap}
-.kpis > .cu{flex:0 0 100%;grid-column:1 / -1;order:-1;margin:0 0 2px;box-sizing:border-box;width:100%}
+.kpis > .cu{min-height:30px;padding:2px 12px;flex:0 0 100%;grid-column:1 / -1;order:-1;margin:0 0 2px;box-sizing:border-box;width:100%}
 .hq-t th[title^="Passengers we couldn"]{letter-spacing:0 !important;font-size:10px !important;white-space:nowrap}
 .wc-main .ta-card{margin:0}
 /* the worth check fits one screen: compact zones; the time-to-afford card (when waiting) beside the decision */

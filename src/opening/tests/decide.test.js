@@ -62,7 +62,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
     if(t === 'milestone'){ await p.click('#msGo'); return t; }
     if(t === 'sim'){ if(await p.$('#skipSim')) await p.click('#skipSim').catch(() => {}); await p.waitForTimeout(300); return t; }
     if(t === 'shop2'){ await p.click('#skipShop'); return t; }
-    if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.fill(`[data-ftpin="${P.next.key}"]`, String(P.next.answer)); await p.click(`[data-ftpchk="${P.next.key}"]`); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } return t; }   // flight times before the timetable
+    if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.evaluate(() => window.__tk.answer(true)); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } return t; }   // flight times before the timetable
     if(t === 'plan'){ await p.click('#nx'); return t; }
     return t; };
   const blockBox = sel => p.$eval(sel, e => { const r = e.getBoundingClientRect(), ln = e.closest('.ad-lane'), lr = ln.getBoundingClientRect(); return { x:r.x, y:r.y, w:r.width, h:r.height, lx:lr.x, lw:lr.width, s0:+ln.dataset.s0, span:+ln.dataset.span, dep:+e.dataset.dep }; });
@@ -158,11 +158,12 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   await load('docs/saves/gubby-airlines-ready-15-Oct.txt');
   for(let g = 0; g < 20 && await T() !== 'plan'; g++) await stepOn();
   await p.waitForTimeout(300); s = await S(); const G0 = await J('dsReport()'); info.gubby = { day:s.day, check:G0.check.map(h => [h.id, h.text, h.action]) };
-  ok('Gubby: on the plan (Thursday, day 4) the check says the plan loses money and names the timing, with Show me on the timetable', s.day === 4 && G0.check[0].id === 'plan_loses_money' && G0.check[1] && ['peak_unserved', 'service_weak', 'loss_making_service'].includes(G0.check[1].id) && G0.check[1].action === 'Show me on the timetable' && /Show me on the timetable/.test(await txt('.actbar .ds-act')), info.gubby);
+  info.gubby.proj = await J('Math.round(planOutcome(currentPlan()).profit)');   // D101 (adaptToOnlyFlight): the lone early flight catches some of the people who wanted another time, so the plan may no longer lose overall
+  ok('Gubby: on the plan (Thursday, day 4) the check leads with the loss (the plan, or the midday Paris flight) and names the timing, with Show me on the timetable', s.day === 4 && ['plan_loses_money', 'loss_making_service'].includes(G0.check[0].id) && G0.check.some(h => ['peak_unserved', 'service_weak'].includes(h.id) && h.action === 'Show me on the timetable') && /Show me on the timetable|Select this flight/.test(await txt('.s3-ck')), info.gubby);
   ok('Gubby: the plan\'s button is quiet while the loss is flagged', !(await p.$eval('#nx', e => e.classList.contains('primary'))));
   await shot('ds-13-gubby-check');
-  await p.click('.actbar [data-dsact]'); await p.waitForTimeout(250);
-  const G1 = await J('dsReport()'); ok('Gubby: Show me on the timetable selects a Paris flight and shades the band on the timetable', G1.sel && (await J(`currentPlan().fleet[${G1.sel.j}].sched[${G1.sel.k}]`)) === 'par' && await vis('.ds-band') && await vis('.ad-blk.ds-hl'), { sel:G1.sel });
+  const showMe = /Show me on the timetable/.test(await txt('.s3-ck')); await p.click('.s3-ck [data-dsact]'); await p.waitForTimeout(250);   // D101: the check sits in the plan summary
+  const G1 = await J('dsReport()'); ok('Gubby: the check\'s button selects a Paris flight on the timetable (Show me also shades the band)', G1.sel && (await J(`currentPlan().fleet[${G1.sel.j}].sched[${G1.sel.k}]`)) === 'par' && (!showMe || await vis('.ds-band')) && await vis('.ad-blk.ds-hl'), { sel:G1.sel, showMe });
   await shot('ds-14-gubby-show-me');
   // move the 12:20 flight later and watch its fill
   const blk = await p.$$eval('.s2-tt .ad-blk[data-tl]', es => es.map(e => [e.getAttribute('data-tl'), +e.dataset.dep])), b1220 = blk.find(x => x[1] === 740) || blk[1]; info.blocks = blk;

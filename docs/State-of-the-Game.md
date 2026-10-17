@@ -10,6 +10,56 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0y. Screens brief 3, D101–D102 (17 Oct 2026)
+
+Parts `p5g_testkit.js` and `p5h_screens3.js` after `p5f_brief`, and `p1_head_screens3.css` after the screens CSS. Both parts are wrapped in `{}`, so their functions are reached only through the names they reassign and `window.__tk`, `window.__ds`, `window.__wc`. Reassignment only (`overrides.txt` 120). Data: v5.17's Settings rows for D101/D102, the Roadmap sheet (`WB.roadmap` = `{when, line, fromDay}`), Market weeks 3–5 and Calendar days 22–28 (`take_parts.py --rows`).
+- **p5g_testkit.js (D102).**
+  - Test airlines: `TK_KEY = 'airlineOpening.v1.test'` holds the index `{list, current}`; each airline is `TK_KEY.<id>`. `S.test = {id, label, made, from}`.
+  - `save` and `load` are reassigned: with `settings.testMode` on and `S.test` set, saving goes to the test store; loading never returns the pupil's game in test mode.
+  - `tkEnter` saves the pupil's game, copies it and marks the copy. `tkLeave` reloads the pupil's game with the original `load`.
+  - `tkJump(key)` unpacks `data-jumps` (gzip, `DecompressionStream`) and migrates it.
+  - `TK_SUMS` is the list of recipes for every sum on screen (flight times, the four sum pages, the review cells, practice, time to afford, rent or buy, finance, the worth check, the challenges). `tkFind` picks the first that applies.
+  - `tkRun(stop)` loops `tkMove` until `tkAtStop`, at `settings.flightSecs` 0.25, logging to `window.__tkLog`. The bar (`#testBar`) is redrawn by `tkSync`; `tkFit` scales the desk to the height under it.
+- **p5h_screens3.js (D101).**
+  1. `stripHtml` → the demand shape:
+     - `dsShape(pl, rid)` gives the bands' locked passengers, who adapts to which flight (`adaptPools` in p4h) and the any-time pool;
+     - `dsCatch` works out what one flight can catch;
+     - the bands share one scale and Any time has its own;
+     - `dsChips` is wrapped so turned away means no seat.
+  2. Studio:
+     - `s2Routes` folds to `.s3-fold`, with chips `[data-s3chip]`;
+     - `s2SvcEditor` becomes the fixed bar `#s2Pop.s3-insp`, with `[data-insm]` moves (`PLW_SNAP` is now a `let`, set to 5 for one move);
+     - `dsAfterPlan` moves the check into `.s2-sum` as `.s3-ck`.
+  3. Flight times:
+     - `ftNew` drops pairs the fleet flies and, at model level, marks new pairs seen without a page;
+     - `ftPage` trims to the level and never asks a known pair;
+     - `ftHtml`, `ftCheck`, `renderFtp` and `ftpPlan` handle hours plus minutes, or the Build sequence;
+     - `ftTableOpen` gives the Fleet desk's table.
+  4. `periodResultsCard` (record, comparison, the plan line with `s3Reasons` from `S.dcLog` and the events, the cash line, the opportunity), `finChart` (`s3Graph`, tabs `[data-wgtab]`), `evidenceHtml` ("Couldn't carry").
+  5. The worth check: a capture click on `[data-acc]` and on the air show's `#nx` sets `UI.wc`, and `R.shop2` draws `wcHtml`.
+     - `wcFigures` uses the comparison's candidate or `fleetModel`. The route is the one with the most left behind; the fare is the current one (or the first on the list).
+     - The sum is recorded as `wc:<pid>` and touches `skills.seatsFare`.
+     - Buy goes through `acquirePlane`; Get it now inserts `acquire` (from the air show, `fleetSums` + `acquire`); Wait sets `S.waitFor`.
+  6. Coming up:
+     - `cuStripHtml` goes first in `.kpis` on Home;
+     - `cuNextWeekLine` goes at the foot of the week review;
+     - the `withIntro` wrapper drops the week-5 tutorial for a `sysNotice`.
+- **Elsewhere:**
+  - `p4h_world.js` `adaptPools(d, deps)` and the same rule in `engine/world-engine.js` (`rules.adapt`);
+  - `p5e_colour.js` `dcWeek(w)` (at most two a week, none from the week before, no repeats);
+  - `p4y_desks.js` `shortPlane` drops "Embraer ";
+  - `build.py` embeds `tests/fixtures/jumps/day-N.txt` as `data-jumps` (12 airlines, about 290 KB gzipped).
+- **Baselines (Steady path, after D101):**
+
+  | Point | Day | Cash |
+  | --- | --- | --- |
+  | Chapter 1 accounts | 118 | £783,536 |
+  | Chapter 2 end | 364 | £13,643,822 |
+  | Chapter 3 end | 730 | £26,375,446 |
+  | Chapter 4 test stop | 743 | £5,555,081 |
+
+  The one-flight rule (more passengers on lone flights) and the two-a-week colour limit move every figure.
+
 ## 0x. The screens brief, D96–D99 (17 Oct 2026)
 
 Parts p5a–p5f after `p4zz_nightops`, and `p1_head_screens.css` joined after the Night Ops CSS. Reassignment only (`overrides.txt` 120). Data: v5.15's PlanTips, DailyColour, Upgrades, Briefings and Milestones sheets and twelve Settings rows, taken on top of v5.8 by `tools/take_parts.py`. The importer reads them as `WB.dailyColour`, `WB.upgrades` and `WB.briefings`.

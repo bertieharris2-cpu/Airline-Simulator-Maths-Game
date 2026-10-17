@@ -79,6 +79,7 @@ const tkOpSel = (pfx, id, x) => ['+', '−', '×', '÷'].includes(x) ? `[data-${
 function tkSeqText(seq){ return seq.map(x => ['+', '−', '×', '÷'].includes(x) ? x : String(x)).join(' '); }
 const TK_SUMS = [
   { what:'a flight time', test:() => tkQ('.ftp-page') && typeof ftpPlan === 'function', plan:() => { const P = ftpPlan(); if(!P || !P.next) return null; const k = tkQa(P.next.key);
+      if(P.next.build) return { at:`[data-ftpchk="${k}"]`, value:'distance ÷ speed', go:() => { tkTap('[data-ftbclr]'); ['[data-ftbfig="dist"]', '[data-ftbop="÷"]', '[data-ftbfig="speed"]'].forEach(tkTap); tkTap(`[data-ftpchk="${k}"]`); } };
       if(P.next.h !== undefined) return { at:`[data-ftph="${k}"]`, value:`${P.next.h} h ${P.next.m} min`, go:() => { tkFill(`[data-ftph="${k}"]`, P.next.h); tkFill(`[data-ftpm="${k}"]`, P.next.m); tkTap(`[data-ftpchk="${k}"]`); } };
       return { at:`[data-ftpin="${k}"]`, value:P.next.answer, go:() => { tkFill(`[data-ftpin="${k}"]`, P.next.answer); tkTap(`[data-ftpchk="${k}"]`); } }; } },
   { what:'the hunt', test:() => step().t === 'hunt' && tkQ('#huntChk, [data-hunt]'), plan:() => { const P = huntPlan(); if(!P) return null;
