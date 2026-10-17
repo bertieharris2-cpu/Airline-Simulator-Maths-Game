@@ -380,6 +380,38 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### The screens brief: review, plan, Fuel desk, sounds, daily colour, briefings (17 Oct 2026)
+*Fable's "Screens brief, 17 October" (D96–D99), from Bertie's play-through, with workbook v5.15. Bertie asked on 16 Oct for no more economy changes for now, so only v5.15's D96–D99 parts are taken (`tools/take_parts.py`, on top of v5.8). The parked v5.9–v5.12 changes are listed in `docs/Report-for-Fable-Screens-Brief.md`, and the full v5.15 is in `data/incoming/`. New parts p5a–p5f and `p1_head_screens.css`; reassignment only (`overrides.txt` stays at 120).*
+- **The Sunday review is a spreadsheet** (p5a):
+  - left to right: what happened, then the figures, then the instrument;
+  - the three sums are cells in the week table (Profit this week, Difference from the plan, Average a day), with no numbered panels. The cell being worked on is lit; the others wait, dimmed;
+  - the formula builds into the lit cell. On Check the cell fills, lights green, and keeps a ƒ with its formula;
+  - the relationship is one line the first time, then behind "Give me a hint";
+  - "Each day" lists only what made a day different: events and the day's colour;
+  - the worth line moved to the plan page. A redraw never jumps the page (on every page).
+- **Operations Briefings** (p5f; Briefings sheet): full screen over the game, advanced by doing, with Pause & discuss and a Briefings shelf in the menu. Fable's two pieces are in `src/opening/briefings/` (embedded by the build) and use the pupil's own figures:
+  - **Cash, tank, profit** on the first visit to the Fuel desk;
+  - **Weekdays and weekends** at the end of the week-2 review. "Change weekdays and weekends separately" grants the Days setting from Monday (D98). Another choice leaves it for the systems team, who propose it after the week-3 review (day 21); "Not this week" keeps the offer on the plan page.
+- **Days is earned (D98):** `flightDaysFromDay` now reads "earned: week-2 review (day 14); fallback day 21". Saves from before this rule keep Days as they had it.
+- **The plan page** (p5b):
+  - **Compare with last week:** last week's flights as faint ghosts, the summary as before → now, what changed in words, and what each change was worth in plain words;
+  - the Operations Wall has a named button;
+  - Ctrl/⌘ + ← → moves between Home, the Plan and the Wall, with key hints the first few times. Esc closes a panel; Enter checks a sum;
+  - What's in this is a quiet list with the total ruled off, a ƒ on each line, and the £300 named "Advertising (Red Kite's undercut)".
+- **The Fuel desk** (p5c):
+  - the fill button says "Most I can afford: N blocks" or "Fill the tank: N blocks", and the line under it says which is the limit;
+  - the order sum reads "Fuel order = blocks × price per 1,000 L";
+  - the week's need shows its cost ("about £4,322 at £1.47");
+  - after an order, one line says what buying fuel does to the money, with Cash before → after and Tank before → after;
+  - the day's statement reads "Fuel burned: N L × £p = £X".
+- **Sounds** (p5d): tap, slot, tick, query, chime, cash, pour, whoosh and day tick, made in the browser. They follow the teacher's sound switch (off to start) and a volume slider in the teacher panel; the query is quieter than the tick.
+- **Daily colour** (p5e; DailyColour sheet), from week 2:
+  - one small effect a day at most, with a one-line reason on the day's row (a hen party +£47, no-shows −£270, a tailwind saving fuel);
+  - fixed by date, so a replayed week replays the same way;
+  - only on flown days, never in a projection.
+- **Tips that can be acted on (D97):** a tip shows only if acting on it gains at least £50 a day (`tipGainGate`). When every seat is sold, the check says so: "Every seat is sold… capacity or a higher fare", with Compare aircraft and Test fare. The timing tips stay quiet then.
+- **Tests:** the regression tests switch the briefings off (`settings.briefings = false`). `BRIEFINGS=1 node week.test.js` plays both and checks the upgrade; `WRONG_CARD=1` also checks the day-21 fallback.
+
 ### Night Ops in the game: the plan and the sums (16 Oct 2026)
 *Bertie chose Night Ops from the style lab, with Glass Cockpit's thin lines, magenta and green, the Segoe typeface, and a blue background. "Start bringing it into the game… start with the plan and sums." This stage covers the Operating Plan Studio and the sums. The other desks get the type, panels and buttons now; their instruments come next. Nothing here changes a figure, a step or a save code.* Two new parts: `p1_head_nightops.css` (every rule under `html.no`) and `p4zz_nightops.js` (one block; it decorates each page after the game draws it, using reassignment only, so `overrides.txt` stays at 120).
 - **Everywhere:**

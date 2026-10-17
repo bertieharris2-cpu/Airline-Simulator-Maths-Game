@@ -2,7 +2,7 @@
 
 *Written by `tools/import_world.py` on 17 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 22 to check, 7 notes.**
+**0 to fix, 24 to check, 7 notes.**
 
 ## Loaded
 
@@ -44,8 +44,10 @@
 - **Finance:** b737: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
 - **Market:** week 19 fuel is £2.16, but the Calendar has £2.17 on its days. Time skips use the Market price, so the two should agree.
 - **Market:** week 53 fuel is £2.20, but the Calendar has £2.24 on its days. Time skips use the Market price, so the two should agree.
-- **Milestones:** charterWinner: waits for the Charter desk (D90), which is not installed yet; the teacher panel leaves it out.
-- **Milestones:** clashServed: waits for clashing weeks (D90), which is not installed yet; the teacher panel leaves it out.
+- **Milestones:** experimenter: waits for its measure in the game (D87 experiments logged with a prediction), not built yet; the teacher panel leaves it out for now.
+- **Milestones:** worthIt: waits for its measure in the game (D88's worth line on a kept change), not built yet; the teacher panel leaves it out for now.
+- **Milestones:** charterWinner: waits for the Charter desk (D90), not built yet; the teacher panel leaves it out for now.
+- **Milestones:** clashServed: waits for clashing weeks (D90), not built yet; the teacher panel leaves it out for now.
 - **Routes:** ist is loaded, but its archetype "long_haul_mixed" is not live. The game uses the route's own demand table and applies no business/leisure or season multipliers to it.
 - **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Boeing 787 Dreamliner 20 min, Airbus A350 20 min, Boeing 747 20 min, Airbus A380 20 min, Embraer E175 20 min, Boeing 757 20 min, Airbus A340 20 min, Boeing 777 20 min.
 - **Routes:** yyz (5700 km): legs not on a quarter hour: Saab 340 760 min, ATR 72 760 min, Embraer E190 380 min, Airbus A220 380 min, Airbus A320 380 min, Boeing 737 380 min, Boeing 787 Dreamliner 380 min, Airbus A350 380 min, Boeing 747 380 min, Airbus A380 380 min, Embraer E175 380 min, Boeing 757 380 min, Airbus A340 380 min, Boeing 777 380 min.
@@ -161,7 +163,7 @@ Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `flightDaysFromDay`: earned: week-2 review (day 14); fallback day 21
 - **DailyColour:** hen_party (Tue, every 3), school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), birthday_cake (Sat, every 4), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
 - **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91), fuel_farm → The fuel farm on the Fuel desk (D89).
-- **Briefings:** fare_lever (briefing-fare.html, not built yet), rival_split (briefing-rival.html, not built yet), full_route (briefing-capacity.html, not built yet), weekend_demand (briefing-weekend.html, not built yet), fuel_cash_tank_profit (briefing-fuel.html, not built yet), aircraft_efficiency (briefing-efficiency.html, not built yet), event_weekend (briefing-event.html, not built yet), seasons (briefing-seasons.html, not built yet), lease_money (briefing-lease.html, not built yet), profit_vs_cash (briefing-cash.html, not built yet).
+- **Briefings:** fare_lever (briefing-fare.html, not built yet), rival_split (briefing-rival.html, not built yet), full_route (briefing-capacity.html, not built yet), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html, not built yet), event_weekend (briefing-event.html, not built yet), seasons (briefing-seasons.html, not built yet), lease_money (briefing-lease.html, not built yet), profit_vs_cash (briefing-cash.html, not built yet).
 
 ## Identity and photos (CR5)
 

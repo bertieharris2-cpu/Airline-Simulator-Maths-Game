@@ -4607,6 +4607,42 @@ body.rm .rvs .rv-t td.rv-c.rv-new,body.rm .rvs .rv-ins .rb-card.rv-ping{animatio
 .rvs .rv-ins .rb-card .sc-h .stamp{font-size:11px;padding:2px 8px;max-width:100%;white-space:nowrap;margin-left:auto}
 .rvs .rv-ins .rb-card .sc-h{min-height:0;flex-wrap:wrap;justify-content:flex-end}
 .rvs .rv-ins .rb-card .sc-h > div:empty{display:none}
+/* ---- the named Operations Wall button and the keyboard hints ---- */
+.dkh-tools.kb{grid-template-columns:34px 34px auto}
+.dkh-tools #wallBtn.kb-wall{grid-column:3;grid-row:1 / span 2;width:auto;height:auto;min-width:78px;padding:4px 9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.dkh-tools #wallBtn .kb-wl{font-size:11.5px;font-weight:600;line-height:1.15;text-align:center;max-width:70px}
+.kb-h{display:none;font-size:10.5px;font-weight:500;letter-spacing:.04em;color:#8fb3dc;line-height:1.1}
+body.kb-hints .lnav .nv .kb-h,body.kb-hints #wallBtn .kb-h{display:block}
+.lnav .nv:hover .kb-h,#wallBtn:hover .kb-h{display:block}
+#wallBtn .kb-h{white-space:nowrap}
+.lnav .nv .nv-t .kb-h{margin-top:1px;font-size:10px;color:#7fd6ff;opacity:.85}
+/* ---- compare with last week ---- */
+.s2-tt{position:relative}
+.cmp-btn{padding:4px 10px;font-size:12.5px;min-height:0;width:auto}
+.cmp-btn.on{border-color:#36C6FF;color:#9fe3ff;box-shadow:inset 0 0 0 1px rgba(54,198,255,.4)}
+.s2-tt .ad-lane{position:relative}
+.cmp-gh{position:absolute;top:3px;bottom:3px;z-index:0;border:1px dashed rgba(159,227,255,.55);background:repeating-linear-gradient(135deg,rgba(159,227,255,.10) 0 6px,rgba(159,227,255,.03) 6px 12px);border-radius:2px;pointer-events:none;overflow:hidden}
+.cmp-gh span{position:absolute;left:6px;bottom:2px;font-size:10.5px;color:rgba(200,230,255,.7);white-space:nowrap}
+.s2-tt .ad-blk{z-index:1}
+.cmp-was{font-style:normal;font-size:.72em;font-weight:500;color:#8fb3dc;margin-right:4px}
+.cmp-pop{position:absolute;left:12px;bottom:10px;z-index:4;max-width:420px;padding:10px 14px;border:1px solid rgba(54,198,255,.5);background:rgba(7,28,55,.96);box-shadow:0 14px 34px rgba(0,0,0,.45);font-size:13.5px;color:#d6e6fb}
+.cmp-pop .kl{margin:0 0 4px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#7fd6ff}
+.cmp-pop ul{margin:0 0 8px;padding-left:16px}.cmp-pop li{margin:2px 0}.cmp-pop .cmp-worth li{color:#bff3d6}
+.cmp-pop .cmp-none{margin:0;color:#9fbde3}
+/* ---- What's in this: a quiet list ---- */
+.explain.ex-list{display:block;padding:8px 12px;font-weight:400}
+.explain.ex-list .ex-t{width:100%;border-collapse:collapse;font-size:13.5px}
+.explain.ex-list .ex-t td{padding:3px 4px;color:#cfe0f5;border:0}
+.explain.ex-list .ex-t td.num{text-align:right;color:#9fbde3;font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}
+.explain.ex-list .ex-t tfoot td{border-top:1px solid rgba(130,195,255,.35);color:#fff;font-weight:600;padding-top:5px}
+.explain.ex-list .fx{margin-left:6px;font-style:italic;font-size:11.5px;color:#7fd6ff;cursor:help}
+/* ---- the Fuel desk ---- */
+.fd-rel{font-weight:500;color:#d6e6fb}.fd-rel span{font-weight:600;color:#fff}
+.fd-limw{font-weight:600;color:#cfe0f5}
+.fd-need{display:block;color:#9fbde3}
+.fd-acct{margin-top:8px;padding:10px 12px;border:1px solid rgba(54,198,255,.45);box-shadow:inset 3px 0 0 #36C6FF;background:rgba(54,198,255,.05);font-size:13.5px;color:#d6e6fb}
+.fd-acct p{margin:0 0 6px}.fd-acs{display:flex;gap:18px;flex-wrap:wrap;color:#9fbde3}.fd-acs b{color:#fff;font-weight:600}
+.explain.ex-list [data-explain]{font-size:13px;margin-top:4px}
 </style>
 </head>
 <body>
@@ -20289,6 +20325,287 @@ render = function(){
 }
 
 /* ==================================================================
+   THE DESK, EASIER TO MOVE ROUND (D96, Fable's screens brief, 17 Oct 2026)
+   - The Operations Wall has a named button on the desk bar (it was an icon nobody would guess).
+   - Home, the Operating Plan and the Wall are three views: Ctrl + → and Ctrl + ← move between them (Cmd on a Mac). The key
+     hint shows in small type under each view's name the first few times, then only on hover. Esc closes a panel; Enter
+     checks a sum. (Settings keyboardShortcuts.)
+   - Compare with last week (Settings compareLastWeek): last week's flights as faint ghosts behind this week's on the
+     timetable, the summary's figures as before → now, a short list of what changed in words, and what each kept change was
+     worth in plain words (D88's line, as a result rather than a bare equation).
+   - What's in this: the cost breakdown is a quiet list, one line per item, the total ruled off, each line with its ƒ.
+   ================================================================== */
+{
+const kbOn = () => WBS().keyboardShortcuts !== false;
+const kbMac = /Mac|iPhone|iPad/.test(navigator.platform || '');
+const kbKey = kbMac ? '⌘' : 'Ctrl';
+/* the hints: the first few sessions, until the pupil has used the keys three times; after that on hover */
+const kbSess = (() => { try{ const n = (+localStorage.getItem('airline-kb-sessions') || 0) + 1; localStorage.setItem('airline-kb-sessions', n); return n; }catch(e){ return 1; } })();
+const kbUsed = () => { try{ return +localStorage.getItem('airline-kb-used') || 0; }catch(e){ return 0; } };
+const kbShowHints = () => kbSess <= 4 && kbUsed() < 3;
+const KB_VIEWS = ['overview', 'plan', 'wall'];
+function kbView(){ if(wallView) return 'wall'; const on = document.querySelector('.lnav .nv.on'); const k = on && on.getAttribute('data-nav'); return KB_VIEWS.includes(k) ? k : null; }
+function kbGo(k){
+  if(k === 'wall'){ setWallView(true); return; }
+  if(wallView) setWallView(false);
+  const b = document.querySelector(`.lnav .nv[data-nav="${k}"]`); if(b && !b.disabled && !b.classList.contains('locked')) b.click();
+}
+/* the named Wall button, and the hints under the three views */
+function kbDecorate(){
+  const wb = document.getElementById('wallBtn');
+  if(wb && !wb.classList.contains('kb-wall')){ wb.classList.add('kb-wall'); if(wb.parentNode) wb.parentNode.classList.add('kb'); wb.insertAdjacentHTML('beforeend', '<span class="kb-wl">Operations Wall</span>'); wb.title = `Operations Wall (W, or ${kbKey} + →)`; }
+  if(!kbOn()) return;
+  const show = kbShowHints();
+  document.body.classList.toggle('kb-hints', show);
+  [['overview', `${kbKey} + ←`], ['plan', `${kbKey} + ← →`]].forEach(([k, t]) => { const b = document.querySelector(`.lnav .nv[data-nav="${k}"]`), t0 = b && (b.querySelector('.nv-t') || b); if(b && !b.querySelector('.kb-h')) t0.insertAdjacentHTML('beforeend', `<small class="kb-h">${t}</small>`); });
+  if(wb && !wb.querySelector('.kb-h')) wb.insertAdjacentHTML('beforeend', `<small class="kb-h">${kbKey} + →</small>`);
+}
+document.addEventListener('keydown', e => {
+  if(!kbOn() || !S || document.getElementById('bfLayer')) return;
+  // where the key was pressed (an input's own handler may already have redrawn the page and moved the focus)
+  const el = e.target && e.target !== document ? e.target : document.activeElement, typing = el && (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.isContentEditable);
+  if(e.defaultPrevented) return;
+  const teacher = document.getElementById('teacher'); if(teacher && teacher.classList.contains('open')) return;
+  // Ctrl/Cmd + arrows: Home ← → Plan ← → Wall
+  if((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')){
+    if(typing || (el && el.closest && el.closest('.ad-blk')) || S.overlay || S.phase === 'setup') return;
+    const at = kbView(); if(at === null && !wallView) { kbGo('overview'); e.preventDefault(); return; }
+    const i = KB_VIEWS.indexOf(at), j = Math.max(0, Math.min(KB_VIEWS.length - 1, i + (e.key === 'ArrowRight' ? 1 : -1)));
+    if(j !== i){ e.preventDefault(); kbGo(KB_VIEWS[j]); try{ localStorage.setItem('airline-kb-used', kbUsed() + 1); }catch(err){} }
+    return;
+  }
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+  // Esc closes whatever panel is open (the Working pad and the teacher panel keep their own)
+  if(e.key === 'Escape'){
+    if(S.overlay && S.overlay.type !== 'menu'){ e.preventDefault(); closeOverlay(); return; }
+    const x = ['#s2PopX', '#s2EdX', '#s2DrX', '#fdLearnX', '#omClose', '#wrClose', '#cpClose', '#dxClose', '#dkClose', '#hClose'].map(s => document.querySelector(s)).find(b => b && b.offsetParent);
+    if(x){ e.preventDefault(); x.click(); return; }
+    if(UI.explain){ e.preventDefault(); UI.explain = null; render(); return; }
+    if(UI.s2 && UI.s2.cmp){ e.preventDefault(); UI.s2.cmp = false; render(); }
+    return;
+  }
+  // Enter checks the sum on the page when nothing else has the focus
+  if(e.key === 'Enter' && !typing && !e.repeat && (!el || el === document.body || el === document.documentElement)){
+    const B = [...screen().querySelectorAll('button')].filter(b => b.offsetParent && !b.disabled && /^\s*Check\b/.test(b.textContent));
+    if(B.length === 1){ e.preventDefault(); B[0].click(); }
+  }
+});
+
+/* ---------- Compare with last week ---------- */
+const cmpOn = () => WBS().compareLastWeek !== false;
+const cmpS0 = s2State;
+s2State = function(pl){
+  const U = cmpS0.apply(this, arguments);
+  if(!U.startPlan){ try{ U.startPlan = JSON.parse(JSON.stringify(normPlan(pl))); }catch(e){} }
+  return U;
+};
+const cmpOrd = n => ['', '1st', '2nd', '3rd', '4th', '5th', '6th'][n] || n + 'th';
+function cmpLinesOf(pl){ const U = UI.s2 || {}, we = U.dt === 'weekend' && flightDaysOn(); return we ? withDay(satOf(S.day || 1), () => planLines(pl)) : planLines(pl); }
+/* what changed, route by route, in words */
+function cmpChanges(a, b){
+  const out = [], sv = pl => { const m = {}; normPlan(pl).fleet.forEach((x, j) => { const deps = x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(normPlan(pl), j);
+    x.sched.forEach((id, k) => (m[id] = m[id] || []).push({ dep:deps[k], days:(x.days || [])[k] || 'all', plane:x.planeId })); }); Object.values(m).forEach(l => l.sort((p, q) => p.dep - q.dep)); return m; };
+  const A = sv(a), B = sv(b), ids = [...new Set(Object.keys(A).concat(Object.keys(B)))];
+  ids.forEach(id => { const r = routeById(id), x = A[id] || [], y = B[id] || [], c = r.city, d = y.length - x.length;
+    if(!x.length && y.length) out.push(`${c}: new route, ${y.length} service${y.length === 1 ? '' : 's'}`);
+    else if(x.length && !y.length) out.push(`${c}: stopped`);
+    else if(d) out.push(`${c}: ${Math.abs(d) === 1 ? 'one' : Math.abs(d) === 2 ? 'two' : Math.abs(d)} ${d > 0 ? 'more' : 'fewer'} service${Math.abs(d) === 1 ? '' : 's'}`);
+    else y.forEach((s, k) => { if(s.dep !== x[k].dep) out.push(`${c} ${cmpOrd(k + 1)} flight moved ${fmtTime(x[k].dep)} → ${fmtTime(s.dep)}`); if(s.days !== x[k].days) out.push(`${c} ${fmtTime(s.dep)}: ${daysLabel(x[k].days)} → ${daysLabel(s.days)}`); });
+    const f0 = (a.prices || {})[id], f1 = (b.prices || {})[id]; if(f0 && f1 && f0 !== f1 && x.length && y.length) out.push(`${c} fare ${money(f0)} → ${money(f1)}`); });
+  const na = normPlan(a).fleet.length, nb = normPlan(b).fleet.length; if(nb > na) out.push(`${nb - na === 1 ? 'A new aircraft' : nb - na + ' new aircraft'} on the plan`);
+  return out;
+}
+/* what each kept change was worth, in plain words (D88's line, as a result) */
+function cmpWorth(a, b, L0, L1, profitShown){
+  const out = [], ids = [...new Set(Object.keys(normPlan(a).prices || {}).concat(Object.keys(normPlan(b).prices || {})))];
+  ids.forEach(id => { const r = routeById(id); if(!r) return; const p0 = L0.v['pax_' + id], p1 = L1.v['pax_' + id], f0 = L0.v['fare_' + id], f1 = L1.v['fare_' + id]; if(p0 === undefined || p1 === undefined) return;
+    const t0 = p0 * f0, t1 = p1 * f1; if(t0 === t1) return;
+    if(f0 !== f1) out.push(`${r.city} fare ${money(f0)} → ${money(f1)}: ${num(p1)} × ${money(f1)} against ${num(p0)} × ${money(f0)}, ${money(Math.abs(t1 - t0))} ${t1 > t0 ? 'more' : 'less'} a day in tickets`);
+    else out.push(`${r.city}: ${num(p1)} passengers a day against ${num(p0)}, ${money(Math.abs(t1 - t0))} ${t1 > t0 ? 'more' : 'less'} a day in tickets`); });
+  if(profitShown && L0.v.profit !== L1.v.profit) out.push(`Projected profit ${money(Math.round(L0.v.profit))} → ${money(Math.round(L1.v.profit))} a day`);
+  return out;
+}
+function cmpDecorate(root){
+  const tt = root.querySelector('.s2-tt'); if(!tt || !cmpOn() || !UI.s2 || UI.s2.mode === 'network' || S.phase === 'setup' || (S.day || 1) < 8) return;   // from week 2: there is a last week
+  const head = tt.querySelector('.dk-pnl-h') || tt.firstElementChild; if(!head) return;
+  const U = UI.s2, a = U.startPlan; if(!a) return;
+  if(!head.querySelector('#cmpLW')) head.insertAdjacentHTML('beforeend', `<button class="btn cmp-btn ${U.cmp ? 'on' : ''}" id="cmpLW" aria-pressed="${!!U.cmp}">${U.cmp ? 'Hide last week' : 'Compare with last week'}</button>`);
+  const btn = head.querySelector('#cmpLW'); if(btn) btn.onclick = () => { U.cmp = !U.cmp; render(); };
+  if(!U.cmp) return;
+  const b = normPlan(currentPlan()), L0 = cmpLinesOf(a), L1 = cmpLinesOf(b), dt = U.dt === 'weekend' && flightDaysOn() ? 'weekend' : 'weekday';
+  // the ghosts: last week's flights behind this week's, lane by lane (matched by aircraft)
+  tt.querySelectorAll('.ad-lane[data-lane]').forEach(lane => { const j = +lane.getAttribute('data-lane'), s0 = +lane.getAttribute('data-s0'), span = +lane.getAttribute('data-span'), cur = b.fleet[j]; if(!cur || !span) return;
+    const x = a.fleet.find(z => z.uid === cur.uid); if(!x) return; const p = planeById(x.planeId), A = normPlan(a), jj = A.fleet.findIndex(z => z.uid === cur.uid), deps = x.deps && x.deps.length === x.sched.length ? x.deps : actualDeps(A, jj);
+    x.sched.forEach((id, k) => { if(!fliesOn((x.days || [])[k], dt)) return; const r = routeById(id), trip = TIME.roundTrip(p, r);
+      lane.insertAdjacentHTML('afterbegin', `<div class="cmp-gh" style="left:${(100 * (deps[k] - s0) / span).toFixed(2)}%;width:${(100 * trip / span).toFixed(2)}%" aria-hidden="true"><span>${fmtTime(deps[k])} ${esc(r.city)}</span></div>`); }); });
+  // the summary's figures, before → now (a hidden figure stays hidden)
+  const profitShown = !root.querySelector('.s2-sum [data-sum="profit"]'), F0 = s2Fill(L0.services || []), F1 = s2Fill(L1.services || []);
+  root.querySelectorAll('.s2-sum .s2-si').forEach(si => { const l = (si.querySelector('small') || {}).textContent || '', b1 = si.querySelector('b'); if(!b1 || si.querySelector('.cmp-was')) return;
+    let was = null; if(/filled/i.test(l)) was = `${num(F0.sold)} / ${num(F0.seats)}`; else if(/empty/i.test(l)) was = num(F0.seats - F0.sold); else if(/turned/i.test(l)) was = num(Math.round(L0.nos || 0)); else if(/profit/i.test(l) && profitShown) was = money(Math.round(L0.v.profit));
+    if(was !== null && was !== b1.textContent.trim()) b1.insertAdjacentHTML('beforebegin', `<em class="cmp-was">${was} →</em>`); });
+  const ch = cmpChanges(a, b), worth = cmpWorth(a, b, L0, L1, profitShown);
+  tt.insertAdjacentHTML('beforeend', `<div class="cmp-pop" role="status"><p class="kl">Changed since last week</p>${ch.length ? `<ul>${ch.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : '<p class="cmp-none">Nothing yet: this is last week\'s plan.</p>'}${worth.length ? `<p class="kl">What it is worth</p><ul class="cmp-worth">${worth.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}</div>`);
+}
+
+/* ---------- What's in this: a quiet list ---------- */
+const EX_REL = { Flights:'trips × running cost of a trip', Fuel:'litres burned × the price paid', 'Terminal charges':'passengers × the charge for each', 'Snack stock':'items stocked × cost of each', "Aircraft's day":'aircraft × the day cost of each', 'Second crew':'crews × the cost of a crew', Advertising:'the advertising chosen for the day' };
+function exList(root){
+  root.querySelectorAll('.explain:not(.ex-list)').forEach(ex => {
+    const head = ex.querySelector(':scope > b'), close = ex.querySelector('[data-explain]'), spans = [...ex.querySelectorAll(':scope > span')];
+    if(!head || !spans.length) return;
+    const total = head.textContent.split(':'), what = total[0].trim(), tv = total.slice(1).join(':').trim();
+    const rows = spans.map(s => { const v = s.querySelector('b'), val = v ? v.textContent : ''; let lab = s.textContent.replace(val, '').trim();
+      if(/undercutting you/i.test(lab)) lab = "Advertising (Red Kite's undercut)";
+      const rel = EX_REL[lab] || EX_REL[lab.split(' (')[0]] || (/^Fuel/.test(lab) ? EX_REL.Fuel : '');
+      return `<tr><td>${esc(lab)}</td><td class="num">${esc(val)}${rel ? `<span class="fx" title="${esc(rel)}">ƒ</span>` : ''}</td></tr>`; }).join('');
+    ex.classList.add('ex-list');
+    ex.innerHTML = `<table class="ex-t"><tbody>${rows}</tbody><tfoot><tr><td>Total ${esc(what.toLowerCase())}</td><td class="num">${esc(tv)}</td></tr></tfoot></table>`;
+    if(close){ ex.appendChild(close); }
+  });
+}
+
+window.__exList = exList;   // for the tests
+const kbRender0 = render;
+render = function(){
+  const r = kbRender0.apply(this, arguments);
+  try{ kbDecorate(); const root = screen(); if(root){ cmpDecorate(root); exList(root); } }catch(e){}
+  return r;
+};
+}
+
+/* ==================================================================
+   THE FUEL DESK, SAID PLAINLY (D96, Fable's screens brief, 17 Oct 2026; Settings fuelFillLabel, fuelAccounting)
+   - The fill button names its limit: "Most I can afford: N blocks" when cash is the limit, "Fill the tank: N blocks" when
+     the tank is; the grey line under the blocks says which.
+   - The order sum carries the relationship ("Fuel order = blocks × price per 1,000 L") instead of an instruction; the same
+     chips, distractors included (choosing the right figures is the point).
+   - The week's requirement has a scale: "about £6,170 at £1.47".
+   - After an order: what it did to the money, said once, gently: "Buying 7,000 L moves £10,290 from cash into the tank.
+     Each day's profit counts only the fuel your flights burn, at the price you paid for it", with Cash before → after and
+     Tank before → after. The day's statement then reads "Fuel burned: 600 L × £1.47 = £882".
+   ================================================================== */
+{
+let fdBefore = null;   // cash and tank just before Confirm purchase
+document.addEventListener('click', e => { const b = e.target && e.target.closest && e.target.closest('#fdBuy'); if(b && !b.disabled) fdBefore = { cash:S.cash, tank:S.fuel, day:S.day }; }, true);
+const fdPlural = n => `${n} block${n === 1 ? '' : 's'}`;
+const fdH0 = fuelDeskHtml;
+fuelDeskHtml = function(asView){
+  let h = fdH0(asView); if(!weekMode()) return h;
+  try{
+    const P0 = fuelOn(S.day || 1), blk = fuelBlock(), max = fdMaxBlocks(P0), space = Math.floor(tankSpace() / blk + 1e-9), cashB = Math.floor(Math.max(0, S.cash - (WORLD.cashReserve || 0)) / (blk * P0) + 1e-9), cashLimit = cashB < space;
+    // the fill button and the line under the blocks name the limit
+    if(WBS().fuelFillLabel !== false){
+      h = h.replace(/(data-fdfill="1"[^>]*>)Fill: [\d,]+ L<\/button>/, `$1${cashLimit ? 'Most I can afford' : 'Fill the tank'}: ${fdPlural(max)}</button>`);
+      h = h.replace(/(<p class="fd-lim">[\s\S]*?)<\/p>/, `$1 <b class="fd-limw">${cashLimit ? 'Cash is the limit.' : 'The tank is the limit.'}</b></p>`);
+    }
+    // the requirement, and what it costs at today's price
+    const need = fdNeed(S.day || 1);
+    h = h.replace(/(This week's requirement <small>[^<]*)(<\/small>)/, `$1$2<small class="fd-need">about ${money(Math.round(need.week * P0))} at ${priceL(P0)}</small>`);
+    // the order sum: the relationship in one line
+    const rel = `<b class="fd-rel"><span>Fuel order</span> = blocks × price per ${num(blk)} L</b>`;
+    h = h.replace('<b>Build the order: the figures and the operation</b>', rel).replace('<b>Sign off the order</b>', rel);
+    // after an order: what it did to the money
+    if(UI.fd && UI.fd.done && fdBefore && fdBefore.day === S.day && S.cash < fdBefore.cash - 0.5){ UI.fdAcct = { cash0:fdBefore.cash, cash1:S.cash, tank0:fdBefore.tank, tank1:S.fuel }; fdBefore = null; }
+    if(UI.fd && !UI.fd.done) UI.fdAcct = null;
+    const A = UI.fdAcct;
+    if(A && WBS().fuelAccounting){
+      const L = Math.round(A.tank1 - A.tank0), cost = Math.round(A.cash0 - A.cash1);
+      h = h.replace(/(<p class="fd-done good"[^>]*>[\s\S]*?<\/p>)/, `$1<div class="fd-acct"><p>Buying ${num(L)} L moves <b>${money(cost)}</b> from cash into the tank. Each day's profit counts only the fuel your flights burn, at the price you paid for it.</p><div class="fd-acs"><span>Cash <b>${money(Math.round(A.cash0))}</b> → <b>${money(Math.round(A.cash1))}</b></span><span>Tank <b>${num(Math.round(A.tank0))} L</b> → <b>${num(Math.round(A.tank1))} L</b></span></div></div>`);
+    }
+  }catch(e){}
+  return h;
+};
+/* the day's statement: the fuel line is the litres burned at the price paid, not the order */
+const fdAR0 = applyResults;
+applyResults = function(){
+  const r = fdAR0.apply(this, arguments);
+  try{ const why = (S.rnd && S.rnd.why) || [], i = why.findIndex(w => w.ic === '⛽' && /^Fuel used today cost/.test(w.text));
+    if(i >= 0){ const fl = (S.rnd.flights || []).filter(f => !f.grounded && !f.noFuel && !f.cancelled), L = fl.reduce((t, f) => t + (f.fuelL || 0), 0), cost = fl.reduce((t, f) => t + (f.fuelCost || 0), 0);
+      if(L > 0 && cost > 0) why[i] = { ic:'⛽', text:`Fuel burned: ${num(L)} L × ${priceL(cost / L)} = ${money(Math.round(cost))}, at the price you paid for it (today's price is ${priceL(fuelPrice())}).` }; } }catch(e){}
+  return r;
+};
+}
+
+/* ==================================================================
+   A SMALL SET OF SOUNDS (D96, Fable's screens brief, 17 Oct 2026; Settings soundSet)
+   tap · slot · tick · query · chime · cash · pour · whoosh · day tick: short, soft and consistent, made in the browser
+   (Web Audio, no files), on top of the voice and the operations sounds that exist. They follow the teacher's sound switch
+   (off to start) and one volume (Teacher panel); the query is always quieter than the tick. Immersion, not feedback: the
+   screen still carries the meaning.
+   ================================================================== */
+{
+const sdOn = () => WBS().soundSet !== false && typeof opsSoundOn === 'function' && opsSoundOn() && typeof loAC !== 'undefined' && !!loAC;
+const sdVol = () => { const v = settings.uiVolume; return v === undefined || v === null || isNaN(+v) ? 0.6 : Math.max(0, Math.min(1, +v)); };
+let sdLast = {};
+/* one note: a sine (or triangle) with a quick attack and a soft decay */
+function sdNote(freq, t0, dur, gain, type, glide){
+  const ac = loAC, o = ac.createOscillator(), g = ac.createGain(); o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t0); if(glide) o.frequency.exponentialRampToValueAtTime(glide, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain * sdVol()), t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g); g.connect(ac.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+}
+/* filtered noise: the pour and the whoosh */
+function sdNoise(t0, dur, gain, f0, f1, q){
+  const ac = loAC, n = Math.floor(ac.sampleRate * dur), buf = ac.createBuffer(1, n, ac.sampleRate), d = buf.getChannelData(0);
+  for(let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+  const src = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain(); src.buffer = buf; bp.type = 'bandpass'; bp.Q.value = q || 1.2;
+  bp.frequency.setValueAtTime(f0, t0); bp.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain * sdVol()), t0 + dur * 0.25); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(bp); bp.connect(g); g.connect(ac.destination); src.start(t0); src.stop(t0 + dur + 0.02);
+}
+const SD = {
+  tap:   t => sdNote(1180, t, 0.05, 0.035, 'triangle'),
+  slot:  t => { sdNote(660, t, 0.07, 0.05, 'triangle'); sdNote(990, t + 0.035, 0.08, 0.04, 'triangle'); },
+  tick:  t => sdNote(1320, t, 0.22, 0.07),
+  query: t => sdNote(392, t, 0.22, 0.045, 'sine', 349),
+  chime: t => { sdNote(784, t, 0.5, 0.05); sdNote(1175, t + 0.09, 0.6, 0.04); },
+  cash:  t => { sdNote(1568, t, 0.09, 0.04, 'triangle'); sdNote(2093, t + 0.06, 0.16, 0.035, 'triangle'); },
+  pour:  t => sdNoise(t, 0.9, 0.05, 500, 1500, 0.9),
+  whoosh:t => sdNoise(t, 0.32, 0.045, 1800, 500, 1.4),
+  day:   t => sdNote(880, t, 0.06, 0.03, 'triangle')
+};
+function sd(kind){
+  try{ if(!sdOn() || !SD[kind]) return; const now = loAC.currentTime, last = sdLast[kind] || 0; if(now - last < 0.06) return; sdLast[kind] = now; SD[kind](now + 0.005); const L = window.__sdLog || (window.__sdLog = []); L.push(kind); if(L.length > 60) L.shift(); }catch(e){}   // __sdLog: the last sounds, for the tests
+}
+/* the triggers: what was pressed, then what the page did */
+let sdCheck = null;
+document.addEventListener('click', e => {
+  const b = e.target && e.target.closest && e.target.closest('button, .btn, [role="button"]'); if(!b || b.disabled) return;
+  if(b.matches('[data-rbfig], [data-fofig], [data-fsfig], [data-pbfig], [data-tafig], .rb-chip')) sd('slot');
+  else if(/^\s*Check\b/.test(b.textContent) || b.matches('[data-rbchk], #cellCheck, #foChk, #scCheck, #fsChk')){
+    const n = s => document.querySelectorAll(s).length;
+    sdCheck = { ok:n('.stamp.ok, .stamp.fin, .pq.done, .rb-card.ok, .so-card.ok, .fd-sign.ok'), q:n('.stamp.q, .answer.query, .sc-in.qy, .rb-msg:not(.ok)') + (document.querySelector('#ftMsg') ? 1 : 0) };
+    setTimeout(() => { if(!sdCheck) return; const ok = n('.stamp.ok, .stamp.fin, .pq.done, .rb-card.ok, .so-card.ok, .fd-sign.ok'); sd(ok > sdCheck.ok ? 'tick' : 'query'); sdCheck = null; }, 90);
+  }
+  else if(!b.closest('#bfLayer')) sd('tap');
+}, true);
+/* what moved: money (a purchase, the week's accounts), the tank, a flight on the timetable, the board's day */
+let sdPrev = null;
+const sdRender0 = render;
+render = function(){
+  const r = sdRender0.apply(this, arguments);
+  try{ const st = step(), t = st ? st.t : '', now = { cash:Math.round(S.cash || 0), fuel:Math.round(S.fuel || 0), day:S.day, t, rbOk:!!(S.wk && S.wk.logged) };
+    if(sdPrev && t !== 'fly' && now.day === sdPrev.day){
+      if(now.fuel > sdPrev.fuel + 0.5) sd('pour');
+      if(now.cash !== sdPrev.cash && t !== 'weekRun') sd('cash');
+    }
+    if(sdPrev && t === 'weekRun' && now.day !== sdPrev.day) sd('day');
+    if(sdPrev && now.rbOk && !sdPrev.rbOk) sd('cash');
+    sdPrev = now; }catch(e){}
+  return r;
+};
+const sdMove0 = moveService;
+moveService = function(){ sd('whoosh'); return sdMove0.apply(this, arguments); };
+/* a result plate (the boarding pass, a granted upgrade) chimes; the Night Ops part already chimes a confirmed sum */
+window.__sd = sd;
+/* the one volume: a slider beside the teacher's Sound switch */
+document.addEventListener('DOMContentLoaded', () => {
+  try{ const box = document.getElementById('tOpsSound'), row = box && (box.closest('label') || box.parentNode); if(!row || document.getElementById('tUiVol')) return;
+    row.insertAdjacentHTML('afterend', `<label class="t-vol">Volume of the sounds <input type="range" id="tUiVol" min="0" max="1" step="0.1" value="${sdVol()}"></label>`);
+    const v = document.getElementById('tUiVol'); v.oninput = () => { settings.uiVolume = +v.value; try{ saveSettings(); }catch(e){} }; v.onchange = () => sd('tick'); }catch(e){}
+});
+}
+
+/* ==================================================================
    DAYS THAT GO UP AS WELL AS DOWN (D96, DailyColour sheet) and TIPS THAT CAN BE ACTED ON (D97). Fable's screens brief, 17 Oct 2026.
    DailyColour: small effects with a one-line reason on the day's row (a hen party clears the snack trolley, a school trip books
    twelve seats, a tailwind saves fuel). Fixed by date, so a replayed week replays the same way: on a row's weekday, in every
@@ -20386,8 +20703,9 @@ window.__dcFor = dcFor;
 DS_ACT.all_full_capacity = ['compare', 'Compare aircraft'];
 const d97Gate = () => { const v = +WBS().tipGainGate; return isNaN(v) ? 0 : v; };
 /* every service at or above seatFillGood, and people still turned away */
-function d97AllFull(L){
+function d97AllFull(L, pl){
   const good = +(WBS().seatFillGood || 0.8), sv = (L && L.services) || []; if(!sv.length) return null;
+  if(pl && normPlan(pl).fleet.some(x => !x.sched.length)) return null;   // an idle plane is spare capacity: that tip comes first
   const full = sv.every(s => s.seats && s.sold / s.seats >= good), away = Math.round((L.nos !== undefined ? L.nos : 0) || 0);
   return full && away > 0 ? away : null;
 }
@@ -20396,12 +20714,13 @@ dsTips = function(pl, L, opts){
   let v = d97Tips0.apply(this, arguments);
   try{
     pl = normPlan(pl || currentPlan()); L = L || planLines(pl);
-    const away = WBS().allFullCapacityTip !== false ? d97AllFull(L) : null, gate = d97Gate();
+    const away = WBS().allFullCapacityTip !== false ? d97AllFull(L, pl) : null, gate = d97Gate();
     if(away){ const T = planTipTable().find(t => t.id === 'all_full_capacity') || (WB.planTips || []).find(t => t.id === 'all_full_capacity') || {};
       const msg = String(T.message || "Every seat is sold — {turnedAway} people a day want seats you don't have. The way to carry them is capacity (another plane, or a bigger one) or a higher fare.").replace('{turnedAway}', num(away));
       const top = v.find(h => h.id === 'turned_away') || {};
-      v = [{ id:'all_full_capacity', priority:1, weight:9, stake:gate, text:msg, route:top.route || null, action:{ kind:'compare', label:'Compare aircraft' }, exps:dsExps('all_full_capacity') }]
-        .concat(v.filter(h => !['peak_unserved', 'service_weak', 'turned_away', 'all_full_capacity'].includes(h.id))); }
+      const cap = { id:'all_full_capacity', priority:1, weight:9, stake:gate, text:msg, route:top.route || null, action:{ kind:'compare', label:'Compare aircraft' }, exps:dsExps('all_full_capacity') };
+      const rest = v.filter(h => !['peak_unserved', 'service_weak', 'turned_away', 'all_full_capacity'].includes(h.id)), lose = rest.filter(h => h.id === 'plan_loses_money');
+      v = lose.concat([cap], rest.filter(h => h.id !== 'plan_loses_money')); }   // a losing plan still leads with the loss
     // the gain gate: losses and the capacity observation always show; anything else only if acting on it gains enough a day
     if(gate > 0) v = v.filter(h => ['plan_loses_money', 'all_full_capacity', 'range_fail'].includes(h.id) || h.priority === 0 || (h.stake || 0) >= gate);
   }catch(e){}
@@ -20495,6 +20814,15 @@ function bfFinish(st, d){
 }
 const upgName = id => ({ weekend_schedules:'weekday and weekend schedules' })[id] || String((upgRow(id) || {}).unlocks || id).replace(/\s*\(.*\)/, '').toLowerCase();
 
+/* the systems team's proposal, after the fallback day's review */
+Object.assign(FRAME_TITLES, { upgprop:'Operations request' }); NO_BACK.push('upgprop'); WS_STEPS.push('upgprop'); SHELL_STEPS.push('upgprop');
+Object.assign(RAIL_LABEL, { upgprop:'Operations request' }); Object.assign(SUB_DESC, { upgprop:'A proposal from the systems team' });
+{ const g = STAGES.day.find(x => x.id === 'review'); if(g && !g.steps.includes('upgprop')) g.steps.push('upgprop'); }
+R.upgprop = st => {
+  screen().innerHTML = shell(deskPage({ title:'Operations request', sub:'From the systems team', cls:'bf-page', body:upgProposal(true) }), deskBar('Build it now, or leave it for later: you can still say yes on the plan page.', ''));
+  const done = yes => { const u = upgS().weekend_schedules; if(yes){ u.granted = S.day; u.via = 'fallback'; toast('Planner upgrade approved: weekday and weekend schedules, from Monday.'); } else u.parked = S.day; closeDay(); };
+  on('upgYes', () => done(true)); on('upgNo', () => done(false));
+};
 /* the week-2 review: after the accounts are signed off, the briefing and the request, then the week closes as before */
 const bfCloseDay0 = closeDay;
 closeDay = function(){
@@ -20505,6 +20833,11 @@ closeDay = function(){
       const data = bfWeekendData();
       if(data && bfOn() && bfHas('weekend_demand')){ S.steps.splice(S.si + 1, 0, { t:'brief', id:'weekend_demand', upg:id, data }); next(); return; }
       upgS()[id].granted = S.day;   // no briefing to play: the upgrade arrives as before
+    }
+    // the fallback (Upgrades sheet): at the review on the fallback day the systems team proposes it
+    const u = upgS()[id], fb = upgFallbackDay(id);
+    if(upgOn() && st && st.t === 'weekReview' && u && u.declined && !u.granted && fb && S.day >= fb && !u.proposed){
+      u.proposed = S.day; S.steps.splice(S.si + 1, 0, { t:'upgprop', id }); next(); return;
     }
   }catch(e){}
   return bfCloseDay0.apply(this, arguments);
@@ -20539,9 +20872,10 @@ fdUnlocked = function(){
   return (S.day || 1) > (upgDay('weekend_schedules') || 14);
 };
 /* the fallback: on the fallback day the systems team proposes it, on the plan's opener */
-function upgProposal(){
+function upgProposal(force){
   const id = 'weekend_schedules', u = (S.upg || {})[id], fb = upgFallbackDay(id);
-  if(!u || u.granted || !fb || (S.day || 1) < fb || u.parked === S.day) return '';
+  if(!u || u.granted || !fb || (S.day || 1) < fb) return '';
+  if(!force && (!u.proposed || u.parked === S.day)) return '';
   const row = upgRow(id) || {}, say = (/'([^']+)'/.exec(String(row.fallback || '')) || [])[1] || 'Systems: we think a weekend timetable would help. Shall we build it?';
   return `<section class="dk-pnl upg-prop"><p class="kl">Operations request · from the systems team</p><p class="upg-say">${esc(say)}</p><p class="upg-what">${esc(String(row.unlocks || 'flightDays (All week / Mon–Fri / Sat–Sun)').replace(/^flightDays\s*/, 'Every flight gets a Days setting '))}</p><div class="upg-b"><button class="btn primary" id="upgYes">Build it</button><button class="btn" id="upgNo">Not this week</button></div></section>`;
 }

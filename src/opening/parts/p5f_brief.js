@@ -62,6 +62,15 @@ function bfFinish(st, d){
 }
 const upgName = id => ({ weekend_schedules:'weekday and weekend schedules' })[id] || String((upgRow(id) || {}).unlocks || id).replace(/\s*\(.*\)/, '').toLowerCase();
 
+/* the systems team's proposal, after the fallback day's review */
+Object.assign(FRAME_TITLES, { upgprop:'Operations request' }); NO_BACK.push('upgprop'); WS_STEPS.push('upgprop'); SHELL_STEPS.push('upgprop');
+Object.assign(RAIL_LABEL, { upgprop:'Operations request' }); Object.assign(SUB_DESC, { upgprop:'A proposal from the systems team' });
+{ const g = STAGES.day.find(x => x.id === 'review'); if(g && !g.steps.includes('upgprop')) g.steps.push('upgprop'); }
+R.upgprop = st => {
+  screen().innerHTML = shell(deskPage({ title:'Operations request', sub:'From the systems team', cls:'bf-page', body:upgProposal(true) }), deskBar('Build it now, or leave it for later: you can still say yes on the plan page.', ''));
+  const done = yes => { const u = upgS().weekend_schedules; if(yes){ u.granted = S.day; u.via = 'fallback'; toast('Planner upgrade approved: weekday and weekend schedules, from Monday.'); } else u.parked = S.day; closeDay(); };
+  on('upgYes', () => done(true)); on('upgNo', () => done(false));
+};
 /* the week-2 review: after the accounts are signed off, the briefing and the request, then the week closes as before */
 const bfCloseDay0 = closeDay;
 closeDay = function(){
@@ -72,6 +81,11 @@ closeDay = function(){
       const data = bfWeekendData();
       if(data && bfOn() && bfHas('weekend_demand')){ S.steps.splice(S.si + 1, 0, { t:'brief', id:'weekend_demand', upg:id, data }); next(); return; }
       upgS()[id].granted = S.day;   // no briefing to play: the upgrade arrives as before
+    }
+    // the fallback (Upgrades sheet): at the review on the fallback day the systems team proposes it
+    const u = upgS()[id], fb = upgFallbackDay(id);
+    if(upgOn() && st && st.t === 'weekReview' && u && u.declined && !u.granted && fb && S.day >= fb && !u.proposed){
+      u.proposed = S.day; S.steps.splice(S.si + 1, 0, { t:'upgprop', id }); next(); return;
     }
   }catch(e){}
   return bfCloseDay0.apply(this, arguments);
@@ -106,9 +120,10 @@ fdUnlocked = function(){
   return (S.day || 1) > (upgDay('weekend_schedules') || 14);
 };
 /* the fallback: on the fallback day the systems team proposes it, on the plan's opener */
-function upgProposal(){
+function upgProposal(force){
   const id = 'weekend_schedules', u = (S.upg || {})[id], fb = upgFallbackDay(id);
-  if(!u || u.granted || !fb || (S.day || 1) < fb || u.parked === S.day) return '';
+  if(!u || u.granted || !fb || (S.day || 1) < fb) return '';
+  if(!force && (!u.proposed || u.parked === S.day)) return '';
   const row = upgRow(id) || {}, say = (/'([^']+)'/.exec(String(row.fallback || '')) || [])[1] || 'Systems: we think a weekend timetable would help. Shall we build it?';
   return `<section class="dk-pnl upg-prop"><p class="kl">Operations request · from the systems team</p><p class="upg-say">${esc(say)}</p><p class="upg-what">${esc(String(row.unlocks || 'flightDays (All week / Mon–Fri / Sat–Sun)').replace(/^flightDays\s*/, 'Every flight gets a Days setting '))}</p><div class="upg-b"><button class="btn primary" id="upgYes">Build it</button><button class="btn" id="upgNo">Not this week</button></div></section>`;
 }

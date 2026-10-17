@@ -325,13 +325,14 @@ planTips = [{'id': r['tipId'], 'condition': r.get('condition'), 'threshold': r.g
 if 'PlanTips' not in wb.sheetnames: issue('check', 'PlanTips', 'no PlanTips sheet: the Operating Plan Studio uses its own copy of the tips.')
 # 15 Oct (Bertie): teacher milestones against coasting. The game has a draft list (docs/Milestones-Draft.md); each row of a
 # Milestones sheet overrides the draft's title, teacher words, threshold or chapters, matched on milestoneId.
-MS_IDS = ['fareTest', 'fullPlane', 'onTarget', 'newsReader', 'firstToFly', 'fuelAhead', 'cleanSheet', 'closeGap', 'shrinkGap', 'neverCoast', 'longHaulFull', 'spotMistake', 'captain', 'savedBought', 'experimenter', 'worthIt']
+MS_IDS = ['fareTest', 'fullPlane', 'onTarget', 'newsReader', 'firstToFly', 'fuelAhead', 'cleanSheet', 'closeGap', 'shrinkGap', 'neverCoast', 'longHaulFull', 'spotMistake', 'captain', 'savedBought']
 teacherMilestones = [{'id': r['milestoneId'], 'chapters': r.get('chapters'), 'title': r.get('title'), 'teacherWords': r.get('teacherWords'), 'threshold': r.get('threshold'), 'status': r.get('status')}
                      for r in live('Milestones', opt_sheet('Milestones')) if r.get('milestoneId')]
 if 'Milestones' not in wb.sheetnames: issue('check', 'Milestones', 'no Milestones sheet yet: the teacher panel uses the draft list in the game (docs/Milestones-Draft.md).')
-MS_PARKED = {'charterWinner': 'the Charter desk (D90)', 'clashServed': 'clashing weeks (D90)'}   # v5.9's mechanics are parked (Bertie, 16 Oct)
+MS_PARKED = {'charterWinner': 'the Charter desk (D90)', 'clashServed': 'clashing weeks (D90)',   # v5.9's mechanics are parked (Bertie, 16 Oct)
+             'experimenter': 'its measure in the game (D87 experiments logged with a prediction)', 'worthIt': "its measure in the game (D88's worth line on a kept change)"}
 for m in teacherMilestones:
-    if m['id'] in MS_PARKED: issue('check', 'Milestones', f'{m["id"]}: waits for {MS_PARKED[m["id"]]}, which is not installed yet; the teacher panel leaves it out.')
+    if m['id'] in MS_PARKED: issue('check', 'Milestones', f'{m["id"]}: waits for {MS_PARKED[m["id"]]}, not built yet; the teacher panel leaves it out for now.')
     elif m['id'] not in MS_IDS: issue('error', 'Milestones', f'{m["id"]}: the game cannot measure this milestone (it knows {", ".join(MS_IDS)}).')
 # v5.13–v5.15 (D96, D98, D99), taken on top of v5.8 (tools/take_parts.py): small explained daily effects, planner upgrades earned
 # at reviews, and the Operations Briefings. appliesOn reads 'Tue, every 3rd week'; options are the three statements, the right one first.

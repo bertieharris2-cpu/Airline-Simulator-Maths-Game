@@ -58,3 +58,39 @@ body.rm .rvs .rv-t td.rv-c.rv-new,body.rm .rvs .rv-ins .rb-card.rv-ping{animatio
 .rvs .rv-ins .rb-card .sc-h .stamp{font-size:11px;padding:2px 8px;max-width:100%;white-space:nowrap;margin-left:auto}
 .rvs .rv-ins .rb-card .sc-h{min-height:0;flex-wrap:wrap;justify-content:flex-end}
 .rvs .rv-ins .rb-card .sc-h > div:empty{display:none}
+/* ---- the named Operations Wall button and the keyboard hints ---- */
+.dkh-tools.kb{grid-template-columns:34px 34px auto}
+.dkh-tools #wallBtn.kb-wall{grid-column:3;grid-row:1 / span 2;width:auto;height:auto;min-width:78px;padding:4px 9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.dkh-tools #wallBtn .kb-wl{font-size:11.5px;font-weight:600;line-height:1.15;text-align:center;max-width:70px}
+.kb-h{display:none;font-size:10.5px;font-weight:500;letter-spacing:.04em;color:#8fb3dc;line-height:1.1}
+body.kb-hints .lnav .nv .kb-h,body.kb-hints #wallBtn .kb-h{display:block}
+.lnav .nv:hover .kb-h,#wallBtn:hover .kb-h{display:block}
+#wallBtn .kb-h{white-space:nowrap}
+.lnav .nv .nv-t .kb-h{margin-top:1px;font-size:10px;color:#7fd6ff;opacity:.85}
+/* ---- compare with last week ---- */
+.s2-tt{position:relative}
+.cmp-btn{padding:4px 10px;font-size:12.5px;min-height:0;width:auto}
+.cmp-btn.on{border-color:#36C6FF;color:#9fe3ff;box-shadow:inset 0 0 0 1px rgba(54,198,255,.4)}
+.s2-tt .ad-lane{position:relative}
+.cmp-gh{position:absolute;top:3px;bottom:3px;z-index:0;border:1px dashed rgba(159,227,255,.55);background:repeating-linear-gradient(135deg,rgba(159,227,255,.10) 0 6px,rgba(159,227,255,.03) 6px 12px);border-radius:2px;pointer-events:none;overflow:hidden}
+.cmp-gh span{position:absolute;left:6px;bottom:2px;font-size:10.5px;color:rgba(200,230,255,.7);white-space:nowrap}
+.s2-tt .ad-blk{z-index:1}
+.cmp-was{font-style:normal;font-size:.72em;font-weight:500;color:#8fb3dc;margin-right:4px}
+.cmp-pop{position:absolute;left:12px;bottom:10px;z-index:4;max-width:420px;padding:10px 14px;border:1px solid rgba(54,198,255,.5);background:rgba(7,28,55,.96);box-shadow:0 14px 34px rgba(0,0,0,.45);font-size:13.5px;color:#d6e6fb}
+.cmp-pop .kl{margin:0 0 4px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#7fd6ff}
+.cmp-pop ul{margin:0 0 8px;padding-left:16px}.cmp-pop li{margin:2px 0}.cmp-pop .cmp-worth li{color:#bff3d6}
+.cmp-pop .cmp-none{margin:0;color:#9fbde3}
+/* ---- What's in this: a quiet list ---- */
+.explain.ex-list{display:block;padding:8px 12px;font-weight:400}
+.explain.ex-list .ex-t{width:100%;border-collapse:collapse;font-size:13.5px}
+.explain.ex-list .ex-t td{padding:3px 4px;color:#cfe0f5;border:0}
+.explain.ex-list .ex-t td.num{text-align:right;color:#9fbde3;font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}
+.explain.ex-list .ex-t tfoot td{border-top:1px solid rgba(130,195,255,.35);color:#fff;font-weight:600;padding-top:5px}
+.explain.ex-list .fx{margin-left:6px;font-style:italic;font-size:11.5px;color:#7fd6ff;cursor:help}
+/* ---- the Fuel desk ---- */
+.fd-rel{font-weight:500;color:#d6e6fb}.fd-rel span{font-weight:600;color:#fff}
+.fd-limw{font-weight:600;color:#cfe0f5}
+.fd-need{display:block;color:#9fbde3}
+.fd-acct{margin-top:8px;padding:10px 12px;border:1px solid rgba(54,198,255,.45);box-shadow:inset 3px 0 0 #36C6FF;background:rgba(54,198,255,.05);font-size:13.5px;color:#d6e6fb}
+.fd-acct p{margin:0 0 6px}.fd-acs{display:flex;gap:18px;flex-wrap:wrap;color:#9fbde3}.fd-acs b{color:#fff;font-weight:600}
+.explain.ex-list [data-explain]{font-size:13px;margin-top:4px}

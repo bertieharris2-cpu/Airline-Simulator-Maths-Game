@@ -97,8 +97,9 @@ window.__dcFor = dcFor;
 DS_ACT.all_full_capacity = ['compare', 'Compare aircraft'];
 const d97Gate = () => { const v = +WBS().tipGainGate; return isNaN(v) ? 0 : v; };
 /* every service at or above seatFillGood, and people still turned away */
-function d97AllFull(L){
+function d97AllFull(L, pl){
   const good = +(WBS().seatFillGood || 0.8), sv = (L && L.services) || []; if(!sv.length) return null;
+  if(pl && normPlan(pl).fleet.some(x => !x.sched.length)) return null;   // an idle plane is spare capacity: that tip comes first
   const full = sv.every(s => s.seats && s.sold / s.seats >= good), away = Math.round((L.nos !== undefined ? L.nos : 0) || 0);
   return full && away > 0 ? away : null;
 }
@@ -107,12 +108,13 @@ dsTips = function(pl, L, opts){
   let v = d97Tips0.apply(this, arguments);
   try{
     pl = normPlan(pl || currentPlan()); L = L || planLines(pl);
-    const away = WBS().allFullCapacityTip !== false ? d97AllFull(L) : null, gate = d97Gate();
+    const away = WBS().allFullCapacityTip !== false ? d97AllFull(L, pl) : null, gate = d97Gate();
     if(away){ const T = planTipTable().find(t => t.id === 'all_full_capacity') || (WB.planTips || []).find(t => t.id === 'all_full_capacity') || {};
       const msg = String(T.message || "Every seat is sold — {turnedAway} people a day want seats you don't have. The way to carry them is capacity (another plane, or a bigger one) or a higher fare.").replace('{turnedAway}', num(away));
       const top = v.find(h => h.id === 'turned_away') || {};
-      v = [{ id:'all_full_capacity', priority:1, weight:9, stake:gate, text:msg, route:top.route || null, action:{ kind:'compare', label:'Compare aircraft' }, exps:dsExps('all_full_capacity') }]
-        .concat(v.filter(h => !['peak_unserved', 'service_weak', 'turned_away', 'all_full_capacity'].includes(h.id))); }
+      const cap = { id:'all_full_capacity', priority:1, weight:9, stake:gate, text:msg, route:top.route || null, action:{ kind:'compare', label:'Compare aircraft' }, exps:dsExps('all_full_capacity') };
+      const rest = v.filter(h => !['peak_unserved', 'service_weak', 'turned_away', 'all_full_capacity'].includes(h.id)), lose = rest.filter(h => h.id === 'plan_loses_money');
+      v = lose.concat([cap], rest.filter(h => h.id !== 'plan_loses_money')); }   // a losing plan still leads with the loss
     // the gain gate: losses and the capacity observation always show; anything else only if acting on it gains enough a day
     if(gate > 0) v = v.filter(h => ['plan_loses_money', 'all_full_capacity', 'range_fail'].includes(h.id) || h.priority === 0 || (h.stake || 0) >= gate);
   }catch(e){}

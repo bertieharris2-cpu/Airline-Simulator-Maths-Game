@@ -53,7 +53,12 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     sums[tag] = seen; return seen; };
   const builds = async tag => { const done = []; for(let g = 0; g < 12; g++){ const P = await p.evaluate(() => window.__sim.evalIn('rbPlan()')); if(!P) break;
       if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); }
-      else { await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
+      else { const y0 = await p.evaluate(() => [...document.querySelectorAll('#screen *')].map(e => e.scrollTop).join(','));
+        await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.waitForTimeout(60);
+        // D96: tapping ÷ never moves the page
+        if(/^review/.test(tag)){ const y1 = await p.evaluate(() => [...document.querySelectorAll('#screen *')].map(e => e.scrollTop).join(',')); ok(`${tag}: tapping ÷ keeps every panel where it was (no scroll jump)`, y0 === y1); if(BRIEF) await shot(`${tag.replace(/\s/g, '-')}-divide`); }
+        await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
+      if(/^review/.test(tag) && BRIEF){ await shot(`${tag.replace(/\s/g, '-')}-${P.id}-built`); ok(`${tag}: one cell lit at a time, no numbered panels (D96)`, (await p.$$('.rv-t td.rv-c.lit')).length === 1 && (await p.$$eval('.rv-ins .rb-card .sc-n', es => es.every(e => getComputedStyle(e).display === 'none'))), P.id); }
       await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push(P.id + (P.div ? '÷' + P.div : '')); } return done; };
   // v4.9 sign-off cards: Build (tap the figures and the operation) and Calculate (type the answer); the first of each kind is answered wrong once
   const briefSeen = {};

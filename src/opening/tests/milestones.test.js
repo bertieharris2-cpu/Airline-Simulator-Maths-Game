@@ -62,7 +62,8 @@ const FIX = n => fs.readFileSync(path.join(__dirname, 'fixtures', n), 'utf8').tr
   ok('Clean sheet: one Query in the week and it is not reached', !has(r, '1:cleanSheet'), r.got);
   // the month audits
   r = await T({ audits:[{ me:30, day:36, share:0.3 }, { me:61, day:64, share:0.08 }] });
-  ok('Close the gap (8% missed) and Shrink the gap (30% → 8%)', has(r, '1:closeGap') && has(r, '1:shrinkGap'), r.got);
+  // Fable's Milestones sheet (v5.15): Close the gap is from chapter 2 ("too hard with one plane"); Shrink the gap stays in chapter 1
+  ok('Shrink the gap (30% → 8%) in chapter 1; Close the gap waits for chapter 2 (Milestones sheet)', !has(r, '1:closeGap') && has(r, '1:shrinkGap'), r.got);
   // never coasting: decided at the review (day 118)
   const weeks = gap => Array.from({ length:16 }, (_, k) => wk(1 + 7 * k, [['par', 3, 90 + 10 * Math.floor(k / gap)]]));
   r = await T({ day:120, entries:weeks(4), audits:[{ me:91, day:92, board:true, idleWeeks:0, share:0.1 }] });

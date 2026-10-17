@@ -10,6 +10,33 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0x. The screens brief, D96–D99 (17 Oct 2026)
+
+Parts p5a–p5f after `p4zz_nightops`, and `p1_head_screens.css` joined after the Night Ops CSS. Reassignment only (`overrides.txt` 120). Data: v5.15's PlanTips, DailyColour, Upgrades, Briefings and Milestones sheets and twelve Settings rows, taken on top of v5.8 by `tools/take_parts.py`. The importer reads them as `WB.dailyColour`, `WB.upgrades` and `WB.briefings`.
+- **p5a_review.js.** Reassigns `renderWeekReviewBuild`, reusing `weekReviewItems`, `rbCardHtml`, `rbBind` and `rbCheck`. The ids `tot`/`diff`/`mean` and every `data-rb*` attribute are unchanged, so `rbPlan()` and the tests still drive it.
+  - Cells: `td.rv-c` with `.lit`, `.wait` or `.done`, plus `.rv-new` once.
+  - The worth lines `.rbw .ds-wk` are removed from the review.
+  - Scroll keeping: the outer `render` wrapper saves each scrolled element's path under `#screen` and restores it when the step and view are the same.
+- **p5f_brief.js.**
+  - `bfOpen(id, data, onDone)`: an iframe `srcdoc` in `#bfLayer`, with `window.BRIEF` injected; `postMessage {type:'briefing-done'}` closes it.
+  - Step `{t:'brief', id, upg, data}`. It is inserted by a `closeDay` wrapper when the week-2 review closes; `bfFinish` records `S.upg.weekend_schedules = {offered, chosen, right, granted|declined}` and calls `closeDay()` again.
+  - `fdUnlocked()`, new in p4zf, is reassigned to the earned rule. The fallback is step `{t:'upgprop'}`, inserted after the review on the fallback day (21) when the request was declined. "Not this week" leaves a `.upg-prop` card on later plan steps (`#upgYes` / `#upgNo`).
+  - The first fuel desk visit (days 8–14, no desk order yet) opens the fuel briefing.
+  - `S.brief.seen` and the Briefings shelf in the menu overlay.
+  - Ctrl+Shift+B skips a briefing (teacher).
+- **p5e_colour.js.**
+  - `dcFor(day)`: the first DailyColour row whose weekday matches and whose week number divides by `everyWeeks`, from week 2.
+  - Effects apply in a `planFlights` wrapper only while `dcLive` is set (`runDayQuick`, `startFlight`, `applyResults`, `simulateDays` outside `QUIET`). Snack rows go through `dayExtras`.
+  - `S.dcLog[day] = {id, line, delta}`. The line is unshifted onto `S.rnd.why`; `dayRowOf` gains `ev` (event lines) and `dc`.
+  - D97: `dsTips` is wrapped (gain gate, `all_full_capacity`); so are `planTipsFor` (actual mode), `dsDo` (`compare` opens the Fleet desk shop) and `dsAfterPlan` (the second "Test fare" button).
+- **p5b_desk.js.**
+  - `#wallBtn.kb-wall` and `.kb-h` hints (localStorage `airline-kb-sessions` / `airline-kb-used`).
+  - Keydown: Ctrl/⌘ + arrows, Esc and Enter. Enter uses `e.target`, so an input's own Enter never checks twice.
+  - The `s2State` wrapper keeps `UI.s2.startPlan`. `cmpDecorate` adds `.cmp-gh` ghosts, `.cmp-was` and `.cmp-pop`.
+  - `exList` turns `.explain` into a table (`window.__exList` for tests).
+- **p5c_fuel.js.** Wraps `fuelDeskHtml` (labels, `.fd-need`, `.fd-rel`, `.fd-acct` after a purchase, using a capture-phase click on `#fdBuy`) and `applyResults` (the "Fuel burned" line).
+- **p5d_sound.js.** `sd(kind)` on `loAC`, behind `opsSoundOn()` and `settings.uiVolume` (slider `#tUiVol`). Click capture plays tap, slot and tick/query; the render wrapper plays cash, pour and day; `moveService` plays the whoosh. `window.__sdLog` keeps the last 60 for tests.
+
 ## 0w. Night Ops in the game: the plan and the sums (16 Oct 2026)
 
 **`p4zz_nightops.js`**, after `p4zy` (before `p4c_display`, so `window.__sim.render` is the wrapped one), and **`p1_head_nightops.css`**, joined after `p1_head_studio2.css`. Reassignment only (`overrides.txt` stays at 120); everything in the JS is inside one block, and every CSS rule is under `html.no` (the certificate print copies the page's CSS, so there are no bare `body` or `*` rules). README: "Night Ops in the game".
