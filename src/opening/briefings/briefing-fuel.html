@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Operations briefing — Cash, tank, profit</title>
+<style>
+:root{--bg:#0b2549;--navy:#081d3d;--panel:rgba(14,44,88,.78);--line:rgba(127,200,255,.42);--hair:rgba(127,200,255,.2);--cy:#7fd6ff;--gold:#ffc83d;--white:#f2f8ff;--muted:#bccfe8;--grey:#9aaecb;--green:#6ef0b4;--red:#ff6b6b;
+ --fig:"Cascadia Mono","Cascadia Code",Consolas,"SF Mono",ui-monospace,Menlo,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--r:2px;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){color-scheme:dark}}
+*{box-sizing:inherit}html,body{height:100%;margin:0}
+body{color:var(--white);font-family:var(--sans);font-size:17px;background:radial-gradient(1000px 600px at 70% -10%,rgba(86,197,255,.14),transparent 60%),linear-gradient(160deg,#143a6e,var(--bg) 55%,var(--navy))}
+.app{height:100%;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--hair);background:var(--panel)}
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cy)}
+.bar .t{font-size:14px;color:var(--grey)}.bar .t b{color:var(--white);font-weight:600}
+.dots{display:flex;gap:6px}.dots i{width:22px;height:4px;background:var(--hair)}.dots i.on{background:var(--gold)}.dots i.done{background:var(--cy)}
+.stage{flex:1;display:grid;place-items:center;padding:20px 18px;overflow:auto}
+.panel{width:min(980px,100%);background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:26px 30px}
+h1{font-size:26px;font-weight:600;margin:0 0 4px}p{margin:0 0 10px;color:var(--muted);line-height:1.45;max-width:66ch}
+.ask{font-size:20px;color:var(--white);margin:12px 0 6px}.hint{font-size:14px;color:var(--grey);min-height:1.4em}.ok{color:var(--green)}
+.gauges{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:16px;align-items:end}
+.g{border:1px solid var(--line);background:rgba(8,29,61,.6);padding:14px;cursor:pointer;position:relative}
+.g.pick{outline:2px solid var(--gold);outline-offset:3px}
+.g .k{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey)}
+.g .v{font-family:var(--fig);font-size:28px;margin-top:4px}
+.meter{height:150px;border:1px solid var(--hair);margin-top:12px;position:relative;background:rgba(0,0,0,.2)}
+.meter i{position:absolute;left:0;right:0;bottom:0;height:0;transition:height .9s ease}
+.cash i{background:var(--gold)}.tank i{background:var(--cy)}.profit i{background:var(--green)}
+.meter .lab{position:absolute;left:8px;top:6px;font-size:11px;color:var(--grey);font-family:var(--fig)}
+.flow{position:absolute;top:50%;left:100%;width:18px;height:3px;background:var(--gold);opacity:0;transform:translateY(-50%)}
+.flow.go{animation:flow .9s ease forwards}@keyframes flow{0%{opacity:0;width:0}30%{opacity:1}100%{opacity:0;width:18px}}
+.ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.btn{font:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:var(--r);border:1px solid var(--line);background:transparent;color:var(--white);cursor:pointer}
+.btn.primary{background:var(--gold);color:#1a1200;border-color:var(--gold)}.btn[disabled]{opacity:.35;cursor:default}.btn:focus-visible{outline:2px solid var(--gold)}
+.costs{margin-top:14px;border:1px solid var(--line);background:rgba(8,29,61,.6);padding:10px 14px;font-family:var(--fig);font-size:15px;display:none}
+.costs.on{display:block}.costs .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--hair)}.costs .row:last-child{border-bottom:0;color:var(--gold)}
+.plane{display:inline-block;transition:transform 1.2s linear;font-size:22px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid var(--hair);background:var(--panel)}
+.pause{font-size:13px;color:var(--grey)}
+@media (prefers-reduced-motion:reduce){.meter i,.plane{transition:none!important}.flow.go{animation:none;opacity:1}}
+@media (max-width:640px){.gauges{grid-template-columns:1fr}}
+</style>
+</head>
+<body><div class="app">
+<div class="bar"><div><div class="eyebrow">Operations briefing</div><div class="t"><b>Cash, tank, profit</b> · first visit to the Fuel desk</div></div><div class="dots" id="dots"></div></div>
+<div class="stage"><div class="panel">
+ <h1 id="h">Three gauges</h1>
+ <p id="p">Cash is what's in the bank. The tank is the fuel you own. Profit is today's result. Buy a week's fuel and watch all three.</p>
+ <div class="gauges">
+  <div class="g cash" id="gCash"><div class="k">Cash</div><div class="v" id="vCash">£12,409</div><div class="meter"><span class="lab">bank</span><i id="mCash" style="height:124px"></i><span class="flow" id="flow1"></span></div></div>
+  <div class="g tank" id="gTank"><div class="k">Fuel in the tank</div><div class="v" id="vTank">0 L</div><div class="meter"><span class="lab">8,000 L storage</span><i id="mTank"></i></div></div>
+  <div class="g profit" id="gProfit"><div class="k">Today's profit</div><div class="v" id="vProfit">£0</div><div class="meter"><span class="lab">so far today</span><i id="mProfit"></i></div></div>
+ </div>
+ <div class="ctrl" id="ctrl"><button class="btn primary" id="buy">Buy 7,000 L at £1.47 — £10,290</button><span class="hint" id="hint"></span></div>
+ <div class="costs" id="costs"><div class="row"><span>Today's costs</span><span></span></div><div class="row"><span>Flying 2 h × £150</span><span>£300</span></div><div class="row"><span>Landing, Heathrow and Paris</span><span>£220</span></div><div class="row"><span>Passenger charges 19 × £5</span><span>£95</span></div><div class="row" id="fuelRow" style="display:none"><span>Fuel burned 120 L × £1.47</span><span>£176</span></div><div class="row"><span>Total</span><span id="tot">£615</span></div></div>
+ <p class="ask" id="ask"></p>
+</div></div>
+<div class="nav"><button class="btn" id="pause">Pause &amp; discuss</button><span class="pause" id="where"></span><button class="btn primary" id="next" disabled>Continue →</button></div>
+</div>
+<script>
+(function(){
+ const $=id=>document.getElementById(id); let step=1;
+ const cash0=12409, price=1.47, litres=7000, cost=10290;
+ function dots(){const el=$("dots");el.innerHTML="";for(let i=1;i<=4;i++){const s=document.createElement("i");s.className=i<step?"done":i===step?"on":"";el.appendChild(s);} $("where").textContent=`Step ${step} of 4 · the airline pauses operations to brief you`;}
+ dots();
+ $("buy").onclick=()=>{ $("buy").disabled=true; $("flow1").classList.add("go"); $("mCash").style.height=Math.round((cash0-cost)/cash0*124)+"px"; $("vCash").textContent="£2,119"; $("mTank").style.height=Math.round(litres/8000*150)+"px"; $("vTank").textContent="7,000 L"; setTimeout(()=>{ step=2; dots(); $("h").textContent="What changed?"; $("p").textContent="Cash fell by £10,290. The tank filled. Look at the profit gauge."; $("ask").innerHTML='Tap the gauge that <b>didn\'t</b> move.'; ["gCash","gTank","gProfit"].forEach(id=>{$(id).onclick=()=>{document.querySelectorAll(".g").forEach(g=>g.classList.remove("pick")); $(id).classList.add("pick"); const ok=id==="gProfit"; $("hint").textContent=ok?"Profit didn't move. You haven't spent the fuel yet — you've turned £10,290 of cash into 7,000 litres you own.":"That one moved. Which gauge stayed where it was?"; $("hint").className="hint "+(ok?"ok":""); $("next").disabled=!ok;};}); },1000); };
+ $("next").onclick=()=>{
+  if(step===2){ step=3; dots(); $("next").disabled=true; $("h").textContent="A plane flies"; $("p").textContent="The 07:00 Twin Otter leaves for Paris and back: 120 litres."; $("ask").innerHTML='<span class="plane" id="plane">✈</span> Press Fly and watch the tank and today\'s costs.'; $("ctrl").innerHTML='<button class="btn primary" id="fly">Fly to Paris and back</button><span class="hint" id="hint"></span>'; $("costs").classList.add("on"); document.querySelectorAll(".g").forEach(g=>g.classList.remove("pick")); $("fly").onclick=()=>{ $("fly").disabled=true; $("plane").style.transform="translateX(240px)"; setTimeout(()=>{ $("mTank").style.height=Math.round(6880/8000*150)+"px"; $("vTank").textContent="6,880 L"; $("fuelRow").style.display="flex"; $("tot").textContent="£791"; $("mProfit").style.height="98px"; $("vProfit").textContent="£919"; $("hint").textContent="120 litres drained from the tank — and £176, the price you paid for them, flowed into today's costs. Now profit moves: 19 × £90 − £791 = £919."; $("hint").className="hint ok"; $("next").disabled=false; },1200); }; }
+  else if(step===3){ step=4; dots(); $("h").textContent="Buying fuel and using fuel are different events"; $("p").innerHTML="<b>Buying</b> moves cash into the tank. <b>Using</b> turns litres into a cost, flight by flight, at the price you paid. A big order today does not make a loss today — it just means less cash in the bank and more fuel in the tank."; $("ask").textContent="Back on the Fuel desk: how many blocks will you order for the week? The plan needs 4,200 litres."; $("ctrl").innerHTML=""; $("costs").classList.remove("on"); $("next").textContent="To the Fuel desk →"; $("next").disabled=false; }
+ };
+ $("pause").onclick=()=>{$("pause").textContent=$("pause").textContent.startsWith("Pause")?"Resume":"Pause & discuss";};
+ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("next").disabled)$("next").click();});
+})();
+</script>
+</body></html>

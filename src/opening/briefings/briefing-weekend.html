@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Operations briefing — Weekdays and weekends</title>
+<style>
+:root{--bg:#0b2549;--navy:#081d3d;--panel:rgba(14,44,88,.78);--line:rgba(127,200,255,.42);--hair:rgba(127,200,255,.2);--cy:#7fd6ff;--gold:#ffc83d;--white:#f2f8ff;--muted:#bccfe8;--grey:#9aaecb;--green:#6ef0b4;--red:#ff6b6b;
+ --fig:"Cascadia Mono","Cascadia Code",Consolas,"SF Mono",ui-monospace,Menlo,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--r:2px;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){color-scheme:dark}}
+*{box-sizing:inherit}html,body{height:100%;margin:0}
+body{color:var(--white);font-family:var(--sans);font-size:17px;background:radial-gradient(1000px 600px at 70% -10%,rgba(86,197,255,.14),transparent 60%),linear-gradient(160deg,#143a6e,var(--bg) 55%,var(--navy))}
+.app{height:100%;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--hair);background:var(--panel)}
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cy)}
+.bar .t{font-size:14px;color:var(--grey)}.bar .t b{color:var(--white);font-weight:600}
+.dots{display:flex;gap:6px}.dots i{width:22px;height:4px;background:var(--hair)}.dots i.on{background:var(--gold)}.dots i.done{background:var(--cy)}
+.stage{flex:1;display:grid;place-items:center;padding:20px 18px;overflow:auto}
+.slide{display:none;width:min(980px,100%);background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:26px 30px;animation:in .35s ease}
+.slide.on{display:block}@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide{animation:none}.col i,.flight{transition:none!important}}
+h1{font-size:26px;font-weight:600;margin:0 0 4px}p{margin:0 0 10px;color:var(--muted);line-height:1.45;max-width:64ch}
+.ask{font-size:20px;color:var(--white);margin:12px 0 6px}
+/* chart */
+.chart{display:grid;grid-template-columns:repeat(7,1fr);gap:14px;align-items:end;height:260px;padding:10px 8px 0;border-bottom:1px solid var(--line);margin-top:14px}
+.col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:pointer}
+.col .bar2{width:100%;display:flex;flex-direction:column-reverse;align-items:stretch}
+.col i{display:block;height:0;transition:height .7s ease;background:var(--cy);opacity:.85}
+.col i.biz{background:#4a86e8}.col i.fam{background:#f08a6e}.col i.lei{background:var(--gold)}
+.col .n{font-family:var(--fig);font-size:14px;color:var(--white);margin-top:6px}
+.col.pick .bar2{outline:2px solid var(--gold);outline-offset:3px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:14px;padding:6px 8px 0;font-size:13px;color:var(--grey);text-align:center}
+.seatline{position:relative;height:0;border-top:2px dashed var(--white);opacity:.7}
+.key{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-top:10px}.key span::before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}.key .b::before{background:#4a86e8}.key .f::before{background:#f08a6e}.key .l::before{background:var(--gold)}
+/* timetable strip */
+.tt{margin-top:16px;border:1px solid var(--line);background:rgba(8,29,61,.6)}
+.tt .row{display:grid;grid-template-columns:64px 1fr;border-top:1px solid var(--hair)}.tt .row:first-child{border-top:0}
+.tt .d{padding:8px 10px;font-size:13px;color:var(--grey);font-family:var(--fig)}
+.tt .track{position:relative;height:34px}
+.flight{position:absolute;top:6px;height:22px;background:var(--cy);opacity:.9;border-radius:var(--r);font-size:11px;color:#06203f;font-family:var(--fig);padding:3px 6px;white-space:nowrap}
+.tt .row.wk .track{background:rgba(255,200,61,.06)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.card{border:1px solid var(--line);border-radius:var(--r);background:rgba(120,190,255,.06);padding:14px;cursor:pointer;color:var(--white);font:inherit;text-align:left}
+.card:hover{border-color:var(--cy)}.card[aria-pressed="true"]{border-color:var(--gold);background:rgba(255,200,61,.1)}.card:focus-visible{outline:2px solid var(--gold)}
+.plate{margin-top:14px;border:1px solid var(--green);background:rgba(110,240,180,.08);padding:14px 16px}
+.plate .eyebrow{color:var(--green)}.plate b{font-size:20px;font-weight:600;display:block;margin-top:4px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid var(--hair);background:var(--panel)}
+.btn{font:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:var(--r);border:1px solid var(--line);background:transparent;color:var(--white);cursor:pointer}
+.btn.primary{background:var(--gold);color:#1a1200;border-color:var(--gold)}.btn[disabled]{opacity:.35;cursor:default}.btn:focus-visible{outline:2px solid var(--gold)}
+.pause{font-size:13px;color:var(--grey)}.hint{font-size:14px;color:var(--grey);margin-top:8px;min-height:1.4em}
+.ok{color:var(--green)}
+</style>
+</head>
+<body><div class="app">
+<div class="bar"><div><div class="eyebrow">Operations briefing</div><div class="t"><b>Weekdays and weekends</b> · week 2 review</div></div><div class="dots" id="dots"></div></div>
+<div class="stage">
+
+<section class="slide on" data-step="1">
+ <h1>Dublin last week: who wanted to fly, day by day</h1>
+ <p>Watch the bars. The dashed line is the seats you offered each day.</p>
+ <div class="chart" id="chart"></div>
+ <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+ <p class="ask" id="ask1">Which days look different from the rest? <span style="color:var(--grey);font-size:15px">Tap them.</span></p>
+ <div class="hint" id="hint1"></div>
+</section>
+
+<section class="slide" data-step="2">
+ <h1>Why the weekend is different</h1>
+ <p>The same bars, coloured by who is flying.</p>
+ <div class="chart" id="chart2"></div>
+ <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+ <div class="key"><span class="b">Business — in the week</span><span class="l">Leisure</span><span class="f">Families — at the weekend</span></div>
+ <p class="ask">Business travel builds through the week. At the weekend it stops, and families and holidaymakers take its place — more of them.</p>
+</section>
+
+<section class="slide" data-step="3">
+ <h1>Your timetable, the same seven days</h1>
+ <p>Here is what you flew to Dublin each day last week.</p>
+ <div class="tt" id="tt"></div>
+ <p class="ask">Does the planner fit what the passengers are doing? <span style="color:var(--grey);font-size:15px">Tap the day you'd most like to change.</span></p>
+ <div class="hint" id="hint3"></div>
+</section>
+
+<section class="slide" data-step="4">
+ <div class="eyebrow">Operations request</div>
+ <h1>What should the planner be able to do?</h1>
+ <p>Right now, changing Saturday changes every day. What control would make this easier to manage?</p>
+ <div class="cards" id="cards"></div>
+ <div class="hint" id="hint4"></div>
+ <div id="plate"></div>
+</section>
+
+</div>
+<div class="nav"><button class="btn" id="pause">Pause &amp; discuss</button><span class="pause" id="where"></span><button class="btn primary" id="next" disabled>Continue →</button></div>
+</div>
+<script>
+(function(){
+ const want=[48,45,47,50,61,83,77], seats=57;
+ const biz=[34,32,33,36,40,12,10], fam=[6,5,6,6,10,41,38], lei=[8,8,8,8,11,30,29];
+ const $=id=>document.getElementById(id); let step=1, picked=new Set(), chosen=null;
+ const max=100, h=v=>Math.round(v/max*230);
+ function dots(){const el=$("dots");el.innerHTML="";for(let i=1;i<=4;i++){const s=document.createElement("i");s.className=i<step?"done":i===step?"on":"";el.appendChild(s);} $("where").textContent=`Step ${step} of 4 · the airline pauses operations to brief you`;}
+ function show(){document.querySelectorAll(".slide").forEach(s=>s.classList.toggle("on",Number(s.dataset.step)===step)); dots(); $("next").disabled=true; if(step===1) chart1(); if(step===2) chart2(); if(step===3) tt(); if(step===4) cards();}
+ function chart1(){const c=$("chart"); c.innerHTML=""; want.forEach((v,i)=>{const col=document.createElement("div"); col.className="col"; col.innerHTML=`<div class="bar2"><i></i></div><div class="n">${v}</div>`; col.onclick=()=>{if(picked.has(i))picked.delete(i);else picked.add(i); col.classList.toggle("pick",picked.has(i)); check1();}; c.appendChild(col); requestAnimationFrame(()=>setTimeout(()=>{col.querySelector("i").style.height=h(v)+"px";},i*120));});
+  const line=document.createElement("div"); line.className="seatline"; line.style.cssText=`position:absolute;left:0;right:0;`; c.style.position="relative"; const sl=document.createElement("div"); sl.style.cssText=`position:absolute;left:8px;right:8px;bottom:${h(seats)+10}px;border-top:2px dashed rgba(242,248,255,.7)`; const lab=document.createElement("span"); lab.style.cssText="position:absolute;right:0;top:-18px;font-size:12px;color:var(--grey);font-family:var(--fig)"; lab.textContent="57 seats offered"; sl.appendChild(lab); c.appendChild(sl);}
+ function check1(){const right=picked.has(5)&&picked.has(6)&&picked.size<=3; $("hint1").textContent=picked.size===0?"":right?"Saturday and Sunday — more people wanted to fly than you had seats. Friday is on the way up too.":"Keep looking: which bars go over the dashed line?"; $("hint1").className="hint "+(right?"ok":""); $("next").disabled=!right;}
+ function chart2(){const c=$("chart2"); c.innerHTML=""; want.forEach((v,i)=>{const col=document.createElement("div"); col.className="col"; col.innerHTML=`<div class="bar2"><i class="biz"></i><i class="lei"></i><i class="fam"></i></div><div class="n">${v}</div>`; c.appendChild(col); const [b,l,f]=col.querySelectorAll("i"); setTimeout(()=>{b.style.height=h(biz[i])+"px"; l.style.height=h(lei[i])+"px"; f.style.height=h(fam[i])+"px";},150+i*100);}); setTimeout(()=>{$("next").disabled=false;},1400);}
+ function tt(){const el=$("tt"); el.innerHTML=""; ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach((d,i)=>{const row=document.createElement("div"); row.className="row"+(i>=5?" wk":""); row.innerHTML=`<div class="d">${d}</div><div class="track"><div class="flight" style="left:22%;width:17%">09:40 Dublin · 19</div><div class="flight" style="left:55%;width:17%">14:50 Dublin · 19</div><div class="flight" style="left:76%;width:17%">19:10 Dublin · 19</div></div>`; row.onclick=()=>{el.querySelectorAll(".row").forEach(r=>r.style.outline=""); row.style.outline="2px solid var(--gold)"; const w=i>=5; $("hint3").textContent=w?`${d}: ${want[i]} wanted to fly, 57 seats. Right — but the planner changes every day at once, so adding a flight on ${d} adds one on Monday too.`:`${d}: ${want[i]} wanted to fly, 57 seats offered. There were empty seats here. Look at the weekend rows.`; $("hint3").className="hint "+(w?"ok":""); $("next").disabled=!w;}; el.appendChild(row);});}
+ function cards(){const el=$("cards"); el.innerHTML=""; const opts=[["Change every day together","the planner as it is now"],["Change weekdays and weekends separately","two timetables: Mon–Fri and Sat–Sun"],["Change one particular date","a single day's exception"]]; opts.forEach((o,i)=>{const b=document.createElement("button"); b.className="card"; b.innerHTML=`<div style="font-weight:600">${o[0]}</div><div style="color:var(--grey);font-size:14px;margin-top:4px">${o[1]}</div>`; b.onclick=()=>{chosen=i; el.querySelectorAll(".card").forEach(c=>c.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); if(i===1){$("hint4").textContent=""; $("plate").innerHTML=`<div class="plate"><div class="eyebrow">Planner upgrade approved</div><b>Weekday / weekend schedules</b><div style="color:var(--muted);margin-top:4px">From Monday, every flight has a Days setting: All week, Mon–Fri or Sat–Sun. The weekend rows will show their own seat fill.</div></div>`; $("next").textContent="Back to the review →"; $("next").disabled=false;} else if(i===0){$("hint4").textContent="That's what the planner does now — and the data says the weekend needs something different."; $("plate").innerHTML="";} else {$("hint4").textContent="That would fix one Saturday. The data shows every weekend is different — what fits all of them?"; $("plate").innerHTML="";}}; el.appendChild(b);});}
+ $("next").onclick=()=>{if(step<4){step++;show();}}; $("pause").onclick=()=>{$("pause").textContent=$("pause").textContent.startsWith("Pause")?"Resume":"Pause & discuss";};
+ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("next").disabled)$("next").click();});
+ show();
+})();
+</script>
+</body></html>
