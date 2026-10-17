@@ -14,7 +14,7 @@
 const wkPlanner = () => typeof weekMode === 'function' && weekMode();
 const dayLike = () => !!S && (S.phase === 'setup' || !!(S.period && (S.period.type === 'day' || (wkPlanner() && ['week', 'month'].includes(S.period.type)))));   // from day 29 the week and month beats are planned on the same desks
 const planW0 = R.plan, workW0 = R.workings;
-const PLW_SNAP = 10;   // minutes: the timeline's grid
+let PLW_SNAP = 10;   // minutes: the timeline's grid (the inspector's Earlier and Later move 5, D101)
 
 /* ---------- steps: the intro replaces the aircraft, market, demand and rotation screens; both routes are open ---------- */
 function newState(){

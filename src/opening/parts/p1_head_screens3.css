@@ -1,0 +1,274 @@
+
+/* =====================================================================
+   SCREENS BRIEF 3 (Fable, 17 Oct 2026: D101 overview → focus → consequence, D102 the teacher test toolkit)
+   ===================================================================== */
+/* ---------- D102: the TEST MODE bar, slim and amber across the top of every screen ---------- */
+.testbar.tk-bar{position:fixed;left:0;right:0;top:0;bottom:auto;z-index:400;display:block;padding:0;gap:0;background:rgba(58,38,4,.94);border:0;border-bottom:1px solid #FFB547;box-shadow:0 2px 14px rgba(0,0,0,.35);font:12px/1.2 "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;color:#FFE2A8}
+body.focus .testbar.tk-bar{left:0}
+.tk-bar .tk-row{display:flex;align-items:center;gap:6px;height:24px;padding:0 8px}
+.tk-bar .tk-flag{color:#FFB547;letter-spacing:.14em;font-size:11px;font-weight:700;padding:0;white-space:nowrap}
+.tk-bar .tk-who{color:#FFE2A8;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
+.tk-bar .grow{flex:1}
+.tk-bar .tk-b{height:19px;padding:0 8px;border:1px solid rgba(255,181,71,.55);background:rgba(255,181,71,.12);color:#FFE2A8;font:inherit;font-size:11.5px;cursor:pointer;white-space:nowrap}
+.tk-bar .tk-b:hover{background:rgba(255,181,71,.26)}
+.tk-bar .tk-b[aria-pressed="true"]{background:#FFB547;color:#2a1a00}
+.tk-bar .tk-drop{display:grid;gap:6px;padding:8px 10px 10px;border-top:1px solid rgba(255,181,71,.35);background:rgba(40,26,2,.97)}
+.tk-bar .tk-g{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.tk-bar .tk-k{width:92px;color:#FFB547;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase}
+.tk-bar .tk-n{opacity:.75}
+.tk-bar select{height:22px;font:inherit;font-size:12px;background:#1e1402;color:#FFE2A8;border:1px solid rgba(255,181,71,.55)}
+.tk-bar .tk-c{display:flex;align-items:center;gap:4px}
+/* the room the bar takes: the desk sits below it (scaled to the height left, see tkFit) */
+html.tk body.desk #control{top:calc(50% + 12px)}
+/* Show the answers: a small amber tag beside the field, never checked */
+.tk-ans{display:inline-block;margin-left:6px;padding:1px 6px;border:1px dashed #FFB547;color:#FFB547;background:rgba(255,181,71,.08);font:600 12px/1.4 "Segoe UI",system-ui,sans-serif;white-space:nowrap;vertical-align:middle;pointer-events:none}
+.tk-ans.float{position:fixed;right:12px;top:30px;z-index:401}
+
+/* ---------- D101: the demand shape (bands on the timetable's hours, Any time in a gutter the plane rows share) ---------- */
+.st-strip.ds3{grid-template-columns:190px 1fr 74px;row-gap:3px;column-gap:10px}
+.s2-tt:has(.ds3) .s2-ad{padding-right:84px}
+.ds3 .st-sl{gap:3px}
+.ds3 .st-sl b{font-size:13.5px;line-height:1.25}
+.ds3 .ds-key i.gd{display:inline-block;width:10px;height:10px;background:#F2C14E;margin:0 3px 0 8px;vertical-align:-1px}
+.ds3 .ds-key i.lk{background:rgba(120,190,255,.7)}
+.ds3 .ds-key i.fx{background:rgba(120,190,255,.32)}
+.ds3 .ds-sb{height:78px;background:linear-gradient(180deg,rgba(7,22,48,.2),rgba(7,22,48,.75));border:1px solid rgba(130,195,255,.16)}
+.ds3 .ds-col,.ds3 .ds-any{display:grid;grid-template-rows:15px 1fr 15px;justify-items:center;box-sizing:border-box}
+.ds3 .ds-col{position:absolute;top:0;bottom:0;border-left:1px solid rgba(130,195,255,.1)}
+.ds3 .ds-col:first-child{border-left:0}
+.ds3 .ds-any{height:78px;border:1px solid rgba(130,195,255,.16);background:rgba(7,22,48,.6)}
+.ds3 .ds-area{position:relative;width:100%}
+.ds3 .ds-stack{position:absolute;bottom:0;left:18%;right:18%;display:flex;flex-direction:column;transition:height .35s ease}
+.ds3 .ds-any .ds-stack{left:16%;right:16%;flex-direction:column-reverse}
+.ds3 .ds-n{font-size:12px;font-weight:600;color:#EAF2FF;line-height:15px}
+.ds3 .ds-l{font-size:10.5px;color:#9FBDE3;line-height:15px;white-space:nowrap}
+.ds3 .ds-lk{flex:1;background:rgba(120,190,255,.7)}
+.ds3 .ds-mv{display:block;flex:none;background:repeating-linear-gradient(135deg,rgba(120,190,255,.55) 0 3px,rgba(120,190,255,.18) 3px 6px)}
+.ds3 .ds-af{display:block;flex:none}
+.ds3 .ds-af.idle{background:rgba(120,190,255,.32)}
+/* a flight selected: its slice in gold, the route's other flights in cyan, what it cannot reach dimmed */
+.ds3 .ds-col.lit .ds-lk{background:#F2C14E;box-shadow:0 0 12px rgba(242,193,78,.35)}
+.ds3 .ds-col.lit .ds-n{color:#F2C14E}
+.ds3 .ds-col.other .ds-lk{background:rgba(54,198,255,.75)}
+.ds3 .ds-col.dim .ds-lk{background:rgba(120,160,210,.16)}
+.ds3 .ds-col.dim .ds-n,.ds3 .ds-col.dim .ds-l{opacity:.55}
+.ds3 .ds-mv.lit{background:repeating-linear-gradient(135deg,#F2C14E 0 3px,rgba(242,193,78,.35) 3px 6px)}
+.ds3 .ds-mv.other{background:repeating-linear-gradient(135deg,rgba(54,198,255,.8) 0 3px,rgba(54,198,255,.25) 3px 6px)}
+.ds3 .ds-mv.dim{background:rgba(120,160,210,.16)}
+.ds3 .ds-any.sel{background:linear-gradient(180deg,rgba(7,22,48,.6),rgba(7,22,48,.6)) padding-box,rgba(120,160,210,.16)}
+.ds3 .ds-any.sel .ds-stack{background:rgba(120,160,210,.16)}
+.ds3 .ds-af.lit{background:#F2C14E;box-shadow:0 0 12px rgba(242,193,78,.3)}
+.ds3 .ds-af.other{background:rgba(54,198,255,.75)}
+.ds3 .ds-cap{grid-column:2 / 4;margin:0;font-size:13px;line-height:1.35;color:#CFE0F7;min-height:18px}
+.ds3 .ds-cap.pulse{animation:dsPulse .9s ease}
+@keyframes dsPulse{0%{color:#F2C14E}100%{color:#CFE0F7}}
+body.rm .ds3 .ds-cap.pulse,body.rm .ds3 .ds-stack{animation:none;transition:none}
+.ds3 .ds-tabs{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
+.ds3 .ds-tabs button{font:inherit;font-size:11px;padding:1px 7px;border:1px solid rgba(130,195,255,.3);background:transparent;color:#9FBDE3;cursor:pointer}
+.ds3 .ds-tabs button[aria-selected="true"]{background:rgba(54,198,255,.18);border-color:#36C6FF;color:#EAF2FF}
+
+/* ---------- D101: the folded route line and its chips ---------- */
+html .s2-routes.s3-fold{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px;min-height:48px;height:48px;padding:0 12px;box-sizing:border-box}
+.s3-line{display:flex;align-items:center;gap:8px;background:none;border:0;color:#EAF2FF;font:inherit;font-size:14px;cursor:pointer;padding:0;white-space:nowrap}
+.s3-line svg{width:18px;height:18px;color:#36C6FF}
+.s3-line b{font-weight:600}
+.s3-line .s3-open{font-size:11.5px;color:#9FBDE3;border:1px solid rgba(130,195,255,.3);padding:1px 7px}
+.s3-line:hover .s3-open{border-color:#36C6FF;color:#EAF2FF}
+.s3-chips{display:flex;gap:5px;flex:1;min-width:0;overflow:hidden}
+.s3-chip{position:relative;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 8px;border:1px solid rgba(130,195,255,.22);background:rgba(7,22,48,.6);color:#CFE0F7;font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
+.s3-chip b{color:#EAF2FF;font-weight:600}
+.s3-chip:hover{border-color:rgba(54,198,255,.6)}
+.s3-chip.on{border-color:#36C6FF;box-shadow:inset 0 -2px 0 #36C6FF;background:rgba(54,198,255,.1)}
+.s3-fb{display:inline-block;width:34px;height:8px;background:rgba(130,195,255,.14);position:relative}
+.s3-fb i{position:absolute;left:0;top:0;bottom:0;background:#2BFF88}
+.s3-fb.fill-mid i{background:#FFB547}.s3-fb.fill-low i{background:#FF5F5F}
+.s3-dot{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:#FFB547}
+.s3-foldb{margin-left:6px}
+.s2-blk.s3-hl{box-shadow:inset 3px 0 0 #36C6FF,0 0 0 1px rgba(54,198,255,.55)}
+
+/* ---------- D101: the inspector bar under the timetable (fixed height, fixed place) ---------- */
+.s2-pop.s3-insp{position:static;display:grid;grid-template-rows:38px 26px;gap:0;width:auto;max-width:none;margin:8px 0 0;padding:6px 10px;box-sizing:border-box;height:78px;
+  border:1px solid rgba(130,195,255,.2);border-left:3px solid #36C6FF;background:linear-gradient(180deg,rgba(11,35,64,.9),rgba(6,22,42,.9));box-shadow:none;transform:none}
+.s2-pop.s3-insp.empty{border-left-color:rgba(130,195,255,.25)}
+.s3-insp .s3-ir1{display:flex;align-items:center;gap:10px;min-width:0}
+.s3-insp .s3-id{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:13px;color:#CFE0F7}
+.s3-insp .s3-id b{color:#EAF2FF;font-size:14px}
+.s3-insp .s3-id.muted{color:#9FBDE3;font-style:italic}
+.s3-insp .s3-ctl{display:flex;align-items:center;gap:6px;flex:1;min-width:0;flex-wrap:nowrap}
+.s3-insp .s3-ctl .btn.small{min-height:28px;height:28px;padding:0 10px;font-size:12.5px;white-space:nowrap}
+.s3-insp .s3-ctl select{height:28px;font-size:12.5px;max-width:170px}
+.s3-insp .s3-x{margin-left:auto;background:none;border:1px solid rgba(130,195,255,.25);color:#9FBDE3;width:26px;height:26px;cursor:pointer;font-size:16px;line-height:1}
+.s3-insp .s3-ir2{display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden;font-size:12.5px;color:#CFE0F7}
+.s3-insp .s3-ir2 .ds-chips{margin:0;padding:0;border:0;background:none;display:flex;align-items:center;gap:5px;flex-wrap:nowrap}
+.s3-insp .s3-ir2 .ds-chip{min-height:22px;padding:0 6px;font-size:11.5px}
+.s3-worth{margin-left:auto;white-space:nowrap}
+.s3-worth b{color:#F2C14E}
+.s3-worth.down b{color:#CFE0F7}
+/* the operations check in the plan summary's right-hand slot */
+.s2-sum .s3-ck{display:flex;align-items:center;min-width:0;flex:1 1 auto;max-width:560px;margin:0 6px;font-size:12px;line-height:1.3}
+.s2-sum .s3-ck .ds-tip{display:flex !important;flex-wrap:nowrap !important;align-items:center;gap:8px;padding:4px 8px;margin:0}
+.s2-sum .s3-ck .ds-ti{flex:none}
+.s2-sum .s3-ck .ds-tt{flex:1 1 auto;min-width:0}
+.s2-sum .s2-si small{white-space:nowrap}
+.s2-sum .s3-ck > *{min-width:0;display:flex;align-items:center;gap:8px;width:100%}
+.s2-sum .s3-ck .ds-t,.s2-sum .s3-ck p,.s2-sum .s3-ck span:not(.ds-btns){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.s2-sum .s3-ck .btn{min-height:26px;height:26px;padding:0 9px;font-size:12px;white-space:nowrap;flex:none}
+.ds3 .ds-key{display:flex;flex-direction:column;gap:1px;font-size:11px}
+.ds3 .ds-key i{margin:0 5px 0 0 !important}
+
+/* ---------- D101: flight times, one table, the instrument below it ---------- */
+.ft3-t{table-layout:fixed;width:100%}
+.ft3-t col.ft3-rc{width:220px}
+.ft3-t th,.ft3-t td{text-align:center;padding:7px 10px}
+.ft3-t tbody th{text-align:left;font-weight:600}
+.ft3-t thead th small{font-weight:400;color:#9FBDE3}
+.ft3-c{font-variant-numeric:tabular-nums;color:#9FBDE3}
+.ft3-c.mine{color:#EAF2FF}
+.ft3-c.act{box-shadow:inset 3px 0 0 #36C6FF;background:rgba(54,198,255,.08)}
+.ft3-c.act b{color:#F2C14E;font-size:18px}
+.ft3-c.wait b{color:#6F86A8}
+.ft3-c.no{color:#6F86A8;font-style:italic}
+.ft3-c.just{animation:ftRise .8s ease}
+@keyframes ftRise{0%{transform:translateY(26px);color:#F2C14E;opacity:.3}60%{color:#F2C14E;opacity:1}100%{transform:none}}
+body.rm .ft3-c.just{animation:none}
+.ft3-st{font-style:normal;color:#2BFF88;font-size:12px;margin-left:4px}
+.ft3-st.fin{color:#FFB547}
+.ft3-sv{color:#CFE0F7}
+.ft3-mean{margin:10px 2px 2px;font-size:15px;color:#EAF2FF}
+.ft3-ins{margin-top:10px;padding:12px 16px;border-left:3px solid #36C6FF}
+.ft3-ins .ft3-q{font-size:20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
+.ft3-ins .ft3-q input{width:52px;font-size:20px;text-align:center}
+.ft3-ins .ft3-q select{font-size:18px;height:38px}
+.ft3-ins .ft3-row{display:flex;align-items:center;gap:8px}
+.ft3-ins .ft3-hint{margin:6px 0 0;color:#CFE0F7}
+.ft3-ins .ft3-lv{margin:2px 0;color:#9FBDE3;font-size:13px}
+.ft3-ins .ft3-seq i{color:#F2C14E;font-style:normal}
+.ft3-modal{position:fixed;inset:0;z-index:300;background:rgba(2,10,22,.72);display:flex;align-items:center;justify-content:center}
+.ft3-mbox{width:min(1100px,92vw);max-height:86vh;overflow:auto;background:#061a33;border:1px solid rgba(130,195,255,.3);padding:12px}
+.ft3-mf{display:flex;align-items:center;gap:10px;margin-top:10px}
+
+/* ---------- D101: the period's results, the result first ---------- */
+.s3-res{display:flex;flex-direction:column;gap:6px}
+.s3-res p{margin:0}
+.s3-rec{align-self:flex-start;padding:3px 10px;border:1px solid #F2C14E;color:#F2C14E;font-weight:700;font-size:13px;letter-spacing:.04em;background:rgba(242,193,78,.08)}
+.s3-big{font-size:15px;color:#CFE0F7}
+.s3-big b{font-size:26px;font-weight:700;color:#EAF2FF;font-variant-numeric:tabular-nums}
+.s3-big b.neg{color:#FF5F5F}
+.s3-cmp{color:#9FBDE3}
+.s3-cmp.up{color:#2BFF88}
+.s3-plan{font-size:14px;color:#CFE0F7}
+.s3-rcp{display:flex;align-items:center;gap:8px}
+.s3-rcp > div{flex:1;border:1px solid rgba(130,195,255,.18);padding:4px 8px;background:rgba(7,22,48,.5)}
+.s3-rcp .kl{display:block;font-size:11px;color:#9FBDE3}
+.s3-rcp b{font-variant-numeric:tabular-nums;color:#EAF2FF;font-weight:600}
+.s3-rcp i{font-style:normal;color:#9FBDE3}
+.s3-lf,.s3-cash{font-size:13.5px;color:#CFE0F7}
+.s3-cash .fx{color:#9FBDE3;cursor:help;margin-left:4px}
+.s3-opp{font-size:13px;color:#9FBDE3}
+.s3-opp summary{cursor:pointer;list-style:none}
+.s3-opp summary::-webkit-details-marker{display:none}
+.s3-ol{display:inline-block;margin-right:7px;padding:0 5px;border:1px solid rgba(159,189,227,.4);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#9FBDE3;vertical-align:1px}
+.s3-ol-list{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px}
+/* the week graph */
+.s3g-w{display:flex;flex-direction:column;gap:4px;width:100%;height:100%}
+.s3g-tabs{display:flex;gap:4px}
+.s3g-tabs button{font:inherit;font-size:12px;padding:2px 10px;border:1px solid rgba(130,195,255,.3);background:transparent;color:#9FBDE3;cursor:pointer}
+.s3g-tabs button[aria-selected="true"]{background:rgba(54,198,255,.16);border-color:#36C6FF;color:#EAF2FF}
+.s3g{width:100%;flex:1;min-height:120px}
+.s3g-b rect{fill:rgba(120,190,255,.55)}
+.s3g-b.cur rect{fill:#36C6FF}
+.s3g-b.neg rect{fill:rgba(255,95,95,.75)}
+.s3g-b:hover rect{fill:#F2C14E}
+.s3g-pj{stroke:rgba(234,242,255,.55);stroke-width:2;stroke-dasharray:3 2}
+.s3g-sf{fill:none;stroke:#2BFF88;stroke-width:1.4;opacity:.75}
+.s3g-0{stroke:rgba(130,195,255,.35);stroke-width:1}
+.s3g-ax{fill:#9FBDE3;font-size:11px;font-family:inherit}
+.s3g-key{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:#9FBDE3}
+.s3g-key .k{display:inline-block;width:12px;height:8px;margin-right:4px;vertical-align:0}
+.s3g-key .k.b{background:rgba(120,190,255,.55)}.s3g-key .k.pj{height:2px;background:rgba(234,242,255,.6);vertical-align:3px}.s3g-key .k.sf{height:2px;background:#2BFF88;vertical-align:3px}
+
+/* red only for the genuinely bad (redMeans): a down arrow and unserved demand are quiet information */
+.tr.down{color:#9FBDE3 !important}
+.s3-q{color:#9FBDE3}
+
+/* ---------- D101: the worth check inside the comparison ---------- */
+.wc{display:grid;grid-template-columns:150px 1fr;gap:12px;height:100%;min-height:0}
+.wc-slim{display:flex;flex-direction:column;gap:6px;overflow:auto}
+.wc-sl{display:grid;grid-template-columns:1fr;gap:1px;padding:6px;border:1px solid rgba(130,195,255,.2);background:rgba(7,22,48,.6);color:#CFE0F7;font:inherit;font-size:12px;text-align:left;cursor:pointer}
+.wc-sl svg{width:100%;height:34px}
+.wc-sl b{color:#EAF2FF;font-size:12.5px}
+.wc-sl.on{border-color:#36C6FF;box-shadow:inset 3px 0 0 #36C6FF;background:rgba(54,198,255,.1)}
+.wc-main{display:flex;flex-direction:column;gap:10px;min-width:0}
+.wc-zones{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:10px}
+.wc-z{border:1px solid rgba(130,195,255,.2);background:linear-gradient(180deg,rgba(11,35,64,.9),rgba(6,22,42,.9));padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.wc-z p{margin:0}
+.wc-eb{font-size:11px;letter-spacing:.16em;color:#9FBDE3;font-weight:700}
+.wc-why h2{margin:0;font-size:18px}
+.wc-pic svg{width:100%;height:72px}
+.wc-facts{font-size:13px;color:#EAF2FF}
+.wc-job,.wc-cmp{font-size:12.5px;color:#CFE0F7}
+.wc-left{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.wc-lr{display:grid;grid-template-columns:20px 1fr auto;align-items:center;gap:6px;font-size:13px;color:#EAF2FF;border-top:1px solid rgba(130,195,255,.12);padding-top:4px}
+.wc-lr b{font-weight:600;color:#EAF2FF}
+.wc-none{font-size:12.5px;color:#9FBDE3}
+.wc-work{border-left:3px solid #36C6FF}
+.wc-work.ok{border-left-color:#2BFF88}
+.wc-q{font-size:16px;color:#EAF2FF;font-weight:600}
+.wc-sum{font-size:20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wc-sum input{width:120px;font-size:20px}
+.wc-ans{color:#2BFF88;font-size:22px}
+.wc-why-l,.wc-hint{font-size:12.5px;color:#9FBDE3}
+.wc-row{display:flex;align-items:center;gap:8px}
+.wc-mr{border-top:1px solid rgba(130,195,255,.14);padding:7px 0;display:flex;flex-direction:column;gap:3px}
+.wc-mr .kl{font-size:12px;color:#9FBDE3}
+.wc-mr b{font-size:19px;color:#EAF2FF}
+.wc-mr.lock{opacity:.45}
+.wc-blank{color:#6F86A8 !important}
+.wc-mr.fresh{animation:wcIn .5s ease both;animation-delay:var(--d)}
+@keyframes wcIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wc-mr b.flash{animation:wcFlash 1s ease}
+@keyframes wcFlash{0%,40%{color:#2BFF88;text-shadow:0 0 12px rgba(43,255,136,.6)}100%{color:#EAF2FF}}
+.wc-coins{display:flex;flex-wrap:wrap;gap:3px;max-width:100%}
+.wc-coins i{width:13px;height:13px;border-radius:50%;background:rgba(242,193,78,.18);border:1px solid rgba(242,193,78,.5)}
+.wc-coins.go i{background:#F2C14E;animation:wcCoin .25s ease both;animation-delay:calc(.8s + var(--i) * 45ms)}
+@keyframes wcCoin{from{background:rgba(242,193,78,.18);transform:scale(.6)}to{background:#F2C14E;transform:none}}
+.wc-pay{font-size:13px;color:#CFE0F7}
+body.rm .wc-mr.fresh,body.rm .wc-coins.go i,body.rm .wc-mr b.flash{animation:none}
+.wc-dec{display:grid;grid-template-columns:1.2fr 1fr auto;gap:14px;align-items:center;border:1px solid rgba(130,195,255,.25);padding:10px 14px;background:rgba(7,22,48,.7)}
+.wc-dq b{font-size:16px;color:#EAF2FF}
+.wc-dq p{margin:3px 0 0;font-size:13px;color:#CFE0F7}
+.wc-btns{display:flex;gap:8px}
+.wc-cash small{font-size:12px;color:#CFE0F7}.wc-cash .wc-short{color:#FFB547}
+
+/* ---------- D101: Coming up (NOW · NEXT · LATER) on Home ---------- */
+.cu{display:flex;align-items:center;gap:10px;min-height:38px;padding:4px 12px;margin:0 0 8px;border:1px solid rgba(130,195,255,.2);background:linear-gradient(180deg,rgba(11,35,64,.9),rgba(6,22,42,.9));font-size:13px;color:#CFE0F7;overflow:hidden;white-space:nowrap}
+.cu-k{font-size:10.5px;letter-spacing:.16em;font-weight:700;color:#9FBDE3}
+.cu-i{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+.cu-i.now{flex:none}.cu-i.next{flex:1 1 auto;min-width:160px}
+.cu-i > span{overflow:hidden;text-overflow:ellipsis}
+.cu-i b{color:#EAF2FF;font-weight:600}
+.cu-i.now{color:#EAF2FF}
+.cu-sil{display:inline-flex;width:22px;height:16px;color:rgba(159,189,227,.35)}
+.cu-sil svg{width:100%;height:100%}
+.cu-sil.on{color:#36C6FF}
+.cu-nw{margin:10px 2px 0;font-size:14px;color:#EAF2FF;border-top:1px solid rgba(130,195,255,.15);padding-top:8px}
+.kpis:has(> .cu){flex-wrap:wrap}
+.kpis > .cu{flex:0 0 100%;grid-column:1 / -1;order:-1;margin:0 0 2px;box-sizing:border-box;width:100%}
+.hq-t th[title^="Passengers we couldn"]{letter-spacing:0 !important;font-size:10px !important;white-space:nowrap}
+.wc-main .ta-card{margin:0}
+/* the worth check fits one screen: compact zones; the time-to-afford card (when waiting) beside the decision */
+.wc-page .dp-body{min-height:0}
+.wc{min-height:0}
+.wc-main{min-height:0;overflow:auto}
+.wc-pic svg{height:50px}
+.wc-why h2{font-size:15px}
+.wc-z{padding:9px 12px;gap:4px}
+.wc-main .ta-card{padding:8px 12px}
+.wc-main .ta-card .sc-h p,.wc-main .ta-card .sc-note{display:none}
+.wc-main .ta-card h2{font-size:13px;letter-spacing:.08em}
+.wc-main .ta-card .rb-bar{min-height:34px}
+.wc-main .ta-card .rb-chips,.wc-main .ta-card .rb-ops{margin-top:4px}
+.wc-pic svg{height:50px !important;width:auto !important;max-width:100%}
+.wc.tight .wc-pic,.wc.tight .wc-job,.wc.tight .wc-cmp,.wc.tight .wc-why-l,.wc.tight .wc-lr:nth-child(n+3){display:none}
+.wc.tight .wc-zones{max-height:none}
+.wc-dec.one{grid-template-columns:1fr auto}

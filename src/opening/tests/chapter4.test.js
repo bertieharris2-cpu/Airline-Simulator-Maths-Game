@@ -26,6 +26,9 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
   await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S()), E = src => p.evaluate(s => window.__sim.evalIn(s), src), J = async src => JSON.parse(await E(`JSON.stringify(${src})`));
   const ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x) : ''));
+  // D102: JUMPS=<dir> saves the airline at each of the teacher's Jump to… points on the way (tools/make_jumps.sh)
+  const JUMPS = process.env.JUMPS, JUMP_DAYS = [1, 8, 15, 22, 29, 43, 57, 92, 127, 274, 365, 736], jumped = {};
+  const jumpSave = async day => { const d = JUMPS && JUMP_DAYS.find(j => !jumped[j] && day >= j - 3 && day <= j + 28); if(!d) return; jumped[d] = true; fs.mkdirSync(JUMPS, { recursive:true }); fs.writeFileSync(path.join(JUMPS, `day-${d}.txt`), await p.evaluate(() => window.__sim.saveCode())); };   // the first HQ in the point's window (month starts need not fall on it)
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };
   const vis = sel => p.evaluate(s => !!document.querySelector(s), sel);
   const txt = async sel => (await p.$eval(sel, e => e.textContent).catch(() => '')).replace(/\s+/g, ' ').trim();
@@ -77,7 +80,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
   const seen = {}; let cash0 = null;
   for(let i = 0; i < 1500; i++){ const t = await T(); s = await S(); const day = s.day;
     if(day >= UPTO && t === 'hq'){ checks.push('stopped at hq day ' + day); break; }
-    if(t === 'hq'){
+    if(t === 'hq'){ await jumpSave(day);
       if(day === 736 && !seen.hq736){ seen.hq736 = true; ok('day 736: chapter 4 opens on HQ (Monday 6 September 2032)', (await J('roundData(S.round).chapterNo')) === 4 && (await E('dateLong(S.day)')).includes('6 September 2032'), await E('dateLong(S.day)')); await shot('c4-04-day736-hq'); }
       if(day >= 764 && !seen.camp){ seen.camp = true; await shot(`c4-d${day}-hq-project`);
         ok(`the campaign project: a Project button on HQ from 4 October 2032 (day ${day}), with a big plane in the fleet`, await vis('#cpOpen') && /A380 launch/.test(await txt('#cpOpen')), await txt('#cpOpen'));

@@ -24,6 +24,9 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
   await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S()), E = src => p.evaluate(s => window.__sim.evalIn(s), src), J = async src => JSON.parse(await E(`JSON.stringify(${src})`));
   const ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x) : ''));
+  // D102: JUMPS=<dir> saves the airline at each of the teacher's Jump to… points on the way (tools/make_jumps.sh)
+  const JUMPS = process.env.JUMPS, JUMP_DAYS = [1, 8, 15, 22, 29, 43, 57, 92, 127, 274, 365, 736], jumped = {};
+  const jumpSave = async day => { const d = JUMPS && JUMP_DAYS.find(j => !jumped[j] && day >= j - 3 && day <= j + 28); if(!d) return; jumped[d] = true; fs.mkdirSync(JUMPS, { recursive:true }); fs.writeFileSync(path.join(JUMPS, `day-${d}.txt`), await p.evaluate(() => window.__sim.saveCode())); };   // the first HQ in the point's window (month starts need not fall on it)
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };
   const vis = sel => p.evaluate(s => !!document.querySelector(s), sel);
   const txt = async sel => (await p.$eval(sel, e => e.textContent).catch(() => '')).replace(/\s+/g, ' ').trim();
@@ -90,7 +93,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=$
   const seen = {}; let lastDay = 0;
   for(let i = 0; i < 1500; i++){ const t = await T(); s = await S(); const day = s.day;
     if(day >= UPTO && t === 'hq'){ checks.push('stopped at hq day ' + day); break; }
-    if(t === 'hq'){ if(day === 365 && !seen.hq365){ seen.hq365 = true; const x = await txt('#screen'); ok('day 365: HQ opens chapter 3 with Tokyo and Cape Town', /Tokyo and Cape Town open/.test(x), x.slice(0, 240)); await shot('c3-02-day365-hq');
+    if(t === 'hq'){ await jumpSave(day); if(day === 365 && !seen.hq365){ seen.hq365 = true; const x = await txt('#screen'); ok('day 365: HQ opens chapter 3 with Tokyo and Cape Town', /Tokyo and Cape Town open/.test(x), x.slice(0, 240)); await shot('c3-02-day365-hq');
         if(TYPE === 'premium'){ const c = await txt('#cCash'); ok('missed h1: the header shows the cash £2,000 high', c === (await E('money(Math.round(S.cash + 2000))')), c); } }
       if(day > 395 && TYPE === 'premium' && !seen.h1fixed){ seen.h1fixed = true; const R = await R3(); ok('missed h1: corrected at the first month-end audit (30 September), and the header shows the true cash', R.h1 && R.h1.fixed && R.shown === R.cash && (await txt('#cCash')) === (await E('money(Math.round(S.cash))')), R.h1); }
       await fits('hq ' + day); lastDay = day; await p.click('#startDay'); continue; }

@@ -43,6 +43,19 @@ for fp in sorted(glob.glob(os.path.join(HERE, 'assets', 'photos', '*'))):
 briefs = {os.path.basename(f): open(f, encoding='utf-8').read() for f in sorted(glob.glob(os.path.join(HERE, 'briefings', '*.html')))}
 p2 = p2 + '<script type="application/json" id="data-briefings">%s</script>' % json.dumps(briefs, separators=(',', ':')).replace('</', '<\\/')
 print(len(briefs), 'briefings embedded')
+# the teacher's test toolkit (D102): Jump to… points on the Steady path, save codes the chapter tests write (tools/make_jumps.sh),
+# each decoded and gzipped so the game stays small
+import gzip
+JUMP_LABELS = {1: 'Launch Day', 8: 'Week 2', 15: 'Week 3', 22: 'Week 4', 29: 'Week 5', 43: 'Week 7 (the fuel spike)', 57: 'Week 9',
+               92: 'December', 127: 'January 2031', 274: 'June 2031 (Delhi)', 365: 'Chapter 3', 736: 'Chapter 4'}
+jumps = {}
+for f in sorted(glob.glob(os.path.join(HERE, 'tests', 'fixtures', 'jumps', 'day-*.txt'))):
+    d = int(re.search(r'day-(\d+)', f).group(1)); code = open(f, encoding='utf-8').read().strip()
+    if not code.startswith('ASIM5.'): continue
+    raw = base64.b64decode(code[6:]).decode('utf-8')
+    jumps['d%d' % d] = {'label': JUMP_LABELS.get(d, 'Day %d' % d), 'day': d, 'gz': base64.b64encode(gzip.compress(raw.encode('utf-8'), 9)).decode('ascii')}
+p2 = p2 + '<script type="application/json" id="data-jumps">%s</script>' % json.dumps(jumps, separators=(',', ':'))
+print(len(jumps), 'test airlines for Jump to… (%d KB)' % (sum(len(j['gz']) for j in jumps.values()) // 1024))
 p2 = p2.replace('<!--PHOTOS-->', '<script type="application/json" id="data-photos">%s</script>' % json.dumps(photos, separators=(',', ':')))
 print(len(art), 'aircraft drawings;', len(photos), 'photos embedded' + ('; over 150 KB: ' + ', '.join(big) if big else ''))
 head = r('parts', 'p1_head.html')
@@ -65,5 +78,5 @@ def build(name, js_list, css='', ovr='overrides.txt'):
     print('built %s,' % name, len(out), 'bytes; JSON + syntax OK')
 
 # one game: the shared parts, then the revised Studio, Days, chapter 2 and the Working pad, then the display part
-GAME = JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js', 'p4zk_pad.js', 'p4zl_fleetshop.js', 'p4zm_buyonly.js', 'p4zn_ch2events.js', 'p4zo_ch3money.js', 'p4zp_runthrough.js', 'p4zq_milestones.js', 'p4zr_paper.js', 'p4zt_decide.js', 'p4zs_ch4.js', 'p4zu_fuelstore.js', 'p4zv_flightplan.js', 'p4zw_intelwall.js', 'p4zx_fit.js', 'p4zy_paint2.js', 'p4zz_nightops.js', 'p5a_review.js', 'p5b_desk.js', 'p5c_fuel.js', 'p5d_sound.js', 'p5e_colour.js', 'p5f_brief.js'] + JS[-1:]
-build('airline-opening-prototype.html', GAME, r('parts', 'p1_head_studio2.css') + r('parts', 'p1_head_nightops.css') + r('parts', 'p1_head_screens.css'))
+GAME = JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js', 'p4zk_pad.js', 'p4zl_fleetshop.js', 'p4zm_buyonly.js', 'p4zn_ch2events.js', 'p4zo_ch3money.js', 'p4zp_runthrough.js', 'p4zq_milestones.js', 'p4zr_paper.js', 'p4zt_decide.js', 'p4zs_ch4.js', 'p4zu_fuelstore.js', 'p4zv_flightplan.js', 'p4zw_intelwall.js', 'p4zx_fit.js', 'p4zy_paint2.js', 'p4zz_nightops.js', 'p5a_review.js', 'p5b_desk.js', 'p5c_fuel.js', 'p5d_sound.js', 'p5e_colour.js', 'p5f_brief.js', 'p5g_testkit.js', 'p5h_screens3.js'] + JS[-1:]
+build('airline-opening-prototype.html', GAME, r('parts', 'p1_head_studio2.css') + r('parts', 'p1_head_nightops.css') + r('parts', 'p1_head_screens.css') + r('parts', 'p1_head_screens3.css'))

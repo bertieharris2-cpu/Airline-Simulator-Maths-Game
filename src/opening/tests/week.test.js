@@ -15,6 +15,9 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   await p.evaluate(b => { const st = window.__sim.settings(); st.briefings = b; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; }, BRIEF);
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S());
   const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));
+  // D102: JUMPS=<dir> saves the airline at each of the teacher's Jump to… points on the way (tools/make_jumps.sh)
+  const JUMPS = process.env.JUMPS, JUMP_DAYS = [1, 8, 15, 22, 29, 43, 57, 92, 127, 274, 365, 736], jumped = {};
+  const jumpSave = async day => { const d = JUMPS && JUMP_DAYS.find(j => !jumped[j] && day >= j - 3 && day <= j + 28); if(!d) return; jumped[d] = true; fs.mkdirSync(JUMPS, { recursive:true }); fs.writeFileSync(path.join(JUMPS, `day-${d}.txt`), await p.evaluate(() => window.__sim.saveCode())); };   // the first HQ in the point's window (month starts need not fall on it)
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };
   const fits = async tag => { const r = await p.evaluate(() => { const bad = []; document.querySelectorAll('.tf-main,.tf-body,#screen,.ws-rail,.sheet1,.wk,.st-tt,.st-top').forEach(e => { if(e.scrollHeight > e.clientHeight + 2) bad.push((e.className || e.id).split(' ')[0] + ' ' + e.scrollHeight + '>' + e.clientHeight); }); return bad; }); if(r.length) overflow.push(tag + ': ' + r.join(', ')); };
   const vis = sel => p.evaluate(s => !!document.querySelector(s), sel);
@@ -117,6 +120,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   // setup
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await identity();
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
+  await jumpSave(1);
   ok('launch day: the intro explains the job and the starting position (no market gate)', await T() === 'brief1' && /Your first week in charge/.test(await p.textContent('#screen')) && (await p.$$('.br1-c')).length === 4, await T());
   await fits('brief'); await shot('d1-brief'); await p.click('#nx');
   ok('launch day: the planner follows the intro', await T() === 'plan', await T());
@@ -128,7 +132,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   for(let i = 0; i < 400; i++){ const t = await T(), s = await S(), day = s.day;
     if(day >= UPTO && t === 'hq') break; if(t === 'chapterReview' && await vis('.rbw')){ await shot('chapter-accounts'); const built = await builds('chapter'); ok('chapter accounts: total revenue, total costs, profit and projected − actual are Build steps', ['rev', 'cost', 'profit', 'vs'].every(k => built.includes(k)), built); await shot('chapter-accounts-built'); checks.push('reached chapterReview day ' + day); break; }
     if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); break; }
-    if(t === 'hq'){ const so = await p.evaluate(() => window.__sim.evalIn('JSON.stringify(shopOfferedReport())')).then(JSON.parse); if(so.scheduled) shopSelf.push(day);
+    if(t === 'hq'){ await jumpSave(day); const so = await p.evaluate(() => window.__sim.evalIn('JSON.stringify(shopOfferedReport())')).then(JSON.parse); if(so.scheduled) shopSelf.push(day);
       if([8, 22].includes(day) && s.phase === 'round') ok(`day ${day}: HQ's brief says new aircraft are on the Fleet desk (no shop step)`, so.brief.some(l => /^On the Fleet desk from today: /.test(l)) && !so.scheduled, so.brief);
       await fits('hq ' + day); if(day !== lastDay) await shot(`d${day}-hq`); lastDay = day; await p.click('#startDay'); continue; }
     if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice(); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }

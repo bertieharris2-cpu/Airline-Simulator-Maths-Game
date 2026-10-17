@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 152 | 152 live, 9 placeholder |
+| Settings | 170 | 170 live, 9 placeholder |
 | Archetypes | 5 | 2 later, 5 live |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved to Routes |
@@ -29,6 +29,7 @@
 | DailyColour | 10 | 10 live, 1 note row |
 | Upgrades | 5 | 5 live, 1 note row |
 | Briefings | 10 | 10 live, 1 note row |
+| Roadmap | 13 | 13 live, 1 note row |
 | RouteNews | 71 | 71 live, 1 note row |
 | Livery | 35 | 35 live, 1 note row |
 | Hunts | 5 | 5 live, 1 note row, 2 placeholder |
@@ -164,6 +165,32 @@ Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - **DailyColour:** hen_party (Tue, every 3), school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), birthday_cake (Sat, every 4), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
 - **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91), fuel_farm → The fuel farm on the Fuel desk (D89).
 - **Briefings:** fare_lever (briefing-fare.html, not built yet), rival_split (briefing-rival.html, not built yet), full_route (briefing-capacity.html, not built yet), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html, not built yet), event_weekend (briefing-event.html, not built yet), seasons (briefing-seasons.html, not built yet), lease_money (briefing-lease.html, not built yet), profit_vs_cash (briefing-cash.html, not built yet).
+
+## Screens brief 3 (D101–D102) touches
+
+Taken from v5.17 on top of v5.8 (`tools/take_parts.py`): the Settings rows and sheets these read, as loaded.
+
+- `adaptToOnlyFlight`: 0.5
+- `demandShapeDisplay`: route demand by band, flexible shown separately; the selected flight's catchable slice highlighted
+- `flightTimeDecay`: per kind of sum, whole game: Calculate twice, then Build, then Model
+- `timeAnswerFormat`: hours + minutes (selector 0, 15, 30, 45)
+- `flightTimesTable`: fixed-width columns; the active sum in the instrument below with its cell highlighted; a 'time saved' column between aircraft
+- `weekPlanTutorial`: removed
+- `redMeans`: only genuinely bad or urgent: an invalid timetable, a plane that can't reach a route, a real loss, a disruption
+- `opportunityDisplay`: quiet type with an 'opportunity' label; gold only on the single biggest opportunity on a screen
+- `resultsFraming`: lead with the result and the comparison with last week; variance with its reasons; 'passengers we couldn't carry' totalled once; cash change as profit − fuel bought
+- `flightInspector`: fixed bar under the timetable
+- `activeRoutesCollapsible`: True
+- `weekGraphDefault`: weekly history (profit per week so far, projection as a faint marker); 'this week by day' as a tab
+- `dailyColourLimit`: at most two a week; never the same item twice in a row; no duplicate lines
+- `comingUp`: Roadmap sheet
+- `aircraftWorthCheck`: inside the comparison, not a separate page
+- `teacherTestMode`: teacher panel, behind the PIN; amber TEST MODE bar; Answer · Answer all · Auto-plan · Run week/month · Skip briefing · Jump to… · Show the answer · Event now
+- `waitCostLine`: idle days × day cost
+- `aircraftCardMeasure`: extra profit for the airline (incremental), one measure on the whole screen
+- `demandStripMode`: follows the selected flight's route; otherwise route tabs (each route · All)
+- **Roadmap:** Week 3 (day 8), Week 4 (day 15), Week 5 (day 22), Week 6 (day 29), Week 7 (day 36), Week 9 (day 50), Week 9 (day 50), December (day 78), January 2031 (day 85), January 2031 (day 106), June 2031 (day 240), September 2031 (day 330), September 2032 (day 700).
+- **Fuel, weeks 1–8:** £1.20 · £1.47 · £1.68 · £1.62 · £1.74 · £1.97 · £2.94 · £2.13.
 
 ## Identity and photos (CR5)
 

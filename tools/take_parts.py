@@ -9,6 +9,7 @@ was taken and from which version. Run tools/import_world.py afterwards.
 
   --sheets A,B      whole sheets, replaced or added (added in the newer workbook's sheet order)
   --settings k1,k2  Settings rows by key, replaced or added before the note rows
+  --rows "Market:3,4,5;Calendar:22-28"   single rows of other sheets by their first column (a number range allowed), replaced in place
   --note "text"     the line added to the README sheet
 
 Usage: python3 tools/take_parts.py <newer-workbook.xlsx> --sheets DailyColour,Upgrades --settings dailyColour --note "…"
@@ -26,7 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BOOK = ROOT / 'data' / 'Airline-World-Workbook.xlsx'
 
 ap = argparse.ArgumentParser(usage=__doc__)
-ap.add_argument('newer'); ap.add_argument('--sheets', default=''); ap.add_argument('--settings', default=''); ap.add_argument('--note', default='')
+ap.add_argument('newer'); ap.add_argument('--sheets', default=''); ap.add_argument('--settings', default=''); ap.add_argument('--rows', default=''); ap.add_argument('--note', default='')
 a = ap.parse_args()
 sheets = [s for s in a.sheets.split(',') if s]; keys = [k for k in a.settings.split(',') if k]
 base = openpyxl.load_workbook(BOOK)
@@ -71,7 +72,26 @@ for k in keys:
     for c in range(1, ns.max_column + 1): copy_cell(ns.cell(row=src_rows[k], column=c), bs.cell(row=at, column=c))
     took.append(f'Settings {k} {how}')
 
-# 3. the README line
+# 3. single rows of other sheets, by the key in their first column (replaced in place; the sheet's other rows untouched)
+for part in [x for x in a.rows.split(';') if x.strip()]:
+    name, ks = part.split(':', 1)
+    if name not in newer.sheetnames or name not in base.sheetnames: sys.exit(f'{name} must be a sheet in both workbooks')
+    want = []
+    for k in ks.split(','):
+        k = k.strip()
+        if '-' in k and all(x.isdigit() for x in k.split('-')): lo, hi = map(int, k.split('-')); want += [str(i) for i in range(lo, hi + 1)]
+        elif k: want.append(k)
+    src, dst = newer[name], base[name]
+    sk = {str(src.cell(row=r, column=1).value): r for r in range(2, src.max_row + 1)}
+    dk = {str(dst.cell(row=r, column=1).value): r for r in range(2, dst.max_row + 1)}
+    if [src.cell(row=1, column=c).value for c in range(1, src.max_column + 1)] != [dst.cell(row=1, column=c).value for c in range(1, dst.max_column + 1)]:
+        sys.exit(f'{name}: the two workbooks have different columns, so rows cannot be copied one by one')
+    for k in want:
+        if k not in sk or k not in dk: sys.exit(f'{name} row {k} must exist in both workbooks')
+        for c in range(1, src.max_column + 1): copy_cell(src.cell(row=sk[k], column=c), dst.cell(row=dk[k], column=c))
+    took.append(f'{name} rows {", ".join(want)} replaced')
+
+# 4. the README line
 if a.note:
     rd = base['README']; rd.cell(row=rd.max_row + 1, column=1).value = a.note
 

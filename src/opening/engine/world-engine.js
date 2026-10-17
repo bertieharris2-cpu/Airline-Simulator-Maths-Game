@@ -24,7 +24,8 @@
     const open = S.airportOpen ? [hm(S.airportOpen), hm(S.airportClose)] : (E.airportOpen || [6, 22]).map(h => h * H);
     return { bands, open, crew: +(S.secondCrewCost ?? E.secondCrewCost ?? 250), maxDuty: +(S.maxDutyHours ?? E.maxDutyHours ?? 12) * H,
              pad: +(E.dutyPaddingMinutes ?? 30), crewFrom: S.crewMechanicFromDate || S.crewFromDate || null,   // crew duty is off before this date (D51)
-             rivalPer: S.rivalSwitchPerTenPounds, rivalCap: S.rivalSwitchCap ?? 0.6, rivalAd: S.rivalAdvertiseFactor ?? 0.5 };   // D50
+             rivalPer: S.rivalSwitchPerTenPounds, rivalCap: S.rivalSwitchCap ?? 0.6, rivalAd: S.rivalAdvertiseFactor ?? 0.5,   // D50
+             adapt: +(S.adaptToOnlyFlight || 0) };   // D101
   }
   const byId = (xs, id) => xs.find(x => x.id === id);
   function home(W, code, terminal){
@@ -76,6 +77,11 @@
       // the time-sensitive total is rounded first, then shared between the bands (Balance Report v3 §1); the rest are flexible
       const ts = roundSchool(demand * arch.timeSensitiveShare), locked = {};
       Object.keys(R.bands).forEach(b => { locked[b] = roundSchool(ts * (arch.bands[b] || 0)); });
+      // D101 (adaptToOnlyFlight): the time-locked passengers of a band with no service on the route: this share take the nearest service instead
+      if(R.adapt > 0 && x.trips.length){ const served = new Set(x.trips.map(t => t.band)), mid = b => (R.bands[b][0] + R.bands[b][1]) * H / 2, add = {};
+        Object.keys(R.bands).forEach(b => { if(served.has(b) || !(locked[b] > 0)) return; const near = x.trips.slice().sort((p, q) => Math.abs(p.dep - mid(b)) - Math.abs(q.dep - mid(b)) || p.dep - q.dep)[0];
+          add[near.band] = (add[near.band] || 0) + locked[b] * R.adapt; locked[b] = Math.round(locked[b] * (1 - R.adapt)); });
+        Object.keys(add).forEach(b => { locked[b] += roundSchool(add[b]); }); }
       const flex = demand - ts;
       x.trips.forEach(t => { t.seats = plane.seats; t.locked = 0; t.flex = 0; });
       Object.keys(R.bands).forEach(b => { let left = locked[b]; x.trips.filter(t => t.band === b).forEach(t => { const k = Math.min(left, t.seats); t.locked = k; left -= k; }); });

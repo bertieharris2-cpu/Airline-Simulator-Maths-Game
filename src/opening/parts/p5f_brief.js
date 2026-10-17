@@ -174,4 +174,11 @@ renderOverlay = function(){
 /* the weekend briefing's data is kept for a replay */
 const bfOpenKeep = bfOpen;
 bfOpen = function(id, data, onDone){ if(data && id !== 'fuel_cash_tank_profit'){ const B = bfS(); (B.data = B.data || {})[id] = data; } return bfOpenKeep(id, data, onDone); };
+/* for the teacher's test toolkit (D102): skip the open briefing to its end state, or play any built one now */
+window.__bf = {
+  open:() => !!bfCur,
+  skip:() => { if(!bfCur) return false; const c = bfCur; bfCur = null; bfShut(); if(c.onDone) c.onDone({ skipped:true }); return true; },
+  list:() => bfRows().filter(b => bfHas(b.id)).map(b => ({ id:b.id, title:b.title })),
+  play:id => bfOpen(id, (id === 'fuel_cash_tank_profit' ? bfFuelData() : id === 'weekend_demand' ? bfWeekendData() : (bfS().data || {})[id]) || {}, () => render())
+};
 }

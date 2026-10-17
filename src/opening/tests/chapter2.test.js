@@ -23,6 +23,9 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
   await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S()), E = src => p.evaluate(s => window.__sim.evalIn(s), src);
   const ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x) : ''));
+  // D102: JUMPS=<dir> saves the airline at each of the teacher's Jump to… points on the way (tools/make_jumps.sh)
+  const JUMPS = process.env.JUMPS, JUMP_DAYS = [1, 8, 15, 22, 29, 43, 57, 92, 127, 274, 365, 736], jumped = {};
+  const jumpSave = async day => { const d = JUMPS && JUMP_DAYS.find(j => !jumped[j] && day >= j - 3 && day <= j + 28); if(!d) return; jumped[d] = true; fs.mkdirSync(JUMPS, { recursive:true }); fs.writeFileSync(path.join(JUMPS, `day-${d}.txt`), await p.evaluate(() => window.__sim.saveCode())); };   // the first HQ in the point's window (month starts need not fall on it)
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };
   const vis = sel => p.evaluate(s => !!document.querySelector(s), sel);
   const txt = async sel => (await p.$eval(sel, e => e.textContent).catch(() => '')).replace(/\s+/g, ' ').trim();
@@ -85,7 +88,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
       await builds(); await p.waitForTimeout(100);
       ok('day 364: the chapter 2 accounts are signed off and the chapter closes', await p.$eval('#nx', e => !e.disabled).catch(() => false), await txt('.ab-hint')); await p.click('#nx'); await p.waitForTimeout(150); continue; }
     if(t === 'protoEnd' || t === 'chapterReview'){ checks.push('reached ' + t + ' day ' + day); if(day === 364 && TYPE === 'premium') ok('Premium missed the year-1 accounts hunt: the end card carries it into chapter 3\'s forecast', /starts £2,000 out/.test(await txt('#screen')), (await txt('.hunt-carry'))); await shot('c2-chapter-end'); if(day === 364) ok('the chapter 2 end card: chapter 3, Owning, opens on Monday 1 September 2031, with an On to chapter 3 button', /Next: chapter 3, Owning, opens on Monday 1 September 2031/.test(await txt('#screen')) && await vis('#peNext'), await txt('.proto-end')); break; }
-    if(t === 'hq'){ if(day === 127){ ok('day 127: chapter 2 opens on Monday 6 January with New York and Dubai', /New York and Dubai/.test(await txt('#screen')), (await txt('#screen')).slice(0, 200)); await shot('c2-03-day127-hq'); }
+    if(t === 'hq'){ await jumpSave(day); if(day === 127){ ok('day 127: chapter 2 opens on Monday 6 January with New York and Dubai', /New York and Dubai/.test(await txt('#screen')), (await txt('#screen')).slice(0, 200)); await shot('c2-03-day127-hq'); }
       if(seen.capLater && !seen.capHq && await vis('#capChBtn')){ seen.capHq = day; await shot(`c2-d${day}-hq-challenge`); ok("after Not today, HQ has a Captain's challenge button", true, day); await p.click('#capChBtn'); await p.waitForTimeout(100); continue; }
       await fits('hq ' + day); lastDay = day; await p.click('#startDay'); continue; }
     if(t === 'intro'){ if(day === 127){ const x = await txt('#screen'); ok('day 127: What\'s new: Going long, with the local-time arrival (out 06:30, lands 07:45 New York time, back 21:00)', /Going long/.test(x) && /06:30/.test(x) && /07:45/.test(x) && /21:00/.test(x), x.slice(0, 300)); await shot('c2-04-intro'); }

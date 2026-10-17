@@ -357,6 +357,14 @@ briefings = [{'id': r['briefingId'], 'trigger': r.get('trigger'), 'title': r.get
              for r in live('Briefings', opt_sheet('Briefings')) if r.get('briefingId')]
 for n_ in ('DailyColour', 'Upgrades', 'Briefings'):
     if n_ not in wb.sheetnames: issue('check', n_, f'no {n_} sheet: the game runs without it.')
+# v5.17 (D101): the Roadmap behind Home's Coming up strip. 'shown from' reads 'day 22'; the line is the pupil's words.
+roadmap = []
+for r in live('Roadmap', opt_sheet('Roadmap')):
+    if not r.get('when'): continue
+    m = re.match(r'\s*day\s+(\d+)', str(r.get('shownFrom') or ''))
+    if not m: issue('error', 'Roadmap', f'{r["when"]}: "shown from" is "{r.get("shownFrom")}", not "day N".'); continue
+    roadmap.append({'when': r['when'], 'line': r.get('nowNextLaterLine'), 'fromDay': int(m.group(1))})
+if 'Roadmap' not in wb.sheetnames: issue('check', 'Roadmap', 'no Roadmap sheet: Home has no Coming up strip.')
 # v5.5 (D82): the A380 launch campaign. One row per field; the game reads the structure (choices, portfolio, signals) and
 # stores the pupil's work. Placeholder rows (reach, funnel) are loaded too: the campaign's hooks show them as 'to be tuned'.
 campaign = {r['field']: {'value': r.get('value'), 'notes': r.get('notes'), 'status': r.get('status')}
@@ -412,7 +420,7 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
          'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips, 'teacherMilestones': teacherMilestones,
          'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview, 'campaign': campaign,
-         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings}
+         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings, 'roadmap': roadmap}
 
 
 # ---------- checks ----------
@@ -748,6 +756,20 @@ t515.append('- **Upgrades:** ' + (', '.join(f'{u["id"]} → {u["unlocks"]}' for 
 have_html = {p.name for p in (ROOT / 'src' / 'opening' / 'briefings').glob('*.html')} if (ROOT / 'src' / 'opening' / 'briefings').exists() else set()
 t515.append('- **Briefings:** ' + (', '.join(f'{b["id"]} ({b["html"]}{"" if b.get("html") in have_html else ", not built yet"})' for b in briefings) or 'none') + '.')
 out += ['', '## Screens brief (D96–D99) touches', '', 'Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and sheets these read, as loaded.', ''] + t515
+
+# v5.17 touches (D101 screens, D102 the teacher test toolkit), taken on top of v5.8 with the fuel dips (Market weeks 3–5)
+NEEDED_V517 = ['adaptToOnlyFlight', 'demandShapeDisplay', 'flightTimeDecay', 'timeAnswerFormat', 'flightTimesTable', 'weekPlanTutorial', 'redMeans',
+               'opportunityDisplay', 'resultsFraming', 'flightInspector', 'activeRoutesCollapsible', 'weekGraphDefault', 'dailyColourLimit', 'comingUp',
+               'aircraftWorthCheck', 'teacherTestMode', 'waitCostLine', 'aircraftCardMeasure', 'demandStripMode']
+t517 = []
+for k in NEEDED_V517:
+    st_ = settings_status.get(k)
+    if st_ is None: t517.append(f'- **Settings:** `{k}` is not on the sheet.'); issue('check', 'Settings', f'{k} is not on the sheet (D101–D102).')
+    elif st_ not in LOAD: t517.append(f'- **Settings:** `{k}` is `{st_}`: not loaded.')
+    else: t517.append(f'- `{k}`: {settings.get(k)}')
+t517.append('- **Roadmap:** ' + (', '.join(f'{x["when"]} (day {x["fromDay"]})' for x in roadmap) or 'none') + '.')
+t517.append('- **Fuel, weeks 1–8:** ' + ' · '.join(f'£{m["fuel"]:.2f}' for m in market[:8] if m.get('fuel') is not None) + '.')
+out += ['', '## Screens brief 3 (D101–D102) touches', '', 'Taken from v5.17 on top of v5.8 (`tools/take_parts.py`): the Settings rows and sheets these read, as loaded.', ''] + t517
 
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'

@@ -107,13 +107,28 @@ function demandPools(route, fare){
   BANDS.forEach(b => { out[b] = roundSchool(ts * (a.bands[b] || 0)); });
   out.flex = Math.max(0, W - ts); return out;
 }
+/* D101 (Settings adaptToOnlyFlight, Screens brief 3): time-locked passengers who want a band with no service on their route —
+   this share of them take the nearest service on that route instead. A one-flight route can then fill (Marrakech at £230, one
+   E175 at 06:00: 76 → 87 want it); wherever a route has a service in every band its people want, timing matters exactly as before.
+   deps: the departures (minutes) of the route's services today. Marks d.adapted (people moved) and d.adaptTo (band → people). */
+function adaptPools(d, deps){
+  const share = +((WORLD.settings || {}).adaptToOnlyFlight || 0); if(!(share > 0) || !deps || !deps.length || !timeDemandOn()) return d;
+  const has = new Set(deps.map(bandOf)), mid = b => { const [a, z] = bandHours(b); return (a + z) * 30; }, add = {};
+  BANDS.forEach(b => { if(has.has(b) || !(d[b] > 0)) return;
+    const dep = deps.slice().sort((x, y) => Math.abs(x - mid(b)) - Math.abs(y - mid(b)) || x - y)[0], to = bandOf(dep);
+    add[to] = (add[to] || 0) + d[b] * share; d[b] = Math.round(d[b] * (1 - share)); });
+  d.adapted = 0; d.adaptTo = {};
+  Object.keys(add).forEach(b => { const n = roundSchool(add[b]); d[b] += n; d.adapted += n; d.adaptTo[b] = n; });
+  return d;
+}
 /* projections value fuel at the week's price (the desk weeks, p4y); actual days cost the tank's layers */
 function fuelAtWeekPrice(){ return false; }
 function planFlights(){
   const out = [], pools = {}, fifo = fifoCursor(S.rnd && S.rnd.fuelOrder), paid = fuelPaid(), list = [];
-  const pool = (route, price) => { if(!pools[route.id]){ const comp = competitorPrice(route); pools[route.id] = Object.assign(demandPools(route, price), { demand: demandAt(route, price), comp, cut: comp !== undefined && comp < price }); } return pools[route.id]; };
+  const pool = (route, price) => { if(!pools[route.id]){ const comp = competitorPrice(route); pools[route.id] = Object.assign(adaptPools(demandPools(route, price), served[route.id]), { demand: demandAt(route, price), comp, cut: comp !== undefined && comp < price }); } return pools[route.id]; };
   S.fleet.forEach((f, i) => { const sched = schedOf(f); if(!sched.length) return; const plane = planeById(f.planeId), D = TIME.day(plane, sched, undefined, typeof fleetDeps === 'function' ? fleetDeps(f) : undefined); D.trips.forEach((tr, k) => list.push({ f, i, k, tr, plane })); });
   list.sort((a, b) => a.tr.dep - b.tr.dep || a.i - b.i);
+  const served = {}; list.forEach(({ f, k, tr }) => { if(f.grounded || (S.rnd && S.rnd.cancelled === f.uid + '-' + k)) return; (served[tr.route] = served[tr.route] || []).push(tr.dep); });   // D101: the bands each route is served in today
   // 1. each service takes the people who must fly in its band
   const rows = list.map(({ f, i, k, tr, plane }) => {
     const route = routeById(tr.route), price = fareOf(tr.route);
