@@ -1,14 +1,14 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 15 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 17 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 21 to check, 7 notes.**
+**0 to fix, 22 to check, 7 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 140 | 140 live, 9 placeholder |
+| Settings | 152 | 152 live, 9 placeholder |
 | Archetypes | 5 | 2 later, 5 live |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved to Routes |
@@ -24,8 +24,11 @@
 | Chapters | 4 | 2 later, 4 live, 1 note row |
 | HandSumRules | 12 | 12 live, 1 note row |
 | Catering | 4 | 4 live, 1 note row |
-| PlanTips | 15 | 15 live, 2 note row |
-| Milestones | 0 |  |
+| PlanTips | 16 | 16 live, 3 note row |
+| Milestones | 18 | 18 live, 1 note row |
+| DailyColour | 10 | 10 live, 1 note row |
+| Upgrades | 5 | 5 live, 1 note row |
+| Briefings | 10 | 10 live, 1 note row |
 | RouteNews | 71 | 71 live, 1 note row |
 | Livery | 35 | 35 live, 1 note row |
 | Hunts | 5 | 5 live, 1 note row, 2 placeholder |
@@ -41,7 +44,8 @@
 - **Finance:** b737: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
 - **Market:** week 19 fuel is £2.16, but the Calendar has £2.17 on its days. Time skips use the Market price, so the two should agree.
 - **Market:** week 53 fuel is £2.20, but the Calendar has £2.24 on its days. Time skips use the Market price, so the two should agree.
-- **Milestones:** no Milestones sheet yet: the teacher panel uses the draft list in the game (docs/Milestones-Draft.md).
+- **Milestones:** charterWinner: waits for the Charter desk (D90), which is not installed yet; the teacher panel leaves it out.
+- **Milestones:** clashServed: waits for clashing weeks (D90), which is not installed yet; the teacher panel leaves it out.
 - **Routes:** ist is loaded, but its archetype "long_haul_mixed" is not live. The game uses the route's own demand table and applies no business/leisure or season multipliers to it.
 - **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Boeing 787 Dreamliner 20 min, Airbus A350 20 min, Boeing 747 20 min, Airbus A380 20 min, Embraer E175 20 min, Boeing 757 20 min, Airbus A340 20 min, Boeing 777 20 min.
 - **Routes:** yyz (5700 km): legs not on a quarter hour: Saab 340 760 min, ATR 72 760 min, Embraer E190 380 min, Airbus A220 380 min, Airbus A320 380 min, Boeing 737 380 min, Boeing 787 Dreamliner 380 min, Airbus A350 380 min, Boeing 747 380 min, Airbus A380 380 min, Embraer E175 380 min, Boeing 757 380 min, Airbus A340 380 min, Boeing 777 380 min.
@@ -124,7 +128,7 @@ The Settings rows and PlanTips columns these read, as loaded.
 - `helpMeInvestigate`: True
 - `planImprovedBanner`: True
 - `whatWasItWorth`: change per unit × units = a day; × 7 = a week
-- **PlanTips:** peak_unserved (priority 1, Change the times), service_weak (priority 2, Change the times), turned_away (priority 2, Change the fare | Change the number of services), fare_too_high (priority 2, Change the fare), fare_too_low (priority 3, Change the fare), idle_plane (priority 3, Change the number of services), long_leg_warning (priority 3, Change the aircraft), range_fail (priority 1, Change the aircraft), all_good (priority 9), general_tradeoff (priority 9), fare_lower_fills (priority 3, Change the fare), weekend_only_news (priority 1, Change the number of services), plane_unused (priority 1, Change the number of services | Change the aircraft), loss_making_service (priority 1, Change the times | Change the fare | Change the number of services), plan_loses_money (priority 0).
+- **PlanTips:** peak_unserved (priority 1, Change the times), service_weak (priority 2, Change the times), turned_away (priority 2, Change the fare | Change the number of services), fare_too_high (priority 2, Change the fare), fare_too_low (priority 3, Change the fare), idle_plane (priority 3, Change the number of services), long_leg_warning (priority 3, Change the aircraft), range_fail (priority 1, Change the aircraft), all_good (priority 9), general_tradeoff (priority 9), fare_lower_fills (priority 3, Change the fare), weekend_only_news (priority 1, Change the number of services), plane_unused (priority 1, Change the number of services | Change the aircraft), loss_making_service (priority 1, Change the times | Change the fare | Change the number of services), plan_loses_money (priority 0), all_full_capacity (priority 1, Change the fare | Change the aircraft).
 
 ## Fuel storage (D89) touches
 
@@ -138,6 +142,26 @@ The Settings rows and the Finance row these read, as loaded.
 - `tankUpgradeDay`: withdrawn (not loaded).
 - `tankCapacityUpgraded`: withdrawn (not loaded).
 - **Fuel farm:** 1,500,000 L for £2,000,000 from 2031-09-01; stage 2 3,000,000 L for £3,000,000 more from 2032-09-06.
+
+## Screens brief (D96–D99) touches
+
+Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and sheets these read, as loaded.
+
+- `reviewAsSpreadsheet`: True
+- `fuelAccounting`: cash buys fuel into the tank; profit counts only the fuel burned, at the price paid
+- `fuelFillLabel`: Most I can afford: N blocks
+- `compareLastWeek`: True
+- `keyboardShortcuts`: Ctrl+→ / Ctrl+← between Home, Plan and the Operations Wall; Esc closes a panel; Enter checks a sum
+- `soundSet`: tap · slot · check-tick · query · result-plate · cash · fuel-pour · plane-move · day-tick
+- `dailyColour`: True
+- `tipGainGate`: 50
+- `allFullCapacityTip`: True
+- `plannerUpgrades`: earned at a review; fallback a week later
+- `operationsBriefings`: full screen; 30–60 s; advance by doing, never by Next; a Pause & discuss state at each stop
+- `flightDaysFromDay`: earned: week-2 review (day 14); fallback day 21
+- **DailyColour:** hen_party (Tue, every 3), school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), birthday_cake (Sat, every 4), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
+- **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91), fuel_farm → The fuel farm on the Fuel desk (D89).
+- **Briefings:** fare_lever (briefing-fare.html, not built yet), rival_split (briefing-rival.html, not built yet), full_route (briefing-capacity.html, not built yet), weekend_demand (briefing-weekend.html, not built yet), fuel_cash_tank_profit (briefing-fuel.html, not built yet), aircraft_efficiency (briefing-efficiency.html, not built yet), event_weekend (briefing-event.html, not built yet), seasons (briefing-seasons.html, not built yet), lease_money (briefing-lease.html, not built yet), profit_vs_cash (briefing-cash.html, not built yet).
 
 ## Identity and photos (CR5)
 

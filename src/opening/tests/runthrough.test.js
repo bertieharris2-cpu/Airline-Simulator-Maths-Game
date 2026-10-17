@@ -10,7 +10,7 @@ const UPTO = +(process.env.UPTO || 9);
   const b = await chromium.launch(); const p = await (await b.newContext({ viewport:{ width:1915, height:891 } })).newPage();
   const errors = []; p.on('pageerror', e => errors.push(e.message)); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
-  await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
+  await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S());
   const txt = sel => p.evaluate(s => { const e = document.querySelector(s); return e ? e.innerText.replace(/\s+\n/g, '\n').replace(/[ \t]+/g, ' ').trim() : ''; }, sel);
   const money = v => (v < 0 ? '−' : '') + '£' + Math.abs(Math.round(v)).toLocaleString('en-GB');

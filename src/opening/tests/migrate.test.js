@@ -13,7 +13,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
   const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S());
   const shot = async n => { await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };
-  const fresh = async () => { await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload(); await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; }); };
+  const fresh = async () => { await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload(); await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; }); };
   const loadViaPanel = async code => { await p.keyboard.press('Control+Shift+T'); await p.waitForSelector('#teacher:not([hidden])'); await p.fill('#tCode', code); await p.click('#tCodeLoad'); await p.waitForTimeout(300); };
   const practice = async () => { for(let i = 0; i < 3; i++){ const a = await p.evaluate(() => window.__sim.practiceAnswer()); if(!a || !(await p.$('#pqIn'))) break; await p.fill('#pqIn', a.text); await p.click('#pqCheck'); await p.waitForTimeout(1050); } };
   const solve = async () => { const seen = []; for(let i = 0; i < 30; i++){ const c = await p.$('[data-cell]'); if(!c) break; const id = await c.getAttribute('data-cell'); seen.push(id); await c.click();

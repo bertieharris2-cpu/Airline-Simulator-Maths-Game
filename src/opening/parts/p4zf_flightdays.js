@@ -10,7 +10,10 @@
 const DAYS_KEYS = ['all', 'weekday', 'weekend'];
 function daysLabels(){ const s = String(WBS().flightDays || 'All week | Mon–Fri | Sat–Sun').split('|').map(x => x.trim()).filter(Boolean); return s.length === 3 ? s : ['All week', 'Mon–Fri', 'Sat–Sun']; }
 const daysLabel = v => daysLabels()[Math.max(0, DAYS_KEYS.indexOf(v || 'all'))];
-const flightDaysOn = () => typeof weekMode === 'function' && weekMode() && !!S && S.phase !== 'setup' && (S.day || 1) >= +(WBS().flightDaysFromDay || 8);
+const flightDaysOn = () => typeof weekMode === 'function' && weekMode() && !!S && S.phase !== 'setup' && fdUnlocked();
+/* when the Days setting is available: from a day number (workbooks to v5.14), or earned at a review (v5.15, D98: "earned: week-2 review
+   (day 14); fallback day 21"). The earned rule is in p5f_brief.js, which reassigns this; here a text value without it means day 8. */
+function fdUnlocked(){ const v = WBS().flightDaysFromDay; return (S.day || 1) >= (/^\s*\d+\s*$/.test(String(v === undefined || v === null ? 8 : v)) ? +v : 8); }
 const dayTypeOf = d => { const w = calDate(d).getUTCDay(); return w === 0 || w === 6 ? 'weekend' : 'weekday'; };
 const fliesOn = (v, dt) => !v || v === 'all' || v === dt;
 const daysFix = (days, n) => { const out = []; for(let k = 0; k < n; k++) out.push(days && DAYS_KEYS.includes(days[k]) ? days[k] : 'all'); return out; };

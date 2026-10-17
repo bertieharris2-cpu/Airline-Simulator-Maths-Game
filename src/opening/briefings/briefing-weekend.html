@@ -6,11 +6,11 @@
 <title>Operations briefing — Weekdays and weekends</title>
 <style>
 :root{--bg:#0b2549;--navy:#081d3d;--panel:rgba(14,44,88,.78);--line:rgba(127,200,255,.42);--hair:rgba(127,200,255,.2);--cy:#7fd6ff;--gold:#ffc83d;--white:#f2f8ff;--muted:#bccfe8;--grey:#9aaecb;--green:#6ef0b4;--red:#ff6b6b;
- --fig:"Cascadia Mono","Cascadia Code",Consolas,"SF Mono",ui-monospace,Menlo,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--r:2px;
+ --fig:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif;--sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif;--r:2px;
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){color-scheme:dark}}
 *{box-sizing:inherit}html,body{height:100%;margin:0}
-body{color:var(--white);font-family:var(--sans);font-size:17px;background:radial-gradient(1000px 600px at 70% -10%,rgba(86,197,255,.14),transparent 60%),linear-gradient(160deg,#143a6e,var(--bg) 55%,var(--navy))}
+body{color:var(--white);font-family:var(--sans);font-size:17px;font-variant-numeric:tabular-nums lining-nums;background:radial-gradient(1000px 600px at 70% -10%,rgba(86,197,255,.14),transparent 60%),linear-gradient(160deg,#143a6e,var(--bg) 55%,var(--navy))}
 .app{height:100%;display:flex;flex-direction:column}
 .bar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--hair);background:var(--panel)}
 .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cy)}
@@ -48,7 +48,9 @@ h1{font-size:26px;font-weight:600;margin:0 0 4px}p{margin:0 0 10px;color:var(--m
 .nav{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid var(--hair);background:var(--panel)}
 .btn{font:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:var(--r);border:1px solid var(--line);background:transparent;color:var(--white);cursor:pointer}
 .btn.primary{background:var(--gold);color:#1a1200;border-color:var(--gold)}.btn[disabled]{opacity:.35;cursor:default}.btn:focus-visible{outline:2px solid var(--gold)}
-.pause{font-size:13px;color:var(--grey)}.hint{font-size:14px;color:var(--grey);margin-top:8px;min-height:1.4em}
+.pause{font-size:13px;color:var(--grey)}
+.paused .stage{filter:brightness(.45) saturate(.6);pointer-events:none}
+.pz{display:none;position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);padding:18px 26px;border:1px solid var(--gold);background:rgba(8,29,61,.94);color:var(--white);font-size:20px;letter-spacing:.02em;z-index:5}.paused .pz{display:block}.pz small{display:block;font-size:13px;color:var(--grey);margin-top:4px}.hint{font-size:14px;color:var(--grey);margin-top:8px;min-height:1.4em}
 .ok{color:var(--green)}
 </style>
 </head>
@@ -57,7 +59,7 @@ h1{font-size:26px;font-weight:600;margin:0 0 4px}p{margin:0 0 10px;color:var(--m
 <div class="stage">
 
 <section class="slide on" data-step="1">
- <h1>Dublin last week: who wanted to fly, day by day</h1>
+ <h1 id="h1a">Dublin last week: who wanted to fly, day by day</h1>
  <p>Watch the bars. The dashed line is the seats you offered each day.</p>
  <div class="chart" id="chart"></div>
  <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
@@ -71,12 +73,12 @@ h1{font-size:26px;font-weight:600;margin:0 0 4px}p{margin:0 0 10px;color:var(--m
  <div class="chart" id="chart2"></div>
  <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
  <div class="key"><span class="b">Business — in the week</span><span class="l">Leisure</span><span class="f">Families — at the weekend</span></div>
- <p class="ask">Business travel builds through the week. At the weekend it stops, and families and holidaymakers take its place — more of them.</p>
+ <p class="ask" id="ask2">Business travel builds through the week. At the weekend it stops, and families and holidaymakers take its place — more of them.</p>
 </section>
 
 <section class="slide" data-step="3">
  <h1>Your timetable, the same seven days</h1>
- <p>Here is what you flew to Dublin each day last week.</p>
+ <p id="p3a">Here is what you flew to Dublin each day last week.</p>
  <div class="tt" id="tt"></div>
  <p class="ask">Does the planner fit what the passengers are doing? <span style="color:var(--grey);font-size:15px">Tap the day you'd most like to change.</span></p>
  <div class="hint" id="hint3"></div>
@@ -92,24 +94,37 @@ h1{font-size:26px;font-weight:600;margin:0 0 4px}p{margin:0 0 10px;color:var(--m
 </section>
 
 </div>
+<div class="pz" role="status">Paused: talk it through<small>Press Resume to carry on</small></div>
 <div class="nav"><button class="btn" id="pause">Pause &amp; discuss</button><span class="pause" id="where"></span><button class="btn primary" id="next" disabled>Continue →</button></div>
 </div>
 <script>
 (function(){
- const want=[48,45,47,50,61,83,77], seats=57;
- const biz=[34,32,33,36,40,12,10], fam=[6,5,6,6,10,41,38], lei=[8,8,8,8,11,30,29];
+ /* The game passes the week's figures as window.BRIEF: the route, who wanted to fly each day, the seats offered, the flights (the same
+    every day), and the three statements from the Upgrades sheet (the right one first; shown shuffled). Opened on its own, the briefing
+    shows Fable's example. When the pupil finishes, the game is told which statement was chosen (postMessage briefing-done). */
+ const D=Object.assign({route:"Dublin",want:[48,45,47,50,61,83,77],seats:[57,57,57,57,57,57,57],flights:[{t:"09:40",l:22,w:17,n:19},{t:"14:50",l:55,w:17,n:19},{t:"19:10",l:76,w:17,n:19}],
+   options:[["Change weekdays and weekends separately","two timetables: Mon–Fri and Sat–Sun"],["Change every day together","the planner as it is now"],["Change one particular date","a single day's exception"]]},window.BRIEF||{});
+ const want=D.want, seats=D.seats, DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+ // who is flying: business builds through the week and stops at the weekend; families and leisure take its place
+ const BIZ=[.7,.71,.7,.72,.66,.15,.13], FAM=[.13,.11,.13,.12,.16,.49,.49];
+ const biz=D.biz||want.map((v,i)=>Math.round(v*BIZ[i])), fam=D.fam||want.map((v,i)=>Math.round(v*FAM[i])), lei=D.lei||want.map((v,i)=>v-biz[i]-fam[i]);
+ // is the weekend busier or quieter than the weekdays? The words follow the pupil's own figures
+ const avg=a=>a.reduce((t,v)=>t+v,0)/Math.max(1,a.length), wdA=avg(want.slice(0,5)), weA=avg(want.slice(5)), up=weA>=wdA, pct=Math.round(Math.abs(weA-wdA)/Math.max(1,wdA)*100);
  const $=id=>document.getElementById(id); let step=1, picked=new Set(), chosen=null;
- const max=100, h=v=>Math.round(v/max*230);
+ const max=Math.ceil(Math.max(...want,...seats)*1.2/10)*10, h=v=>Math.round(v/max*230);
+ $("h1a").textContent=`${D.route} last week: who wanted to fly, day by day`; $("ask2").textContent=up?"Business travel fills the weekdays. At the weekend most of it stops, and families and holidaymakers take its place, more of them.":"Business travel fills the weekdays. At the weekend most of it stops; families and holidaymakers come instead, but not as many."; $("p3a").textContent=`Here is what you flew to ${D.route} each day last week.`;
+ const done=()=>{ try{ parent.postMessage({type:"briefing-done",id:"weekend_demand",chosen:chosen,right:chosen===0},"*"); }catch(e){} };
  function dots(){const el=$("dots");el.innerHTML="";for(let i=1;i<=4;i++){const s=document.createElement("i");s.className=i<step?"done":i===step?"on":"";el.appendChild(s);} $("where").textContent=`Step ${step} of 4 · the airline pauses operations to brief you`;}
  function show(){document.querySelectorAll(".slide").forEach(s=>s.classList.toggle("on",Number(s.dataset.step)===step)); dots(); $("next").disabled=true; if(step===1) chart1(); if(step===2) chart2(); if(step===3) tt(); if(step===4) cards();}
- function chart1(){const c=$("chart"); c.innerHTML=""; want.forEach((v,i)=>{const col=document.createElement("div"); col.className="col"; col.innerHTML=`<div class="bar2"><i></i></div><div class="n">${v}</div>`; col.onclick=()=>{if(picked.has(i))picked.delete(i);else picked.add(i); col.classList.toggle("pick",picked.has(i)); check1();}; c.appendChild(col); requestAnimationFrame(()=>setTimeout(()=>{col.querySelector("i").style.height=h(v)+"px";},i*120));});
-  const line=document.createElement("div"); line.className="seatline"; line.style.cssText=`position:absolute;left:0;right:0;`; c.style.position="relative"; const sl=document.createElement("div"); sl.style.cssText=`position:absolute;left:8px;right:8px;bottom:${h(seats)+10}px;border-top:2px dashed rgba(242,248,255,.7)`; const lab=document.createElement("span"); lab.style.cssText="position:absolute;right:0;top:-18px;font-size:12px;color:var(--grey);font-family:var(--fig)"; lab.textContent="57 seats offered"; sl.appendChild(lab); c.appendChild(sl);}
- function check1(){const right=picked.has(5)&&picked.has(6)&&picked.size<=3; $("hint1").textContent=picked.size===0?"":right?"Saturday and Sunday — more people wanted to fly than you had seats. Friday is on the way up too.":"Keep looking: which bars go over the dashed line?"; $("hint1").className="hint "+(right?"ok":""); $("next").disabled=!right;}
+ function seatLine(c){ c.style.position="relative"; const sl=document.createElement("div"); const s0=Math.round(seats.reduce((t,v)=>t+v,0)/7); sl.style.cssText=`position:absolute;left:8px;right:8px;bottom:${h(s0)+10}px;border-top:2px dashed rgba(242,248,255,.7)`; const lab=document.createElement("span"); lab.style.cssText="position:absolute;right:0;top:-18px;font-size:12px;color:var(--grey)"; lab.textContent=`${s0} seats offered`; sl.appendChild(lab); c.appendChild(sl); }
+ function chart1(){const c=$("chart"); c.innerHTML=""; want.forEach((v,i)=>{const col=document.createElement("div"); col.className="col"; col.innerHTML=`<div class="bar2"><i></i></div><div class="n">${v}</div>`; col.onclick=()=>{if(picked.has(i))picked.delete(i);else picked.add(i); col.classList.toggle("pick",picked.has(i)); check1();}; c.appendChild(col); requestAnimationFrame(()=>setTimeout(()=>{col.querySelector("i").style.height=h(v)+"px";},i*120));}); seatLine(c);}
+ function check1(){const right=picked.has(5)&&picked.has(6)&&picked.size<=3; $("hint1").textContent=picked.size===0?"":right?`Saturday and Sunday: about ${pct}% ${up?"more":"fewer"} people wanted to fly than on a weekday.${weA>avg(seats.slice(5))?" More than you had seats.":weA<avg(seats.slice(5))*0.8?" Seats flew empty.":""}${want[4]>want[0]*1.1?" Friday is on the way up too.":""}`:"Keep looking: which bars go over the dashed line?"; $("hint1").className="hint "+(right?"ok":""); $("next").disabled=!right;}
  function chart2(){const c=$("chart2"); c.innerHTML=""; want.forEach((v,i)=>{const col=document.createElement("div"); col.className="col"; col.innerHTML=`<div class="bar2"><i class="biz"></i><i class="lei"></i><i class="fam"></i></div><div class="n">${v}</div>`; c.appendChild(col); const [b,l,f]=col.querySelectorAll("i"); setTimeout(()=>{b.style.height=h(biz[i])+"px"; l.style.height=h(lei[i])+"px"; f.style.height=h(fam[i])+"px";},150+i*100);}); setTimeout(()=>{$("next").disabled=false;},1400);}
- function tt(){const el=$("tt"); el.innerHTML=""; ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach((d,i)=>{const row=document.createElement("div"); row.className="row"+(i>=5?" wk":""); row.innerHTML=`<div class="d">${d}</div><div class="track"><div class="flight" style="left:22%;width:17%">09:40 Dublin · 19</div><div class="flight" style="left:55%;width:17%">14:50 Dublin · 19</div><div class="flight" style="left:76%;width:17%">19:10 Dublin · 19</div></div>`; row.onclick=()=>{el.querySelectorAll(".row").forEach(r=>r.style.outline=""); row.style.outline="2px solid var(--gold)"; const w=i>=5; $("hint3").textContent=w?`${d}: ${want[i]} wanted to fly, 57 seats. Right — but the planner changes every day at once, so adding a flight on ${d} adds one on Monday too.`:`${d}: ${want[i]} wanted to fly, 57 seats offered. There were empty seats here. Look at the weekend rows.`; $("hint3").className="hint "+(w?"ok":""); $("next").disabled=!w;}; el.appendChild(row);});}
- function cards(){const el=$("cards"); el.innerHTML=""; const opts=[["Change every day together","the planner as it is now"],["Change weekdays and weekends separately","two timetables: Mon–Fri and Sat–Sun"],["Change one particular date","a single day's exception"]]; opts.forEach((o,i)=>{const b=document.createElement("button"); b.className="card"; b.innerHTML=`<div style="font-weight:600">${o[0]}</div><div style="color:var(--grey);font-size:14px;margin-top:4px">${o[1]}</div>`; b.onclick=()=>{chosen=i; el.querySelectorAll(".card").forEach(c=>c.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); if(i===1){$("hint4").textContent=""; $("plate").innerHTML=`<div class="plate"><div class="eyebrow">Planner upgrade approved</div><b>Weekday / weekend schedules</b><div style="color:var(--muted);margin-top:4px">From Monday, every flight has a Days setting: All week, Mon–Fri or Sat–Sun. The weekend rows will show their own seat fill.</div></div>`; $("next").textContent="Back to the review →"; $("next").disabled=false;} else if(i===0){$("hint4").textContent="That's what the planner does now — and the data says the weekend needs something different."; $("plate").innerHTML="";} else {$("hint4").textContent="That would fix one Saturday. The data shows every weekend is different — what fits all of them?"; $("plate").innerHTML="";}}; el.appendChild(b);});}
- $("next").onclick=()=>{if(step<4){step++;show();}}; $("pause").onclick=()=>{$("pause").textContent=$("pause").textContent.startsWith("Pause")?"Resume":"Pause & discuss";};
- document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("next").disabled)$("next").click();});
+ function tt(){const el=$("tt"); el.innerHTML=""; DAYS.forEach((d,i)=>{const row=document.createElement("div"); row.className="row"+(i>=5?" wk":""); row.innerHTML=`<div class="d">${d}</div><div class="track">${D.flights.map(x=>`<div class="flight" style="left:${x.l}%;width:${x.w}%">${x.t} ${D.route} · ${x.n}</div>`).join("")}</div>`; row.onclick=()=>{el.querySelectorAll(".row").forEach(r=>r.style.outline=""); row.style.outline="2px solid var(--gold)"; const w=i>=5; $("hint3").textContent=w?`${d}: ${want[i]} wanted to fly, ${seats[i]} seats. Right, but the planner changes every day at once, so ${up?`adding a flight on ${d} adds one on Monday too`:`taking a flight off on ${d} takes it off on Monday too`}.`:`${d}: ${want[i]} wanted to fly, ${seats[i]} seats offered.${want[i]<seats[i]?" There were empty seats here.":""} Look at the weekend rows.`; $("hint3").className="hint "+(w?"ok":""); $("next").disabled=!w;}; el.appendChild(row);});}
+ function cards(){const el=$("cards"); el.innerHTML=""; const order=[1,0,2].filter(i=>i<D.options.length); order.forEach(i=>{const o=[].concat(D.options[i]); const b=document.createElement("button"); b.className="card"; b.innerHTML=`<div style="font-weight:600">${o[0]}</div>${o[1]?`<div style="color:var(--grey);font-size:14px;margin-top:4px">${o[1]}</div>`:""}`; b.onclick=()=>{chosen=i; el.querySelectorAll(".card").forEach(c=>c.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); if(i===0){$("hint4").textContent=""; $("plate").innerHTML=`<div class="plate"><div class="eyebrow">Planner upgrade approved</div><b>Weekday / weekend schedules</b><div style="color:var(--muted);margin-top:4px">From Monday, every flight has a Days setting: All week, Mon–Fri or Sat–Sun. The weekend rows will show their own seat fill.</div></div>`;} else {$("hint4").textContent=i===1?"That's what the planner does now, and the data says the weekend needs something different. The systems team will look at it.":"That would fix one Saturday. The data shows every weekend is different. The systems team will look at it."; $("plate").innerHTML="";} $("next").textContent="Back to the review →"; $("next").disabled=false;}; el.appendChild(b);});}
+ $("next").onclick=()=>{if(step<4){step++;show();} else if(chosen!==null) done();};
+ $("pause").onclick=()=>{const on=!document.body.classList.contains("paused"); document.body.classList.toggle("paused",on); $("pause").textContent=on?"Resume":"Pause & discuss";};
+ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("next").disabled&&!document.body.classList.contains("paused"))$("next").click();});
  show();
 })();
 </script>

@@ -6,11 +6,11 @@
 <title>Operations briefing — Cash, tank, profit</title>
 <style>
 :root{--bg:#0b2549;--navy:#081d3d;--panel:rgba(14,44,88,.78);--line:rgba(127,200,255,.42);--hair:rgba(127,200,255,.2);--cy:#7fd6ff;--gold:#ffc83d;--white:#f2f8ff;--muted:#bccfe8;--grey:#9aaecb;--green:#6ef0b4;--red:#ff6b6b;
- --fig:"Cascadia Mono","Cascadia Code",Consolas,"SF Mono",ui-monospace,Menlo,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--r:2px;
+ --fig:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif;--sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif;--r:2px;
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){color-scheme:dark}}
 *{box-sizing:inherit}html,body{height:100%;margin:0}
-body{color:var(--white);font-family:var(--sans);font-size:17px;background:radial-gradient(1000px 600px at 70% -10%,rgba(86,197,255,.14),transparent 60%),linear-gradient(160deg,#143a6e,var(--bg) 55%,var(--navy))}
+body{color:var(--white);font-family:var(--sans);font-size:17px;font-variant-numeric:tabular-nums lining-nums;background:radial-gradient(1000px 600px at 70% -10%,rgba(86,197,255,.14),transparent 60%),linear-gradient(160deg,#143a6e,var(--bg) 55%,var(--navy))}
 .app{height:100%;display:flex;flex-direction:column}
 .bar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--hair);background:var(--panel)}
 .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cy)}
@@ -39,6 +39,8 @@ h1{font-size:26px;font-weight:600;margin:0 0 4px}p{margin:0 0 10px;color:var(--m
 .plane{display:inline-block;transition:transform 1.2s linear;font-size:22px}
 .nav{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid var(--hair);background:var(--panel)}
 .pause{font-size:13px;color:var(--grey)}
+.paused .stage{filter:brightness(.45) saturate(.6);pointer-events:none}
+.pz{display:none;position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);padding:18px 26px;border:1px solid var(--gold);background:rgba(8,29,61,.94);color:var(--white);font-size:20px;letter-spacing:.02em;z-index:5}.paused .pz{display:block}.pz small{display:block;font-size:13px;color:var(--grey);margin-top:4px}
 @media (prefers-reduced-motion:reduce){.meter i,.plane{transition:none!important}.flow.go{animation:none;opacity:1}}
 @media (max-width:640px){.gauges{grid-template-columns:1fr}}
 </style>
@@ -57,21 +59,32 @@ h1{font-size:26px;font-weight:600;margin:0 0 4px}p{margin:0 0 10px;color:var(--m
  <div class="costs" id="costs"><div class="row"><span>Today's costs</span><span></span></div><div class="row"><span>Flying 2 h × £150</span><span>£300</span></div><div class="row"><span>Landing, Heathrow and Paris</span><span>£220</span></div><div class="row"><span>Passenger charges 19 × £5</span><span>£95</span></div><div class="row" id="fuelRow" style="display:none"><span>Fuel burned 120 L × £1.47</span><span>£176</span></div><div class="row"><span>Total</span><span id="tot">£615</span></div></div>
  <p class="ask" id="ask"></p>
 </div></div>
+<div class="pz" role="status">Paused: talk it through<small>Press Resume to carry on</small></div>
 <div class="nav"><button class="btn" id="pause">Pause &amp; discuss</button><span class="pause" id="where"></span><button class="btn primary" id="next" disabled>Continue →</button></div>
 </div>
 <script>
 (function(){
- const $=id=>document.getElementById(id); let step=1;
- const cash0=12409, price=1.47, litres=7000, cost=10290;
+ /* The game passes the pupil's own figures as window.BRIEF (cash, price, the week's order, the tank, the first flight of the plan);
+    opened on its own, the briefing shows Fable's example. When the pupil finishes, the game is told (postMessage briefing-done). */
+ const D=Object.assign({cash:12409,price:1.47,litres:7000,tank:8000,weekNeed:4200,flight:{dep:"07:00",plane:"Twin Otter",to:"Paris",litres:120,pax:19,fare:90,
+   costs:[["Flying 2 h × £150",300],["Landing, Heathrow and Paris",220],["Passenger charges 19 × £5",95]]}},window.BRIEF||{});
+ const F=D.flight, $=id=>document.getElementById(id), gbp=n=>(n<0?"−":"")+"£"+Math.abs(Math.round(n)).toLocaleString("en-GB"), L=n=>Math.round(n).toLocaleString("en-GB")+" L";
+ const cost=Math.round(D.litres*D.price), after=D.cash-cost, burn=Math.round(F.litres*D.price), other=F.costs.reduce((t,c)=>t+c[1],0), tot=other+burn, rev=F.pax*F.fare, profit=rev-tot;
+ let step=1;
+ $("vCash").textContent=gbp(D.cash); $("mTank").parentNode.querySelector(".lab").textContent=L(D.tank)+" storage";
+ $("buy").textContent=`Buy ${L(D.litres)} at £${D.price.toFixed(2)} — ${gbp(cost)}`;
+ $("costs").innerHTML='<div class="row"><span>Today\'s costs</span><span></span></div>'+F.costs.map(c=>`<div class="row"><span>${c[0]}</span><span>${gbp(c[1])}</span></div>`).join("")+`<div class="row" id="fuelRow" style="display:none"><span>Fuel burned ${L(F.litres)} × £${D.price.toFixed(2)}</span><span>${gbp(burn)}</span></div><div class="row"><span>Total</span><span id="tot">${gbp(other)}</span></div>`;
  function dots(){const el=$("dots");el.innerHTML="";for(let i=1;i<=4;i++){const s=document.createElement("i");s.className=i<step?"done":i===step?"on":"";el.appendChild(s);} $("where").textContent=`Step ${step} of 4 · the airline pauses operations to brief you`;}
  dots();
- $("buy").onclick=()=>{ $("buy").disabled=true; $("flow1").classList.add("go"); $("mCash").style.height=Math.round((cash0-cost)/cash0*124)+"px"; $("vCash").textContent="£2,119"; $("mTank").style.height=Math.round(litres/8000*150)+"px"; $("vTank").textContent="7,000 L"; setTimeout(()=>{ step=2; dots(); $("h").textContent="What changed?"; $("p").textContent="Cash fell by £10,290. The tank filled. Look at the profit gauge."; $("ask").innerHTML='Tap the gauge that <b>didn\'t</b> move.'; ["gCash","gTank","gProfit"].forEach(id=>{$(id).onclick=()=>{document.querySelectorAll(".g").forEach(g=>g.classList.remove("pick")); $(id).classList.add("pick"); const ok=id==="gProfit"; $("hint").textContent=ok?"Profit didn't move. You haven't spent the fuel yet — you've turned £10,290 of cash into 7,000 litres you own.":"That one moved. Which gauge stayed where it was?"; $("hint").className="hint "+(ok?"ok":""); $("next").disabled=!ok;};}); },1000); };
+ const done=()=>{ try{ parent.postMessage({type:"briefing-done",id:"fuel_cash_tank_profit"},"*"); }catch(e){} };
+ $("buy").onclick=()=>{ $("buy").disabled=true; $("flow1").classList.add("go"); $("mCash").style.height=Math.max(2,Math.round(after/D.cash*124))+"px"; $("vCash").textContent=gbp(after); $("mTank").style.height=Math.round(Math.min(1,D.litres/D.tank)*150)+"px"; $("vTank").textContent=L(D.litres); setTimeout(()=>{ step=2; dots(); $("h").textContent="What changed?"; $("p").textContent=`Cash fell by ${gbp(cost)}. The tank filled. Look at the profit gauge.`; $("ask").innerHTML='Tap the gauge that <b>didn\'t</b> move.'; ["gCash","gTank","gProfit"].forEach(id=>{$(id).onclick=()=>{document.querySelectorAll(".g").forEach(g=>g.classList.remove("pick")); $(id).classList.add("pick"); const ok=id==="gProfit"; $("hint").textContent=ok?`Profit didn't move. You haven't spent the fuel yet: you've turned ${gbp(cost)} of cash into ${L(D.litres)} you own.`:"That one moved. Which gauge stayed where it was?"; $("hint").className="hint "+(ok?"ok":""); $("next").disabled=!ok;};}); },1000); };
  $("next").onclick=()=>{
-  if(step===2){ step=3; dots(); $("next").disabled=true; $("h").textContent="A plane flies"; $("p").textContent="The 07:00 Twin Otter leaves for Paris and back: 120 litres."; $("ask").innerHTML='<span class="plane" id="plane">✈</span> Press Fly and watch the tank and today\'s costs.'; $("ctrl").innerHTML='<button class="btn primary" id="fly">Fly to Paris and back</button><span class="hint" id="hint"></span>'; $("costs").classList.add("on"); document.querySelectorAll(".g").forEach(g=>g.classList.remove("pick")); $("fly").onclick=()=>{ $("fly").disabled=true; $("plane").style.transform="translateX(240px)"; setTimeout(()=>{ $("mTank").style.height=Math.round(6880/8000*150)+"px"; $("vTank").textContent="6,880 L"; $("fuelRow").style.display="flex"; $("tot").textContent="£791"; $("mProfit").style.height="98px"; $("vProfit").textContent="£919"; $("hint").textContent="120 litres drained from the tank — and £176, the price you paid for them, flowed into today's costs. Now profit moves: 19 × £90 − £791 = £919."; $("hint").className="hint ok"; $("next").disabled=false; },1200); }; }
-  else if(step===3){ step=4; dots(); $("h").textContent="Buying fuel and using fuel are different events"; $("p").innerHTML="<b>Buying</b> moves cash into the tank. <b>Using</b> turns litres into a cost, flight by flight, at the price you paid. A big order today does not make a loss today — it just means less cash in the bank and more fuel in the tank."; $("ask").textContent="Back on the Fuel desk: how many blocks will you order for the week? The plan needs 4,200 litres."; $("ctrl").innerHTML=""; $("costs").classList.remove("on"); $("next").textContent="To the Fuel desk →"; $("next").disabled=false; }
+  if(step===2){ step=3; dots(); $("next").disabled=true; $("h").textContent="A plane flies"; $("p").textContent=`The ${F.dep} ${F.plane} leaves for ${F.to} and back: ${L(F.litres)}.`; $("ask").innerHTML=`<span class="plane" id="plane">✈</span> Press Fly and watch the tank and today's costs.`; $("ctrl").innerHTML=`<button class="btn primary" id="fly">Fly to ${F.to} and back</button><span class="hint" id="hint"></span>`; $("costs").classList.add("on"); document.querySelectorAll(".g").forEach(g=>{g.classList.remove("pick"); g.onclick=null;}); $("fly").onclick=()=>{ $("fly").disabled=true; $("plane").style.transform="translateX(240px)"; setTimeout(()=>{ $("mTank").style.height=Math.round(Math.min(1,(D.litres-F.litres)/D.tank)*150)+"px"; $("vTank").textContent=L(D.litres-F.litres); $("fuelRow").style.display="flex"; $("tot").textContent=gbp(tot); $("mProfit").style.height=Math.max(2,Math.min(150,Math.round(Math.max(0,profit)/Math.max(1,rev)*150)))+"px"; $("vProfit").textContent=gbp(profit); $("hint").textContent=`${L(F.litres)} drained from the tank, and ${gbp(burn)}, the price you paid for them, flowed into today's costs. Now profit moves: ${F.pax} × £${F.fare} − ${gbp(tot)} = ${gbp(profit)}.`; $("hint").className="hint ok"; $("next").disabled=false; },1200); }; }
+  else if(step===3){ step=4; dots(); $("h").textContent="Buying fuel and using fuel are different events"; $("p").innerHTML="<b>Buying</b> moves cash into the tank. <b>Using</b> turns litres into a cost, flight by flight, at the price you paid. A big order today does not make a loss today: it just means less cash in the bank and more fuel in the tank."; $("ask").textContent=`Back on the Fuel desk: how many blocks will you order for the week? The plan needs ${L(D.weekNeed)}.`; $("ctrl").innerHTML=""; $("costs").classList.remove("on"); $("next").textContent="To the Fuel desk →"; $("next").disabled=false; }
+  else if(step===4) done();
  };
- $("pause").onclick=()=>{$("pause").textContent=$("pause").textContent.startsWith("Pause")?"Resume":"Pause & discuss";};
- document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("next").disabled)$("next").click();});
+ $("pause").onclick=()=>{const on=!document.body.classList.contains("paused"); document.body.classList.toggle("paused",on); $("pause").textContent=on?"Resume":"Pause & discuss";};
+ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("next").disabled&&!document.body.classList.contains("paused"))$("next").click();});
 })();
 </script>
 </body></html>

@@ -9,7 +9,7 @@ const TAG = `${HOME}-${MK}-${W}`;
   const errors = [], overflow = [], checks = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
-  await p.evaluate(() => { window.__sim.settings().flightSecs = 1; });
+  await p.evaluate(() => { window.__sim.settings().flightSecs = 1; window.__sim.settings().briefings = false; });
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S());
   const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(200); await p.screenshot({ path:OUT + n + '-' + TAG + '.png' }); };

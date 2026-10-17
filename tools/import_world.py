@@ -325,12 +325,37 @@ planTips = [{'id': r['tipId'], 'condition': r.get('condition'), 'threshold': r.g
 if 'PlanTips' not in wb.sheetnames: issue('check', 'PlanTips', 'no PlanTips sheet: the Operating Plan Studio uses its own copy of the tips.')
 # 15 Oct (Bertie): teacher milestones against coasting. The game has a draft list (docs/Milestones-Draft.md); each row of a
 # Milestones sheet overrides the draft's title, teacher words, threshold or chapters, matched on milestoneId.
-MS_IDS = ['fareTest', 'fullPlane', 'onTarget', 'newsReader', 'firstToFly', 'fuelAhead', 'cleanSheet', 'closeGap', 'shrinkGap', 'neverCoast', 'longHaulFull', 'spotMistake', 'captain', 'savedBought']
+MS_IDS = ['fareTest', 'fullPlane', 'onTarget', 'newsReader', 'firstToFly', 'fuelAhead', 'cleanSheet', 'closeGap', 'shrinkGap', 'neverCoast', 'longHaulFull', 'spotMistake', 'captain', 'savedBought', 'experimenter', 'worthIt']
 teacherMilestones = [{'id': r['milestoneId'], 'chapters': r.get('chapters'), 'title': r.get('title'), 'teacherWords': r.get('teacherWords'), 'threshold': r.get('threshold'), 'status': r.get('status')}
                      for r in live('Milestones', opt_sheet('Milestones')) if r.get('milestoneId')]
 if 'Milestones' not in wb.sheetnames: issue('check', 'Milestones', 'no Milestones sheet yet: the teacher panel uses the draft list in the game (docs/Milestones-Draft.md).')
+MS_PARKED = {'charterWinner': 'the Charter desk (D90)', 'clashServed': 'clashing weeks (D90)'}   # v5.9's mechanics are parked (Bertie, 16 Oct)
 for m in teacherMilestones:
-    if m['id'] not in MS_IDS: issue('error', 'Milestones', f'{m["id"]}: the game cannot measure this milestone (it knows {", ".join(MS_IDS)}).')
+    if m['id'] in MS_PARKED: issue('check', 'Milestones', f'{m["id"]}: waits for {MS_PARKED[m["id"]]}, which is not installed yet; the teacher panel leaves it out.')
+    elif m['id'] not in MS_IDS: issue('error', 'Milestones', f'{m["id"]}: the game cannot measure this milestone (it knows {", ".join(MS_IDS)}).')
+# v5.13–v5.15 (D96, D98, D99), taken on top of v5.8 (tools/take_parts.py): small explained daily effects, planner upgrades earned
+# at reviews, and the Operations Briefings. appliesOn reads 'Tue, every 3rd week'; options are the three statements, the right one first.
+WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+def applies_on(s):
+    m = re.match(r'\s*(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\w*,\s*every\s+(\d+)', str(s or ''))
+    return {'weekday': m.group(1), 'everyWeeks': int(m.group(2))} if m else None
+dailyColour = []
+for r in live('DailyColour', opt_sheet('DailyColour')):
+    if not r.get('colourId'): continue
+    on = applies_on(r.get('appliesOn'))
+    if not on: issue('error', 'DailyColour', f'{r["colourId"]}: appliesOn "{r.get("appliesOn")}" is not "Day, every Nth week".'); continue
+    dailyColour.append({'id': r['colourId'], **on, 'effect': r.get('effect'), 'size': r.get('size'), 'line': r.get('line')})
+upgrades = [{'id': r['upgradeId'], 'trigger': r.get('trigger'), 'dataShown': r.get('dataShown'), 'question': r.get('question'),
+             'options': [o.strip() for o in str(r.get('options') or '').split('|') if o.strip()], 'freeTextFrom': r.get('freeTextFrom'),
+             'fallback': r.get('fallback'), 'unlocks': r.get('unlocks'), 'briefing': None if r.get('briefing') in (None, '—') else r.get('briefing')}
+            for r in live('Upgrades', opt_sheet('Upgrades')) if r.get('upgradeId')]
+for u in upgrades:
+    if len(u['options']) != 3: issue('check', 'Upgrades', f'{u["id"]}: {len(u["options"])} options, not three.')
+briefings = [{'id': r['briefingId'], 'trigger': r.get('trigger'), 'title': r.get('title'), 'show': r.get('beat1'), 'predict': r.get('beat2'), 'reveal': r.get('beat3'),
+              'use': r.get('beat4'), 'leadsInto': r.get('leadsInto'), 'seconds': r.get('seconds'), 'html': r.get('html')}
+             for r in live('Briefings', opt_sheet('Briefings')) if r.get('briefingId')]
+for n_ in ('DailyColour', 'Upgrades', 'Briefings'):
+    if n_ not in wb.sheetnames: issue('check', n_, f'no {n_} sheet: the game runs without it.')
 # v5.5 (D82): the A380 launch campaign. One row per field; the game reads the structure (choices, portfolio, signals) and
 # stores the pupil's work. Placeholder rows (reach, funnel) are loaded too: the campaign's hooks show them as 'to be tuned'.
 campaign = {r['field']: {'value': r.get('value'), 'notes': r.get('notes'), 'status': r.get('status')}
@@ -385,7 +410,8 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'events': events, 'challenges': challenges, 'mechanics': mechanics,
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
          'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips, 'teacherMilestones': teacherMilestones,
-         'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview, 'campaign': campaign}
+         'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview, 'campaign': campaign,
+         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings}
 
 
 # ---------- checks ----------
@@ -706,6 +732,21 @@ for k in ('tankUpgradeDay', 'tankCapacityUpgraded'):
     if settings_status.get(k) and k not in settings: t58.append(f'- `{k}`: withdrawn (not loaded).')
 t58.append('- **Fuel farm:** ' + (f'{fuel_farm["litres"]:,} L for £{fuel_farm["price"]:,} from {fuel_farm["from"]}' + (f'; stage 2 {fuel_farm["stage2"]["litres"]:,} L for £{fuel_farm["stage2"]["price"]:,} more from {fuel_farm["stage2"]["from"]}' if fuel_farm.get('stage2') else '') if fuel_farm else 'no row') + '.')
 out += ['', '## Fuel storage (D89) touches', '', 'The Settings rows and the Finance row these read, as loaded.', ''] + t58
+
+# v5.13–v5.15 touches (D96 screens, D97 tips gated by gain, D98 upgrades, D99 briefings), taken on top of v5.8
+NEEDED_V515 = ['reviewAsSpreadsheet', 'fuelAccounting', 'fuelFillLabel', 'compareLastWeek', 'keyboardShortcuts', 'soundSet', 'dailyColour',
+               'tipGainGate', 'allFullCapacityTip', 'plannerUpgrades', 'operationsBriefings', 'flightDaysFromDay']
+t515 = []
+for k in NEEDED_V515:
+    st_ = settings_status.get(k)
+    if st_ is None: t515.append(f'- **Settings:** `{k}` is not on the sheet.'); issue('check', 'Settings', f'{k} is not on the sheet (D96–D99).')
+    elif st_ not in LOAD: t515.append(f'- **Settings:** `{k}` is `{st_}`: not loaded.')
+    else: t515.append(f'- `{k}`: {settings.get(k)}')
+t515.append('- **DailyColour:** ' + (', '.join(f'{c["id"]} ({c["weekday"]}, every {c["everyWeeks"]})' for c in dailyColour) or 'none') + '.')
+t515.append('- **Upgrades:** ' + (', '.join(f'{u["id"]} → {u["unlocks"]}' for u in upgrades) or 'none') + '.')
+have_html = {p.name for p in (ROOT / 'src' / 'opening' / 'briefings').glob('*.html')} if (ROOT / 'src' / 'opening' / 'briefings').exists() else set()
+t515.append('- **Briefings:** ' + (', '.join(f'{b["id"]} ({b["html"]}{"" if b.get("html") in have_html else ", not built yet"})' for b in briefings) or 'none') + '.')
+out += ['', '## Screens brief (D96–D99) touches', '', 'Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and sheets these read, as loaded.', ''] + t515
 
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'

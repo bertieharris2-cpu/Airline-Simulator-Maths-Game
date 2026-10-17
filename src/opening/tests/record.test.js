@@ -14,7 +14,7 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
   const ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x) : ''));
   const T = () => p.evaluate(() => window.__sim.step().t), E = src => p.evaluate(s => window.__sim.evalIn(s), src);
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
-  await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
+  await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
 
   // ---------- 1. Launch Day: a long multiplication in the column template, cell by cell ----------
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx');

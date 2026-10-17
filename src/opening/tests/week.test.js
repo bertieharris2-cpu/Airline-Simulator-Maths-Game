@@ -2,6 +2,7 @@
 // Workbook v4.4: chapter 1 a week at a time. Launch Day plan + sums, the week on the board, the Sunday review, then the next Monday.
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || require('os').tmpdir() + '/airline-week') + '/'; fs.mkdirSync(OUT, { recursive:true });
+const BRIEF = process.env.BRIEFINGS === '1';   // D99: play the Operations Briefings (off in the regression run)
 const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 15);
 const V2 = true;   // the game is the revised Studio (one file since 13 Oct 2026): opener, operating plan, change network
 const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
@@ -11,7 +12,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   let modelWide = false, openerSeen = false, newsSeen = false, d67 = null; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [], foLevels = [], caps = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
-  await p.evaluate(() => { const st = window.__sim.settings(); st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
+  await p.evaluate(b => { const st = window.__sim.settings(); st.briefings = b; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; }, BRIEF);
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S());
   const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };
@@ -55,6 +56,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       else { await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
       await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push(P.id + (P.div ? '÷' + P.div : '')); } return done; };
   // v4.9 sign-off cards: Build (tap the figures and the operation) and Calculate (type the answer); the first of each kind is answered wrong once
+  const briefSeen = {};
   let soWrongB = false, soWrongC = false, paperB = false, paperQ = false, paperFin = false;
   const signs = async tag => { const done = []; for(let g = 0; g < 14; g++){ const P = await p.evaluate(() => window.__sim.evalIn('soPlan()')); checks.push('info soPlan ' + tag + ' ' + JSON.stringify(P)); if(!P) break;
       if(P.rb){ await p.click(`[data-rbop="${P.rb.id}|${P.rb.op}"]`); await p.fill(`[data-rbdiv="${P.rb.id}"]`, String(P.rb.div)); await p.click(`[data-rbchk="${P.rb.id}"]`); await p.waitForTimeout(80); done.push('rb:' + P.rb.id + '÷' + P.rb.div); continue; }
@@ -306,6 +308,24 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       if(s.phase === 'setup') ok('launch: five sums (D86): tickets at three fares, the fare, a worked example then the fuel order, the profit; snacks ×2 as Builds; the other route\'s tickets by the model', typed.filter(x => /\|tk_par$/.test(x)).length === 3 && !typed.some(x => /\|tk_dub/.test(x)) && typed.includes('tutorial') && typed.filter(x => /fuelorder:a\|order$/.test(x)).length === 1 && typed.filter(x => /\|profit$/.test(x)).length === 1 && typed.filter(x => /\|snack build$/.test(x)).length === 2, typed);
       if(s.phase === 'setup') ok('launch: the sums were done in the dock beside the plan', await vis('.dock-sum') && await vis('.ad'));
       ok(`work ${day}: back enabled`, !!(await p.$('#nx')) && await p.$eval('#nx', e => !e.disabled)); await p.click('#nx'); continue; }
+    if(BRIEF && t === 'fuelDesk' && await vis('#bfLayer') && !briefSeen.fuel){ briefSeen.fuel = true; await p.waitForTimeout(400); await shot(`d${day}-brief-fuel-1`); const F = p.frameLocator('#bfLayer iframe');
+      await F.locator('#buy').click(); await p.waitForTimeout(1300); await shot(`d${day}-brief-fuel-2`); await F.locator('#gTank').click(); const wrong = await F.locator('#next').isDisabled(); await F.locator('#gProfit').click();
+      ok('D99 fuel briefing: tapping a gauge that moved does not go on; tapping profit (it did not move) does', wrong && !(await F.locator('#next').isDisabled()), await F.locator('#hint').textContent());
+      await F.locator('#next').click(); await F.locator('#fly').click(); await p.waitForTimeout(1500); await shot(`d${day}-brief-fuel-3`);
+      ok('D99 fuel briefing: a flight drains litres from the tank into the day\'s costs at the price paid', /drained from the tank/.test(await F.locator('#hint').textContent()), await F.locator('#hint').textContent());
+      await F.locator('#next').click(); await F.locator('#next').click(); await p.waitForTimeout(300);
+      ok('D99 fuel briefing: done, the Fuel desk is underneath and the briefing is marked seen', !(await vis('#bfLayer')) && await vis('.fd-ob, #fdBuy') && !!(await p.evaluate(() => window.__sim.evalIn('JSON.stringify((S.brief||{}).seen||{})'))).match(/fuel_cash_tank_profit/));
+      continue; }
+    if(BRIEF && !briefSeen.prop && await vis('#upgYes')){ briefSeen.prop = true; await shot(`d${day}-upgrade-proposal`); await p.click('#upgYes'); await p.waitForTimeout(150);
+      ok(`D98 fallback: the systems team proposes the weekend timetable on day ${day}; Build it grants Days`, (await p.evaluate(() => window.__sim.evalIn('JSON.stringify(S.upg.weekend_schedules)')).then(JSON.parse)).granted === day); continue; }
+    if(BRIEF && t === 'brief'){ briefSeen.weekend = true; await p.waitForTimeout(600); const F = p.frameLocator('#bfLayer iframe'); await shot(`d${day}-brief-weekend-1`);
+      await F.locator('#chart .col').nth(5).click(); await F.locator('#chart .col').nth(6).click(); await F.locator('#next').click(); await p.waitForTimeout(1600); await shot(`d${day}-brief-weekend-2`); await F.locator('#next').click();
+      await F.locator('#tt .row').nth(5).click(); await shot(`d${day}-brief-weekend-3`); await F.locator('#next').click();
+      const pick = process.env.WRONG_CARD === '1' ? 'every day together' : 'weekdays and weekends separately'; await F.locator('.card', { hasText:pick }).click(); await p.waitForTimeout(200); await shot(`d${day}-brief-weekend-4`);
+      await F.locator('#next').click(); await p.waitForTimeout(400);
+      const U = await p.evaluate(() => window.__sim.evalIn('JSON.stringify((S.upg||{}).weekend_schedules||null)')).then(JSON.parse);
+      ok(`D98 week-2 review: the Operations Request ${process.env.WRONG_CARD === '1' ? 'with another statement leaves Days for the fallback' : 'grants the Days setting'}`, process.env.WRONG_CARD === '1' ? !U.granted && U.declined === 14 : U.granted === 14, U);
+      continue; }
     if(t === 'fuelDesk'){ await fits('fuelDesk ' + day); await shot(`d${day}-fueldesk`); const txt = (await p.textContent('#screen')).replace(/\s+/g, ' ');
       { const R = JSON.parse(await p.evaluate(() => window.__sim.evalIn('JSON.stringify(fuelStoreReport())'))), m = txt.match(/Storage ?([\d,]+) L(?: \(fuel farm\))? — (about \w+ weeks?|less than a week) of flying/);   // D89: the storage line, each Monday
         caps.push([day, R.cap, R.block, R.log.length ? R.log[R.log.length - 1].week : null]);

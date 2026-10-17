@@ -21,7 +21,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
   const errors = [], checks = [], info = {};
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
-  await p.evaluate(() => { const st = window.__sim.settings(); st.workingOnPaper = 'off'; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
+  await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.workingOnPaper = 'off'; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S()), E = src => p.evaluate(s => window.__sim.evalIn(s), src);
   const ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x) : ''));
   const shot = async n => { if(!SHOTS) return; await p.waitForTimeout(150); await p.screenshot({ path:OUT + n + '.png' }); };
