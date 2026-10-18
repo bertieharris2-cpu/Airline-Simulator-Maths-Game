@@ -1024,7 +1024,7 @@ R.options = () => {
   const same = plans.map((pl, i) => { for(let j = 0; j < i; j++) if(planKey(plans[j]) === planKey(pl)) return j; return null; });
   const cols = plans.map((pl, i) => ({ id:'abc'[i], label:PLAN_NAMES[i], sub:pl.sched.length ? '' : 'No flights', values:lines[i].v, parts:lines[i].parts, headHtml:planControls(i, pl, lines[i], same[i]) }));
   const tid = (per ? 'popts:' : 'opts:') + S.day, prev = S.rnd.tables[tid];
-  const t = ensureTable(tid, per ? 'periodPlan2' : 'options', cols, { context:ctx, rowIds, labels: per ? periodLabels() : { tk1:`${routeById(S.market).city} tickets`, tk2:`${routeById(otherRoute()).city} tickets` } });
+  const t = ensureTable(tid, per ? 'periodPlan2' : 'options', cols, { context:ctx, rowIds, labels: per ? periodLabels() : { tk1:`${routeById(S.market).city} ticket revenue`, tk2:`${routeById(otherRoute()).city} ticket revenue` } });
   // Launch Day opens the first figure by itself; after that the pupil chooses which figure to complete
   if(t !== prev){ const a = prev && prev.active, c = a && t.cols.find(x => x.id === a.col), ri = a ? tRows(t).findIndex(r => r.id === a.row) : -1;
     t.active = prev ? (c && ri >= 0 && cellState(t, c, ri) === 'enter' ? a : null) : (sc === 0 ? t.active : null); }

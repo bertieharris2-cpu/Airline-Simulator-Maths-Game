@@ -84,7 +84,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   await p.selectOption(`[data-addsel="0|${saab}"]`, 'par'); await p.waitForTimeout(250);
   const flash = await txt('.ds-flash'); info.flash = flash;
   ok('NBN: after the change a line says what changed: seats a → b · profit £x → £y', /This change — seats [\d,]+ → [\d,]+ · profit [−+]?£[\d,]+ → [−+]?£[\d,]+/.test(flash), flash);
-  ok('NBN: the first extra flight is a Build: what was it worth a day?', await vis('.ds-wb') && /extra flight/.test(await txt('.ds-wb')), await txt('.ds-wb'));
+  ok('NBN: the first extra flight is a Build: what was it worth a day?', await vis('.ds-wb') && /extra (\w+ )?flight/.test(await txt('.ds-wb')), await txt('.ds-wb'));
   await shot('ds-03-nbn-worth-build');
   await p.click('[data-dswf="other"]'); await p.click('[data-dswo="×"]'); await p.click('[data-dswf="units"]'); await p.click('[data-dswc]'); await p.waitForTimeout(120);
   ok('NBN: a figure that is not part of it is a Query with one more try', /Query: .* is not part of it.*One more try/.test(await txt('.ds-wb')), await txt('.ds-wb'));

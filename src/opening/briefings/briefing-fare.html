@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations briefing — What a fare does</title>
+<link rel="stylesheet" href="kit/brief-kit.css" data-kit>
+<script src="kit/brief-kit.js" data-kit></script>
+</head>
+<body data-brief="fare_lever">
+<script>
+/* 1 · What a fare does (Launch Day, before the fare sums). A gate at Heathrow, his plane outside, the queue for the route
+   with a price tag on each passenger. He guesses which fare brings in the most ticket money, then drags the fare up: people
+   step out of the queue, the tags on those who stay grow, and the stack of ticket money rises, then falls. The numbers are his
+   plan's at each fare (the ones the sums use next). Bertie, 18 Oct: "the higher the ticket the lower the demand ... one lost
+   seat is sometimes OK if they're paying more". Caption: Ticket money = passengers × fare. Both move. */
+const D = Object.assign({ id:'fare_lever', route:{ city:'Dublin', code:'DUB' }, gate:7, times:'06:00 · 13:40', seats:38, flights:2, planeSeats:19, start:80,
+  fares:[{ f:70, want:80, pax:38 }, { f:80, want:72, pax:38 }, { f:90, want:62, pax:38 }, { f:100, want:44, pax:38 }, { f:110, want:30, pax:27 }], sums:[90, 100, 110] }, K.B);
+const F = D.fares.slice().sort((a, b) => a.f - b.f), city = D.route.city, money = K.money, num = K.num;
+const tk = x => x.pax * x.f, best = F.reduce((a, b) => tk(b) > tk(a) ? b : a, F[0]);
+K.start({ title:'What a fare does' });
+const L = K.layers();
+K.terminal({ horizon:330, glassBottom:520, stand:900, poolX:900 });
+const pl = K.plane(L.back, { x:560, y:226, w:600 });
+const gate = K.gate(L.mid, { x:205, y:700, gate:D.gate, city, flag:D.route.flag, times:D.times, fare:D.start });
+
+/* the queue: lane 1 from the desk to the right (the seats), lane 2 snaking back (no seat); the rope after the last seat */
+const SP = 24, X0 = 340, LANE = 40, slot = i => i < LANE ? [X0 + i * SP, 700] : [X0 + (2 * LANE - 1 - i) * SP, 800];
+const ropeAt = Math.min(D.seats, 2 * LANE) - .5, rope = K.s('g', null, L.mid);
+{ const [x, y] = slot(Math.floor(ropeAt)), xx = x + (ropeAt < LANE ? SP / 2 : -SP / 2);
+  K.s('rect', { x:xx - 3, y:y - 46, width:6, height:46, fill:'#8fa9c6' }, rope); K.s('circle', { cx:xx, cy:y - 48, r:6, fill:'#cfe0f2' }, rope);
+  K.s('path', { d:`M${xx} ${y - 40} Q ${xx + 30} ${y + 20} ${xx} ${y + 60}`, fill:'none', stroke:'#c44', 'stroke-width':3, opacity:.0 }, rope);
+  const sg = K.s('g', { transform:`translate(${xx - 60} ${y - 128})` }, rope); K.s('rect', { x:0, y:0, width:120, height:40, fill:'#0a1a33', stroke:'#2b5c95', 'stroke-width':1.5 }, sg);
+  K.txt(sg, 60, 17, `${num(D.seats)} SEATS`, { 'font-size':14, 'font-weight':700, 'text-anchor':'middle', 'letter-spacing':1.5 }); K.txt(sg, 60, 33, `${D.flights} flights × ${D.planeSeats}`, { 'font-size':12, fill:'#9FBDE3', 'text-anchor':'middle' }); }
+/* empty seats: dashed places in the seat lane */
+const ghosts = K.s('g', null, L.mid), ghostAt = [];
+for(let i = 0; i < Math.min(D.seats, LANE); i++){ const [x, y] = slot(i), g = K.s('g', { opacity:0 }, ghosts); K.s('ellipse', { cx:x, cy:y, rx:10, ry:3.4, fill:'none', stroke:'#F2C14E', 'stroke-width':1.4, 'stroke-dasharray':'3 2' }, g); K.s('rect', { x:x - 8, y:y - 40, width:16, height:26, rx:7, fill:'none', stroke:'#F2C14E', 'stroke-opacity':.55, 'stroke-width':1.2, 'stroke-dasharray':'3 3' }, g); ghostAt.push(g); }
+
+/* the people: as many as want to fly at the cheapest fare; the queue is the ones who want to fly at this fare */
+const ppl = K.s('g', null, L.front), maxWant = Math.max(...F.map(x => x.want)), P = [];
+for(let i = 0; i < Math.min(maxWant, 2 * LANE); i++){ const p = K.person(ppl, -60, 760, 'pax'); p.g.style.opacity = 0; P.push(p); }
+let Q = [], fare = D.start;
+/* the money: ticket money a day, by the gate's window */
+const st = K.stack(L.front, { x:1460, y:640, unit:200, w:96, bh:10, fs:30 });
+const say = K.call(1160, 470, '', ''); say.out();
+
+const at = f => F.find(x => x.f === f) || F[0];
+function lit(){ const x = at(fare); Q.forEach((p, i) => { p.g.classList.toggle('dim', i >= x.pax); if(p.tagText){ p.tagText.textContent = money(fare); } if(p.tag) p.tag.style.opacity = i < x.pax ? 1 : 0; }); ghostAt.forEach((g, i) => g.setAttribute('opacity', i >= x.pax && i < Math.min(D.seats, LANE) ? .9 : 0)); }
+function tagOn(p, f){ const g = K.priceTag(p, money(f)); g.querySelector('path').setAttribute('d', 'M-13 -8 L 11 -8 L 15 0 L 11 8 L -13 8 Z'); p.tagText.setAttribute('font-size', 10.5); const i = Q.indexOf(p); g.setAttribute('transform', `translate(0 ${i % 2 ? -82 : -64})`); }
+async function toFare(f, quick){
+  const x = at(f), from = at(fare), w = Math.min(x.want, P.length), moves = []; fare = f; gate.fare(f);
+  if(w < Q.length){ // some step out of the queue and walk away
+    const leave = Q.map((p, i) => [p, i]).sort(() => Math.random() - .5).slice(0, Q.length - w).map(z => z[0]);
+    Q = Q.filter(p => !leave.includes(p)); leave.forEach((p, k) => { p.g.classList.remove('dim'); moves.push(K.walk(p, -60, 600 + (k % 6) * 30, quick ? 500 : 1100, k * 25).then(() => { p.g.style.opacity = 0; })); });
+  } else if(w > Q.length){ const back = P.filter(p => !Q.includes(p)).slice(0, w - Q.length); back.forEach(p => { p.set(-60, 700 + Math.random() * 100); p.g.style.opacity = 1; }); Q = Q.concat(back); }
+  Q.forEach((p, i) => { const [sx, sy] = slot(i); if(!p.tag) tagOn(p, f); if(Math.abs(p.x - sx) > 1 || Math.abs(p.y - sy) > 1) moves.push(K.walk(p, sx, sy, quick ? 600 : 1000, quick ? i * 6 : 200 + i * 8)); });
+  // the tags grow with the fare
+  Q.forEach((p, i) => { if(p.tag){ const y0 = i % 2 ? -82 : -64; K.tween(400, k => p.tag.setAttribute('transform', `translate(0 ${y0}) scale(${1 + .25 * Math.sin(k * Math.PI)})`)); } });
+  lit();
+  const v = tk(x), d = v - tk(from);
+  await Promise.all([st.set(v, quick ? 300 : 900, `${num(x.pax)} × ${money(f)}`), Promise.all(moves)]);
+  return { x, from, d };
+}
+
+(async () => {
+  // Show: the queue forms at the start fare
+  K.mark(0); const x0 = at(D.start);
+  K.caption(`${city} at <b>${money(D.start)}</b>: ${num(x0.want)} people want to fly. Your ${D.flights} flights have ${num(D.seats)} seats.`);
+  Q = P.slice(0, Math.min(x0.want, P.length)); Q.forEach((p, i) => { p.g.style.opacity = 1; p.set(-40 - (i % 5) * 20, 690 + (i % 7) * 18); });
+  await Promise.all(Q.map((p, i) => { const [sx, sy] = slot(i); return K.walk(p, sx, sy, 1400, i * 28); }));
+  Q.forEach(p => tagOn(p, D.start)); lit();
+  await st.set(tk(x0), 900, `${num(x0.pax)} × ${money(D.start)}`);
+  K.call(1460, 688, 'ticket money a day', 'quiet');
+  await K.wait(1200);
+  // Predict: which fare brings in the most?
+  K.mark(1); K.question('Which fare brings in the <b>most ticket money</b>?');
+  await K.caption('Tap the fare you think. A guess is fine.');
+  const ch = K.chips({ x:800, y:118, center:true, label:'Fares', items:F.map(z => ({ label:money(z.f), small:`${num(z.want)} want`, value:z.f })) });
+  ch.btns.forEach(b => b.style.width = '5.8cqw');
+  const guess = await ch.wait(); ch.set(guess, 'mine'); const gb = ch.btns.find(b => b.val === guess); gb.insertAdjacentHTML('beforeend', '<small style="color:#F2C14E">your guess</small>');
+  // Reveal: he moves the fare up, a stop at a time
+  K.mark(2); K.question('Now move the fare: <b>drag along the fares</b>, or tap them');
+  await K.caption('Watch the queue, the empty seats and the money.');
+  ch.btns.forEach(b => { b.setAttribute('aria-pressed', 'false'); b.classList.toggle('now', b.val === fare); });
+  const seen = new Set([fare]); let busy = false, queued = null;
+  const go = async f => { if(f === fare) return; if(busy){ queued = f; return; } busy = true; ch.btns.forEach(b => b.classList.toggle('now', b.val === f)); seen.add(f);
+    const r = await toFare(f); const full = r.x.pax >= D.seats, lost = r.from.pax - r.x.pax;
+    if(r.d > 0 && lost > 0) say.say(`<b>${num(lost)} ${lost === 1 ? 'seat' : 'seats'} empty</b> — and still <b>${money(r.d)}</b> more`);
+    else if(r.d > 0) say.say(full ? `Still full, each paying more: <b>${money(r.d)}</b> more` : `<b>${money(r.d)}</b> more`);
+    else if(r.d < 0 && lost > 0) say.say(`<b>${num(lost)}</b> fewer passengers: <b>${money(-r.d)}</b> less`);
+    else if(r.d < 0) say.say(`Cheaper, the same passengers: <b>${money(-r.d)}</b> less`);
+    else say.say('The same money');
+    say.out(false); st.glow(f === best.f);
+    busy = false; if(queued !== null){ const q = queued; queued = null; go(q); } };
+  ch.btns.forEach(b => { b.onclick = () => go(b.val); });
+  // dragging across the chips moves the fare to the chip under the finger
+  const box = ch.box; let dragging = false; box.style.touchAction = 'none';
+  const under = e => { const el = document.elementFromPoint(e.clientX, e.clientY), b = el && el.closest('.bk-chip'); return b && box.contains(b) ? b : null; };
+  box.addEventListener('pointerdown', e => { dragging = true; box.setPointerCapture(e.pointerId); const b = under(e); if(b) go(b.val); });
+  box.addEventListener('pointermove', e => { if(!dragging) return; const b = under(e); if(b) go(b.val); });
+  ['pointerup', 'pointercancel'].forEach(t => box.addEventListener(t, () => { dragging = false; }));
+  // on when he has been to the top fare and seen the most
+  await new Promise(res => { const t = setInterval(() => { if(!busy && seen.has(F[F.length - 1].f) && seen.has(best.f)){ clearInterval(t); res(); } }, 200); });
+  ch.set(best.f, 'best'); st.glow(fare === best.f);
+  const gx = at(guess);
+  K.question(guess === best.f ? `Your guess, <b>${money(best.f)}</b>, brings in the most: <b>${money(tk(best))}</b>` : `<b>${money(best.f)}</b> brings in the most: <b>${money(tk(best))}</b>. Your guess, ${money(guess)}: ${money(tk(gx))}`);
+  await K.caption('Ticket money = <b>passengers × fare</b>. Both move.');
+  await K.cont('Go on');
+  // Use: the sums the pupil does next
+  K.mark(3); say.out(); ch.off();
+  const sums = (D.sums || []).filter(f => at(f)).map(f => money(f));
+  K.question(`Next: the ticket money at ${sums.length > 1 ? sums.slice(0, -1).join(', ') + ' and ' + sums[sums.length - 1] : sums[0] || 'each fare'}`);
+  await K.caption(`Passengers × fare, for each fare. The most is not always the fullest plane.`);
+  await K.cont('Work out the ticket money');
+  K.done({ guess, best:best.f });
+})();
+</script>
+</body>
+</html>

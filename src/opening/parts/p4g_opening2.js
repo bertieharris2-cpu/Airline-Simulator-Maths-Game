@@ -301,7 +301,7 @@ R.planner = () => {
 };
 
 /* ---------- COST: today's new numbers ---------- */
-function costLabels(){ const a = routeById(S.market), b = routeById(otherRoute()); return { pax1:`${a.city} passengers`, fare1:`${a.city} fare`, tk1:`${a.city} tickets`, pax2:`${b.city} passengers`, fare2:`${b.city} fare`, tk2:`${b.city} tickets` }; }
+function costLabels(){ const a = routeById(S.market), b = routeById(otherRoute()); return { pax1:`${a.city} passengers`, fare1:`${a.city} fare`, tk1:`${a.city} ticket revenue`, pax2:`${b.city} passengers`, fare2:`${b.city} fare`, tk2:`${b.city} ticket revenue` }; }
 const COST_ROWS = () => TABLES.cost1.rows;
 function typedRow(id){ const r = COST_ROWS().find(x => x.id === id); return !!(r && r.tool && toolLevel(r.tool) !== 'model'); }
 function costRowIds(L, pl){

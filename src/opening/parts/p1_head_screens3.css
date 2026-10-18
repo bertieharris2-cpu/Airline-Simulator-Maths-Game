@@ -29,9 +29,12 @@ html.tk body.desk #control{top:calc(50% + 12px)}
 .s2-tt:has(.ds3) .s2-ad{padding-right:84px}
 .ds3 .st-sl{gap:3px}
 .ds3 .st-sl b{font-size:13.5px;line-height:1.25}
-.ds3 .ds-key i.gd{display:inline-block;width:10px;height:10px;background:#F2C14E;margin:0 3px 0 8px;vertical-align:-1px}
+.ds3 .ds-key i{display:inline-block;flex:none;width:16px;height:11px;vertical-align:-1px;box-shadow:inset 0 0 0 1px rgba(160,205,255,.25)}
+.ds3 .ds-key i.gd{background:#F2C14E}
 .ds3 .ds-key i.lk{background:rgba(120,190,255,.7)}
+.ds3 .ds-key i.mv{background:repeating-linear-gradient(135deg,rgba(140,200,255,.85) 0 3px,rgba(120,190,255,.14) 3px 6px)}
 .ds3 .ds-key i.fx{background:rgba(120,190,255,.32)}
+.ds3 .ds-key i.ot{background:rgba(54,198,255,.75)}
 .ds3 .ds-sb{height:78px;background:linear-gradient(180deg,rgba(7,22,48,.2),rgba(7,22,48,.75));border:1px solid rgba(130,195,255,.16)}
 .ds3 .ds-col,.ds3 .ds-any{display:grid;grid-template-rows:15px 1fr 15px;justify-items:center;box-sizing:border-box}
 .ds3 .ds-col{position:absolute;top:0;bottom:0;border-left:1px solid rgba(130,195,255,.1)}
@@ -43,7 +46,7 @@ html.tk body.desk #control{top:calc(50% + 12px)}
 .ds3 .ds-n{font-size:12px;font-weight:600;color:#EAF2FF;line-height:15px}
 .ds3 .ds-l{font-size:10.5px;color:#9FBDE3;line-height:15px;white-space:nowrap}
 .ds3 .ds-lk{flex:1;background:rgba(120,190,255,.7)}
-.ds3 .ds-mv{display:block;flex:none;background:repeating-linear-gradient(135deg,rgba(120,190,255,.55) 0 3px,rgba(120,190,255,.18) 3px 6px)}
+.ds3 .ds-mv{display:block;flex:none;background:repeating-linear-gradient(135deg,rgba(140,200,255,.85) 0 3px,rgba(120,190,255,.14) 3px 6px)}
 .ds3 .ds-af{display:block;flex:none}
 .ds3 .ds-af.idle{background:rgba(120,190,255,.32)}
 /* a flight selected: its slice in gold, the route's other flights in cyan, what it cannot reach dimmed */
@@ -101,9 +104,15 @@ html .s2-routes.s3-fold{display:flex;flex-direction:row;align-items:center;justi
 .s3-insp .s3-ir2{display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden;font-size:12.5px;color:#CFE0F7}
 .s3-insp .s3-ir2 .ds-chips{margin:0;padding:0;border:0;background:none;display:flex;align-items:center;gap:5px;flex-wrap:nowrap}
 .s3-insp .s3-ir2 .ds-chip{min-height:22px;padding:0 6px;font-size:11.5px}
-.s3-worth{margin-left:auto;white-space:nowrap}
-.s3-worth b{color:#F2C14E}
+.s2-pop.s3-insp.has-w{height:auto;min-height:78px;grid-template-rows:38px 26px auto}
+.s3-insp .s3-ir3{display:flex;align-items:center;min-width:0;margin-top:4px;padding:5px 10px;background:rgba(242,193,78,.07);border-left:3px solid #F2C14E}
+.s3-worth{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 12px;font-size:14px;color:#EAF2FF;line-height:1.3}
+.s3-worth .s3-ws .mono{font-size:15px}
+.s3-worth b{color:#F2C14E;font-size:16px}
 .s3-worth.down b{color:#CFE0F7}
+.s3-worth .s3-wm{color:#FFE3A8;font-weight:600}
+.s3-worth.down .s3-wm,.s3-worth.same .s3-wm{color:#CFE0F7;font-weight:500}
+.s3-insp .s3-ir3:has(.s3-worth.down),.s3-insp .s3-ir3:has(.s3-worth.same){background:rgba(130,195,255,.06);border-left-color:rgba(160,205,255,.6)}
 /* the operations check in the plan summary's right-hand slot */
 .s2-sum .s3-ck{display:flex;align-items:center;min-width:0;flex:1 1 auto;max-width:560px;margin:0 6px;font-size:12px;line-height:1.3}
 .s2-sum .s3-ck .ds-tip{display:flex !important;flex-wrap:nowrap !important;align-items:center;gap:8px;padding:4px 8px;margin:0}
@@ -113,8 +122,9 @@ html .s2-routes.s3-fold{display:flex;flex-direction:row;align-items:center;justi
 .s2-sum .s3-ck > *{min-width:0;display:flex;align-items:center;gap:8px;width:100%}
 .s2-sum .s3-ck .ds-t,.s2-sum .s3-ck p,.s2-sum .s3-ck span:not(.ds-btns){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .s2-sum .s3-ck .btn{min-height:26px;height:26px;padding:0 9px;font-size:12px;white-space:nowrap;flex:none}
-.ds3 .ds-key{display:flex;flex-direction:column;gap:1px;font-size:11px}
-.ds3 .ds-key i{margin:0 5px 0 0 !important}
+.ds3 .ds-key{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-size:11px}
+.ds3 .ds-key>span{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.ds3 .ds-key i{margin:0 !important}
 
 /* ---------- D101: flight times, one table, the instrument below it ---------- */
 .ft3-t{table-layout:fixed;width:100%}
@@ -286,3 +296,53 @@ body.rm .wc-mr.fresh,body.rm .wc-coins.go i,body.rm .wc-mr b.flash{animation:non
 .pn-tag .pn-s{color:#9be7b8;flex:1 0 100%;word-break:break-all;font-size:11px}
 body.rm .pn-tag .pn-r i{animation:none}
 @media print{.pn-tag{display:none}}
+
+/* the worth Build (D88) in the inspector's third row, and over the summary when no flight is selected (Bertie, 18 Oct) */
+.s3-insp .s3-ir3 .ds-wb,.ds-wstrip .ds-wb{display:flex;flex-direction:column;align-items:stretch;gap:5px;width:100%}
+.ds-wb .ds-wq{font-size:14px;line-height:1.3;color:#EAF2FF;margin:0}.ds-wb .ds-wq b{color:#FFE3A8}.ds-wb .ds-wc{color:#CFE0F7}
+.ds-wb .ds-wrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.ds-wb .ds-wl{font-size:12.5px;color:#9FBDE3}
+.ds-wb .ds-wbar{display:inline-flex;align-items:center;gap:5px;min-width:210px;min-height:30px;padding:2px 8px;border:1px dashed rgba(159,180,211,.6);background:rgba(7,22,48,.5)}
+.ds-wb .ds-wbar .rb-ph{color:#7f9cc4;font-size:12px;font-style:italic}.ds-wb .ds-wbar .rb-eq{margin-left:auto;color:#9FBDE3}
+.ds-wb .rb-chip{display:inline-flex;align-items:center;height:30px;padding:0 10px;font-size:13px}
+.ds-wb .ds-wun{font-size:12.5px}.ds-wb .ds-wun[disabled]{opacity:.4;cursor:default}
+.ds-wb .sc-msg{font-size:13px;color:#FFD39A}
+.s3-insp.has-b .s3-ir3{padding:7px 10px}
+/* ---------- sums in the sheet (Bertie, 18 Oct): the answer typed in the sheet's cell, the help in a panel under the sheet ---------- */
+.ws.ws-workings.ws-sheet,body.desk .ws.norail.ws-workings.ws-sheet,.ws.norail.ws-workings.ws-sheet{grid-template-columns:minmax(0,1fr) !important}
+.sh-work{padding:8px 12px !important;border-left:3px solid #F2C14E}
+.sh-work .sh-h{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.sh-work .sh-h .dk-kind{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9FBDE3}
+.sh-work .sh-h b{font-size:15px;color:#EAF2FF}.sh-work .sh-h .sd-prog{font-size:12px;color:#9FBDE3}
+.sh-work.sh-typing .sh-b .wk-sum{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:18px;row-gap:3px;align-items:start}
+.sh-work.sh-typing .wk-sum>*{grid-column:2;margin:0}
+.sh-work.sh-typing .wk-sum>.sum-h{grid-column:1;grid-row:1}
+.sh-work.sh-typing .wk-sum>.pq{grid-column:1;grid-row:2 / span 3}
+.sh-work.sh-typing .wk-sum>.msg{grid-row:1}
+.sh-work .pq{padding:6px 10px;text-align:left}.sh-work .pq .kl{display:none}
+.sh-work .pq .pq-q{margin:0;font-size:13.5px}
+.sh-work .pq-big{font-size:22px;margin:2px 0 0}.sh-work .pq-own{font-size:14px;color:#FFE3A8;margin:4px 0 0}
+.sh-work .wk-msg{font-size:14px;text-align:left}.sh-work .wk-msg:empty{display:none}
+.ws-sheet .plw-tl .ad-dem{display:none}
+.sheetp td.sh-in{min-width:200px;padding:2px 4px !important;background:rgba(242,193,78,.1) !important;box-shadow:inset 0 0 0 2px #F2C14E}
+.sheetp td.sh-in .sd-ans{display:flex;flex-wrap:nowrap;align-items:center;gap:5px;margin:0}
+.sheetp td.sh-in .answer{display:flex;align-items:center;gap:2px;min-width:0}
+.sheetp td.sh-in .answer .unit{font-size:14px;color:#FFE3A8}
+.sheetp td.sh-in input#cellAns{width:96px;height:26px;padding:0 6px;font-size:15px;box-sizing:border-box}
+.sheetp td.sh-in input#cellAns::placeholder{color:#7f9cc4;font-size:12px;font-style:italic}
+.sheetp td.sh-in #cellCheck{height:26px;min-height:26px;padding:0 9px;font-size:12.5px;white-space:nowrap}
+.sheetp .sheet1.sh-fold{display:none}
+.sheetp .sh-prev{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 14px;margin:6px 0 0;padding:5px 8px;font-size:12.5px;color:#CFE0F7;background:rgba(130,195,255,.05);border:1px solid rgba(130,195,255,.14)}
+.sheetp .sh-prev .kl{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9FBDE3}
+.sheetp .sh-prev b{color:#F2C14E;font-weight:600}
+.sheetp .sh-prev #shAll{margin-left:auto;font-size:12px}
+/* Figure done, Next sum: one band */
+.sh-work:not(.sh-typing) .wk-sum.paper:has(#wkNext){display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:6px 16px}
+.sh-work .wk-sum.paper:has(#wkNext)>.sum-h{flex-basis:100%;margin:0}
+.sh-work .wk-sum.paper:has(#wkNext) .pq.done{margin:0;padding:6px 14px;display:flex;align-items:center;gap:14px;flex:0 1 auto}
+.sh-work .wk-sum.paper:has(#wkNext) .pq.done .pq-big{font-size:20px;margin:0}
+.sh-work .wk-sum.paper:has(#wkNext) .sd-written,.sh-work .wk-sum.paper:has(#wkNext) .pq-fin{margin:0;flex:1 1 200px}
+.sh-work .wk-sum.paper:has(#wkNext) .wk-act{margin:0}
+.sh-work .wk-sum.paper:has(#wkNext) .wk-act .btn.big{min-height:40px;padding:0 22px}
+.sheetp td.sh-in #cellCheck{padding:0 7px !important;font-size:12px !important}
+.sheetp td.sh-in input#cellAns{width:auto;flex:1 1 70px;min-width:70px}

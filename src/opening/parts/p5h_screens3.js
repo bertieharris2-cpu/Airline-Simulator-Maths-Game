@@ -36,6 +36,10 @@ function dsCatch(D, F){
   const dir = from.length ? (from.every(b => BANDS.indexOf(b) > early) ? 'later' : from.every(b => BANDS.indexOf(b) < early) ? 'earlier' : 'at another time') : null;
   return { lock, adapt, flex, total:lock + adapt + flex, dir, othersFlex };
 }
+/* the key: one swatch for each way a bar is drawn, drawn the same way (Bertie, play notes 18 Oct: "the key ... doesn't really match,
+   so you can't see the cross-hatchings"). Hatched: those who wanted that time but, with no flight then, take the nearest one. */
+function dsKeyHtml(F, mv, others){
+  return `<span class="st-key ds-key"><span><i class="lk"></i>must fly at that time</span>${mv ? '<span><i class="mv"></i>no flight then: take the nearest</span>' : ''}${F ? '<span><i class="gd"></i>this flight can catch</span>' + (others ? '<span><i class="ot"></i>your other flights</span>' : '') : '<span><i class="fx"></i>will fly any time</span>'}</span>`; }
 stripHtml = function(pl, id){
   const flown = [...new Set(pl.fleet.flatMap(x => x.sched))].filter(r => routeById(r)), sel = dsSel(pl), U = UI;
   let rid = sel ? sel.route : id && routeById(id) ? id : null;
@@ -61,7 +65,7 @@ stripHtml = function(pl, id){
   const pulse = F && U.dsLast && U.dsLast.key === F.key && U.dsLast.dep !== F.dep ? ' pulse' : '';
   U.dsLast = F ? { key:F.key, dep:F.dep } : null;
   return `<div class="st-strip ds3" data-strip="${rid}"><div class="st-sl"><b>${flagSvg(D.r.flag, 14)} ${esc(D.r.city)} at ${money(D.fare)}: ${num(D.W)} want to fly</b>
-      <span class="st-key ds-key"><span><i class="lk"></i>must fly at that time</span><span><i class="fx"></i>will fly any time</span>${F ? '<span><i class="gd"></i>this flight can catch</span>' : ''}</span>${tabs}</div>
+      ${dsKeyHtml(F, D.bands.some(o => o.move > 0), F && D.fl.length > 1)}${tabs}</div>
     <div class="st-sb ds-sb">${cols}</div>${any}<p class="ds-cap${pulse}" data-k="ds-cap">${cap}</p></div>`;
 };
 /* All: every flown route's bands and any-time passengers, added up; no flight slice (a flight belongs to one route) */
@@ -71,7 +75,7 @@ function dsAllHtml(pl, flown, tabs){
   const mx = Math.max(1, ...bands.map(o => o.want)), H = v => `${Math.max(v > 0 ? 6 : 0, Math.round(92 * v / mx))}%`, HA = v => `${v > 0 ? 92 : 0}%`;
   const s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => 100 * (Math.max(s0, Math.min(e0, m)) - s0) / span;
   const cols = bands.map(o => `<div class="ds-col idle" style="left:${X(o.h0 * 60).toFixed(2)}%;width:${(X(o.h1 * 60) - X(o.h0 * 60)).toFixed(2)}%"><span class="ds-n">${num(o.want)}</span><div class="ds-area"><div class="ds-stack" style="height:${H(o.want)}"><i class="ds-lk"></i></div></div><span class="ds-l">${esc(BAND_SHORT[o.b])}</span></div>`).join('');
-  return `<div class="st-strip ds3" data-strip=""><div class="st-sl"><b>All routes at your fares: ${num(W)} want to fly</b><span class="st-key ds-key"><span><i class="lk"></i>must fly at that time</span><span><i class="fx"></i>will fly any time</span></span>${tabs}</div>
+  return `<div class="st-strip ds3" data-strip=""><div class="st-sl"><b>All routes at your fares: ${num(W)} want to fly</b>${dsKeyHtml(null, false, false)}${tabs}</div>
     <div class="st-sb ds-sb">${cols}</div><div class="ds-any"><span class="ds-n">${num(flex)}</span><div class="ds-area"><div class="ds-stack" style="height:${HA(flex)}"><i class="ds-af idle" style="height:100%"></i></div></div><span class="ds-l">Any time</span></div>
     <p class="ds-cap">Choose a route to see its shape; select a flight to see what it can catch.</p></div>`;
 }
@@ -106,14 +110,27 @@ s2Routes = function(pl, L, ids){
 const s3Block0 = s2Block;
 s2Block = function(i, pl, L, x, j, t, k){ const h = s3Block0.apply(this, arguments); return UI.s2 && UI.s2.chip && t.route === UI.s2.chip ? h.replace('class="ad-blk st-blk s2-blk ', 'class="ad-blk st-blk s2-blk hl s3-hl ') : h; };
 /* the inspector bar: in place of the floating box, under the timetable, the same height whatever is selected */
+/* What the change was worth, in its own row of the inspector, with what it means (Bertie, play notes 18 Oct: the sum "is great,
+   but I don't think it's obvious what that actually means ... say something like which means it is better to charge £100 and
+   have one seat empty than £90") */
 function s3Worth(pl, L, sel){
   const B = UI.s3Base; if(!B || B.j !== sel.j || B.k0 === undefined) return '';
   const x = pl.fleet[sel.j], id = x && x.sched[sel.k]; if(!id) return ''; const r = routeById(id), fare = pl.prices[id] || r.basePrice;
   const now = (L.routes || []).find(z => z.id === id) || {}, was = B.routes[id] || { pax:0, fare };
   if(B.key === planKey(pl)) return '';
-  const a = now.pax || 0, d = a * fare - was.pax * was.fare;
-  if(!d) return `<span class="s3-worth same" data-k="s3w">No change in ${esc(r.city)} tickets: <span class="mono">${num(a)} × ${money(fare)}</span> a day</span>`;
-  return `<span class="s3-worth ${d >= 0 ? 'up' : 'down'}" data-k="s3w"><span class="mono">${num(a)} × ${money(fare)} − ${num(was.pax)} × ${money(was.fare)}</span> = <b class="mono">${money(Math.abs(d))}</b> ${d >= 0 ? 'more' : 'less'} a day in ${esc(r.city)} tickets</span>`;
+  const a = now.pax || 0, d = a * fare - was.pax * was.fare, seats = s2Fill(s2Svc(L, id)).seats, mean = s3Mean(a, fare, was, d, seats);
+  if(!d && fare === was.fare) return `<span class="s3-worth same" data-k="s3w"><span><span class="mono">${num(a)} × ${money(fare)}</span> a day in ${esc(r.city)} tickets, as before.</span></span>`;
+  return `<span class="s3-worth ${d > 0 ? 'up' : d < 0 ? 'down' : 'same'}" data-k="s3w"><span class="s3-ws"><span class="mono">${num(a)} × ${money(fare)} − ${num(was.pax)} × ${money(was.fare)}</span> = <b class="mono">${money(Math.abs(d))}</b> ${d > 0 ? 'more' : d < 0 ? 'less' : 'difference'} a day in ${esc(r.city)} tickets.</span>${mean ? `<span class="s3-wm">${esc(mean)}</span>` : ''}</span>`;
+}
+/* the sentence under the sum: what it says about the fare */
+function s3Mean(a, f, w, d, seats){
+  const k = Math.abs(a - w.pax), m = money(f), m0 = money(w.fare), n = (v, one, many) => `${num(v)} ${v === 1 ? one : many}`;
+  if(f === w.fare) return a > w.pax ? `The new plan carries ${n(k, 'more passenger', 'more passengers')} at ${m}.` : a < w.pax ? `The new plan carries ${n(k, 'passenger', 'passengers')} fewer at ${m}.` : '';
+  if(!d) return 'The same money either way.';
+  if(a === w.pax) return f > w.fare ? `The same ${num(a)} passengers, each paying ${money(f - w.fare)} more.` : `The same ${num(a)} passengers, each paying ${money(w.fare - f)} less: the lower fare brought no one new.`;
+  if(f > w.fare){ const empty = Math.max(0, seats - w.pax) === 0 ? n(k, 'seat', 'seats') + ' empty' : n(k, 'more seat', 'more seats') + ' empty';
+    return d > 0 ? `So it is better to charge ${m} and have ${empty} than to charge ${m0}.` : `So ${m0} was better: the ${n(k, 'passenger', 'passengers')} lost cost more than the higher fare brings in.`; }
+  return d > 0 ? `So ${m} is better: the ${n(k, 'extra passenger', 'extra passengers')} more than ${k === 1 ? 'makes' : 'make'} up for the lower fare.` : `So ${m0} was better: the ${n(k, 'extra passenger', 'extra passengers')} ${k === 1 ? "doesn't" : "don't"} make up for the lower fare.`;
 }
 const s3Svc0 = s2SvcEditor;
 s2SvcEditor = function(pl, L, sel){
@@ -122,7 +139,10 @@ s2SvcEditor = function(pl, L, sel){
   const s = (L.services || []).find(z => z.uid === x.uid && z.k === sel.k) || {}, a = `0|${sel.j}|${sel.k}`, fare = pl.prices[r.id] || r.basePrice;
   const routes = plannerOrder().filter(id => planeCanFly(p, routeById(id))), planes = pl.fleet.map((y, q) => ({ y, q })).filter(({ y, q }) => q !== sel.j && planeCanFly(planeById(y.planeId), r));
   const key = `${sel.j}|${sel.k}|${x.uid}`; if(!UI.s3Base || UI.s3Base.sel !== key){ UI.s3Base = { sel:key, j:sel.j, k0:sel.k, key:planKey(pl), routes:Object.fromEntries((L.routes || []).map(z => [z.id, { pax:z.pax, fare:pl.prices[z.id] || routeById(z.id).basePrice }])) }; }
-  return `<div class="s2-pop s3-insp" id="s2Pop" role="group" aria-label="The ${esc(r.city)} ${fmtTime(dep)} flight">
+  // the D88 Build for this change sits here, where the change was made, until it is built; then the worth line (the answer is not shown beside its own question)
+  const W = UI.dsWorth && UI.s2 && UI.dsWorth.dayKey === UI.s2.key ? UI.dsWorth : null, build = W && !W.done && W.build && W.route === id0 && typeof dsWorthBuildHtml === 'function';
+  const worth = build ? dsWorthBuildHtml(W) : s3Worth(pl, L, sel);
+  return `<div class="s2-pop s3-insp ${worth ? 'has-w' : ''} ${build ? 'has-b' : ''}" id="s2Pop" role="group" aria-label="The ${esc(r.city)} ${fmtTime(dep)} flight">
     <div class="s3-ir1"><span class="s3-id">${flagSvg(r.flag, 16)}<b>${esc(r.city)}</b><span class="mono">${fmtTime(dep)}–${fmtTime(arr)}</span><span class="mono">${num(s.sold || 0)}/${num(s.seats || p.seats)}</span><span>${esc(shortPlane(p))}</span></span>
       <span class="s2-pop-b s3-ctl"><button class="btn small" data-insm="${a}|-5" title="5 minutes earlier (hold to keep moving)">&#9664; Earlier</button><button class="btn small" data-insm="${a}|5" title="5 minutes later (hold to keep moving)">Later &#9654;</button>
         <select data-s2rt="${sel.j}|${sel.k}" aria-label="Route" title="Route">${routes.map(id => `<option value="${id}" ${id === r.id ? 'selected' : ''}>${esc(routeById(id).city)}</option>`).join('')}</select>
@@ -131,7 +151,7 @@ s2SvcEditor = function(pl, L, sel){
         <select data-s2ac="${sel.j}|${sel.k}" aria-label="Aircraft" title="Aircraft" ${planes.length ? '' : 'disabled'}><option value="">${esc(shortPlane(p))} · ${esc(regOf(x.uid))}</option>${planes.map(({ y, q }) => `<option value="${q}">${esc(shortPlane(planeById(y.planeId)))} · ${esc(regOf(y.uid))}</option>`).join('')}</select>
         <button class="btn small sc-open" data-svccard="${a}" title="This flight's fuel, costs and profit">Service costs</button><button class="btn small danger" data-tlrm="${a}" title="Remove (or press Delete)">Remove</button></span>
       <button class="dk-x s3-x" id="s2PopX" aria-label="Deselect (Esc)">&times;</button></div>
-    <div class="s3-ir2">${s3Worth(pl, L, sel)}</div></div>`;
+    <div class="s3-ir2"></div>${worth ? `<div class="s3-ir3">${worth}</div>` : ''}</div>`;
 };
 /* the empty bar when no flight is selected: the timetable's last child, so it never moves */
 const s3Tt0 = s2Timetable;
@@ -158,7 +178,7 @@ document.addEventListener('click', e => {
   render();
 });
 document.addEventListener('keydown', e => { if(e.key !== 'Escape' || !UI.s2 || UI.s2.fold !== false || UI.tlSel || !document.querySelector('.s2-routes:not(.s3-fold)')) return; if(document.querySelector('#s2Pop:not(.empty), .s2-ed, .s2-dr')) return; UI.s2.fold = true; render(); });
-/* the fare chips (D87) go in the bar's second row, unless the worth line is there */
+/* the fare chips (D87) go in the bar's second row; the worth line has the third */
 const s3Render0 = render;
 render = function(){ const r = s3Render0.apply(this, arguments); try{ const ch = document.querySelector('.s3-insp .s3-ir1 .ds-chips'), r2 = document.querySelector('.s3-insp .s3-ir2');
     if(ch && r2){ if(r2.children.length) ch.remove(); else r2.appendChild(ch); } }catch(e){} return r; };

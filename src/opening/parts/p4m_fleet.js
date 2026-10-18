@@ -173,7 +173,7 @@ function costRowsFor(L){
   const base = TABLES.cost1.rows, rows = [], byId = id => base.find(r => r.id === id);
   (L.routes.length ? L.routes : [{ id:S.market }]).forEach(x => { const r = routeById(x.id);
     rows.push({ id:'pax_' + x.id, label:`${r.city} passengers`, type:'given', unit:'n' }, { id:'fare_' + x.id, label:`${r.city} fare`, type:'given', unit:'£' },
-      { id:'tk_' + x.id, label:`${r.city} tickets`, type:'calc', unit:'£', op:'×', from:['pax_' + x.id, 'fare_' + x.id], sentence:`{pax_${x.id}} × {fare_${x.id}} = {?tk_${x.id}}`, tool: x.id === S.market ? 'revenue' : 'routeRevenue', route:x.id }); });
+      { id:'tk_' + x.id, label:`${r.city} ticket revenue`, type:'calc', unit:'£', op:'×', from:['pax_' + x.id, 'fare_' + x.id], sentence:`{pax_${x.id}} × {fare_${x.id}} = {?tk_${x.id}}`, tool: x.id === S.market ? 'revenue' : 'routeRevenue', route:x.id }); });
   ['buyers', 'snackP', 'snack'].forEach(id => rows.push(byId(id)));
   const tks = (L.routes.length ? L.routes : [{ id:S.market }]).map(x => `{tk_${x.id}}`);
   rows.push(Object.assign({}, byId('rev'), { from:tks.map(s => s.replace(/[{}]/g, '')), sentence:tks.concat(['{snack}']).join(' + ') + ' = {?rev}' }));
@@ -184,8 +184,8 @@ function costRowsFor(L){
   return rows;
 }
 function costLabels(){
-  const out = {}; (S.rnd && S.rnd.costRoutes ? S.rnd.costRoutes : [S.market, otherRoute()]).forEach(id => { const r = routeById(id); if(!r) return; out['pax_' + id] = `${r.city} passengers`; out['fare_' + id] = `${r.city} fare`; out['tk_' + id] = `${r.city} tickets`; });
-  const a = routeById(S.market), b = routeById(otherRoute()); if(a) Object.assign(out, { pax1:`${a.city} passengers`, fare1:`${a.city} fare`, tk1:`${a.city} tickets` }); if(b) Object.assign(out, { pax2:`${b.city} passengers`, fare2:`${b.city} fare`, tk2:`${b.city} tickets` });
+  const out = {}; (S.rnd && S.rnd.costRoutes ? S.rnd.costRoutes : [S.market, otherRoute()]).forEach(id => { const r = routeById(id); if(!r) return; out['pax_' + id] = `${r.city} passengers`; out['fare_' + id] = `${r.city} fare`; out['tk_' + id] = `${r.city} ticket revenue`; });
+  const a = routeById(S.market), b = routeById(otherRoute()); if(a) Object.assign(out, { pax1:`${a.city} passengers`, fare1:`${a.city} fare`, tk1:`${a.city} ticket revenue` }); if(b) Object.assign(out, { pax2:`${b.city} passengers`, fare2:`${b.city} fare`, tk2:`${b.city} ticket revenue` });
   return out;
 }
 function costRowIds(L, pl){

@@ -183,7 +183,7 @@ function dsAfterPlan(){
   if(sum && side && !(W && !W.done && W.build)) sum.insertAdjacentHTML('beforebegin', `<span class="ds-sumi">${side}</span>`);
   const rows = [];
   // the worth Build has its own strip above the plan summary (the bar holds one line: it spilled over the summary when it carried the Build)
-  if(W && !W.done && W.build){ const sumBar = root.querySelector('.s2-sum'); if(sumBar) sumBar.insertAdjacentHTML('beforebegin', `<div class="ds-wstrip" role="group" aria-label="What was it worth?">${dsWorthBuildHtml(W)}</div>`); else rows.push(dsWorthBuildHtml(W)); }
+  if(W && !W.done && W.build && !root.querySelector('#s2Pop .ds-wb')){ const sumBar = root.querySelector('.s2-sum'); if(sumBar) sumBar.insertAdjacentHTML('beforebegin', `<div class="ds-wstrip" role="group" aria-label="What was it worth?">${dsWorthBuildHtml(W)}</div>`); else rows.push(dsWorthBuildHtml(W)); }
   else if(!sum && imp) rows.push(imp);
   else if(!sum && W && W.line && W.done) rows.push(dsWorthLineHtml(W));
   if(U.mode !== 'opener' && tips[0] && (hot || !rows.length)) rows.push(dsOneRow(tips));
@@ -290,18 +290,26 @@ function dsWorth(a, b, La, Lb){
       line:`${num(Math.abs(dn))} ${dn >= 0 ? 'more' : 'fewer'} passengers × ${money(fare)} = <b>${money(Math.abs(dn * fare))} ${word(dn)} a day</b>` }; }
   return null;
 }
-const DS_WORTH_Q = { fare:'What was the fare change worth a day?', time:'What was the new time worth a day?', service:'What was the extra flight worth a day?' };
+const DS_WORTH_Q = { fare:'What was the fare change worth a day?', time:'What was the new time worth a day?', service:'What did the extra flight add in tickets a day?' };
 function dsWorthLineHtml(W){ return `<span class="ds-worth-l"><span class="fx" title="worked out by the model">ƒ</span><span>${esc(routeById(W.route).city)} ${esc(W.what)}: ${W.line}</span></span>`; }
+/* the question names the change it is about, before and after (Bertie, play notes 18 Oct: "I don't think that's really clear
+   what that even is"), and Undo takes back the last tap ("I accidentally clicked the wrong thing") */
+function dsWorthAsk(W){ const city = esc(routeById(W.route).city);
+  if(W.kind === 'fare'){ const f1 = W.other ? W.other.v : 0, f0 = f1 - W.per; return { q:`What is the ${city} fare ${W.per > 0 ? 'rise' : 'cut'} worth a day?`, c:`${money(f0)} → ${money(f1)}, and the same ${num(W.units)} passengers: each pays ${money(Math.abs(W.per))} ${W.per > 0 ? 'more' : 'less'}.` }; }
+  if(W.kind === 'time') return { q:`What is the new ${city} time worth a day?`, c:`${num(Math.abs(W.units))} ${W.units >= 0 ? 'more' : 'fewer'} passengers a day, each paying ${money(W.per)}.` };
+  return { q:`What does the extra ${city} flight add in tickets a day?`, c:`${num(W.units)} more passengers a day, each paying ${money(W.per)}. (Its costs come off after.)` }; }
 function dsWorthBuildHtml(W){
-  const figs = dsWorthFigs(W), tok = t => OPS4.includes(t) ? `<i class="rb-op">${t}</i>` : (f => f ? `<span class="rb-tk">${esc(f.lab)}</span>` : '')(figs.find(f => f.k === t));
-  return `<span class="ds-wb"><span class="ds-wq"><b>${esc(DS_WORTH_Q[W.kind] || 'What was it worth?')}</b> Tap the change for one, ×, then how many.</span>
-    <span class="ds-wbar">${W.tokens.length ? W.tokens.map(tok).join('') : '<span class="rb-ph">?</span>'}</span>${figs.map(f => `<button class="rb-chip" data-dswf="${f.k}">${esc(f.lab)}</button>`).join('')}${OPS4.slice(0, 3).map(o => `<button class="ds-wop" data-dswo="${o}">${o}</button>`).join('')}
-    <button class="btn small" data-dswc="1">Check ✓</button>${W.msg ? `<span class="sc-msg">${esc(W.msg)}</span>` : ''}</span>`; }
+  const figs = dsWorthFigs(W), A = dsWorthAsk(W), tok = t => OPS4.includes(t) ? `<i class="rb-op">${t}</i>` : (f => f ? `<span class="rb-tk">${esc(f.lab)}</span>` : '')(figs.find(f => f.k === t));
+  return `<span class="ds-wb"><span class="ds-wq"><b>${A.q}</b> <span class="ds-wc">${A.c}</span></span>
+    <span class="ds-wrow"><span class="ds-wl">Build the sum:</span><span class="ds-wbar">${W.tokens.length ? W.tokens.map(tok).join('') : '<span class="rb-ph">a card, a sign, a card</span>'}<span class="rb-eq">= ?</span></span>
+      ${figs.map(f => `<button class="rb-chip" data-dswf="${f.k}">${esc(f.lab)}</button>`).join('')}${OPS4.slice(0, 3).map(o => `<button class="ds-wop" data-dswo="${o}">${o}</button>`).join('')}
+      <button class="dk-link ds-wun" data-dswu="1" ${W.tokens.length ? '' : 'disabled'}>Undo</button><button class="btn small" data-dswc="1">Check ✓</button></span>${W.msg ? `<span class="sc-msg">${esc(W.msg)}</span>` : ''}</span>`; }
 function dsWorthFigs(W){ return [{ k:'per', lab:W.perLab }, { k:'units', lab:W.unitLab }].concat(W.other ? [{ k:'other', lab:W.other.lab }] : []).sort((a, b) => a.lab.localeCompare(b.lab)); }
 function dsBindWorth(W){
   if(!W || W.done) return; const root = screen();
-  root.querySelectorAll('[data-dswf]').forEach(b => b.onclick = e => { e.stopPropagation(); if(W.tokens.length % 2 === 1){ W.msg = 'Put the operation between the figures.'; render(); return; } W.tokens.push(b.getAttribute('data-dswf')); W.msg = ''; render(); });
-  root.querySelectorAll('[data-dswo]').forEach(b => b.onclick = e => { e.stopPropagation(); if(W.tokens.length % 2 === 0){ W.msg = 'Start with a figure.'; render(); return; } W.tokens.push(b.getAttribute('data-dswo')); render(); });
+  root.querySelectorAll('[data-dswf]').forEach(b => b.onclick = e => { e.stopPropagation(); if(W.tokens.length % 2 === 1){ W.msg = 'Next, a sign: × + or −.'; render(); return; } W.tokens.push(b.getAttribute('data-dswf')); W.msg = ''; render(); });
+  root.querySelectorAll('[data-dswo]').forEach(b => b.onclick = e => { e.stopPropagation(); if(W.tokens.length % 2 === 0){ W.msg = W.tokens.length ? 'Next, a card.' : 'Start with a card.'; render(); return; } W.tokens.push(b.getAttribute('data-dswo')); W.msg = ''; render(); });
+  root.querySelectorAll('[data-dswu]').forEach(b => b.onclick = e => { e.stopPropagation(); W.tokens.pop(); W.msg = ''; render(); });
   root.querySelectorAll('[data-dswc]').forEach(b => b.onclick = e => { e.stopPropagation(); const k = W.tokens.join(' '), ok = k === 'per × units' || k === 'units × per';
     const rk = 'worth:' + W.kind + ':' + S.day, chips = W.tokens.map(t => OPS4.includes(t) ? { op:t } : { label:(dsWorthFigs(W).find(f => f.k === t) || {}).lab, k:t });
     let e2 = null; try{ e2 = recOpen(rk, { type:'build', relKey:'worth', doc:`What was it worth: ${routeById(W.route).city}`, ask:DS_WORTH_Q[W.kind], question:`${W.perLab} × ${W.unitLab}`, unit:'£', correct:Math.abs(W.per * W.units), correctText:money(Math.abs(W.per * W.units)), ops:[W.per, W.units], op:'×', level:'Build' }); }catch(x){}
