@@ -7,6 +7,7 @@
 const { chromium } = require('playwright'); const fs = require('fs'), path = require('path'), zlib = require('zlib');
 const [LOG, OUT = 'playnotes-shots', ...WANT] = process.argv.slice(2); if(!LOG){ console.log('node tools/playnotes_shots.js LOG OUTDIR [mm:ss ...|marks|said|screens]'); process.exit(1); }
 const raw = fs.readFileSync(LOG), L = JSON.parse(raw[0] === 0x1f ? zlib.gunzipSync(raw) : raw); fs.mkdirSync(OUT, { recursive:true });
+L.log.forEach(e => { if(e.codez){ e.code = zlib.gunzipSync(Buffer.from(e.codez, 'base64')).toString('utf8'); delete e.codez; } });   // from 18 Oct each save code is gzipped inside a plain .json
 const secs = s => { const [m, x] = s.split(':'); return +m * 60 + +(x || 0); }, mmss = t => `${String(Math.floor(t / 60)).padStart(2, '0')}-${String(Math.floor(t % 60)).padStart(2, '0')}`;
 const mode = WANT.length ? WANT : ['marks'];
 const times = mode[0] === 'marks' ? L.log.filter(e => e.kind === 'mark').map(e => e.t) : mode[0] === 'said' ? L.log.filter(e => e.kind === 'say').map(e => e.t) : mode[0] === 'screens' ? L.log.filter(e => e.kind === 'screen').map(e => e.t) : mode.map(secs);

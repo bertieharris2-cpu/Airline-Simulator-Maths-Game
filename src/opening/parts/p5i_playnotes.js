@@ -6,7 +6,9 @@
      "Studio", "Worth check"), with the week and date. Every screen has one, even where two screens share a heading.
    - Record: the microphone records while the game is played. The game logs the time each screen appears (and a save
      code whenever the day or the step changes, so the exact screen can be rebuilt), Mark drops a marker, and in Chrome a
-     live transcript is kept beside it. Stop saves two files: the recording and the log (playnotes-….json.gz).
+     live transcript is kept beside it. Stop saves two files: the recording and the log (playnotes-….json, a plain file
+     the Claude app takes as an attachment; each save code inside is gzipped, as "codez"). Save again, in the corner
+     afterwards, downloads both once more in case one goes astray.
    - Log only: the same log with no microphone, its clock times matching a recording made on a phone.
    tools/playnotes.py reads the log; tools/playnotes_shots.js rebuilds and screenshots the screens it names.
    ================================================================== */
@@ -89,6 +91,8 @@ function pnWords(){
 }
 function pnMark(){ if(!PN.on) return; pnPush({ kind:'mark', screen:pnName(), when:pnWhen() }); toast('Marked at ' + pnClock(pnT())); pnTag(); }
 async function pnGz(text){ if(typeof CompressionStream === 'undefined') return null; return await new Response(new Blob([text]).stream().pipeThrough(new CompressionStream('gzip'))).blob(); }
+/* a save code, gzipped and in base64, so a long session's log stays a few MB as plain .json */
+async function pnZ(code){ const b = await pnGz(code); if(!b) return null; const u = new Uint8Array(await b.arrayBuffer()); let s = ''; for(let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
 function pnDownload(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000); }
 async function pnStop(){
   if(!PN.on) return; pnPush({ kind:'stop' }); PN.on = false; PN.srOn = false; clearInterval(PN.timer);
@@ -97,12 +101,15 @@ async function pnStop(){
   if(PN.rec){ await new Promise(res => { PN.rec.onstop = res; try{ PN.rec.stop(); }catch(e){ res(); } }); try{ PN.rec.stream.getTracks().forEach(t => t.stop()); }catch(e){} }
   const lines = PN.log.map(e => `${pnClock(e.t)}  ${e.kind === 'screen' ? `${e.name}${e.when ? ' · ' + e.when : ''}` : e.kind === 'say' ? `“${e.text}”` : e.kind === 'mark' ? `★ MARK (${e.screen})` : e.kind === 'note' ? `(${e.text})` : e.kind.toUpperCase()}`);
   const ext = /mp4/.test(PN.mime) ? 'm4a' : /ogg/.test(PN.mime) ? 'ogg' : 'webm';
-  const out = { v:1, started:PN.wall0, audio:PN.audio ? base + '.' + ext : null, timeline:lines, log:PN.log };
-  const txt = JSON.stringify(out), gz = await pnGz(txt);
-  if(PN.audio && PN.chunks.length) pnDownload(new Blob(PN.chunks, { type:PN.mime || 'audio/webm' }), base + '.' + ext);
-  setTimeout(() => pnDownload(gz || new Blob([txt], { type:'application/json' }), base + (gz ? '.json.gz' : '.json')), 600);
-  PN.rec = null; PN.chunks = []; pnTag(); toast(`Saved ${PN.audio ? 'the recording and ' : ''}the log (${PN.log.filter(e => e.kind === 'screen').length} screens). Send both to Claude.`);
+  const log = []; for(const e of PN.log){ if(e.code){ const z = await pnZ(e.code); const c = Object.assign({}, e); if(z){ delete c.code; c.codez = z; } log.push(c); } else log.push(e); }
+  const out = { v:2, started:PN.wall0, audio:PN.audio ? base + '.' + ext : null, timeline:lines, log };
+  const files = [{ blob:new Blob([JSON.stringify(out)], { type:'application/json' }), name:base + '.json' }];
+  if(PN.audio && PN.chunks.length) files.unshift({ blob:new Blob(PN.chunks, { type:PN.mime || 'audio/webm' }), name:base + '.' + ext });
+  PN.saved = { files, base }; pnSaveFiles();
+  PN.rec = null; PN.chunks = []; pnTag(); toast(`Saved ${files.length === 2 ? 'two files, the recording and the log' : 'the log'} (${PN.log.filter(e => e.kind === 'screen').length} screens), to your Downloads. Send ${files.length === 2 ? 'both' : 'it'} to Claude.`);
 }
+/* one after the other: two downloads at once can lose the second */
+function pnSaveFiles(){ if(PN.saved) PN.saved.files.forEach((f, i) => setTimeout(() => pnDownload(f.blob, f.name), i * 700)); }
 window.addEventListener('beforeunload', e => { if(PN.on){ e.preventDefault(); e.returnValue = ''; } });
 
 /* ---------- the tag in the corner ---------- */
@@ -110,10 +117,11 @@ function pnTag(){
   let el = document.getElementById('pnTag'); const show = PN.on || settings.screenNames || settings.testMode;   // test mode shows them too
   if(!show){ if(el) el.remove(); return; }
   if(!el){ el = document.createElement('div'); el.id = 'pnTag'; el.className = 'pn-tag'; document.body.appendChild(el);
-    el.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; if(b.id === 'pnRec') pnStart(true, pnWordsOn()); if(b.id === 'pnMark') pnMark(); if(b.id === 'pnStop') pnStop(); }); }
+    el.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; if(b.id === 'pnRec'){ PN.saved = null; pnStart(true, pnWordsOn()); } if(b.id === 'pnMark') pnMark(); if(b.id === 'pnStop') pnStop();
+      if(b.id === 'pnAgain') pnSaveFiles(); if(b.id === 'pnDone'){ PN.saved = null; pnTag(); } }); }
   const name = pnName(), when = pnWhen();
   el.classList.toggle('rec', PN.on);
-  el.innerHTML = `<b class="pn-n">${esc(name)}</b>${when ? `<span class="pn-w">${esc(when)}</span>` : ''}${PN.on ? `<span class="pn-r"><i></i>${PN.audio ? 'REC' : 'LOG'} ${pnClock(pnT())}</span><button id="pnMark" title="Drop a marker in the log">Mark</button><button id="pnStop">Stop &amp; save</button>` : `<button id="pnRec" title="Record your voice and log the screens">● Record</button>`}`;
+  el.innerHTML = `<b class="pn-n">${esc(name)}</b>${when ? `<span class="pn-w">${esc(when)}</span>` : ''}${PN.on ? `<span class="pn-r"><i></i>${PN.audio ? 'REC' : 'LOG'} ${pnClock(pnT())}</span><button id="pnMark" title="Drop a marker in the log">Mark</button><button id="pnStop">Stop &amp; save</button>` : PN.saved ? `<span class="pn-s">Saved ${esc(PN.saved.base)} (${PN.saved.files.map(f => f.name.split('.').pop()).join(' + ')})</span><button id="pnAgain" title="Download the files again">Save again</button><button id="pnDone" title="Done: hide this">✓</button>` : `<button id="pnRec" title="Record your voice and log the screens">● Record</button>`}`;
 }
 const pnRender0 = render;
 render = function(){ const r = pnRender0.apply(this, arguments); try{ if(PN.on || settings.screenNames || settings.testMode){ setTimeout(() => { pnNote(); pnTag(); }, 0); } }catch(e){} return r; };
@@ -126,13 +134,13 @@ document.addEventListener('DOMContentLoaded', () => setTimeout(() => {
       <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tScreenNames" style="width:24px;height:24px"> Show each screen's name in the bottom-left corner</label></div>
       <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tPnWords" style="width:24px;height:24px"> Live transcript while recording (Chrome; it sends the speech to Google to turn into words)</label></div>
       <div class="row" style="gap:8px"><button class="btn small" id="tPnRec">● Record voice and screens</button><button class="btn small" id="tPnLog">Log screens only</button></div>
-      <p class="small muted">Talk as you play. The game notes each screen as it appears; Mark drops a marker; Stop &amp; save (bottom-left) saves the recording and the log. Send both files to Claude, who can rebuild any screen you talked about. "Log screens only" keeps the clock times, to match a recording made on a phone.</p>`;
+      <p class="small muted">Talk as you play. The game notes each screen as it appears; Mark drops a marker; Stop &amp; save (bottom-left) saves two files, the recording and the log. Send both to Claude, who can rebuild any screen you talked about. "Log screens only" keeps the clock times, to match a recording made on a phone.</p>`;
     grid.insertBefore(sec, tsec.nextSibling);
     const sn = document.getElementById('tScreenNames'); sn.checked = !!settings.screenNames; sn.onchange = () => { settings.screenNames = sn.checked; saveSettings(); pnTag(); };
     const w = document.getElementById('tPnWords'); w.checked = pnWordsOn(); w.onchange = () => { settings.pnWords = w.checked; saveSettings(); };
     if(pnFile()){ w.checked = false; w.disabled = true; w.parentNode.insertAdjacentHTML('beforeend', ' <span class="small muted">(not when the game is opened from a file: Chrome would ask for the microphone at every pause)</span>'); }
-    document.getElementById('tPnRec').onclick = () => { teacherClose(); pnStart(true, pnWordsOn()); };
-    document.getElementById('tPnLog').onclick = () => { teacherClose(); pnStart(false, false); };
+    document.getElementById('tPnRec').onclick = () => { teacherClose(); PN.saved = null; pnStart(true, pnWordsOn()); };
+    document.getElementById('tPnLog').onclick = () => { teacherClose(); PN.saved = null; pnStart(false, false); };
   }catch(e){}
   pnTag();
 }, 20));

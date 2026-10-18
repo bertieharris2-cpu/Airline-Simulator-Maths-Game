@@ -283,5 +283,6 @@ body.rm .wc-mr.fresh,body.rm .wc-coins.go i,body.rm .wc-mr b.flash{animation:non
 .pn-tag .pn-r{display:inline-flex;align-items:center;gap:5px;color:#ffb4b4;font-variant-numeric:tabular-nums;white-space:nowrap}
 .pn-tag .pn-r i{width:9px;height:9px;border-radius:50%;background:#ff4d4d;animation:pnBlink 1.2s infinite}
 @keyframes pnBlink{50%{opacity:.25}}
+.pn-tag .pn-s{color:#9be7b8;flex:1 0 100%;word-break:break-all;font-size:11px}
 body.rm .pn-tag .pn-r i{animation:none}
 @media print{.pn-tag{display:none}}

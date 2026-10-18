@@ -1,4 +1,4 @@
-"""Reads a Play notes log (playnotes-….json.gz from the game's teacher panel → Play notes) and prints its timeline:
+"""Reads a Play notes log (playnotes-….json from the game's teacher panel → Play notes; older logs are .json.gz) and prints its timeline:
 each screen as it appeared, what was said (the live transcript, when Chrome made one) and the marks.
 
     python3 tools/playnotes.py playnotes-2026-10-18-1002.json.gz            the timeline
@@ -10,8 +10,15 @@ Screenshots of the screens named in a log: node tools/playnotes_shots.js LOG OUT
 import gzip, json, sys, os
 
 def load(path):
+    """a log: playnotes-….json (from 18 Oct, each save code gzipped as "codez"), or the earlier .json.gz (also inside a .zip)"""
+    import base64, zipfile, io
     raw = open(path, 'rb').read()
-    return json.loads(gzip.decompress(raw) if raw[:2] == b'\x1f\x8b' else raw)
+    if raw[:2] == b'PK':
+        z = zipfile.ZipFile(io.BytesIO(raw)); raw = z.read([n for n in z.namelist() if 'playnotes' in n or n.endswith(('.json', '.gz'))][0])
+    L = json.loads(gzip.decompress(raw) if raw[:2] == b'\x1f\x8b' else raw)
+    for e in L.get('log', []):
+        if e.get('codez'): e['code'] = gzip.decompress(base64.b64decode(e.pop('codez'))).decode('utf-8')
+    return L
 
 def secs(s):
     m, _, x = s.partition(':'); return int(m) * 60 + float(x or 0)

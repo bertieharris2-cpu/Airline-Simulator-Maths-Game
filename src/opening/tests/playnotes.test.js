@@ -1,6 +1,6 @@
 // Run: NODE_PATH=<playwright node_modules> node playnotes.test.js   (env: OUT, GAME)
 // Play notes (Bertie, 18 Oct 2026): the screen name in the corner, and a recording with its log. Chromium's fake microphone
-// stands in for a real one. The toolkit plays a week; Stop & save must give the recording and a gzipped log whose timeline
+// stands in for a real one. The toolkit plays a week; Stop & save must give the recording and a plain .json log whose timeline
 // names the screens in order, with a save code wherever the day or the step changed.
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os'), zlib = require('zlib');
@@ -8,9 +8,9 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
 (async () => {
   const b = await chromium.launch({ args:['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] });
   const ctx = await b.newContext({ viewport:{ width:1366, height:768 }, acceptDownloads:true, permissions:['microphone'] }), p = await ctx.newPage();
-  const errors = [], checks = [], files = {};
+  const errors = [], checks = [], files = {}; let downloads = 0;
   p.on('pageerror', e => errors.push(e.message)); p.on('dialog', d => d.accept());
-  p.on('download', async d => { const f = OUT + d.suggestedFilename(); await d.saveAs(f); files[d.suggestedFilename()] = f; });
+  p.on('download', async d => { downloads++; const f = OUT + d.suggestedFilename(); await d.saveAs(f); files[d.suggestedFilename()] = f; });
   const ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x) : ''));
   const tag = () => p.$eval('#pnTag', e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
@@ -27,11 +27,16 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
   await p.evaluate(() => window.__tk.run('plan')); await p.click('#pnMark'); await p.evaluate(() => window.__tk.run('plan'));
   const names = await p.evaluate(() => window.__pn.log().filter(e => e.kind === 'screen').map(e => e.name)); ok('the log names the screens as they came', ['Home', 'Plan opener', 'Flying', 'Results', 'The board', 'Sunday review'].every(n => names.some(x => x.startsWith(n))), [...new Set(names)]);
   await p.click('#pnStop'); await p.waitForTimeout(2500);
-  const fn = Object.keys(files); ok('Stop & save gives two files: the recording and the gzipped log', fn.some(f => /^playnotes-.*\.(webm|ogg|m4a)$/.test(f)) && fn.some(f => /^playnotes-.*\.json\.gz$/.test(f)), fn);
-  const lg = fn.find(f => /\.json\.gz$/.test(f)), L = lg ? JSON.parse(zlib.gunzipSync(fs.readFileSync(files[lg]))) : { log:[], timeline:[] };
+  const fn = Object.keys(files); ok('Stop & save gives two files: the recording and the log as plain .json (the Claude app takes it as an attachment)', fn.some(f => /^playnotes-.*\.(webm|ogg|m4a)$/.test(f)) && fn.some(f => /^playnotes-[^.]*\.json$/.test(f)), fn);
+  const lg = fn.find(f => /\.json$/.test(f)), L = lg ? JSON.parse(fs.readFileSync(files[lg], 'utf8')) : { log:[], timeline:[] };
+  const zipped = L.log.filter(e => e.codez).length; L.log.forEach(e => { if(e.codez){ e.code = zlib.gunzipSync(Buffer.from(e.codez, 'base64')).toString('utf8'); delete e.codez; } });
+  ok('the save codes inside are gzipped, and unpack to codes the game loads', zipped >= 4 && L.log.filter(e => e.code).every(e => /^ASIM5\./.test(e.code)), zipped);
   const audio = fn.find(f => /\.(webm|ogg|m4a)$/.test(f)); ok('the recording has sound in it', audio && fs.statSync(files[audio]).size > 2000, audio && fs.statSync(files[audio]).size);
   ok('the log has the timeline in words, the mark, and save codes where the day or the step changed', L.timeline.some(l => /^\d\d:\d\d  Home · Week 2/.test(l)) && L.log.some(e => e.kind === 'mark') && L.log.filter(e => e.code).length >= 4 && L.log.filter(e => e.code).every(e => /^ASIM5\./.test(e.code)), { lines:L.timeline.slice(0, 6), codes:L.log.filter(e => e.code).length });
   ok('every entry carries its clock time, to match a phone recording', L.log.every(e => /^\d{4}-\d\d-\d\dT/.test(e.at)) && L.log.every((e, i) => !i || e.t >= L.log[i - 1].t));
+  const n0 = downloads; ok('afterwards the corner offers Save again', /Saved playnotes-.*Save again/.test(await tag()), await tag());
+  await p.click('#pnAgain'); await p.waitForTimeout(2000); ok('Save again downloads both files once more', downloads - n0 === 2, downloads - n0);
+  await p.click('#pnDone'); await p.waitForTimeout(200); ok('✓ puts the corner back to Record', /Record/.test(await tag()) && !/Save again/.test(await tag()), await tag());
   fs.writeFileSync(OUT + 'log.json', JSON.stringify(L));
   checks.push('info ' + JSON.stringify({ files:fn, screens:L.log.filter(e => e.kind === 'screen').length, timeline:L.timeline.slice(0, 14) }));
   console.log(checks.join('\n')); console.log('ERRORS', errors.length ? errors : 'none');
