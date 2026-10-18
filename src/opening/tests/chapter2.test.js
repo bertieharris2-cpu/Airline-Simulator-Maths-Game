@@ -125,7 +125,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
         if(st.day !== undefined){ const L = await E(`JSON.stringify([S.day, S.ledger.rev[${st.day}] === undefined || S.ledger.rev[${st.day}] === null, S.ledger.rev[${st.day} - 1] !== undefined])`).then(JSON.parse);
           ok(`${ev.id}: the month stops on the day (${st.day}), before it is flown`, L[0] === st.day && L[1] && L[2], L); } }
       if(ev.id === 'fees_rise') ok('Landing fees rise: three choices, no Luton (cancelled for now)', ev.keys.length === 3 && !/luton/i.test(ev.labels.join(' ')), ev.labels);
-      await p.click(`[data-o="${k}"]`); await p.click('#nx'); await p.waitForTimeout(80); info.events[ev.id] = { day:st.day || day, pick:ev.keys[k] };
+      for(let i = 0; i < 8 && await p.$('[data-seep]'); i++) await p.click('[data-seep]'); await p.click(`[data-o="${k}"]`); await p.click('#nx'); await p.waitForTimeout(80); info.events[ev.id] = { day:st.day || day, pick:ev.keys[k] };
       if(st.day !== undefined) ok(`${ev.id}: after the choice, the button carries on with the month`, /Carry on: fly/.test(await txt('#nx')), await txt('#nx'));
       if(ev.id === 'fog' && CHOICE.fog === 'wait') ok('fog, wait: the flights before 12:00 on 22 January are grounded, the later ones fly', await E('JSON.stringify(withDay(143, () => { const f = planFlights(); return [f.filter(x => x.dep < 720 && !x.grounded).length, f.filter(x => x.dep >= 720 && !x.grounded).length]; }))').then(v => { const a = JSON.parse(v); return a[0] === 0 && a[1] > 0; }), await E('JSON.stringify(withDay(143, () => planFlights().map(x => [x.dep, x.grounded])))'));
       if(await T() === 'event') await p.click('#nx'); continue; }

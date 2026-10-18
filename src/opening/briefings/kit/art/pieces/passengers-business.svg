@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="passengers-business" width="270" height="105" viewBox="0 0 180 70" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five business travellers standing, each with a case">
+<defs><symbol id="ppb" viewBox="0 0 30 66" width="30" height="66">
+<ellipse cx="13" cy="64.5" rx="12" ry="1.6" fill="#000" opacity="0.35"/>
+<circle cx="12" cy="8" r="7" fill="#c4d4ea"/>
+<path d="M3,22 C3,18 6,16 10,16 L14,16 C18,16 21,18 21,22 L21,40 L3,40 Z" fill="#5fb8e6"/>
+<path d="M3,22 C3,18 6,16 10,16 L12,16 L12,40 L3,40 Z" fill="#36c6ff"/>
+<path d="M10,16 L12,24 L14,16 Z" fill="#081f3d"/>
+<rect x="4.5" y="38" width="6.5" height="26" rx="2.5" fill="#2d5f8c"/>
+<rect x="13" y="38" width="6.5" height="26" rx="2.5" fill="#24507a"/>
+<rect x="21" y="44" width="9" height="12" rx="1.5" fill="#123e64" stroke="#36c6ff" stroke-opacity="0.5"/>
+<rect x="24" y="41.5" width="3" height="3" fill="none" stroke="#36c6ff" stroke-opacity="0.5"/>
+</symbol></defs>
+<use href="#ppb" x="2" y="2"/><use href="#ppb" x="38" y="2"/><use href="#ppb" x="74" y="2"/><use href="#ppb" x="110" y="2"/><use href="#ppb" x="146" y="2"/>
+</svg>

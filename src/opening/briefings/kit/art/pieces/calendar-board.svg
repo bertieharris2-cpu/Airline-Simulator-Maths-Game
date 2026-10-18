@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="calendar-board" width="320" height="250" viewBox="0 0 320 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Twelve-month calendar board with March as the current month">
+<rect x="0" y="0" width="320" height="250" fill="#081f3d" stroke="#5a95c8" stroke-opacity="0.42"/>
+<text x="16" y="30" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="15" font-weight="600" fill="#eaf2ff">2031</text>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="15" text-anchor="middle">
+<rect x="14" y="46" width="68" height="56" fill="#05152b"/><text x="48" y="80" fill="#9fbde3">JAN</text>
+<rect x="88" y="46" width="68" height="56" fill="#05152b"/><text x="122" y="80" fill="#9fbde3">FEB</text>
+<rect x="162" y="46" width="68" height="56" fill="#123e64" stroke="#36c6ff" stroke-width="2"/><text x="196" y="80" fill="#eaf2ff" font-weight="600">MAR</text>
+<rect x="236" y="46" width="68" height="56" fill="#0a2247"/><text x="270" y="80" fill="#9fbde3">APR</text>
+<rect x="14" y="110" width="68" height="56" fill="#0a2247"/><text x="48" y="144" fill="#9fbde3">MAY</text>
+<rect x="88" y="110" width="68" height="56" fill="#0a2247"/><text x="122" y="144" fill="#9fbde3">JUN</text>
+<rect x="162" y="110" width="68" height="56" fill="#0a2247"/><text x="196" y="144" fill="#9fbde3">JUL</text>
+<rect x="236" y="110" width="68" height="56" fill="#0a2247"/><text x="270" y="144" fill="#9fbde3">AUG</text>
+<rect x="14" y="174" width="68" height="56" fill="#0a2247"/><text x="48" y="208" fill="#9fbde3">SEP</text>
+<rect x="88" y="174" width="68" height="56" fill="#0a2247"/><text x="122" y="208" fill="#9fbde3">OCT</text>
+<rect x="162" y="174" width="68" height="56" fill="#0a2247"/><text x="196" y="208" fill="#9fbde3">NOV</text>
+<rect x="236" y="174" width="68" height="56" fill="#0a2247"/><text x="270" y="208" fill="#9fbde3">DEC</text>
+</g>
+<rect x="290" y="114" width="8" height="8" rx="1" fill="#9fbde3"/>
+</svg>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="frame-cash-tank-profit" width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hangar-side scene: coins stream from a cash vault into a fuel tank holding 2,600 litres worth £3,900; a departures board shows the day's costs">
+<defs>
+<linearGradient id="f2wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050f25"/><stop offset="1" stop-color="#0c2852"/></linearGradient>
+<linearGradient id="f2floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d2a55"/><stop offset="1" stop-color="#040e22"/></linearGradient>
+<radialGradient id="f2pool" cx="0.3" cy="0.72" r="0.6"><stop offset="0" stop-color="#36c6ff" stop-opacity="0.12"/><stop offset="1" stop-color="#36c6ff" stop-opacity="0"/></radialGradient>
+<radialGradient id="f2shadow"><stop offset="0" stop-color="#000" stop-opacity="0.55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+<linearGradient id="f2steelF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a5c8a"/><stop offset="1" stop-color="#1b3863"/></linearGradient>
+<linearGradient id="f2steelT" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5c80b0"/><stop offset="1" stop-color="#3d5f8e"/></linearGradient>
+<linearGradient id="f2steelS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16305a"/><stop offset="1" stop-color="#0c1f3e"/></linearGradient>
+<linearGradient id="f2cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4c70a2"/><stop offset="0.35" stop-color="#2f5384"/><stop offset="1" stop-color="#112a50"/></linearGradient>
+<linearGradient id="f2fuel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#36c6ff" stop-opacity="0.85"/><stop offset="1" stop-color="#2c7fd0" stop-opacity="0.55"/></linearGradient>
+<radialGradient id="f2glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#36c6ff" stop-opacity="0.22"/><stop offset="1" stop-color="#36c6ff" stop-opacity="0"/></radialGradient>
+<symbol id="f2coin" viewBox="-15 -15 30 30" width="30" height="30" x="-15" y="-15" overflow="visible">
+<ellipse cx="0" cy="2.2" rx="13" ry="13" fill="#a87a0c"/>
+<ellipse cx="0" cy="0" rx="13" ry="13" fill="#f2c14e"/>
+<ellipse cx="0" cy="0" rx="9" ry="9" fill="none" stroke="#c99512" stroke-width="1.6"/>
+<path d="M-8,-7 A11,11 0 0 1 4,-11" stroke="#fff3c4" stroke-width="2" fill="none" stroke-linecap="round"/>
+</symbol>
+</defs>
+
+<!-- hangar wall and floor -->
+<rect width="1600" height="900" fill="url(#f2wall)"/>
+<g stroke="#5a95c8" stroke-opacity="0.07"><line x1="80" y1="0" x2="80" y2="660"/><line x1="200" y1="0" x2="200" y2="660"/><line x1="320" y1="0" x2="320" y2="660"/><line x1="440" y1="0" x2="440" y2="660"/><line x1="560" y1="0" x2="560" y2="660"/><line x1="680" y1="0" x2="680" y2="660"/><line x1="800" y1="0" x2="800" y2="660"/><line x1="920" y1="0" x2="920" y2="660"/><line x1="1040" y1="0" x2="1040" y2="660"/><line x1="1160" y1="0" x2="1160" y2="660"/><line x1="1280" y1="0" x2="1280" y2="660"/><line x1="1400" y1="0" x2="1400" y2="660"/><line x1="1520" y1="0" x2="1520" y2="660"/></g>
+<rect y="660" width="1600" height="240" fill="url(#f2floor)"/>
+<line x1="0" y1="660" x2="1600" y2="660" stroke="#5a95c8" stroke-opacity="0.22"/>
+<rect width="1600" height="900" fill="url(#f2pool)"/>
+
+<!-- cash vault -->
+<ellipse cx="300" cy="688" rx="210" ry="14" fill="url(#f2shadow)"/>
+<path d="M110,380 L410,380 L456,352 L156,352 Z" fill="url(#f2steelT)"/>
+<path d="M410,380 L456,352 L456,652 L410,680 Z" fill="url(#f2steelS)"/>
+<rect x="110" y="380" width="300" height="300" fill="url(#f2steelF)"/>
+<line x1="110" y1="380.5" x2="410" y2="380.5" stroke="#9cc4f0" stroke-opacity="0.6"/>
+<path d="M300,370 L360,370 L372,362 L312,362 Z" fill="#061226"/>
+<circle cx="260" cy="530" r="108" fill="#1a3866" stroke="#5c80b0" stroke-width="3"/>
+<circle cx="260" cy="530" r="92" fill="none" stroke="#0e2346" stroke-width="2"/>
+<g fill="#7d9cc6"><circle cx="260" cy="430" r="4"/><circle cx="331" cy="459" r="4"/><circle cx="360" cy="530" r="4"/><circle cx="331" cy="601" r="4"/><circle cx="260" cy="630" r="4"/><circle cx="189" cy="601" r="4"/><circle cx="160" cy="530" r="4"/><circle cx="189" cy="459" r="4"/></g>
+<g stroke="#9cb8dc" stroke-width="7" stroke-linecap="round"><line x1="260" y1="530" x2="260" y2="478"/><line x1="260" y1="530" x2="305" y2="556"/><line x1="260" y1="530" x2="215" y2="556"/></g>
+<circle cx="260" cy="530" r="14" fill="#9cb8dc"/><circle cx="260" cy="530" r="6" fill="#1a3866"/>
+<rect x="114" y="452" width="10" height="34" rx="2" fill="#0e2346"/><rect x="114" y="574" width="10" height="34" rx="2" fill="#0e2346"/>
+<text x="110" y="726" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="18" fill="#9fbde3">Cash</text>
+<text x="110" y="760" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="28" font-weight="600" fill="#f2c14e">£20,000 → £16,100</text>
+
+<!-- coin stream: the one gold thing -->
+<path d="M330,352 Q560,110 790,178" fill="none" stroke="#f2c14e" stroke-opacity="0.25" stroke-width="2" stroke-dasharray="2 8" stroke-linecap="round"/>
+<use href="#f2coin" transform="translate(358,324) rotate(-40) scale(1,0.45)"/>
+<use href="#f2coin" transform="translate(399,286) rotate(-3) scale(1,0.93)"/>
+<use href="#f2coin" transform="translate(440,254) rotate(34) scale(1,0.71)"/>
+<use href="#f2coin" transform="translate(482,226) rotate(-9) scale(1,0.79)"/>
+<use href="#f2coin" transform="translate(523,203) rotate(28) scale(1,0.89)"/>
+<use href="#f2coin" transform="translate(565,186) rotate(-15) scale(1,0.56)"/>
+<use href="#f2coin" transform="translate(606,173) rotate(22) scale(1,0.95)"/>
+<use href="#f2coin" transform="translate(647,166) rotate(-21) scale(1,0.61)"/>
+<use href="#f2coin" transform="translate(689,163) rotate(16) scale(1,0.86)"/>
+<use href="#f2coin" transform="translate(730,166) rotate(-27) scale(1,0.83)"/>
+<use href="#f2coin" transform="translate(767,172) rotate(10) scale(1,0.66)"/>
+
+<!-- fuel tank -->
+<ellipse cx="820" cy="690" rx="190" ry="16" fill="url(#f2shadow)"/>
+<ellipse cx="790" cy="480" rx="230" ry="250" fill="url(#f2glow)"/>
+<path d="M640,250 L640,680 A150,30 0 0 0 940,680 L940,250 Z" fill="url(#f2cyl)"/>
+<ellipse cx="790" cy="250" rx="150" ry="30" fill="#5d82b4"/>
+<ellipse cx="790" cy="250" rx="150" ry="30" fill="none" stroke="#a8ccf2" stroke-opacity="0.55"/>
+<path d="M735,186 L845,186 L812,234 L768,234 Z" fill="#3d5f8e"/>
+<path d="M735,186 L845,186" stroke="#a8ccf2" stroke-opacity="0.7" stroke-width="2"/>
+<ellipse cx="790" cy="234" rx="22" ry="5" fill="#061226"/>
+<g stroke="#0e2346" stroke-width="2" stroke-opacity="0.7"><path d="M640,360 A150,30 0 0 0 940,360" fill="none"/><path d="M640,580 A150,30 0 0 0 940,580" fill="none"/></g>
+<rect x="715" y="296" width="150" height="344" fill="#050f22" stroke="#5a95c8" stroke-opacity="0.5" stroke-width="1.5"/>
+<rect x="719" y="417" width="142" height="219" fill="url(#f2fuel)"/>
+<rect x="719" y="415" width="142" height="4" fill="#d6f2ff"/>
+<path d="M727,425 L760,425 L740,630 L727,630 Z" fill="#ffffff" opacity="0.08"/>
+<g stroke="#9fbde3" stroke-width="1.5"><line x1="865" y1="385" x2="878" y2="385"/><line x1="865" y1="470" x2="878" y2="470"/><line x1="865" y1="555" x2="878" y2="555"/><line x1="865" y1="300" x2="878" y2="300"/></g>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="14" fill="#9fbde3"><text x="884" y="305">4,000 L</text><text x="884" y="390">3,000</text><text x="884" y="475">2,000</text><text x="884" y="560">1,000</text></g>
+<text x="660" y="760" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="18" fill="#9fbde3">In the tank</text>
+<text x="660" y="796" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="34" font-weight="600" fill="#eaf2ff">2,600 L</text>
+<text x="660" y="828" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="19" fill="#9fbde3">worth <tspan font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" fill="#f2c14e">£3,900</tspan> at <tspan font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums">£1.50</tspan> a litre</text>
+
+<!-- fuel line to the day's flights (not yet used) -->
+<path d="M940,620 L1000,620 L1000,600 L1040,600" fill="none" stroke="#3d5f8e" stroke-width="8"/>
+<path d="M940,620 L1000,620 L1000,600 L1040,600" fill="none" stroke="#36c6ff" stroke-opacity="0.18" stroke-width="2"/>
+
+<!-- departures board: the day's costs -->
+<ellipse cx="1300" cy="688" rx="270" ry="12" fill="url(#f2shadow)"/>
+<rect x="1060" y="640" width="12" height="40" fill="#16305a"/><rect x="1488" y="640" width="12" height="40" fill="#16305a"/>
+<rect x="1040" y="232" width="480" height="412" fill="#05152b" stroke="#5a95c8" stroke-opacity="0.42"/>
+<line x1="1040" y1="232.5" x2="1520" y2="232.5" stroke="#9cc4f0" stroke-opacity="0.5"/>
+<text x="1066" y="270" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="12" font-weight="600" letter-spacing="1.4" fill="#36c6ff">DEPARTURES · TODAY'S COSTS</text>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="12" font-weight="600" letter-spacing="1.2" fill="#9fbde3"><text x="1066" y="304">TIME</text><text x="1146" y="304">FLIGHT</text><text x="1236" y="304">TO</text><text x="1400" y="304" text-anchor="end">FUEL</text><text x="1494" y="304" text-anchor="end">OTHER</text></g>
+<line x1="1060" y1="316" x2="1500" y2="316" stroke="#5a95c8" stroke-opacity="0.2"/>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="18" fill="#eaf2ff">
+<text x="1066" y="352">06:00</text><text x="1146" y="352">AS101</text><text x="1236" y="352">DUBLIN</text><text x="1400" y="352" text-anchor="end">£975</text><text x="1494" y="352" text-anchor="end">£410</text>
+<text x="1066" y="398">09:45</text><text x="1146" y="398">AS102</text><text x="1236" y="398">LONDON</text><text x="1400" y="398" text-anchor="end">£975</text><text x="1494" y="398" text-anchor="end">£410</text>
+<text x="1066" y="444">10:20</text><text x="1146" y="444">AS103</text><text x="1236" y="444">PARIS</text><text x="1400" y="444" text-anchor="end">£975</text><text x="1494" y="444" text-anchor="end">£450</text>
+<text x="1066" y="490">13:05</text><text x="1146" y="490">AS104</text><text x="1236" y="490">LONDON</text><text x="1400" y="490" text-anchor="end">£975</text><text x="1494" y="490" text-anchor="end">£450</text>
+</g>
+<g stroke="#5a95c8" stroke-opacity="0.1"><line x1="1060" y1="368" x2="1500" y2="368"/><line x1="1060" y1="414" x2="1500" y2="414"/><line x1="1060" y1="460" x2="1500" y2="460"/></g>
+<line x1="1060" y1="512" x2="1500" y2="512" stroke="#5a95c8" stroke-opacity="0.35"/>
+<text x="1066" y="552" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="18" fill="#9fbde3">Today's costs</text>
+<text x="1494" y="552" text-anchor="end" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="26" font-weight="600" fill="#eaf2ff">£5,620</text>
+<text x="1066" y="610" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="15" fill="#9fbde3">Fuel becomes a cost when each flight uses it.</text>
+
+<!-- briefing caption -->
+<text x="80" y="54" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="1.32" fill="#36c6ff">OPERATIONS BRIEFING</text>
+<text x="80" y="92" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="34" font-weight="600" fill="#eaf2ff">Cash, tank, profit</text>
+<text x="80" y="124" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="19" fill="#9fbde3">Buying fuel moves cash into the tank. Profit doesn't change until the fuel is used.</text>
+</svg>

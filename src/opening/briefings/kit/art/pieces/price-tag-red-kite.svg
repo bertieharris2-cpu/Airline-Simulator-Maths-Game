@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="price-tag-red-kite" width="250" height="130" viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Red Kite Air price tag showing £75">
+<ellipse cx="108" cy="96" rx="82" ry="5" fill="#000" opacity="0.3"/>
+<path d="M30,10 L190,10 L190,86 L30,86 L4,48 Z" fill="#123e64" stroke="#5a95c8" stroke-opacity="0.5" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="30" cy="48" r="6" fill="#041426" stroke="#5a95c8" stroke-opacity="0.5"/>
+<rect x="158" y="10" width="32" height="32" fill="#7a1428"/>
+<g transform="translate(159.5,11.5) scale(0.29)"><path d="M50,12 L47.2,18 L45.8,30 L36,29.5 L25,23.5 L14,26 L1.5,37.5 L8.5,38.5 L3.5,43 L10.5,43.5 L7,48 L13.5,47.5 L12.5,52 L27,47.5 L42.5,48.5 L45,55 L32,85 L42,83 L50,68 L58,83 L68,85 L55,55 L57.5,48.5 L73,47.5 L87.5,52 L86.5,47.5 L93,48 L89.5,43.5 L96.5,43 L91.5,38.5 L98.5,37.5 L86,26 L75,23.5 L64,29.5 L54.2,30 L52.8,18 Z" fill="#f1e9dc" transform="rotate(-10 50 50)"/></g>
+<text data-part="price" x="96" y="62" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="36" font-weight="600" fill="#eaf2ff">£75</text>
+</svg>

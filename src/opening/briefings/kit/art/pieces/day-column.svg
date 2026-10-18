@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="day-column" width="170" height="520" viewBox="0 0 170 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day column for Monday with four flights and the day's ticket money">
+<rect x="0" y="0" width="170" height="520" fill="#081f3d" stroke="#5a95c8" stroke-opacity="0.42"/>
+<text x="16" y="34" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600" fill="#eaf2ff">Mon</text>
+<text x="154" y="34" text-anchor="end" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="13" fill="#9fbde3">2 Sep</text>
+<line x1="12" y1="50" x2="158" y2="50" stroke="#5a95c8" stroke-opacity="0.2"/>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="13">
+<rect x="12" y="64" width="146" height="54" fill="#1a4688" stroke="#96cdff" stroke-opacity="0.35"/><rect x="12" y="64" width="5" height="54" fill="#3ce394"/>
+<text x="26" y="86" fill="#eaf2ff" font-weight="600">06:00 DUB</text><text x="26" y="106" fill="#eaf2ff">19/19</text>
+<rect x="12" y="128" width="146" height="54" fill="#1a4688" stroke="#96cdff" stroke-opacity="0.35"/><rect x="12" y="128" width="5" height="54" fill="#3ce394"/>
+<text x="26" y="150" fill="#eaf2ff" font-weight="600">09:45 LHR</text><text x="26" y="170" fill="#eaf2ff">17/19</text>
+<rect x="12" y="192" width="146" height="54" fill="#1a4688" stroke="#96cdff" stroke-opacity="0.35"/><rect x="12" y="192" width="5" height="54" fill="#ffb547"/>
+<text x="26" y="214" fill="#eaf2ff" font-weight="600">10:20 CDG</text><text x="26" y="234" fill="#eaf2ff">12/19</text>
+<rect x="12" y="256" width="146" height="54" fill="#1a4688" stroke="#96cdff" stroke-opacity="0.35"/><rect x="12" y="256" width="5" height="54" fill="#ffb547"/>
+<text x="26" y="278" fill="#eaf2ff" font-weight="600">13:05 LHR</text><text x="26" y="298" fill="#eaf2ff">10/19</text>
+<rect x="12" y="320" width="146" height="54" fill="none" stroke="#5a95c8" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<text x="85" y="352" text-anchor="middle" fill="#9fbde3">free slot</text>
+</g>
+<line x1="12" y1="460" x2="158" y2="460" stroke="#5a95c8" stroke-opacity="0.35"/>
+<text x="16" y="482" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="13" fill="#9fbde3">Ticket money</text>
+<text x="16" y="506" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="20" font-weight="600" fill="#eaf2ff">£4,640</text>
+</svg>

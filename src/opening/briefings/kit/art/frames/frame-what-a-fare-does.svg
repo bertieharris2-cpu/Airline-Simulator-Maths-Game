@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="frame-what-a-fare-does" width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Night-time Heathrow gate: 72 passengers queue for two Twin Otters; 38 are seated, 34 have no seat; ticket money 38 times £80; fare slider set to £80">
+<defs>
+<linearGradient id="f1sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#030b1d"/><stop offset="1" stop-color="#0a2247"/></linearGradient>
+<linearGradient id="f1apron" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c2852"/><stop offset="1" stop-color="#040e22"/></linearGradient>
+<radialGradient id="f1pool" cx="0.27" cy="0.62" r="0.55"><stop offset="0" stop-color="#36c6ff" stop-opacity="0.13"/><stop offset="1" stop-color="#36c6ff" stop-opacity="0"/></radialGradient>
+<linearGradient id="f1skin" x1="0" y1="0" x2="0.15" y2="1"><stop offset="0" stop-color="#f8fbff"/><stop offset="0.55" stop-color="#e1e9f3"/><stop offset="1" stop-color="#a9b9cf"/></linearGradient>
+<linearGradient id="f1glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a4a80"/><stop offset="1" stop-color="#0b2448"/></linearGradient>
+<linearGradient id="f1door" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fbde3" stop-opacity="0.55"/><stop offset="1" stop-color="#9fbde3" stop-opacity="0.15"/></linearGradient>
+<radialGradient id="f1shadow"><stop offset="0" stop-color="#000" stop-opacity="0.5"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+<linearGradient id="f1note" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd25e"/><stop offset="1" stop-color="#d9a21f"/></linearGradient>
+<symbol id="f1dhc6" viewBox="0 0 190 70">
+<ellipse cx="29" cy="22" rx="2.2" ry="13" fill="#9fbde3" opacity="0.28"/>
+<path d="M6,38 C6,30 12,25.5 24,24.5 L138,23.5 C150,23.5 166,24.5 182,26.5 L183,31 C170,33 156,37 144,40.5 L30,45.5 C15,45.5 6,43 6,38 Z" fill="url(#f1skin)"/>
+<path data-part="tail" d="M150,24 L166,3 C167,1.8 168,1.5 170,1.5 L180,1.5 C182,1.5 183,3 183,5 L183,27 Z" fill="url(#f1skin)"/>
+<path d="M160,25.5 L190,24 L190,27 L160,28.5 Z" fill="#cfd9e6"/>
+<rect x="46" y="19" width="56" height="4.5" rx="1" fill="#e6edf6"/>
+<path d="M31,17.5 L70,17.5 L70,26.5 C60,28 42,28 35,26.5 C32,25.5 31,22 31,17.5 Z" fill="#cdd7e4"/>
+<rect x="30" y="19" width="3" height="6" fill="#4b5d78"/>
+<line x1="88" y1="23" x2="80" y2="44" stroke="#8a9cb6" stroke-width="1.6"/>
+<path d="M12,30.5 L20,26.8 L28,26.3 L28,31 L14,32.2 Z" fill="#0f284c"/>
+<g fill="#0f284c"><rect x="74" y="28.5" width="5" height="5" rx="1"/><rect x="84" y="28.4" width="5" height="5" rx="1"/><rect x="94" y="28.3" width="5" height="5" rx="1"/><rect x="104" y="28.2" width="5" height="5" rx="1"/><rect x="114" y="28.1" width="5" height="5" rx="1"/><rect x="124" y="28" width="5" height="5" rx="1"/></g>
+<rect x="134" y="27" width="9" height="13" rx="1" fill="none" stroke="#8a9cb6" stroke-width="0.8"/>
+<path d="M24,25.6 L138,24.6" stroke="#ffffff" stroke-width="0.8" opacity="0.9"/>
+<line x1="22" y1="44" x2="22" y2="60" stroke="#62748f" stroke-width="2"/>
+<circle cx="22" cy="64" r="6" fill="#0b1830"/><circle cx="22" cy="64" r="2" fill="#62748f"/>
+<line x1="84" y1="43" x2="90" y2="59" stroke="#62748f" stroke-width="2.4"/>
+<circle cx="90" cy="63.5" r="6.5" fill="#0b1830"/><circle cx="90" cy="63.5" r="2.2" fill="#62748f"/>
+</symbol>
+<pattern id="f1queue" width="16" height="34" patternUnits="userSpaceOnUse" patternTransform="scale(1.125)" x="149.333" y="469.111">
+<circle cx="8" cy="5" r="4.3" fill="#c4d4ea"/>
+<rect x="4" y="10.5" width="8" height="13.5" rx="3.5" fill="#9fb3cf"/>
+<rect x="5" y="22" width="6" height="12" rx="2" fill="#7389a8"/>
+</pattern>
+<pattern id="f1seatA" width="16" height="34" patternUnits="userSpaceOnUse" patternTransform="scale(1.125)" x="728.889" y="469.111">
+<rect x="2" y="16" width="3" height="14" rx="1" fill="#2a5c9c"/>
+<rect x="2" y="25" width="12" height="4" rx="1" fill="#2a5c9c"/>
+<rect x="7" y="29" width="2" height="5" fill="#1b4275"/>
+<rect x="4" y="15" width="6.5" height="12" rx="3" fill="#9fb3cf"/>
+<rect x="6" y="22.5" width="9" height="4.5" rx="2" fill="#8aa0bf"/>
+<rect x="12.5" y="25" width="3" height="8.5" rx="1.5" fill="#7389a8"/>
+<circle cx="7.5" cy="10.5" r="4.3" fill="#c4d4ea"/>
+</pattern>
+<pattern id="f1seatB" href="#f1seatA" x="1066.667" y="469.111"/>
+</defs>
+
+<!-- sky, horizon, apron -->
+<rect width="1600" height="900" fill="url(#f1sky)"/>
+<rect y="470" width="1600" height="430" fill="url(#f1apron)"/>
+<rect width="1600" height="900" fill="url(#f1pool)"/>
+<line x1="0" y1="470" x2="1600" y2="470" stroke="#5a95c8" stroke-opacity="0.18"/>
+<g fill="#9fbde3" opacity="0.35"><circle cx="660" cy="462" r="1.5"/><circle cx="740" cy="462" r="1.5"/><circle cx="820" cy="462" r="1.5"/><circle cx="900" cy="462" r="1.5"/><circle cx="980" cy="462" r="1.5"/><circle cx="1060" cy="462" r="1.5"/><circle cx="1140" cy="462" r="1.5"/><circle cx="1220" cy="462" r="1.5"/><circle cx="1300" cy="462" r="1.5"/><circle cx="1380" cy="462" r="1.5"/><circle cx="1460" cy="462" r="1.5"/><circle cx="1540" cy="462" r="1.5"/></g>
+<line x1="790" y1="487" x2="1560" y2="487" stroke="#eaf2ff" stroke-opacity="0.1" stroke-width="3"/>
+
+<!-- terminal front -->
+<rect x="0" y="200" width="600" height="366" fill="#0a2247"/>
+<rect x="0" y="188" width="612" height="14" fill="#123462"/>
+<line x1="0" y1="188.5" x2="612" y2="188.5" stroke="#3b6ea8" stroke-width="1"/>
+<g fill="url(#f1glass)"><rect x="20" y="226" width="62" height="190"/><rect x="88" y="226" width="62" height="190"/><rect x="156" y="226" width="62" height="190"/><rect x="224" y="226" width="62" height="190"/><rect x="292" y="226" width="62" height="190"/><rect x="360" y="226" width="62" height="190"/><rect x="428" y="226" width="62" height="190"/><rect x="496" y="226" width="62" height="190"/></g>
+<path d="M20,226 L180,226 L60,416 L20,416 Z" fill="#9fbde3" opacity="0.06"/>
+<path d="M260,226 L330,226 L210,416 L140,416 Z" fill="#9fbde3" opacity="0.045"/>
+<rect x="20" y="380" width="538" height="36" fill="#9fbde3" opacity="0.07"/>
+<rect x="140" y="436" width="200" height="40" fill="#05152b" stroke="#5a95c8" stroke-opacity="0.42"/>
+<text x="156" y="462" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="16" font-weight="600" fill="#eaf2ff">GATE 1</text>
+<text x="324" y="462" text-anchor="end" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="14" fill="#9fbde3">DUBLIN 06:00</text>
+<rect x="168" y="486" width="64" height="80" fill="url(#f1door)"/>
+<rect x="168" y="486" width="64" height="80" fill="none" stroke="#3b6ea8"/>
+
+<!-- aircraft at the stand -->
+<ellipse cx="1010" cy="482" rx="185" ry="9" fill="url(#f1shadow)"/>
+<ellipse cx="1390" cy="482" rx="185" ry="9" fill="url(#f1shadow)"/>
+<use href="#f1dhc6" x="820" y="354" width="342" height="126"/>
+<use href="#f1dhc6" x="1200" y="354" width="342" height="126"/>
+
+<!-- the queue: 34 standing, 38 seated -->
+<ellipse cx="474" cy="567" rx="320" ry="6" fill="url(#f1shadow)"/>
+<ellipse cx="991" cy="567" rx="185" ry="6" fill="url(#f1shadow)"/>
+<ellipse cx="1371" cy="567" rx="185" ry="6" fill="url(#f1shadow)"/>
+<rect x="168" y="527.75" width="612" height="38.25" fill="url(#f1queue)" opacity="0.5"/>
+<rect x="798" y="526" width="4" height="40" fill="#9fbde3"/>
+<rect x="795" y="523" width="10" height="5" rx="1" fill="#9fbde3"/>
+<rect x="820" y="527.75" width="342" height="38.25" fill="url(#f1seatA)"/>
+<rect x="1200" y="527.75" width="342" height="38.25" fill="url(#f1seatB)"/>
+
+<!-- labels on the line -->
+<text x="474" y="598" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="18" fill="#9fbde3"><tspan font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums">34</tspan> we couldn't carry</text>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="18" fill="#3ce394" text-anchor="middle"><text x="991" y="598">19/19 ✓</text><text x="1371" y="598">19/19 ✓</text></g>
+<path d="M168,614 L168,622 L1542,622 L1542,614" fill="none" stroke="#5a95c8" stroke-opacity="0.35" stroke-width="1.5"/>
+<text x="855" y="652" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="20" fill="#9fbde3"><tspan font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums">72</tspan> want to fly at <tspan font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums">£80</tspan></text>
+
+<!-- ticket money: the one gold thing -->
+<ellipse cx="1000" cy="792" rx="110" ry="9" fill="url(#f1shadow)"/>
+<g transform="translate(930,770)">
+<g><path d="M0,0 L120,0 L136,-10 L16,-10 Z" fill="#ffe08a"/><rect x="0" y="0" width="120" height="14" fill="url(#f1note)"/><path d="M120,0 L136,-10 L136,4 L120,14 Z" fill="#b8860f"/><rect x="52" y="0" width="14" height="14" fill="#1a1200" opacity="0.25"/></g>
+<g transform="translate(0,-16)"><path d="M0,0 L120,0 L136,-10 L16,-10 Z" fill="#ffe08a"/><rect x="0" y="0" width="120" height="14" fill="url(#f1note)"/><path d="M120,0 L136,-10 L136,4 L120,14 Z" fill="#b8860f"/><rect x="52" y="0" width="14" height="14" fill="#1a1200" opacity="0.25"/></g>
+<g transform="translate(3,-32)"><path d="M0,0 L120,0 L136,-10 L16,-10 Z" fill="#ffe08a"/><rect x="0" y="0" width="120" height="14" fill="url(#f1note)"/><path d="M120,0 L136,-10 L136,4 L120,14 Z" fill="#b8860f"/><rect x="52" y="0" width="14" height="14" fill="#1a1200" opacity="0.25"/></g>
+<g transform="translate(-2,-48)"><path d="M0,0 L120,0 L136,-10 L16,-10 Z" fill="#ffe08a"/><rect x="0" y="0" width="120" height="14" fill="url(#f1note)"/><path d="M120,0 L136,-10 L136,4 L120,14 Z" fill="#b8860f"/><rect x="52" y="0" width="14" height="14" fill="#1a1200" opacity="0.25"/></g>
+</g>
+<text x="1090" y="744" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="34" font-weight="600" fill="#f2c14e">38 × £80</text>
+<text x="1092" y="772" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="16" fill="#9fbde3">ticket money</text>
+
+<!-- fare slider: cyan = interactive -->
+<rect x="80" y="696" width="560" height="150" fill="#081f3d" stroke="#5a95c8" stroke-opacity="0.42"/>
+<rect x="80" y="696" width="4" height="150" fill="#36c6ff"/>
+<text x="108" y="728" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="1.32" fill="#36c6ff">DECISION</text>
+<text x="108" y="760" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="20" font-weight="600" fill="#eaf2ff">Fare to Dublin</text>
+<text x="610" y="762" text-anchor="end" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="30" font-weight="600" fill="#eaf2ff">£80</text>
+<rect x="120" y="790" width="480" height="6" rx="2" fill="#123e64"/>
+<rect x="120" y="790" width="240" height="6" rx="2" fill="#36c6ff" opacity="0.5"/>
+<rect x="351" y="779" width="18" height="28" rx="2" fill="#36c6ff"/>
+<g stroke="#081f3d" stroke-width="1.5"><line x1="357" y1="787" x2="357" y2="799"/><line x1="363" y1="787" x2="363" y2="799"/></g>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="13" fill="#9fbde3" text-anchor="middle"><text x="120" y="828">£40</text><text x="240" y="828">£60</text><text x="360" y="828" fill="#eaf2ff">£80</text><text x="480" y="828">£100</text><text x="600" y="828">£120</text></g>
+
+<!-- briefing caption -->
+<text x="80" y="70" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="1.32" fill="#36c6ff">OPERATIONS BRIEFING</text>
+<text x="80" y="110" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="34" font-weight="600" fill="#eaf2ff">What a fare does</text>
+<text x="80" y="144" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="19" fill="#9fbde3">At <tspan font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums">£80</tspan>, <tspan font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums">72</tspan> people want to fly. Two Twin Otters carry <tspan font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums">38</tspan>.</text>
+</svg>

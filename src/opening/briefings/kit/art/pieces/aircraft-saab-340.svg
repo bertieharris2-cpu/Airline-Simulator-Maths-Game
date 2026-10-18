@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="aircraft-saab-340" width="236" height="84" viewBox="0 0 236 84" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Saab 340 side view">
+<defs><linearGradient id="acs2" x1="0" y1="0" x2="0.15" y2="1"><stop offset="0" stop-color="#f8fbff"/><stop offset="0.55" stop-color="#e1e9f3"/><stop offset="1" stop-color="#a9b9cf"/></linearGradient>
+<pattern id="acw2" width="9" height="6" patternUnits="userSpaceOnUse" x="50" y="35.5"><rect x="0" y="0" width="5" height="5" rx="1" fill="#0f284c"/></pattern></defs>
+<ellipse cx="57" cy="49" rx="2.4" ry="16" fill="#9fbde3" opacity="0.28"/>
+<path data-part="body" d="M4,48 C4,38 14,31 30,30 L160,30 C180,30 200,32 222,34 L224,40 C204,46 186,52 170,56 L34,58 C16,58 4,55 4,48 Z" fill="url(#acs2)"/>
+<path data-part="tail" d="M170,31 L204,4 C205,3 206,2.5 208,2.5 L220,2.5 C222,2.5 223,4 223,6 L224,37 Z" fill="url(#acs2)"/>
+<path d="M196,39 L236,37 L236,41 L196,43 Z" fill="#cfd9e6"/>
+<rect x="50" y="35.5" width="108" height="6" fill="url(#acw2)"/>
+<path d="M12,40 L22,35 L32,34.5 L32,39.5 L16,41 Z" fill="#0f284c"/>
+<rect x="36" y="34" width="9" height="19" rx="1" fill="none" stroke="#8a9cb6" stroke-width="0.8"/>
+<path d="M30,31.2 L160,31.2" stroke="#ffffff" stroke-width="0.8" opacity="0.9"/>
+<rect x="76" y="54" width="50" height="4" rx="1" fill="#d5deea"/>
+<path d="M60,43 L112,43 C116,43 118,47 118,50 C118,54 116,56 112,56 L66,56 C61,56 59,50 60,43 Z" fill="#cdd7e4"/>
+<rect x="58" y="45" width="3" height="8" fill="#4b5d78"/>
+<line x1="24" y1="57" x2="24" y2="73" stroke="#62748f" stroke-width="2"/>
+<circle cx="24" cy="78.5" r="5.5" fill="#0b1830"/><circle cx="24" cy="78.5" r="1.8" fill="#62748f"/>
+<line x1="94" y1="56" x2="94" y2="71" stroke="#62748f" stroke-width="2.4"/>
+<circle cx="94" cy="77.5" r="6.5" fill="#0b1830"/><circle cx="94" cy="77.5" r="2.2" fill="#62748f"/>
+</svg>

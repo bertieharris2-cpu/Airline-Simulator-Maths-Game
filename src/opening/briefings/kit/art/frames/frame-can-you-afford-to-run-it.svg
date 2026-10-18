@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="frame-can-you-afford-to-run-it" width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Briefing 13, beat 3: a week of seven stands with fuel drums, Monday and Tuesday flown, Tuesday's takings dropping into the cash gauge above the red reserve line, and the Buy button lit for two more blocks">
+<defs>
+<linearGradient id="b13sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020812"/><stop offset="1" stop-color="#0a1f40"/></linearGradient>
+<linearGradient id="b13floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c2852"/><stop offset="1" stop-color="#041022"/></linearGradient>
+<radialGradient id="b13pool" cx="0.25" cy="0.6" r="0.6"><stop offset="0" stop-color="#36c6ff" stop-opacity="0.10"/><stop offset="1" stop-color="#36c6ff" stop-opacity="0"/></radialGradient>
+<radialGradient id="b13shd"><stop offset="0" stop-color="#000" stop-opacity="0.5"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+<linearGradient id="b13gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffd76b"/><stop offset="0.5" stop-color="#f2c14e"/><stop offset="1" stop-color="#b98a1c"/></linearGradient>
+<linearGradient id="b13fuel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7fd9ff"/><stop offset="0.45" stop-color="#36c6ff"/><stop offset="1" stop-color="#1a6fb5"/></linearGradient>
+<linearGradient id="b13skin" x1="0" y1="0" x2="0.15" y2="1"><stop offset="0" stop-color="#f8fbff"/><stop offset="0.55" stop-color="#d9e2ee"/><stop offset="1" stop-color="#9aabc3"/></linearGradient>
+<symbol id="b13ot" viewBox="0 0 190 70"><path d="M6,38 C6,30 12,25.5 24,24.5 L138,23.5 C150,23.5 166,24.5 182,26.5 L183,31 C170,33 156,37 144,40.5 L30,45.5 C15,45.5 6,43 6,38 Z" fill="url(#b13skin)"/><path d="M150,24 L166,3 C167,1.8 168,1.5 170,1.5 L180,1.5 C182,1.5 183,3 183,5 L183,27 Z" fill="#1f5fae"/><path d="M160,25.5 L190,24 L190,27 L160,28.5 Z" fill="#cfd9e6"/><rect x="46" y="19" width="56" height="4.5" rx="1" fill="#e6edf6"/><path d="M31,17.5 L70,17.5 L70,26.5 C60,28 42,28 35,26.5 C32,25.5 31,22 31,17.5 Z" fill="#cdd7e4"/><path d="M12,30.5 L20,26.8 L28,26.3 L28,31 L14,32.2 Z" fill="#0f284c"/><g fill="#0f284c"><rect x="74" y="28.5" width="5" height="5" rx="1"/><rect x="84" y="28.4" width="5" height="5" rx="1"/><rect x="94" y="28.3" width="5" height="5" rx="1"/><rect x="104" y="28.2" width="5" height="5" rx="1"/><rect x="114" y="28.1" width="5" height="5" rx="1"/><rect x="124" y="28" width="5" height="5" rx="1"/></g><line x1="22" y1="44" x2="22" y2="60" stroke="#62748f" stroke-width="2"/><circle cx="22" cy="64" r="6" fill="#0b1830"/><line x1="84" y1="43" x2="90" y2="59" stroke="#62748f" stroke-width="2.4"/><circle cx="90" cy="63.5" r="6.5" fill="#0b1830"/></symbol>
+<symbol id="b13coin" viewBox="-15 -15 30 30" width="30" height="30" x="-15" y="-15" overflow="visible"><ellipse cx="0" cy="2.2" rx="13" ry="13" fill="#a87a0c"/><ellipse cx="0" cy="0" rx="13" ry="13" fill="#f2c14e"/><ellipse cx="0" cy="0" rx="9" ry="9" fill="none" stroke="#c99512" stroke-width="1.6"/></symbol>
+<symbol id="b13pad" viewBox="0 0 96 40"><path d="M10,0 L96,0 L86,16 L0,16 Z" fill="#123462"/><path d="M10,0.5 L96,0.5" stroke="#5a95c8" stroke-opacity=".6"/><rect x="0" y="16" width="86" height="10" fill="#0a2247"/><path d="M86,16 L96,0 L96,10 L86,26 Z" fill="#071a38"/></symbol>
+</defs>
+
+<rect width="1600" height="900" fill="url(#b13sky)"/>
+<rect y="430" width="1600" height="390" fill="url(#b13floor)"/>
+<rect width="1600" height="900" fill="url(#b13pool)"/>
+<line x1="0" y1="430" x2="1600" y2="430" stroke="#5a95c8" stroke-opacity="0.2"/>
+<line x1="420" y1="468" x2="1180" y2="468" stroke="#eaf2ff" stroke-opacity="0.12" stroke-width="3" stroke-dasharray="18 14"/>
+
+<!-- header bar -->
+<rect width="1600" height="56" fill="#071a33"/>
+<line x1="0" y1="56" x2="1600" y2="56" stroke="#5a95c8" stroke-opacity="0.35"/>
+<text x="28" y="35" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="2.2" fill="#36c6ff">BRIEFING</text>
+<text x="124" y="36" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600" fill="#eaf2ff">Can you afford to run it?</text>
+<g><rect x="380" y="27" width="26" height="4" fill="#36c6ff"/><rect x="412" y="27" width="26" height="4" fill="#36c6ff"/><rect x="444" y="27" width="26" height="4" fill="#36c6ff"/><rect x="476" y="27" width="26" height="4" fill="#24426c"/><rect x="508" y="27" width="26" height="4" fill="#24426c"/></g>
+
+<!-- LEFT: the cash gauge -->
+<text x="200" y="104" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="13" font-weight="600" letter-spacing="1.6" fill="#9fbde3">CASH</text>
+<ellipse cx="210" cy="664" rx="120" ry="10" fill="url(#b13shd)"/>
+<rect x="110" y="640" width="180" height="22" fill="#16305a"/><line x1="110" y1="640.5" x2="290" y2="640.5" stroke="#9cc4f0" stroke-opacity="0.5"/>
+<rect x="132" y="426" width="136" height="214" fill="url(#b13gold)"/>
+<ellipse cx="200" cy="426" rx="68" ry="9" fill="#ffe28f"/>
+<rect x="132" y="426" width="136" height="111" fill="#fff3c4" opacity="0.18"/>
+<path d="M130,150 L130,640 M270,150 L270,640" stroke="#9fc8f4" stroke-opacity="0.45" stroke-width="2"/>
+<ellipse cx="200" cy="150" rx="70" ry="11" fill="none" stroke="#9fc8f4" stroke-opacity="0.45" stroke-width="2"/>
+<rect x="142" y="160" width="10" height="470" fill="#ffffff" opacity="0.08"/>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="12" fill="#9fbde3" text-anchor="end" style="font-variant-numeric:tabular-nums lining-nums"><text x="122" y="644">£0</text><text x="122" y="472">£5,000</text><text x="122" y="301">£10,000</text></g>
+<g stroke="#9fbde3" stroke-opacity="0.5"><line x1="126" y1="469" x2="132" y2="469"/><line x1="126" y1="297" x2="132" y2="297"/></g>
+<line data-part="reserve-line" x1="116" y1="537" x2="300" y2="537" stroke="#ff5f5f" stroke-width="3"/>
+<rect x="300" y="526" width="22" height="22" fill="#ff5f5f"/><path d="M306,534 L316,534 M306,540 L316,540" stroke="#3a0b10" stroke-width="2"/>
+<text x="330" y="534" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="15" font-weight="700" fill="#ff5f5f">keep</text>
+<text x="330" y="552" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="15" font-weight="700" fill="#ff5f5f" style="font-variant-numeric:tabular-nums lining-nums">£3,000</text>
+<text x="200" y="488" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="14" font-weight="700" fill="#3a2a00" style="font-variant-numeric:tabular-nums lining-nums">£3,240 to spend</text>
+<text x="200" y="700" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="34" font-weight="600" fill="#f2c14e" style="font-variant-numeric:tabular-nums lining-nums">£6,240</text>
+<text x="200" y="724" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="14" fill="#9fbde3">keeping £3,000</text>
+<g><rect x="96" y="744" width="208" height="46" fill="#1260dc" stroke="#5cb0ff" style="filter:drop-shadow(0 0 12px rgba(30,130,255,.45))"/><text x="200" y="773" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="17" font-weight="700" fill="#eaf3ff">Buy 2 blocks · £2,940</text></g>
+<text x="200" y="808" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="12.5" fill="#9fbde3">£1,470 a block (1,000 L)</text>
+
+<!-- Tuesday's takings dropping into the gauge -->
+<path d="M594,478 Q400,190 214,160" fill="none" stroke="#f2c14e" stroke-opacity="0.22" stroke-width="2" stroke-dasharray="2 8" stroke-linecap="round"/>
+<use href="#b13coin" transform="translate(560,432) rotate(-20) scale(0.8,0.5)"/>
+<use href="#b13coin" transform="translate(510,370) rotate(10) scale(0.8,0.85)"/>
+<use href="#b13coin" transform="translate(450,310) rotate(-15) scale(0.8,0.6)"/>
+<use href="#b13coin" transform="translate(385,262) rotate(20) scale(0.8,0.9)"/>
+<use href="#b13coin" transform="translate(320,222) rotate(-10) scale(0.8,0.55)"/>
+<use href="#b13coin" transform="translate(258,186) rotate(15) scale(0.8,0.8)"/>
+
+<!-- CENTRE: the week strip -->
+<text x="800" y="104" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="13" font-weight="600" letter-spacing="1.6" fill="#9fbde3">THIS WEEK</text>
+<ellipse cx="704" cy="452" rx="100" ry="6" fill="url(#b13shd)"/>
+<use href="#b13ot" x="610" y="378" width="190" height="70"/>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif">
+<!-- pads -->
+<use href="#b13pad" x="436" y="556" width="96" height="40"/><use href="#b13pad" x="540" y="556" width="96" height="40"/><use href="#b13pad" x="644" y="556" width="96" height="40"/><use href="#b13pad" x="748" y="556" width="96" height="40"/><use href="#b13pad" x="852" y="556" width="96" height="40"/><use href="#b13pad" x="956" y="556" width="96" height="40"/><use href="#b13pad" x="1060" y="556" width="96" height="40"/>
+<!-- Mon, Tue: flown (empty) -->
+<g fill="none" stroke="#3b5f8f" stroke-width="2"><rect x="461" y="498" width="44" height="58"/><ellipse cx="483" cy="498" rx="22" ry="6"/><rect x="565" y="498" width="44" height="58"/><ellipse cx="587" cy="498" rx="22" ry="6"/></g>
+<text x="483" y="532" text-anchor="middle" font-size="13" font-weight="600" fill="#3ce394">✓</text><text x="587" y="532" text-anchor="middle" font-size="13" font-weight="600" fill="#3ce394">✓</text>
+<!-- Wed: bought, glowing -->
+<ellipse cx="691" cy="528" rx="44" ry="40" fill="#36c6ff" opacity="0.12"/>
+<rect x="669" y="498" width="44" height="58" fill="url(#b13fuel)"/><ellipse cx="691" cy="498" rx="22" ry="6" fill="#bfeaff"/><rect x="669" y="498" width="44" height="58" fill="none" stroke="#7fd9ff" stroke-opacity=".6"/>
+<rect x="676" y="506" width="4" height="44" fill="#ffffff" opacity="0.3"/>
+<!-- Thu-Sun: still to buy (outlines) -->
+<g fill="none" stroke="#5a95c8" stroke-width="2" stroke-dasharray="5 4"><rect x="773" y="498" width="44" height="58"/><ellipse cx="795" cy="498" rx="22" ry="6"/><rect x="877" y="498" width="44" height="58"/><ellipse cx="899" cy="498" rx="22" ry="6"/><rect x="981" y="498" width="44" height="58"/><ellipse cx="1003" cy="498" rx="22" ry="6"/><rect x="1085" y="498" width="44" height="58"/><ellipse cx="1107" cy="498" rx="22" ry="6"/></g>
+<g font-size="12" fill="#9fbde3" text-anchor="middle" style="font-variant-numeric:tabular-nums lining-nums"><text x="795" y="532">600 L</text><text x="899" y="532">600 L</text><text x="1003" y="532">600 L</text><text x="1107" y="532">600 L</text></g>
+<text x="691" y="532" text-anchor="middle" font-size="12" font-weight="700" fill="#041426" style="font-variant-numeric:tabular-nums lining-nums">600 L</text>
+<!-- day labels -->
+<g font-size="15" font-weight="700" text-anchor="middle"><text x="483" y="616" fill="#6f86a8">MON</text><text x="587" y="616" fill="#6f86a8">TUE</text><text x="691" y="616" fill="#36c6ff">WED</text><text x="795" y="616" fill="#eaf2ff">THU</text><text x="899" y="616" fill="#eaf2ff">FRI</text><text x="1003" y="616" fill="#eaf2ff">SAT</text><text x="1107" y="616" fill="#eaf2ff">SUN</text></g>
+<rect x="644" y="566" width="96" height="3" fill="#36c6ff"/>
+<text x="800" y="664" text-anchor="middle" font-size="16" fill="#c6d8f0" style="font-variant-numeric:tabular-nums lining-nums">This week needs <tspan font-weight="700" fill="#eaf2ff">4,200 L</tspan> · bought so far <tspan font-weight="700" fill="#eaf2ff">2 blocks (2,000 L)</tspan></text>
+<g><rect x="896" y="690" width="210" height="44" fill="#0d2346" stroke="#2b5c9e"/><text x="1001" y="718" text-anchor="middle" font-size="16" font-weight="700" fill="#eaf2ff">Fly Wednesday ▶</text></g>
+</g>
+
+<!-- RIGHT: flight board -->
+<text x="1380" y="104" text-anchor="middle" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="13" font-weight="600" letter-spacing="1.6" fill="#9fbde3">FLIGHT BOARD</text>
+<rect x="1210" y="126" width="350" height="520" fill="#020812" stroke="rgba(65,122,171,.6)"/>
+<line x1="1210" y1="126.5" x2="1560" y2="126.5" stroke="#9cc4f0" stroke-opacity="0.5"/>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums">
+<text x="1232" y="162" font-size="12" font-weight="700" letter-spacing="1.6" fill="#9fbde3">WEEK 2 · TWIN OTTER</text>
+<line x1="1226" y1="176" x2="1544" y2="176" stroke="rgba(53,96,135,.5)"/>
+<text x="1232" y="206" font-size="17" font-weight="700" fill="#eaf2ff">Mon 9</text><text x="1538" y="206" text-anchor="end" font-size="20" font-weight="700" fill="#eaf2ff">£518</text>
+<text x="1232" y="230" font-size="14" fill="#3ce394">+£2,000 tickets</text><text x="1538" y="230" text-anchor="end" font-size="14" fill="#9fbde3">−£882 fuel · −£600 costs</text>
+<line x1="1226" y1="246" x2="1544" y2="246" stroke="rgba(53,96,135,.38)"/>
+<text x="1232" y="276" font-size="17" font-weight="700" fill="#eaf2ff">Tue 10</text><text x="1538" y="276" text-anchor="end" font-size="20" font-weight="700" fill="#eaf2ff">£518</text>
+<text x="1232" y="300" font-size="14" fill="#3ce394">+£2,000 tickets</text><text x="1538" y="300" text-anchor="end" font-size="14" fill="#9fbde3">−£882 fuel · −£600 costs</text>
+<line x1="1226" y1="316" x2="1544" y2="316" stroke="rgba(53,96,135,.38)"/>
+<g font-size="15" fill="#6f86a8"><text x="1232" y="346">Wed 11</text><text x="1232" y="384">Thu 12</text><text x="1232" y="422">Fri 13</text><text x="1232" y="460">Sat 14</text><text x="1232" y="498">Sun 15</text></g>
+<line x1="1226" y1="580" x2="1544" y2="580" stroke="#9fbde3" stroke-width="2"/>
+<text x="1232" y="618" font-size="17" fill="#c6d8f0">Week so far</text><text x="1538" y="620" text-anchor="end" font-size="26" font-weight="700" fill="#eaf2ff">£1,036</text>
+</g>
+
+<!-- caption bar -->
+<rect y="830" width="1600" height="70" fill="#071a33"/>
+<line x1="0" y1="830" x2="1600" y2="830" stroke="#5a95c8" stroke-opacity="0.35"/>
+<text x="40" y="874" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="22" fill="#eaf2ff">Tuesday's tickets are in. <tspan font-weight="700">You can buy 2 more blocks now.</tspan></text>
+</svg>

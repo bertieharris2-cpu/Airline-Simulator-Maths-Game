@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="aircraft-e175" width="380" height="118" viewBox="0 0 380 118" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Embraer E175 side view">
+<defs><linearGradient id="acs4" x1="0" y1="0" x2="0.15" y2="1"><stop offset="0" stop-color="#f8fbff"/><stop offset="0.55" stop-color="#e1e9f3"/><stop offset="1" stop-color="#a9b9cf"/></linearGradient>
+<linearGradient id="acn4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfe7f1"/><stop offset="1" stop-color="#97a9c2"/></linearGradient>
+<pattern id="acw4" width="10.5" height="7" patternUnits="userSpaceOnUse" x="72" y="72"><rect x="0" y="0" width="6" height="6" rx="1.2" fill="#0f284c"/></pattern></defs>
+<path data-part="body" d="M4,86 C4,72 18,63 40,62 L280,62 C310,62 340,64 362,68 L364,76 C342,84 318,92 296,96 L46,98 C20,98 4,94 4,86 Z" fill="url(#acs4)"/>
+<path data-part="tail" d="M288,63 L336,8 C337,6.5 338,6 340,6 L360,6 C362,6 363,7.5 363,9.5 L366,74 Z" fill="url(#acs4)"/>
+<path d="M330,74 L380,70 L380,75 L332,79 Z" fill="#cfd9e6"/>
+<rect x="72" y="72" width="200" height="7" fill="url(#acw4)"/>
+<path d="M15,78 L28,71 L46,70 L46,76 L20,79 Z" fill="#0f284c"/>
+<rect x="52" y="66" width="10" height="26" rx="1" fill="none" stroke="#8a9cb6" stroke-width="0.8"/>
+<rect x="276" y="66" width="10" height="25" rx="1" fill="none" stroke="#8a9cb6" stroke-width="0.8"/>
+<path d="M40,63.4 L280,63.4" stroke="#ffffff" stroke-width="0.9" opacity="0.9"/>
+<rect x="140" y="94" width="76" height="5" rx="1" fill="#d5deea"/>
+<rect x="150" y="92" width="10" height="6" fill="#b8c6d8"/>
+<path d="M124,94 L178,94 C184,94 186,106 178,108 L126,108 C116,108 114,94 124,94 Z" fill="url(#acn4)"/>
+<ellipse cx="121" cy="101" rx="3" ry="6.5" fill="#10294d"/>
+<line x1="34" y1="97" x2="34" y2="106" stroke="#62748f" stroke-width="2.2"/>
+<circle cx="34" cy="112" r="6" fill="#0b1830"/><circle cx="34" cy="112" r="2" fill="#62748f"/>
+<line x1="198" y1="98" x2="198" y2="104" stroke="#62748f" stroke-width="2.6"/>
+<circle cx="198" cy="111" r="7" fill="#0b1830"/><circle cx="198" cy="111" r="2.4" fill="#62748f"/>
+</svg>

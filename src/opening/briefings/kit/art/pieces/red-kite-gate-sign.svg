@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="red-kite-gate-sign" width="312" height="84" viewBox="0 0 260 70" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Red Kite Air gate sign: Gate 4, Luton to Dublin 07:10">
+<rect x="0.5" y="0.5" width="259" height="69" fill="#05152b" stroke="#5a95c8" stroke-opacity="0.48"/>
+<rect x="12" y="13" width="44" height="44" fill="#7a1428"/>
+<g transform="translate(14,15) scale(0.4)"><path d="M50,12 L47.2,18 L45.8,30 L36,29.5 L25,23.5 L14,26 L1.5,37.5 L8.5,38.5 L3.5,43 L10.5,43.5 L7,48 L13.5,47.5 L12.5,52 L27,47.5 L42.5,48.5 L45,55 L32,85 L42,83 L50,68 L58,83 L68,85 L55,55 L57.5,48.5 L73,47.5 L87.5,52 L86.5,47.5 L93,48 L89.5,43.5 L96.5,43 L91.5,38.5 L98.5,37.5 L86,26 L75,23.5 L64,29.5 L54.2,30 L52.8,18 Z" fill="#f1e9dc" transform="rotate(-10 50 50)"/></g>
+<text x="70" y="32" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="17" font-weight="600" fill="#eaf2ff">GATE 4</text>
+<text x="70" y="52" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="13" fill="#9fbde3" style="font-variant-numeric:tabular-nums lining-nums">LUTON → DUBLIN 07:10</text>
+</svg>

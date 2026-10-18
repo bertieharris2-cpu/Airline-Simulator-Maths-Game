@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="aircraft-red-kite-e175" width="342" height="106" viewBox="0 0 380 118" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Red Kite Air E175 in livery">
+<defs>
+<linearGradient id="rkeS" x1="0" y1="0" x2="0.15" y2="1"><stop offset="0" stop-color="#f8fbff"/><stop offset="0.55" stop-color="#e1e9f3"/><stop offset="1" stop-color="#a9b9cf"/></linearGradient>
+<linearGradient id="rkeT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a8223a"/><stop offset="1" stop-color="#5e0e1f"/></linearGradient>
+<linearGradient id="rkeW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a182e"/><stop offset="1" stop-color="#5e0e1f"/></linearGradient>
+<clipPath id="rkeC"><path d="M4,86 C4,72 18,63 40,62 L280,62 C310,62 340,64 362,68 L364,76 C342,84 318,92 296,96 L46,98 C20,98 4,94 4,86 Z"/></clipPath>
+<pattern id="rkeP" width="10.5" height="7" patternUnits="userSpaceOnUse" x="72" y="72"><rect x="0" y="0" width="6" height="6" rx="1.2" fill="#0f284c"/></pattern>
+</defs>
+<path data-part="body" d="M4,86 C4,72 18,63 40,62 L280,62 C310,62 340,64 362,68 L364,76 C342,84 318,92 296,96 L46,98 C20,98 4,94 4,86 Z" fill="url(#rkeS)"/>
+<g clip-path="url(#rkeC)"><path d="M140,99 L296,96 C318,92 342,84 364,76 L366,66 C344,63 316,61.5 290,61.5 L276,61.5 C224,74 184,88 140,99 Z" fill="url(#rkeW)"/><path d="M269,61.8 C217,74 177,88 133,98.6" fill="none" stroke="#a8223a" stroke-width="1.6"/></g>
+<path data-part="tail" d="M288,63 L336,8 C337,6.5 338,6 340,6 L360,6 C362,6 363,7.5 363,9.5 L366,74 Z" fill="url(#rkeT)"/>
+<g data-part="kite-mark" transform="translate(320,17) scale(0.37)"><path d="M50,12 L47.2,18 L45.8,30 L36,29.5 L25,23.5 L14,26 L1.5,37.5 L8.5,38.5 L3.5,43 L10.5,43.5 L7,48 L13.5,47.5 L12.5,52 L27,47.5 L42.5,48.5 L45,55 L32,85 L42,83 L50,68 L58,83 L68,85 L55,55 L57.5,48.5 L73,47.5 L87.5,52 L86.5,47.5 L93,48 L89.5,43.5 L96.5,43 L91.5,38.5 L98.5,37.5 L86,26 L75,23.5 L64,29.5 L54.2,30 L52.8,18 Z" fill="#f1e9dc" transform="rotate(-10 50 50)"/></g>
+<path d="M330,74 L380,70 L380,75 L332,79 Z" fill="#7a1428"/>
+<rect x="72" y="72" width="200" height="7" fill="url(#rkeP)"/>
+<text x="74" y="69.4" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="7.6" font-weight="700" letter-spacing="1.6" fill="#7a1428">RED KITE</text>
+<path d="M15,78 L28,71 L46,70 L46,76 L20,79 Z" fill="#0f284c"/>
+<rect x="52" y="66" width="10" height="26" rx="1" fill="none" stroke="#8a9cb6" stroke-width="0.8"/>
+<path d="M40,63.4 L280,63.4" stroke="#ffffff" stroke-width="0.9" opacity="0.9"/>
+<rect x="140" y="94" width="76" height="5" rx="1" fill="#d5deea"/>
+<rect x="150" y="92" width="10" height="6" fill="#b8c6d8"/>
+<path d="M124,94 L178,94 C184,94 186,106 178,108 L126,108 C116,108 114,94 124,94 Z" fill="#7a1428"/>
+<path d="M124,94.7 L178,94.7" stroke="#a8223a" stroke-width="1.2"/>
+<ellipse cx="121" cy="101" rx="3" ry="6.5" fill="#2a0710"/>
+<line x1="34" y1="97" x2="34" y2="106" stroke="#62748f" stroke-width="2.2"/>
+<circle cx="34" cy="112" r="6" fill="#0b1830"/><circle cx="34" cy="112" r="2" fill="#62748f"/>
+<line x1="198" y1="98" x2="198" y2="104" stroke="#62748f" stroke-width="2.6"/>
+<circle cx="198" cy="111" r="7" fill="#0b1830"/><circle cx="198" cy="111" r="2.4" fill="#62748f"/>
+</svg>

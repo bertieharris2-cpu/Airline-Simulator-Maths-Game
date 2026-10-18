@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="aircraft-787" width="754" height="204" viewBox="0 0 754 204" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Boeing 787 side view">
+<defs><linearGradient id="acs6" x1="0" y1="0" x2="0.15" y2="1"><stop offset="0" stop-color="#f8fbff"/><stop offset="0.55" stop-color="#e1e9f3"/><stop offset="1" stop-color="#a9b9cf"/></linearGradient>
+<linearGradient id="acn6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfe7f1"/><stop offset="1" stop-color="#97a9c2"/></linearGradient>
+<pattern id="acw6" width="13.5" height="10" patternUnits="userSpaceOnUse" x="112" y="117"><rect x="0" y="0" width="7" height="9" rx="2" fill="#0f284c"/></pattern></defs>
+<path data-part="body" d="M6,146 C6,118 30,100 76,98 L560,98 C620,98 680,104 724,112 L728,126 C688,140 640,156 596,164 L86,167 C34,167 6,160 6,146 Z" fill="url(#acs6)"/>
+<path data-part="tail" d="M556,99 L652,9 C654,7 656,6 659,6 L702,6 C705,6 707,8 707,11 L716,120 Z" fill="url(#acs6)"/>
+<path d="M650,124 L754,117 L754,126 L654,133 Z" fill="#cfd9e6"/>
+<rect x="112" y="117" width="432" height="10" fill="url(#acw6)"/>
+<path d="M24,124 L44,113 L78,110.5 L78,121 L34,125 Z" fill="#0f284c"/>
+<g fill="none" stroke="#8a9cb6" stroke-width="1"><rect x="92" y="106" width="13" height="46" rx="2"/><rect x="290" y="106" width="13" height="46" rx="2"/><rect x="470" y="106" width="13" height="44" rx="2"/><rect x="560" y="106" width="13" height="42" rx="2"/></g>
+<path d="M76,100 L560,100" stroke="#ffffff" stroke-width="1.2" opacity="0.9"/>
+<rect x="280" y="161" width="150" height="8" rx="2" fill="#d5deea"/>
+<rect x="300" y="156" width="22" height="10" fill="#b8c6d8"/>
+<path d="M228,158 L330,158 C344,158 348,188 332,191 L232,191 C214,191 212,158 228,158 Z" fill="url(#acn6)"/>
+<ellipse cx="224" cy="174.5" rx="6" ry="15" fill="#10294d"/>
+<path d="M330,160 L336,164 L330,168 L336,172 L330,176 L336,180 L330,184 L336,188" fill="none" stroke="#8a9cb6" stroke-width="1.2"/>
+<line x1="70" y1="166" x2="70" y2="186" stroke="#62748f" stroke-width="3"/>
+<circle cx="70" cy="196" r="8" fill="#0b1830"/><circle cx="70" cy="196" r="2.6" fill="#62748f"/>
+<line x1="410" y1="168" x2="410" y2="182" stroke="#62748f" stroke-width="4"/>
+<circle cx="396" cy="194" r="10" fill="#0b1830"/><circle cx="396" cy="194" r="3.2" fill="#62748f"/>
+<circle cx="424" cy="194" r="10" fill="#0b1830"/><circle cx="424" cy="194" r="3.2" fill="#62748f"/>
+</svg>

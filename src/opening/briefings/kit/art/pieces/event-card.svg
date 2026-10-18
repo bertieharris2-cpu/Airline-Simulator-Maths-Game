@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="event-card" width="330" height="150" viewBox="0 0 330 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Event card: rugby final in Dublin, more people want to fly on Saturday">
+<rect x="0" y="0" width="330" height="150" fill="#081f3d" stroke="#5a95c8" stroke-opacity="0.42"/>
+<line x1="0" y1="0.5" x2="330" y2="0.5" stroke="#9cc4f0" stroke-opacity="0.5"/>
+<text x="20" y="30" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="1.32" fill="#36c6ff">NEWS</text>
+<g data-part="icon" fill="none" stroke="#9fbde3" stroke-width="1.5" stroke-linejoin="round"><rect x="20" y="46" width="40" height="30"/><line x1="20" y1="56" x2="60" y2="56"/><line x1="30" y1="42" x2="30" y2="50"/><line x1="50" y1="42" x2="50" y2="50"/><rect x="40" y="62" width="10" height="8"/></g>
+<text x="76" y="60" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="18" font-weight="600" fill="#eaf2ff">Rugby final in Dublin</text>
+<text x="76" y="82" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="14" fill="#9fbde3">Saturday 14 September</text>
+<line x1="20" y1="100" x2="310" y2="100" stroke="#5a95c8" stroke-opacity="0.2"/>
+<text x="20" y="128" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="15" fill="#9fbde3">Want to fly to Dublin</text>
+<text x="310" y="128" text-anchor="end" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="18" font-weight="600" fill="#eaf2ff">44 → 90</text>
+</svg>

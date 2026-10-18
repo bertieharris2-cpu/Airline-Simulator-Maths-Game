@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="route-strip" width="700" height="120" viewBox="0 0 700 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Route strip from 06:00 to 22:00 with hour marks, one flight block and a now line">
+<rect x="0" y="0" width="700" height="120" fill="#081f3d" stroke="#5a95c8" stroke-opacity="0.42"/>
+<text x="16" y="28" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="15" font-weight="600" fill="#eaf2ff">Heathrow – Dublin</text>
+<g stroke="#5a95c8" stroke-opacity="0.2"><line x1="40" y1="44" x2="40" y2="96"/><line x1="117.5" y1="44" x2="117.5" y2="96"/><line x1="195" y1="44" x2="195" y2="96"/><line x1="272.5" y1="44" x2="272.5" y2="96"/><line x1="350" y1="44" x2="350" y2="96"/><line x1="427.5" y1="44" x2="427.5" y2="96"/><line x1="505" y1="44" x2="505" y2="96"/><line x1="582.5" y1="44" x2="582.5" y2="96"/><line x1="660" y1="44" x2="660" y2="96"/></g>
+<g font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="12" fill="#9fbde3" text-anchor="middle"><text x="40" y="112">06:00</text><text x="117.5" y="112">08:00</text><text x="195" y="112">10:00</text><text x="272.5" y="112">12:00</text><text x="350" y="112">14:00</text><text x="427.5" y="112">16:00</text><text x="505" y="112">18:00</text><text x="582.5" y="112">20:00</text><text x="660" y="112">22:00</text></g>
+<rect x="40" y="52" width="68" height="36" fill="#1a4688" stroke="#96cdff" stroke-opacity="0.35"/><rect x="40" y="84" width="68" height="4" fill="#3ce394"/>
+<text x="48" y="75" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="13" font-weight="600" fill="#eaf2ff">AS101</text>
+<rect x="128" y="52" width="68" height="36" fill="#1a4688" stroke="#96cdff" stroke-opacity="0.35"/><rect x="128" y="84" width="68" height="4" fill="#3ce394"/>
+<text x="136" y="75" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="13" font-weight="600" fill="#eaf2ff">AS102</text>
+<rect x="235" y="40" width="3" height="58" fill="#36c6ff"/>
+<text x="243" y="36" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" style="font-variant-numeric:tabular-nums lining-nums" font-size="12" fill="#36c6ff">11:05</text>
+</svg>

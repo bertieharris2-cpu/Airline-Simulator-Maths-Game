@@ -105,7 +105,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
         ok('its chosen services fly from tomorrow', rented.cost[4] > 0, rented.cost);
         await shot('fs-04-back-on-board'); }
       continue; }
-    if(t === 'event'){ await p.click('[data-o="1"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
+    if(t === 'event'){ for(let i = 0; i < 8 && await p.$('[data-seep]'); i++) await p.click('[data-seep]'); await p.click('[data-o="1"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
     if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.evaluate(() => window.__tk.answer(true)); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } continue; }   // flight times before the timetable
     if(t === 'plan'){
       if(day === 8 && !planShop){ const so = JSON.parse(await E('JSON.stringify(shopOfferedReport())')); ok('day 8: no shop step by itself: HQ goes straight to the plan, and the brief names the Fleet desk', !so.scheduled && so.brief.some(l => /On the Fleet desk from today/.test(l)), so);

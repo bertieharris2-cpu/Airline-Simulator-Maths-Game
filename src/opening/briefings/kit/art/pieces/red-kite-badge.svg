@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="red-kite-badge" width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Red Kite Air badge">
+<rect width="40" height="40" fill="#7a1428"/>
+<g transform="translate(2,2) scale(0.36)"><path d="M50,12 L47.2,18 L45.8,30 L36,29.5 L25,23.5 L14,26 L1.5,37.5 L8.5,38.5 L3.5,43 L10.5,43.5 L7,48 L13.5,47.5 L12.5,52 L27,47.5 L42.5,48.5 L45,55 L32,85 L42,83 L50,68 L58,83 L68,85 L55,55 L57.5,48.5 L73,47.5 L87.5,52 L86.5,47.5 L93,48 L89.5,43.5 L96.5,43 L91.5,38.5 L98.5,37.5 L86,26 L75,23.5 L64,29.5 L54.2,30 L52.8,18 Z" fill="#f1e9dc" transform="rotate(-10 50 50)"/></g>
+</svg>

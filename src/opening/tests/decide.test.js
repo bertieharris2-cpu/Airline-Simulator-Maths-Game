@@ -47,7 +47,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   const stepOn = async () => { const t = await T();
     if(t === 'hq'){ await p.click('#startDay'); return t; }
     if(t === 'intro'){ for(let pg = 0; pg < 3; pg++) if(await p.$('#niNext')) await p.click('#niNext'); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled).catch(() => false); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); return t; }
-    if(t === 'event'){ await p.click('[data-o="0"]').catch(() => {}); await p.click('#nx'); return t; }
+    if(t === 'event'){ for(let i = 0; i < 8 && await p.$('[data-seep]'); i++) await p.click('[data-seep]'); await p.click('[data-o="0"]').catch(() => {}); await p.click('#nx'); return t; }
     if(t === 'workings' && await vis('.so-page')){ await signs(); await p.waitForTimeout(300); await p.click('#nx'); return t; }
     if(t === 'workings'){ await solveW(); await p.click('#nx'); return t; }
     if(t === 'fuelDesk'){ const bn = await p.$('[data-fdb="2"]:not([disabled])'); if(bn){ await bn.click(); await p.waitForTimeout(60);

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-piece="fuel-tank-half" width="180" height="262" viewBox="0 0 180 262" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fuel tank, half full">
+<defs><linearGradient id="mfc2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4c70a2"/><stop offset="0.35" stop-color="#2f5384"/><stop offset="1" stop-color="#112a50"/></linearGradient>
+<linearGradient id="mff2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#36c6ff" stop-opacity="0.85"/><stop offset="1" stop-color="#2c7fd0" stop-opacity="0.55"/></linearGradient>
+<radialGradient id="mfg2"><stop offset="0" stop-color="#36c6ff" stop-opacity="0.16"/><stop offset="1" stop-color="#36c6ff" stop-opacity="0"/></radialGradient></defs>
+<ellipse cx="90" cy="170" rx="90" ry="90" fill="url(#mfg2)"/>
+<ellipse cx="96" cy="250" rx="86" ry="8" fill="#000" opacity="0.35"/>
+<path d="M10,34 L10,240 A80,16 0 0 0 170,240 L170,34 Z" fill="url(#mfc2)"/>
+<ellipse cx="90" cy="34" rx="80" ry="16" fill="#5d82b4"/>
+<path d="M70,4 L110,4 L100,26 L80,26 Z" fill="#3d5f8e"/><ellipse cx="90" cy="26" rx="10" ry="3" fill="#061226"/>
+<rect x="56" y="62" width="68" height="166" fill="#050f22" stroke="#5a95c8" stroke-opacity="0.5" stroke-width="1.5"/>
+<rect data-part="fuel" x="59" y="145" width="62" height="80" fill="url(#mff2)"/><rect x="59" y="144" width="62" height="3" fill="#d6f2ff"/>
+<g stroke="#9fbde3" stroke-width="1.5"><line x1="124" y1="104" x2="132" y2="104"/><line x1="124" y1="145" x2="132" y2="145"/><line x1="124" y1="186" x2="132" y2="186"/></g>
+</svg>

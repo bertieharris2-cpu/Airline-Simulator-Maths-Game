@@ -1,0 +1,107 @@
+
+/* =====================================================================
+   CLAUDE DESIGN, BATCH 2 (the handover of 18 Oct 2026). Year one only: the new screens are drawn only while yearOne()
+   (p5l); styles that change existing screens sit under body.yr1. Tokens are DESIGN.md's (p1_head_design1.css), plus
+   the ones this batch adds: Red Kite's identity and the briefing people.
+   ===================================================================== */
+:root{
+  --red-kite:#7a1428; --red-kite-ember:#a8223a; --red-kite-ivory:#f1e9dc;
+  --people-neutral:#9fb3cf; --people-head:#c4d4ea; --people-family:#c8956a;
+}
+
+/* ---------- 3.1 / 3.2 event cards: one centred column 900px ---------- */
+/* the mock-ups are drawn in screen pixels at 1366 × 768, where the desk (1680 × 940) shows at 0.813: the batch's pages zoom their
+   frame by 1 / 0.813 so they match the mock-up there, and scale with the desk at other sizes. No side panel on these pages. */
+body.desk .ws.ev2-ws,.ws.ev2-ws{grid-template-columns:minmax(0,1fr) !important}
+.ws.ev2-ws .ws-main > .tf{zoom:1.23}
+.ev2-ws .tf-top,.ev2-ws .tf-todo,.ev2-ws .tf-story{display:none}
+.ev2-ws .tf-bar{width:900px;max-width:100%;margin-left:auto;margin-right:auto;background:none;border:0;box-shadow:none;padding-left:0;padding-right:0}
+.ev2-ws #nx[hidden]{display:none}
+.ev2{width:900px;max-width:100%;margin:0 auto;display:flex;flex-direction:column;gap:12px;color:var(--text)}
+.ev2-h{display:flex;flex-direction:column;gap:2px}
+.ev2-eye.amber{color:var(--bv-amber)}
+.ev2-eye.cyan{color:var(--cyan)}
+.ev2-tt{display:flex;align-items:center;gap:10px;margin:2px 0 4px;font:600 30px/1.1 var(--font-sans);letter-spacing:-.01em;color:var(--text)}
+.ev2-tt .say{font-size:16px}
+.ev2-ctx{margin:0;font:400 15px/1.4 var(--font-sans);color:#c6d8f0}
+.ev2-scene{display:block;width:100%;height:auto;aspect-ratio:900/250;border:1px solid rgba(65,122,171,.45);background:#030b19}
+.ev2-scene text{font-variant-numeric:tabular-nums lining-nums}
+.ev2-rain{animation:ev2rain .8s linear infinite}
+.ev2-rain.r2{animation-duration:1.15s;opacity:.6}
+@keyframes ev2rain{from{transform:translate(0,0)}to{transform:translate(-36px,110px)}}
+.ev2-flash{opacity:0;animation:ev2flash 1.6s ease-out .5s 1}
+@keyframes ev2flash{0%{opacity:0}8%{opacity:.35}16%{opacity:.05}26%{opacity:.25}60%{opacity:0}100%{opacity:0}}
+.ev2-wake{animation:ev2wake .9s ease-out 1}
+@keyframes ev2wake{0%{opacity:.2}40%{opacity:1}70%{opacity:.6}100%{opacity:1}}
+.ev2-fog{animation:ev2fog 18s ease-in-out infinite alternate}
+@keyframes ev2fog{from{transform:translateX(-40px)}to{transform:translateX(40px)}}
+.ev2-ash,.ev2-snow{animation:ev2fall 7s ease-in-out infinite alternate}
+@keyframes ev2fall{from{transform:translate(-8px,-6px)}to{transform:translate(10px,14px)}}
+body.rm .ev2-rain,body.rm .ev2-flash,body.rm .ev2-wake,body.rm .ev2-fog,body.rm .ev2-ash,body.rm .ev2-snow,body.rm .ev2-out.arrive{animation:none}
+body.rm .ev2-flash{opacity:0}
+@media (prefers-reduced-motion:reduce){.ev2-rain,.ev2-flash,.ev2-wake,.ev2-fog,.ev2-ash,.ev2-snow,.ev2-out.arrive{animation:none}.ev2-flash{opacity:0}}
+/* the choices as board keys */
+.ev2-keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.ev2-key{font:inherit;text-align:left;color:var(--text);padding:12px 14px;min-height:68px;background:var(--panel-0);border:1px solid rgba(65,122,171,.6);border-radius:var(--radius-none);cursor:pointer;display:flex;flex-direction:column;gap:3px;transition:opacity .35s,border-color var(--t-hover),box-shadow var(--t-hover)}
+.ev2-key b{font:700 15px/1.2 var(--font-sans);letter-spacing:.06em}
+.ev2-key span{font:400 13.5px/1.35 var(--font-sans);color:var(--text-soft)}
+.ev2-key em{font-style:normal;font-weight:600;color:var(--gold)}
+.ev2-key:hover:not(:disabled){border-color:var(--cyan)}
+.ev2-key:disabled{cursor:default}
+.ev2-key.pick{border-color:var(--cyan);background:#0c2a4c;box-shadow:var(--glow-cyan)}
+.ev2-key.rec{opacity:.38}
+.ev2-ins,.ev2-share{margin:0;font:400 13px/1.4 var(--font-sans);color:var(--text-soft)}
+.ev2-ins b{color:var(--text);font-weight:600}
+/* the outcome plate: one row */
+.ev2-out{display:grid;grid-template-columns:290px minmax(0,1fr);gap:16px;align-items:center;padding:14px 16px;background:linear-gradient(155deg,var(--panel-2) 0%,var(--panel-1) 48%,var(--panel-0) 100%);border:1px solid rgba(65,122,171,.6);box-shadow:inset 0 1px 0 rgba(150,205,255,.2)}
+.ev2-out.arrive{animation:ev2arrive .45s cubic-bezier(.2,.9,.3,1) 1}
+@keyframes ev2arrive{0%{transform:translateY(6px);opacity:.2}100%{transform:none;opacity:1}}
+.ev2-oh{display:flex;flex-direction:column;gap:3px;min-width:0}
+.ev2-res{color:var(--text-soft)}
+.ev2-oh b{font:600 22px/1.15 var(--font-sans);color:var(--text)}
+.ev2-oh p{margin:0;font:400 14px/1.4 var(--font-sans);color:#c6d8f0}
+.ev2-figs{display:grid;grid-template-columns:1.5fr 1fr;gap:10px;min-width:0}
+.ev2-tile{display:flex;flex-direction:column;gap:5px;padding:10px 12px;background:var(--panel-0);border:1px solid rgba(53,96,135,.5);min-width:0}
+.ev2-tl{font:400 12.5px/1.2 var(--font-sans);color:var(--text-soft)}
+.ev2-tv{font:600 24px/1.1 var(--font-sans);color:var(--text);font-variant-numeric:tabular-nums lining-nums}
+.ev2-tv.gold{color:var(--gold);text-shadow:0 0 16px rgba(242,193,78,.25)}
+.ev2-bar{position:relative;display:block;height:16px;background:#0b2448;border:1px solid rgba(65,122,171,.5)}
+.ev2-bar i{position:absolute;left:0;top:0;bottom:0;background:var(--gold);box-shadow:0 0 12px rgba(242,193,78,.35)}
+.ev2-tile small{font:400 13px/1.3 var(--font-sans);color:var(--text-soft);font-variant-numeric:tabular-nums lining-nums}
+.ev2-sr{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ev2-stars{position:relative;display:inline-block;font-size:22px;letter-spacing:3px;color:#24426c;line-height:1}
+.ev2-stars i{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--gold);font-style:normal}
+.ev2-chg{font:600 14px/1.2 var(--font-sans)}
+.ev2-chg.up{color:var(--green)}
+.ev2-chg.dn{color:var(--text)}
+.ev2-chg.no{color:var(--text-soft);font-weight:400}
+/* Red Kite: the slim board, the model as the hero, See profit row by row */
+.ev2-kb{padding:10px 26px;background:linear-gradient(135deg,#0a1c38,#030a18);border:1px solid rgba(65,122,171,.45)}
+.ev2-kbi{display:flex;flex-direction:column;gap:2px;padding:10px 20px 12px;background:#020812;border:1px solid rgba(65,122,171,.6);box-shadow:inset 0 1px 0 rgba(156,196,240,.4)}
+.ev2-kbh{font:700 13px/1.6 var(--font-sans);letter-spacing:.18em;color:var(--text-soft)}
+.ev2-kr{display:grid;grid-template-columns:240px 150px 136px 1fr;align-items:center;font:600 20px/1.3 var(--font-sans);color:var(--text);font-variant-numeric:tabular-nums lining-nums}
+.ev2-kr b{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+.ev2-kr b.gold{color:var(--gold)}
+.ev2-kite{width:22px;height:22px;flex:none}
+.ev2-fast{font:700 13px/1 var(--font-sans);letter-spacing:.12em;color:var(--bv-amber)}
+.ev2-mt{padding:4px 14px 10px;background:linear-gradient(155deg,var(--panel-2) 0%,var(--panel-1) 48%,var(--panel-0) 100%);border:1px solid rgba(65,122,171,.6);box-shadow:inset 0 1px 0 rgba(150,205,255,.2)}
+.ev2-t{width:100%;border-collapse:collapse}
+.ev2 .ev2-t th,.ev2 .ev2-t td{border:0 !important;background:none}
+.ev2-t thead th{padding:10px 12px 8px;font:600 13px/1.2 var(--font-sans);color:var(--text-soft);text-align:right;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.ev2-t thead th:first-child{text-align:left}
+.ev2-t tbody th{padding:10px 12px;text-align:left;font:600 17px/1.2 var(--font-sans);color:var(--text);white-space:nowrap}
+.ev2-t tbody td{padding:10px 12px;text-align:right;font:600 18px/1.2 var(--font-sans);color:var(--text);white-space:nowrap;font-variant-numeric:tabular-nums lining-nums}
+.ev2-t tbody tr{border-bottom:1px solid var(--line-soft);transition:background var(--t-data),box-shadow var(--t-data),opacity .35s}
+.ev2-t tbody tr:last-child{border-bottom:0}
+.ev2-t td small{font:400 12px var(--font-sans);color:var(--text-soft)}
+.ev2-t td.gold{color:var(--gold)}
+.ev2-t td.ev2-note{font:400 13px/1.2 var(--font-sans);color:var(--text-soft)}
+.ev2-t td.ev2-a{width:1%;padding-left:6px}
+.ev2 .ev2-t tr.lit > *,.ev2 .ev2-mt.done tbody tr.pick > *{background:var(--panel-active)}
+.ev2 .ev2-t tr.lit > :first-child,.ev2 .ev2-mt.done tbody tr.pick > :first-child{box-shadow:inset 3px 0 0 var(--cyan)}
+.ev2-see{color:var(--cyan);border-color:rgba(54,198,255,.55)}
+.ev2-chp{font-size:13px;white-space:nowrap}
+.ev2-mnote{margin:6px 0 0;font:400 13px/1.4 var(--font-sans);color:var(--text-soft)}
+.ev2-pnote{margin:6px 0 0;padding:8px 10px;font:400 13.5px/1.4 var(--font-sans);color:var(--text);background:var(--panel-0);border:1px solid var(--line-soft)}
+.ev2-mt.done{padding:0 14px}
+.ev2-mt.done tbody tr.rec{opacity:.45}
