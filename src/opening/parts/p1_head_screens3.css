@@ -272,3 +272,16 @@ body.rm .wc-mr.fresh,body.rm .wc-coins.go i,body.rm .wc-mr b.flash{animation:non
 .wc.tight .wc-pic,.wc.tight .wc-job,.wc.tight .wc-cmp,.wc.tight .wc-why-l,.wc.tight .wc-lr:nth-child(n+3){display:none}
 .wc.tight .wc-zones{max-height:none}
 .wc-dec.one{grid-template-columns:1fr auto}
+
+/* Play notes (18 Oct): the screen's name, and the recorder, in the bottom-left corner over the nav's artwork */
+.pn-tag{position:fixed;left:6px;bottom:6px;z-index:9000;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;width:max(150px,calc(13vw - 14px));box-sizing:border-box;padding:5px 8px 5px 10px;background:rgba(4,14,30,.92);border:1px solid rgba(130,195,255,.35);color:#CFE0F7;font:12px/1.2 system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.pn-tag .pn-n{color:#EAF2FF;font-size:13px;flex:1 0 100%}
+.pn-tag .pn-w{color:#9FBDE3;flex:1 0 100%}
+.pn-tag button{font:inherit;font-size:11.5px;padding:3px 8px;border:1px solid rgba(130,195,255,.4);background:rgba(54,198,255,.12);color:#EAF2FF;cursor:pointer;white-space:nowrap}
+.pn-tag button:hover{background:rgba(54,198,255,.25)}
+.pn-tag.rec{border-color:#ff5d5d}
+.pn-tag .pn-r{display:inline-flex;align-items:center;gap:5px;color:#ffb4b4;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pn-tag .pn-r i{width:9px;height:9px;border-radius:50%;background:#ff4d4d;animation:pnBlink 1.2s infinite}
+@keyframes pnBlink{50%{opacity:.25}}
+body.rm .pn-tag .pn-r i{animation:none}
+@media print{.pn-tag{display:none}}
