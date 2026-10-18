@@ -4,7 +4,7 @@
 
 ## The game, in one paragraph
 
-*Airline Simulator* is a maths game for secondary pupils: they run an airline, and the airline's figures are their sums. The game is one HTML file (`airline-opening-prototype.html`, built from `src/opening/parts/`). Its look is the Night Ops design system: deep navy desks, thin cyan rules, amber for what needs attention and green for what is done. That system lives in `p1_head_nightops.css` and `p4zz_nightops.js`, and `ui-sandbox/airline-ui-sandbox.html` holds its key screens with sample data. The screens below are all from Launch Day: the pupil plans two routes for one 19-seat Twin Otter (Dublin and Paris), works out the day's figures, watches the first take-off, and sees the day fly on the Operations Wall.
+*Airline Simulator* is a maths game for upper-primary pupils (Years 5–6): they run an airline, and the airline's figures are their sums. The game is one HTML file (`airline-opening-prototype.html`, built from `src/opening/parts/`). Its look is the Night Ops design system: deep navy desks, thin cyan rules, amber for what needs attention and green for what is done. That system lives in `p1_head_nightops.css` and `p4zz_nightops.js`, and `ui-sandbox/airline-ui-sandbox.html` holds its key screens with sample data. The screens below are all from Launch Day: the pupil plans two routes for one 19-seat Twin Otter (Dublin and Paris), works out the day's figures, watches the first take-off, and sees the day fly on the Operations Wall.
 
 ## 1. The Studio with a flight selected: a deep dive
 

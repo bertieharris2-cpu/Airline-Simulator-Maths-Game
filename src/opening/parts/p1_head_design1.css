@@ -1,0 +1,229 @@
+
+/* =====================================================================
+   DESIGN.md (the BertieV4 design system, 18 Oct 2026): its tokens, and Claude Design's batch 1.
+   The tokens are DESIGN.md's own names and values; use them rather than typing colours.
+   Three of DESIGN.md's names already mean something else in the game's older layers (--line is the desk's border,
+   --amber the older layers' money and button colour, --blue a text blue). They keep the game's values on the page,
+   and DESIGN.md's values are --bv-line, --bv-amber and --bv-blue; inside a new component (.bv) the DESIGN names
+   point at those, so the component reads as DESIGN.md writes it.
+   ===================================================================== */
+:root{
+  --bg-0:#020812; --bg-1:#041426; --bg-2:#071d36;
+  --panel-0:#05152b; --panel-1:#081f3d; --panel-2:#0d3159; --panel-active:#123e64;
+  --line-soft:rgba(53,96,135,.38);
+  --text:#eaf2ff; --text-soft:#9fbde3; --text-muted:#6f86a8;
+  --cyan:#36c6ff; --gold:#f2c14e; --green:#3ce394; --red:#ff5f5f; --magenta:#ff4fd8;
+  --bv-line:rgba(65,122,171,.48); --bv-amber:#ffb547; --bv-blue:#278ef0;
+  --wall-panel-2:#0a2446; --wall-panel-1:#06182f; --wall-panel-0:#041022; --wall-tile:rgba(4,13,30,.55); --wall-ocean:#040d1e; --wall-land:#14284a;
+  --nav-ink:#9fc8f4; --nav-active-top:#1677e7; --nav-active-bottom:#124582;
+  --action-top:#2486ff; --action-bottom:#1260dc; --action-edge:#5cb0ff;
+  --go-top:#22c97a; --go-bottom:#118f55; --go-edge:#5ff0a8; --on-action:#eaf3ff; --on-go:#04231a;
+  --livery-body:#f4f6f8; --livery-belly:#1b2a4a; --livery-second:#d7263d;
+  --shadow-panel:0 10px 28px rgba(0,0,0,.16), inset 0 1px rgba(255,255,255,.028);
+  --focus-rail:inset 3px 0 0 #36c6ff, 0 0 22px rgba(54,198,255,.09);
+  --glow-cyan:0 0 18px rgba(54,198,255,.18); --glow-gold:0 0 20px rgba(242,193,78,.18); --glow-green:0 0 18px rgba(60,227,148,.18); --glow-red:0 0 20px rgba(255,95,95,.20);
+  --field-inset:inset 0 4px 12px rgba(0,0,0,.25);
+  --s1:4px; --s2:8px; --s3:12px; --s4:18px; --s5:28px;
+  --radius-none:0; --radius-field:2px; --radius-chip:3px;
+  --t-hover:150ms; --t-page:220ms; --t-data:350ms; --t-wake:350ms; --t-result:450ms; --t-fuel:600ms; --t-ambient:25s;
+  --font-sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+}
+.bv{--line:var(--bv-line);--amber:var(--bv-amber);--blue:var(--bv-blue)}
+/* the Night Ops layer's colour roles read DESIGN.md's tokens (confirmed green is DESIGN.md's #3ce394, not #2bff88) */
+html.no{--no-cyan:var(--cyan);--no-blue:var(--bv-blue);--no-mag:var(--magenta);--no-green:var(--green);--no-gold:var(--gold);--no-amber:var(--bv-amber);--no-red:var(--red);
+  --no-ink:var(--text);--no-soft:var(--text-soft);--no-mute:var(--text-muted)}
+/* DESIGN.md's type styles. The game already has classes called .screen-title and .task (other things), so these carry bv- */
+.bv-title{font:600 32px/38px var(--font-sans);letter-spacing:-.01em}
+.bv-task{font:600 24px/30px var(--font-sans)}
+.bv-result{font:600 26px/30px var(--font-sans)}
+.bv-section{font:550 17px/22px var(--font-sans)}
+.bv-body{font:400 15px/22px var(--font-sans)}
+.bv-support{font:400 12.5px/17px var(--font-sans)}
+.bv-eyebrow{font:600 11px/14px var(--font-sans);letter-spacing:.12em;text-transform:uppercase}
+.bv,.bv *{font-variant-numeric:tabular-nums lining-nums}
+/* DESIGN.md's parts used by this batch: panel, buttons, the unknown, the sum tag */
+.bv-panel{position:relative;background:linear-gradient(155deg,var(--panel-2) 0%,var(--panel-1) 48%,var(--panel-0) 100%);border:1px solid var(--bv-line);box-shadow:var(--shadow-panel);border-radius:var(--radius-none);padding:var(--s4)}
+.bv-panel::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,rgba(150,205,255,.40),rgba(150,205,255,.08) 58%,transparent);pointer-events:none}
+.bv-panel.support{background:linear-gradient(160deg,#092643,#051629)}
+.bv-panel.active{background:linear-gradient(155deg,var(--panel-active) 0%,#092743 58%,#06192d 100%);box-shadow:var(--shadow-panel),var(--focus-rail)}
+.bv-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);min-height:40px;padding:0 var(--s4);border-radius:var(--radius-none);border:1px solid var(--bv-line);background:linear-gradient(180deg,#0d2a4c,#081d38);color:var(--text);font:600 15px/1 var(--font-sans);cursor:pointer;transition:transform var(--t-hover) ease,border-color var(--t-hover) ease}
+.bv-btn:hover:not(:disabled){transform:translateY(-1px);border-color:var(--cyan)}
+.bv-btn:active:not(:disabled){transform:none}
+.bv-btn:disabled{opacity:.45;cursor:default}
+.bv-btn.primary{background:linear-gradient(180deg,var(--action-top),var(--action-bottom));border-color:var(--action-edge);color:var(--on-action)}
+.bv-btn.go{background:linear-gradient(180deg,var(--go-top),var(--go-bottom));border-color:var(--go-edge);color:var(--on-go)}
+.bv-btn.big{min-height:48px;font-size:18px;padding:0 22px}
+.bv-btn.small{min-height:30px;padding:0 var(--s3);font-size:13px}
+.bv-link{border:0;background:none;padding:0 var(--s2);color:var(--text-soft);font:600 14px var(--font-sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.bv-link:disabled{opacity:.4;cursor:default}
+.bv-link:hover:not(:disabled){color:var(--cyan)}
+.bv-unknown{color:var(--magenta);text-shadow:0 0 14px rgba(255,79,216,.35)}
+.bv-sumtag{display:inline-flex;align-items:center;padding:2px 8px;background:var(--gold);color:#1c1400;font:700 12px/16px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;border-radius:var(--radius-chip);white-space:nowrap}
+.bv-ok{color:var(--green)}
+@keyframes bvSettle{0%{box-shadow:0 0 0 rgba(60,227,148,0)}35%{box-shadow:0 0 26px rgba(60,227,148,.38)}100%{box-shadow:var(--glow-green)}}
+@keyframes bvLight{0%{color:var(--text)}30%{color:var(--green);text-shadow:0 0 16px rgba(60,227,148,.55)}100%{text-shadow:none}}
+
+/* ---------- 3. the Operations Wall in deep navy (Option A; layout and sizes unchanged) ---------- */
+#wall{--ocean:var(--wall-ocean);--land:var(--wall-land)}
+#wall .ocean,#wall.mode-intel .ocean{fill:var(--wall-ocean)}
+#wall .mworld,#wall.mode-intel .mworld{--land:var(--wall-land)}
+#wall .w-over{background:linear-gradient(155deg,var(--wall-panel-2) 0%,var(--wall-panel-1) 50%,var(--wall-panel-0) 100%);border-color:var(--bv-line);box-shadow:inset 0 1px 0 rgba(150,205,255,.18)}
+#wall .wt{background:var(--wall-tile);border-color:var(--dk-line,#1c3f73)}
+#wall .lo-intro{background:radial-gradient(800px 500px at 50% 40%,rgba(31,122,255,.12),transparent 70%),rgba(4,13,30,.96)}
+#wall .w-head{background:linear-gradient(180deg,#071a3b,#041029);border-color:rgba(54,198,255,.24)}
+#wall .w-board,#wall .w-status{background:linear-gradient(160deg,var(--dk-pnl,#0a1a35),var(--dk-bg2,#06142b))}
+#wall .wo-stage .wo-cap{background:var(--wall-panel-1)}
+/* section 5: the HQ's network map (Home and Network) used the same old pale blue ocean; it takes the Wall's deep navy too */
+#hqMap,.hq-map{--ocean:var(--wall-ocean);--land:var(--wall-land)}
+
+/* ---------- 4. the take-off: the plane pivots on its main wheels (they sit 86% of the way down the drawing) ---------- */
+.runway .rw-plane{transform-origin:46% 86%}
+
+/* ---------- the Calculation Builder (DESIGN.md: Week 1 flow): tiles, square operations, the book strip, the answer ---------- */
+.bv-eq{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;margin:0 0 var(--s3);font:600 22px/1.2 var(--font-sans);color:var(--text)}
+.bv-eqs{color:var(--text-soft)}
+.bv-slot{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:64px;height:40px;padding:0 10px;border:2px dashed var(--magenta);color:var(--magenta);font:700 22px/1 var(--font-sans);border-radius:var(--radius-field)}
+.bv-slot.op{min-width:44px;width:44px;padding:0;border-color:rgba(159,189,227,.45);color:var(--text)}
+.bv-slot.on{border-style:solid;border-color:var(--cyan);color:var(--text);background:rgba(54,198,255,.08)}
+.bv-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s2);margin:0 0 10px}
+.bv-tile{height:58px;min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:4px;padding:0 var(--s3);border:1px solid var(--bv-line);background:linear-gradient(180deg,#0d2a4c,#081d38);color:var(--text);text-align:left;cursor:pointer;border-radius:var(--radius-none);transition:border-color var(--t-hover) ease,box-shadow var(--t-hover) ease}
+.bv-tile small{font:500 11.5px/1.15 var(--font-sans);color:var(--text-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.bv-tile b{font:700 22px/1 var(--font-sans);color:var(--text)}
+.bv-tile:hover{border-color:var(--cyan)}
+.bv-tile.on{border-color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan),var(--glow-cyan);background:linear-gradient(180deg,#123e64,#0a2747)}
+.bv .bv-money,.bv-tile b.bv-money{color:var(--gold)}
+.bv-ops{display:flex;align-items:center;gap:var(--s2)}
+.bv-op{width:48px;height:48px;flex:none;border:1px solid var(--bv-line);background:linear-gradient(180deg,#0d2a4c,#081d38);color:var(--text);font:600 24px/1 var(--font-sans);cursor:pointer;border-radius:var(--radius-none)}
+.bv-op:hover{border-color:var(--cyan)}
+.bv-ops .bv-msg,.bv-ansrow .bv-msg{flex:1;min-width:0;margin:0;align-self:center}
+.bv-ops .bv-msg:empty,.bv-ansrow .bv-msg:empty{min-height:0}
+.bv-mine{min-height:48px}
+.bv-msg{min-height:20px;margin-top:var(--s2);font:500 14px/1.35 var(--font-sans);color:var(--text-soft)}
+.bv-msg:empty{min-height:0;margin:0}
+.bv-msg.q{color:var(--bv-amber)}
+.bv-msg.ok{color:var(--green)}
+.bv-fl{margin:0 0 var(--s1);font:400 14px/1.4 var(--font-sans);color:var(--text-soft)}
+.bv-built{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;margin:0 0 var(--s3)}
+.bv-big{display:inline-flex;align-items:center;gap:10px;font:700 30px/1.15 var(--font-sans);color:var(--text)}
+.bv-big .bv-o{color:var(--text-soft);font-weight:600}
+.bv-n{display:inline-flex;align-items:flex-start;gap:3px}
+.bv-ab{display:inline-block;font:700 11px/1 var(--font-sans);font-style:normal;color:#03121f;background:var(--cyan);padding:2px 4px;border-radius:var(--radius-chip);margin-top:2px}
+.bv-fl .bv-ab{margin:0 3px 0 0;vertical-align:1px}
+.bv-big .bv-unknown{font-weight:800}
+.bv-bok{font:600 13px/1.3 var(--font-sans);color:var(--green)}
+.bv-bok .bv-link{padding:0 2px;font-size:13px}
+.bv-book{display:flex;align-items:center;gap:var(--s3);padding:10px var(--s3);border:1px solid rgba(242,193,78,.55);border-left:3px solid var(--gold);background:rgba(242,193,78,.06);margin:0 0 var(--s3)}
+.bv-sumbadge{flex:none;display:inline-flex;align-items:center;padding:7px 12px;background:var(--gold);color:#1c1400;font:800 18px/1 var(--font-sans);letter-spacing:.06em;border-radius:var(--radius-chip)}
+.bv-book p{margin:0;font:400 15px/1.4 var(--font-sans);color:var(--text)}
+.bv-ansrow{display:flex;align-items:stretch;gap:10px}
+.bv .answer.bv-field{display:flex;align-items:center;flex:0 1 280px;height:48px;padding:0 var(--s3);margin:0;background:#020c1a;border:1px solid var(--bv-line);box-shadow:var(--field-inset);border-radius:var(--radius-field)}
+.bv .answer.bv-field:focus-within{border-color:var(--cyan);box-shadow:var(--field-inset),0 0 0 1px var(--cyan)}
+.bv .answer.bv-field .unit{color:var(--gold);font:700 22px var(--font-sans);margin-right:6px}
+.bv .answer.bv-field input{flex:1;min-width:0;height:100%;background:transparent;border:0;outline:0;color:var(--text);caret-color:var(--cyan);font:700 22px var(--font-sans);font-variant-numeric:tabular-nums lining-nums}
+.bv-ansrow .bv-btn{min-width:130px}
+.bv-got{color:var(--green)}
+.bv-got.arrive,.bv-lit{animation:bvLight .5s ease-out 1}
+.bv-doneline{margin:0 0 var(--s3);font:600 15px/1.4 var(--font-sans);color:var(--green)}
+.bv-doneline b{color:var(--text)}
+.bv-doneline .bv-sumtag{vertical-align:1px}
+.bv-cb .pq-ref{margin-top:var(--s3)}
+.bv-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.bv-cb .sum-h.bv-sumh{margin:-4px 0 6px;font:400 12.5px/17px var(--font-sans);color:var(--text-soft)}
+.wk-sum.bv-cb{display:block;width:100%;max-width:none}
+.bv-step{width:100%}
+body.rm .bv-got.arrive,body.rm .bv-lit,body.rm .bv td.arrive{animation:none}
+
+/* ---------- 2. the Work it out page: one centred column 760px; the sheet sized to its figures ---------- */
+.bv-wio .plw{width:760px;max-width:100%;margin-left:auto;margin-right:auto;gap:var(--s2)}
+body.desk .bv-wio .ws-main h1.tq{font:600 32px/38px var(--font-sans);letter-spacing:-.01em;text-align:center}
+.bv-wio .sheetp table.fx{width:auto;table-layout:fixed;margin:0 auto}
+.bv-wio .sheetp table.fx th:first-child{width:230px;min-width:230px}
+.bv-wio .sheetp table.fx thead th:not(:first-child),.bv-wio .sheetp table.fx td{width:168px;min-width:168px;max-width:168px}
+.bv-wio .sheetp table.fx td{position:relative}
+.bv-wio .sheetp table.fx td.c.bv-opd{outline:2px solid var(--cyan);outline-offset:-2px;background:rgba(54,198,255,.07);box-shadow:none}
+.bv-wio .sheetp .bv-tag{position:absolute;right:6px;top:50%;transform:translateY(-50%);font:700 10.5px/1 var(--font-sans);font-style:normal;color:#03121f;background:var(--cyan);padding:2px 4px;border-radius:var(--radius-chip)}
+.bv-wio .sheetp table.fx td.c.bv-target{outline:2px solid var(--magenta);outline-offset:-2px;background:rgba(255,79,216,.08);box-shadow:0 0 14px rgba(255,79,216,.18)}
+html .bv-wio .sheetp .ft2 table.fx td.c.enter.bv-target button{background:none;border:0;outline:0;color:var(--magenta);font:800 20px/1 var(--font-sans);box-shadow:none;width:100%}
+.bv-wio .sheetp table.fx td.c.done{background:rgba(60,227,148,.09);color:var(--green)}
+.bv-wio .sheetp td.c.done span{color:var(--green);font-weight:700}
+.bv-wio .sheetp table.fx td.c.arrive{animation:bvFill .5s ease-out 1}
+html .bv-wio .sheetp .ft2 table.fx td.c.enter.bv-wait button{color:var(--text-soft);background:transparent;box-shadow:none}
+.bv-wio .sheetp .bv-ctag{position:absolute;right:4px;top:3px;font:700 10px/1 var(--font-sans);font-style:normal;color:var(--gold);border:1px solid rgba(242,193,78,.55);padding:1px 4px;border-radius:var(--radius-chip)}
+@keyframes bvFill{0%{background:rgba(60,227,148,0)}35%{background:rgba(60,227,148,.32)}100%{background:rgba(60,227,148,.09)}}
+.bv-wio .sh-work{background:linear-gradient(155deg,var(--panel-active) 0%,#092743 58%,#06192d 100%);border:1px solid var(--bv-line);box-shadow:var(--shadow-panel),var(--focus-rail);padding:var(--s3) var(--s4) var(--s4)}
+.bv-wio .sh-work .sh-h{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s2)}
+.bv-wio .sh-work .sh-h .dk-kind{font:600 11px/14px var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--magenta)}
+.bv-wio .sh-work .sh-h b{font:550 17px/22px var(--font-sans);color:var(--text)}
+.bv-wio .sh-work .sd-prog{color:var(--text-soft);font:400 12.5px var(--font-sans)}
+
+/* ---------- 1. the Studio: the selected flight's panel (its row, and the Change row) ---------- */
+.s2-pop.s3-insp{grid-template-rows:38px 46px;height:96px}
+.bv-insp .s3-ir2.bv-chg{display:flex;align-items:center;gap:var(--s3);flex-wrap:nowrap;overflow:visible;padding:4px 0 0;border-top:1px solid var(--line-soft)}
+.bv-chgl{color:var(--cyan)}
+.bv-fare{display:inline-flex;align-items:center;gap:6px}
+.bv-fs{width:34px;height:34px;border:1px solid var(--bv-line);background:linear-gradient(180deg,#0d2a4c,#081d38);color:var(--text);font:700 20px/1 var(--font-sans);cursor:pointer;border-radius:var(--radius-none)}
+.bv-fs:hover:not(:disabled){border-color:var(--cyan)}
+.bv-fs:disabled{opacity:.35;cursor:default}
+.bv-fv{min-width:72px;text-align:center;font:700 22px/1 var(--font-sans)}
+.bv-was{color:var(--text-soft);font:400 12.5px var(--font-sans)}
+.bv-seats{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;margin-left:auto}
+.bv-seats small{color:var(--text-soft);font:400 12.5px var(--font-sans);margin-right:2px}
+.bv-sf{display:inline-flex;align-items:baseline;gap:5px;padding:4px 8px;border:1px solid var(--line-soft);background:rgba(4,13,30,.5);color:var(--text-soft);font:600 13px var(--font-sans);cursor:pointer;border-radius:var(--radius-chip)}
+.bv-sf b{color:var(--text);font-weight:700}
+.bv-sf.fill-good b{color:var(--green)}
+.bv-sf.fill-mid b{color:var(--bv-amber)}
+.bv-sf:hover{border-color:var(--cyan)}
+.bv-sf.on{border-color:var(--cyan);color:var(--text);box-shadow:inset 0 0 0 1px var(--cyan)}
+.s2-tt .ad-blk.bv-anchor{outline:2px solid var(--cyan);outline-offset:2px;box-shadow:var(--glow-cyan)}
+.ds-wstrip:empty{display:none}
+
+/* ---------- 1. the Worth Sum Callout: pinned above the flight; magenta while it waits for its sum, green once when done ---------- */
+.bv-wsc{position:fixed;z-index:40;width:460px;padding:12px 14px 14px;background:linear-gradient(155deg,var(--panel-active) 0%,#092743 58%,#06192d 100%);border:1px solid var(--magenta);box-shadow:0 18px 40px rgba(0,0,0,.45),0 0 24px rgba(255,79,216,.16);color:var(--text)}
+.bv-wsc.done{border-color:var(--green);box-shadow:0 18px 40px rgba(0,0,0,.45),var(--glow-green)}
+.bv-wsc.done.arrive{animation:bvSettle .5s ease-out 1}
+body.rm .bv-wsc.done.arrive{animation:none}
+.bv-wsc-h{display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s2)}
+.bv-wsc-h .bv-eyebrow{color:var(--magenta)}
+.bv-wsc.done .bv-wsc-h .bv-eyebrow{color:var(--green)}
+.bv-x{margin-left:auto;width:28px;height:28px;flex:none;border:1px solid var(--line-soft);background:transparent;color:var(--text-soft);font:400 18px/1 var(--font-sans);cursor:pointer}
+.bv-x:hover{border-color:var(--cyan);color:var(--text)}
+.bv-ba{border-collapse:collapse;margin:0 0 var(--s3)}
+.bv-ba th{text-align:left;font:400 14px/1.3 var(--font-sans);color:var(--text-soft);padding:3px 16px 3px 0;white-space:nowrap}
+.bv-ba td{font:700 16px/1.3 var(--font-sans);color:var(--text);padding:3px 6px;text-align:right;white-space:nowrap}
+.bv-ba td.ar{color:var(--text-muted);font-weight:400;padding:3px 2px}
+.bv-ba td:last-child{text-align:left}
+.bv-ba tr.bv-k th{color:var(--text);font-weight:600}
+.bv-ba .bv-unknown{font-size:20px}
+.bv-ba .bv-got{font-size:17px}
+.bv-diff{font:600 13px var(--font-sans);color:var(--green)}
+.bv-wsc .bv-eq{font-size:17px;margin-bottom:var(--s2)}
+.bv-wsc .bv-slot{min-width:54px;height:40px;font-size:18px}
+.bv-wsc .bv-slot.op{min-width:40px;width:40px}
+.bv-wsc .bv-tile{padding:0 8px}
+.bv-wsc .bv-tile small{font-size:11px;white-space:normal;line-height:1.1}
+.bv-wsc .bv-ops{flex-wrap:wrap;row-gap:6px}
+.bv-wsc .bv-ops .bv-msg{order:5;flex-basis:100%}
+.bv-wsc .bv-ops .bv-mine{margin-left:auto}
+.bv-wsc .bv-mine{font-size:15px;padding:0 14px}
+.bv-wsc .bv-big{font-size:26px}
+.bv-wsc .bv-book{padding:8px 10px}
+.bv-wsc .bv-sumbadge{font-size:15px;padding:5px 9px}
+.bv-wsc .bv-book p{font-size:13.5px}
+.bv-wsc .bv-ansrow{flex-wrap:wrap;row-gap:6px}
+.bv-wsc .answer.bv-field{flex:0 1 250px;width:auto;min-width:0}
+.bv-wsc .bv-ansrow .bv-msg{flex-basis:100%}
+.bv-mean{margin:0 0 var(--s3);font:600 15px/1.4 var(--font-sans);color:var(--text)}
+.bv-wsc-act{display:flex;justify-content:flex-end}
+.bv-ptr{position:absolute;bottom:-9px;width:16px;height:16px;margin-left:-8px;background:#06192d;border-right:1px solid var(--magenta);border-bottom:1px solid var(--magenta);transform:rotate(45deg)}
+.bv-wsc.done .bv-ptr{border-color:var(--green)}
+.bv-wsc.below .bv-ptr{bottom:auto;top:-9px;background:#0f3558;transform:rotate(225deg)}
+.bv-wsc.nopt .bv-ptr{display:none}
+
+/* ---------- section 5: unknown = magenta, money = gold, everywhere ----------
+   The other sum instruments keep their layout until they are rebuilt on the Calculation Builder (next batch); their
+   unknown "?" turns magenta now: the review's build cards, the build bars on the desks' cards, the flight-times cell. */
+.rb-q,.rvs .rv-t td.rv-c.lit .rb-q{color:var(--magenta);text-shadow:0 0 12px rgba(255,79,216,.35)}
+.rb-bar .rb-res{color:var(--magenta)}
+.ft3-c.act{box-shadow:inset 0 0 0 2px var(--magenta);background:rgba(255,79,216,.07)}
+.ft3-c.act b{color:var(--magenta)}
+.ft3-q > .ft3-seq > i{color:var(--magenta);font-style:normal;font-weight:700}

@@ -10,6 +10,40 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0za. Claude Design batch 1 (18 Oct 2026)
+
+Two new parts: `p1_head_design1.css` (appended after `p1_head_screens3.css`) and `p5k_design1.js` (after `p5j_sheet.js`). Both only reassign, so `overrides.txt` stays at 120. The brief is `docs/Launch-Day-Changes-Batch-1.md`; the report and the screens changed are in `docs/Batch-1-Report.md`.
+- **Tokens.** DESIGN.md's variables go on `:root`.
+  - `--line`, `--amber` and `--blue` already meant other things in the older layers. They keep the game's values; DESIGN.md's values are `--bv-line`, `--bv-amber` and `--bv-blue`, and `.bv` re-points the DESIGN names inside the new components.
+  - `--gold`, `--green` and `--red` now hold DESIGN.md's values.
+  - `html.no`'s `--no-*` colour roles read the tokens.
+  - The type styles are `.bv-title`, `.bv-task`, `.bv-result`, `.bv-section`, `.bv-body`, `.bv-support` and `.bv-eyebrow`; the component classes are `.bv-panel`, `.bv-btn`, `.bv-unknown` and `.bv-sumtag`.
+- **The Calculation Builder** (shared helpers):
+  - `bvBuildStepHtml` (the slots, the tiles, the square operations, "That's my sum");
+  - `bvTypeStepHtml` (the built sum, the SUM strip `bvBookHtml`, the answer and Check);
+  - `bvJudge(tokens, seq, tiles, lhs)` (the Query notes);
+  - `bvBig` (A × B with letters).
+- **Work it out.**
+  - `sumDockHtmlPlanner` and `bindSumDock` are reassigned while `paperOn()`. The state per sum is `UI.bvB = { key, tokens, tries, built, shown }`.
+  - `bvTiles(t, col, row)` gives the four tiles: the operands, then real figures (the column's "want to fly", figures shown in the same column, the strip's aircraft and fuel).
+  - `bvSame` sends the later columns of a row straight to step 2.
+  - `bvBuildCheck` records a `build` entry under the cell's key; the typed answer opens the `calc` entry, so both carry the same `n`.
+  - `paperPlan()` returns the whole sequence for sums of any length.
+  - `bvSheetMark()` (a render hook) adds `bv-wio` to the page, A and B on the sheet (`.bv-opd`, `.bv-tag`), the magenta target (`.bv-target`), the green fill with its Sum n (`.bv-filled`, `.bv-ctag`; `arrive` once, by `UI.bvArrived`) and the header's `.bv-sumtag`.
+  - The answer box is no longer moved into the cell: its row has no `.sd-ans`, which `shAfter` looks for.
+  - The test handles are unchanged: `[data-pbfig]`, `[data-pbop]`, `#pbUndo`, `#pbChk`, `#cellAns`, `#cellCheck`, `#ftMsg`, `#wkNext`.
+- **The Studio.**
+  - `s2SvcEditor` is reassigned: row 1, then the `.bv-chg` row by `bvFareRow` (`[data-bvfare="id|±1"]`, `[data-bvfareto="id|f"]`).
+  - `dsWorth` is wrapped. It adds `W.ba` (before → after), `W.tiles`, `W.seq = ['pax','×','fare']`, `W.answer` (passengers × fare after) and `W.cb` (the callout's sum state). It sets `W.per` so every kind but a flight taken off asks its sum once.
+  - `bvWscShow()` (a render hook on the plan step) draws `#bvWsc` (`.wait` or `.done`), with `position:fixed` inside the scaled `#control` above `bvWscAnchor` (the selected flight, or the route's first block, outlined `.bv-anchor`). It removes `.ds-wstrip` and `.ds-flash`.
+  - The sum's handles: `[data-wsf]`, `[data-wso]`, `#wsUndo`, `#wsChk`, `#wsChange`, `#wsAns`, `#wsCheck`, `#wsDone`, `#wsX`, `#wsMsg`.
+  - Records `worth:<kind>:<day>`, a build then a calc.
+  - Closes on a pointerdown outside it and the panel, or on Esc.
+- **The Wall.** `#wall`-scoped rules for `.w-over`, `.wt`, the map variables, `.lo-intro`, `.w-head`, `.w-board`, `.w-status` and `.wo-cap`. `#hqMap` takes the same ocean and land.
+- **The take-off.** `TKO2` (taxi 1.5, hold 0.4, roll 2.5, rotate 0.9, climb 6.1 s; total 11.4 at `flightSecs` 7).
+  - `takeoffSecs`, `takeoffPose` (returns `g`, the ground travelled, for the centre line's `background-position`) and `takeoffRun` are reassigned.
+  - `.rw-plane` pivots at `46% 86%`. `.art-shadow` fades as it climbs. Reduced motion: `.tko-rm`, a 0.8 s fade.
+
 ## 0z. Play notes, Bertie's Launch Day notes and the eleven briefings (18 Oct 2026)
 
 Parts `p5i_playnotes.js` and `p5j_sheet.js` follow `p5h_screens3`. Both are wrapped in `{}` and reached through `window.__pn` and `window.__sh`. Also new: the briefings kit (`src/opening/briefings/kit/`), nine briefing pages and two rebuilt ones. Reassignment only (`overrides.txt` 120). No data changes: the Briefings sheet (v5.15) already names all eleven pages.

@@ -82,15 +82,20 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   await shot('ds-02-nbn-find-work');
   // a Paris flight on the Saab: the line after the change, and the first "what was it worth" Build (an extra flight)
   await p.selectOption(`[data-addsel="0|${saab}"]`, 'par'); await p.waitForTimeout(250);
-  const flash = await txt('.ds-flash'); info.flash = flash;
-  ok('NBN: after the change a line says what changed: seats a → b · profit £x → £y', /This change — seats [\d,]+ → [\d,]+ · profit [−+]?£[\d,]+ → [−+]?£[\d,]+/.test(flash), flash);
-  ok('NBN: the first extra flight is a Build: what was it worth a day?', await vis('.ds-wb') && /extra (\w+ )?flight/.test(await txt('.ds-wb')), await txt('.ds-wb'));
+  // batch 1 (Claude Design, 18 Oct): the change opens the Worth Sum Callout over the new flight, in place of the line above it
+  const wsc = await txt('#bvWsc'); info.callout = wsc;
+  ok('NBN: the first extra flight opens the Worth Sum Callout over it: what it does, flights and passengers before → after, the day\'s tickets as the unknown (magenta edge)', await vis('#bvWsc.wait') && /extra flight: what it does/i.test(wsc) && /Flights a day\s*[\d,]+\s*→\s*[\d,]+/.test(wsc) && /Passengers a day\s*[\d,]+\s*→\s*[\d,]+/.test(wsc) && /Paris tickets a day\s*£[\d,]+\s*→\s*\?/.test(wsc) && await vis('.s2-tt .ad-blk.bv-anchor'), wsc);
+  ok('NBN: the callout\'s sum is built from four tiles, two of them real figures from the callout', (await p.$$('#bvWsc [data-wsf]')).length === 4, await p.$$eval('#bvWsc [data-wsf]', es => es.map(e => e.textContent)));
   await shot('ds-03-nbn-worth-build');
-  await p.click('[data-dswf="other"]'); await p.click('[data-dswo="×"]'); await p.click('[data-dswf="units"]'); await p.click('[data-dswc]'); await p.waitForTimeout(120);
-  ok('NBN: a figure that is not part of it is a Query with one more try', /Query: .* is not part of it.*One more try/.test(await txt('.ds-wb')), await txt('.ds-wb'));
-  await p.click('[data-dswf="units"]'); await p.click('[data-dswo="×"]'); await p.click('[data-dswf="per"]'); await p.click('[data-dswc]'); await p.waitForTimeout(150);
-  const B1 = await J('dsReport()'); info.built = B1.built;
-  ok('NBN: passengers × fare is right: the Build is done, and the line shows what the flight was worth a day', !!B1.built.service && /One more flight: [\d,]+ × £[\d,]+ − £[\d,]+ costs = /.test(await txt('.s2-sum')), await txt('.s2-sum'));
+  const dec = await E("(UI.dsWorth.tiles.find(t => t.dis) || {}).k"); await p.click(`[data-wsf="${dec}"]`); await p.click('[data-wso="×"]'); await p.click('[data-wsf="fare"]'); await p.click('#wsChk'); await p.waitForTimeout(120);
+  ok('NBN: a figure that is not part of it is a Query with one more try', /Query: .* is not part of .*One more try/.test(await txt('#wsMsg')), await txt('#wsMsg'));
+  await p.click('[data-wsf="pax"]'); await p.click('[data-wso="×"]'); await p.click('[data-wsf="fare"]'); await p.click('#wsChk'); await p.waitForTimeout(150);
+  ok('NBN: passengers × fare built: the sum shows large with its SUM number, the book strip and the answer box', await vis('#bvWsc #wsAns') && /SUM \d+/.test(await txt('#bvWsc .bv-book')) && /= \?/.test(await txt('#bvWsc .bv-big')), await txt('#bvWsc'));
+  await p.fill('#wsAns', String(await E('UI.dsWorth.answer'))); await p.click('#wsCheck'); await p.waitForTimeout(200);
+  const B1 = await J('dsReport()'); info.built = B1.built; const wsc2 = await txt('#bvWsc');
+  ok('NBN: the answer is right: the callout turns green with the tickets and the difference a day, a line of meaning and Done; the line is in the plan summary', !!B1.built.service && await vis('#bvWsc.done') && /£[\d,]+ \([+−±]£[\d,]+ a day\)/.test(wsc2) && /extra flight costs/.test(wsc2) && await vis('#wsDone') && /One more flight: [\d,]+ × £[\d,]+ − £[\d,]+ costs = /.test(await txt('.s2-sum')), [wsc2, await txt('.s2-sum')]);
+  await shot('ds-03b-nbn-worth-done'); await p.click('#wsDone'); await p.waitForTimeout(150);
+  ok('NBN: Done closes the callout', !(await vis('#bvWsc')));
   ok('NBN: the plan improved: Plan improved: seats a → b · result £x → £y, in the plan summary', /Plan improved: seats [\d,]+ → [\d,]+ · result/.test(await txt('.s2-sum')), await txt('.s2-sum'));
   await shot('ds-04-nbn-improved');
   // the fare chips on a full route with people turned away
@@ -108,7 +113,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   for(const k of [1, 2, 3, 4, 2]){ await p.mouse.move(bx.x + bx.w / 2 + k * bx.lw * 40 / bx.span, bx.y + bx.h / 2, { steps:2 }); await p.waitForTimeout(60); seen.push(await txt('.s2-tt .ad-blk.dragging .st-bs')); }
   await p.mouse.up();   // dropped 80 minutes later: the rest of the day still fits await p.waitForTimeout(250); info.drag = { lab0, seen };
   ok('NBN: while a block is dragged its label shows the fill at each time (seats filled / seats)', seen.length && seen.every(x => /^\d+\/\d+( FULL)?$/.test(x)), info.drag);
-  ok('NBN: after the drop, the one-line change', /This change — seats/.test(await txt('.ds-flash')), await txt('.ds-flash'));
+  ok('NBN: after the drop, the one-line change (or, when the change needs its sum, the Worth Sum Callout with seats before → after)', /This change — seats/.test(await txt('.ds-flash')) || /new time: what it does.*Passengers a day\s*[\d,]+\s*→\s*[\d,]+/i.test(await txt('#bvWsc')), [await txt('.ds-flash'), await txt('#bvWsc')]);
   // a guided experiment: the issue named, two or three experiments, predict, change one thing, compare, use
   await p.click('#dsInv'); await p.waitForTimeout(200);
   const opts = await p.$$eval('[data-dxv]', es => es.map(e => e.getAttribute('data-dxv'))); info.expOpts = opts;
@@ -172,7 +177,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
     for(let k = 1; k <= 8; k++){ await p.mouse.move(bb.x + bb.w / 2 + k * bb.lw * 30 / bb.span, bb.y + bb.h / 2, { steps:2 }); await p.waitForTimeout(60); lab.push(await txt('.s2-tt .ad-blk.dragging .st-bs') + ' at ' + await txt('.s2-tt .ad-blk.dragging .st-bt b')); }
     await shot('ds-15-gubby-drag'); await p.mouse.up(); await p.waitForTimeout(250); info.gubbyDrag = lab;
     ok('Gubby: moving the 12:20 flight shows its fill live as it goes later', lab.length > 3 && new Set(lab.slice(1).map(x => x.split(' at ')[0])).size >= 2, lab);
-    ok('Gubby: after the drop, the line says seats and profit before and after', /This change — seats [\d,]+ → [\d,]+ · profit/.test(await txt('.ds-flash')), await txt('.ds-flash')); }
+    ok('Gubby: after the drop, the line says seats and profit before and after (or the Worth Sum Callout says passengers before → after)', /This change — seats [\d,]+ → [\d,]+ · profit/.test(await txt('.ds-flash')) || /what it does.*Passengers a day\s*[\d,]+\s*→\s*[\d,]+/i.test(await txt('#bvWsc')), [await txt('.ds-flash'), await txt('#bvWsc')]); }
   await shot('ds-16-gubby-after');
 
   console.log(checks.join('\n')); console.log('info ' + JSON.stringify(info)); console.log('ERRORS', errors.length ? errors : 'none');

@@ -39,13 +39,23 @@ Only the fare sums have a briefing in front of them.
 
 | # | From | Item |
 | --- | --- | --- |
-| C1 | Bertie | The Studio with a flight selected: the worth result is missed after Check, and the fare is hard to find among the inspector's controls. |
-| C2 | Bertie | The Sums page: centre the sheet and its working panel, and keep a Build sum at full size. |
-| C3 | Bertie | The Operations Wall's blue: paler, flatter, "cheaper", out of style with the HQ. |
-| C4 | Bertie | The take-off: a straight ground roll of two to three seconds before it lifts. The timing can be done without design (`TKO` in `p4q_paint.js`: rotate later, longer run); the feel comes from Claude Design. |
+| C1 | Bertie | **Done 18 Oct (batch 1, Option D).** The Studio with a flight selected: the worth result is missed after Check, and the fare is hard to find among the inspector's controls. |
+| C2 | Bertie | **Done 18 Oct (batch 1, Option A).** The Sums page: centre the sheet and its working panel, and keep a Build sum at full size. |
+| C3 | Bertie | **Done 18 Oct (batch 1, deep navy).** The Operations Wall's blue: paler, flatter, "cheaper", out of style with the HQ. |
+| C4 | Bertie | **Done 18 Oct (batch 1).** The take-off: a straight ground roll of two to three seconds before it lifts. The timing can be done without design (`TKO` in `p4q_paint.js`: rotate later, longer run); the feel comes from Claude Design. |
 
 ## D. Play notes tooling
 
 | # | From | Change |
 | --- | --- | --- |
 | D1 | seen | **The recording started 21 s after the log** (the microphone prompt), so every remark's time had to be shifted by hand. Log the moment the recorder actually starts (a `rec` entry), and have `playnotes_transcribe.py` shift by it. Use the silence filter by default: without it, the transcript put remarks up to 30 s early. |
+
+## E. From batch 1 (Claude Design, 18 Oct)
+
+| # | From | Change | Where |
+| --- | --- | --- | --- |
+| E1 | brief §5 | **The other sum instruments on the Calculation Builder.** "Every sum in every week" follows the Week 1 flow (four tiles, book and type, SUM n). Batch 1 converted the Work it out pages and the Studio's worth sums. Still on their own layouts (only their "?" is magenta): the Fuel desk's order, the Sunday review's build cards, the sign-off cards, the flight-times page, the aircraft worth check, and the finance and time-to-afford cards. | `p4zr_paper.js` (fuel order), `p4zb_decisions.js` (review cards), `p4zc_signoffs.js`, `p5h_screens3.js` (flight times, worth check), `p4zm_buyonly.js`, `p4zo_ch3money.js`, `p4zs_ch4.js`, `p4zu_fuelstore.js` |
+| E2 | DESIGN.md | **The DESIGN names `--line`, `--amber` and `--blue` everywhere.** They point at DESIGN.md's values only inside the new components (`.bv`), because the older layers use them with other meanings (`--amber` is their money colour). Retire those uses, then let the DESIGN names hold DESIGN's values everywhere. | `p1_head.html` (the older layers), `p1_head_design1.css` |
+| E3 | DESIGN.md | **The green buttons' labels in `on-go`** (#04231a), and the Fixed Inspector's quarter-hour steps (the game moves 5 minutes, D101). Both are DESIGN.md rules the game doesn't follow yet. | the button styles; `s3Move` in `p5h_screens3.js` |
+| E4 | seen | **"Price a litre £1.30"** in the strip under Launch Day's timetable, while the sheet's fuel price is £1.20 (Launch Day's fuel is free, so no sum uses it). | the plan strip on the Work it out page |
+

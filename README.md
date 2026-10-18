@@ -380,6 +380,19 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Claude Design batch 1: DESIGN.md, the worth callout, the Work it out column, the deep navy Wall, the take-off (18 Oct 2026)
+*Bertie's choices from Claude Design's mock-ups of his Launch Day screens (`docs/Launch-Day-Changes-Batch-1.md`). The report, with the other screens changed, the conflicts flagged and the screenshots at 1366 × 768 and 1920 × 1080, is `docs/Batch-1-Report.md`.*
+- **The design system.** `DESIGN.md` (repo root) is Bertie's design system, and `CLAUDE.md` says to follow it. Its tokens are CSS variables in `parts/p1_head_design1.css`. The batch's code is `parts/p5k_design1.js`.
+- **The Studio.** The selected flight's panel keeps two rows: the flight's controls, and a Change row with the fare as a − / + stepper, "was £90" and the seats filled at each fare. A plan change that needs its worth sum opens the **Worth Sum Callout** above the flight that changed: what the change does, before → after, with the day's tickets as the magenta unknown. Its sum is built, worked out in the book and typed; the callout turns green once with the answer, the difference a day and a line of meaning.
+- **Work it out.** One centred column, 760px: the sheet sized to its figures, the working panel under it, the route strips below. Every sum follows the **Week 1 flow**:
+  1. build it from four figure tiles (two of them real figures from the same screen) and an operation;
+  2. work it out in the book (the gold **SUM n** badge links the screen, the book and the printed record) and type the answer;
+  3. done: the answer lights green once in the sheet's cell.
+  - The sheet outlines the sum's figures in cyan as A and B; the cell being filled is magenta with a "?".
+- **The Operations Wall** is deep navy (`--wall-*` tokens); so is the HQ's network map.
+- **The take-off** has a ground roll of 2.5 s gathering speed, the nose wheel lifting first, then the climb: 9.5 s from the roll to leaving the view. Under reduced motion it is a 0.8 s fade.
+- **Colour roles everywhere:** the unknown is magenta, money gold, confirmed green `#3ce394`.
+
 ### Operations briefings: the eleven scenes of Fable's plan (18 Oct 2026)
 *Fable's briefings plan (linked by Bertie on 18 Oct), built now so that the play notes can test them. The pages are in `src/opening/briefings/` and share one kit (`briefings/kit/brief-kit.js` and `.css`). The build embeds both, and the game puts the kit into each page as it opens. The triggers and each scene's figures are in `p5f_brief.js`. Reassignment only (`overrides.txt` stays at 120). Notes for Fable: `docs/Report-for-Fable-Briefings.md`; screenshots: `docs/screenshots/briefings/`.*
 - **How a briefing plays:**

@@ -47,6 +47,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
     info['signs ' + tag] = done; return done; };
   const solveW = async () => { for(let g = 0; g < 80; g++){ if(await T() !== 'workings') break;
       if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ await p.click('#wkTutGo'); continue; }
+      if(await p.$('#pbChk')){ const P = JSON.parse(await p.evaluate(() => window.__sim.evalIn('JSON.stringify(paperPlan())'))); for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-pbop="${x}"]` : `[data-pbfig="${x}"]`); await p.click('#pbChk'); await p.waitForTimeout(60); continue; }   // batch 1: every sum is built first
       if(await p.$('#cellAns')){ await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(60); continue; }
       if(await p.$('.sc-p1.sign #scCheck')){ const A = await E('scAnswers()'); for(const [k, v] of Object.entries(A)) await p.fill(`[data-sc="${k}"]`, v); await p.click('#scCheck'); await p.waitForTimeout(80); continue; }
       if(await p.$('#scNext:not([disabled])')){ await p.click('#scNext'); continue; }
