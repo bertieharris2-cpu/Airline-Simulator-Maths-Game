@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations briefing — How long will it take?</title>
+<link rel="stylesheet" href="kit/brief-kit.css" data-kit>
+<script src="kit/brief-kit.js" data-kit></script>
+</head>
+<body data-brief="flight_time">
+<script>
+/* 7 · How long will it take? (the first Flight times page). A map strip from London to the new city, with a ruler of equal
+   hour-long chunks laid along the route; his plane at the start. He presses Fly one hour and the plane covers one chunk;
+   again; a quarter-hour button for the last bit; it lands and the clock stops. The triangle appears and he taps the letter to
+   find. Caption: Time = distance ÷ speed. Lands on the first flight-time sum. */
+const D = Object.assign({ id:'flight_time', route:{ city:'Amsterdam', km:450 }, plane:{ name:'Twin Otter', speed:300 } }, K.B);
+const km = D.route.km, sp = D.plane.speed, city = D.route.city, num = K.num, hours = km / sp;
+const hm = m => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, '0')}`, total = Math.round(hours * 60);
+K.start({ title:'How long will it take?' });
+const L = K.layers(), sv = K.s;
+/* the map: the sea, the land either side, the route */
+sv('rect', { x:0, y:0, width:1600, height:900, fill:'#0a2347' }, L.back);
+for(let i = 0; i < 12; i++) sv('path', { d:`M0 ${80 + i * 70} Q 400 ${60 + i * 70} 800 ${85 + i * 70} T 1600 ${75 + i * 70}`, fill:'none', stroke:'#1b4777', 'stroke-opacity':.35, 'stroke-width':1 }, L.back);
+sv('path', { d:'M0 120 L 150 90 L 230 160 L 210 260 L 260 330 L 240 430 L 300 520 L 250 610 L 120 660 L 0 640 Z', fill:'#15365e', stroke:'#2d5c92', 'stroke-width':2 }, L.back);
+sv('path', { d:'M1600 60 L 1330 90 L 1260 180 L 1300 300 L 1240 380 L 1280 520 L 1220 650 L 1300 780 L 1600 840 Z', fill:'#15365e', stroke:'#2d5c92', 'stroke-width':2 }, L.back);
+const X0 = 230, X1 = 1290, Y = 400, px = X1 - X0, kmX = k => X0 + px * k / km;
+sv('line', { x1:X0, y1:Y, x2:X1, y2:Y, stroke:'#9fc3ea', 'stroke-width':2.5, 'stroke-dasharray':'10 8', opacity:.6 }, L.mid);
+[[X0, 'London'], [X1, city]].forEach(([x, n]) => { sv('circle', { cx:x, cy:Y, r:10, fill:'#EAF2FF' }, L.mid); K.txt(L.mid, x, Y - 50, n, { 'font-size':26, 'font-weight':700, 'text-anchor':'middle' }); });
+K.txt(L.mid, (X0 + X1) / 2, Y - 92, `${num(km)} km`, { 'font-size':22, 'text-anchor':'middle', fill:'#9FBDE3' });
+/* the ruler: one chunk for each hour at this plane's speed; the last part in quarter hours */
+const rul = sv('g', { opacity:0 }, L.mid), full = Math.floor(hours + 1e-9);
+for(let h = 0; h <= full; h++){ const x = kmX(Math.min(km, h * sp)); sv('rect', { x, y:Y + 30, width:Math.max(0, kmX(Math.min(km, (h + 1) * sp)) - x), height:34, fill:h % 2 ? '#1f5fa8' : '#2b78c9', opacity:h < full ? .9 : 0 }, rul); if(h < full) K.txt(rul, (x + kmX((h + 1) * sp)) / 2, Y + 54, `1 hour · ${num(sp)} km`, { 'font-size':16, 'font-weight':700, 'text-anchor':'middle' }); }
+const qs = Math.round((hours - full) * 4); for(let q = 0; q < qs; q++){ const a = kmX(full * sp + q * sp / 4), b = kmX(full * sp + (q + 1) * sp / 4); sv('rect', { x:a, y:Y + 30, width:b - a - 2, height:34, fill:q % 2 ? '#2a6b6b' : '#338383', opacity:.9 }, rul); K.txt(rul, (a + b) / 2, Y + 54, '¼', { 'font-size':16, 'font-weight':700, 'text-anchor':'middle' }); }
+/* his plane at London, and the clock */
+const pg = sv('g', null, L.front); const pl = K.plane(pg, { x:-70, y:-52, w:150, shadow:false }); K.at(pg, X0, Y - 6);
+const clock = K.call(800, 640, '<b>0 h 00</b> in the air', 'cy');
+let at = 0, mins = 0;
+const fly = async (k, m) => { const a = at; at = Math.min(km, at + k); await K.tween(900, t => K.at(pg, kmX(K.lerp(a, at, t)), Y - 6 - Math.sin(t * Math.PI) * 6), 'io'); mins += m; clock.say(`<b>${hm(mins)}</b> in the air`); };
+
+(async () => {
+  K.mark(0); await K.caption(`Your ${D.plane.name} flies at <b>${num(sp)} km an hour</b>. ${city} is ${num(km)} km away.`);
+  await K.tween(700, t => rul.setAttribute('opacity', t)); await K.caption('Each block of the ruler is one hour of flying.');
+  K.mark(1); K.question('Fly it there: <b>one hour at a time</b>');
+  const b1 = K.h('button', { class:'bk-chip', type:'button', style:'position:absolute;width:14cqw' }, K.hud(), `Fly one hour<small>${num(sp)} km</small>`), bq = K.h('button', { class:'bk-chip', type:'button', style:'position:absolute;width:14cqw' }, K.hud(), `Fly a quarter hour<small>${num(sp / 4)} km</small>`);
+  K.pos(b1, 560, 720); K.pos(bq, 820, 720);
+  const left = () => km - at;
+  await new Promise(res => {
+    const upd = () => { b1.disabled = left() < sp - 1e-6; bq.disabled = left() < 1e-6; if(left() < 1e-6) res(); };
+    b1.onclick = async () => { if(left() < sp - 1e-6) return; b1.disabled = bq.disabled = true; await fly(sp, 60); upd(); if(left() > 1e-6 && left() < sp - 1e-6) K.caption('Less than an hour to go: fly the rest a quarter hour at a time.'); };
+    bq.onclick = async () => { b1.disabled = bq.disabled = true; await fly(Math.min(sp / 4, left()), 15); upd(); };
+    upd();
+  });
+  b1.remove(); bq.remove();
+  K.mark(2); K.question(null); await K.caption(`Landed in ${city}: <b>${hm(mins)}</b>. ${num(km)} km at ${num(sp)} km an hour.`);
+  await K.wait(1200);
+  // the triangle: he taps the letter to find
+  const tri = sv('g', { opacity:0 }, L.top), TX = 800, TY = 650;
+  sv('path', { d:`M${TX} ${TY - 150} L ${TX + 170} ${TY + 120} L ${TX - 170} ${TY + 120} Z`, fill:'#0b2246', stroke:'#F2C14E', 'stroke-width':3 }, tri);
+  sv('line', { x1:TX - 98, y1:TY + 5, x2:TX + 98, y2:TY + 5, stroke:'#F2C14E', 'stroke-width':2 }, tri); sv('line', { x1:TX, y1:TY + 5, x2:TX, y2:TY + 120, stroke:'#F2C14E', 'stroke-width':2 }, tri);
+  const LT = { D:[TX, TY - 30, 'Distance'], S:[TX - 62, TY + 80, 'Speed'], T:[TX + 62, TY + 80, 'Time'] }, letters = {};
+  Object.entries(LT).forEach(([k, [x, y, w]]) => { letters[k] = K.txt(tri, x, y, k, { 'font-size':54, 'font-weight':800, 'text-anchor':'middle' }); K.txt(tri, x, y + 26, w, { 'font-size':15, 'text-anchor':'middle', fill:'#9FBDE3' }); });
+  clock.out(); await K.tween(500, t => tri.setAttribute('opacity', t));
+  K.question('Which letter do you want to find? <b>Tap it</b>');
+  const pick = await new Promise(res => Object.entries(LT).forEach(([k, [x, y]]) => { const b = K.h('button', { type:'button', 'aria-label':LT[k][2], style:'position:absolute;width:7cqw;height:7cqw;transform:translate(-50%,-70%);background:transparent;border:0;cursor:pointer' }, K.hud()); K.pos(b, x, y); b.onclick = () => { document.querySelectorAll('.bk-hud button[aria-label]').forEach(e => e.remove()); res(k); }; }));
+  const say = { T:`Cover the T: <b>D ÷ S</b>. ${num(km)} ÷ ${num(sp)} = ${Math.round(hours * 100) / 100} hours = <b>${hm(total)}</b>`, D:`Cover the D: <b>S × T</b>. ${num(sp)} × ${Math.round(hours * 100) / 100} = ${num(km)} km`, S:`Cover the S: <b>D ÷ T</b>. ${num(km)} ÷ ${Math.round(hours * 100) / 100} = ${num(sp)} km an hour` };
+  Object.keys(letters).forEach(k => letters[k].setAttribute('fill', k === pick ? '#F2C14E' : '#EAF2FF'));
+  K.question(say[pick] + (pick === 'T' ? '' : ` · <span style="color:#9FBDE3">For the time, cover the T.</span>`));
+  await K.caption('<b>Time = distance ÷ speed.</b>');
+  await K.cont('Go on');
+  K.mark(3); K.question(`Next: the flight time to ${city}, worked out`);
+  await K.caption('Hours, then the part of an hour left over, in minutes.');
+  await K.cont('To the flight times');
+  K.done({ pick });
+})();
+</script>
+</body>
+</html>

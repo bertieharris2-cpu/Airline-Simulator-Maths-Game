@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations briefing — A year of demand</title>
+<link rel="stylesheet" href="kit/brief-kit.css" data-kit>
+<script src="kit/brief-kit.js" data-kit></script>
+</head>
+<body data-brief="seasons">
+<script>
+/* 9 · A year of demand (the chapter-1 review). Twelve months roll past like a departure board, with his destinations beneath
+   them: Geneva swells with snow in winter, Barcelona with sun in summer; Christmas and half-term are marked. He drags a plane
+   onto the month he'd send it to Geneva. Then his plan appears under the months: the same all year. Caption: Markets change
+   through the year. A plan that never changes is wrong half the time. Lands on the request for seasonal plans. */
+const D = Object.assign({ id:'seasons', months:['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'], year0:2030,
+  places:[{ city:'Geneva', base:40, mult:[.5, .6, .9, 1.4, 1.4, 1.4, 1.2, .9, .5, .5, .5, .5], mark:'snow' }, { city:'Barcelona', base:54, mult:[1.1, .9, .6, .6, .6, .6, .9, 1, 1, 1.3, 1.3, 1.3], mark:'sun' }],
+  marks:[{ m:3, label:'Christmas' }, { m:5, label:'Half-term' }], seats:38,
+  options:['Plans that switch with the season', 'A bigger plane', 'More flights every week'] }, K.B);
+const M = D.months, num = K.num, P = D.places, maxV = Math.max(...P.flatMap(p => p.mult.map(m => p.base * m)), D.seats || 0) * 1.1;
+K.start({ title:'A year of demand' });
+const L = K.layers(), sv = K.s;
+sv('rect', { x:0, y:0, width:1600, height:900, fill:'url(#gFloor)' }, L.back);
+/* the board: a month to each column, split-flap style */
+const CX = i => 150 + i * 112, W = 100, BY = 120, BAR0 = 640, HB = v => 360 * v / maxV;
+const cols = M.map((m, i) => { const g = sv('g', { opacity:.25 }, L.mid); sv('rect', { x:CX(i), y:BY, width:W, height:70, fill:'#050f22', stroke:'#2b5c95', 'stroke-width':2 }, g); sv('line', { x1:CX(i), y1:BY + 35, x2:CX(i) + W, y2:BY + 35, stroke:'#0b1d38', 'stroke-width':2 }, g);
+  K.txt(g, CX(i) + W / 2, BY + 46, m.toUpperCase(), { 'font-size':30, 'font-weight':800, 'text-anchor':'middle', 'font-family':'Consolas,monospace', fill:'#F2F2E6' }); K.txt(g, CX(i) + W / 2, BY + 92, String(D.year0 + (i >= 4 ? 1 : 0)), { 'font-size':14, 'text-anchor':'middle', fill:'#8EA6C8' });
+  sv('rect', { x:CX(i) - 4, y:BY + 110, width:W + 8, height:BAR0 - BY - 110, fill:'#0b1d38', opacity:.45 }, g); return g; });
+/* the markers: Christmas, half-term */
+D.marks.forEach(mk => { const x = CX(mk.m) + W / 2; const g = sv('g', null, L.mid); sv('line', { x1:x, y1:BY + 118, x2:x, y2:BAR0, stroke:'#cfe0f2', 'stroke-opacity':.3, 'stroke-dasharray':'4 6' }, g); K.txt(g, x, BAR0 + 92, mk.label, { 'font-size':15, 'text-anchor':'middle', fill:'#B8CBE6' }); });
+/* two bars a month: Geneva (ice), Barcelona (sea) */
+const COL = ['#d6ecff', '#4fd1c5'], bars = P.map((p, j) => M.map((m, i) => sv('rect', { x:CX(i) + 12 + j * 40, y:BAR0, width:34, height:0, fill:COL[j], opacity:.9 }, L.mid)));
+P.forEach((p, j) => { const g = sv('g', null, L.mid); sv('rect', { x:150 + j * 260, y:BAR0 + 30, width:22, height:22, fill:COL[j] }, g); K.txt(g, 182 + j * 260, BAR0 + 48, `${p.city}: people a day`, { 'font-size':18, 'font-weight':600 }); });
+sv('line', { x1:140, y1:BAR0, x2:CX(11) + W + 10, y2:BAR0, stroke:'#4b6f9b', 'stroke-width':2 }, L.mid);
+const cursor = sv('rect', { x:CX(0) - 6, y:BY - 8, width:W + 12, height:BAR0 - BY + 16, fill:'none', stroke:'#36C6FF', 'stroke-width':3, opacity:0 }, L.top);
+
+(async () => {
+  K.mark(0); await K.caption('Your year, a month at a time: who wants to fly to Geneva and to Barcelona.');
+  cursor.setAttribute('opacity', 1);
+  for(let i = 0; i < 12; i++){ cursor.setAttribute('x', CX(i) - 6); cols[i].setAttribute('opacity', 1);
+    await Promise.all(P.map((p, j) => K.tween(380, t => { const h = HB(p.base * p.mult[i]) * t; bars[j][i].setAttribute('y', BAR0 - h); bars[j][i].setAttribute('height', h); }, 'out')));
+    if(i === 3) K.call(CX(i) + W / 2, BY + 150, '❄ snow', 'quiet'); if(i === 9) K.call(CX(i) + W / 2, BY + 150, '☀ summer', 'quiet');
+    await K.wait(140); }
+  cursor.setAttribute('opacity', 0);
+  // Predict: he drags a plane onto the month he'd send it to Geneva
+  K.mark(1); K.question('Drag the plane to the month you would <b>send it to Geneva</b>');
+  await K.caption('A guess is fine.');
+  const pl = K.h('div', { class:'bk-chip', role:'button', tabindex:'0', 'aria-label':'A plane: drag it to a month', style:'position:absolute;touch-action:none;cursor:grab;width:9cqw' }, K.hud(), '✈ A plane<small>drag me</small>'); K.pos(pl, 1340, 780);
+  const month = await new Promise(res => { let drag = false, dx = 0, dy = 0; const wb = () => document.querySelector('.bk-world').getBoundingClientRect();
+    pl.addEventListener('pointerdown', e => { drag = true; pl.setPointerCapture(e.pointerId); const r = pl.getBoundingClientRect(); dx = e.clientX - r.left; dy = e.clientY - r.top; });
+    pl.addEventListener('pointermove', e => { if(!drag) return; const b = wb(); K.pos(pl, (e.clientX - dx - b.left) / b.width * 1600, (e.clientY - dy - b.top) / b.height * 900); });
+    pl.addEventListener('pointerup', e => { if(!drag) return; drag = false; const b = wb(), x = (e.clientX - b.left) / b.width * 1600, i = Math.round((x - 150 - W / 2) / 112); if(i >= 0 && i < 12){ K.pos(pl, CX(i) + 2, BAR0 + 110); res(i); } });
+    pl.addEventListener('keydown', e => { if(e.key === 'Enter'){ res(3); K.pos(pl, CX(3) + 2, BAR0 + 110); } }); });
+  pl.style.cursor = 'default';
+  // Reveal: Geneva's winter, and his plan the same all year
+  K.mark(2); K.question(null);
+  const g0 = P[0], top = g0.mult.map((m, i) => [m, i]).sort((a, b) => b[0] - a[0]), best = top.filter(x => x[0] === top[0][0]).map(x => x[1]);
+  best.forEach(i => bars[0][i].setAttribute('fill', '#F2C14E'));
+  await K.caption(best.includes(month) ? `${M[month]}: Geneva at its busiest — ${num(g0.base * g0.mult[month])} a day, snow and Christmas.` : `${M[month]}: Geneva ${num(g0.base * g0.mult[month])} a day. Its busiest months: ${best.map(i => M[i]).join(', ')}, ${num(g0.base * top[0][0])} a day.`);
+  await K.wait(2200);
+  // his plan: the same every month
+  const y = BAR0 - HB(D.seats || 38), line = sv('g', { opacity:0 }, L.top); sv('rect', { x:140, y:y - 2, width:CX(11) + W - 130, height:4, fill:'#EAF2FF', filter:'url(#fGlowLine)' }, line); K.txt(line, CX(11) + W, y - 10, `your plan: ${num(D.seats || 38)} seats a day, every month`, { 'font-size':16, 'font-weight':600, 'text-anchor':'end', stroke:'#06142b', 'stroke-width':4, 'paint-order':'stroke' });
+  await K.tween(700, t => line.setAttribute('opacity', t));
+  await K.caption('<b>Markets change through the year. A plan that never changes is wrong half the time.</b>');
+  await K.cont('Go on');
+  // Use: the request for seasonal plans, under the chart (a choice that doesn't fit is answered; he can choose again or keep it)
+  K.mark(3); pl.remove(); K.question('<b>Operations request:</b> what does the calendar need from your planner?');
+  await K.caption('Choose the change that fits the year.');
+  let chosen = null;
+  for(;;){
+    const ch = K.chips({ x:800, y:770, center:true, label:'Operations request', items:[1, 0, 2].map(i => ({ label:D.options[i], value:i })) }); ch.btns.forEach(b => { b.style.width = '19cqw'; b.style.padding = '.9cqw 1cqw'; });
+    chosen = await ch.wait(); ch.off();
+    await K.caption(chosen === 0 ? 'A winter plan and a summer plan, each with its own dates: Geneva gets its flights when the snow comes.' : chosen === 1 ? 'A bigger plane is the same size in July as in January: Geneva needs it in winter only.' : 'More flights every week would fly empty in Geneva\'s summer.');
+    await K.wait(1800); ch.remove(); if(chosen === 0) break;
+    const again = K.chips({ x:800, y:780, center:true, label:'Again', items:[{ label:'Choose again', value:'a' }, { label:'Keep this choice', value:'k' }] });
+    const a = await again.wait(); again.remove(); if(a === 'k') break;
+  }
+  await K.caption(chosen === 0 ? 'Noted: a winter plan and a summer plan, each with its own dates. The systems team will build it.' : 'Noted. The systems team will look at it again.');
+  await K.cont('Continue');
+  K.done({ month, chosen, right:chosen === 0 });
+})();
+</script>
+</body>
+</html>

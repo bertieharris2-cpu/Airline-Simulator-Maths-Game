@@ -296,6 +296,9 @@ body.rm .wc-mr.fresh,body.rm .wc-coins.go i,body.rm .wc-mr b.flash{animation:non
 .pn-tag .pn-s{color:#9be7b8;flex:1 0 100%;word-break:break-all;font-size:11px}
 body.rm .pn-tag .pn-r i{animation:none}
 @media print{.pn-tag{display:none}}
+/* while the screen's name shows, a briefing's frame sits to the right of it, so the tag never covers the caption */
+body.pn-shown .bf-layer{box-sizing:border-box;padding:0 12px 0 calc(max(150px,13vw - 14px) + 12px)}
+body.pn-shown .bf-layer iframe{width:min(1240px,100%)}
 
 /* the worth Build (D88) in the inspector's third row, and over the summary when no flight is selected (Bertie, 18 Oct) */
 .s3-insp .s3-ir3 .ds-wb,.ds-wstrip .ds-wb{display:flex;flex-direction:column;align-items:stretch;gap:5px;width:100%}
@@ -346,3 +349,8 @@ body.rm .pn-tag .pn-r i{animation:none}
 .sh-work .wk-sum.paper:has(#wkNext) .wk-act .btn.big{min-height:40px;padding:0 22px}
 .sheetp td.sh-in #cellCheck{padding:0 7px !important;font-size:12px !important}
 .sheetp td.sh-in input#cellAns{width:auto;flex:1 1 70px;min-width:70px}
+/* the Briefings shelf on Home: a button beside Plan the week, a list to watch one again */
+.bf-home{position:relative;margin-left:auto}
+.bf-home-list{position:absolute;right:0;bottom:calc(100% + 6px);z-index:20;display:flex;flex-direction:column;gap:5px;min-width:250px;padding:10px;background:#0a1e3d;border:1px solid rgba(130,195,255,.34);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.bf-home-list[hidden]{display:none}.bf-home-list .kl{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9FBDE3}
+.bf-home-list .btn{justify-content:flex-start;text-align:left}

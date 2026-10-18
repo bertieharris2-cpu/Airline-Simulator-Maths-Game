@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations briefing — Customers have a choice</title>
+<link rel="stylesheet" href="kit/brief-kit.css" data-kit>
+<script src="kit/brief-kit.js" data-kit></script>
+</head>
+<body data-brief="rival_split">
+<script>
+/* 2 · Customers have a choice (Thursday, week 1: Red Kite). Two gates side by side: his plane and his queue for the route; Red
+   Kite's aircraft taxis in next door, red kite on its tail, a £50 sign at its gate. He predicts how many will cross by dragging
+   a marker along his queue. Then, for every £10 he is dearer, one in ten of his passengers walks across to Red Kite's gate;
+   his advertising posters go up and half of them turn back. Caption: Every £10 dearer, one in ten walks. Lands on the Red Kite
+   decision, with the tenths sum. The figures are the game's (the switching rule, his fare, who wants to fly). */
+const D = Object.assign({ id:'rival_split', route:{ city:'Dublin' }, fare:80, rival:50, want:72, stay:50, stayAd:61, rivalName:'Red Kite', adCost:300, airline:'Your airline', perTen:.1 }, K.B);
+const money = K.money, num = K.num, city = D.route.city, gap = Math.max(0, D.fare - D.rival), steps = Math.round(gap / 10), walkN = Math.max(0, D.want - D.stay), backN = Math.max(0, D.stayAd - D.stay);
+K.start({ title:'Customers have a choice' });
+const L = K.layers();
+K.terminal({ horizon:330, glassBottom:520, stand:300, poolX:800, pane:200 });
+const mine = K.plane(L.back, { x:110, y:236, w:470 });
+const rk = K.plane(L.back, { x:1700, y:236, w:470, art:'', body:'#F4F6F8', tail:'#D7263D', logo:'#F7F1EE', kind:'jet' });
+const gA = K.gate(L.mid, { x:470, y:650, signY:-196, gate:12, city, flag:D.route.flag, times:D.airline, fare:D.fare });
+const gB = K.s('g', null, L.mid); { const g = K.gate(gB, { x:1230, y:650, signY:-196, gate:14, city, times:D.rivalName, fare:D.rival }); K.s('rect', { x:1230 - 150, y:650 - 196, width:64, height:84, fill:'#D7263D' }, gB); K.txt(gB, 1230 - 118, 650 - 144, '14', { 'font-size':40, 'font-weight':800, 'text-anchor':'middle', fill:'#fff' }); }
+gB.style.opacity = 0;
+/* his queue: rows in front of his gate; Red Kite's own few travellers at theirs */
+const N = Math.min(D.want, 90), Q = [], qx = i => 230 + (i % 15) * 31, qy = i => 700 + Math.floor(i / 15) * 27;
+for(let i = 0; i < N; i++){ const p = K.person(L.front, qx(i), qy(i), 'pax', { scale:.92 }); p.g.style.opacity = 0; Q.push(p); }
+const theirs = []; for(let i = 0; i < 6; i++){ const p = K.person(L.front, 1250 + (i % 3) * 34, 700 + Math.floor(i / 3) * 27, 'rk', { scale:.92 }); p.g.style.opacity = 0; theirs.push(p); }
+const cnt = K.call(760, 690, '', 'quiet'); cnt.out();
+
+(async () => {
+  K.mark(0); await K.caption(`Your ${city} gate: ${num(D.want)} people want to fly at ${money(D.fare)}.`);
+  await Promise.all(Q.map((p, i) => { const x = p.x, y = p.y; p.set(x - 300, y); p.g.style.opacity = 1; return K.walk(p, x, y, 900, i * 12); }));
+  cnt.say(`<b>${num(N)}</b> in your queue`); cnt.out(false);
+  await K.wait(600);
+  // Red Kite taxis in next door
+  gB.style.opacity = 1; await K.caption(`${D.rivalName} arrives next door, at <b>${money(D.rival)}</b>.`);
+  await K.tween(2200, t => K.at(rk, 1700 - t * 760, 262), 'out');
+  theirs.forEach(p => p.g.style.opacity = 1);
+  await K.wait(500);
+  // Predict: drag the marker along his queue
+  K.mark(1); K.question(`How many of your passengers will walk to ${D.rivalName}? <b>Drag the marker</b>`);
+  await K.caption(`You are ${money(gap)} dearer. A guess is fine.`);
+  const stops = Array.from({ length:11 }, (_, k) => Math.round(N * k / 10));
+  let guess = 0; const mark = K.s('g', null, L.top), ml = K.s('rect', { x:0, y:680, width:4, height:110, fill:'#F2C14E' }, mark);
+  const showMark = n => { const x = n >= N ? qx(14) + 16 : qx(n % 15) - 16; ml.setAttribute('x', 230 - 16 + (n / Math.max(1, N)) * (15 * 31)); Q.forEach((p, i) => p.g.classList.toggle('dim', i >= N - n)); };
+  const rail = K.rail({ x:214, y:860, w:15 * 31, stops, value:0, label:'How many walk', onMove:v => { guess = v; showMark(v); cnt.say(`You think: <b>${num(v)}</b> walk`); } });
+  rail.el.style.opacity = 1; showMark(0); cnt.say('Drag: how many walk?');
+  await new Promise(res => { rail.onEnd = () => res(); });
+  await K.wait(400); rail.lock(); await K.wait(300); rail.el.remove();
+  // Reveal: for every £10 dearer, one in ten walks across
+  K.mark(2); Q.forEach(p => p.g.classList.remove('dim')); mark.remove();
+  K.question(`${money(D.fare)} against ${money(D.rival)}: <b>${money(gap)}</b> dearer`);
+  const per = Math.round(walkN / Math.max(1, steps)), walkers = [], order = Q.slice().reverse();
+  for(let s = 0; s < steps; s++){
+    const grp = order.slice(s * per, s === steps - 1 ? walkN : (s + 1) * per); walkers.push(...grp);
+    const tag = K.call(860, 610, `£${(s + 1) * 10} dearer: <b>${s + 1} in 10</b> walk`, s === steps - 1 ? '' : 'quiet');
+    await Promise.all(grp.map((p, i) => K.walk(p, 960 + (walkers.indexOf(p) % 9) * 28, 700 + Math.floor(walkers.indexOf(p) / 9) * 27, 1300, i * 40)));
+    await K.wait(250); if(s < steps - 1) tag.out();
+  }
+  cnt.say(`<b>${num(N - walkers.length)}</b> stay with you`);
+  K.question(`${num(walkers.length)} walked to ${D.rivalName}. Your guess: ${num(guess)}.`);
+  await K.caption(`<b>Every £10 dearer, one in ten walks.</b> ${num(walkers.length)} of ${num(D.want)} went to ${D.rivalName}.`);
+  await K.wait(1600);
+  // advertising: posters go up, half of them turn back
+  await K.caption(`Advertise (${money(D.adCost)}): your posters go up.`);
+  const posters = [[150, 470], [640, 470]].map(([x, y]) => { const g = K.s('g', { opacity:0 }, L.mid); K.s('rect', { x, y, width:150, height:96, fill:'#0a1a33', stroke:'#F2C14E', 'stroke-width':2 }, g); K.txt(g, x + 75, y + 40, String(D.airline || 'Your airline').toUpperCase().slice(0, 14), { 'font-size':16, 'font-weight':800, 'text-anchor':'middle', fill:'#F2C14E' }); K.txt(g, x + 75, y + 66, 'worth the fare', { 'font-size':14, 'text-anchor':'middle' }); return g; });
+  await Promise.all(posters.map((g, i) => K.wait(i * 300).then(() => K.tween(500, t => g.setAttribute('opacity', t), 'out'))));
+  const back = walkers.slice(0, backN);
+  await Promise.all(back.map((p, i) => K.walk(p, qx(N - 1 - i) , qy(N - 1 - i), 1300, i * 40)));
+  cnt.say(`<b>${num(D.stayAd)}</b> stay with you`);
+  K.question(`Advertising: <b>half</b> of them turn back. ${num(D.stayAd)} stay, for ${money(D.adCost)}.`);
+  await K.caption(`Every £10 dearer, one in ten walks. <b>Advertising halves it.</b>`);
+  await K.cont('Go on');
+  // Use: the Red Kite card
+  K.mark(3); K.question(`Next: <b>match ${money(D.rival)}</b>, <b>hold ${money(D.fare)}</b>, or <b>advertise</b>?`);
+  await K.caption('Your passengers × the tenths who stay: the card shows each choice. Then you decide.');
+  await K.cont('To the Red Kite card');
+  K.done({ guess, walked:walkN });
+})();
+</script>
+</body>
+</html>

@@ -26,7 +26,7 @@ const pnWall = () => { try{ return !!wallView; }catch(e){ return false; } };
 /* the screen's name: the step (or the desk opened over it), told apart by what is on the page where one step has several screens */
 function pnName(){
   if(!S || !S.steps) return 'Start';
-  const bf = pnQ('#bfLayer'); if(bf && !bf.hidden && bf.childElementCount) return 'Briefing';
+  const bf = pnQ('#bfLayer'); if(bf && !bf.hidden && bf.childElementCount){ const t = ((bf.querySelector('iframe') || {}).title || '').replace(/^Operations briefing:\s*/, ''); return t ? 'Briefing: ' + t : 'Briefing'; }   // which one, for the log
   if(pnWall()) return 'Operations Wall';
   if(S.overlay && S.overlay.type === 'menu') return 'Menu';
   if(S.overlay && S.overlay.type) return 'Panel: ' + S.overlay.type;
@@ -115,6 +115,7 @@ window.addEventListener('beforeunload', e => { if(PN.on){ e.preventDefault(); e.
 /* ---------- the tag in the corner ---------- */
 function pnTag(){
   let el = document.getElementById('pnTag'); const show = PN.on || settings.screenNames || settings.testMode;   // test mode shows them too
+  document.body.classList.toggle('pn-shown', !!show);   // a briefing's frame moves right of the tag (p1_head_screens3.css)
   if(!show){ if(el) el.remove(); return; }
   if(!el){ el = document.createElement('div'); el.id = 'pnTag'; el.className = 'pn-tag'; document.body.appendChild(el);
     el.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; if(b.id === 'pnRec'){ PN.saved = null; pnStart(true, pnWordsOn()); } if(b.id === 'pnMark') pnMark(); if(b.id === 'pnStop') pnStop();
@@ -124,7 +125,7 @@ function pnTag(){
   el.innerHTML = `<b class="pn-n">${esc(name)}</b>${when ? `<span class="pn-w">${esc(when)}</span>` : ''}${PN.on ? `<span class="pn-r"><i></i>${PN.audio ? 'REC' : 'LOG'} ${pnClock(pnT())}</span><button id="pnMark" title="Drop a marker in the log">Mark</button><button id="pnStop">Stop &amp; save</button>` : PN.saved ? `<span class="pn-s">Saved ${esc(PN.saved.base)} (${PN.saved.files.map(f => f.name.split('.').pop()).join(' + ')})</span><button id="pnAgain" title="Download the files again">Save again</button><button id="pnDone" title="Done: hide this">✓</button>` : `<button id="pnRec" title="Record your voice and log the screens">● Record</button>`}`;
 }
 const pnRender0 = render;
-render = function(){ const r = pnRender0.apply(this, arguments); try{ if(PN.on || settings.screenNames || settings.testMode){ setTimeout(() => { pnNote(); pnTag(); }, 0); } }catch(e){} return r; };
+render = function(){ const r = pnRender0.apply(this, arguments); try{ if(PN.on || settings.screenNames || settings.testMode || document.getElementById('pnTag')){ setTimeout(() => { pnNote(); pnTag(); }, 0); } }catch(e){} return r; };   // (a tag left from test mode goes with the next render)
 document.addEventListener('click', () => { if(PN.on || settings.screenNames || settings.testMode) setTimeout(() => { pnNote(); pnTag(); }, 60); }, true);
 
 /* ---------- the teacher panel: Play notes ---------- */

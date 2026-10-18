@@ -111,6 +111,8 @@ const K = (() => {
     const f = s('filter', { id:'fSh', x:'-30%', y:'-30%', width:'160%', height:'160%' }, defs); s('feDropShadow', { dx:-6, dy:10, stdDeviation:8, 'flood-color':'#000', 'flood-opacity':.45 }, f);
     const f2 = s('filter', { id:'fSoft', x:'-30%', y:'-30%', width:'160%', height:'160%' }, defs); s('feDropShadow', { dx:-2, dy:4, stdDeviation:3, 'flood-color':'#000', 'flood-opacity':.35 }, f2);
     const gl = s('filter', { id:'fGlow', x:'-50%', y:'-50%', width:'200%', height:'200%' }, defs); s('feGaussianBlur', { stdDeviation:6, result:'b' }, gl); const m = s('feMerge', null, gl); s('feMergeNode', { in:'b' }, m); s('feMergeNode', { in:'SourceGraphic' }, m);
+    // the same glow for thin things (a line's own box is too flat for a filter measured in its size)
+    const gl2 = s('filter', { id:'fGlowLine', filterUnits:'userSpaceOnUse', x:0, y:0, width:1600, height:900 }, defs); s('feGaussianBlur', { stdDeviation:5, result:'b' }, gl2); const m2 = s('feMerge', null, gl2); s('feMergeNode', { in:'b' }, m2); s('feMergeNode', { in:'SourceGraphic' }, m2);
   }
 
   /* the terminal interior: a glass wall onto the apron (sky, the far side of the airfield, runway lights), pillars, the floor */
@@ -134,6 +136,26 @@ const K = (() => {
     s('rect', { x:0, y:glassB + 8, width:1600, height:900 - glassB - 8, fill:'url(#gFloor)' }, layers.back);
     for(let i = 0; i < 9; i++){ const x = 200 * i - 200; s('line', { x1:800 + (x - 800) * .55, y1:glassB + 8, x2:x - 400, y2:900, stroke:'#2a4d7d', 'stroke-opacity':.22, 'stroke-width':1.5 }, layers.back); }
     s('ellipse', { cx:o.poolX || 700, cy:glassB + 120, rx:700, ry:120, fill:'url(#gLightPool)' }, layers.back);
+    return g;
+  }
+
+  /* outdoors: the sky, the far side of the airfield (hangars, the terminal, the tower), the apron with its markings and lights */
+  function apron(o){
+    o = o || {}; const g = layers.back, hz = o.horizon || 430;
+    s('rect', { x:0, y:0, width:1600, height:hz, fill:o.day ? 'url(#gSkyDay)' : 'url(#gSky)' }, g);
+    if(!o.day) for(let i = 0; i < 40; i++) s('circle', { cx:(i * 397) % 1600, cy:(i * 131) % (hz * .55), r:i % 3 ? .9 : 1.4, fill:'#cfe6ff', opacity:.35 }, g);
+    const far = s('g', null, g);
+    if(o.hangar !== false){ const hx = o.hangarX === undefined ? 980 : o.hangarX; s('path', { d:`M${hx} ${hz} L ${hx} ${hz - 120} Q ${hx + 220} ${hz - 190} ${hx + 440} ${hz - 120} L ${hx + 440} ${hz} Z`, fill:'#0c1f3b' }, far);
+      s('rect', { x:hx + 60, y:hz - 96, width:320, height:96, fill:'#173a66' }, far); for(let i = 0; i < 8; i++) s('rect', { x:hx + 64 + i * 40, y:hz - 92, width:36, height:92, fill:'#22508a', opacity:.55 + (i % 2) * .15 }, far);
+      s('rect', { x:hx + 60, y:hz - 104, width:320, height:8, fill:'#7fd0ff', opacity:.35 }, far); }
+    s('path', { d:`M0 ${hz} L0 ${hz - 40} L180 ${hz - 40} L180 ${hz - 62} L420 ${hz - 62} L420 ${hz - 30} L640 ${hz - 30} L640 ${hz} Z`, fill:'#0a1a31' }, far);
+    for(let x = 20; x < 620; x += 26) s('rect', { x, y:hz - 54 + ((x / 26) % 2) * 22, width:10, height:6, fill:'#ffd27a', opacity:.35 }, far);
+    if(o.tower !== false){ const tx = o.towerX || 520; s('rect', { x:tx, y:hz - 170, width:18, height:140, fill:'#0a1a31' }, far); s('path', { d:`M${tx - 16} ${hz - 170} L ${tx + 34} ${hz - 170} L ${tx + 28} ${hz - 198} L ${tx - 10} ${hz - 198} Z`, fill:'#0c2240' }, far); s('rect', { x:tx - 6, y:hz - 194, width:30, height:10, fill:'#7fd0ff', opacity:.6 }, far); }
+    s('rect', { x:0, y:hz, width:1600, height:900 - hz, fill:'url(#gApron)' }, g);
+    for(let r = 0; r < 3; r++){ const yy = hz + 6 + r * 12; for(let x = (r * 37) % 70; x < 1600; x += 70 - r * 10) s('circle', { cx:x, cy:yy, r:1.4 + r * .7, fill:r === 1 ? '#ffd27a' : '#9fe0ff', opacity:.5 }, g); }
+    // stand markings, faint
+    for(let i = 0; i < 6; i++) s('line', { x1:i * 320 - 100, y1:900, x2:i * 320 + 60, y2:hz + 40, stroke:'#c9d6e6', 'stroke-opacity':.07, 'stroke-width':4 }, g);
+    s('line', { x1:0, y1:hz + 150, x2:1600, y2:hz + 150, stroke:'#c9d6e6', 'stroke-opacity':.08, 'stroke-width':3, 'stroke-dasharray':'40 30' }, g);
     return g;
   }
 
@@ -184,8 +206,8 @@ const K = (() => {
   /* a gate: the desk, the backlit sign (gate, city, flag, times) and a fare display */
   function gate(parent, o){
     const g = s('g', { class:'gate' }, parent); at(g, o.x, o.y);
-    s('rect', { x:-6, y:-226, width:12, height:226, fill:'#0c1f3b' }, g);
-    const sign = s('g', { transform:'translate(-150 -300)', filter:'url(#fSoft)' }, g); s('rect', { x:0, y:0, width:300, height:84, fill:'#0a1a33', stroke:'#2b5c95', 'stroke-width':2 }, sign);
+    const sy = o.signY === undefined ? -300 : o.signY; s('rect', { x:-6, y:sy + 74, width:12, height:-sy - 74, fill:'#0c1f3b' }, g);
+    const sign = s('g', { transform:`translate(-150 ${sy})`, filter:'url(#fSoft)' }, g); s('rect', { x:0, y:0, width:300, height:84, fill:'#0a1a33', stroke:'#2b5c95', 'stroke-width':2 }, sign);
     s('rect', { x:0, y:0, width:64, height:84, fill:'#F2C14E' }, sign); txt(sign, 32, 52, String(o.gate || 7), { 'font-size':40, 'font-weight':800, fill:'#1a1200', 'text-anchor':'middle' });
     if(o.flag && /<svg/i.test(o.flag)){ const f = s('g', { transform:'translate(80 14)' }, sign); f.innerHTML = o.flag; const fs = f.querySelector('svg'); if(fs){ fs.setAttribute('height', 22); fs.setAttribute('width', 33); fs.removeAttribute('style'); } }
     txt(sign, o.flag ? 122 : 80, 34, String(o.city || '').toUpperCase(), { 'font-size':24, 'font-weight':700, 'letter-spacing':2 });
@@ -260,5 +282,5 @@ const K = (() => {
   }
 
   return { B, RM, s, h, at, txt, start, pause, mark, caption, question, cont, done, call, chips, rail, count, wait, tween, every, pos,
-    terminal, plane, person, walk, priceTag, gate, stack, tank, vault, coins, board, money, num, esc, clamp, lerp, layers:() => layers, hud:() => hud, svg:() => svg, defs:() => defs, isPaused:() => paused };
+    terminal, apron, plane, person, walk, priceTag, gate, stack, tank, vault, coins, board, money, num, esc, clamp, lerp, layers:() => layers, hud:() => hud, svg:() => svg, defs:() => defs, isPaused:() => paused };
 })();

@@ -10,6 +10,41 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0z. Play notes, Bertie's Launch Day notes and the eleven briefings (18 Oct 2026)
+
+Parts `p5i_playnotes.js` and `p5j_sheet.js` follow `p5h_screens3`. Both are wrapped in `{}` and reached through `window.__pn` and `window.__sh`. Also new: the briefings kit (`src/opening/briefings/kit/`), nine briefing pages and two rebuilt ones. Reassignment only (`overrides.txt` 120). No data changes: the Briefings sheet (v5.15) already names all eleven pages.
+- **p5i_playnotes.js.** The screen-name tag (`pnName` reads the step, `UI.view` and the open overlays) and the recorder (`MediaRecorder`, with Chrome's `webkitSpeechRecognition` only when the game is served over http(s)).
+  - The log file is `{v:2, started, audio, timeline, log:[{t, at, kind, …}]}`. It carries a gzipped save code (`codez`) whenever the day or the step changes.
+  - Stop & save writes the recording (`<base>.webm` in Chrome) and `<base>.json`, 700 ms apart. `PN.saved` keeps both blobs for Save again.
+  - Tools: `tools/playnotes.py` (the timeline, `--at`), `tools/playnotes_transcribe.py` (faster-whisper, with the game's own words as the prompt) and `tools/playnotes_shots.js`.
+  - `pnName` names an open briefing from its frame's title. `pnTag` toggles `body.pn-shown`, which moves `.bf-layer`'s frame right of the tag. The render hook also runs while a tag is still on screen, so a tag left over from test mode is removed.
+- **Launch Day notes (p5h, p4zt, p4m/p4g/p4d).**
+  - `dsKeyHtml(F, mv, others)` draws the key's swatches the way the bars are drawn.
+  - `s3Worth(pl, L, sel)` gives the worth row and its meaning; `s3Mean` writes the sentence.
+  - While a D88 worth Build is pending, the service editor gives its row 3 to `dsWorthBuildHtml(W)` (the question, `dsWorthAsk` naming the change before → after, the cards, Undo `[data-dswu]` and Check). The strip is no longer put beside its own answer.
+  - Row labels read `${city} ticket revenue`.
+- **p5j_sheet.js (sums in the sheet, `settings.sumsInSheet`, on by default).** It wraps `R.workings` with `shAfter(st)`:
+  - the dock's body moves into `section.sh-work` under the sheet, the dock goes, and the page gets `ws-sheet`;
+  - `.sd-ans` moves into the active cell `td.enter.on`, behind a hidden `.sh-mirror` button (`sync()` mirrors the typed value into the cell's first button);
+  - from the second column on, the sum's numbers give way to "read its figures from the sheet";
+  - the other tables fold (`.sh-fold`, with the `.sh-prev` line and `#shAll`); `shTitle` titles the page.
+  - The worked example (`#wkTutNext`, `#wkTutGo`) keeps the right-hand panel. The teacher's checkbox is `#tSheet`.
+- **The briefings kit (`brief-kit.js`, `brief-kit.css`).**
+  - `build.py` embeds the kit as `data-briefing-kit`. `bfOpen` replaces each page's `<link data-kit>` and `<script data-kit>` with it, so a page also runs on its own from `briefings/`.
+  - `K` has the frame (`start`, `mark`, `caption`, `question`, `cont`, `done`, `pause`) and a scene clock that `wait`, `tween` and `every` run on. The clock stops while paused. With `rm`, a tween jumps to its end.
+  - The world is an SVG at 1600 × 900, with an HTML layer over it in the same units (`pos`, `call`, `chips`, `rail`).
+  - Scene pieces: `terminal`, `apron`, `gate`, `plane`, `person`, `walk`, `priceTag`, `stack`, `tank`, `vault`, `coins`, `board`.
+  - `K.B` is `window.BRIEF`: `{id, airline, test, rm}` plus the scene's figures. `done(extra)` posts `{type:'briefing-done', id, …extra}` to the game.
+- **p5f_brief.js.**
+  - `BF_EXTRA` gives the nine new ids their titles and files, merged under the sheet's row (`bfRow`).
+  - `bfMore(st, root)` runs after every render, opens at most one briefing, and only when none is open. Its triggers: fare sums on Launch Day with nothing answered; Red Kite's card with no choice yet; the week-1 review; `shop2` with the comparison on; the first Flight times page (`[data-ftph], .ft3-ins`); the plan while an event with `mult > 1` is announced; the chapter-1 review; `shop2` with a plane to rent; the Finance desk from `ch3FromDay` after a purchase or an overdrawn month.
+  - The figures: `bfFareData`, `bfRivalData`, `bfCapacityData`, `bfEffData`, `bfTimeData`, `bfEventData`, `bfSeasonData`, `bfLeaseData`, `bfCashData`, and `bfFuelData` (which now adds `perDay`, `days`, `blk` and the day's tickets and other costs). `bfDataFor(id)` picks the right one.
+  - Each scene's figures are kept in `S.brief.data` for a replay; the fuel scene replays with today's.
+  - Scenes 8 and 9 write `S.upg.day_override` and `S.upg.seasonal_plans` as `{offered, chosen, right}`. Nothing reads them yet.
+  - Skip (the toolkit, `__bf.skip`, Ctrl+Shift+B) marks the briefing seen, so Run ▶ never meets it twice.
+  - `bfHomeShelf` adds `#bfHomeBtn` beside Plan the week; `__bf.data(id)` is for the tests.
+- **Tests.** `briefings.test.js` (new) plays every page on its own, then each briefing in the game at its moment from the Jump to saves, then scene 6 to the end out of test mode, then the shelf. `week.test.js` with `BRIEFINGS=1` drives the rebuilt weekend and fuel scenes (`WRONG_CARD=1`: "Keep this choice") and skips the others. `decide.test.js` matches "extra flight" with a word between. Briefings change nothing in the economy: they only read the airline, and the two requests they record are not used yet.
+
 ## 0y. Screens brief 3, D101–D102 (17 Oct 2026)
 
 Parts `p5g_testkit.js` and `p5h_screens3.js` after `p5f_brief`, and `p1_head_screens3.css` after the screens CSS. Both parts are wrapped in `{}`, so their functions are reached only through the names they reassign and `window.__tk`, `window.__ds`, `window.__wc`. Reassignment only (`overrides.txt` 120). Data: v5.17's Settings rows for D101/D102, the Roadmap sheet (`WB.roadmap` = `{when, line, fromDay}`), Market weeks 3–5 and Calendar days 22–28 (`take_parts.py --rows`).

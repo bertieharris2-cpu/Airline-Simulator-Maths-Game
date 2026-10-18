@@ -21,7 +21,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--sans);font-varian
 .bk-hud{position:absolute;inset:0;pointer-events:none}.bk-hud>*{pointer-events:auto}
 /* the foot: one caption line, the Continue */
 .bk-foot{flex:none;display:flex;align-items:center;gap:16px;height:64px;padding:0 18px;background:rgba(6,20,43,.94);border-top:1px solid var(--hair)}
-.bk-cap{flex:1;margin:0;font-size:19px;line-height:1.25;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .35s}
+.bk-cap{flex:1;margin:0;font-size:19px;line-height:1.25;color:var(--white);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;transition:opacity .35s}   /* two lines at most: a caption is never cut short */
 .bk-cap.out{opacity:0}.bk-cap b{color:var(--gold);font-weight:600}
 .bk-go{font:inherit;font-size:16px;font-weight:700;height:42px;padding:0 22px;border:1px solid var(--gold);background:var(--gold);color:#1a1200;cursor:pointer;transition:opacity .3s,transform .3s}
 .bk-go[hidden]{display:none}.bk-go:focus-visible{outline:2px solid #fff;outline-offset:2px}

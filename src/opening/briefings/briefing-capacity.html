@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations briefing — More demand than seats</title>
+<link rel="stylesheet" href="kit/brief-kit.css" data-kit>
+<script src="kit/brief-kit.js" data-kit></script>
+</head>
+<body data-brief="full_route">
+<script>
+/* 3 · More demand than seats (the week-1 review). Passengers arrive at the gate through his busiest day; each departure boards
+   its seats and pushes back; after the last plane leaves, a crowd is still standing in the lounge as the lights dim. He taps the
+   crowd and it counts itself. Caption: People you can't carry don't pay. Another plane, a bigger one, or a higher fare. Lands on
+   the capacity observation and the second-plane decision. The day is his own (the route and day with the most turned away). */
+const D = Object.assign({ id:'full_route', route:{ city:'Dublin' }, day:'Saturday', fare:80, want:72, flights:[{ t:'06:00', seats:19, sold:19 }, { t:'09:40', seats:19, sold:19 }, { t:'13:40', seats:19, sold:19 }] }, K.B);
+const money = K.money, num = K.num, city = D.route.city, F = D.flights, sold = F.reduce((t, f) => t + f.sold, 0), left = Math.max(0, D.want - sold);
+K.start({ title:'More demand than seats' });
+const L = K.layers();
+K.terminal({ horizon:330, glassBottom:520, stand:820, poolX:700 });
+const night = K.s('rect', { x:0, y:0, width:1600, height:520, fill:'#020814', opacity:0 }, L.mid);
+const gate = K.gate(L.mid, { x:1340, y:660, signY:-210, gate:9, city, flag:D.route.flag, times:F.map(f => f.t).join(' · '), fare:D.fare });
+const door = K.s('g', null, L.mid); K.s('rect', { x:1130, y:520, width:70, height:150, fill:'#0a1a31', stroke:'#2b5c95', 'stroke-width':2 }, door); K.s('rect', { x:1136, y:526, width:58, height:138, fill:'#7fd0ff', opacity:.08 }, door);
+const pl = K.plane(L.back, { x:1700, y:250, w:480 });
+const dim = K.s('rect', { x:0, y:520, width:1600, height:380, fill:'#020814', opacity:0 }, L.mid);   // under the people: they stay lit
+/* the lounge: places in rows, filled from the door outwards */
+const spots = []; for(let r = 0; r < 9; r++) for(let c = 0; c < 12; c++) spots.push([1040 - c * 40 - (r % 2) * 18, 640 + r * 30]);
+const crowd = [];   // the people waiting now, in place order
+const clock = K.call(1460, 70, '06:00', 'cy');
+const board = K.call(1000, 470, '', 'quiet'); board.out();
+const arrive = async n => { const add = []; for(let i = 0; i < n; i++){ const s = spots[crowd.length]; if(!s) break; const p = K.person(L.front, -40, 700 + (i % 5) * 30, 'pax', { scale:.95 }); crowd.push(p); add.push(K.walk(p, s[0], s[1], 1200, i * 30)); } await Promise.all(add); };
+const regroup = () => Promise.all(crowd.map((p, i) => K.walk(p, spots[i][0], spots[i][1], 500)));
+
+(async () => {
+  K.mark(0); await K.caption(`Your busiest day: ${city} on ${D.day}. <b>${num(D.want)}</b> people want to fly, at ${money(D.fare)}.`);
+  // the day: arrivals before each departure; each plane boards its seats and pushes back
+  const waves = F.map((f, i) => i < F.length - 1 ? Math.round(D.want * (i + 1) / F.length) - Math.round(D.want * i / F.length) : D.want - Math.round(D.want * i / F.length));
+  for(let i = 0; i < F.length; i++){
+    const f = F[i]; clock.say(f.t);
+    await arrive(waves[i]);
+    // the plane comes in to the stand
+    K.at(pl, 1700, 250); await K.tween(1200, t => K.at(pl, 1700 - t * 900, 250), 'out');
+    board.say(`${f.t} · ${num(f.seats)} seats`); board.out(false);
+    const go = crowd.splice(0, Math.min(f.sold, crowd.length));
+    await Promise.all(go.map((p, k) => K.walk(p, 1165, 640, 700, k * 45).then(() => { p.g.style.opacity = 0; })));
+    board.say(`${f.t} · <b>full</b>: ${num(go.length)} on board`);
+    await regroup();
+    await K.tween(1100, t => K.at(pl, 800 - t * 1400, 250 - t * 30), 'in');
+    board.out(); await K.wait(250);
+  }
+  // after the last plane: the lights dim on the people still standing
+  clock.say('22:00'); await Promise.all([K.tween(1600, t => night.setAttribute('opacity', t * .75)), K.tween(1600, t => dim.setAttribute('opacity', t * .35))]);
+  crowd.forEach(p => p.g.parentNode.appendChild(p.g));
+  K.mark(1); K.question('The last plane has gone. <b>Tap the people still here.</b>');
+  await K.caption('How many are left at the gate?');
+  // he taps the crowd: it counts itself
+  const hit = K.h('button', { type:'button', 'aria-label':'The people still at the gate', style:'position:absolute;background:transparent;border:1px dashed rgba(242,193,78,.6);cursor:pointer' }, K.hud());
+  const xs = crowd.map(p => p.x), ys = crowd.map(p => p.y), x0 = Math.min(...xs, 900) - 40, x1 = Math.max(...xs, 1000) + 40, y0 = Math.min(...ys, 640) - 80, y1 = Math.max(...ys, 640) + 30;
+  K.pos(hit, x0, y0); hit.style.width = (100 * (x1 - x0) / 1600) + '%'; hit.style.height = (100 * (y1 - y0) / 900) + '%';
+  await new Promise(res => hit.onclick = res); hit.remove();
+  K.mark(2); K.question(null);
+  for(let i = 0; i < crowd.length; i++){ const p = crowd[i], t = K.txt(L.top, p.x, p.y - 64, String(i + 1), { 'font-size':15, 'font-weight':800, 'text-anchor':'middle', fill:'#F2C14E' }); await K.wait(crowd.length > 30 ? 40 : 90); }
+  const c = K.call((x0 + x1) / 2, y0 - 30, `<b>${num(left)}</b> people with no seat: <b>${money(left * D.fare)}</b> of tickets you couldn't sell`, '');
+  await K.caption(`<b>People you can't carry don't pay.</b> Another plane, a bigger one, or a higher fare.`);
+  await K.cont('Go on');
+  // Use: the review, with the capacity observation and what a second plane would carry
+  K.mark(3); K.question('Next: the week\'s review, and what more seats would carry');
+  await K.caption(`${F.length} flights × ${num(F[0] ? F[0].seats : 19)} seats = ${num(F.reduce((t, f) => t + f.seats, 0))}. ${num(D.want)} wanted to fly.`);
+  await K.cont('To the review');
+  K.done({ left });
+})();
+</script>
+</body>
+</html>

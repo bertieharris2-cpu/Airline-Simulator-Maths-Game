@@ -380,6 +380,71 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Operations briefings: the eleven scenes of Fable's plan (18 Oct 2026)
+*Fable's briefings plan (linked by Bertie on 18 Oct), built now so that the play notes can test them. The pages are in `src/opening/briefings/` and share one kit (`briefings/kit/brief-kit.js` and `.css`). The build embeds both, and the game puts the kit into each page as it opens. The triggers and each scene's figures are in `p5f_brief.js`. Reassignment only (`overrides.txt` stays at 120). Notes for Fable: `docs/Report-for-Fable-Briefings.md`; screenshots: `docs/screenshots/briefings/`.*
+- **How a briefing plays:**
+  - It plays full screen over the game in four steps: Show → Predict → Reveal → Use, 30 to 50 seconds in all.
+  - It moves on only when he does something (a tap, a drag, a press). Continue appears after that, never before.
+  - A guess is never marked wrong: the reveal shows his guess beside the answer.
+  - The figures are his own airline's at that moment: his painted plane, routes, fares, seats and cash. Each page has fallbacks, so it also plays when opened on its own.
+- **The frame:**
+  - A quiet bar: BRIEFING, the title, four progress marks and **Pause & discuss**. Pause (or P) stops the scene's clock so the class can talk.
+  - The scene, with a caption under it (one line, two at most).
+  - **Skip** shows only in test mode. The teacher can also close a briefing with Ctrl+Shift+B. A skipped briefing counts as seen.
+  - With reduced motion (the teacher's toggle or the computer's setting), each step is a still frame.
+- **The scenes and when they open** (each once, at most):
+
+  | # | Briefing | Opens | He… | Caption |
+  | --- | --- | --- | --- | --- |
+  | 1 | What a fare does | Launch Day, as the fare sums open | guesses which fare brings in the most ticket money, then drags the fare up along his own figures: people leave the queue, the price tags of those who stay grow, and the money stack rises, then falls | Ticket money = passengers × fare. Both move. |
+  | 2 | Customers have a choice | Red Kite's card on day 4, before he decides | drags a marker to guess how many walk to Red Kite's £50 gate; then advertising turns half of them back | Every £10 dearer, one in ten walks. Advertising halves it. |
+  | 3 | More demand than seats | the week-1 review, if anyone was turned away | taps the crowd still at the gate after the last plane, on his busiest day | People you can't carry don't pay. |
+  | 4 | Weekdays and weekends | the week-2 review (rebuilt on the kit) | taps the days that look different, then makes the Operations Request | grants the weekday and weekend timetables, as before |
+  | 5 | Cash, tank, profit | the first Fuel desk visit, day 8 (rebuilt on the kit) | predicts what buying fuel does to today's profit, presses Buy, then watches the week burn it | Buying fuel moves cash into the tank. Profit only counts what your flights burn. |
+  | 6 | Two planes, one route | the first aircraft comparison | taps the plane that used less fuel a passenger; then the bigger one flies half empty | Bigger is cheaper per seat — when it's full. |
+  | 7 | How long will it take? | the first Flight times page | flies his plane along a ruler an hour at a time, then a quarter hour at a time; taps the letter to find in the triangle | Time = distance ÷ speed. |
+  | 8 | One big Saturday | the plan page while an event is announced (the All Blacks from day 22) | taps the days that changed, then makes the Operations Request | An event changes one weekend, not every weekend. |
+  | 9 | A year of demand | the chapter-1 review | drags a plane to the month he would send it to Geneva, then makes the Operations Request | Markets change through the year. |
+  | 10 | Renting a plane | the shop, once renting opens (6 January 2031) | drags the days until the rent stack matches the price | 2,000 days of rent = the price. |
+  | 11 | Profit is not cash | the Finance desk in chapter 3, once a plane is bought or a month ends overdrawn | taps the day the cash fell | Profit: did we earn? Cash: can we pay? |
+
+- **Operations Requests:**
+  - **Scene 4** grants weekday and weekend timetables from Monday, as before.
+  - **Scene 8** asks for changes to one particular date (`day_override`). **Scene 9** asks for plans that switch with the season (`seasonal_plans`).
+  - Neither of those is built yet. His choice is kept in the save (`S.upg`), and the caption says the systems team will build it.
+  - In scenes 4, 8 and 9, a choice that doesn't fit is answered in one sentence, and he can choose again or keep it.
+- **Watch again:** once he has seen a briefing, a **Briefings** button appears on Home beside Plan the week, and the menu has a Briefings shelf. A replay uses the figures the briefing first played with (the fuel scene uses today's).
+- **The teacher's toolkit:**
+  - **Event now** plays any briefing with today's figures.
+  - **Skip briefing** jumps to its end.
+  - **Run ▶** skips briefings, except when told to stop at decisions.
+  - The workbook's `operationsBriefings` setting switches all briefings off.
+  - The regression tests switch them off as well (`settings.briefings = false`).
+- **Tests:** `node src/opening/tests/briefings.test.js` runs in two parts:
+  - **On their own:** it plays each page with its fallback figures, checking the frame, that nothing moves on before he acts, Pause & discuss, and reduced motion.
+  - **In the game:** it uses the Jump to saves to open each briefing by itself at its moment, with his figures, and checks that it does not open again.
+  - It ends by playing one scene to the end out of test mode, then checks the Home shelf.
+  - `ONLY=fare_lever,shelf` runs part of it.
+  - `BRIEFINGS=1 node week.test.js` plays the weekend and fuel scenes through, and skips the others.
+
+### Bertie's Launch Day play notes (18 Oct 2026)
+*From the first recorded play notes (`playnotes-2026-10-18-1031`). The recording was transcribed with `medium.en`, and the log puts each remark on its screen. New part `p5j_sheet.js`; the rest is in `p5h_screens3.js`, `p4zt_decide.js` and `p1_head_screens3.css`. Reassignment only (`overrides.txt` stays at 120).*
+- **The demand key matches the bars:** each swatch is drawn the way its bar is (a band, Any time, and the hatched "no flight then: take the nearest"). With a flight selected, the key adds "this flight" and "your other flights".
+- **What a fare change means:** after a change, the inspector's worth line has a larger row of its own, with one sentence under it saying what it means: "So it is better to charge £100 and have 1 seat empty than to charge £90."
+- **The worth sum sits where the change was made:**
+  - "What is the Dublin fare rise worth a day?" is built in the inspector, beside the change.
+  - It names the change: "£90 → £100, and the same 38 passengers: each pays £10 more".
+  - It has Undo for the last card.
+  - The answer is no longer shown beside its own question.
+- **Sums in the sheet** (teacher panel → Maths tools, on by default):
+  - the answer is typed into the spreadsheet's own cell;
+  - the sum's numbers show under the sheet, for the first column only;
+  - tables already done fold to one line;
+  - the page is titled by what is being worked out ("Calculate the revenue for each fare to Dublin");
+  - there is no panel on the right (the worked example keeps it).
+- **Words:** rows read "Dublin ticket revenue", not "Dublin tickets".
+- **A briefing before the fare sums**, as Bertie asked ("the higher the ticket the lower the demand… one lost seat is sometimes OK if they're paying more"): *What a fare does*, above.
+
 ### Play notes: talk while you play (18 Oct 2026)
 *For reviewing the game by voice instead of screenshots. New part `p5i_playnotes.js` (reassignment only; `overrides.txt` stays at 120).*
 - **Screen names:** teacher panel → Play notes → "Show each screen's name". A tag in the bottom-left corner names the screen in words that are easy to say ("Home", "Plan opener", "Studio: flight selected", "Flight times", "Sums", "The board", "Results", "Sunday review", "Worth check", "Fuel desk", "Finance desk"…), with the week and date. It is always on in test mode.
@@ -392,6 +457,7 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Log screens only** keeps the same log with clock times and no microphone, to match a recording made on a phone.
 - **Reading a log:** `python3 tools/playnotes.py LOG` prints the timeline. `--at 12:40` gives the screen and save code at that moment.
 - **Screenshots from a log:** `node tools/playnotes_shots.js LOG OUTDIR [marks|said|screens|mm:ss …]` rebuilds and screenshots the screens a log names. Each is rebuilt from the last save code, so anything clicked after the day or step began is not reproduced.
+- **Briefings:** the tag names the briefing ("Briefing: What a fare does"), and while the tag shows, the briefing's frame sits to the right of it so the caption is never covered. Leaving test mode takes the tag away; before, it stayed in the corner with the test airline's date.
 - **Test:** `node src/opening/tests/playnotes.test.js` (Chromium's fake microphone).
 
 ### Screens brief 3: the test toolkit, demand that makes sense, overview → focus → consequence (17 Oct 2026)
@@ -608,7 +674,7 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Not yet:** months and the year keep the plain run (the brief's month timeline is in the evaluation), decision pauses, no-shows, knock-on delays and weather costs wait for the uncertainty stage.
 
 ### Building and testing the prototype
-- **Build:** `python3 src/opening/build.py` joins `src/opening/parts/` (in order: head, data, HTML, then the scripts `p4a_core`, `../engine/world-engine`, `p4a2_workbook` (the workbook's routes, aircraft, catering and settings), `p4b_control`, `p4d_opening`, `p4e_toolkit`, `p4f_campaign`, `p4g_opening2`, `p4h_world`, `p4i_liveops`, `p4j_intro`, `p4k_chapter` (the calendar from the sheets), `p4l_handsums` (week 1: hand-sum rules, events, weekends), `p4m_fleet` (the fleet and the shop), `p4n_weeks` (the weeks, Market events, the teacher's skip), `p4o_review` (December, the chapter review, the gates), `p4p_identity`, `p4q_paint`, `p4r_showroom`, `p4s_practice`, `p4t_workout`, `p4u_migrate` (old save codes), `p4v_week` (the week loop), `p4w_planner` (the Week 1 planner: the intro, the timeline editor, the fuel strip, the Maths Dock, the comparison), the later parts up to `p4zd`, then the game's own `p4ze_studio2`, `p4zf_flightdays`, `p4zg_chapter2`, `p4zh_longhaul`, `p4zj_types`, `p4zk_pad` (the Working pad), `p4zl_fleetshop` (the shop under Fleet), `p4zm_buyonly` (chapter 1 buy only), then `p4zn`–`p4zz` and `p5a`–`p5h` (the screens briefs; `p5g_testkit` is the teacher's test toolkit, `p5h_screens3` Screens brief 3, `p5i_playnotes` Play notes), and last `p4c_display`), with `p1_head_studio2.css`, `p1_head_nightops.css`, `p1_head_screens.css` and `p1_head_screens3.css`. The build also embeds the briefings and the Jump to airlines. A later part's function wins; `overrides.txt` lists them. The build checks every JSON block and the script's syntax.
+- **Build:** `python3 src/opening/build.py` joins `src/opening/parts/` (in order: head, data, HTML, then the scripts `p4a_core`, `../engine/world-engine`, `p4a2_workbook` (the workbook's routes, aircraft, catering and settings), `p4b_control`, `p4d_opening`, `p4e_toolkit`, `p4f_campaign`, `p4g_opening2`, `p4h_world`, `p4i_liveops`, `p4j_intro`, `p4k_chapter` (the calendar from the sheets), `p4l_handsums` (week 1: hand-sum rules, events, weekends), `p4m_fleet` (the fleet and the shop), `p4n_weeks` (the weeks, Market events, the teacher's skip), `p4o_review` (December, the chapter review, the gates), `p4p_identity`, `p4q_paint`, `p4r_showroom`, `p4s_practice`, `p4t_workout`, `p4u_migrate` (old save codes), `p4v_week` (the week loop), `p4w_planner` (the Week 1 planner: the intro, the timeline editor, the fuel strip, the Maths Dock, the comparison), the later parts up to `p4zd`, then the game's own `p4ze_studio2`, `p4zf_flightdays`, `p4zg_chapter2`, `p4zh_longhaul`, `p4zj_types`, `p4zk_pad` (the Working pad), `p4zl_fleetshop` (the shop under Fleet), `p4zm_buyonly` (chapter 1 buy only), then `p4zn`–`p4zz` and `p5a`–`p5j` (the screens briefs; `p5g_testkit` is the teacher's test toolkit, `p5h_screens3` Screens brief 3, `p5i_playnotes` Play notes, `p5j_sheet` sums in the sheet), and last `p4c_display`), with `p1_head_studio2.css`, `p1_head_nightops.css`, `p1_head_screens.css` and `p1_head_screens3.css`. The build also embeds the briefings with their shared kit (`briefings/kit/`) and the Jump to airlines. A later part's function wins; `overrides.txt` lists them. The build checks every JSON block and the script's syntax.
 - **Import:** `python3 tools/import_world.py` after editing the workbook. Live rows only; the report's *Chapter 1 touches* lists every non-live value the chapter reads (today: Istanbul's archetype, `timeSkip`, `reputationFromDate`).
 - **Tests** (Playwright, with the pre-installed Chromium; `NODE_PATH=/opt/node-tools/node_modules`):
   - `node src/opening/tests/week.test.js` plays chapter 1 a week at a time (v4.4) with the Balance Report's plans (`UPTO` day, `OUT` for screenshots): Launch Day's sums in order, the board, the Sunday reviews, Buy now or wait on day 8 (it waits for the Saab and signs off the time to afford), the Saab bought on day 15, Amsterdam, the ATR waited for on day 22 and bought on day 29 for Madrid; it checks the Calculate count for weeks 1–4, that the sweep's best plan beats the pupil's, Buy greyed in week 2 and the neglect lines from week 3.
@@ -641,6 +707,7 @@ The opening is being made excellent before the later campaign continues. `airlin
   - `node src/opening/tests/migrate.test.js` loads the two real pupil codes and a full-game code: they land on the week's board (or one planning day with the first-time sums), and the week completes.
   - `node src/opening/tests/opening.test.js` (the day-by-day flow, `teacherDayByDay`) plays chapter 1 as a scripted pupil (`UPTO` beats, `W`/`H` for the screen size, `SHOTS=0` to skip screenshots): Launch Day's sums, the events, the shop on day 8 (rents the Saab), two aircraft, the weeks, December and the chapter accounts; it checks the typed figures, that projected = actual every period, and that no screen overflows at 1366×768 or 1915×891.
   - `node src/opening/tests/screens3.test.js` (Screens brief 3): test mode, Run and Jump to, the pupil's save untouched; the fuel dips; the demand shape and caption for a lone flight; the inspector and the folded routes; a week's results, the weekly graph and Coming up seen while Run plays; the daily colour limit over eighteen weeks.
+  - `node src/opening/tests/briefings.test.js`: the eleven Operations briefings on their own and at their moments in the game, played to the end, and the Home shelf (`ONLY=<ids>` for some of them).
   - `sh tools/make_jumps.sh` (then `python3 src/opening/build.py`) rebuilds the toolkit's Jump to airlines: the week and chapter 2–4 tests in a chain, each writing its save at the jump points (`JUMPS=<dir>`). Run it after a change to the engine or the data.
   - `node src/opening/tests/balance.test.js` (no browser) checks the world engine against Balance Reports v2, v3, v4, v4.1 (re-based to the v4.4 day costs, no crew in chapter 1) and the v4.4 addendum: every single-service figure to the pound, 23 known differences noted (see `docs/Workbook-v4-Report-Back.md`).
   - `node src/opening/tests/engine.test.js` prices eight plans in the game and in the engine and expects the same pounds.

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations briefing — Two planes, one route</title>
+<link rel="stylesheet" href="kit/brief-kit.css" data-kit>
+<script src="kit/brief-kit.js" data-kit></script>
+</head>
+<body data-brief="aircraft_efficiency">
+<script>
+/* 6 · Two planes, one route (the first aircraft comparison). His plane and the bigger one take off together for the route and
+   fly side by side; under each, its fuel gauge draining and a cutaway of its cabin with its passengers. He taps the one he
+   thinks uses less fuel per passenger. On landing the fuel shares out across the seats. Then the bigger plane flies again half
+   empty and its fuel per passenger leaps. Caption: Bigger is cheaper per seat — when it's full. Lands on the comparison. */
+const D = Object.assign({ id:'aircraft_efficiency', route:{ city:'Dublin' }, a:{ name:'Twin Otter', seats:19, litres:180 }, b:{ name:'Saab 340', seats:34, litres:230 } }, K.B);
+const A = D.a, B2 = D.b, num = K.num, city = D.route.city, per = (l, n) => Math.round(10 * l / Math.max(1, n)) / 10, half = Math.max(1, Math.round(B2.seats / 2));
+const fmtL = v => (Math.round(v * 10) / 10).toLocaleString('en-GB', { minimumFractionDigits:1, maximumFractionDigits:1 });
+K.start({ title:'Two planes, one route' });
+const L = K.layers(), sv = K.s;
+/* the sky, clouds drifting past, the ground far below */
+sv('rect', { x:0, y:0, width:1600, height:900, fill:'url(#gSky)' }, L.back);
+sv('rect', { x:0, y:800, width:1600, height:100, fill:'#06142b' }, L.back); for(let i = 0; i < 70; i++) sv('circle', { cx:(i * 233) % 1600, cy:812 + (i * 37) % 80, r:1.2, fill:'#ffd27a', opacity:.5 }, L.back);
+const clouds = sv('g', { opacity:.5 }, L.back), CL = [];
+for(let i = 0; i < 9; i++){ const g = sv('g', null, clouds), x = (i * 211) % 1700, y = 80 + (i * 97) % 600, w = 120 + (i * 53) % 140; sv('ellipse', { cx:0, cy:0, rx:w, ry:w * .22, fill:'#9fc3ea', opacity:.18 }, g); sv('ellipse', { cx:w * .3, cy:-w * .08, rx:w * .5, ry:w * .2, fill:'#bcd6f2', opacity:.16 }, g); K.at(g, x, y); CL.push({ g, x, y, v:.4 + (i % 3) * .25 }); }
+const drift = K.every(() => CL.forEach(c => { c.x -= c.v * 2.2; if(c.x < -300) c.x = 1900; K.at(c.g, c.x, c.y); }));
+/* two lanes: the plane, its cabin, its fuel */
+function lane(P, y, art, tag){
+  const g = sv('g', null, L.mid), pl = K.plane(g, { x:120, y, w:430, art, shadow:false });
+  K.txt(g, 120, y - 14, `${P.name} · ${num(P.seats)} seats`, { 'font-size':22, 'font-weight':700 });
+  // the cabin: one square a seat
+  const cab = sv('g', { transform:`translate(600 ${y + 40})` }, g), cols = Math.ceil(P.seats / 2), seats = [];
+  sv('rect', { x:-10, y:-14, width:cols * 26 + 20, height:72, rx:30, fill:'#0d2342', stroke:'#4b6f9b', 'stroke-width':2 }, cab);
+  for(let i = 0; i < P.seats; i++){ const c = Math.floor(i / 2), r = i % 2, sq = sv('rect', { x:c * 26, y:r * 26, width:20, height:20, rx:4, fill:'#1a3a66' }, cab), hd = sv('circle', { cx:c * 26 + 10, cy:r * 26 + 10, r:6.5, fill:'#d8c3ae', opacity:0 }, cab); seats.push({ sq, hd }); }
+  // the fuel gauge
+  const gx = 600 + cols * 26 + 60, fuel = sv('g', { transform:`translate(${gx} ${y + 26})` }, g);
+  sv('rect', { x:0, y:0, width:260, height:26, fill:'#0d2342', stroke:'#4b6f9b', 'stroke-width':2 }, fuel); const bar = sv('rect', { x:2, y:2, width:256, height:22, fill:'url(#gFuel)' }, fuel);
+  const lt = K.txt(fuel, 0, 56, `${num(P.litres)} L for the trip`, { 'font-size':18, 'font-weight':600 });
+  return { g, pl, seats, bar, lt, gx, y, P, cols };
+}
+const ln = [lane(A, 170, D.a.art || (D.art || undefined), 'a'), lane(B2, 500, D.b.art || '', 'b')];
+const board = (L2, n) => L2.seats.forEach((s, i) => { s.hd.setAttribute('opacity', i < n ? 1 : 0); s.sq.setAttribute('fill', i < n ? '#24508a' : '#1a3a66'); });
+
+async function fly(lanes, fills){
+  lanes.forEach((L2, i) => board(L2, fills[i]));
+  await Promise.all(lanes.map(L2 => K.tween(2600, t => { L2.bar.setAttribute('width', 256 * (1 - t)); L2.lt.textContent = `${num(Math.round(L2.P.litres * t))} L burned`; K.at(L2.pl, 120 + Math.sin(t * Math.PI) * 30, L2.y + Math.sin(t * 6) * 3); }, 'io')));
+}
+(async () => {
+  K.mark(0); await K.caption(`To ${city} and back: your ${A.name} and a ${B2.name}, both full.`);
+  await fly(ln, [A.seats, B2.seats]);
+  await K.wait(400);
+  // Predict: which used less fuel for each passenger?
+  K.mark(1); K.question('Which used <b>less fuel for each passenger</b>? Tap the plane.');
+  await K.caption('A guess is fine.');
+  const pick = await new Promise(res => ln.forEach((L2, i) => { const b = K.h('button', { type:'button', 'aria-label':L2.P.name, style:'position:absolute;background:transparent;border:1px dashed rgba(242,193,78,.55);cursor:pointer' }, K.hud()); K.pos(b, 100, L2.y - 40); b.style.width = (100 * 1300 / 1600) + '%'; b.style.height = (100 * 210 / 900) + '%'; b.onclick = () => { document.querySelectorAll('.bk-hud button[aria-label]').forEach(x => x.remove()); res(i); }; }));
+  // Reveal: the fuel shares out across the seats
+  K.mark(2); K.question(null);
+  const lp = ln.map(L2 => per(L2.P.litres, L2.P.seats)), best = lp[0] <= lp[1] ? 0 : 1;
+  for(let i = 0; i < 2; i++){ const L2 = ln[i];
+    L2.seats.forEach((s, k) => { const d = sv('circle', { cx:L2.gx + 130, cy:L2.y + 39, r:4, fill:'#3fb6ff' }, L.top); const sx = 600 + Math.floor(k / 2) * 26 + 10, sy = L2.y + 40 + (k % 2) * 26 + 10; K.wait(k * 25).then(() => K.tween(500, t => { d.setAttribute('cx', K.lerp(L2.gx + 130, sx, t)); d.setAttribute('cy', K.lerp(L2.y + 39, sy, t) - Math.sin(t * Math.PI) * 40); }, 'io')).then(() => d.remove()); });
+    await K.wait(L2.seats.length * 25 + 500);
+    K.call(L2.gx + 130, L2.y + 150, `${num(L2.P.litres)} L ÷ ${num(L2.P.seats)} = <b>${fmtL(lp[i])} L</b> a passenger`, i === best ? '' : 'quiet');
+  }
+  await K.caption(`${pick === best ? 'Yes: ' : ''}the ${ln[best].P.name} uses <b>${fmtL(lp[best])} L</b> a passenger, the ${ln[1 - best].P.name} ${fmtL(lp[1 - best])} L.`);
+  await K.wait(2400);
+  // the bigger plane again, half empty
+  await K.caption(`Now the ${B2.name} again, with only ${num(half)} on board.`);
+  document.querySelectorAll('.bk-call').forEach(c => c.classList.add('out'));
+  ln[0].g.style.opacity = .35; await fly([ln[1]], [half]);
+  const lh = per(B2.litres, half);
+  K.call(ln[1].gx + 130, ln[1].y + 150, `${num(B2.litres)} L ÷ ${num(half)} = <b>${fmtL(lh)} L</b> a passenger`, '');
+  K.question(`Half empty: <b>${fmtL(lh)} L</b> a passenger${lh > lp[0] ? `, more than the ${A.name}'s ${fmtL(lp[0])} L` : ''}`);
+  await K.caption('<b>Bigger is cheaper per seat — when it\'s full.</b>');
+  await K.cont('Go on');
+  K.mark(3); drift(); K.question('Next: the comparison, with litres for each seat');
+  await K.caption('Look at how full each plane would fly, not only its size.');
+  await K.cont('To the comparison');
+  K.done({ pick, best });
+})();
+</script>
+</body>
+</html>

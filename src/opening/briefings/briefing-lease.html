@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations briefing — Renting a plane</title>
+<link rel="stylesheet" href="kit/brief-kit.css" data-kit>
+<script src="kit/brief-kit.js" data-kit></script>
+</head>
+<body data-brief="lease_money">
+<script>
+/* 10 · Renting a plane (6 Jan 2031). The big plane on the apron; beside it its price as one tall solid block, and his cash as
+   a short one that doesn't reach. A rent meter starts, and a stack of small daily blocks begins to grow beside the price. He
+   drags a day slider until the stack matches the block. Caption: 2,000 days of rent = the price. Lands on the shop: Rent
+   available, Buy greyed, and the rent-or-buy sum. */
+const D = Object.assign({ id:'lease_money', plane:'Boeing 787', price:12000000, rent:6000, cash:1500000 }, K.B);
+const money = K.money, num = K.num, days = Math.round(D.price / D.rent), short = v => v >= 1e6 ? '£' + (Math.round(v / 1e5) / 10).toLocaleString('en-GB') + 'm' : money(v);
+K.start({ title:'Renting a plane' });
+const L = K.layers();
+K.apron({ horizon:460, day:true, hangarX:1080, towerX:180 });
+const pl = K.plane(L.mid, { x:60, y:380, w:760, kind:'wide' });
+/* the blocks: the price, his cash, the rent stack */
+const BASE = 820, TOP = 160, H = BASE - TOP, hOf = v => H * Math.min(1.4, v / D.price);
+const blk = (x, v, fill, label, sub) => { const g = K.s('g', { filter:'url(#fSh)' }, L.front), h = hOf(v); K.s('rect', { x, y:BASE - h, width:120, height:h, fill }, g); const t1 = K.txt(g, x + 60, BASE - h - 34, label, { 'font-size':24, 'font-weight':800, 'text-anchor':'middle' }); K.txt(g, x + 60, BASE - h - 12, sub, { 'font-size':15, 'text-anchor':'middle', fill:'#9FBDE3' }); return g; };
+blk(930, D.price, 'url(#gGold)', short(D.price), 'the price');
+const cashG = blk(1080, D.cash, '#2b78c9', short(D.cash), 'your cash');
+/* the rent stack: one thin slab a day (drawn in hundreds) */
+const st = K.s('g', null, L.front), stTxt = K.txt(L.front, 1290, BASE - 20, '', { 'font-size':24, 'font-weight':800, 'text-anchor':'middle' }), stSub = K.txt(L.front, 1290, BASE, '', { 'font-size':15, 'text-anchor':'middle', fill:'#9FBDE3' });
+const meter = K.call(1320, 880, `rent: <b>${money(D.rent)}</b> a day`, 'cy');
+let shown = 0;
+const drawStack = n => { const h = hOf(n * D.rent), slabs = Math.ceil(n / 100); while(st.childNodes.length < slabs){ const i = st.childNodes.length; K.s('rect', { x:1230, y:0, width:120, height:Math.max(2, hOf(100 * D.rent) - 1.5), fill:i % 2 ? '#4fd1c5' : '#3fb8ad' }, st); }
+  while(st.childNodes.length > slabs) st.lastChild.remove(); [...st.childNodes].forEach((r, i) => { const top = BASE - hOf(Math.min(n, (i + 1) * 100) * D.rent); r.setAttribute('y', top); r.setAttribute('height', Math.max(1, hOf(Math.min(100, n - i * 100) * D.rent) - 1)); });
+  stTxt.setAttribute('y', BASE - h - 34); stSub.setAttribute('y', BASE - h - 12); stTxt.textContent = short(n * D.rent); stSub.textContent = `${num(n)} days of rent`; };
+const priceLine = K.s('rect', { x:900, y:BASE - H - 2, width:480, height:4, fill:'#F2C14E', opacity:0, filter:'url(#fGlowLine)' }, L.top);
+
+(async () => {
+  K.mark(0); await K.caption(`The ${D.plane}: <b>${short(D.price)}</b> to buy. Your cash: ${short(D.cash)}. It doesn't reach.`);
+  await K.wait(1600);
+  await K.caption(`Or rent it: <b>${money(D.rent)} a day</b>, from today.`);
+  // the meter runs a little: the stack starts to grow
+  await K.tween(1800, t => { shown = Math.round(60 * t); drawStack(shown); }, 'lin');
+  // Predict: drag the days until the stack matches the price
+  K.mark(1); K.question('How many days of rent make <b>the price</b>? Drag the days');
+  await K.caption('A guess is fine: drag until the stack matches the gold block.');
+  const stops = Array.from({ length:13 }, (_, i) => i * 250);
+  let guess = 0; const rail = K.rail({ x:420, y:870, w:690, stops, value:0, label:'Days of rent', onMove:v => { guess = v; drawStack(Math.max(v, 1)); priceLine.setAttribute('opacity', Math.abs(v * D.rent - D.price) < 1 ? 1 : 0); } });
+  drawStack(60);
+  await new Promise(res => { rail.onEnd = () => { if(guess > 0) res(); }; });
+  await K.wait(500); rail.lock();
+  // Reveal: the stack meets the block at the price ÷ the rent
+  K.mark(2); K.question(null);
+  const from = guess; await K.tween(1200, t => drawStack(Math.round(K.lerp(from, days, t))), 'io'); priceLine.setAttribute('opacity', 1);
+  K.question(`${short(D.price)} ÷ ${money(D.rent)} = <b>${num(days)} days</b>${guess && guess !== days ? ` · your guess: ${num(guess)}` : ''}`);
+  await K.caption(`<b>${num(days)} days of rent = the price.</b> About ${Math.round(days / 365 * 10) / 10} years.`);
+  await K.cont('Go on');
+  K.mark(3); rail.el.remove(); K.question('Next: the shop. Rent now; buying opens later');
+  await K.caption('Rent keeps your cash; buying keeps the plane. You will work out which pays.');
+  await K.cont('To the shop');
+  K.done({ guess, days });
+})();
+</script>
+</body>
+</html>
