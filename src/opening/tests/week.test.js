@@ -378,8 +378,14 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       { const R = JSON.parse(await p.evaluate(() => window.__sim.evalIn('JSON.stringify(fuelStoreReport())'))), m = txt.match(/Storage ?([\d,]+) L(?: \(fuel farm\))? — (about \w+ weeks?|less than a week) of flying/);   // D89: the storage line, each Monday
         caps.push([day, R.cap, R.block, R.log.length ? R.log[R.log.length - 1].week : null]);
         ok(`day ${day}: the desk's storage line "Storage ${R.cap.toLocaleString('en-GB')} L — ${m ? m[2] : '?'} of flying" (D89)`, !!m && +m[1].replace(/,/g, '') === R.cap && R.block === 1000 && (day !== 8 || R.cap === 8000), [R.cap, R.block, m && m[0]]); }
-      if(day === 8){ ok('day 8: the fuel desk shows next week\'s band £1.60–£1.76 at high confidence, and today\'s £1.47', /£1\.60 – £1\.76/.test(txt) && /High/.test(txt) && /£1\.47 \/ L/.test(txt), (txt.match(/Next week's forecast.{0,60}/) || [''])[0]);
+      if(day === 8){ ok('day 8: the fuel desk shows next week\'s band £1.60–£1.76 at high confidence, and today\'s £1.47', /£1\.60 ?– ?£1\.76/.test(txt) && /high confidence|High/.test(txt) && /£1\.47 \/ L/.test(txt), (txt.match(/(Next week's forecast|next week).{0,60}/) || [''])[0]);
+        // year one (batch 2, 3.6): three panels (position, order, market); the scenario table opens from Buy now or wait?
+        if(await vis('.fd2')){ ok('day 8: the year-one desk is three panels: Your position (tank, four figures), the order under it, one Market panel; no forecast tiles', await vis('.fd2-l .fd2-pos .fd2-tank') && await vis('.fd2-l .fd-ord') && await vis('.fd2-r .fd2-mk .fd2-chart') && !(await vis('.fd-news, .fd-nc, .dp-cards')) && (await p.$$('.fd2-pos .fd2-f')).length === 4);
+          ok('day 8: first visit, the tour: Your position has the active look and the callout "1 of 3", nothing dimmed', await vis('.fd2-pos.fd2-on .fd2-tour') && /1 of 3/.test(await p.textContent('.fd2-tour')) && (await p.$$('.fd2-on')).length === 1);
+          for(let k = 0; k < 3 && await vis('#fd2Next'); k++){ await p.click('#fd2Next'); await p.waitForTimeout(60); } ok('day 8: the tour ends after three panels', !(await vis('.fd2-tour')));
+          await p.click('#fd2Scen'); await p.waitForTimeout(60); }
         ok('day 8: the scenario table has a row for each point of the band', (await p.$$('.fd-t tbody tr')).length >= 4, (await p.$$('.fd-t tbody tr')).length);
+        if(await vis('#fd2ScenX')){ await p.click('#fd2ScenX'); await p.waitForTimeout(60); }
         ok('day 8: the desk says what an empty tank costs (the day\'s price + 10p)', /day's price \+ 10p/.test(txt)); }
       const n = day === 8 ? 3 : 2, bn = await p.$(`[data-fdb="${n}"]:not([disabled])`);
       if(bn){ await bn.click(); await p.waitForTimeout(60);
@@ -388,7 +394,9 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
           if(FO.level === 'build'){ for(const x of FO.seq) await p.click(x === '×' ? '[data-foop="×"]' : `[data-fofig="${x}"]`); await p.click('#foChk'); await p.waitForTimeout(60); }
           else { await p.fill('#foIn', '1'); await p.click('#foChk'); await p.waitForTimeout(60); ok(`day ${day}: a wrong order is a Query with one more try`, await vis('.fd-sign .stamp.q') && /One more try/.test(await p.textContent('.fd-sign .sc-msg'))); await p.fill('#foIn', FO.answer); await p.click('#foChk'); await p.waitForTimeout(60); }
           ok(`day ${day}: the order (${FO.level}) is signed, then Confirm opens`, await vis('.fd-sign.ok') && await p.$eval('#fdBuy', e => !e.disabled)); await shot(`d${day}-fueldesk-signed`); }
+        if(await vis('#fd2Scen')){ await p.click('#fd2Scen'); await p.waitForTimeout(60); }
         ok(`day ${day}: the desk shows the week's fuel by aircraft and route, worked out by the model`, await vis('.fd-ls') && (await p.$$('.fd-ls tbody tr')).length >= 2);
+        if(await vis('#fd2ScenX')){ await p.click('#fd2ScenX'); await p.waitForTimeout(60); }
         const f0 = (await S()).fuel; await p.click('#fdBuy'); await p.waitForTimeout(80); const f1 = (await S()).fuel;
         ok(`day ${day}: the order of ${n} × 1,000 L goes into the tank`, Math.round(f1 - f0) === n * 1000, [f0, f1]); await shot(`d${day}-fueldesk-bought`); }
       await p.click('#nx'); continue; }
