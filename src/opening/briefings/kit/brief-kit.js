@@ -41,7 +41,7 @@ const K = (() => {
   function start(o){
     o = o || {};
     document.title = 'Operations briefing — ' + (o.title || '');
-    document.body.innerHTML = `<div class="bk${RM ? ' rm' : ''}${FLAT ? ' flat' : ''}"><header class="bk-bar"><span class="bk-eye">Briefing</span><span class="bk-title">${esc(o.title || '')}</span><span class="bk-marks">${'<i></i>'.repeat(4)}</span><span class="bk-grow"></span>
+    document.body.innerHTML = `<div class="bk${RM ? ' rm' : ''}${FLAT ? ' flat' : ''}"><header class="bk-bar"><span class="bk-eye">Briefing</span><span class="bk-title">${esc(o.title || '')}</span><span class="bk-marks">${'<i></i>'.repeat(o.marks || 4)}</span><span class="bk-grow"></span>
       <button class="bk-btn" id="bkPause" title="Freeze the scene to talk about it">Pause &amp; discuss</button>${B.test ? '<button class="bk-btn" id="bkSkip" title="Teacher test mode">Skip</button>' : ''}</header>
       <main class="bk-stage"><div class="bk-world"></div><div class="bk-pz"><div><b>Paused</b><small>Talk it through, then carry on.</small><p style="margin:12px 0 0"><button class="bk-btn" id="bkResume">Resume</button></p></div></div></main>
       <footer class="bk-foot"><p class="bk-cap" aria-live="polite"></p><button class="bk-go" hidden>Continue &#9654;</button></footer></div>`;
@@ -359,7 +359,7 @@ const K = (() => {
     if(typeof art === 'string' && art.indexOf('kit:') === 0){ const [pc, t] = art.slice(4).split('|'); if(!name) name = PLANE_PIECE[pc] || pc; if(t && !o.tail) tail = t; }
     if(!name){ name = o.kind === 'jet' ? 'aircraft-e175' : o.kind === 'wide' ? 'aircraft-787' : (PLANE_PIECE[B.kitPlane] || 'aircraft-twin-otter'); if(!tail && !o.plain) tail = B.kitTail || null; }
     if(!pieceOf(name)) return null;
-    const P = pieceOf(name), w = o.w || 600, hgt = w * P.h / P.w, g = s('g', { class:'plane' }, parent);
+    const P = pieceOf(name), w = o.natural ? P.w : o.w || 600, hgt = w * P.h / P.w, g = s('g', { class:'plane' }, parent);   // natural: the piece's own size (12 px = 1 m)
     if(o.shadow !== false) shadowF(g, w * .52, hgt - 1, w * .46, Math.max(3, w * .03));
     const pc = piece(name, g, { w, mirror:!o.flip }); if(tail) pc.parts('tail').forEach(e => e.setAttribute('fill', tail));
     at(g, o.x || 0, o.y || 0); g.w = w; g.h = hgt; g.piece = pc; return g;
@@ -434,5 +434,5 @@ const K = (() => {
   }
 
   return { B, RM, s, h, at, txt, start, pause, mark, caption, question, cont, done, call, chips, rail, count, wait, tween, every, pos,
-    terminal, apron, plane, person, walk, priceTag, gate, stack, tank, vault, coins, board, money, num, esc, clamp, lerp, layers:() => layers, hud:() => hud, svg:() => svg, defs:() => defs, isPaused:() => paused };
+    terminal, apron, plane, person, walk, priceTag, gate, stack, tank, vault, coins, board, piece, flat:FLAT, money, num, esc, clamp, lerp, layers:() => layers, hud:() => hud, svg:() => svg, defs:() => defs, isPaused:() => paused };
 })();

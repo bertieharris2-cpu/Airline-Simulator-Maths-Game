@@ -10,6 +10,7 @@ const FIX = n => fs.readFileSync(path.join(__dirname, 'fixtures', n), 'utf8').tr
   const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));
   const E = s => p.evaluate(x => window.__sim.evalIn(x), s), J = async s => JSON.parse(await E(`JSON.stringify(${s})`));
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
+  await p.evaluate(() => { window.__sim.settings().briefings = false; });   // (a briefing over the screen would take the teacher's keys)
   await p.evaluate(c => { const s = window.__sim.loadCode(c); window.__sim.setS(s); window.__sim.landSave(); window.__sim.render(); }, FIX('gubby-ASIM5.txt'));
   // the helper: decision entries (routes = [id, flights, fare]), history a day at a time, audits, sums; then the engine
   await E(`(window.msT = C => {

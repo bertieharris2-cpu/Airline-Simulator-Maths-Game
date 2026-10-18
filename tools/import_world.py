@@ -771,6 +771,16 @@ t517.append('- **Roadmap:** ' + (', '.join(f'{x["when"]} (day {x["fromDay"]})' f
 t517.append('- **Fuel, weeks 1–8:** ' + ' · '.join(f'£{m["fuel"]:.2f}' for m in market[:8] if m.get('fuel') is not None) + '.')
 out += ['', '## Screens brief 3 (D101–D102) touches', '', 'Taken from v5.17 on top of v5.8 (`tools/take_parts.py`): the Settings rows and sheets these read, as loaded.', ''] + t517
 
+# D103 (Bertie, 18 Oct 2026, for Briefing 13): the pupil's own reserve, going bust, the standing aim; added to the installed workbook
+NEEDED_D103 = ['pupilReserve', 'bustRule', 'standingAim']
+t103 = []
+for k in NEEDED_D103:
+    st_ = settings_status.get(k)
+    if st_ is None: t103.append(f'- **Settings:** `{k}` is not on the sheet.'); issue('check', 'Settings', f'{k} is not on the sheet (D103).')
+    elif st_ not in LOAD: t103.append(f'- **Settings:** `{k}` is `{st_}`: not loaded.')
+    else: t103.append(f'- `{k}`: {settings.get(k)}')
+out += ['', '## D103 touches (Briefing 13)', '', "Bertie's rules of 18 Oct 2026, added to the installed workbook: the Settings rows the game reads, as loaded.", ''] + t103
+
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'
 CREDITS = ROOT / 'data' / 'Photo-Credits.md'

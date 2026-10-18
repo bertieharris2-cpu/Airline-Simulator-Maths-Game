@@ -67,7 +67,7 @@ fuelDeskHtml = function(asView){
     const lim = ord.querySelector('.fd-lim'), blocks = ord.querySelector('.fd-blocks'), fill = blocks && blocks.querySelector('.fs-fill'), b4 = blocks && blocks.querySelector('[data-fdb="4"]');
     // 0 to 5 blocks, as the mock-up has them (a week of flying is often just over 4 blocks); More still steps beyond
     if(b4 && !blocks.querySelector('[data-fdb="5"]')){ const n = 5, max = fdMaxBlocks(fuelOn(day)), sel = UI.fd && UI.fd.selNow; b4.insertAdjacentHTML('afterend', `<button class="fd-b ${sel === n ? 'on' : ''}" data-fdb="${n}" ${n > max ? 'disabled' : ''}>${num(n * fuelBlock())} L</button>`); }
-    if(lim) lim.innerHTML = lim.innerHTML.replace(/^Blocks of [^·]*·\s*room in the tank for [\d,]+ L;\s*cash/, 'Cash').replace(/^Blocks of [^·]*·\s*room/, 'Room');
+    if(lim) lim.innerHTML = lim.innerHTML.replace(/^Blocks of [^·]*·\s*room in the tank for [\d,]+ L;\s*([a-z])/, (m, c) => c.toUpperCase()).replace(/^Blocks of [^·]*·\s*room/, 'Room');
     if(blocks && (fill || lim)){ const row = document.createElement('div'); row.className = 'fd2-row2'; if(fill) row.appendChild(fill); if(lim) row.appendChild(lim); blocks.after(row); } }
   const scen = UI.fd2Scen && side ? `<div class="fd2-dlg" role="dialog" aria-label="Buy now or wait?">${side.outerHTML}<button class="bv-btn" id="fd2ScenX">Close</button></div>` : '';
   const step = fd2TourStep(), html = `<div class="fd fd2">${dialogs}${scen}<div class="fd2-l">${fd2Position(day, pick('.fs-farm-l'))}${ord ? ord.outerHTML : ''}</div><div class="fd2-r">${fd2Market(day)}</div></div>`;

@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 17 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 18 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **0 to fix, 24 to check, 7 notes.**
 
@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 170 | 170 live, 9 placeholder |
+| Settings | 173 | 173 live, 9 placeholder |
 | Archetypes | 5 | 2 later, 5 live |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved to Routes |
@@ -28,7 +28,7 @@
 | Milestones | 18 | 18 live, 1 note row |
 | DailyColour | 10 | 10 live, 1 note row |
 | Upgrades | 5 | 5 live, 1 note row |
-| Briefings | 10 | 10 live, 1 note row |
+| Briefings | 11 | 11 live, 1 note row |
 | Roadmap | 13 | 13 live, 1 note row |
 | RouteNews | 71 | 71 live, 1 note row |
 | Livery | 35 | 35 live, 1 note row |
@@ -164,7 +164,7 @@ Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `flightDaysFromDay`: earned: week-2 review (day 14); fallback day 21
 - **DailyColour:** hen_party (Tue, every 3), school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), birthday_cake (Sat, every 4), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
 - **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91), fuel_farm → The fuel farm on the Fuel desk (D89).
-- **Briefings:** fare_lever (briefing-fare.html, not built yet), rival_split (briefing-rival.html, not built yet), full_route (briefing-capacity.html, not built yet), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html, not built yet), event_weekend (briefing-event.html, not built yet), seasons (briefing-seasons.html, not built yet), lease_money (briefing-lease.html, not built yet), profit_vs_cash (briefing-cash.html, not built yet).
+- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), full_route (briefing-capacity.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), cash_to_fly (briefing-cash-to-fly.html).
 
 ## Screens brief 3 (D101–D102) touches
 
@@ -191,6 +191,14 @@ Taken from v5.17 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `demandStripMode`: follows the selected flight's route; otherwise route tabs (each route · All)
 - **Roadmap:** Week 3 (day 8), Week 4 (day 15), Week 5 (day 22), Week 6 (day 29), Week 7 (day 36), Week 9 (day 50), Week 9 (day 50), December (day 78), January 2031 (day 85), January 2031 (day 106), June 2031 (day 240), September 2031 (day 330), September 2032 (day 700).
 - **Fuel, weeks 1–8:** £1.20 · £1.47 · £1.68 · £1.62 · £1.74 · £1.97 · £2.94 · £2.13.
+
+## D103 touches (Briefing 13)
+
+Bertie's rules of 18 Oct 2026, added to the installed workbook: the Settings rows the game reads, as loaded.
+
+- `pupilReserve`: 0
+- `bustRule`: 3 grounded days in a week
+- `standingAim`: Make as much money as you can. | In January you'll choose what kind of airline you are. | Keep cash for emergencies: you decide how much. | Run out of cash and the airline closes. | You start again from Launch Day. No loans.
 
 ## Identity and photos (CR5)
 

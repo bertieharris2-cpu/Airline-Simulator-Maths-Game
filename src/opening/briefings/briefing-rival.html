@@ -38,18 +38,22 @@ const theirs = K.plane(L.back, { x:1700, y:0, w:522, flip:true, piece:'redkite',
 const RKY = 404 - theirs.h; K.at(theirs, 1700, RKY);
 /* the fare signs: his route, airline and fare; Red Kite's badge and fare (gold: money) */
 const sign = (x, w) => { const g = sv('g', null, L.mid); K.at(g, x, 446); sv('rect', { x:0, y:0, width:w, height:64, fill:'#04111f', stroke:'#2b5c95', 'stroke-width':2 }, g); return g; };
-const sA = sign(210, 372); K.txt(sA, 20, 42, `${city.toUpperCase()}${D.airline ? ' · ' + String(D.airline).toUpperCase().slice(0, 16) : ''}`, { 'font-size':24, 'font-weight':800, 'letter-spacing':1 });
+const sA = sign(210, 372), tA = K.txt(sA, 20, 42, `${city.toUpperCase()}${D.airline ? ' · ' + String(D.airline).toUpperCase().slice(0, 16) : ''}`, { 'font-size':24, 'font-weight':800, 'letter-spacing':1 });
 const fA = K.txt(sA, 352, 42, money(D.fare), { 'font-size':26, 'font-weight':800, 'text-anchor':'end', fill:'#f2c14e' });
 const sB = sign(1000, 300); sB.style.opacity = 0;
 const badge = sv('g', null, sB); K.at(badge, 12, 10); if(flat && window.KIT_ART && window.KIT_ART['red-kite-badge']){ const b = sv('g', null, badge); b.innerHTML = window.KIT_ART['red-kite-badge'].replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, ''); b.setAttribute('transform', `scale(${44 / 40})`); }
 else sv('rect', { x:0, y:0, width:44, height:44, fill:'#7a1428' }, badge);
-K.txt(sB, 70, 42, rk.toUpperCase(), { 'font-size':24, 'font-weight':800, 'letter-spacing':1 });
+const tB = K.txt(sB, 70, 42, rk.toUpperCase(), { 'font-size':24, 'font-weight':800, 'letter-spacing':1 });
 const fB = K.txt(sB, 282, 42, money(D.rival), { 'font-size':26, 'font-weight':800, 'text-anchor':'end', fill:'#f2c14e' });
+/* each sign is as wide as its words and fare need (a long airline name never runs into the fare) */
+function fitSign(g, t, f, x0){ try{ const r = g.querySelector('rect'), w = Math.ceil(x0 + t.getComputedTextLength() + 30 + f.getComputedTextLength() + 20); if(w > +r.getAttribute('width')){ r.setAttribute('width', w); f.setAttribute('x', w - 20); } }catch(e){} }
+const fitSigns = () => { fitSign(sA, tA, fA, 20); fitSign(sB, tB, fB, 70); };
+fitSigns(); if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitSigns);
 /* the queues, in rows of ten: his under his sign, Red Kite's under theirs */
 const COLS = 10, DX = 34, DY = 58, Y0 = 590, AX = 230, BX = 1035, rows = Math.ceil(N / COLS);
 const spotA = i => [AX + (i % COLS) * DX, Y0 + Math.floor(i / COLS) * DY], spotB = j => [BX + (j % COLS) * DX, Y0 + Math.floor(j / COLS) * DY];
 const Q = []; for(let i = 0; i < N; i++){ const [x, y] = spotA(i), p = K.person(L.front, x, y, 'pax'); p.g.style.opacity = 0; p.home = i; Q.push(p); }
-const note = per > 1 ? K.call(AX - 20, Y0 - 110, `each figure = ${per} travellers`, 'quiet') : null;
+const note = per > 1 ? K.call(AX + COLS * DX + 120, Y0 - 30, `each figure = ${per} travellers`, 'quiet') : null;   // beside the queue, clear of the sign
 /* walking with a change of mind: a new walk takes over from wherever the figure is */
 function go(p, x2, y2, ms, delay){ const tok = (p.tok || 0) + 1; p.tok = tok;
   return K.wait(delay || 0).then(() => { if(p.tok !== tok) return; const x1 = p.x, y1 = p.y;
@@ -81,6 +85,7 @@ const arrow = sv('g', { opacity:0 }, L.mid); sv('line', { x1:640, y1:Y0 + 20, x2
   const rail = K.rail({ x:RX, y:RY, w:RW, stops, value:0, label:'How many walk', onMove:v => { guess = v; walkTo(v, 60); tip.move(RX + RW * v / N - 30, RY - 64); tip.say(`You think: <b style="color:#36c6ff">${num(v * per)}</b> walk`); } });
   // the track's marks: 0, 10, 20, … (in travellers)
   const tl = sv('g', null, L.top); for(let v = 0; v <= N; v += Math.max(1, Math.round(10 / per))) K.txt(tl, RX + RW * v / N, RY + 40, num(v * per), { 'font-size':15, fill:'#9fbde3', 'text-anchor':'middle' });
+  await new Promise(res => { rail.onEnd = () => { rail.onEnd = null; res(); }; });   // the guess is the pupil's: the button waits for the first move
   await K.cont('Lock in my guess', 'sec');
   rail.lock(); await K.wait(250); rail.el.remove(); tl.remove(); tip.out(); arrow.setAttribute('opacity', 0);
   // 3 Reveal: the rule, in three steps, while the queue settles on what happens

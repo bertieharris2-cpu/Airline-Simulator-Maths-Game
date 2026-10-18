@@ -10,6 +10,99 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zb. Claude Design batch 2, year one (18 Oct 2026)
+
+From Claude Design's handover of 18 Oct, for year one only (Launch Day, day 1, to the year-1 accounts, day 364).
+- **Files.** New parts `p5l_year1.js` to `p5s_sweep.js` (after `p5k_design1.js`) and the stylesheet `p1_head_design2.css` (after `p1_head_design1.css`). All of them only reassign, so `overrides.txt` stays at 120.
+- **Docs.** The report is `docs/Batch-2-Report.md` (with the screens changed beyond those named, and the flags). The screenshots are in `docs/screenshots/batch2/`.
+
+**The gate.**
+- `yearOne(day)` (p5l) reads the Chapters sheet: days 1 to 364. `body.yr1` is set on render.
+- The new screens draw only in year one: `.ev2`, `.wio2`, `.rv2`, `.op2` and `.fd2`. Changes to existing screens sit under `body.yr1`.
+- From day 365 everything is as before.
+
+**Screens.**
+- **Event cards** (`p5m_events.js`, `ev2Render`):
+  - Storm's departures board (`ev2Scene`). The choices keep `[data-o]`; the footer is `#nx`, hidden until a choice is made.
+  - Red Kite's table (`ev2KiteTable`): the covers are `[data-seep]`, and Choose (`[data-o]`) comes once every profit is seen.
+  - The outcome plate (`ev2Plate`) arrives `EV2_HOLD` (1000 ms) after the press.
+  - The teacher's test kit taps `[data-seep]` before choosing (`p5g_testkit.js`).
+- **Work it out** (`p5n_wio2.js`):
+  - The sheet is one 640px object, with the A/B margins.
+  - The tenths tables (`wio2TenData`) draw rows of ten.
+  - `bvTiles` is wrapped for four tiles. The decoys come from:
+    - the tenths: the fares or the seats;
+    - "flights a day";
+    - otherwise the same rows in the sheet's other columns ("Snack price at £5").
+- **Sunday review** (`p5o_review2.js`): three columns and a formula bar.
+  - The handles are kept (`[data-rbcard]`, `[data-rbfig]`, `[data-rbop]`, `[data-rbchk]`, `[data-rbundo]`), plus `[data-rbans]` and `[data-rbdivchip]`.
+  - `rbPlan()` gives the answer.
+  - The grid row is `minmax(0,1fr)` and each `.rv2-col` scrolls inside itself.
+  - `rv2Neglect` groups the neglect lines by reason, one note a reason, with the routes listed.
+- **Plan opener** (`p5p_opener2.js`): `s2Opener` draws `.op2`.
+  - `op2Rows` is `s2Changes` plus D87's `dsCheck` tips, and `op2Link` turns their buttons into "›" links.
+  - The CSS caps the "This week" list at 330px with its own scroll, stacks two links, and draws D87's `.ds-act2` "Test fare" as a link.
+- **Fuel desk** (`p5q_fuel2.js`, `fd2On()`): `fd2Position`, `fd2Tank` and `fd2Market`.
+  - The tour is `S.fd2Tour` (`{step}` then `{done}`), with `#fd2Next`.
+  - "Buy now or wait? ›" opens the scenario table and the fuel by route.
+
+**Briefings.**
+- **The kit** (`briefings/kit`). In year one the game sends `BRIEF.kitFlat`, and the kit draws from `KIT_ART`: `kit/art/pieces/*.svg`, embedded by the build.
+  - `K.piece(name, parent, {x, y, w})`.
+  - `K.plane(…, {natural, flip, plain, art:'kit:<type>|<tail>'})`.
+  - No SVG filters. `.bk-act` (Buy and Fly) and `.bk-card` (cards and tables).
+  - `K.start({ title, marks })` (Briefing 13 has five marks).
+- `briefing-rival.html` has four beats.
+  - Lock in my guess waits for the rail's first `onEnd`.
+  - The gate signs grow to fit their words (`fitSign`), and the "each figure" note sits beside the queue.
+
+**Briefing 13** (`briefing-cash-to-fly.html`; `p5f_brief.js`).
+- `BF_EXTRA.cash_to_fly`; its data comes from `bfCashToFlyData()`: the cash, the reserve, the block price and litres, seven days of `{litres, tickets, otherCosts}` from `planLines` at each day, the planes, the shop's cheapest plane (`acCompare` for its route and increment), the emergency premium and the week number.
+- `bfCashToFly(next)` opens it:
+  - on the Fuel desk in week 2, after `fuel_cash_tank_profit`, if no order has been placed this week;
+  - in the shop (`shop2`), before `aircraft_efficiency`.
+- The page returns `{reserve, boughtPlaneInScene, stagedBuys}`. Unless skipped, the reserve becomes `setMyReserve(…, 'briefing')`. `S.brief.cashToFly` keeps `{day, at, reserve, boughtPlaneInScene, stagedBuys, skipped}`.
+
+**D103** (`p5r_d103.js`). It reads the Settings rows `pupilReserve`, `bustRule` and `standingAim`.
+- **The reserve.**
+  - `resOn()` is true in year one when `pupilReserve` exists. `S.myRes = {v, day, via, log, nudged}`, read by `myReserve()` and set by `setMyReserve(v, via)` (a record event "Cash reserve").
+  - `cashFloor` returns it. `reserveState().block` is false. `reserveWords` and `odBlockWhy` say "your".
+  - The wording helpers `resThe`, `resAbove`, `resPlus`, `resTag`, `resCashWord`, `resKeepWords` and `resLaunchWords` are used in p4w (Launch Day intro), p4y (order line), p4zb (comparison, pay) and p4zm (buy-only shop). Outside year one they give the old words.
+  - The control is `rsHtml(where)`/`rsBind` (`[data-rsw]`, `[data-rs="edit|+|-|done"]`, £500 steps). It is on the Fuel desk's order panel and in a `.rs-pnl` at the top of Finance.
+  - `resNudge(day, why)` fires once a week, only with no reserve set: a why line and BOARD news.
+- **Going bust.**
+  - `bankCheck` lends nothing in year one.
+  - `updateTopBar` shows "Below £0 · no loans" in red, writing only on a change (it runs every frame on the board).
+  - `d103Run` wraps `runDayQuick`, `startFlight` and `simulateDays`. Inside them, `planFlights` passes through `d103Ground`, which decides each day once:
+    - the litres needed and the shortfall in the tank;
+    - the bill, ceil(shortfall) × (the day's price + `fuelTopUp`);
+    - the takings, revenue plus on-board sales.
+    - It grounds the day when cash + takings < bill. The flights get zeroed revenue and fuel and `fuelGround:true`; the fixed costs still run.
+  - `bustGrounded` records `S.bust.g`, the why line, FUEL news and a record event. On the third grounded day in a week it sets `S.bust.closed = {day, week, days, cash}`.
+  - `render` draws `bustHtml()` while it is closed. `bustRestart()`:
+    - records the run and starts a new state;
+    - keeps the airline, the briefings seen, the reserve and the first plane's livery, registration and name;
+    - adds `S.restarts`, and lands on the chapter page.
+- **The aim.** `aimHtml()` is inserted after `.cu` on Home. It shows from `seen.cash_to_fly`, or from day 15. After `airlineType()` it shows the type (`ATYPE`) with the cash lines.
+
+**The sweep** (`p5s_sweep.js`).
+- `swBookOnly(t, col, row)` is true in year one for any sum with a fare in it, or whose tool is not at the Build level.
+- `sumDockHtmlPlanner`, `paperPlan`, `dsWorth` (kind `fare`) and `bvWscHtml` skip the Build step for those sums.
+- A render hook (`swSweep`) sets the footer hint, adds `.bv-bookln` where an answer box has no book line, and marks a lone "?" `.sw-unk` (magenta). `.yr1 .sum-h b` is gold.
+
+**Workbook.**
+- The Settings rows `pupilReserve` (0), `bustRule` ("3 grounded days in a week") and `standingAim` (five lines split by "|") are live, with D103 notes. `cashReserve`'s note says year one uses `pupilReserve`.
+- The Briefings sheet has a `cash_to_fly` row. The README has the D103 row.
+- `tools/import_world.py` has `NEEDED_D103`.
+
+**Tests.**
+- `briefings.test.js`: Briefing 13 with five marks; in the game on the week-2 Fuel desk and before the shop. The rival scene's context beat comes first. W/H set the size.
+- `week.test.js`: Launch Day's fare sums go to the book; the cabin sales have four tiles; the D86 count leaves out "Build, then the sum"; the grouped route note.
+- `record.test.js`: a fare sum has no Build entry.
+- `chapter2.test.js`: the year-one event cards (choosing commits, the date in the eyebrow).
+- `milestones.test.js`: briefings off.
+- The results are in `docs/Batch-2-Report.md`. Chapters 3 and 4 give the same figures as the last commit from the same saves.
+
 ## 0za. Claude Design batch 1 (18 Oct 2026)
 
 Two new parts: `p1_head_design1.css` (appended after `p1_head_screens3.css`) and `p5k_design1.js` (after `p5j_sheet.js`). Both only reassign, so `overrides.txt` stays at 120. The brief is `docs/Launch-Day-Changes-Batch-1.md`; the report and the screens changed are in `docs/Batch-1-Report.md`.

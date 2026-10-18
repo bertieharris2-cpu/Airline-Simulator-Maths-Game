@@ -196,8 +196,10 @@ body.rm .ev2-flash{opacity:0}
 .rv2-page .dp-tt h1{font:700 30px/1.15 var(--font-sans);margin:0 0 2px;letter-spacing:-.005em}
 .rv2-page .dp-tt p{font:400 14px/1.4 var(--font-sans);color:var(--text-soft)}
 .rv2-page .dp-body{gap:0}
-.bv.rv2.rbw{display:grid;grid-template-columns:360px 480px 300px;gap:10px;justify-content:start;align-items:start;flex:1;min-height:0}
-.rv2-col{display:flex;flex-direction:column;gap:11px;min-height:0;min-width:0}
+.bv.rv2.rbw{display:grid;grid-template-columns:360px 480px 300px;grid-template-rows:minmax(0,1fr);gap:10px;justify-content:start;align-items:stretch;flex:1;min-height:0}
+.rv2-col{display:flex;flex-direction:column;gap:11px;min-height:0;min-width:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(65,122,171,.7) transparent}   /* a long week (routes not flown) scrolls inside its column, clear of the footer */
+.rv2-col > *{flex:none}
+.rv2 .rv2-neg p{margin:0 0 4px;font:400 13px/1.4 var(--font-sans)}.rv2 .rv2-neg p:last-child{margin:0}.rv2 .rv2-neg b{font-weight:700}.rv2 .rv2-negl{display:block;color:var(--text)}
 .rv2 .rv2-ch{margin:0 0 -4px;color:var(--text-soft)}
 .rv2 .bv-panel{padding:10px 12px}
 .rv2 .rv2-ph{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 6px}
@@ -292,18 +294,22 @@ body.yr1 .s2-page.s2-opener .dp-tt p{font-size:17px}
 .op2 .s2-of small{font-size:15.5px;color:var(--text-soft)}.op2 .s2-of b{font:700 24.5px/1.2 var(--font-sans);color:var(--text)}.op2 .s2-of em{font-size:15px;color:var(--text-soft)}
 .op2 .s2-of.warn b{color:var(--gold)}.op2 .s2-of.good b{color:var(--green)}.op2 .s2-of.bad b{color:var(--amber)}
 .op2 .op2-act .bv-btn{min-height:49px;padding:0 20px;font:600 19.5px/1 var(--font-sans)}
-.op2 .op2-week{padding:15px 18px 8px;max-height:none;overflow:visible}
+.op2 .op2-week{padding:15px 18px 8px;max-height:330px;display:flex;flex-direction:column;overflow:hidden}   /* a long week (news, three planes) scrolls inside the list: the timetable and Keep plan stay on screen */
 .op2 .op2-week h2{margin:0 0 5px;font-size:22px!important;font-weight:700!important;line-height:1.3;color:var(--text)}
-.op2 .s2-cl.op2-list{padding:0;gap:0}
+.op2 .s2-cl.op2-list{padding:0 6px 0 0;gap:0;flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(65,122,171,.7) transparent}
+.op2 .op2-week h2{flex:none}
 .op2 .s2-cl.op2-list li{display:flex;flex-wrap:nowrap;align-items:flex-start;gap:12px;padding:11px 2px;background:none;border:0;border-bottom:1px solid var(--line-soft)}
 .op2 .s2-cl.op2-list li:last-child{border-bottom:0}
 .op2 .op2-i{flex:none;width:20px;height:20px;margin-top:2px;color:var(--text-soft)}.op2 .op2-i .di,.op2 .op2-i svg{width:20px;height:20px}
 .op2 .op2-r.tip .op2-i{color:var(--gold)}.op2 .op2-r.good .op2-i{color:var(--green)}
 .op2 .op2-t{flex:1;min-width:0;font:400 17.5px/1.4 var(--font-sans);color:var(--text)}
 .op2 .op2-t small{display:block;margin-top:2px;font-size:15.5px;color:var(--text-soft)}
-.op2 .op2-l{flex:none;display:flex;gap:12px;align-items:center}
+.op2 .op2-l{flex:none;display:flex;flex-direction:column;gap:2px;align-items:flex-end}   /* two links on one change stack, so the words keep their width */
 .op2 .op2-a{padding:0;border:0;background:none;color:var(--cyan);font:400 16.5px/1.45 var(--font-sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer;white-space:nowrap}
 .op2 .op2-a:hover,.op2 .op2-a:focus-visible{color:var(--text);outline:0}
+/* D87's "Test fare" on the full-capacity tip: a small link like the others (DESIGN.md: tips are messages, never buttons) */
+.op2 .op2-l .ds-act2{min-height:0;padding:0;border:0;background:none;box-shadow:none;color:var(--cyan);font:400 16.5px/1.45 var(--font-sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer;white-space:nowrap}
+.op2 .op2-l .ds-act2::after{content:' ›'}.op2 .op2-l .ds-act2:hover,.op2 .op2-l .ds-act2:focus-visible{color:var(--text);outline:0}
 /* ---------- 3.6 the Fuel desk: position first, three square panels (year one; p5q). Desk px: the mock's sizes × 1.23 ---------- */
 .fd2-page .dp-head{align-items:baseline}
 .fd2-page .fd2-tt{display:flex;align-items:baseline;gap:20px;flex-wrap:wrap}
@@ -392,3 +398,45 @@ body.yr1 .s2-page.s2-opener .dp-tt p{font-size:17px}
 .fd2-tour .bv-btn{min-height:40px;padding:0 16px;font:600 17px/1 var(--font-sans)}
 body.rm .fd2-tank .tk-f{animation:none}
 @media (prefers-reduced-motion:reduce){.fd2-tank .tk-f{animation:none}}
+
+/* ---------- D103 (year one): the pupil's reserve line, the closing screen, the standing aim ---------- */
+/* the reserve on the Fuel desk (desk-scaled: the mock's px × 1.23) and the Finance desk */
+.yr1 .rs{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 7px;padding:5px 12px;border:1px solid var(--bv-line);background:rgba(4,17,34,.5);font:400 17px/1.3 var(--font-sans);color:var(--text-soft)}
+.yr1 .rs-k{font-weight:600}
+.yr1 .rs-c{font-weight:700;color:var(--gold)}
+.yr1 .rs-v b,.yr1 .rs-n{font-weight:700;color:var(--text)}
+.yr1 .rs-a{margin-left:auto;padding:0;border:0;background:none;color:var(--cyan);font:400 17px/1.3 var(--font-sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer;white-space:nowrap}
+.yr1 .rs-a:hover,.yr1 .rs-a:focus-visible{color:var(--text);outline:0}
+.yr1 .rs.on{border-color:var(--cyan)}
+.yr1 .rs-st{width:38px;height:38px;border:1px solid var(--bv-line);border-radius:0;background:var(--panel-1);color:var(--text);font:700 21px/1 var(--font-sans);cursor:pointer}
+.yr1 .rs-st:disabled{opacity:.4;cursor:default}.yr1 .rs-st:focus-visible{outline:2px solid var(--cyan);outline-offset:1px}
+.yr1 .rs-n{min-width:92px;text-align:center;font-size:20px}
+.yr1 .rs-ok{min-height:38px;margin-left:auto}
+.yr1 .rs small{flex-basis:100%;font-size:15px;color:var(--text-soft)}
+.yr1 .rs-pnl{margin:0 0 12px;padding:12px 16px}
+.yr1 .rs-pnl .bv-eyebrow{color:var(--cyan)}
+.yr1 .rs-pnl p{margin:4px 0 8px;font-size:14px;color:var(--text-soft)}
+.yr1 .rs-pnl .rs{margin:0;font-size:15px}.yr1 .rs-pnl .rs-a{font-size:15px}.yr1 .rs-pnl .rs small{font-size:13px}
+/* the closing screen: one card on the room's darkest ground; the eyebrow is the one red (a genuine problem) */
+.bust{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:radial-gradient(1100px 600px at 30% 0%,#0b2347 0%,#041126 60%,#020812 100%)}
+.bust-card{max-width:660px;padding:28px 34px}
+.bust-eb{color:var(--red,#ff6b6b)}
+.bust h1{margin:10px 0 12px;font:600 32px/1.2 var(--font-sans);color:var(--text)}
+.bust p{margin:0 0 12px;font:400 18px/1.5 var(--font-sans);color:var(--text-soft)}
+.bust-days{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 16px;padding:0;list-style:none}
+.bust-days li{padding:5px 12px;border:1px solid var(--bv-line);background:rgba(4,17,34,.6);font:600 15px/1.2 var(--font-sans);color:#9fb3cf}
+.bust-act{margin-top:20px}.bust-act .bv-btn{min-height:46px;padding:0 22px;font:600 18px/1 var(--font-sans)}
+/* the standing aim, under Coming up on Home */
+.yr1 .kpis > .aim{flex:0 0 100%;grid-column:1 / -1;order:-1;box-sizing:border-box;width:100%}
+.yr1 .aim{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 14px;margin:0 0 2px;padding:2px 12px;border:1px solid rgba(130,195,255,.2);background:linear-gradient(180deg,rgba(11,35,64,.9),rgba(6,22,42,.9));font-size:13px;line-height:1.25;color:#CFE0F7}
+.yr1 .aim .bv-eyebrow{font-size:10.5px;color:var(--cyan)}
+.yr1 .aim b{font-weight:600;color:#EAF2FF}
+.yr1 .vw > .rs-pnl{grid-column:1 / -1;align-self:start}
+
+/* ---------- Batch 2 section 2 (year one): the gold SUM n on every sum, the book line, the magenta unknown, two-line tile labels ---------- */
+.yr1 .sum-h b{background:var(--gold);color:#1c1400;border-radius:0;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+html.no .yr1 .dock-sum .sum-h b{color:#1c1400}
+.yr1 .bv-bookln{margin:4px 0 8px;font:400 14px/1.35 var(--font-sans);color:var(--text-soft)}
+.yr1 .sw-unk{color:var(--magenta)!important;font-weight:700}
+.yr1 .bv-tile small{white-space:normal;overflow:hidden;text-overflow:clip;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.15}
+.yr1 .bv-tile{height:auto;min-height:58px;padding-top:6px;padding-bottom:6px}

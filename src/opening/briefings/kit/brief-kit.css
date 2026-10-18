@@ -70,6 +70,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--sans);font-varian
    cyan, bold words in a caption are white (gold stays for money), Next is the blue primary, a choice that is not "go on" is
    the outlined secondary, the drag handle is a square cyan block. */
 .bk.flat .bk-marks i.on{background:var(--cy)}
+.bk.flat .bk-stage{background:radial-gradient(1200px 700px at 30% 0%,#0a2446 0%,#06182f 55%,#020812 100%)}   /* deep navy round the scene, not the old royal blue */
 .bk.flat .bk-cap b{color:var(--white);font-weight:700}
 .bk.flat .bk-go{border:1px solid #5cb0ff;background:linear-gradient(180deg,#2486ff,#1260dc);color:#eaf3ff}
 .bk.flat .bk-go.sec{border-color:#5b86b8;background:#0d2a4c;color:#eaf2ff}
@@ -78,3 +79,21 @@ body{background:var(--bg);color:var(--white);font-family:var(--sans);font-varian
 .bk.flat .bk-rail .hd{border-radius:0;background:var(--cy);box-shadow:0 0 0 .3cqw rgba(54,198,255,.18),0 .3cqw .8cqw rgba(0,0,0,.5)}
 .bk.flat .bk-call{border-color:var(--line)}
 .bk.flat .bk-call b{color:var(--white)}
+/* a scene's own controls (Briefing 13: Buy under the cash gauge, Fly under the week): placed where the thing is; a card over
+   the scene (the shop's offer, the two weeks side by side) */
+.bk-act{position:absolute;transform:translate(-50%,-50%);font:inherit;font-size:1.12cqw;font-weight:700;padding:.72cqw 1.3cqw;border:1px solid #5cb0ff;background:linear-gradient(180deg,#2486ff,#1260dc);color:#eaf3ff;cursor:pointer;white-space:nowrap;transition:opacity .3s,box-shadow .3s}
+.bk-act.sec{border-color:#2b5c9e;background:#0d2346;color:#eaf2ff}
+.bk-act[hidden]{display:none}.bk-act[disabled]{opacity:.42;cursor:default}
+.bk-act.lit{box-shadow:0 0 0 .3cqw rgba(54,198,255,.3),0 0 1.4cqw rgba(30,130,255,.45)}
+.bk-act:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.bk-card{position:absolute;transform:translate(-50%,-50%);padding:1.3cqw 1.7cqw;background:#081f3d;border:1px solid rgba(65,122,171,.7);box-shadow:0 1cqw 2.4cqw rgba(0,0,0,.45);color:var(--white);transition:opacity .35s}
+.bk-card.out{opacity:0;pointer-events:none}
+.bk-card .ey{display:block;font-size:.95cqw;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cy)}
+.bk-card h3{margin:.45cqw 0 .3cqw;font-size:1.55cqw;font-weight:600;line-height:1.25}
+.bk-card p{margin:.3cqw 0 0;font-size:1.12cqw;line-height:1.4;color:#c6d8f0}
+.bk-card .bk-row{display:flex;gap:.7cqw;margin-top:1cqw}
+.bk-card table{border-collapse:collapse;margin-top:.7cqw;font-size:1.12cqw}
+.bk-card th{font-weight:600;color:#9fbde3;text-align:right;padding:.3cqw 0 .3cqw 2cqw;white-space:nowrap}
+.bk-card th:first-child,.bk-card td:first-child{text-align:left;padding-left:0}
+.bk-card td{text-align:right;padding:.42cqw 0 .42cqw 2cqw;border-top:1px solid rgba(53,96,135,.45);color:var(--white);white-space:nowrap}
+.bk-card td:first-child{color:#c6d8f0}.bk-card td.gold{color:var(--gold);font-weight:700}

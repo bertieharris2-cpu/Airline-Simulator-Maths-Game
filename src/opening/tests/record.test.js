@@ -24,7 +24,7 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
   else { await p.click('[data-pe="0|add|par|0|0"]').catch(() => {}); await p.click('[data-pe="0|add|dub|0|0"]').catch(() => {}); }
   await p.waitForTimeout(100); await p.click('#nx'); await p.waitForTimeout(150);
   // D86 (15 Oct 2026): the pupil works on paper; the game takes the answer. One answer box, two tries, a sum number.
-  for(let k = 0; k < 20 && !(await p.$('.wk-sum.paper #cellAns')); k++){ if(await p.$('#pbChk')){ const P = JSON.parse(await E('JSON.stringify(paperPlan())')); for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-pbop="${x}"]` : `[data-pbfig="${x}"]`); await p.click('#pbChk'); await p.waitForTimeout(80); continue; }   // batch 1: every sum is built first
+  for(let k = 0; k < 20 && !(await p.$('.wk-sum.paper #cellAns')); k++){ if(await p.$('#pbChk')){ const P = JSON.parse(await E('JSON.stringify(paperPlan())')); for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-pbop="${x}"]` : `[data-pbfig="${x}"]`); await p.click('#pbChk'); await p.waitForTimeout(80); continue; }   // a sum still built first (batch 1; fare sums go to the book)
     if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ await p.click('#wkTutGo'); continue; } if(await p.$('[data-wpick]')){ const ws = await p.$$('[data-wpick]'); await (ws[1] || ws[0]).click(); await p.waitForTimeout(80); continue; } if(await p.$('#wkNext')){ await p.click('#wkNext'); continue; } await p.waitForTimeout(100); }
   ok('the answer box is on screen: no column template, no squared paper, no Working pad', !!(await p.$('.wk-sum.paper #cellAns')) && !(await p.$('.wkb, .wk-grid, [data-summode], .pad-btn')), await T());
   const head = (await p.textContent('.wk-sum.paper .sum-h')).replace(/\s+/g, ' ').trim(), n1 = +(/^Sum (\d+)/.exec(head) || [])[1];
@@ -36,7 +36,8 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
   const e1 = JSON.parse(await E('JSON.stringify(S.record.entries.filter(e => e.type === "calc").pop())'));
   ok('the record has the sum with its number and both attempts, a Query then Checked', e1 && e1.n === n1 && e1.attempts.length === 2 && !e1.attempts[0].ok && e1.attempts[1].ok && e1.status === 'checked' && /ten times smaller/.test(e1.attempts[0].note), e1 && { n:e1.n, q:e1.question, tries:e1.attempts.length, status:e1.status, note:e1.attempts[0].note });
   const b1 = JSON.parse(await E(`JSON.stringify(S.record.entries.filter(e => e.type === "build" && e.key === ${JSON.stringify(e1 ? e1.key : '')}).pop() || null)`));
-  ok('batch 1: the sum was built first: its Build is in the record under the same Sum number, checked', !!b1 && b1.n === n1 && b1.status === 'checked', b1 && { n:b1.n, status:b1.status, chips:(b1.attempts[0] || {}).chips });
+  // batch 2 (Bertie, 18 Oct): a sum about fares is always worked out in the book, so year one's sales forecast has no Build step
+  ok('batch 2: a fare sum is worked out in the book, not built: no Build in the record, the one Sum number', !b1 && e1 && e1.n === n1, b1 && { n:b1.n, status:b1.status });
   // the next sums: answered right, until the profit, which is answered wrong twice: Finance fills it in
   let shownN = null;
   for(let k = 0; k < 30; k++){ if(await p.$('#wkNext')){ await p.click('#wkNext'); continue; } if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ await p.click('#wkTutGo'); continue; }

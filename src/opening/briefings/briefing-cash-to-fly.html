@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations briefing — Can you afford to run it?</title>
+<link rel="stylesheet" href="kit/brief-kit.css" data-kit>
+<script src="kit/brief-kit.js" data-kit></script>
+</head>
+<body data-brief="cash_to_fly">
+<script>
+/* 13 · Can you afford to run it? (week 2: the Fuel desk after Cash, tank, profit, or the shop if the pupil gets there first).
+   Fable's brief (18 Oct 2026), drawn to the kit's style frame (Claude Design handover 18 Oct, section 5). Five beats:
+   1 Show: the week as seven stands with the fuel each day needs standing on them as drums; the planes at Monday; cash in a
+     tall glass gauge.
+   2 Decide: a red reserve line across the gauge, dragged up from £0 (or the line set before); the Buy button and the
+     caption say what fits above it.
+   3 Buy and fly: the drums fill from Monday; Fly flies one day: its drum empties, the tickets drop into the gauge, the board
+     adds the day. When the tickets lift the cash above the line, Buy lights. A day whose fuel was not bought flies on
+     emergency fuel at the day's price + 10p (a grey drum).
+   4 The twist: back to Monday; the shop's plane, bought or not. Two planes need twice the fuel. Fuel that can't be paid for
+     (cash and the day's takings, the game's rule, D103) keeps a plane grounded, grey, and its day cost is still paid. The two
+     weeks side by side.
+   5 Use: the rules of the year, the card that stays on Home until January; back to the desk with the line kept.
+   The figures are the game's (the engine's projection of the pupil's plan); the fallbacks are Bertie's week 2. Sends back reserve
+   (the line), boughtPlaneInScene and stagedBuys. Only the reserve line is red; grounded planes and days go grey. */
+const WKS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], WKL = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const D = Object.assign({ id:'cash_to_fly', cash:12409, reserve:0, price:1470, blockLitres:1000, emergencyPremium:.1, week:2, next:'fuel',
+  planes:[{ name:'Twin Otter', dayCost:600 }], shopPlane:{ name:'Twin Otter', price:10000, dayCost:600, litresPerDay:600, tickets:2000 } }, K.B);
+const money = K.money, num = K.num, clamp = K.clamp, lerp = K.lerp, RM = K.RM, sv = K.s, txt = K.txt;
+const PR = Math.max(1, Math.round(+D.price || 1470)), BL = Math.max(1, Math.round(+D.blockLitres || 1000)), PL = PR / BL;
+const PREM = D.emergencyPremium === undefined ? .1 : +D.emergencyPremium, PENCE = Math.round(PREM * 100);
+const days0 = Array.isArray(D.days) && D.days.length ? D.days : WKS.map((w, i) => ({ d:`${w} ${9 + i}`, litres:600, tickets:2000, otherCosts:600 }));
+const DAYS = WKS.map((w, i) => { const x = days0[i] || {}; return { d:String(x.d || w), name:String(x.name || WKL[i]), litres:Math.max(0, Math.round(+x.litres || 0)),
+  tickets:Math.max(0, Math.round(+x.tickets || 0)), other:Math.max(0, Math.round(+(x.otherCosts !== undefined ? x.otherCosts : x.other) || 0)) }; });
+const FLEET = Array.isArray(D.planes) && D.planes.length ? D.planes : [{ name:'Twin Otter', dayCost:600 }];
+/* the pupil's planes fly the plan (one set of drums, the plan's litres); the shop's plane flies a week like one of them */
+const ME = { name:FLEET.length > 1 ? `${FLEET.length} planes` : String(FLEET[0].name || 'Your plane'), litres:DAYS.map(x => x.litres), tickets:DAYS.map(x => x.tickets), cost:DAYS.map(x => x.other),
+  idle:FLEET.reduce((t, p) => t + Math.max(0, Math.round(+p.dayCost || 0)), 0) };
+const SH = D.shopPlane && +D.shopPlane.price > 0 ? D.shopPlane : null, SD = SH && Array.isArray(SH.days) && SH.days.length === 7 ? SH.days : null;
+const NEW = SH ? { name:String(SH.name || 'plane'), price:Math.round(+SH.price),
+  litres:DAYS.map((x, i) => x.litres ? Math.round(SD ? +SD[i].litres || 0 : +SH.litresPerDay || x.litres / FLEET.length) : 0),
+  tickets:DAYS.map((x, i) => x.litres ? Math.round(SD ? +SD[i].tickets || 0 : SH.tickets !== undefined ? +SH.tickets : x.tickets / FLEET.length) : 0),
+  cost:DAYS.map((x, i) => Math.round(SD ? +SD[i].otherCosts || 0 : +SH.dayCost || 0)), idle:Math.max(0, Math.round(+SH.dayCost || 0)) } : null;
+const blocks = n => `${num(n)} ${n === 1 ? 'block' : 'blocks'}`, times = n => n === 1 ? 'once' : n === 2 ? 'twice' : `${num(n)} times`;
+const W8 = ms => K.wait(RM ? 0 : ms);
+
+/* ---------- the week, as the game runs it ---------- */
+function week(cash, planes){ return { cash, tank:0, day:0, buys:0, rows:[], planes, dear:0, grounded:0, log:[] }; }
+const needOn = (W, d) => W.planes.reduce((t, P) => t + P.litres[d], 0);
+function stillNeed(W){ let t = 0; for(let d = W.day; d < 7; d++) t += needOn(W, d); return Math.max(0, t - W.tank); }
+function canBuy(W, r){ const room = Math.floor(Math.max(0, W.cash - r) / PR + 1e-9), want = Math.ceil(stillNeed(W) / BL - 1e-9); return Math.max(0, Math.min(room, want)); }
+function buy(W, n){ W.cash -= n * PR; W.tank += n * BL; W.buys++; W.log.push({ buy:n }); }
+/* one day: each plane takes its fuel from the tank; what is missing is bought as emergency fuel (the day's price + 10p), paid
+   from cash and the day's takings; if they can't pay it, that plane stays on the ground and its day cost still runs */
+function fly(W){
+  const d = W.day, row = { d, tickets:0, fuel:0, costs:0, dearL:0, dearCost:0, grounded:[], flew:[] };
+  W.planes.forEach((P, p) => {
+    const need = P.litres[d]; if(!need){ row.costs += P.cost[d]; return; }
+    const fromTank = Math.min(W.tank, need), short = need - fromTank, extra = Math.round(short * (PL + PREM));
+    if(short > 0 && W.cash + P.tickets[d] < extra){ row.grounded.push(p); row.costs += P.idle; return; }
+    W.tank -= fromTank; W.cash += P.tickets[d] - extra; row.tickets += P.tickets[d]; row.fuel += Math.round(fromTank * PL) + extra; row.dearL += short; row.dearCost += extra;
+    row.costs += P.cost[d]; row.flew.push(p);
+  });
+  W.cash -= row.costs; row.result = row.tickets - row.fuel - row.costs; row.cash = W.cash;
+  W.rows.push(row); if(row.dearL) W.dear++; if(row.grounded.length) W.grounded++; W.day++; W.log.push({ fly:d });
+  return row;
+}
+/* a week flown without the pupil: each morning buy what fits above the line, then fly */
+function autoWeek(W, r){ while(W.day < 7){ const n = canBuy(W, r); if(n) buy(W, n); fly(W); } return W; }
+const flying = W => W.rows.reduce((t, x) => t + x.result, 0);
+
+/* ---------- the scene ---------- */
+K.start({ title:'Can you afford to run it?', marks:5 });
+const L = K.layers(), defs = K.defs(), hud = K.hud(), svgEl = K.svg(), flat = K.flat;
+const grad = (id, stops, x2, y2) => { const g = sv('linearGradient', { id, x1:0, y1:0, x2, y2 }, defs); stops.forEach(([o, c]) => sv('stop', { offset:o, 'stop-color':c }, g)); };
+grad('b13gold', [[0, '#ffd76b'], [.5, '#f2c14e'], [1, '#b98a1c']], 1, 0); grad('b13fuel', [[0, '#7fd9ff'], [.45, '#36c6ff'], [1, '#1a6fb5']], 1, 0);
+/* the apron at night, light from the upper left */
+sv('rect', { x:0, y:0, width:1600, height:900, fill:flat ? 'url(#gNight)' : 'url(#gSky)' }, L.back);
+sv('rect', { x:0, y:404, width:1600, height:496, fill:flat ? 'url(#gFloorF)' : '#081831' }, L.back);
+sv('line', { x1:0, y1:404.5, x2:1600, y2:404.5, stroke:'#5a95c8', 'stroke-opacity':.2 }, L.back);
+if(flat) sv('ellipse', { cx:430, cy:600, rx:720, ry:230, fill:'url(#gPoolF)' }, L.back);
+sv('line', { x1:414, y1:474, x2:1146, y2:474, stroke:'#eaf2ff', 'stroke-opacity':.12, 'stroke-width':3, 'stroke-dasharray':'18 14' }, L.back);
+const head = (x, s) => txt(L.back, x, 50, s, { 'font-size':17, 'font-weight':600, 'letter-spacing':2.2, fill:'#9fbde3', 'text-anchor':'middle' });
+head(198, 'CASH'); head(794, 'THIS WEEK'); head(1373, 'FLIGHT BOARD');
+
+/* the cash gauge: a tall glass, gold to the cash, the figure under it */
+const netOf = P => P.tickets.reduce((t, v, i) => t + v - P.cost[i] - P.litres[i] * PL, 0);
+let TOP = Math.max(D.cash, D.cash + netOf(ME), NEW ? D.cash - NEW.price + netOf(ME) + netOf(NEW) : 0) * 1.06;
+const TSTEP = [500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000, 200000, 250000, 500000, 1000000].find(s => TOP / s <= 7) || 1000000;
+TOP = Math.max(TSTEP, Math.ceil(TOP / TSTEP) * TSTEP);
+const RSTEP = TOP <= 20000 ? 250 : TOP <= 60000 ? 500 : TOP <= 200000 ? 1000 : 5000;
+const GX = 110, GW = 176, GT = 104, GB = 580, GC = GX + GW / 2, yOf = v => GB - (GB - GT - 16) * clamp(v / TOP, 0, 1);
+const gauge = sv('g', null, L.mid);
+sv('ellipse', { cx:GC + 8, cy:GB + 24, rx:128, ry:10, fill:flat ? 'url(#gShadowF)' : '#000', opacity:flat ? 1 : .3 }, gauge);
+sv('rect', { x:GX - 22, y:GB, width:GW + 44, height:22, fill:'#16305a' }, gauge); sv('line', { x1:GX - 22, y1:GB + .5, x2:GX + GW + 22, y2:GB + .5, stroke:'#9cc4f0', 'stroke-opacity':.5 }, gauge);
+const gold = sv('rect', { x:GX + 14, y:GB, width:GW - 28, height:0, fill:'url(#b13gold)' }, gauge), goldTop = sv('ellipse', { cx:GC, cy:GB, rx:(GW - 28) / 2, ry:9, fill:'#ffe28f', opacity:0 }, gauge);
+const spend = txt(gauge, GC, 0, '', { 'font-size':18, 'font-weight':700, fill:'#3a2a00', 'text-anchor':'middle', opacity:0 }), spend2 = txt(gauge, GC, 0, 'to spend', { 'font-size':16, fill:'#3a2a00', 'text-anchor':'middle', opacity:0 });
+sv('path', { d:`M${GX},${GT} L${GX},${GB} M${GX + GW},${GT} L${GX + GW},${GB}`, stroke:'#9fc8f4', 'stroke-opacity':.45, 'stroke-width':2 }, gauge);
+sv('ellipse', { cx:GC, cy:GT, rx:GW / 2, ry:12, fill:'none', stroke:'#9fc8f4', 'stroke-opacity':.45, 'stroke-width':2 }, gauge);
+sv('rect', { x:GX + 14, y:GT + 12, width:11, height:GB - GT - 22, fill:'#fff', opacity:.08 }, gauge);
+for(let v = 0; v <= TOP + .5; v += TSTEP){ const y = yOf(v); txt(gauge, GX - 12, y + 5, money(v), { 'font-size':15.5, fill:'#9fbde3', 'text-anchor':'end' }); if(v) sv('line', { x1:GX - 7, y1:y, x2:GX, y2:y, stroke:'#9fbde3', 'stroke-opacity':.5 }, gauge); }
+const figure = txt(L.mid, GC, 652, money(0), { 'font-size':38, 'font-weight':600, fill:'#f2c14e', 'text-anchor':'middle' });
+const keepT = txt(L.mid, GC, 684, '', { 'font-size':18, fill:'#9fbde3', 'text-anchor':'middle' });
+const hint1 = txt(L.mid, GC, 708, 'If something goes wrong,', { 'font-size':16.5, fill:'#8ea6c8', 'text-anchor':'middle', opacity:0 }), hint2 = txt(L.mid, GC, 728, 'this is all you\'ll have.', { 'font-size':16.5, fill:'#8ea6c8', 'text-anchor':'middle', opacity:0 });
+const perBlock = txt(L.mid, GC, 830, `${money(PR)} a block (${num(BL)} L)`, { 'font-size':16.5, fill:'#9fbde3', 'text-anchor':'middle', opacity:0 });
+let shown = 0;
+function setLevel(v){ shown = v; const y = yOf(v); gold.setAttribute('y', y.toFixed(1)); gold.setAttribute('height', Math.max(0, GB - y).toFixed(1)); goldTop.setAttribute('cy', y.toFixed(1)); goldTop.setAttribute('opacity', v > 0 ? 1 : 0); figure.textContent = money(v); spendLabel(); }
+const levelTo = (to, ms) => { const from = shown; return K.tween(RM ? 0 : ms === undefined ? 700 : ms, k => setLevel(lerp(from, to, k)), 'out').then(() => setLevel(to)); };
+
+/* the reserve line: the one red thing; dragged (or the arrow keys) in steps */
+let R = clamp(Math.round((+D.reserve || 0) / RSTEP) * RSTEP, 0, TOP), rLive = false, touched = false;
+const rv = sv('g', { opacity:0 }, L.top);
+sv('line', { x1:GX - 8, y1:0, x2:GX + GW + 12, y2:0, stroke:'#ff5f5f', 'stroke-width':4 }, rv);
+const rHand = sv('g', { tabindex:0, role:'slider', 'aria-label':'Cash to keep for emergencies', 'aria-valuemin':0, 'aria-valuemax':TOP, style:'cursor:ns-resize;touch-action:none;outline:none' }, rv);
+sv('rect', { x:GX - 12, y:-20, width:GW + 64, height:40, fill:'#fff', opacity:0 }, rHand);   // a wider place to take hold of the line
+const hRect = sv('rect', { x:GX + GW + 12, y:-15, width:30, height:30, fill:'#ff5f5f' }, rHand);
+sv('path', { d:`M${GX + GW + 19},-5 L${GX + GW + 35},-5 M${GX + GW + 19},5 L${GX + GW + 35},5`, stroke:'#3a0b10', 'stroke-width':2.4 }, rHand);
+const rWord = txt(rv, GX + GW + 50, -4, 'keep', { 'font-size':18, 'font-weight':700, fill:'#ff5f5f' }), rFig = txt(rv, GX + GW + 50, 17, money(R), { 'font-size':18, 'font-weight':700, fill:'#ff5f5f' });
+const valAt = y => (GB - y) / (GB - GT - 16) * TOP;
+function setR(v, user){ const r = clamp(Math.round(v / RSTEP) * RSTEP, 0, TOP); if(user) touched = true; R = r; rv.setAttribute('transform', `translate(0 ${yOf(R).toFixed(1)})`); rFig.textContent = money(R); rHand.setAttribute('aria-valuenow', R); rHand.setAttribute('aria-valuetext', `keep ${money(R)}`); refresh(); }
+const worldY = ev => { const b = svgEl.getBoundingClientRect(); return (ev.clientY - b.top) / b.height * 900; };
+let drag = null;
+rHand.addEventListener('pointerdown', ev => { if(!rLive) return; ev.preventDefault(); drag = ev.pointerId; try{ rHand.setPointerCapture(ev.pointerId); }catch(e){} hRect.setAttribute('fill', '#ff7a7a'); });
+rHand.addEventListener('pointermove', ev => { if(drag === ev.pointerId) setR(valAt(worldY(ev)), true); });
+const letGo = () => { if(drag === null) return; drag = null; hRect.setAttribute('fill', '#ff5f5f'); };
+rHand.addEventListener('pointerup', letGo); rHand.addEventListener('pointercancel', letGo);
+rHand.addEventListener('keydown', ev => { if(!rLive) return; const up = ev.key === 'ArrowUp' || ev.key === 'ArrowRight', dn = ev.key === 'ArrowDown' || ev.key === 'ArrowLeft'; if(!up && !dn) return; ev.preventDefault(); setR(R + (up ? RSTEP : -RSTEP), true); });
+/* a tap on the glass moves the line there */
+const glassHit = sv('rect', { x:GX, y:GT, width:GW, height:GB - GT, fill:'#fff', opacity:0, style:'cursor:pointer;touch-action:none' }, L.top);
+glassHit.addEventListener('pointerdown', ev => { if(!rLive) return; ev.preventDefault(); setR(valAt(worldY(ev)), true); });
+
+/* the week strip: seven stands, a drum on each for the fuel the day needs */
+const SX = i => 446 + i * 100, SC = i => SX(i) + 48, ST = 588, DW = 66, DH = 78, DRY = 8, MID = (SX(0) + SX(6) + 96) / 2;
+const stands = DAYS.map((x, i) => { const g = sv('g', { opacity:0 }, L.mid); K.at(g, SX(i), ST);
+  sv('path', { d:'M10,0 L96,0 L86,16 L0,16 Z', fill:'#123462' }, g); sv('path', { d:'M10,0.5 L96,0.5', stroke:'#5a95c8', 'stroke-opacity':.6 }, g);
+  sv('rect', { x:0, y:16, width:86, height:10, fill:'#0a2247' }, g); sv('path', { d:'M86,16 L96,0 L96,10 L86,26 Z', fill:'#071a38' }, g);
+  const now = sv('rect', { x:0, y:30, width:96, height:3, fill:'#36c6ff', opacity:0 }, g); return { g, now }; });
+const dayLab = DAYS.map((x, i) => txt(L.mid, SC(i), ST + 66, WKS[i].toUpperCase(), { 'font-size':17, 'font-weight':700, 'text-anchor':'middle', fill:'#eaf2ff', opacity:0 }));
+const dayNote = DAYS.map((x, i) => txt(L.mid, SC(i), ST + 88, '', { 'font-size':15.5, 'text-anchor':'middle', fill:'#8ea6c8' }));
+function drum(i){
+  const cx = SC(i) + 2, b = ST + 4, x = cx - DW / 2, y = b - DH, g = sv('g', { opacity:0 }, L.mid);
+  const glow = sv('ellipse', { cx, cy:y + DH / 2 + 4, rx:DW * .8, ry:DH * .62, fill:'#36c6ff', opacity:0 }, g);
+  const body = sv('rect', { x, y, width:DW, height:DH, fill:'url(#b13fuel)', opacity:0 }, g);
+  const part = sv('rect', { x, y:b, width:DW, height:0, fill:'url(#b13fuel)' }, g);
+  const lid = sv('ellipse', { cx, cy:y, rx:DW / 2, ry:DRY, fill:'#bfeaff', opacity:0 }, g);
+  const line = sv('g', { fill:'none', stroke:'#5a95c8', 'stroke-width':2, 'stroke-dasharray':'5 4' }, g); sv('rect', { x, y, width:DW, height:DH }, line); sv('ellipse', { cx, cy:y, rx:DW / 2, ry:DRY }, line);
+  const shine = sv('rect', { x:x + 9, y:y + 10, width:5, height:DH - 18, fill:'#fff', opacity:0 }, g);
+  const split = sv('line', { x1:x, y1:0, x2:x + DW, y2:0, stroke:'#9fc8f4', 'stroke-width':1.6, 'stroke-dasharray':'3 3', opacity:0 }, g);
+  const lab = txt(g, cx, y + DH / 2 + 7, '', { 'font-size':15.5, 'font-weight':700, 'text-anchor':'middle', fill:'#9fbde3' });
+  return { g, glow, body, part, lid, line, shine, split, lab, x, y, b, cx };
+}
+const drums = DAYS.map((x, i) => drum(i));
+function paintDrum(i, s){   // s: { need, fill, mine (plane 1's part), state:'open' | 'flown' | 'dear' | 'ground' | 'none' }
+  const m = drums[i], need = s.need || 0, f = need ? clamp(s.fill / need, 0, 1) : 0, set = (e, a) => { for(const k in a) e.setAttribute(k, a[k]); };
+  const lineCol = s.state === 'flown' ? '#3b5f8f' : s.state === 'dear' ? '#718096' : s.state === 'ground' ? '#4a5568' : f >= 1 ? '#7fd9ff' : '#5a95c8';
+  set(m.line, { stroke:lineCol, 'stroke-dasharray':s.state === 'open' && f < 1 ? '5 4' : s.state === 'ground' ? '5 4' : 'none', 'stroke-opacity':f >= 1 && s.state === 'open' ? .6 : 1 });
+  const full = s.state === 'open' && f >= 1, grey = s.state === 'dear';
+  set(m.body, { opacity:full || grey ? 1 : 0, fill:grey ? '#4a5568' : 'url(#b13fuel)' }); set(m.lid, { opacity:full || grey ? 1 : 0, fill:grey ? '#718096' : '#bfeaff' });
+  set(m.glow, { opacity:full ? .12 : 0 }); set(m.shine, { opacity:full ? .3 : 0 });
+  const ph = s.state === 'open' && f > 0 && f < 1 ? DH * f : 0; set(m.part, { y:(m.b - ph).toFixed(1), height:ph.toFixed(1) });
+  const sp = s.mine && need && s.mine < need && s.state === 'open' ? m.b - DH * s.mine / need : null; set(m.split, { opacity:sp === null ? 0 : .9, y1:sp || 0, y2:sp || 0 });
+  m.lab.textContent = s.state === 'flown' ? '✓' : s.state === 'dear' ? `+${PENCE}p` : s.state === 'none' ? '' : `${num(need)} L`;
+  set(m.lab, { fill:s.state === 'flown' ? '#3ce394' : s.state === 'dear' ? '#eaf2ff' : s.state === 'ground' ? '#6f86a8' : full ? '#041426' : '#9fbde3', 'font-size':s.state === 'flown' ? 22 : 15.5 });
+}
+/* every drum from the week's state: flown days as they went, the rest filled from the tank in order from today */
+function paintDrums(W, tank){
+  tank = tank === undefined ? W.tank : tank; let left = tank;
+  for(let i = 0; i < 7; i++){
+    if(i < W.day){ const r = W.rows[i]; paintDrum(i, { need:needOn(W, i), fill:0, state:!needOn(W, i) ? 'none' : r.grounded.length && !r.flew.length ? 'ground' : r.dearL ? 'dear' : 'flown' }); continue; }
+    const need = needOn(W, i), fill = Math.min(Math.max(0, left), need); left -= need;
+    paintDrum(i, { need, fill, mine:W.planes.length > 1 ? W.planes[0].litres[i] : 0, state:need ? 'open' : 'none' });
+  }
+  stands.forEach((s, i) => s.now.setAttribute('opacity', i === W.day ? 1 : 0));
+  dayLab.forEach((t, i) => t.setAttribute('fill', i < W.day ? '#6f86a8' : i === W.day ? '#36c6ff' : '#eaf2ff'));
+}
+const needs = txt(L.mid, MID, 712, '', { 'font-size':18, fill:'#c6d8f0', 'text-anchor':'middle', opacity:0 });
+
+/* the planes: the pupil's at the day being flown, the shop's (if bought) just behind it */
+const pArt = i => (FLEET[i] && FLEET[i].art) || undefined;
+function makePlane(art, behind, plain){ const g = K.plane(L.mid, { natural:true, flip:true, art, plain }); g.dataset.behind = behind ? 1 : 0; g.style.opacity = 0; return g; }
+const planes = [makePlane(pArt(0), false)];
+const spot = (g, d) => { const b = +g.dataset.behind; return { x:Math.min(1150 - g.w - (b ? 34 : 0), Math.max(400, SC(Math.min(d, 6)) - g.w / 2)) + (b ? 34 : 0), y:468 - g.h - (b ? 58 : 0) }; };   // (a big plane at Monday keeps clear of the gauge)
+const put = (g, x, y, o) => { K.at(g, x, y); if(o !== undefined) g.style.opacity = o; };
+function planesAt(d, o){ planes.forEach(g => { const p = spot(g, d); put(g, p.x, p.y, o); }); }
+async function taxiIn(){ planes.forEach(g => { const p = spot(g, 0); put(g, 1640, p.y, 1); });
+  await K.tween(RM ? 0 : 1500, k => planes.forEach(g => { const p = spot(g, 0); put(g, lerp(1640, p.x, k), p.y); }), 'out'); }
+/* a day flown: the planes that fly lift off to the left; a grounded one stays, grey; all of them are at the next day after */
+async function planesFly(d, row){
+  const go = planes.filter((g, i) => row.flew.includes(i)), stay = planes.filter((g, i) => row.grounded.includes(i));
+  stay.forEach(g => g.style.opacity = .35);
+  await K.tween(RM ? 0 : 560, k => go.forEach(g => { const p = spot(g, d); put(g, p.x - 150 * k * k, p.y - 80 * k * k, 1 - k); }), 'in');
+}
+async function planesNext(d){
+  planes.forEach(g => g.style.opacity = 0);
+  await K.tween(RM ? 0 : 420, k => planes.forEach(g => { const p = spot(g, d); put(g, p.x, p.y - 24 * (1 - k), k); }), 'out');
+  planesAt(d, 1);
+}
+
+/* the coins: the day's tickets, from the day's stand into the cash */
+function coin(parent){ const g = sv('g', null, parent); sv('ellipse', { cx:0, cy:2.2, rx:13, ry:13, fill:'#a87a0c' }, g); sv('ellipse', { cx:0, cy:0, rx:13, ry:13, fill:'#f2c14e' }, g); sv('ellipse', { cx:0, cy:0, rx:9, ry:9, fill:'none', stroke:'#c99512', 'stroke-width':1.6 }, g); return g; }
+async function coins(d){
+  if(RM) return; const x0 = SC(d), y0 = 500, x1 = GC, y1 = GT + 26, cx = (x0 + x1) / 2, cy = 150, cs = [0, 1, 2, 3, 4, 5].map(() => coin(L.top));
+  await Promise.all(cs.map((c, j) => W8(j * 70).then(() => K.tween(640, k => { const a = 1 - k, x = a * a * x0 + 2 * a * k * cx + k * k * x1, y = a * a * y0 + 2 * a * k * cy + k * k * y1; K.at(c, x, y, .85); c.setAttribute('opacity', k > .9 ? (1 - k) * 10 : 1); }, 'io'))));
+  cs.forEach(c => c.remove());
+}
+
+/* the flight board: a line per day flown (tickets in green, fuel and costs plain, the day's result), the week so far */
+const BX = 1160, BW = 426, BY = 80, BH = 690, CR = { t:1336, f:1414, c:1494, r:BX + BW - 18 };
+const board = sv('g', { opacity:0 }, L.mid);
+sv('rect', { x:BX, y:BY, width:BW, height:BH, fill:'#020812', stroke:'rgba(65,122,171,.6)' }, board); sv('line', { x1:BX, y1:BY + .5, x2:BX + BW, y2:BY + .5, stroke:'#9cc4f0', 'stroke-opacity':.5 }, board);
+const bTitle = txt(board, BX + 18, BY + 36, '', { 'font-size':16.5, 'font-weight':700, 'letter-spacing':1.6, fill:'#9fbde3' });
+[['DAY', BX + 18, 'start'], ['TICKETS', CR.t, 'end'], ['FUEL', CR.f, 'end'], ['COSTS', CR.c, 'end'], ['RESULT', CR.r, 'end']].forEach(([s, x, a]) => txt(board, x, BY + 70, s, { 'font-size':14.5, 'font-weight':600, 'letter-spacing':.6, fill:'#6f86a8', 'text-anchor':a }));
+sv('line', { x1:BX + 14, y1:BY + 82, x2:BX + BW - 14, y2:BY + 82, stroke:'rgba(53,96,135,.5)' }, board);
+const RY = i => BY + 92 + i * 70;
+const bRows = DAYS.map((x, i) => { const y = RY(i), g = sv('g', null, board);
+  const t = (xx, s, a) => txt(g, xx, y + 30, s, Object.assign({ 'font-size':16.5, 'text-anchor':'end' }, a || {}));
+  return { date:t(BX + 18, x.d, { 'text-anchor':'start', 'font-size':17, fill:'#6f86a8' }), tk:t(CR.t, '', { fill:'#3ce394' }), fu:t(CR.f, '', { fill:'#9fbde3' }), co:t(CR.c, '', { fill:'#9fbde3' }),
+    re:t(CR.r, '', { 'font-weight':700, 'font-size':18, fill:'#eaf2ff' }), note:txt(g, BX + 18, y + 54, '', { 'font-size':15, fill:'#8ea6c8' }), rule:sv('line', { x1:BX + 14, y1:y + 66, x2:BX + BW - 14, y2:y + 66, stroke:'rgba(53,96,135,.38)', opacity:0 }, g) }; });
+sv('line', { x1:BX + 14, y1:BY + BH - 74, x2:BX + BW - 14, y2:BY + BH - 74, stroke:'#9fbde3', 'stroke-width':2 }, board);
+txt(board, BX + 18, BY + BH - 28, 'Week so far', { 'font-size':19, fill:'#c6d8f0' });
+const soFar = txt(board, BX + BW - 18, BY + BH - 26, '£0', { 'font-size':28, 'font-weight':700, 'text-anchor':'end', fill:'#eaf2ff' });
+function boardRow(W, i){ const r = W.rows[i], b = bRows[i];
+  b.date.setAttribute('fill', '#eaf2ff'); b.date.setAttribute('font-weight', 700);
+  b.tk.textContent = r.tickets ? '+' + money(r.tickets) : '£0'; b.fu.textContent = r.fuel ? '−' + money(r.fuel) : '£0'; b.co.textContent = r.costs ? '−' + money(r.costs) : '£0'; b.re.textContent = money(r.result);
+  b.note.textContent = r.grounded.length ? (W.planes.length > 1 && r.flew.length ? `1 plane grounded: its ${money(W.planes[r.grounded[0]].idle)} still paid` : `grounded: the day's ${money(r.costs)} still paid`) : r.dearL ? `ran dry: ${num(r.dearL)} L at +${PENCE}p` : '';
+  b.rule.setAttribute('opacity', 1); soFar.textContent = money(flying(W)); }
+function boardClear(W, title){ bTitle.textContent = title; bRows.forEach(b => { b.date.setAttribute('fill', '#6f86a8'); b.date.setAttribute('font-weight', 400); [b.tk, b.fu, b.co, b.re, b.note].forEach(t => t.textContent = ''); b.rule.setAttribute('opacity', 0); }); soFar.textContent = '£0'; }
+
+/* the controls: Buy under the gauge, Fly under the week */
+const act = (cls, x, y) => { const b = K.h('button', { class:'bk-act ' + cls, type:'button' }, hud, ''); K.pos(b, x, y); b.hidden = true; return b; };
+const buyB = act('', GC, 772), flyB = act('sec', MID, 772);
+const press = (...bs) => new Promise(res => bs.forEach(b => b.onclick = () => { if(b.disabled || b.hidden) return; bs.forEach(x => x.onclick = null); res(b); }));
+let W = week(D.cash, [ME]), stage = 1, stagedBuys = 0;
+function spendLabel(){ const top = yOf(shown), ln = yOf(R), room = shown - R;
+  if(stage < 2 || room <= 0 || ln - top < 52){ spend.setAttribute('opacity', 0); spend2.setAttribute('opacity', 0); return; }
+  const y = (top + ln) / 2; spend.textContent = money(room); spend.setAttribute('y', (y - 2).toFixed(1)); spend2.setAttribute('y', (y + 18).toFixed(1)); spend.setAttribute('opacity', 1); spend2.setAttribute('opacity', 1); }
+function sayBuy(){ const n = canBuy(W, R), all = Math.ceil(stillNeed(W) / BL - 1e-9);
+  if(!all) return 'The fuel for the rest of the week is bought.';
+  if(!n) return W.cash <= R ? `Keeping ${money(R)} leaves nothing to spend on fuel.` : `Above your line there isn't enough for a block (${money(PR)}).`;
+  return `You can buy ${n === all ? 'all ' : ''}${blocks(n)} and keep ${money(W.cash - n * PR)}.`; }
+function refresh(){
+  const n = canBuy(W, R); buyB.innerHTML = n ? `Buy ${blocks(n)} · ${money(n * PR)}` : 'Buy'; buyB.disabled = !n;
+  keepT.textContent = `keeping ${money(R)}`; const low = rLive && R < PR; hint1.setAttribute('opacity', low ? 1 : 0); hint2.setAttribute('opacity', low ? 1 : 0);
+  spendLabel(); if(stage === 2 && touched){ const c = document.querySelector('.bk-cap'); if(c) c.innerHTML = sayBuy(); }
+  if(W.day < 7) flyB.innerHTML = `Fly ${DAYS[W.day].name} &#9654;`;
+  if(stage === 2) flyB.hidden = n > 0;   // nothing above the line: the week can still be flown (emergency fuel)
+  needsLine();
+}
+/* under the strip: what the week needs, then what is bought so far */
+function needsLine(){ const b = boughtL(W), who = W.planes.length > 1 ? 'Two planes need' : 'This week needs';
+  needs.textContent = b ? `${who} ${num(weekL(W))} L · bought so far ${blocks(Math.round(b / BL))} (${num(b)} L)` : `${who} ${num(weekL(W))} L — ${blocks(Math.ceil(weekL(W) / BL - 1e-9))} at ${money(PR)}.`; }
+const boughtL = W => W.log.reduce((t, x) => t + (x.buy || 0) * BL, 0);
+const weekL = W => W.planes.reduce((t, P) => t + P.litres.reduce((a, v) => a + v, 0), 0);
+async function doBuy(n, fast){
+  const t0 = W.tank, c0 = W.cash; buyB.classList.remove('lit'); buy(W, n); refresh();
+  K.tween(RM ? 0 : fast ? 200 : 520, k => setLevel(lerp(c0, W.cash, k)), 'out');
+  await K.tween(RM ? 0 : fast ? 260 : 900, k => paintDrums(W, lerp(t0, W.tank, k)), 'io'); paintDrums(W); setLevel(W.cash);
+}
+async function doFly(fast){
+  const d = W.day, c0 = W.cash, before = Math.min(Math.max(0, W.tank), needOn(W, d)), row = fly(W);
+  buyB.classList.remove('lit'); buyB.disabled = flyB.disabled = true;
+  if(!fast) await planesFly(d, row);
+  if(row.flew.length) await K.tween(RM ? 0 : fast ? 120 : 380, k => paintDrum(d, { need:needOn(W, d), fill:before * (1 - k), state:'open' }), 'io');
+  paintDrums(W);
+  if(row.flew.length && !fast){ const up = c0 - row.dearCost + row.tickets; await Promise.all([coins(d), W8(260).then(() => levelTo(up, 520))]); }
+  await levelTo(row.cash, fast ? 120 : 360);
+  boardRow(W, d); if(row.grounded.length) dayNote[d].textContent = W.planes.length > 1 && row.flew.length ? '1 grounded' : 'grounded';
+  if(fast) planesAt(Math.min(W.day, 6), 1); else if(W.day < 7) await planesNext(W.day); else planesAt(6, 1);
+  refresh(); flyB.disabled = false; return row;
+}
+/* a buy or a day flown, until Sunday is flown; the caption follows what happened */
+async function flyTheWeek(counts, first){
+  while(W.day < 7){
+    flyB.hidden = false; buyB.hidden = false; refresh();
+    const b = first || await press(buyB, flyB); first = null;
+    if(b === buyB){ await doBuy(canBuy(W, R)); if(counts) stagedBuys++; continue; }
+    const row = await doFly(), d = row.d, n = canBuy(W, R), next = W.day < 7 ? needOn(W, W.day) : 0;
+    const short = W.day < 7 && next && W.tank < next && n > 0; if(short) buyB.classList.add('lit');   // Buy lights whenever the tickets can fill tomorrow's drum
+    if(row.grounded.length) await K.caption(W.planes.length > 1 && row.flew.length ? 'A plane you can\'t fuel still costs you every day.' : 'Grounded: the fuel couldn\'t be paid for, and the day\'s costs still ran.');
+    else if(row.dearL) await K.caption(`Ran dry: today's fuel cost ${PENCE}p a litre more.`);
+    else if(short) await K.caption(`${DAYS[d].name}'s tickets are in. <b>You can buy ${n} more ${n === 1 ? 'block' : 'blocks'} now.</b>`);
+  }
+  flyB.hidden = true; buyB.hidden = true;
+}
+const fadeIn = (el, ms) => K.tween(RM ? 0 : ms || 260, k => el.setAttribute('opacity', k), 'out');
+
+(async () => {
+  /* ---------- 1 · Show: the week needs fuel ---------- */
+  K.mark(0); setLevel(0); paintDrums(W); boardClear(W, `WEEK ${D.week} · ${ME.name.toUpperCase()}`);
+  fadeIn(board, 400);
+  for(let i = 0; i < 7; i++){ fadeIn(stands[i].g); fadeIn(drums[i].g); fadeIn(dayLab[i]); await W8(80); }
+  needsLine(); fadeIn(needs, 400);
+  await taxiIn(); stands[0].now.setAttribute('opacity', 1); dayLab[0].setAttribute('fill', '#36c6ff');
+  await levelTo(D.cash, 1000);
+  await K.caption(`Your planes need fuel every day. You have <b>${money(D.cash)}</b>.`);
+  await K.cont();
+
+  /* ---------- 2 · Decide: how much do you keep back? ---------- */
+  K.mark(1); stage = 2;
+  await K.caption('Before you buy, decide how much cash you\'ll keep for emergencies. There\'s no right amount — it\'s your call.');
+  setR(R); rLive = true; await fadeIn(rv, 300); fadeIn(perBlock, 300); keepT.setAttribute('opacity', 1);
+  buyB.hidden = false; refresh(); setTimeout(() => { try{ rHand.focus({ preventScroll:true }); }catch(e){} }, 60);
+  if(!RM){ const r0 = R; for(let j = 0; j < 2; j++){ await K.tween(260, k => { if(!touched) rv.setAttribute('transform', `translate(0 ${(yOf(r0) - 22 * Math.sin(k * Math.PI)).toFixed(1)})`); }, 'io'); } if(!touched) setR(r0); }
+  // nothing above the line: the week can still be flown (the drums empty, emergency fuel)
+  flyB.hidden = canBuy(W, R) > 0; refresh();
+  const first = await press(buyB, flyB);
+
+  /* ---------- 3 · Buy and fly: the week in stages ---------- */
+  K.mark(2); stage = 3; touched = false;
+  if(first === buyB){ await doBuy(canBuy(W, R)); stagedBuys++; await K.caption(`Now fly the week, one day at a time.`); }
+  await flyTheWeek(true, first === flyB ? flyB : null);
+  const W1 = W;
+  await K.caption('You don\'t need the whole week\'s fuel on Monday. <b>Buy what you can, fly, and buy the rest with the tickets.</b>');
+  await K.cont();
+
+  /* ---------- 4 · The twist: a plane you can't fuel ---------- */
+  K.mark(3); stage = 4;
+  let bought = false, W2 = null;
+  if(NEW){
+    // back to Monday
+    W = week(D.cash, [ME]); boardClear(W, `WEEK ${D.week} · ${ME.name.toUpperCase()}`); dayNote.forEach(t => t.textContent = ''); paintDrums(W); planesAt(0, 1); await levelTo(D.cash, 600);
+    await K.caption('Back to Monday.');
+    const afford = NEW.price <= D.cash;
+    const card = K.h('div', { class:'bk-card' }, hud, `<span class="ey">The shop</span><h3>The shop has a ${K.esc(NEW.name)} for ${money(NEW.price)}. ${afford ? 'Buy it?' : ''}</h3>
+      <p>${afford ? (SH.where ? `On ${K.esc(SH.where)} it would need ${num(NEW.litres.reduce((a, v) => a + v, 0))} L of fuel this week, and cost ${money(NEW.idle)} a day to run.` : `It would fly a week like yours: ${num(NEW.litres.reduce((a, v) => a + v, 0))} L of fuel, and ${money(NEW.idle)} a day to run.`) : `That's more than the ${money(D.cash)} you have.`}</p>
+      <div class="bk-row">${afford ? '<button class="bk-chip" data-c="buy" type="button">Buy it</button>' : ''}<button class="bk-chip" data-c="no" type="button">${afford ? 'Not now' : 'Go on'}</button></div>`);
+    K.pos(card, MID, 290);
+    const pick = await new Promise(res => card.querySelectorAll('[data-c]').forEach(b => b.onclick = () => res(b.getAttribute('data-c'))));
+    card.classList.add('out'); setTimeout(() => card.remove(), 400);
+    if(pick === 'buy'){
+      bought = true; W = week(D.cash - NEW.price, [ME, NEW]);
+      const p2 = makePlane(SH.art || '', true, true); planes.push(p2); const p = spot(p2, 0);
+      await K.tween(RM ? 0 : 900, k => put(p2, p.x - 260 * (1 - k), p.y - 120 * (1 - k) * (1 - k), Math.min(1, k * 1.6)), 'out');
+      await levelTo(W.cash, 800); boardClear(W, `WEEK ${D.week} · 2 PLANES`); paintDrums(W);
+      needsLine();
+      await K.caption(`Two planes need fuel every day. You have <b>${money(W.cash)}</b>.`);
+      await flyTheWeek(false); W2 = W;
+      await K.caption(W2.grounded ? 'A plane you can\'t fuel still costs you every day. <b>Fuel first, then planes.</b>' : 'Before buying a plane, ask: <b>can I still afford to run the planes I\'ll have?</b>');
+    } else {
+      // the week runs as before; a quieter card says what the plane would have done
+      for(const x of W1.log){ if(x.buy) await doBuy(x.buy, true); else await doFly(true); }
+      if(afford){ W2 = autoWeek(week(D.cash - NEW.price, [ME, NEW]), R);
+        const q = K.h('div', { class:'bk-card' }, hud, `<span class="ey">If you had bought it</span><p>The cash would have dropped to <b>${money(D.cash - NEW.price)}</b> on Monday, and two planes would have needed ${num(weekL(W2))} L this week.</p>`);
+        K.pos(q, MID, 290); await W8(2600); q.classList.add('out'); setTimeout(() => q.remove(), 400); }
+      await K.caption(afford ? 'Before buying a plane, ask: <b>can I still afford to run the planes I\'ll have?</b>' : 'Fuel first, then planes.');
+    }
+    if(W2){
+      const A = W1, B2 = W2, row = (label, a, b, cls) => `<tr><td>${label}</td><td class="${cls || ''}">${a}</td><td class="${cls || ''}">${b}</td></tr>`;
+      const plate = K.h('div', { class:'bk-card' }, hud, `<span class="ey">The same week, twice</span><table><thead><tr><th></th><th>Without the ${K.esc(NEW.name)}</th><th>With it</th></tr></thead><tbody>
+        ${row('Cash on Sunday night', money(A.cash), money(B2.cash), 'gold')}${row('Bought fuel', times(A.buys), times(B2.buys))}
+        ${row(`Days on fuel at +${PENCE}p`, num(A.dear), num(B2.dear))}${row('Days with a plane grounded', num(A.grounded), num(B2.grounded))}
+        ${row('The week\'s flying', money(flying(A)), money(flying(B2)))}</tbody></table>`);
+      K.pos(plate, MID, 290); await K.cont(); plate.classList.add('out');
+    } else await K.cont();
+  }
+
+  /* ---------- 5 · Use: the rules of the game ---------- */
+  K.mark(4); stage = 5; rLive = false; buyB.hidden = flyB.hidden = true;
+  const dim = sv('rect', { x:0, y:0, width:1600, height:900, fill:'#020812', opacity:0 }, L.top); K.tween(RM ? 0 : 400, k => dim.setAttribute('opacity', .82 * k));
+  const card = sv('g', { opacity:0 }, L.top);
+  if(!K.piece('rules-card', card, { x:440, y:210, w:720 })){   // (a page opened on its own has no kit art: the same card, drawn)
+    sv('rect', { x:440, y:210, width:720, height:400, fill:'#081f3d', stroke:'rgba(65,122,171,.7)' }, card);
+    [['YOUR AIM THIS YEAR', 60, 20, 700, '#36c6ff'], ['Make as much money as you can.', 116, 34, 600, '#eaf2ff'], ['In January you\'ll choose what kind of airline you are.', 172, 25, 400, '#c6d8f0'],
+      ['Keep cash for emergencies: you decide how much.', 216, 25, 400, '#c6d8f0'], ['Run out of cash and the airline closes.', 260, 25, 400, '#c6d8f0'], ['You start again from Launch Day. No loans.', 304, 25, 400, '#c6d8f0']]
+      .forEach(([s, y, f, w, c]) => txt(card, 476, 210 + y, s, { 'font-size':f, 'font-weight':w, fill:c, 'letter-spacing':f === 20 ? 3 : 0 }));
+  }
+  await K.tween(RM ? 0 : 500, k => card.setAttribute('opacity', k), 'out');
+  await K.caption('Your aim this year. <b>This card stays on Home until January.</b>');
+  await K.cont(D.next === 'shop' ? 'Back to the shop' : 'Back to the Fuel desk');
+  K.done({ reserve:R, boughtPlaneInScene:bought, stagedBuys });
+})();
+</script>
+</body>
+</html>

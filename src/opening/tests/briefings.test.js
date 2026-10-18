@@ -1,7 +1,7 @@
-// Run: NODE_PATH=<playwright node_modules> node briefings.test.js   (env: OUT, GAME, ONLY=id,id)
-// Operations briefings (Fable's plan, 18 Oct 2026): eleven short scenes in the airline's world. Part 1 plays each page on its own
-// (its fallback figures, the kit loaded from briefings/kit/) and checks the shared frame and its rules: the title and four
-// progress marks; no Continue before the pupil acts; Pause freezes the scene; the end is reached; with reduced motion too.
+// Run: NODE_PATH=<playwright node_modules> node briefings.test.js   (env: OUT, GAME, ONLY=id,id, W, H)
+// Operations briefings (Fable's plan, 18 Oct 2026; Briefing 13 from the 18 Oct handover): twelve short scenes in the airline's world. Part 1 plays each page on its own
+// (its fallback figures, the kit loaded from briefings/kit/) and checks the shared frame and its rules: the title and its
+// progress marks (four; five for Briefing 13); after a context beat's Continue, none before the pupil acts; Pause freezes the scene; the end is reached; with reduced motion too.
 // Part 2 opens each at its moment in the game with the pupil's own figures (the Jump to airlines), plays one to the end, and
 // checks it is marked seen, sits on the Home shelf and plays again from there; Skip shows in test mode only.
 const { chromium } = require('playwright');
@@ -9,7 +9,7 @@ const path = require('path'), fs = require('fs'), os = require('os');
 const ROOT = path.resolve(__dirname, '../../..'), FILE = 'file://' + path.resolve(ROOT, process.env.GAME || 'airline-opening-prototype.html'), DIR = path.resolve(__dirname, '../briefings');
 const OUT = (process.env.OUT || os.tmpdir() + '/airline-briefings') + '/', ONLY = (process.env.ONLY || '').split(',').filter(Boolean); fs.mkdirSync(OUT, { recursive:true });
 const checks = [], errors = [], ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x).slice(0, 300) : ''));
-const want = id => !ONLY.length || ONLY.includes(id);
+const want = id => !ONLY.length || ONLY.includes(id), myResV = r => r && r.v > 0 ? r.v : 0, VW = +(process.env.W || 1366), VH = +(process.env.H || 768);
 
 /* how a pupil does each page: the first interaction is awaited (Continue must still be hidden then), the rest drive it to the end */
 const W = async (p, sel, ms) => p.waitForSelector(sel, { timeout:ms || 30000 });
@@ -18,7 +18,7 @@ const drag = async (p, sel, frac) => { const r = await p.$(sel), b = await r.bou
 const dragTo = async (p, sel, x, y) => { const el = await p.$(sel), bb = await el.boundingBox(), box = await (await p.$('.bk-world')).boundingBox(); await p.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2); await p.mouse.down(); await p.mouse.move(box.x + box.width * x / 1600, box.y + box.height * y / 900, { steps:12 }); await p.mouse.up(); };
 const PAGES = [
   { id:'fare_lever', file:'briefing-fare.html', title:'What a fare does', first:'.bk-chip', play:async p => { await p.click('.bk-chip >> nth=4'); for(const i of [2, 3, 4]){ await p.waitForTimeout(400); await p.click(`.bk-chip >> nth=${i}`); await p.waitForTimeout(1500); } await go(p); await go(p); } },
-  { id:'rival_split', file:'briefing-rival.html', title:'Customers have a choice', first:'.bk-rail', play:async p => { await drag(p, '.bk-rail', .3); await go(p); await go(p); } },
+  { id:'rival_split', file:'briefing-rival.html', title:'Customers have a choice', pre:go, first:'.bk-rail', play:async p => { await drag(p, '.bk-rail', .3); await go(p); await go(p); await go(p); } },
   { id:'full_route', file:'briefing-capacity.html', title:'More demand than seats', first:'.bk-hud button[aria-label="The people still at the gate"]', play:async p => { await p.click('.bk-hud button[aria-label="The people still at the gate"]'); await go(p); await go(p); } },
   { id:'weekend_demand', file:'briefing-weekend.html', title:'Weekdays and weekends', first:'.bk-hud button[aria-label="Sat"]', play:async p => { await p.click('.bk-hud button[aria-label="Sat"]'); await p.click('.bk-hud button[aria-label="Sun"]'); await go(p); await W(p, '.bk-chip'); await p.click('.bk-chip:has-text("Change weekdays and weekends separately")'); await go(p); } },
   { id:'fuel_cash_tank_profit', file:'briefing-fuel.html', title:'Cash, tank, profit', first:'.bk-chip', play:async p => { await p.click('.bk-chip >> nth=1'); await W(p, '.bk-hud button.bk-chip:has-text("Buy fuel")'); await p.click('.bk-hud button.bk-chip:has-text("Buy fuel")'); await go(p); await go(p); } },
@@ -27,6 +27,9 @@ const PAGES = [
   { id:'event_weekend', file:'briefing-event.html', title:'One big Saturday', first:'.bk-hud button[aria-label="Sat"]', play:async p => { await p.click('.bk-hud button[aria-label="Sat"]'); await p.click('.bk-hud button[aria-label="Sun"]'); await go(p); await W(p, '.bk-chip'); await p.click('.bk-chip:has-text("Change one particular date")'); await go(p); } },
   { id:'seasons', file:'briefing-seasons.html', title:'A year of demand', first:'.bk-hud [role=button]', play:async p => { await dragTo(p, '.bk-hud [role=button]', 525, 700); await go(p); await W(p, '.bk-chip'); await p.click('.bk-chip:has-text("Plans that switch with the season")'); await go(p); } },
   { id:'lease_money', file:'briefing-lease.html', title:'Renting a plane', first:'.bk-rail', play:async p => { await drag(p, '.bk-rail', .6); await go(p); await go(p); } },
+  { id:'cash_to_fly', file:'briefing-cash-to-fly.html', title:'Can you afford to run it?', marks:5, pre:go, first:'.bk-act:not([hidden]):not([disabled])', play:async p => { await p.click('.bk-act:not([hidden]):not([disabled]) >> nth=0');
+      for(let g = 0; g < 240 && !(await p.$('.bk-go:not([hidden])')); g++){ const b = await p.$('.bk-act.sec:not([hidden]):not([disabled])'); if(b) await b.click(); await p.waitForTimeout(400); }
+      await go(p); await W(p, '.bk-card [data-c="no"]'); await p.click('.bk-card [data-c="no"]'); await go(p); await go(p); } },
   { id:'profit_vs_cash', file:'briefing-cash.html', title:'Profit is not cash', first:'.bk-hud button[aria-label="The day cash fell"]', play:async p => { await p.click('.bk-hud button[aria-label="The day cash fell"]'); await go(p); await go(p); } },
 ];
 
@@ -35,12 +38,13 @@ const PAGES = [
   /* ---------- part 1: each page on its own ---------- */
   for(const P of PAGES){ if(!want(P.id)) continue;
     for(const rm of [false, true]){ if(rm && !['fare_lever', 'full_route'].includes(P.id)) continue;
-      const p = await b.newPage({ viewport:{ width:1366, height:768 } }), errs = []; p.on('pageerror', e => errs.push(e.message)); if(rm) await p.emulateMedia({ reducedMotion:'reduce' });
+      const p = await b.newPage({ viewport:{ width:VW, height:VH } }), errs = []; p.on('pageerror', e => errs.push(e.message)); if(rm) await p.emulateMedia({ reducedMotion:'reduce' });
       const tag = P.id + (rm ? ' (reduced motion)' : '');
       try{
         await p.goto('file://' + path.join(DIR, P.file));
         await W(p, '.bk-title', 8000);
-        ok(`${tag}: the frame: BRIEFING, the title, four progress marks, Pause & discuss, no Skip outside test mode`, (await p.textContent('.bk-title')) === P.title && (await p.$$('.bk-marks i')).length === 4 && !!(await p.$('#bkPause')) && !(await p.$('#bkSkip')), await p.textContent('.bk-title'));
+        ok(`${tag}: the frame: BRIEFING, the title, ${P.marks || 4} progress marks, Pause & discuss, no Skip outside test mode`, (await p.textContent('.bk-title')) === P.title && (await p.$$('.bk-marks i')).length === (P.marks || 4) && !!(await p.$('#bkPause')) && !(await p.$('#bkSkip')), await p.textContent('.bk-title'));
+        if(P.pre) await P.pre(p);   // a scene that opens on its context: Continue, then the pupil's first move
         await W(p, P.first, 40000); await p.waitForTimeout(300);
         ok(`${tag}: the scene waits for him: no Continue before he acts`, await p.$eval('.bk-go', e => e.hidden), await p.textContent('.bk-cap'));
         if(!rm) await p.screenshot({ path:`${OUT}${P.id}-1.png` });
@@ -55,7 +59,7 @@ const PAGES = [
       ok(`${tag}: no errors`, !errs.length, errs); await p.close(); } }
 
   /* ---------- part 2: in the game, at their moments ---------- */
-  const p = await b.newPage({ viewport:{ width:1366, height:768 } }); p.on('pageerror', e => errors.push(e.message)); p.on('dialog', d => d.accept());
+  const p = await b.newPage({ viewport:{ width:VW, height:VH } }); p.on('pageerror', e => errors.push(e.message)); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
   await p.evaluate(() => { const st = window.__sim.settings(); st.autoWall = false; st.opsSound = false; delete st.briefings; });
   const E = s => p.evaluate(x => window.__sim.evalIn(x), s), open = () => p.evaluate(() => window.__bf.open()), title = () => p.$eval('#bfLayer iframe', e => e.title).catch(() => '');
@@ -64,7 +68,7 @@ const PAGES = [
   const data = id => p.evaluate(i => JSON.stringify(window.__bf.data(i)), id).then(JSON.parse);
   const shopOpen = async () => { await p.click('[data-nav="fleet"]'); await p.waitForTimeout(300); const s = await p.$('#fleetShop'); if(s){ await s.click(); await p.waitForTimeout(1200); } };
   const at = async (id, how, check) => { if(!want(id)) return; try{ await how(); const o = await open(), t = await title(); ok(`${id}: opens by itself at its moment`, o && t.includes(PAGES.find(x => x.id === id).title), { day:await E('S.day'), step:await E('step().t'), t });
-      if(o){ const D = await data(id); if(check) ok(`${id}: with his own figures`, check(D), D); await p.waitForTimeout(3500); await p.screenshot({ path:`${OUT}game-${id}.png` }); await p.evaluate(() => window.__bf.skip()); await p.waitForTimeout(300); ok(`${id}: once seen (or skipped) it does not open again`, !(await open()) && !!(await E(`(S.brief && S.brief.seen && S.brief.seen.${id}) || 0`))); } }
+      if(o){ const D = await data(id); if(check) ok(`${id}: with the pupil's own figures`, check(D), D); await p.waitForTimeout(3500); await p.screenshot({ path:`${OUT}game-${id}.png` }); await p.evaluate(() => window.__bf.skip()); await p.waitForTimeout(300); ok(`${id}: once seen (or skipped) it does not open again`, !((await open()) && (await title()).includes(PAGES.find(x => x.id === id).title)) && !!(await E(`(S.brief && S.brief.seen && S.brief.seen.${id}) || 0`))); } }
     catch(e){ ok(`${id}: at its moment`, false, e.message.split('\n')[0]); } };
   // Launch Day: the fare sums
   await at('fare_lever', async () => { await load(1); await p.evaluate(() => window.__tk.enter()); for(let g = 0; g < 4 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('decision')); await p.waitForTimeout(600); } },
@@ -82,7 +86,13 @@ const PAGES = [
   await at('full_route', async () => { for(let g = 0; g < 6 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('review')); await p.waitForTimeout(600); } }, D => D.want > D.flights.reduce((t, f) => t + f.sold, 0));
   // week 2: the Fuel desk; the shop's first comparison
   await at('fuel_cash_tank_profit', async () => { await load(8); await p.click('[data-nav="fuel"]'); await p.waitForTimeout(1500); }, D => D.cash > 0 && D.perDay > 0 && D.day.tickets > 0);
-  await at('aircraft_efficiency', async () => { await load(8); await shopOpen(); }, D => D.a.seats < D.b.seats && D.a.litres / D.a.seats > D.b.litres / D.b.seats);
+  // Briefing 13 (D103): straight after the fuel scene on the week-2 Fuel desk, with the pupil's own week, planes and the shop's cheapest plane
+  await at('cash_to_fly', async () => { if(!(await open())){ await load(8); await E('((S.brief = S.brief || { seen:{} }).seen.fuel_cash_tank_profit = 8, 1)'); await p.click('[data-nav="fuel"]'); await p.waitForTimeout(1500); } },
+    D => D.cash > 0 && D.days.length === 7 && D.days.every(x => x.litres >= 0 && x.tickets >= 0) && D.price > 0 && D.blockLitres > 0 && D.planes.length >= 1 && D.reserve === 0);
+  if(want('cash_to_fly')){ const R = JSON.parse(await E('JSON.stringify({ r:S.brief.cashToFly || null, res:S.myRes || null })'));
+    ok('cash_to_fly: skipped, the pupil\'s reserve stays unset (£0) and the moment is recorded', R.r && R.r.at === 'fuel' && R.r.skipped && myResV(R.res) === 0, R); }
+  // the shop in week 2: Briefing 13 first (if the Fuel desk has not played it), then the efficiency scene before the comparison
+  await at('aircraft_efficiency', async () => { await load(8); await shopOpen(); if((await title()).includes('Can you afford')){ await p.evaluate(() => window.__bf.skip()); await p.waitForTimeout(1500); } }, D => D.a.seats < D.b.seats && D.a.litres / D.a.seats > D.b.litres / D.b.seats);
   // week 3: the first Flight times page; week 4: the All Blacks announcement
   await at('flight_time', async () => { await load(15); await p.evaluate(() => window.__tk.enter()); await p.evaluate(() => window.__tk.run('plan')); await p.waitForTimeout(1200); }, D => D.route.km > 0 && D.plane.speed > 0);
   await at('event_weekend', async () => { await load(22); await p.evaluate(() => window.__tk.enter()); await p.evaluate(() => window.__tk.run('plan')); await p.waitForTimeout(1200); }, D => D.mult.filter(m => m > 1).length >= 1 && D.title.length > 3);
@@ -94,6 +104,7 @@ const PAGES = [
   // played to the end in the game: the efficiency scene, then the Home shelf and a replay
   if(want('shelf')){ try{ await p.evaluate(() => window.__tk.leave && window.__tk.leave()); await load(8);
     ok('out of test mode, the screen-name tag goes (no stale week left in the corner)', !(await p.$('#pnTag')), await p.$eval('#pnTag', e => e.textContent).catch(() => null));
+    await E('((S.brief = S.brief || { seen:{} }).seen.cash_to_fly = 8, 1)');   // (Briefing 13 has its own checks above)
     await shopOpen(); if(await open()){ const F = p.frameLocator('#bfLayer iframe');
       ok('in the game, out of test mode: no Skip button', !(await F.locator('#bkSkip').count()));
       await F.locator('.bk-hud button[aria-label]').first().waitFor({ timeout:30000 }); await F.locator('.bk-hud button[aria-label]').first().click();

@@ -17,7 +17,8 @@ try{ BF_KIT = JSON.parse(document.getElementById('data-briefing-kit').textConten
 const BF_EXTRA = { fare_lever:{ title:'What a fare does', html:'briefing-fare.html' }, rival_split:{ title:'Customers have a choice', html:'briefing-rival.html' },
   full_route:{ title:'More demand than seats', html:'briefing-capacity.html' }, aircraft_efficiency:{ title:'Two planes, one route', html:'briefing-efficiency.html' },
   flight_time:{ title:'How long will it take?', html:'briefing-time.html' }, event_weekend:{ title:'One big Saturday', html:'briefing-event.html' },
-  seasons:{ title:'A year of demand', html:'briefing-seasons.html' }, lease_money:{ title:'Renting a plane', html:'briefing-lease.html' }, profit_vs_cash:{ title:'Profit is not cash', html:'briefing-cash.html' } };
+  seasons:{ title:'A year of demand', html:'briefing-seasons.html' }, lease_money:{ title:'Renting a plane', html:'briefing-lease.html' }, profit_vs_cash:{ title:'Profit is not cash', html:'briefing-cash.html' },
+  cash_to_fly:{ title:'Can you afford to run it?', html:'briefing-cash-to-fly.html' } };
 const bfRows = () => WB.briefings || [], upgRows = () => WB.upgrades || [];
 const bfRow = id => { const w = bfRows().find(b => b.id === id), x = BF_EXTRA[id]; if(!w && !x) return undefined; const r = Object.assign({ id }, x || {}, w || {}); if(x && !BF_FILES[r.html]) r.html = x.html; return r; }, upgRow = id => upgRows().find(u => u.id === id);
 const bfHas = id => { const b = bfRow(id); return !!(b && BF_FILES[b.html]); };
@@ -159,6 +160,8 @@ function bfAfterRender(){
   if(fuelHere && firstVisit && bfOn() && bfHas('fuel_cash_tank_profit') && !bfS().seen.fuel_cash_tank_profit && !bfCur && !document.getElementById('bfLayer')){
     const data = bfFuelData(); if(data) bfOpen('fuel_cash_tank_profit', data, () => render());
   }
+  // 13 · Can you afford to run it? (Fable, 18 Oct; year one): week 2's Fuel desk, straight after Cash, tank, profit and before the first order
+  if(fuelHere && bfC2FDue() && bfS().seen.fuel_cash_tank_profit && !(S.fo && S.fo.last && S.fo.last.day >= from) && !bfCur && !document.getElementById('bfLayer')) bfCashToFly('fuel');
   if(st.t === 'hq' && !UI.view) bfHomeShelf(root);
   bfMore(st, root);
 }
@@ -186,6 +189,8 @@ function bfMore(st, root){
   if(st.t === 'event' && S.rnd && S.rnd.event && S.rnd.event.rivalFare && S.rnd.eventChoice === undefined && !seen.rival_split && bfHas('rival_split')){ const data = bfRivalData(); if(data){ bfOpen('rival_split', data, () => render()); return; } }
   // 3 · More demand than seats: the week-1 review, when people were turned away
   if(st.t === 'weekReview' && weekNo(S.day || 1) === 1 && !seen.full_route && bfHas('full_route')){ const data = bfCapacityData(); if(data){ bfOpen('full_route', data, () => render()); return; } }
+  // 13 · Can you afford to run it?: the week-2 shop, if the pupil gets there before the Fuel desk (before the comparison, before Buy)
+  if(st.t === 'shop2' && bfC2FDue()){ if(bfCashToFly('shop')) return; }
   // 6 · Two planes, one route: the first comparison in the shop
   if(st.t === 'shop2' && typeof acCompareOn === 'function' && acCompareOn() && !seen.aircraft_efficiency && bfHas('aircraft_efficiency')){ const data = bfEffData(); if(data){ bfOpen('aircraft_efficiency', data, () => render()); return; } }
   // 7 · How long will it take?: the first Flight times page
@@ -209,7 +214,8 @@ function bfLaunchFuelData(c){
 /* each scene's figures, now (the toolkit's Event now and a replay with nothing kept); null where the moment has no figures */
 function bfDataFor(id){
   const F = { fare_lever:() => bfFareData((() => { try{ return workTables(currentPlan()).tables.find(x => x.stage === 'fare'); }catch(e){ return null; } })()), rival_split:bfRivalData, full_route:bfCapacityData,
-    weekend_demand:bfWeekendData, fuel_cash_tank_profit:bfFuelData, aircraft_efficiency:bfEffData, flight_time:bfTimeData, event_weekend:bfEventData, seasons:bfSeasonData, lease_money:bfLeaseData, profit_vs_cash:bfCashData }[id];
+    weekend_demand:bfWeekendData, fuel_cash_tank_profit:bfFuelData, aircraft_efficiency:bfEffData, flight_time:bfTimeData, event_weekend:bfEventData, seasons:bfSeasonData, lease_money:bfLeaseData, profit_vs_cash:bfCashData,
+    cash_to_fly:bfCashToFlyData }[id];
   try{ return F ? F() : null; }catch(e){ return null; } }
 /* a plane in the showroom's plain silver (one he does not own) */
 function bfPlain(p){ if(typeof yearOne === 'function' && yearOne()) return `kit:${(p && p.artworkId) || 'dhc6'}|`;   // year one: the kit's own white plane
@@ -317,6 +323,37 @@ function bfFuelData(){
     flight:{ dep:fmtTime(f.dep), plane:p.name, to:r.city, litres:f.fuelL || fuelForTrip(p, r), pax:f.sold, fare:f.price, costs:[[`Flying and landing, ${r.city} and back`, run]].concat(term ? [[`Passenger charges ${f.sold} × ${money(termCharge())}`, term]] : []) } };
 }
 
+/* 13 · Can you afford to run it? (Fable's brief, 18 Oct 2026; D103): the engine's projection of the pupil's plan for this week, day by
+   day (litres, takings, the other costs), the cash and reserve, the price of a block, the planes and the shop's cheapest plane
+   (flying a week like one of the pupil's). It plays once, in year one, in week 2; the line drawn becomes the pupil's reserve. */
+const bfC2FDue = () => bfOn() && bfHas('cash_to_fly') && !bfS().seen.cash_to_fly && typeof yearOne === 'function' && yearOne() && weekNo(S.day || 1) === 2 && S.phase === 'round';
+function bfCashToFlyData(){
+  if(!S || !S.fleet || !S.fleet.length) return null;
+  const blk = fuelBlock(), ppl = fuelPrice(), wk = weekNo(S.day || 1), mon = (wk - 1) * 7 + 1, pl = currentPlan(), WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], WL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const days = []; for(let d = mon; d < mon + 7; d++){ let L = null; try{ L = dryRun(() => atDay(d, () => planLines(pl))); }catch(e){} if(!L) return null;
+    const v = L.v || {}, dt = calDate(d), w = dt.getUTCDay();
+    days.push({ d:`${WD[w]} ${dt.getUTCDate()}`, name:WL[w], litres:Math.round(L.fuelL || 0), tickets:Math.max(0, Math.round((v.profit || 0) + (v.cost || 0))), otherCosts:Math.max(0, Math.round((v.cost || 0) - (v.fuel || 0))) }); }
+  if(!days.some(x => x.litres)) return null;
+  const planes = S.fleet.map(f => ({ name:planeById(f.planeId).name, art:bfArt(f.uid), dayCost:Math.round(dayCostOf(f)) }));
+  // the shop's cheapest plane: what the comparison (D62) projects it would add to the airline (its best use, on the route
+  // turning people away), or, without the comparison, a week like one of the pupil's
+  const cands = shopPlanes().map(p => ({ p, o:shopOffer(p) })).filter(x => x.o.buyOffered && x.o.price > 0).sort((a, b) => a.o.price - b.o.price), n = S.fleet.length;
+  let C = null; try{ if(typeof acCompareOn === 'function' && acCompareOn()) C = acCompare(); }catch(e){}
+  const bOf = pid => C && (C.cands.find(x => x.pid === pid) || {}).b, c = cands.find(x => !C || bOf(x.p.id)) || cands[0], b = c && bOf(c.p.id);
+  const one = b ? { litres:Math.round(b.fuelL || 0), tickets:Math.round(b.rev || 0), otherCosts:Math.max(0, Math.round((b.cost || 0) - (b.fuelL || 0) * ppl)) } : null;
+  const shopPlane = c ? { name:c.p.name, price:Math.round(c.o.price), dayCost:Math.round(c.p.dayCost || 0), art:bfPlain(c.p), where:b ? (routeById(C.rid) || {}).city || null : null,
+    days:days.map(x => one && x.litres ? one : { litres:Math.round(x.litres / n), tickets:Math.round(x.tickets / n), otherCosts:Math.round(x.otherCosts / n) }) } : null;
+  return { cash:Math.round(S.cash), reserve:typeof myReserve === 'function' ? myReserve() : 0, price:Math.round(ppl * blk), blockLitres:blk, days, planes, shopPlane,
+    emergencyPremium:WORLD.fuelTopUp !== undefined ? WORLD.fuelTopUp : 0.1, week:wk };
+}
+function bfCashToFly(next){
+  const data = bfCashToFlyData(); if(!data) return false; data.next = next;
+  return bfOpen('cash_to_fly', data, d => {
+    d = d || {}; if(!d.skipped && d.reserve !== undefined && typeof setMyReserve === 'function') setMyReserve(d.reserve, 'briefing');
+    bfS().cashToFly = { day:S.day, at:next, reserve:d.reserve === undefined ? null : d.reserve, boughtPlaneInScene:!!d.boughtPlaneInScene, stagedBuys:d.stagedBuys || 0, skipped:!!d.skipped };
+    try{ save(); }catch(e){} render(); });
+}
+
 /* ---------- the Briefings shelf (menu): replay any briefing seen ---------- */
 function bfShelfHtml(){
   const seen = Object.keys(bfS().seen).filter(bfHas); if(!seen.length) return '';
@@ -331,7 +368,7 @@ renderOverlay = function(){
   return r;
 };
 /* a replay: the figures it played with first, or today's */
-function bfReplay(id){ bfOpen(id, (id === 'fuel_cash_tank_profit' ? bfFuelData() : (bfS().data || {})[id]) || bfDataFor(id) || {}, () => render()); }
+function bfReplay(id){ bfOpen(id, (id === 'fuel_cash_tank_profit' ? bfFuelData() : (bfS().data || {})[id]) || bfDataFor(id) || {}, d => { if(id === 'cash_to_fly' && d && !d.skipped && d.reserve !== undefined && typeof setMyReserve === 'function') setMyReserve(d.reserve, 'briefing'); render(); }); }
 /* the shelf on Home (Fable's plan: "Replay from a Briefings shelf on Home"): a Briefings button beside Plan the week */
 function bfHomeShelf(root){
   const act = root.querySelector('.td2 .td-act'), seen = Object.keys(bfS().seen).filter(bfHas); if(!act || !seen.length || act.querySelector('.bf-home')) return;

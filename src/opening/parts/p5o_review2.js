@@ -17,6 +17,14 @@
 const RV2_TITLE = { tot:'Profit this week', diff:'Difference from the plan', mean:'Average a day' };
 const rv2On = () => !!S && yearOne() && WBS().reviewAsSpreadsheet !== false && settings.reviewSheet !== false;
 const rv2Seen = {};   // week|id → filled, so a cell lights only when it has just been filled
+/* the routes that lost passengers to Red Kite, grouped by why (one line a reason, not one paragraph a route) */
+function rv2Neglect(L){
+  const RX = /^(.+?): ([\d,]+) → ([\d,]+)\. (No service flew this week, so|Under half full all week, so|Flown properly,) (.*)$/, groups = [], odd = [];
+  L.forEach(n => { const m = RX.exec(n.text || ''); if(!m){ odd.push(n); return; } const key = m[4] + '|' + m[5]; let g = groups.find(x => x.key === key); if(!g) groups.push(g = { key, bad:n.bad, why:m[4], rest:m[5], items:[] }); g.items.push(`${m[1]} ${m[2]} → ${m[3]}`); });
+  const head = g => /^No service/.test(g.why) ? 'No service flew this week' : /^Under half/.test(g.why) ? 'Under half full all week' : 'Flown properly';
+  const tail = g => /^Flown properly/.test(g.why) ? 'some passengers are coming back' : g.rest.replace(/\.$/, '');
+  return groups.map(g => `<p class="${g.bad ? 'orange' : 'green'}"><b>${esc(head(g))}:</b> ${esc(tail(g))}. <span class="rv2-negl">${esc(g.items.join(' · '))}</span></p>`).join('')
+    + odd.map(n => `<p class="${n.bad ? 'orange' : 'green'}">${esc(n.text)}</p>`).join(''); }
 /* each figure the sums use, by the sheet's own row names */
 function rv2Name(it, k){ if(it.kind === 'mean') return 'Profit this week'; if(it.kind === 'diff') return k === 'proj' ? 'Projected on Monday' : 'Profit this week'; const f = it.figs.find(x => x.k === k); return f ? f.label : k; }
 function rv2Words(it){
@@ -100,7 +108,7 @@ function rv2Render(st){
     : `<div class="rv2-bar built"><span class="rv2-fx">FX</span><span class="rv2-f ph">Signed off: point at a ƒ to see its formula.</span></div>`;
   const sheet = `<section class="bv-panel rv2-sheet rbw-t"><div class="rv2-ph"><h2>The week, day by day</h2><span>${fmtRange(W.from, W.from + 6)}</span></div><table class="rv2-t">${rows}</table>${changed}</section>`;
   const dayLines = (W.rows || []).filter(r => (r.ev && r.ev.length) || r.dc).map(r => `<li><b>${esc(rbShort(r.d))}</b> ${(r.ev || []).map(n => `<span>${esc(rv2DayLine(n))}</span>`).join(' ')}${r.dc ? ` <span class="dc ${r.dc.delta < 0 ? 'dn' : ''}">${esc(r.dc.line)} ${r.dc.delta < 0 ? '−' : '+'}${money(Math.abs(r.dc.delta))}</span>` : ''}</li>`).join('');
-  const neg = W.neglect && W.neglect.length ? `<div class="wk-neglect">${W.neglect.map(n => `<p class="${n.bad ? 'orange' : 'green'}">${esc(n.text)}</p>`).join('')}</div>` : '';
+  const neg = W.neglect && W.neglect.length ? `<div class="wk-neglect rv2-neg">${rv2Neglect(W.neglect)}</div>` : '';
   const what = `<div class="rv2-col rv2-what"><p class="bv-eyebrow rv2-ch">What happened</p>${rv2SeatHtml(h)}${dayLines ? `<section class="bv-panel support rv2-days"><div class="rv2-ph"><h2>Each day</h2></div><ul>${dayLines}</ul></section>` : ''}${surprisesLine(W.from, W.from + 6)}${fuelAdvantageLine(wk)}${neg}${rv2RoutesHtml(h)}</div>`;
   const Mi = W.missed, miss = Mi ? `<div class="wk-missed ${Mi.missed > 0 ? 'warn' : 'ok'}"><span class="kl">What the best plan would have earned</span><div class="wm-row"><span>Your plan <b class="mono">${money(Mi.yours)}</b></span><span>Best plan with your planes <b class="mono">${money(Mi.best)}</b></span><span>Missed <b class="mono ${Mi.missed > 0 ? 'orange' : 'green'}">${money(Mi.missed)}</b></span></div><p class="small muted">Best plan: ${esc(Mi.bestPlan)} · about ${money(Mi.bestDay)} a day. No cash is taken.</p></div>` : '';
   // the finance team's card: SUM n, the formula in words, the answer, Check

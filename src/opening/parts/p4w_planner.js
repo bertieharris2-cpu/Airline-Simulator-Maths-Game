@@ -64,7 +64,7 @@ R.brief1 = () => {
       ${rs.map(r => `<div class="br1-c"><small>Route · open</small><b>${esc(r.city)}${r.code ? ` (${esc(r.code)})` : ''}</b><span>${num(routeKm(r))} km · ${fmtDur(TIME.leg(p, r))} each way · available from day one</span></div>`).join('')}
     </div></div>
     <div class="br1-steps"><span class="kl">Your Week 1 plan: five simple steps</span><ol>${steps.map(([t, d], i) => `<li><i>${i + 1}</i><b>${t}</b><span>${d}</span></li>`).join('')}</ol></div>
-    <p class="br1-foot">Real decisions, real results. Cash to start: <b class="mono gold">${money(S.cash)}</b>, with ${money(WORLD.cashReserve || 0)} always kept back for emergencies.</p></div>`,
+    <p class="br1-foot">Real decisions, real results. Cash to start: <b class="mono gold">${money(S.cash)}</b>${resLaunchWords(WORLD.cashReserve || 0)}</p></div>`,
     `<footer class="actbar"><span class="ab-i" aria-hidden="true">i</span><p class="ab-hint">${STEP_HINT.brief1}</p><div class="ab-act"><button class="btn primary big" id="nx">Open Week 1 Planner &#9654;</button></div></footer>`);
   on('nx', () => { if(!S.fleet.length) buyPlane(planeById('dhc6')); const f0 = fleetOne(); S.rnd.featured = f0.uid; S.rnd.focusRoute = S.market; advance(); });
 };

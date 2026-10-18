@@ -195,7 +195,8 @@ async function tkMove(R){
     case 'fly': case 'sim': case 'weekRun': case 'month': { const d0 = S.day, s0 = S.si; await W(() => step().t !== t || S.day !== d0 || S.si !== s0); return 'flew'; }
     case 'fuelDesk': if(!UI.tkFuelled || UI.tkFuelled !== S.day){ const b = [...document.querySelectorAll('[data-fdb]:not([disabled])')]; if(b.length){ b[Math.min(1, b.length - 1)].click(); UI.tkFuelled = S.day; return 'chose fuel blocks'; } }
       if(tkTap('#fdBuy:not([disabled])')) return 'bought fuel'; break;
-    case 'event': { const k = S.day + '|' + S.si + '|' + ((S.rnd && S.rnd.event && S.rnd.event.id) || ''), o = tkQ('[data-o="1"]') || tkQ('[data-o="0"]'); if(o && UI.tkEv !== k){ UI.tkEv = k; o.click(); return 'chose an option'; } } break;
+    case 'event': { if(tkTap('[data-seep]')) return 'saw a choice\'s profit';   // Red Kite (year one): each profit is seen before Choose shows
+      const k = S.day + '|' + S.si + '|' + ((S.rnd && S.rnd.event && S.rnd.event.id) || ''), o = tkQ('[data-o="1"]') || tkQ('[data-o="0"]'); if(o && UI.tkEv !== k){ UI.tkEv = k; o.click(); return 'chose an option'; } } break;
     case 'shop2': if(tkTap('#skipShop')) return 'left the shop'; break;
     case 'acquire': { const w = tkQ('[data-bw$="|wait"]'); if(w && !tkQ('#nx:not([disabled])')){ w.click(); return 'chose to wait'; } if(tkTap('#noBuy')) return 'not buying'; const l = tkQ('[data-terms="lease"]:not([disabled])'); if(l && !l.classList.contains('on')){ l.click(); return 'chose to rent'; } } break;
     case 'paint': if(tkTap('#roll')) return 'rolled out'; break;

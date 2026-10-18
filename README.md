@@ -380,6 +380,29 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Claude Design batch 2: year one (18 Oct 2026)
+*Claude Design's handover of 18 Oct, in year one only (Launch Day to the year-1 accounts, 31 Aug 2031); chapters 3 and 4 keep today's screens. The report, with the screens changed beyond those named and the flags, is `docs/Batch-2-Report.md`; screenshots at 1366 × 768 and 1920 × 1080 are in `docs/screenshots/batch2/`.*
+- **The screens.**
+  - Event cards are one column with the departures board (Storm), and the choice commits.
+  - The Red Kite card uncovers each profit, then Choose.
+  - Work it out is one sheet with the margins showing where figures come from and go.
+  - Event sums show the passengers in rows of ten.
+  - The Sunday review has a formula bar on the sheet.
+  - The Fuel desk has three panels, position first, with a first-visit tour.
+  - The week plan opener has one "This week" list.
+  - Customers have a choice: drag the marker and the passengers walk.
+- **The briefings** are drawn from the kit's flat art (`src/opening/briefings/kit/art/`).
+- **Batch 1's rules everywhere in year one.**
+  - Sums about fares are worked out in the book; the Build step stays only where a kind of sum is first met.
+  - Every sum has the gold SUM n and four tiles.
+  - Unknown is magenta, money gold, panels deep navy.
+- **Briefing 13, Can you afford to run it?** It plays in week 2 (the Fuel desk, or the shop if that comes first). The pupil draws their own cash reserve on a gauge, buys fuel in stages with each day's takings, and sees what a second plane does to the week.
+- **The D103 rules** (workbook Settings `pupilReserve`, `bustRule`, `standingAim`).
+  - The reserve is the pupil's (£0 until set; changed on the Fuel and Finance desks).
+  - There are no loans in year one.
+  - A day whose fuel can't be paid for is grounded. Three in a week close the airline and it starts again from Launch Day.
+  - The rules card stays on Home until the airline-type choice in January.
+
 ### Claude Design batch 1: DESIGN.md, the worth callout, the Work it out column, the deep navy Wall, the take-off (18 Oct 2026)
 *Bertie's choices from Claude Design's mock-ups of his Launch Day screens (`docs/Launch-Day-Changes-Batch-1.md`). The report, with the other screens changed, the conflicts flagged and the screenshots at 1366 × 768 and 1920 × 1080, is `docs/Batch-1-Report.md`.*
 - **The design system.** `DESIGN.md` (repo root) is Bertie's design system, and `CLAUDE.md` says to follow it. Its tokens are CSS variables in `parts/p1_head_design1.css`. The batch's code is `parts/p5k_design1.js`.

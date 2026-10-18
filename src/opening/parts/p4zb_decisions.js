@@ -112,8 +112,8 @@ function acGiveUp(c, C){
 function acDots(pax, seats){ return `<span class="acx-dots" role="img" aria-label="${pax} of ${seats} seats filled">${Array.from({ length:seats }, (_, i) => `<i class="${i < pax ? 'on' : ''}"></i>`).join('')}</span>`; }
 function acCashBar(o){
   const cash = Math.max(0, Math.round(S.cash)), res = WORLD.cashReserve || 0, need = o.price + res, tot = Math.max(cash, need), w = v => (100 * v / tot).toFixed(1) + '%';
-  if(need <= cash) return `<div class="acx-bar" role="img" aria-label="Buying leaves ${money(cash - need)} after the reserve"><i class="p" style="width:${w(o.price)}"></i><i class="r" style="width:${w(res)}"></i><i class="l" style="width:${w(cash - need)}"></i></div><small>${money(o.price)} · reserve ${money(res)} · <b class="good">${money(cash - need)} left</b></small>`;
-  return `<div class="acx-bar" role="img" aria-label="Buying would break the reserve by ${money(need - cash)}"><i class="p" style="width:${w(Math.min(o.price, cash))}"></i><i class="x" style="width:${w(need - cash)}"></i></div><small class="bad">Not enough cash to buy outright: ${money(need - cash)} short. You could rent or finance it (next screen).</small>`;
+  if(need <= cash) return `<div class="acx-bar" role="img" aria-label="Buying leaves ${money(cash - need)} after ${resOn() ? 'your' : 'the'} reserve"><i class="p" style="width:${w(o.price)}"></i><i class="r" style="width:${w(res)}"></i><i class="l" style="width:${w(cash - need)}"></i></div><small>${money(o.price)}${resOn() ? (res ? ` · your reserve ${money(res)}` : '') : ` · reserve ${money(res)}`} · <b class="good">${money(cash - need)} left</b></small>`;
+  return `<div class="acx-bar" role="img" aria-label="Buying would break ${resOn() ? 'your' : 'the'} reserve by ${money(need - cash)}"><i class="p" style="width:${w(Math.min(o.price, cash))}"></i><i class="x" style="width:${w(need - cash)}"></i></div><small class="bad">Not enough cash to buy outright: ${money(need - cash)} short. You could rent or finance it (next screen).</small>`;
 }
 function acWaterfall(b){
   const vals = [['Max revenue', b.max, 'a'], ['Expected', b.tk, 'b'], ['Costs', -b.cost, 'c'], ['Profit', b.own, b.own >= 0 ? 'd' : 'e']], mx = Math.max(b.max, 1), H = 44, y = v => Math.round(H * Math.abs(v) / mx);
@@ -154,7 +154,7 @@ function acWhereHtml(C){
 }
 function renderAcCompare(){
   const C = acCompare(), lab = acLabels(C), r = routeById(C.rid), hl = UI.acHl || null;
-  const sub = `<b>We have a capacity problem.</b> Last week about <b>${C.prob.away}</b> passengers a day wanted to fly to ${esc(r.city)} and couldn't get a seat. Cash <b class="gold">${money(Math.round(S.cash))}</b> · emergency reserve ${money(WORLD.cashReserve || 0)}. A second plane could carry more people, but every plane costs money to get and money to run.`;
+  const sub = `<b>We have a capacity problem.</b> Last week about <b>${C.prob.away}</b> passengers a day wanted to fly to ${esc(r.city)} and couldn't get a seat. Cash <b class="gold">${money(Math.round(S.cash))}</b>${resTag(WORLD.cashReserve || 0)}. A second plane could carry more people, but every plane costs money to get and money to run.`;
   const ctl = `<div class="acx-ctl" role="group" aria-label="Compare one row"><span>Compare one row</span>${AC_HL.map(([k, l]) => `<button data-achl="${k}" class="${hl === k ? 'on' : ''}" aria-pressed="${hl === k}">${l}</button>`).join('')}</div>`;
   const body = `<div class="acx ${hl ? 'hl' : ''}" data-hl="${hl || ''}"><div class="acx-cols">${C.cands.map(c => acColHtml(c, C, lab)).join('')}</div>
     <aside class="acx-side"><section class="dk-pnl">${acWhereHtml(C)}</section><section class="dk-pnl acx-cns"><div class="dk-pnl-h">${ICO2.swap}<h2>What the extra money buys</h2></div>${acConnectors(C)}</section>
@@ -194,7 +194,7 @@ function renderAcPay(st){
     ['Extra profit a day after payments', sg(ch.extra - o.daily), ch.extra - o.daily >= 0 ? 'good' : 'bad', `${ex} − ${money(Math.round(o.daily))} a day`], ['Can give it back?', 'No']];
   const buyRows = [['Pay today', money(o.price)], ['Ongoing', '£0'], ['Cash left today', money(cash - o.price), cash - o.price < res ? 'bad' : '', `${money(cash)} − ${money(o.price)}`], ['Total paid after 30 days', money(o.price), '', 'the price, paid today'], ['Paid in all', money(o.price), '', 'then it is yours'],
     ['Extra profit a day after payments', sg(ch.extra), ch.extra >= 0 ? 'good' : 'bad', `${ex} − £0`], ['Can give it back?', 'No']];
-  const buyNote = o.canBuy ? '' : `<span class="bad">${money(o.price)}: ${esc(saveUpText(o.saveUp))}.</span> Keep the ${money(res)} reserve.`;
+  const buyNote = o.canBuy ? '' : `<span class="bad">${money(o.price)}: ${esc(saveUpText(o.saveUp))}.</span>${resOn() ? (res ? ` Keep your ${money(res)} reserve.` : '') : ` Keep the ${money(res)} reserve.`}`;
   const meths = [['short', 'Short division'], ['small', 'Make the sum smaller']], m = st.rbM || 'short', z = (() => { let a = o.price, b = o.lease, k = 0; while(a % 10 === 0 && b % 10 === 0){ a /= 10; b /= 10; k++; } return { a, b, k }; })();
   const rb = due ? `<section class="dk-pnl acq-rb ${st.rbOk ? 'ok' : ''}"><div class="sc-h"><span class="sc-n">✓</span><div><h2>When does renting cost more than buying?</h2><p>Sign this off: how many days of rent equal the price? ${money(o.price)} ÷ ${money(o.lease)} a day.</p></div>${st.rbOk ? cardStampHtml('ok') : st.rbQ ? cardStampHtml('q') : ''}</div>
     <div class="sc-tabs">${meths.map(([k, l]) => `<button data-rbm="${k}" class="${m === k ? 'on' : ''}">${l}</button>`).join('')}</div>

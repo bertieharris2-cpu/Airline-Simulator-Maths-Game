@@ -27,7 +27,13 @@ bvTiles = function(t, col, row){
       if(E.kind === 'rival'){ add({ k:'rkFare', label:`${WORLD.rival || 'Red Kite Air'}'s fare`, text:money(E.rival), dis:true }); add({ k:'myFare', label:`Your ${E.r.city} fare`, text:money(E.fare), dis:true }); }
       else { if(E.plane) add({ k:'seats', label:`Seats on a ${shortPlane(E.plane)}`, text:num(E.plane.seats), dis:true }); add({ k:'myFare', label:`${E.r.city} fare`, text:money(E.fare), dis:true }); } } }
   else { tiles = tiles.filter(x => x.k !== 'day' && x.k !== 'fuelL');   // the plan strip under the timetable is gone from the page
-    const pax = stackRows(t, col, row).find(x => /^pax_/.test(x.id)); if(pax){ const rid = pax.id.slice(4), n = wio2Flights(rid); if(n) add({ k:'flights', label:`${routeById(rid) ? routeById(rid).city : ''} flights a day`.trim(), text:num(n), dis:true }); } }
+    const pax = stackRows(t, col, row).find(x => /^pax_/.test(x.id)); if(pax){ const rid = pax.id.slice(4), n = wio2Flights(rid); if(n) add({ k:'flights', label:`${routeById(rid) ? routeById(rid).city : ''} flights a day`.trim(), text:num(n), dis:true }); }
+    // still short of four (the cabin sales): the same figures in the sheet's other columns, which are on the page beside it
+    if(tiles.length < 4){ const ops = stackRows(t, col, row), ci = t.cols.indexOf(col);
+      t.cols.map((c, i) => ({ c, i, d:Math.abs(i - ci) })).filter(x => x.c !== col).sort((a, b) => a.d - b.d || a.i - b.i).forEach(({ c }) => ops.forEach(o => {
+        const v = (c.values || {})[o.id], r = tRows(t).find(x => x.id === o.id); if(v === undefined || v === null) return;
+        const at = / at (£[\d,.]+)/.exec(c.label || '');   // "Snacks at £5": "Snack price at £5", short enough for two lines
+        add({ k:`${c.id}:${o.id}`, label:at ? `${o.label} at ${at[1]}` : `${o.label} (${c.label || c.id})`, text:r ? fmtVal(r.unit, v) : String(v), dis:true }); })); } }
   return tiles.sort((a, b) => a.label.localeCompare(b.label)); };
 function wio2Flights(rid){ try{ return currentPlan().fleet.reduce((n, x) => n + x.sched.filter(id => id === rid).length, 0); }catch(e){ return 0; } }
 
