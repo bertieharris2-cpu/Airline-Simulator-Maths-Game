@@ -444,6 +444,7 @@ The opening is being made excellent before the later campaign continues. `airlin
   - there is no panel on the right (the worked example keeps it).
 - **Words:** rows read "Dublin ticket revenue", not "Dublin tickets".
 - **A briefing before the fare sums**, as Bertie asked ("the higher the ticket the lower the demand… one lost seat is sometimes OK if they're paying more"): *What a fare does*, above.
+- **The second test (13:50), parked:** nothing changed in the game yet. Design requests: `docs/Report-for-Claude-Design-Play-Notes-18-Oct.md`. Briefing questions: the addendum in `docs/Report-for-Fable-Briefings.md`. Everything else: `docs/Next-Batch-Parked.md`. Transcript and screenshots: `docs/screenshots/playnotes-1350/`.
 
 ### Play notes: talk while you play (18 Oct 2026)
 *For reviewing the game by voice instead of screenshots. New part `p5i_playnotes.js` (reassignment only; `overrides.txt` stays at 120).*

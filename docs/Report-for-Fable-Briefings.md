@@ -105,3 +105,41 @@ The screen-name tag in the corner now names the briefing ("Briefing: What a fare
 4. It checks the Briefings button on Home.
 
 `BRIEFINGS=1 node week.test.js` plays scenes 4 and 5 through (with `WRONG_CARD=1`: a request that doesn't fit, then "Keep this choice") and skips the others.
+
+## Addendum: Bertie's test of the briefings (18 October, 13:50)
+
+*Bertie played Launch Day with the briefings on and talked as he went. Transcript and screenshots: `docs/screenshots/playnotes-1350/`. Nothing has been changed in the game yet. The items are parked in `docs/Next-Batch-Parked.md` (section A) and wait on your answers below.*
+
+**His rule for all of them:** "check whether the briefings come before the first instance of working that out." On Launch Day the pupil now meets, in this order:
+1. the Studio, where a fare change or an extra flight asks "what is it worth a day?";
+2. the fare sums, where What a fare does opens first;
+3. the fuel order, for the rest of the week (3 × £1,300), with its worked example;
+4. the profit;
+5. two cabin-sales Build sums (snacks at £3, half buy; at £5, 3 in 10 buy; stock £1 an item).
+
+Only the fare sums have a briefing in front of them.
+
+**What he said, and what we ask you:**
+
+1. **What a fare does comes too late.** "I feel like this needs to come before the previous screen", meaning the Studio. He also wanted the point to reach the Studio's sum: "what does the extra Paris flight add in tickets a day, if they're paying £10 extra".
+   - **We propose:** open it after the Launch Day intro, before the Studio. Make its Use step the Studio's worth line: "£10 more a ticket × 38 passengers = £380 more a day, if no one is lost".
+   - **Do you agree with the place and with that ending?**
+2. **What a fare does is confusing.** "So is it doing 72 times 80? … I really like the creativity of this, but I'm a little bit confused. This needs to show that if you charge more there's less passengers. However you only have a max capacity if you've only got a 19-seater plane … If I put on four Dublin flights I might be able to get more money."
+   - At £80, 72 people queue and the money is 38 × £80. Nothing says that only 38 have seats: the second row of the queue looks like the first. Screenshot `02-fare-briefing.png`.
+   - **Proposal:**
+     - label the two groups ("38 have seats", "34 can't get one");
+     - write the stack as "38 × £80, not 72 × £80";
+     - draw the seats as his two plane-loads (2 × 19), so that more flights visibly means more seats.
+   - **Would you rather redesign the scene, or give us the changes?**
+3. **There is no fuel briefing before the fuel order.** "I still haven't had the fuel briefing, so I think we need to check the order of all of this." Cash, tank, profit opens at the first Fuel desk visit (day 8), but Launch Day already asks for the fuel order.
+   - **Do we move that scene to Launch Day, or add a short one there?** The short one would be "fuel comes by the 1,000 L: blocks × the price of a block", keeping the tank scene for day 8.
+4. **There is no cabin sales briefing.** "Also the cabin sales, we've not had a briefing." This would be a twelfth scene.
+   - **A sketch, for you to change:**
+     - **Show:** the day's passengers board; a trolley goes down the aisle.
+     - **Predict:** at £3 or at £5, which brings in more?
+     - **Reveal:** half buy at £3, 3 in 10 at £5. Buyers × price, then less £1 stock on each item sold.
+     - **Use:** the two cabin-sales sums and the snack choice.
+   - **We need** a Briefings sheet row and your version of the scene.
+5. **A sum that doesn't add up**, which the cabin sales scene must not copy. The cabin-sales Build showed "Passengers flying 27, Passengers buying snacks 31". The 27 is Dublin alone (at £110); the 31 is half of the day's 64 passengers, halved flight by flight, which rounds down to 31 rather than 32. Both get fixed on our side (`Next-Batch-Parked.md`, B1 and B2). The scene should count buyers the same way the sums will.
+
+Once your answers are in, a test will check that every kind of sum has its briefing before the first time it is asked.

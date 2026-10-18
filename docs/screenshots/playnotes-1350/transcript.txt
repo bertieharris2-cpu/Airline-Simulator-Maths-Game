@@ -1,0 +1,48 @@
+Bertie, play notes 18 Oct 2026 13:50 (playnotes-2026-10-18-1350). Transcribed with faster-whisper medium.en and silence detection.
+The recording began about 21 s after the log (the microphone prompt), so log time = recording time + 21 s; the screen is the one the log shows at that moment.
+
+01:16  (log 01:37, Studio: flight selected)  So before this screen we need the briefing
+01:25  (log 01:46, Studio: flight selected)  showing them about what does the extra Paris flight add in tickets a day
+01:33  (log 01:54, Studio: flight selected)  if they're paying £10 extra, etc.
+02:02  (log 02:23, Studio: flight selected)  I also just did a sum and didn't really see the results
+02:06  (log 02:27, Studio: flight selected)  so can we look at studio flight selected page
+02:14  (log 02:35, Studio: flight selected)  when we finish this.
+02:20  (log 02:41, Studio: flight selected)  Take a real deep dive into the screen.
+02:42  (log 03:03, Studio: flight selected)  I also don't think the fare is that easy to spot to change.
+03:29  (log 03:50, Studio: flight selected)  Okay so I've just seen briefing what a fare does.
+03:34  (log 03:55, Briefing: What a fare does)  I feel like this needs to come before the previous screen.
+04:09  (log 04:30, Briefing: What a fare does)  I see, I'm not sure this screen, I think this is confusing.
+04:17  (log 04:38, Briefing: What a fare does)  So is it doing 72 times 80?
+04:32  (log 04:53, Briefing: What a fare does)  Obviously I get that there are wasted passengers.
+04:40  (log 05:01, Briefing: What a fare does)  I'm not sure this is very clear what it's showing.
+04:47  (log 05:08, Briefing: What a fare does)  I think it could, I really like the creativity of this
+04:58  (log 05:19, Briefing: What a fare does)  but I'm a little bit confused
+05:00  (log 05:21, Briefing: What a fare does)  because this needs to show that if you charge more
+05:08  (log 05:29, Briefing: What a fare does)  there's less passengers.
+05:10  (log 05:31, Briefing: What a fare does)  However you only have a max capacity if you've only got a 19 seater plane.
+05:19  (log 05:40, Briefing: What a fare does)  But it depends, at the moment I've done two Paris flights and two Dublin.
+05:26  (log 05:47, Briefing: What a fare does)  If I put on four Dublin flights I might be able to get more money.
+05:33  (log 05:54, Briefing: What a fare does)  Do you see what I mean? I'm a bit confused by this screen.
+05:37  (log 05:58, Briefing: What a fare does)  I think we need to a. have it before the previous screen
+05:42  (log 06:03, Briefing: What a fare does)  and b. just make it a bit clearer.
+08:30  (log 08:51, Sums tutorial)  I still haven't had the fuel briefing.
+08:32  (log 08:53, Sums tutorial)  So I think we need to check the order of all of this.
+08:51  (log 09:12, Sums)  Also the cabin sales, we've not had a briefing.
+09:02  (log 09:23, Sums)  I also think on this page the spreadsheet and everything could be centralised.
+09:24  (log 09:45, Sums)  And also like the sum, where you build the sum it gets smaller there.
+09:31  (log 09:52, Sums)  I think this is something for Claude design to suggest improvements for.
+09:53  (log 10:14, Sums)  Also it says passengers flying equals 27 passengers buying snacks 31.
+10:02  (log 10:23, Sums)  So that doesn't make any sense.
+10:34  (log 10:55, Take-off)  Also for the take off could we make the run up a bit longer?
+10:39  (log 11:00, Take-off)  So have it going in a straight line first for a couple of seconds
+10:43  (log 11:04, Take-off)  and then let it take off just to be a tad more realistic.
+11:08  (log 11:29, Operations Wall)  I'm not sure I like the blue of this screen.
+11:11  (log 11:32, Operations Wall)  I'm not sure I like the blue. It's a bit paler.
+11:15  (log 11:36, Operations Wall)  We've got less gradient.
+11:18  (log 11:39, Operations Wall)  It feels a bit cheaper.
+11:20  (log 11:41, Operations Wall)  This one doesn't seem to fit the style.
+11:24  (log 11:45, Operations Wall)  Possibly something for Claude design to think about.
+11:37  (log 11:58, Operations Wall)  So I think a general note before I continue
+11:40  (log 12:01, Operations Wall)  is to check whether the briefings come before the first instance of working that out.
+12:02  (log 12:23, Sums)  Also the read aloud button should read the title of the page.
+12:09  (log 12:30, Sums)  So for sums, well for this page it should be calculate the Paris ticket revenue.
