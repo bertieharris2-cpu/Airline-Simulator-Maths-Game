@@ -44,6 +44,9 @@ briefs = {os.path.basename(f): open(f, encoding='utf-8').read() for f in sorted(
 p2 = p2 + '<script type="application/json" id="data-briefings">%s</script>' % json.dumps(briefs, separators=(',', ':')).replace('</', '<\\/')
 # the briefings' shared kit (briefings/kit/): the game puts it into each page as it opens (a page opened on its own loads it from kit/)
 kit = {k: open(os.path.join(HERE, 'briefings', 'kit', 'brief-kit.' + k), encoding='utf-8').read() for k in ('css', 'js')}
+# the kit's flat art (Claude Design handover 18 Oct 2026, section 4): the scene pieces go in ahead of the kit as window.KIT_ART
+kit_art = {os.path.splitext(os.path.basename(f))[0]: re.sub(r'<\?xml[^>]*>\s*', '', open(f, encoding='utf-8').read()).strip() for f in sorted(glob.glob(os.path.join(HERE, 'briefings', 'kit', 'art', 'pieces', '*.svg')))}
+kit['js'] = 'window.KIT_ART=' + json.dumps(kit_art, separators=(',', ':')) + ';\n' + kit['js']
 p2 = p2 + '<script type="application/json" id="data-briefing-kit">%s</script>' % json.dumps(kit, separators=(',', ':')).replace('</', '<\\/')
 print(len(briefs), 'briefings embedded')
 # the teacher's test toolkit (D102): Jump to… points on the Steady path, save codes the chapter tests write (tools/make_jumps.sh),

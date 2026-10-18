@@ -66,3 +66,15 @@ body{background:var(--bg);color:var(--white);font-family:var(--sans);font-varian
 .art .glint{display:none}
 @keyframes artSpin{0%{transform:scaleY(1)}50%{transform:scaleY(-1)}100%{transform:scaleY(1)}}@keyframes artTurn{to{transform:rotate(360deg)}}
 .rm *{transition:none!important;animation:none!important}
+/* BertieV4 flat (year one; Claude Design handover 18 Oct 2026, section 4): the frame follows DESIGN.md. The current mark is
+   cyan, bold words in a caption are white (gold stays for money), Next is the blue primary, a choice that is not "go on" is
+   the outlined secondary, the drag handle is a square cyan block. */
+.bk.flat .bk-marks i.on{background:var(--cy)}
+.bk.flat .bk-cap b{color:var(--white);font-weight:700}
+.bk.flat .bk-go{border:1px solid #5cb0ff;background:linear-gradient(180deg,#2486ff,#1260dc);color:#eaf3ff}
+.bk.flat .bk-go.sec{border-color:#5b86b8;background:#0d2a4c;color:#eaf2ff}
+.bk.flat .bk-rail .tr{background:#123e64}
+.bk.flat .bk-rail .tk{background:#2b5c95}
+.bk.flat .bk-rail .hd{border-radius:0;background:var(--cy);box-shadow:0 0 0 .3cqw rgba(54,198,255,.18),0 .3cqw .8cqw rgba(0,0,0,.5)}
+.bk.flat .bk-call{border-color:var(--line)}
+.bk.flat .bk-call b{color:var(--white)}

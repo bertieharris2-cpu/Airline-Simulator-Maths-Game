@@ -19,9 +19,9 @@ const fmtL = v => (Math.round(v * 10) / 10).toLocaleString('en-GB', { minimumFra
 K.start({ title:'Two planes, one route' });
 const L = K.layers(), sv = K.s;
 /* the sky, clouds drifting past, the ground far below */
-sv('rect', { x:0, y:0, width:1600, height:900, fill:'url(#gSky)' }, L.back);
+sv('rect', { x:0, y:0, width:1600, height:900, fill:K.B.kitFlat ? 'url(#gNight)' : 'url(#gSky)' }, L.back);   // year one: the kit's night
 sv('rect', { x:0, y:800, width:1600, height:100, fill:'#06142b' }, L.back); for(let i = 0; i < 70; i++) sv('circle', { cx:(i * 233) % 1600, cy:812 + (i * 37) % 80, r:1.2, fill:'#ffd27a', opacity:.5 }, L.back);
-const clouds = sv('g', { opacity:.5 }, L.back), CL = [];
+const clouds = sv('g', { opacity:K.B.kitFlat ? .22 : .5 }, L.back), CL = [];
 for(let i = 0; i < 9; i++){ const g = sv('g', null, clouds), x = (i * 211) % 1700, y = 80 + (i * 97) % 600, w = 120 + (i * 53) % 140; sv('ellipse', { cx:0, cy:0, rx:w, ry:w * .22, fill:'#9fc3ea', opacity:.18 }, g); sv('ellipse', { cx:w * .3, cy:-w * .08, rx:w * .5, ry:w * .2, fill:'#bcd6f2', opacity:.16 }, g); K.at(g, x, y); CL.push({ g, x, y, v:.4 + (i % 3) * .25 }); }
 const drift = K.every(() => CL.forEach(c => { c.x -= c.v * 2.2; if(c.x < -300) c.x = 1900; K.at(c.g, c.x, c.y); }));
 /* two lanes: the plane, its cabin, its fuel */

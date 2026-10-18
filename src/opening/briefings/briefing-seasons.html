@@ -59,7 +59,7 @@ const cursor = sv('rect', { x:CX(0) - 6, y:BY - 8, width:W + 12, height:BAR0 - B
   await K.caption(best.includes(month) ? `${M[month]}: Geneva at its busiest — ${num(g0.base * g0.mult[month])} a day, snow and Christmas.` : `${M[month]}: Geneva ${num(g0.base * g0.mult[month])} a day. Its busiest months: ${best.map(i => M[i]).join(', ')}, ${num(g0.base * top[0][0])} a day.`);
   await K.wait(2200);
   // his plan: the same every month
-  const y = BAR0 - HB(D.seats || 38), line = sv('g', { opacity:0 }, L.top); sv('rect', { x:140, y:y - 2, width:CX(11) + W - 130, height:4, fill:'#EAF2FF', filter:'url(#fGlowLine)' }, line); K.txt(line, CX(11) + W, y - 10, `your plan: ${num(D.seats || 38)} seats a day, every month`, { 'font-size':16, 'font-weight':600, 'text-anchor':'end', stroke:'#06142b', 'stroke-width':4, 'paint-order':'stroke' });
+  const y = BAR0 - HB(D.seats || 38), line = sv('g', { opacity:0 }, L.top); sv('rect', { x:140, y:y - 2, width:CX(11) + W - 130, height:4, fill:'#EAF2FF', filter:K.B.kitFlat ? undefined : 'url(#fGlowLine)' }, line); K.txt(line, CX(11) + W, y - 10, `your plan: ${num(D.seats || 38)} seats a day, every month`, { 'font-size':16, 'font-weight':600, 'text-anchor':'end', stroke:'#06142b', 'stroke-width':4, 'paint-order':'stroke' });
   await K.tween(700, t => line.setAttribute('opacity', t));
   await K.caption('<b>Markets change through the year. A plan that never changes is wrong half the time.</b>');
   await K.cont('Go on');

@@ -30,7 +30,7 @@ const T = K.tank(L.mid, { x:600, y:300, w:250, h:380 });
 const tankTitle = K.txt(L.mid, 725, 286, 'YOUR FUEL TANK', { 'font-size':15, 'letter-spacing':3, fill:'#9FBDE3', 'text-anchor':'middle' });
 const out = K.s('path', { d:'M850 640 L 960 640', fill:'none', stroke:'url(#gMetal)', 'stroke-width':12, 'stroke-linecap':'round' }, L.mid);
 /* the week's board, with today's profit over it */
-const bd = K.s('g', { filter:'url(#fSh)' }, L.mid), BX = 1040, BY = 190, RH = 52;
+const bd = K.s('g', { filter:K.B.kitFlat ? undefined : 'url(#fSh)' }, L.mid), BX = 1040, BY = 190, RH = 52;
 K.s('rect', { x:BX, y:BY, width:470, height:110 + RH * days, fill:'#050f22', stroke:'#2b5c95', 'stroke-width':2 }, bd);
 K.txt(bd, BX + 18, BY + 34, 'PROFIT THIS WEEK', { 'font-size':15, 'letter-spacing':3, fill:'#F2C14E', 'font-weight':700 });
 const prof = K.txt(bd, BX + 452, BY + 38, money(0), { 'font-size':30, 'font-weight':800, 'text-anchor':'end' });

@@ -21,7 +21,7 @@ K.apron({ horizon:460, day:true, hangarX:1080, towerX:180 });
 const pl = K.plane(L.mid, { x:60, y:380, w:760, kind:'wide' });
 /* the blocks: the price, his cash, the rent stack */
 const BASE = 820, TOP = 160, H = BASE - TOP, hOf = v => H * Math.min(1.4, v / D.price);
-const blk = (x, v, fill, label, sub) => { const g = K.s('g', { filter:'url(#fSh)' }, L.front), h = hOf(v); K.s('rect', { x, y:BASE - h, width:120, height:h, fill }, g); const t1 = K.txt(g, x + 60, BASE - h - 34, label, { 'font-size':24, 'font-weight':800, 'text-anchor':'middle' }); K.txt(g, x + 60, BASE - h - 12, sub, { 'font-size':15, 'text-anchor':'middle', fill:'#9FBDE3' }); return g; };
+const blk = (x, v, fill, label, sub) => { const g = K.s('g', { filter:K.B.kitFlat ? undefined : 'url(#fSh)' }, L.front), h = hOf(v); K.s('rect', { x, y:BASE - h, width:120, height:h, fill }, g); const t1 = K.txt(g, x + 60, BASE - h - 34, label, { 'font-size':24, 'font-weight':800, 'text-anchor':'middle' }); K.txt(g, x + 60, BASE - h - 12, sub, { 'font-size':15, 'text-anchor':'middle', fill:'#9FBDE3' }); return g; };
 blk(930, D.price, 'url(#gGold)', short(D.price), 'the price');
 const cashG = blk(1080, D.cash, '#2b78c9', short(D.cash), 'your cash');
 /* the rent stack: one thin slab a day (drawn in hundreds) */
@@ -31,7 +31,7 @@ let shown = 0;
 const drawStack = n => { const h = hOf(n * D.rent), slabs = Math.ceil(n / 100); while(st.childNodes.length < slabs){ const i = st.childNodes.length; K.s('rect', { x:1230, y:0, width:120, height:Math.max(2, hOf(100 * D.rent) - 1.5), fill:i % 2 ? '#4fd1c5' : '#3fb8ad' }, st); }
   while(st.childNodes.length > slabs) st.lastChild.remove(); [...st.childNodes].forEach((r, i) => { const top = BASE - hOf(Math.min(n, (i + 1) * 100) * D.rent); r.setAttribute('y', top); r.setAttribute('height', Math.max(1, hOf(Math.min(100, n - i * 100) * D.rent) - 1)); });
   stTxt.setAttribute('y', BASE - h - 34); stSub.setAttribute('y', BASE - h - 12); stTxt.textContent = short(n * D.rent); stSub.textContent = `${num(n)} days of rent`; };
-const priceLine = K.s('rect', { x:900, y:BASE - H - 2, width:480, height:4, fill:'#F2C14E', opacity:0, filter:'url(#fGlowLine)' }, L.top);
+const priceLine = K.s('rect', { x:900, y:BASE - H - 2, width:480, height:4, fill:'#F2C14E', opacity:0, filter:K.B.kitFlat ? undefined : 'url(#fGlowLine)' }, L.top);
 
 (async () => {
   K.mark(0); await K.caption(`The ${D.plane}: <b>${short(D.price)}</b> to buy. Your cash: ${short(D.cash)}. It doesn't reach.`);

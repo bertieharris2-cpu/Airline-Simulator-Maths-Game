@@ -40,7 +40,7 @@ const bays = DAYS.map((d, k) => {
 /* the seats line of each day: glowing, at the row where the seats run out */
 const seatFig = k => Math.round(seats[k] / per), rowsOf = n => Math.ceil(n / 6);
 bays.forEach((b, k) => { const n = seatFig(k), r = n / 6, y = ROWY(r) - 30; const line = K.s('g', { opacity:0 }, L.top);
-  K.s('rect', { x:b.x + 10, y:y - 2, width:180, height:4, fill:'#EAF2FF', filter:'url(#fGlowLine)' }, line);
+  K.s('rect', { x:b.x + 10, y:y - 2, width:180, height:4, fill:'#EAF2FF', filter:K.B.kitFlat ? undefined : 'url(#fGlowLine)' }, line);
   const t = K.txt(line, b.x + 188, y - 8, `${num(seats[k])} seats`, { 'font-size':14, 'font-weight':600, 'text-anchor':'end', fill:'#EAF2FF', stroke:'#06142b', 'stroke-width':4, 'paint-order':'stroke' }); b.line = line; b.lineY = y; });
 if(per > 1) K.call(1515, 300, `each figure = ${per} travellers`, 'quiet');
 /* the flights beneath each day */

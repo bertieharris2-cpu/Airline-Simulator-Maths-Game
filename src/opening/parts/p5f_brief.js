@@ -34,7 +34,9 @@ let bfCur = null;
 function bfOpen(id, data, onDone){
   const b = bfRow(id), html = b && BF_FILES[b.html]; if(!html){ if(onDone) onDone({ skipped:true }); return false; }
   bfShut(); const layer = document.createElement('div'); layer.id = 'bfLayer'; layer.className = 'bf-layer' + (reducedMotion() ? ' rm' : '');
-  const D = Object.assign({ id, airline:(S.airline && S.airline.name) || '', test:typeof testOn === 'function' && testOn(), rm:reducedMotion() }, data || {});
+  // year one (batch 2, section 4): the kit draws from its flat pieces; the pupil's first plane and tail colour are the default plane
+  const y1 = typeof yearOne === 'function' && yearOne(), f0 = S.fleet && S.fleet[0], kit = y1 ? { kitFlat:true, kitPlane:f0 ? artIdOf(f0.planeId) : 'dhc6', kitTail:f0 ? bfTail(f0) : '' } : {};
+  const D = Object.assign({ id, airline:(S.airline && S.airline.name) || '', test:typeof testOn === 'function' && testOn(), rm:reducedMotion() }, kit, data || {});
   const inject = `<script>window.BRIEF=${JSON.stringify(D).replace(/</g, '\\u003c')};<\/script>`;
   const fr = document.createElement('iframe'); fr.title = `Operations briefing: ${b.title || id}`; fr.setAttribute('allow', '');
   // the shared kit goes in where the page asks for it (a page opened on its own loads it from kit/)
@@ -210,7 +212,8 @@ function bfDataFor(id){
     weekend_demand:bfWeekendData, fuel_cash_tank_profit:bfFuelData, aircraft_efficiency:bfEffData, flight_time:bfTimeData, event_weekend:bfEventData, seasons:bfSeasonData, lease_money:bfLeaseData, profit_vs_cash:bfCashData }[id];
   try{ return F ? F() : null; }catch(e){ return null; } }
 /* a plane in the showroom's plain silver (one he does not own) */
-function bfPlain(p){ try{ return typeof plainArt === 'function' ? plainArt(p) : ''; }catch(e){ return ''; } }
+function bfPlain(p){ if(typeof yearOne === 'function' && yearOne()) return `kit:${(p && p.artworkId) || 'dhc6'}|`;   // year one: the kit's own white plane
+  try{ return typeof plainArt === 'function' ? plainArt(p) : ''; }catch(e){ return ''; } }
 /* 6: his plane and the next bigger one on the route the comparison is about: seats and litres for the round trip */
 function bfEffData(){
   let C = null; try{ C = acCompare(); }catch(e){} const rid = (C && C.rid) || S.market, r = routeById(rid); if(!r) return null;
@@ -265,7 +268,9 @@ function bfCashData(){
   return { month:`${mo[2]} ${mo[3]}`, days, bought:!!last, overdrawn };
 }
 /* his plane, drawn in his colours, for a scene */
-function bfArt(uid){ const f = (uid !== undefined && S.fleet.find(z => z.uid === uid)) || S.fleet[0]; try{ return f ? aircraftArt(typeof ensureIdentity === 'function' ? ensureIdentity(f) : f) : ''; }catch(e){ return ''; } }
+/* the pupil's tail colour, for the kit's blank tail (year one) */
+function bfTail(f){ try{ const L = normLivery(f.livery); return hexOf(L.second) || hexOf(L.belly) || ''; }catch(e){ return ''; } }
+function bfArt(uid){ const f = (uid !== undefined && S.fleet.find(z => z.uid === uid)) || S.fleet[0]; if(f && typeof yearOne === 'function' && yearOne()) return `kit:${artIdOf(f.planeId)}|${bfTail(f)}`; try{ return f ? aircraftArt(typeof ensureIdentity === 'function' ? ensureIdentity(f) : f) : ''; }catch(e){ return ''; } }
 /* Red Kite's undercut: who wants to fly at his fare, who stays, and who stays if he advertises (the card's own figures) */
 function bfRivalData(){
   const ev = S.rnd && S.rnd.event; if(!ev || !ev.rivalFare) return null;
