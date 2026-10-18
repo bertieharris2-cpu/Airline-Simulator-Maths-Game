@@ -1,0 +1,55 @@
+  19.2   76.9  I know I asked for the containers to be made central, but the spreadsheet doesn't fill the container and it looks a bit awkward, really.
+  76.9   83.9  Also, what's in this next to total costs is far larger than total costs.
+  83.9   94.3  Also, on the spreadsheet Paris Ticket Revenue, that row should have slightly different borders to highlight it.
+  94.3  118.4  And then total revenue should also be highlighted and then total profit should be highlighted to make it look like a normal spreadsheet.
+ 118.4  127.4  Now I realise that we don't want to over-complicate the UI, add more unnecessary things for them to read.
+ 127.4  137.4  Maybe we don't need the aircraft day and timetable or any of the information below the sign-off documents.
+ 137.4  146.4  But there should be something visual in the left and right margins of the central containers.
+ 146.4  158.3  Not to do with writing, more infographic, something visual.
+ 158.3  200.9  I don't know what I was dragging. Nothing really changed.
+ 200.9  222.3  So can we look at this, look at how it's sequenced, because it doesn't make sense as to how it is.
+ 222.3  239.9  There's been no context, like introduction with context, and the slider didn't seem to actually relate to anything.
+ 239.9  250.9  This screen looks a little clumsy like the screens we had before. We've not worked on this one, so this is definitely something to look at.
+ 250.9  265.1  The weighting of text for the options they can choose is really high compared to what the model says about Dublin today.
+ 265.1  288.7  My eyes are, we need to establish, the numbers should be more of a focal point, so we need to de-emphasise the buttons when you first get this page.
+ 288.7  312.3  Otherwise I would just guess. Maybe the options don't even appear at this point until the people have had a look at the numbers.
+ 312.3  326.2  Also I think when you click advertise, it might as well count as the green button. I don't think we need to change your mind.
+ 326.2  337.6  I think that discourages them to think analytically about future decisions if they know there's going to be an undo button.
+ 337.6  378.3  I would like to move red kite undercutting you to week two. I think it's too much in week one.
+ 378.3  384.3  I really don't like this screen. This is the same problem as the other screen that looks similar to this.
+ 384.3  413.0  Again, this should be centralised. It doesn't seem to follow the design rules that we've updated.
+ 413.0  422.0  So let's work on it. Rather than applying the new design rules to this automatically, let's work on it with Claude Design.
+ 422.0  429.6  But I definitely think we could have a more visual of Storm, a slight animation maybe.
+ 429.6  446.2  It's just a lot of text, something quite simple. And a decision that comes up, vouchers cost £200 but passengers were safe and happy, is tiny.
+ 446.2  461.2  Also I think it might be worse just showing the figures and just showing them. They don't need to calculate what percentage of the costs is £200 to show them that it's actually a small cost to make your passengers happy.
+ 461.2  478.7  We should have had a briefing about business travellers before this point.
+ 478.7  490.6  And again, this is another screen that I'm really not happy with how it feels.
+ 490.6  499.6  We could definitely have some sort of graphic to do with the business travellers and why we're doing this.
+ 499.6  512.6  I know we're going to have a briefing but we just need to fill some of that white space without it being a load of words.
+ 512.6  519.6  This first week has just felt very stop start and I can imagine the children not really knowing why.
+ 519.6  530.6  These things just keep coming up, they do them and move on. It just feels a bit disjointed.
+ 530.6  584.4  I'm not sure what this screen has been showing me. Yeah, no, generally this briefing is a little bit confusing.
+ 584.4  603.2  How did week one go? Root performance. We need to see all those figures without having to scroll across horizontally.
+ 603.2  631.3  Maybe as well, like difference on the plan. Maybe the buttons are actually on the spreadsheet.
+ 631.3  646.3  So I type, I press projected. What's that cell? Projected on Monday. And then click minus.
+ 646.3  667.3  And then there's 13,794 on the spreadsheet. I think that makes more sense actually. And maybe that's the same for the profit average.
+ 667.3  704.1  I think here, test fare, test the lower fare, keep plan, edit plan, and then we've got a keep plan in the bottom right as well.
+ 704.1  717.8  There's a lot of buttons here. I don't think we need test fare or test the lower fare, but we could have the message.
+ 717.8  763.5  Okay, I quite like this visual, but I don't think we need the multiple choice question at the start.
+ 763.5  770.5  I think it just should show what happens and how profit, how the fuel cost is allocated across each day.
+ 770.5  786.0  I'm going to mark this just to see if Claude Design can improve it. I quite like it at the moment.
+ 786.0  796.4  I think some of the boxes are slightly too rounded. But again, there is also quite a lot of information on here.
+ 796.4  808.9  Also, the shortcut to go to the operations wall sometimes takes you back to home.
+ 808.9  815.9  So the control to go back to home shouldn't exist. It should always be to the operations wall and back.
+ 815.9  832.0  I think maybe the price forecast confidence should maybe...
+ 832.0  842.5  Actually, never mind. I think the briefing could include more about how to make a purchase order.
+ 842.5  847.5  So about the eight blocks because that introduces more terminology just on this page.
+ 847.5  863.1  I'd also like your position to be maybe slightly that the information in that container be slightly more emphasised,
+ 863.1  871.1  maybe slightly larger, because it's actually very important information that we don't see.
+ 871.1  883.6  Maybe on this screen, we could also have like a tutorial where different containers are highlighted with say an amber border
+ 883.6  893.6  and the rest of the screen goes darker or dimmer with a call out saying what this shows, why it's important.
+ 893.6  895.6  That's it for each container.
+ 895.6  903.4  Although maybe not price forecast confidence because that's quite obvious.
+ 903.4  921.1  But we do have fuel outlook as well in the top right.
+ 921.1  925.1  It just feels there's a lot of repeating information on this page.
+duration 927.6
