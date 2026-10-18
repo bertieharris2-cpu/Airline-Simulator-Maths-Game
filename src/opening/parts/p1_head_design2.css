@@ -105,3 +105,89 @@ body.rm .ev2-flash{opacity:0}
 .ev2-pnote{margin:6px 0 0;padding:8px 10px;font:400 13.5px/1.4 var(--font-sans);color:var(--text);background:var(--panel-0);border:1px solid var(--line-soft)}
 .ev2-mt.done{padding:0 14px}
 .ev2-mt.done tbody tr.rec{opacity:.45}
+
+/* ---------- 3.3 the Work it out page: the sheet as one object, the margins; 3.4 event sums as rows of ten ---------- */
+.ws.wio2 .ws-main > .tf{zoom:1.23}
+.wio2-grid{display:grid;grid-template-columns:190px 640px 190px;gap:34px;justify-content:center;align-items:start}
+.ws.wio2 .wio2-grid .plw,.ws.wio2 .plw{width:640px;max-width:none;margin-left:auto;margin-right:auto}
+.ws.wio2.wio2-ev .plw{width:760px}
+.ws.wio2 .sheetp{padding:0;background:linear-gradient(155deg,var(--panel-2) 0%,var(--panel-1) 48%,var(--panel-0) 100%);border:1px solid var(--bv-line);box-shadow:var(--shadow-panel)}
+.ws.wio2 .sheetp > .pnl-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 14px 2px;margin:0;border:0}
+.ws.wio2 .sheetp > .pnl-h h3{font:600 16px/1.3 var(--font-sans);color:var(--text);margin:0}
+.ws.wio2 .wio2-plan{font:400 12.5px/1.3 var(--font-sans);color:var(--text-soft);text-align:right}
+.ws.wio2 .sheetp .sheet1{padding:0 14px 10px;background:none;border:0;box-shadow:none}
+.ws.wio2 .sheetp table.fx{width:100%;table-layout:fixed;margin:0}
+.ws.wio2 .sheetp table.fx th:first-child{width:330px;min-width:330px}
+.ws.wio2 .sheetp table.fx thead th:not(:first-child),.ws.wio2 .sheetp table.fx td{width:auto;min-width:0;max-width:none}
+.ws.wio2 .sheetp table.fx.wio2-one thead{display:none}
+.ws.wio2 .sheetp table.fx tbody th{padding:6px 12px;font:400 15px/1.3 var(--font-sans);color:var(--text);text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:none}
+.ws.wio2 .sheetp table.fx tbody td{padding:6px 12px;font:700 15px/1.3 var(--font-sans);text-align:right;border:0;border-bottom:1px solid var(--line-soft)}
+.ws.wio2 .sheetp table.fx tbody th.dim,.ws.wio2 .sheetp table.fx tbody td.dim{color:var(--text-soft);opacity:1}
+.ws.wio2 .sheetp table.fx tbody tr.row-on > *{background:var(--panel-active)}
+.ws.wio2 .sheetp table.fx tbody tr.row-on th{font-weight:700;color:var(--text)}
+.ws.wio2 .sheetp table.fx tbody tr.wio2-rule > *{border-top:2px solid var(--text-soft)}
+.ws.wio2 .sheetp table.fx tbody tr.wio2-dbl > *{border-bottom:4px double var(--text-soft)}
+.ws.wio2 .sheetp table.fx tbody tr.wio2-dbl th{font-weight:700;color:var(--text)}
+.ws.wio2 .sheetp th .link{font:600 12px/1 var(--font-sans);color:var(--cyan);margin-left:8px;padding:0;background:none;border:0;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.ws.wio2 .sheetp table.fx td{overflow:visible}
+.ws.wio2 .sheetp .bv-tag{right:auto;left:-11px;top:50%;transform:translateY(-50%);width:20px;height:20px;padding:0;display:grid;place-items:center;border-radius:50%;background:#05152b;border:1.5px solid var(--cyan);color:var(--cyan);font:700 11px/1 var(--font-sans)}
+.ws.wio2 .sheetp .mdl{font-size:10px;padding:1px 4px;margin-left:6px}
+.ws.wio2 .bv-tile{height:66px;justify-content:flex-start;padding-top:8px}
+.ws.wio2 .bv-tile small{white-space:normal;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.15;min-height:26px}
+.wio2-m{display:flex;flex-direction:column;gap:12px;padding-top:24px;min-width:0}
+.wio2-m > .bv-eyebrow{color:var(--text-soft);text-align:center}
+.wio2-tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 10px 10px;text-align:center;background:linear-gradient(160deg,#092643,#051629);border:1px solid var(--bv-line)}
+.wio2-ab{position:absolute;left:8px;top:8px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--cyan);color:var(--cyan);font:700 11px/17px var(--font-sans);text-align:center;font-style:normal;background:#05152b}
+.wio2-pic{display:flex;align-items:center;justify-content:center;min-height:52px;width:100%}
+.wio2-pic svg.art{width:150px;height:auto}
+.wio2-tag{width:112px;height:auto}
+.wio2-tile > b{font:700 15px/1.25 var(--font-sans);color:var(--text)}
+.wio2-tile > span{font:400 13px/1.3 var(--font-sans);color:var(--text-soft)}
+.wio2-fig{font:700 26px/1.1 var(--font-sans);color:var(--text)}
+.wio2-fig.gold{color:var(--gold)}
+.wio2-box{display:flex;flex-direction:column;gap:6px;padding:12px 10px;text-align:center;background:linear-gradient(160deg,#092643,#051629);border:1px solid var(--bv-line)}
+.wio2-box span{font:400 13px/1.3 var(--font-sans);color:var(--text-soft)}
+.wio2-box b{font:700 18px/1.1 var(--font-sans);color:var(--text)}
+.wio2-box.q{border-color:var(--magenta)}
+.wio2-box.q b{font-size:22px;color:var(--magenta);text-shadow:0 0 14px rgba(255,79,216,.35)}
+.wio2-box.done{border-color:var(--green)}
+.wio2-box.done b{color:var(--green)}
+.wio2-link{display:block;width:2px;height:18px;margin:-6px auto;background:var(--cyan);opacity:.85}
+.wio2-ten{display:grid;grid-template-columns:470px minmax(0,1fr);align-items:center;padding:0 18px 0 0}
+.wio2-tensvg{display:block;width:470px;height:200px}
+.wio2-tent{display:flex;flex-direction:column;gap:6px}
+.wio2-tent b{font:700 16px/1.3 var(--font-sans);color:var(--text)}
+.wio2-tent span{font:400 15px/1.4 var(--font-sans);color:var(--text-soft)}
+.wio2-tent small{font:400 13px/1.4 var(--font-sans);color:var(--text-soft)}
+.wio2-kite svg{width:26px;height:26px;display:block}
+
+/* the page fits 1366 × 768 without scrolling: compact rows, the built sum on one line, no formula line (the sheet's A and
+   B tags and the margins say what A and B are) */
+.ws.wio2 .ws-main > .tf h1.tq{margin:0 0 4px;font-size:30px;line-height:34px}
+.ws.wio2 .tf-top{margin-bottom:4px}
+.ws.wio2 .sheetp table.fx tbody th,.ws.wio2 .sheetp table.fx tbody td{padding-top:4px;padding-bottom:4px}
+.ws.wio2 .sh-work{padding:8px 14px 10px}
+.ws.wio2 .sh-work .bv-sumh,.ws.wio2 .sh-work .bv-fl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}
+.ws.wio2 .bv-built{margin:0 0 8px}
+.ws.wio2 .bv-big{font-size:26px}
+.ws.wio2 .bv-book{padding:8px 12px;margin:0 0 8px}
+.ws.wio2 .bv-sumbadge{font-size:16px;padding:6px 10px}
+.ws.wio2 .bv-ansrow .bv-btn.big,.ws.wio2 .answer.bv-field{height:44px;min-height:44px}
+.ws.wio2 .bv-cb .pq-ref{margin-top:8px}
+.ws.wio2 .bv-eq{margin-bottom:8px}
+.ws.wio2 .bv-tiles{margin-bottom:8px}
+.ws.wio2 .bv-op{width:44px;height:44px}
+.ws.wio2 .bv-mine{min-height:44px}
+.wio2-tensvg{height:176px}
+.ws.wio2 .sheetp table.fx tbody tr > th,.ws.wio2 .sheetp table.fx tbody tr > td{height:30px!important;box-sizing:border-box}
+.ws.wio2 .sheetp table.fx tbody td button{min-height:0;height:22px;padding:0 6px;line-height:22px}
+.ws.wio2 .sheetp .sheet1{margin-bottom:0;padding-bottom:8px}
+.ws.wio2 .sh-work{margin-top:8px}
+.ws.wio2 .bv-tile{height:60px;padding-top:7px}
+.ws.wio2 .sh-work .sh-h{margin-bottom:4px}
+.ws.wio2 .ws-main > .tf{row-gap:6px;gap:6px}
+.ws.wio2 .tf-top{margin:0}
+.wio2-to .pq-ref{margin-top:14px;font-size:13px}
+.ws.wio2 .bv-ops{flex-wrap:wrap;row-gap:6px}
+.ws.wio2 .bv-ops .bv-msg{order:5;flex-basis:100%}
+.ws.wio2 .bv-ops .bv-mine{margin-left:auto}
