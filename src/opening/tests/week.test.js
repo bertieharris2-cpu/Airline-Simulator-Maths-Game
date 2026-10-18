@@ -56,14 +56,14 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       if(await p.$('#nx')) break; await p.waitForTimeout(80); }
     sums[tag] = seen; return seen; };
   const builds = async tag => { const done = []; for(let g = 0; g < 12; g++){ const P = await p.evaluate(() => window.__sim.evalIn('rbPlan()')); if(!P) break;
-      if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); }
+      if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); if(P.chip) await p.click(`[data-rbdivchip="${P.id}"]`); }
       else { const y0 = await p.evaluate(() => [...document.querySelectorAll('#screen *')].map(e => e.scrollTop).join(','));
         await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.waitForTimeout(60);
         // D96: tapping ÷ never moves the page
         if(/^review/.test(tag)){ const y1 = await p.evaluate(() => [...document.querySelectorAll('#screen *')].map(e => e.scrollTop).join(',')); ok(`${tag}: tapping ÷ keeps every panel where it was (no scroll jump)`, y0 === y1); if(BRIEF) await shot(`${tag.replace(/\s/g, '-')}-divide`); }
         await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
-      if(/^review/.test(tag) && BRIEF){ await shot(`${tag.replace(/\s/g, '-')}-${P.id}-built`); ok(`${tag}: one cell lit at a time, no numbered panels (D96)`, (await p.$$('.rv-t td.rv-c.lit')).length === 1 && (await p.$$eval('.rv-ins .rb-card .sc-n', es => es.every(e => getComputedStyle(e).display === 'none'))), P.id); }
-      await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push(P.id + (P.div ? '÷' + P.div : '')); } return done; };
+      if(/^review/.test(tag) && BRIEF){ await shot(`${tag.replace(/\s/g, '-')}-${P.id}-built`); ok(`${tag}: one cell lit at a time, no numbered panels (D96)`, (await p.$$('.rv-t td.rv-c.lit, .rv2-t td.rv2-c.lit')).length === 1 && (await p.$$eval('.rv-ins .rb-card .sc-n', es => es.every(e => getComputedStyle(e).display === 'none'))), P.id); }
+      if(P.ans !== undefined) await p.fill(`[data-rbans="${P.id}"]`, String(P.ans)); await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push(P.id + (P.div ? '÷' + P.div : '')); } return done; };
   // v4.9 sign-off cards: Build (tap the figures and the operation) and Calculate (type the answer); the first of each kind is answered wrong once
   const briefSeen = {};
   // the fuel scene (Cash, tank, profit), played through wherever it opens: before Launch Day's fuel order (from 18 Oct), or on the Fuel desk for a save that never met it
@@ -275,14 +275,14 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       // a new aircraft's plan on the Monday it is first there (before the opener's checks, so a weekend service added below stays)
       if(s.fleet.length === 2 && !planned2 && day >= 15){ planned2 = day; await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }], { par:90, ams:90 }); }
       if(s.fleet.length > 2 && !planned3 && day >= 22){ planned3 = day; await setPlan([{ sched:['par', 'par'], deps:[420, 1080] }, { sched:['ams', 'ams'], deps:[480, 960] }, { sched:['mad'], deps:[540] }], { par:90, ams:90, mad:170 }); }
-      if(V2 && s.phase !== 'setup' && await vis('#s2Keep')){
+      if(V2 && s.phase !== 'setup' && await vis('#s2Keep, .op2')){
         if(!openerSeen){ openerSeen = true; const ch = await p.$$eval('.s2-cl li', ls => ls.map(l => l.textContent.replace(/\s+/g, ' ').trim()));
           ok(`plan ${day} (v2): from week 2 the Monday opens on last week's plan, ready to run again, with Keep plan and Edit plan and the known changes`, /ready to run again/.test(await p.textContent('.s2-oh h2')) && /Keep plan|Run anyway/.test(await p.textContent('#nx')) && await vis('#s2Edit') && ch.length >= 1 && (await p.$$('.s2-otl .ad-blk[disabled]')).length >= 1, ch); await shot(`d${day}-v2-opener`); }
         if(!newsSeen && await vis('[data-s2review]')){ newsSeen = true; const id = (await p.getAttribute('[data-s2review]', 'data-s2review')).split('|')[0]; await p.click('[data-s2review]'); await p.waitForTimeout(120);
           const n = (await S()).fleet.reduce((t, f) => t + (f.schedule || []).filter(x => x === id).length, 0);
           ok(`plan ${day} (v2): a news item's Review button opens the plan on that route: highlighted, its flights glowing, its editor open, the strip on it`, (n ? await vis(`.s2-r.focus[data-s2r="${id}"]`) : true) && await vis('.s2-ed') && (await p.$$('.s2-blk.hl')).length === n && await p.$eval('.st-strip', e => e.getAttribute('data-strip')).catch(() => null) === id && await vis('#s2Apply'), { id, n, hl:(await p.$$('.s2-blk.hl')).length }); await shot(`d${day}-v2-review`);
-          await p.click('#s2Apply'); await p.waitForTimeout(100); ok(`plan ${day} (v2): Apply changes returns to the week's plan`, await vis('#s2Keep')); }
-        if(await vis('.so-board-note')) ok(`plan ${day} (v2): while the board waits, Keep plan is held too`, await p.$eval('#s2Keep', e => e.disabled)); }
+          await p.click('#s2Apply'); await p.waitForTimeout(100); ok(`plan ${day} (v2): Apply changes returns to the week's plan`, await vis('#s2Keep, .op2')); }
+        if(await vis('.so-board-note')) ok(`plan ${day} (v2): while the board waits, Keep plan is held too`, await p.$eval('#s2Keep', e => e.disabled).catch(() => p.$eval('#nx', e => e.disabled))); }
       // D67 (Workbook v4.11): a Sat–Sun Dublin service for the rugby weekend, and what it does to the week
       if(V2 && day >= 29 && !d67 && await vis('[data-s2review^="dub|dub_rugby"]')){ d67 = { day }; const R2 = () => p.evaluate(() => window.__sim.evalIn('studio2Report()'));
         const tipsBefore = (await R2()).tips; await p.click('[data-s2review^="dub|dub_rugby"]'); await p.waitForTimeout(150); let r = await R2();
@@ -409,10 +409,10 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       if(day === 7){ const f = await p.$$eval('[data-rbfig^="tot|"]', es => es.map(e => e.getAttribute('data-rbfig').split('|')[1]));
         await p.click(`[data-rbfig="tot|${f[0]}"]`); await p.click('[data-rbop="tot|×"]'); await p.click(`[data-rbfig="tot|${f[1]}"]`); await p.click('[data-rbchk="tot"]'); await p.waitForTimeout(60);
         ok('review 7: a wrong operation is a Query with a plain hint', await vis('.rb-card .stamp.q') && /which operation joins amounts together/.test(await p.textContent('.rb-msg')), await p.textContent('.rb-msg'));
-        await p.click('[data-rbclr="tot"]'); await p.click(`[data-rbfig="tot|${f[0]}"]`); await p.click('[data-rbop="tot|+"]'); await p.click(`[data-rbfig="tot|${f[1]}"]`); await p.click('[data-rbchk="tot"]'); await p.waitForTimeout(60);
+        if(await p.$('[data-rbclr="tot"]')) await p.click('[data-rbclr="tot"]'); await p.click(`[data-rbfig="tot|${f[0]}"]`); await p.click('[data-rbop="tot|+"]'); await p.click(`[data-rbfig="tot|${f[1]}"]`); await p.click('[data-rbchk="tot"]'); await p.waitForTimeout(60);
         ok('review 7: wrong twice: Finance fills in the total (two tries, D86)', await vis('[data-rbcard="tot"] .stamp.fin'), await p.textContent('[data-rbcard="tot"]').then(t => t.replace(/\s+/g, ' ').slice(0, 160))); }
       const built = await builds('review ' + day); sums['review ' + day] = built;
-      ok(`review ${day}: the week total, the difference and the mean are Build steps (the game calculates; day 7's total was Finance's after two tries)`, (built.includes('tot') || day === 7) && built.includes('diff') && built.some(x => /^mean÷7/.test(x)), built);
+      ok(`review ${day}: the week total, the difference and the mean are built on the sheet, then typed from the book (day 7's formula was Finance's after two tries)`, (built.includes('tot') || day === 7) && built.includes('diff') && built.some(x => /^mean÷7/.test(x)), built);
       if(day === 7){ ok('review 7: the mean asks for the divisor and shows the average day', /Average day:/.test(await p.textContent('.rbw-t'))); await shot(`d${day}-review-built`); }
       ok(`review ${day}: seat fill shows seats filled, empty seats and turned away as actuals`, await vis('.st-rv') && (await p.$$('.st-rvf > span')).length === 3, await p.$eval('.st-rv', e => e.textContent.replace(/\s+/g, ' ').slice(0, 160)).catch(() => ''));
       ok(`review ${day}: the missed-profit line`, await vis('.wk-missed'), await p.$eval('.wk-missed', e => e.textContent.replace(/\s+/g, ' ')).catch(() => ''));

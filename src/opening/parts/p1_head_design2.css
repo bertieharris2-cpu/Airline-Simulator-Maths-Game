@@ -191,3 +191,116 @@ body.rm .ev2-flash{opacity:0}
 .ws.wio2 .bv-ops{flex-wrap:wrap;row-gap:6px}
 .ws.wio2 .bv-ops .bv-msg{order:5;flex-basis:100%}
 .ws.wio2 .bv-ops .bv-mine{margin-left:auto}
+/* ---------- 3.5 the Sunday review: formula bar on the sheet (year one; p5o) ---------- */
+.dp.rv2-page{zoom:1.23;gap:8px}
+.rv2-page .dp-tt h1{font:700 30px/1.15 var(--font-sans);margin:0 0 2px;letter-spacing:-.005em}
+.rv2-page .dp-tt p{font:400 14px/1.4 var(--font-sans);color:var(--text-soft)}
+.rv2-page .dp-body{gap:0}
+.bv.rv2.rbw{display:grid;grid-template-columns:360px 480px 300px;gap:10px;justify-content:start;align-items:start;flex:1;min-height:0}
+.rv2-col{display:flex;flex-direction:column;gap:11px;min-height:0;min-width:0}
+.rv2 .rv2-ch{margin:0 0 -4px;color:var(--text-soft)}
+.rv2 .bv-panel{padding:10px 12px}
+.rv2 .rv2-ph{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 6px}
+.rv2 .rv2-ph h2{margin:0;font:700 15px/1.3 var(--font-sans);color:var(--text);text-transform:none;letter-spacing:0}
+.rv2 .rv2-ph > span{font:400 12.5px/1.3 var(--font-sans);color:var(--text-soft)}
+/* what happened */
+.rv2 .st-rv.rv2-seat{padding:10px 12px}
+.rv2 .rv2-f3{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;column-gap:18px;margin:0}
+.rv2 .rv2-f3 small{display:block;font:400 12.5px/1.3 var(--font-sans);color:var(--text-soft)}
+.rv2 .rv2-f3 b{display:block;font:700 18px/1.25 var(--font-sans);color:var(--text)}
+.rv2 .rv2-f3 b.gold,.rv2 .rv2-l2 b.gold{color:var(--gold)}
+.rv2 .rv2-days ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
+.rv2 .rv2-days li{font:400 13px/1.4 var(--font-sans);color:var(--text)}
+.rv2 .rv2-days li b{font-weight:600;color:var(--text-soft)}
+.rv2 .rv2-days li .dc{color:var(--green)}.rv2 .rv2-days li .dc.dn{color:var(--amber)}
+.rv2 .rv2-rt{display:flex;flex-direction:column}
+.rv2 .rv2-rh,.rv2 .rv2-l1{display:grid;grid-template-columns:1fr 76px 70px 60px;align-items:baseline}
+.rv2 .rv2-rh{padding:6px 10px;background:#0d2a4c;font:600 12.5px/1.3 var(--font-sans);color:var(--text-soft)}
+.rv2 .rv2-rh span:not(:first-child),.rv2 .rv2-l1 span{text-align:right}
+.rv2 .rv2-r{padding:7px 10px;border-bottom:1px solid var(--line-soft)}
+.rv2 .rv2-l1{font:700 13.5px/1.35 var(--font-sans);color:var(--text)}
+.rv2 .rv2-l2{font:400 12.5px/1.4 var(--font-sans);color:var(--text-soft);white-space:nowrap;letter-spacing:-.01em}
+.rv2 .rv2-l2 b{font-weight:700;color:var(--text)}
+.rv2 .fuel-adv,.rv2 .wk-neglect{margin:0}
+/* the formula bar */
+.rv2 .rv2-bar{display:flex;align-items:center;gap:10px;min-height:50px;padding:8px 8px 8px 10px;background:linear-gradient(160deg,#092643,#051629);border:1px solid var(--bv-line)}
+.rv2 .rv2-bar:not(.built){border-color:rgba(54,198,255,.55)}
+.rv2 .rv2-fx{flex:none;font:700 12px/1 var(--font-sans);letter-spacing:.08em;color:var(--cyan)}
+.rv2 .rv2-f{flex:1;min-width:0;font:700 14.5px/1.35 var(--font-sans);color:var(--text)}
+.rv2 .rv2-f.ph{font-weight:400;color:var(--text-soft)}
+.rv2 .rv2-ops{flex:none;display:flex;align-items:center;gap:8px}
+.rv2 .rv2-ob{width:32px;height:32px;padding:0;display:grid;place-items:center;background:#06192d;border:1px solid var(--bv-line);color:var(--text);font:700 17px/1 var(--font-sans);cursor:pointer;border-radius:var(--radius-none)}
+.rv2 .rv2-ob:hover,.rv2 .rv2-ob:focus-visible{border-color:var(--cyan);outline:0}
+.rv2 .rv2-ob.on{border-color:var(--cyan);background:rgba(54,198,255,.14)}
+.rv2 .rv2-chip{height:28px;padding:0 8px;background:transparent;border:1px solid var(--cyan);color:var(--cyan);font:600 13px/1 var(--font-sans);cursor:pointer;white-space:nowrap;border-radius:var(--radius-none)}
+.rv2 .rv2-chip.on{background:rgba(54,198,255,.16);color:var(--text)}
+.rv2 .rv2-undo{padding:0 2px;font-size:13px}
+.rv2 .rv2-ok{flex:none;width:32px;height:32px;display:grid;place-items:center;color:var(--green);font:700 18px/1 var(--font-sans)}
+/* the sheet */
+.rv2 .rv2-sheet.rbw-t{overflow:visible;padding:10px 12px 8px}
+.rv2 .rv2-t{width:100%;border-collapse:collapse;table-layout:fixed}
+.rv2 .rv2-t td{height:32px;padding:0 12px;border-bottom:1px solid var(--line-soft);font:400 14.5px/1.2 var(--font-sans);color:var(--text)}
+.rv2 .rv2-t td.num{width:140px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums lining-nums;box-sizing:border-box}
+.rv2 .rv2-t td.num.bad{color:var(--amber)}
+.rv2 .rv2-t tr.rv2-pj td:first-child{color:var(--text-soft)}
+.rv2 .rv2-t tr.tap td[data-rbfig]{cursor:pointer}
+.rv2 .rv2-t tr.tap td[data-rbfig]:hover,.rv2 .rv2-t tr.tap td[data-rbfig]:focus-visible{box-shadow:inset 0 0 0 1.5px rgba(54,198,255,.7);outline:0}
+.rv2 .rv2-t td.on{background:#06192d;box-shadow:inset 0 0 0 1.5px var(--cyan)!important}
+.rv2 .rv2-t tr.rv2-lit td{background:var(--panel-active)}
+.rv2 .rv2-t tr.rv2-lit td:first-child{font-weight:700}
+.rv2 .rv2-t td.rv2-c.lit{background:#0b2240;box-shadow:inset 0 0 0 1.5px var(--magenta)}
+.rv2 .rv2-t td.rv2-c.lit .rb-q{font:700 15px/1 var(--font-sans);font-style:normal;color:var(--magenta)}
+.rv2 .rv2-t td.rv2-c.wait{cursor:default}
+.rv2 .rv2-t td.rv2-c .fx{margin-left:6px;font:italic 400 12px var(--font-sans);color:var(--text-soft);cursor:help}
+.rv2 .rv2-t td.rv2-new{animation:rv2New 1.1s ease-out both}
+@keyframes rv2New{0%{background:rgba(60,227,148,.28)}100%{background:transparent}}
+.rv2 .rb-changed{margin:8px 0 0;font-size:13.5px}
+/* the finance team's card */
+.rv2 .rv2-card{display:flex;flex-direction:column;gap:10px;padding:12px 12px 12px 15px}
+.rv2 .rv2-ch2{display:flex;align-items:center;gap:8px;font:400 13px/1.3 var(--font-sans);color:var(--text-soft)}
+.rv2 .rv2-ch2 .stamp{margin-left:auto}
+.rv2 .rv2-words{margin:0;font:400 14.5px/1.4 var(--font-sans);color:var(--text);letter-spacing:-.005em}
+.rv2 .answer.bv-field.rv2-ans{flex:none;width:100%;height:42px;box-sizing:border-box}
+.rv2 .rv2-chk{width:100%;min-height:42px;font-size:16px}
+.rv2 .rv2-note{margin:-2px 0 0;font:400 13px/1.4 var(--font-sans);color:var(--text-soft)}
+.rv2 .rv2-msg{margin:0;font-size:13.5px;line-height:1.4}
+.rv2 .rv2-msg:empty{display:none}
+.rv2 .rv2-msg.q{color:var(--amber)}
+.rv2 .rv2-signed{margin:0;display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border:1px solid rgba(60,227,148,.45);background:rgba(60,227,148,.06);font:400 14px/1.4 var(--font-sans);color:var(--text)}
+.rv2 .rv2-signed svg{width:20px;height:20px;flex:none;color:var(--green)}
+.rv2 .rv2-t td.rv2-c .rv2-dw{display:block;font:400 12px/1.2 var(--font-sans);color:var(--text-soft);margin-top:1px}
+.rv2 .rv2-t td.rv2-c.dw{height:42px}
+.rv2 .stamp.q,html.no .rv2 .stamp.q{border-color:var(--amber);color:var(--amber)}
+.rv2 .rv2-ch2 .stamp{font-size:11px;padding:1px 7px}
+.rv2 .answer.bv-field.query{border-color:var(--amber);box-shadow:var(--field-inset),0 0 0 1px var(--amber)}
+.rv2 .ds-miss{padding:10px 12px;gap:6px}
+.rv2 .ds-miss .ds-mw{font-size:14px;line-height:1.35}.rv2 .ds-miss .ds-big{font-size:13.5px}
+.rv2 .ds-fixr .btn{min-height:34px;padding:4px 10px;font-size:14px;line-height:1.25;white-space:normal;text-align:left}
+.rv2 .rv2-ins .wk-missed{margin:0}
+body.rm .rv2 .rv2-t td.rv2-new{animation:none}
+@media (prefers-reduced-motion:reduce){.rv2 .rv2-t td.rv2-new{animation:none}}
+/* ---------- 3.7 the week's plan opener: one list of what's changed (year one; p5p). Desk px: the mock's sizes × 1.23 ---------- */
+body.yr1 .s2-page.s2-opener .dp-tt h1{font-size:37px}
+body.yr1 .s2-page.s2-opener .dp-tt p{font-size:17px}
+.op2 .s2-otop{gap:16px}
+.op2 .op2-card{display:flex;flex-direction:column;gap:15px;height:auto;padding:20px;border-top:0}
+.op2 .op2-eb{display:block;color:var(--cyan);font-size:13.5px;letter-spacing:.12em}
+.op2 .s2-oh h2{margin:10px 0 5px;font-size:22px!important;font-weight:700!important;line-height:1.3;color:var(--text)}
+.op2 .s2-oh p{margin:0;font:400 18px/1.4 var(--font-sans);color:var(--text-soft)}
+.op2 .s2-ofs{gap:10px}
+.op2 .s2-of{padding:10px 13px;background:linear-gradient(160deg,#092643,#051629);border:1px solid var(--bv-line)}
+.op2 .s2-of small{font-size:15.5px;color:var(--text-soft)}.op2 .s2-of b{font:700 24.5px/1.2 var(--font-sans);color:var(--text)}.op2 .s2-of em{font-size:15px;color:var(--text-soft)}
+.op2 .s2-of.warn b{color:var(--gold)}.op2 .s2-of.good b{color:var(--green)}.op2 .s2-of.bad b{color:var(--amber)}
+.op2 .op2-act .bv-btn{min-height:49px;padding:0 20px;font:600 19.5px/1 var(--font-sans)}
+.op2 .op2-week{padding:15px 18px 8px;max-height:none;overflow:visible}
+.op2 .op2-week h2{margin:0 0 5px;font-size:22px!important;font-weight:700!important;line-height:1.3;color:var(--text)}
+.op2 .s2-cl.op2-list{padding:0;gap:0}
+.op2 .s2-cl.op2-list li{display:flex;flex-wrap:nowrap;align-items:flex-start;gap:12px;padding:11px 2px;background:none;border:0;border-bottom:1px solid var(--line-soft)}
+.op2 .s2-cl.op2-list li:last-child{border-bottom:0}
+.op2 .op2-i{flex:none;width:20px;height:20px;margin-top:2px;color:var(--text-soft)}.op2 .op2-i .di,.op2 .op2-i svg{width:20px;height:20px}
+.op2 .op2-r.tip .op2-i{color:var(--gold)}.op2 .op2-r.good .op2-i{color:var(--green)}
+.op2 .op2-t{flex:1;min-width:0;font:400 17.5px/1.4 var(--font-sans);color:var(--text)}
+.op2 .op2-t small{display:block;margin-top:2px;font-size:15.5px;color:var(--text-soft)}
+.op2 .op2-l{flex:none;display:flex;gap:12px;align-items:center}
+.op2 .op2-a{padding:0;border:0;background:none;color:var(--cyan);font:400 16.5px/1.45 var(--font-sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer;white-space:nowrap}
+.op2 .op2-a:hover,.op2 .op2-a:focus-visible{color:var(--text);outline:0}

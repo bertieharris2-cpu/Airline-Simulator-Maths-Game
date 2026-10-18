@@ -31,9 +31,9 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
       if(await p.$('#nx')) break; await p.waitForTimeout(80); }
     return seen; };
   const builds = async () => { const done = []; for(let g = 0; g < 12; g++){ const P = await p.evaluate(() => window.__sim.evalIn('rbPlan()')); if(!P) break;
-      if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); }
+      if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); if(P.chip) await p.click(`[data-rbdivchip="${P.id}"]`); }
       else { await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
-      await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push('build|' + P.id); } return done; };
+      if(P.ans !== undefined) await p.fill(`[data-rbans="${P.id}"]`, String(P.ans)); await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); done.push('build|' + P.id); } return done; };
   const signs = async () => { const done = []; for(let g = 0; g < 12; g++){ const P = await p.evaluate(() => window.__sim.evalIn('soPlan()')); if(!P || P.rb) break; const k = P.key;
       if(P.level === 'build'){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-soop="${k}|${x}"]` : `[data-sofig="${k}|${x}"]`); } else await p.fill(`[data-soin="${k}"]`, P.answer);
       await p.click(`[data-sochk="${k}"]`); await p.waitForTimeout(80); done.push('so|' + P.level + '|' + k); } return done; };

@@ -94,6 +94,8 @@ const TK_SUMS = [
   { what:'the fuel sum', test:() => tkQ('#fsChk'), plan:() => ({ at:'#fsChk', value:'litres × price', go:() => { ['[data-fsfig="L"]', '[data-fsop="×"]', '[data-fsfig="R"]'].forEach(tkTap); tkTap('#fsChk'); } }) },
   { what:'the fuel bill', test:() => tkQ('#fbIn') && S.rnd && S.rnd.fuelOrder, plan:() => ({ at:'#fbIn', value:S.rnd.fuelOrder.total, go:() => { tkFill('#fbIn', S.rnd.fuelOrder.total); tkTap('#fbCheck'); } }) },
   { what:'a review cell', test:() => typeof rbPlan === 'function' && tkQ('.rb-card:not(.ok):not(.locked)'), plan:() => { const P = rbPlan(); if(!P) return null;
+      // year one (batch 2, p5o): the cells and the average's chip, then the answer from the book
+      if(P.ans !== undefined) return { at:`[data-rbans="${tkQa(P.id)}"]`, value:P.ans, go:() => { (P.seq || []).forEach(x => tkTap(tkOpSel('rb', P.id, x))); if(P.chip) tkTap(`[data-rbdivchip="${tkQa(P.id)}"]`); tkFill(`[data-rbans="${tkQa(P.id)}"]`, P.ans); tkTap(`[data-rbchk="${tkQa(P.id)}"]`); } };
       if(P.seq) return { at:`[data-rbchk="${tkQa(P.id)}"]`, value:tkSeqText(P.seq), go:() => { P.seq.forEach(x => tkTap(tkOpSel('rb', P.id, x))); tkTap(`[data-rbchk="${tkQa(P.id)}"]`); } };
       return { at:`[data-rbdiv="${tkQa(P.id)}"]`, value:'÷ ' + P.div, go:() => { tkTap(`[data-rbop="${tkQa(P.id)}|${P.op}"]`); tkFill(`[data-rbdiv="${tkQa(P.id)}"]`, P.div); tkTap(`[data-rbchk="${tkQa(P.id)}"]`); } }; } },
   { what:'a sign-off', test:() => typeof soPlan === 'function' && tkQ('[data-sochk], [data-soprechk], [data-rbchk]'), plan:() => { const P = soPlan(); if(!P) return null;

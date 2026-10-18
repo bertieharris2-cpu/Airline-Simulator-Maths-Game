@@ -26,9 +26,9 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   const txt = async sel => (await p.$eval(sel, e => e.textContent).catch(() => '')).replace(/\s+/g, ' ').trim();
   const load = async f => { const c = fs.readFileSync(path.join(ROOT, f), 'utf8').trim(); await p.evaluate(c => { const s = window.__sim.loadCode(c); window.__sim.setS(s); window.__sim.landSave(); window.__sim.render(); }, c); await p.waitForTimeout(300); };
   const builds = async () => { for(let g = 0; g < 14; g++){ const P = await E('rbPlan()'); if(!P) break;
-      if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); }
+      if(P.seq){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-rbop="${P.id}|${x}"]` : `[data-rbfig="${P.id}|${x}"]`); if(P.chip) await p.click(`[data-rbdivchip="${P.id}"]`); }
       else { await p.click(`[data-rbop="${P.id}|${P.op}"]`); await p.fill(`[data-rbdiv="${P.id}"]`, String(P.div)); }
-      await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); } };
+      if(P.ans !== undefined) await p.fill(`[data-rbans="${P.id}"]`, String(P.ans)); await p.click(`[data-rbchk="${P.id}"]`); await p.waitForTimeout(80); } };
   const signs = async () => { for(let g = 0; g < 14; g++){ const P = await E('soPlan()'); if(!P) break;
       if(P.rb){ await p.click(`[data-rbop="${P.rb.id}|${P.rb.op}"]`); await p.fill(`[data-rbdiv="${P.rb.id}"]`, String(P.rb.div)); await p.click(`[data-rbchk="${P.rb.id}"]`); await p.waitForTimeout(80); continue; }
       const k = P.key.replace(/"/g, '\\"');
@@ -73,10 +73,11 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   ok('NBN: the save opens on the week 2 plan (day 8), the opener', s.day === 8 && await T() === 'plan' && await vis('.s2-oc'), info.nbn);
   const R0 = await J('dsReport()'); info.nbnCheck = R0.check;
   ok('NBN: the check leads with the loss and then "Saab 340 has no flights", with Find work for this aircraft', R0.check[0].id === 'plan_loses_money' && R0.check[1] && R0.check[1].id === 'plane_unused' && /Saab 340 has no flights/.test(R0.check[1].text) && R0.check[1].action === 'Find work for this aircraft', R0.check.map(h => [h.id, h.text, h.action]));
-  ok('NBN: the opener card shows the check above Keep plan; its action is the dominant button; Keep plan is quiet and says Run anyway', /Operations check/.test(await txt('.ds-oc')) && /Saab 340 has no flights/.test(await txt('.ds-oc')) && /Find work for this aircraft/.test(await txt('.ds-oc .ds-act')) && /Run anyway/.test(await txt('#s2Keep')) && !(await p.$eval('#s2Keep', e => e.classList.contains('primary'))), await txt('.ds-oc'));
+  // year one (batch 2, 3.7): the check is part of the This week list, its action a › link; Keep plan is in the footer only
+  ok('NBN: the This week list carries the check (the loss, then "Saab 340 has no flights" with its Edit plan › link); Keep plan, in the footer only, is quiet and says Run anyway', /Saab 340 has no flights/.test(await txt('.op2-list')) && await vis('.op2-list [data-dsact="1"]') && !(await vis('.op2-list [data-dsact="0"]')) && !(await vis('#s2Keep')) && /Run anyway/.test(await txt('#nx')) && !(await p.$eval('#nx', e => e.classList.contains('primary'))), await txt('.op2-list'));
   ok('NBN: the pupil sees words, not the engine\'s money at stake', !(await txt('#screen')).includes((await J('dsReport().check[1].stake')).toLocaleString('en-GB')) || true);
   await shot('ds-01-nbn-opener');
-  await p.click('.ds-oc [data-dsact="1"]'); await p.waitForTimeout(250);
+  await p.click('.op2-list [data-dsact="1"]'); await p.waitForTimeout(250);
   const R1 = await J('dsReport()'), saab = await J("S.fleet.findIndex(f => f.planeId === 'sf34')");
   ok('NBN: Find work opens the plan on the Saab\'s row with its + Add flight picked out', R1.s2.mode === 'plan' && await vis(`.ds-pulse[data-addsel="0|${saab}"]`) && R1.log.some(x => x.what === 'act' && x.id === 'plane_unused'), { s2:R1.s2, saab });
   await shot('ds-02-nbn-find-work');
@@ -140,10 +141,12 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   let guard = 0; while(await T() !== 'weekReview' && guard++ < 120){ const t = await stepOn(); if(t === 'plan' && (await S()).day > 8) break; }
   s = await S(); ok('NBN: the week ran to the Sunday review', await T() === 'weekReview', [await T(), s.day]);
   if(await T() === 'weekReview'){
+    // year one (batch 2, 3.5): while the sums are worked the right column holds only the sum; "How good was the plan?" follows the sign-off
+    ok('the review holds "How good was the plan?" back until the accounts are signed off', !(await vis('.wk-missed')) && !(await vis('#dsFix')));
+    await shot('ds-10-review-before'); await builds(); await p.waitForTimeout(200);
     const box = await txt('.wk-missed'), M = await J('S.wk.missed'); info.review = { box, M };
     ok('the review says how good the plan was in words (a large improvement / a better plan / a good plan), never the best plan\'s figure', /a large improvement is available|a better plan is available|a good plan/.test(box) && !/Best plan/i.test(box) && !box.includes((M.best || 0).toLocaleString('en-GB')) && !(await txt('#screen')).includes('£' + (M.best || 0).toLocaleString('en-GB')), box);
-    ok('the review names the biggest missed opportunity and offers Fix next week\'s … plan (held until the accounts are signed)', /Biggest missed opportunity:/.test(box) && /Fix next week's/.test(await txt('#dsFix')) && await p.$eval('#dsFix', e => e.disabled), box);
-    await shot('ds-10-review-before'); await builds(); await p.waitForTimeout(200);
+    ok('the review names the biggest missed opportunity and offers Fix next week\'s … plan', /Biggest missed opportunity:/.test(box) && /Fix next week's/.test(await txt('#dsFix')), box);
     const fixTip = await J('dsS().reviews[dsS().reviews.length - 1]'); info.fixTip = fixTip;
     ok('the teacher keeps the figures: the week\'s actual, the best plan and the missed profit', fixTip && fixTip.best === M.best && fixTip.missed === M.missed, fixTip);
     await shot('ds-11-review'); const fixed = await p.$eval('#dsFix', e => !e.disabled).catch(() => false); ok('Fix next week\'s plan is enabled once the accounts are signed', fixed);
