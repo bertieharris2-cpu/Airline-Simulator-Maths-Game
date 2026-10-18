@@ -386,7 +386,8 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Record:** "● Record" (in the tag or the panel) records the microphone while you play. The browser asks for the microphone once.
   - The game logs the time each screen appears. Whenever the day or the step changes, it keeps a save code, so the screen can be rebuilt.
   - **Mark** drops a marker in the log.
-  - In Chrome, a live transcript lands in the log beside the screens. It uses Chrome's speech service, so it needs the internet and sends the speech to Google; switch it off in the panel if that matters.
+  - In Chrome, when the game is served from a web address, a live transcript lands in the log beside the screens. It uses Chrome's speech service, so it needs the internet and sends the speech to Google; switch it off in the panel if that matters.
+  - When the game is opened from a file (`C:/…/airline-opening-prototype.html`), there is no live transcript. Chrome does not keep the microphone permission for speech recognition there, and asked again at every pause, which dropped the game out of full screen. The recording asks once. `python3 tools/playnotes_transcribe.py RECORDING LOG` turns the recording into words afterwards and puts them in the log at their times (`pip install faster-whisper`; the model comes from huggingface.co).
   - **Stop & save** downloads two files: the recording (`playnotes-<date-time>.webm`) and the log (`.json.gz`).
 - **Log screens only** keeps the same log with clock times and no microphone, to match a recording made on a phone.
 - **Reading a log:** `python3 tools/playnotes.py LOG` prints the timeline. `--at 12:40` gives the screen and save code at that moment.

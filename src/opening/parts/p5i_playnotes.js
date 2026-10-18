@@ -73,7 +73,13 @@ async function pnStart(audio, words){
   PN.timer = setInterval(pnTag, 1000); pnTag(); toast(PN.audio ? 'Recording. Talk as you play; Stop saves the recording and the log.' : 'Logging the screens. Stop saves the log.');
 }
 /* the live transcript (Chrome's speech recognition): each finished phrase lands in the log at its time */
+/* From a file (C:/…/airline-opening-prototype.html) Chrome does not keep the microphone permission for speech recognition, and
+   the recogniser stops after every pause: each restart asked again and dropped the game out of full screen (Bertie, 18 Oct).
+   So from a file there is no live transcript: the recording alone asks once. */
+const pnFile = () => location.protocol === 'file:';
+const pnWordsOn = () => !pnFile() && settings.pnWords !== false && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 function pnWords(){
+  if(pnFile()){ pnPush({ kind:'note', text:'No live transcript when the game is opened from a file (Chrome would ask for the microphone at every pause).' }); return; }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if(!SR){ pnPush({ kind:'note', text:'No live transcript in this browser.' }); return; }
   const r = PN.sr = new SR(); r.continuous = true; r.interimResults = false; r.lang = 'en-GB'; PN.srOn = true;
   r.onresult = e => { for(let i = e.resultIndex; i < e.results.length; i++) if(e.results[i].isFinal){ const text = e.results[i][0].transcript.trim(); if(text) pnPush({ kind:'say', text, screen:pnName() }); } };
@@ -104,7 +110,7 @@ function pnTag(){
   let el = document.getElementById('pnTag'); const show = PN.on || settings.screenNames || settings.testMode;   // test mode shows them too
   if(!show){ if(el) el.remove(); return; }
   if(!el){ el = document.createElement('div'); el.id = 'pnTag'; el.className = 'pn-tag'; document.body.appendChild(el);
-    el.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; if(b.id === 'pnRec') pnStart(true, settings.pnWords !== false); if(b.id === 'pnMark') pnMark(); if(b.id === 'pnStop') pnStop(); }); }
+    el.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; if(b.id === 'pnRec') pnStart(true, pnWordsOn()); if(b.id === 'pnMark') pnMark(); if(b.id === 'pnStop') pnStop(); }); }
   const name = pnName(), when = pnWhen();
   el.classList.toggle('rec', PN.on);
   el.innerHTML = `<b class="pn-n">${esc(name)}</b>${when ? `<span class="pn-w">${esc(when)}</span>` : ''}${PN.on ? `<span class="pn-r"><i></i>${PN.audio ? 'REC' : 'LOG'} ${pnClock(pnT())}</span><button id="pnMark" title="Drop a marker in the log">Mark</button><button id="pnStop">Stop &amp; save</button>` : `<button id="pnRec" title="Record your voice and log the screens">● Record</button>`}`;
@@ -123,8 +129,9 @@ document.addEventListener('DOMContentLoaded', () => setTimeout(() => {
       <p class="small muted">Talk as you play. The game notes each screen as it appears; Mark drops a marker; Stop &amp; save (bottom-left) saves the recording and the log. Send both files to Claude, who can rebuild any screen you talked about. "Log screens only" keeps the clock times, to match a recording made on a phone.</p>`;
     grid.insertBefore(sec, tsec.nextSibling);
     const sn = document.getElementById('tScreenNames'); sn.checked = !!settings.screenNames; sn.onchange = () => { settings.screenNames = sn.checked; saveSettings(); pnTag(); };
-    const w = document.getElementById('tPnWords'); w.checked = settings.pnWords !== false; w.onchange = () => { settings.pnWords = w.checked; saveSettings(); };
-    document.getElementById('tPnRec').onclick = () => { teacherClose(); pnStart(true, settings.pnWords !== false); };
+    const w = document.getElementById('tPnWords'); w.checked = pnWordsOn(); w.onchange = () => { settings.pnWords = w.checked; saveSettings(); };
+    if(pnFile()){ w.checked = false; w.disabled = true; w.parentNode.insertAdjacentHTML('beforeend', ' <span class="small muted">(not when the game is opened from a file: Chrome would ask for the microphone at every pause)</span>'); }
+    document.getElementById('tPnRec').onclick = () => { teacherClose(); pnStart(true, pnWordsOn()); };
     document.getElementById('tPnLog').onclick = () => { teacherClose(); pnStart(false, false); };
   }catch(e){}
   pnTag();
