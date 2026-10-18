@@ -396,11 +396,11 @@ The opening is being made excellent before the later campaign continues. `airlin
 
   | # | Briefing | Opens | He… | Caption |
   | --- | --- | --- | --- | --- |
-  | 1 | What a fare does | Launch Day, as the fare sums open | guesses which fare brings in the most ticket money, then drags the fare up along his own figures: people leave the queue, the price tags of those who stay grow, and the money stack rises, then falls | Ticket money = passengers × fare. Both move. |
+  | 1 | What a fare does | Launch Day, as the Studio opens (before a fare can be changed; from 18 Oct, Bertie's test) | guesses which fare brings in the most ticket money, then drags the fare up along his own figures: people leave the queue, the price tags of those who stay grow, and the money stack rises, then falls | Ticket money = passengers × fare. Both move. |
   | 2 | Customers have a choice | Red Kite's card on day 4, before he decides | drags a marker to guess how many walk to Red Kite's £50 gate; then advertising turns half of them back | Every £10 dearer, one in ten walks. Advertising halves it. |
   | 3 | More demand than seats | the week-1 review, if anyone was turned away | taps the crowd still at the gate after the last plane, on his busiest day | People you can't carry don't pay. |
   | 4 | Weekdays and weekends | the week-2 review (rebuilt on the kit) | taps the days that look different, then makes the Operations Request | grants the weekday and weekend timetables, as before |
-  | 5 | Cash, tank, profit | the first Fuel desk visit, day 8 (rebuilt on the kit) | predicts what buying fuel does to today's profit, presses Buy, then watches the week burn it | Buying fuel moves cash into the tank. Profit only counts what your flights burn. |
+  | 5 | Cash, tank, profit | Launch Day, before the fuel order sum, with the order's own figures (from 18 Oct); a save that missed it gets it at the first Fuel desk visit (rebuilt on the kit) | predicts what buying fuel does to today's profit, presses Buy, then watches the week burn it | Buying fuel moves cash into the tank. Profit only counts what your flights burn. |
   | 6 | Two planes, one route | the first aircraft comparison | taps the plane that used less fuel a passenger; then the bigger one flies half empty | Bigger is cheaper per seat — when it's full. |
   | 7 | How long will it take? | the first Flight times page | flies his plane along a ruler an hour at a time, then a quarter hour at a time; taps the letter to find in the triangle | Time = distance ÷ speed. |
   | 8 | One big Saturday | the plan page while an event is announced (the All Blacks from day 22) | taps the days that changed, then makes the Operations Request | An event changes one weekend, not every weekend. |

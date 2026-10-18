@@ -106,12 +106,18 @@ async function toFare(f, quick){
   K.question(guess === best.f ? `Your guess, <b>${money(best.f)}</b>, brings in the most: <b>${money(tk(best))}</b>` : `<b>${money(best.f)}</b> brings in the most: <b>${money(tk(best))}</b>. Your guess, ${money(guess)}: ${money(tk(gx))}`);
   await K.caption('Ticket money = <b>passengers × fare</b>. Both move.');
   await K.cont('Go on');
-  // Use: the sums the pupil does next
+  // Use: what the pupil does next (before the Studio: the plan, where a changed fare asks what it is worth; at the sums: the ticket money)
   K.mark(3); say.out(); ch.off();
-  const sums = (D.sums || []).filter(f => at(f)).map(f => money(f));
-  K.question(`Next: the ticket money at ${sums.length > 1 ? sums.slice(0, -1).join(', ') + ' and ' + sums[sums.length - 1] : sums[0] || 'each fare'}`);
-  await K.caption(`Passengers × fare, for each fare. The most is not always the fullest plane.`);
-  await K.cont('Work out the ticket money');
+  if(D.next === 'studio'){
+    K.question('Next: <b>your plan</b>. Change a fare, and it asks what the change is worth a day');
+    await K.caption('More money a ticket, but count who still flies: passengers × fare.');
+    await K.cont('To your plan');
+  } else {
+    const sums = (D.sums || []).filter(f => at(f)).map(f => money(f));
+    K.question(`Next: the ticket money at ${sums.length > 1 ? sums.slice(0, -1).join(', ') + ' and ' + sums[sums.length - 1] : sums[0] || 'each fare'}`);
+    await K.caption(`Passengers × fare, for each fare. The most is not always the fullest plane.`);
+    await K.cont('Work out the ticket money');
+  }
   K.done({ guess, best:best.f });
 })();
 </script>

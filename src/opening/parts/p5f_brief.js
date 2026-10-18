@@ -164,7 +164,18 @@ function bfAfterRender(){
 function bfMore(st, root){
   if(!bfOn() || bfCur || document.getElementById('bfLayer')) return;
   const seen = bfS().seen;
-  // 1 · What a fare does: Launch Day, as the fare sums open (before the first is answered)
+  // Bertie, 18 Oct: "check whether the briefings come before the first instance of working that out"
+  // 1 · What a fare does: Launch Day, as the Studio opens (before a fare can be changed, and the change's worth asked)
+  if(st.t === 'plan' && S.phase === 'setup' && !seen.fare_lever && bfHas('fare_lever') && root.querySelector('.ad-blk')){
+    let W = null; try{ W = workTables(currentPlan()); }catch(e){}
+    const data = bfFareData(W && W.tables.find(x => x.stage === 'fare')); if(data){ data.next = 'studio'; bfOpen('fare_lever', data, () => render()); return; }
+  }
+  // 5 · Cash, tank, profit: Launch Day, before the fuel order (blocks × the price of a block, for the days from Wednesday)
+  if(st.t === 'workings' && S.phase === 'setup' && !seen.fuel_cash_tank_profit && bfHas('fuel_cash_tank_profit')){
+    const t = typeof currentTable === 'function' ? currentTable() : null, c = t && t.stage === 'fuelorder' && !Object.keys(t.done || {}).length && t.cols[0];
+    if(c && c.values && c.values.blocks > 0){ const data = bfLaunchFuelData(c); if(data){ bfOpen('fuel_cash_tank_profit', data, () => render()); return; } }
+  }
+  // 1 · (a save that reached the sums without it) as the fare sums open (before the first is answered)
   if(st.t === 'workings' && S.phase === 'setup' && !seen.fare_lever && bfHas('fare_lever')){
     let W = null; try{ W = workTables(currentPlan()); }catch(e){}
     const t = W && W.tables.find(x => x.stage === 'fare'); if(t && !Object.keys(t.done || {}).length && !UI.justDone){ const data = bfFareData(t); if(data) bfOpen('fare_lever', data, () => render()); return; }
@@ -185,6 +196,13 @@ function bfMore(st, root){
   if(st.t === 'shop2' && !seen.lease_money && bfHas('lease_money')){ const data = bfLeaseData(); if(data){ bfOpen('lease_money', data, () => render()); return; } }
   // 11 · Profit is not cash: the Finance desk in chapter 3, after a plane is bought or a month ends overdrawn
   if(UI.view === 'finance' && (S.day || 1) >= (dayIn(WBS().ch3FromDay, /(\d+)/) || 365) && !seen.profit_vs_cash && bfHas('profit_vs_cash')){ const data = bfCashData(); if(data && (data.bought || data.overdrawn)){ bfOpen('profit_vs_cash', data, () => render()); return; } }
+}
+/* 5 on Launch Day: the order's own figures (its blocks at its price, for its days), and the cash there will be when it is paid, from Wednesday */
+function bfLaunchFuelData(c){
+  const base = bfFuelData(); if(!base) return null;
+  const v = c.values, blkL = base.blk || 1000, buyL = v.blocks * blkL, price = v.blk / blkL, days = +((/(\d+) days?/.exec(c.label || '') || [])[1]) || base.days || 5;
+  const before = Math.max(0, 7 - days - ((S.day || 1) - 1)), dayProfit = ((base.day && base.day.tickets) || 0) - ((base.day && base.day.other) || 0);
+  return Object.assign({}, base, { buyL, price, tank:buyL, days, perDay:Math.min(base.perDay || buyL, Math.floor(buyL / days)), cash:Math.round(S.cash + before * dayProfit), next:'order' });
 }
 /* each scene's figures, now (the toolkit's Event now and a replay with nothing kept); null where the moment has no figures */
 function bfDataFor(id){

@@ -69,6 +69,14 @@ const PAGES = [
   // Launch Day: the fare sums
   await at('fare_lever', async () => { await load(1); await p.evaluate(() => window.__tk.enter()); for(let g = 0; g < 4 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('decision')); await p.waitForTimeout(600); } },
     D => D.fares && D.fares.length >= 3 && D.sums.length === 3 && D.fares.every(x => x.pax <= x.want) && /<svg/.test(D.art || ''));
+  // Launch Day's order (Bertie, 18 Oct: each briefing before the first time it is worked out): the fare scene in the Studio, the fuel scene before the fuel order
+  if(want('fare_lever')) ok('fare_lever: opens in the Studio, before a fare can be changed, and ends on the plan', /"next":"studio"/.test(await E('JSON.stringify((S.brief.data || {}).fare_lever || {})')));
+  if(want('fuel_launch')){ try{ for(let g = 0; g < 8 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('decision')); await p.waitForTimeout(600); }
+      const t = await title(), st = await E('step().t'), tb = JSON.parse(await E('JSON.stringify((t => t && { stage:t.stage, v:t.cols[0].values })(currentTable()))'));
+      const fr = p.frames().find(f => f !== p.mainFrame()), B = fr ? await fr.evaluate(() => window.BRIEF) : {};
+      ok('Cash, tank, profit: opens on Launch Day before the fuel order, with the order\'s own figures', /Cash, tank, profit/.test(t) && st === 'workings' && tb && tb.stage === 'fuelorder' && B.buyL === tb.v.blocks * 1000 && Math.abs(B.price * 1000 - tb.v.blk) < 0.01 && B.next === 'order' && B.cash > 0, { t, st, tb, B:{ buyL:B.buyL, price:B.price, cash:B.cash, days:B.days, perDay:B.perDay, next:B.next } });
+      await p.waitForTimeout(3000); await p.screenshot({ path:`${OUT}game-fuel-launch.png` }); await p.evaluate(() => window.__bf.skip()); await p.waitForTimeout(300); }
+    catch(e){ ok('Cash, tank, profit on Launch Day', false, e.message.split('\n')[0]); } }
   // Thursday: Red Kite; Sunday: the week-1 review
   await at('rival_split', async () => { for(let g = 0; g < 6 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('decision')); await p.waitForTimeout(600); } }, D => D.rival === 50 && D.fare > D.rival && D.stay < D.want && D.stayAd > D.stay);
   await at('full_route', async () => { for(let g = 0; g < 6 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('review')); await p.waitForTimeout(600); } }, D => D.want > D.flights.reduce((t, f) => t + f.sold, 0));
