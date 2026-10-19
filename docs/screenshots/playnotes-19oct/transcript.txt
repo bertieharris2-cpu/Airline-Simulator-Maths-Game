@@ -1,0 +1,45 @@
+Play notes 19 Oct 2026, 17:09 (9 min 36 s): Bertie's words, each line placed on the screen the log shows at that time.
+No speech was picked up from 0:00 to 0:12 or from 2:46 to 3:39. Marks: 0:16, 3:50, 5:51, 7:00, 7:24, 8:15.
+
+0:12.5  [Studio: route editor]  Okay, I just clipped away from the container and the question disappears. So if we do want
+0:28.5  [Studio: route editor]  the child to answer that question, we need to sort that out. However, I think I like the
+0:42.3  [Studio: route editor]  call out, but I find it difficult to understand. Paris tickets a day equals, I'm not sure what
+0:58.0  [Studio: route editor]  I'm supposed to do. I just don't know what the question is. Yeah, I'm really confused
+1:34.1  [Studio: route editor]  what I'm supposed to be doing. And at the moment, I'm just I haven't even confirmed I want to do this
+1:51.9  [Studio: route editor]  flight. So I think it's come too soon. I think to be honest, they should be allowed to play around
+2:24.7  [Studio: flight selected]  with just setting up flights to try and fill them. And then if they want to do said flights, then
+2:35.2  [Studio: flight selected]  they click confirm. And then maybe the costs come up. I like the format of the call outs. But at
+2:46.1  [Studio: flight selected]  this point, I really like it. You are buying 300 meters. Okay, this screen has come up quickly.
+3:56.0  [Briefing: Cash, tank, profit]  And we've not really I don't feel like we've introduced fuel very well here.
+4:02.1  [Briefing: Cash, tank, profit]  Um, it should probably say something like to run your plane, you will need to have fuel.
+4:12.7  [Briefing: Cash, tank, profit]  Fuel prices fluctuate, they go up and down. And sometimes you won't be able to avoid this.
+4:24.0  [Briefing: Cash, tank, profit]  But sometimes you might want to invest in fuel when you think it's at a good price. And I don't
+4:41.5  [Briefing: Cash, tank, profit]  think they need a question at the start of this. Like, does it go down? Does it say the same?
+4:45.2  [Briefing: Cash, tank, profit]  Does it go up? It should just show how fuel is the cost price of fuel is accounted for.
+5:01.7  [Briefing: Cash, tank, profit]  So buying fuel moves cash into the tank is a bit confusing. Profit only counts what your flights
+5:09.3  [Briefing: Cash, tank, profit]  burn. But it should be more like under that spreadsheet. It should be like the cost of the
+5:26.6  [Briefing: Cash, tank, profit]  in child friendly language. So on day one, if you make 5000, it's not going to charge you all
+5:33.5  [Briefing: Cash, tank, profit]  13 grand on that day, because you'd make a lot. Okay, calculate the fuel order. This looks a
+5:49.2  [Sums tutorial]  little bit squished, we've got some white space around it. And I don't think we need to. I think
+6:02.5  [Sums tutorial]  rather than split the Dublin and Paris
+6:05.5  [Sums tutorial]  parts of the spreadsheet, maybe it should say Paris at 90, Dublin at £90, Dublin at £100 as
+6:16.3  [Sums tutorial]  column headings, rather than the row headings. And then the row headings can just be number
+6:22.8  [Sums tutorial]  of passengers, fare, ticket revenue, so that we can sort of compare side by side. I think that
+6:34.4  [Sums tutorial]  fuel can go underneath that as it would as a cost, like a proper balance sheet. I don't think
+6:45.6  [Sums tutorial]  we need to worry about the worked example. We're trusting that I've taught them this.
+6:51.2  [Sums tutorial]  So they're going to do it in their books. So calculate the fuel order should be coming from
+6:59.7  [Sums]  the fuel desk, which is actually locked at the moment. So we just need to go through that.
+7:20.3  [Sums]  Calculate the profit. I think really to educate them, I would like it to be more of a spreadsheet
+7:27.2  [Sums]  that where different parts become focal points using different mechanisms like highlighting those
+7:36.1  [Sums]  rows. I don't necessarily write out the sum for them even at this stage.
+7:43.6  [Sums]  Just say total profit equals revenue takeaway costs. Work is out in your book.
+8:10.5  [Sums]  Maybe on the snacks page. Again, I think this should be part of a main spreadsheet,
+8:19.6  [Sums]  but it sort of zooms in on it, emphasises it with a different border colour, darkens the other bit,
+8:28.3  [Sums]  rather than cycling through screens. We don't need to calculate build the sum, I don't think.
+8:38.6  [Sums]  And if we do build the sum, I think they should be clicking on the spreadsheet as the buttons
+8:42.6  [Sums]  rather than having different buttons. So, yeah, maybe actually we do build the sum,
+8:51.7  [Sums]  but by clicking on the spreadsheet, then we don't have to have this extra box of cabin sales
+8:57.4  [Sums]  with large text. So I think a lot of the feedback comes down to, I think, having a more full
+9:11.8  [Sums]  spreadsheet that at various points, different parts of it become the focal point. Maybe with callouts
+9:22.5  [Sums]  to introduce things and to build sums, they should be clicking on the cells.
+9:26.6  [Sums]  And this is good, sort of a link to ICT skills.
