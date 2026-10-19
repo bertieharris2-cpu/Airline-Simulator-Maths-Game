@@ -78,11 +78,12 @@ def live(name, rows):
 
 
 # v6.0 (D104): a second autumn (track B) for pupils who have played before, and six curveball events with no best answer.
-# The game plays track A (Settings autumnTrack) until the teacher's switch is built; the curveballs wait for their effects.
-D104_PENDING = {'school_trip', 'dub_strike', 'snack_supplier', 'sponsor_club', 'slot_squeeze', 'tanker_offer'}
-def on_track(r, key):
+# Every track is loaded with its track ('A', 'B' or 'both'); the game plays the airline's track (Settings autumnTrack, the
+# teacher's switch) in chapter 1's autumn (parts/p5w_d104.js). The six curveballs' effects are built there too.
+D104_CURVEBALLS = {'school_trip', 'dub_strike', 'snack_supplier', 'sponsor_club', 'slot_squeeze', 'tanker_offer'}
+def track_of(r):
     t = str(r.get('track') or 'both').strip().lower()
-    return t in ('a', 'both') and r.get(key) not in D104_PENDING
+    return 'A' if t == 'a' else 'B' if t == 'b' else 'both'
 
 # ---------- small parsers ----------
 def num(s):
@@ -262,9 +263,10 @@ market = [{'week': m['week'], 'weekStart': m['weekStart'], 'season': m['season']
           for m in live('Market', all_market)]
 
 all_events = sheet(wb, 'Events')
-ev_rows = [e for e in live('Events', all_events) if on_track(e, 'eventId')]
-for e_ in sorted({e['eventId'] for e in all_events if e.get('eventId') in D104_PENDING}): issue('check', 'Events', f'{e_}: a D104 curveball event, loaded once its effects are built.')
-if any(str(e.get('track') or '').strip().lower() == 'b' for e in all_events): issue('note', 'Events', 'Track B rows (Events, EventOptions, RouteNews) wait for the teacher\'s autumnTrack switch (D104); the game plays track A.')
+ev_rows = live('Events', all_events)
+cb = sorted({e['eventId'] for e in all_events if e.get('eventId') in D104_CURVEBALLS})
+if cb: issue('note', 'Events', f'D104: the six curveball events are loaded ({", ".join(cb)}); their effects are in parts/p5w_d104.js.')
+if any(track_of(e) == 'B' for e in all_events): issue('note', 'Events', 'D104: track B rows (Events, EventOptions, RouteNews) are loaded with their track; the game plays the airline\'s track in chapter 1\'s autumn (Settings autumnTrack, the teacher\'s switch).')
 events, by_id = [], {}
 for e in ev_rows:
     x = by_id.get(e['eventId'])
@@ -272,7 +274,8 @@ for e in ev_rows:
         x = by_id[e['eventId']] = {'id': e['eventId'], 'date': e['date'], 'title': e['title'], 'text': e['text'],
                                    'options': [], 'effects': None, 'costShare': e.get('costShare'), 'status': e['status'],
                                    # D50: a rival's fare (or a cut as a share of the pupil's), how long it lasts, the advertising cost, the routes it touches
-                                   'rivalFare': e.get('rivalFare'), 'rivalFareCut': e.get('rivalFareCut'), 'durationDays': e.get('durationDays'), 'advertiseCost': e.get('advertiseCost'), 'affectsRoutes': words(e.get('affectsRoutes') or '')}
+                                   'rivalFare': e.get('rivalFare'), 'rivalFareCut': e.get('rivalFareCut'), 'durationDays': e.get('durationDays'), 'advertiseCost': e.get('advertiseCost'), 'affectsRoutes': words(e.get('affectsRoutes') or ''),
+                                   'track': track_of(e)}
         events.append(x)
     if e['option'] is not None:
         x['options'].append({'n': e['option'], 'label': e['label'], 'sub': e['subLabel'], 'cash': e['cash'],
@@ -284,9 +287,9 @@ for e in ev_rows:
 # eventCostScaleFromDay; from then costShare × a day's profit. The game reads these for chapters 2–3 (chapter 1 keeps its Events rows: Bertie, 14 Oct).
 all_eo = sheet(wb, 'EventOptions') if 'EventOptions' in wb.sheetnames else []
 eventOptions = {}
-for o in [o for o in live('EventOptions', all_eo) if on_track(o, 'eventId')]:
+for o in live('EventOptions', all_eo):
     eventOptions.setdefault(o['eventId'], []).append({'n': o['option'], 'label': o['label'], 'sub': o.get('subLine'), 'cash': o.get('cash'),
-        'costShare': o.get('costShare'), 'stars': o.get('stars'), 'other': o.get('otherEffect')})
+        'costShare': o.get('costShare'), 'stars': o.get('stars'), 'other': o.get('otherEffect'), 'track': track_of(o)})
 for v in eventOptions.values(): v.sort(key=lambda x: x['n'])
 
 all_ch = sheet(wb, 'Challenges')
@@ -421,8 +424,8 @@ routeNews = [{'id': r['newsId'], 'announce': r['announceDate'], 'start': r['star
               'routes': words(r.get('routes') or ''), 'mult': r['demandMultiplier'], 'segment': r.get('segment') or 'all', 'announced': bool(r.get('announced')),
               'headline': r.get('headline'), 'goodResponse': r.get('goodResponse'), 'status': r['status'],
               # v6.0 (D90): news in the same week that the pupil chooses between; a festival's 'about' line for the pupil
-              'clashGroup': r.get('clashGroup'), 'about': r.get('aboutForThePupil') or r.get('about')}
-             for r in live('RouteNews', opt_sheet('RouteNews')) if on_track(r, 'newsId')]
+              'clashGroup': r.get('clashGroup'), 'about': r.get('aboutForThePupil') or r.get('about'), 'track': track_of(r)}
+             for r in live('RouteNews', opt_sheet('RouteNews'))]
 if 'RouteNews' not in wb.sheetnames: issue('error', 'RouteNews', 'no RouteNews sheet: the world report has no route news.')
 # Livery (v4.3 draft, CR5): the paint shop's fixed choices, grouped by kind
 all_livery = opt_sheet('Livery')

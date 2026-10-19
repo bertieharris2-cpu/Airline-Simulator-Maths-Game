@@ -2,7 +2,7 @@
 
 *Written by `tools/import_world.py` on 19 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 27 to check, 7 notes.**
+**0 to fix, 25 to check, 8 notes.**
 
 ## Loaded
 
@@ -17,7 +17,7 @@
 | Airports | 1 | 1 later, 1 live, 3 removed |
 | Calendar | 49 | 49 live |
 | Market | 416 | 416 live |
-| Events | 46 rows → 28 events | 3 later, 46 live, 1 note row, 3 placeholder, 2 removed |
+| Events | 46 rows → 40 events | 3 later, 46 live, 1 note row, 3 placeholder, 2 removed |
 | EventOptions | 65 | 65 live, 1 note row |
 | Challenges | 6 | 6 live, 2 placeholder |
 | Mechanics | 17 | 3 later, 17 live |
@@ -36,12 +36,10 @@
 
 ## To check
 
-- **Events:** dub_strike: a D104 curveball event, loaded once its effects are built.
-- **Events:** school_trip: a D104 curveball event, loaded once its effects are built.
-- **Events:** slot_squeeze: a D104 curveball event, loaded once its effects are built.
-- **Events:** snack_supplier: a D104 curveball event, loaded once its effects are built.
-- **Events:** sponsor_club: a D104 curveball event, loaded once its effects are built.
-- **Events:** tanker_offer: a D104 curveball event, loaded once its effects are built.
+- **EventOptions:** "sponsor_club" option 1 has a cash price £500 on day 30, but costs are a share of a day's profit from day 29.
+- **EventOptions:** "tanker_offer" option 1 has a cash price £12000 on day 43, but costs are a share of a day's profit from day 29.
+- **EventOptions:** "fault_b" option 1 has a costShare on day 18, before day 29.
+- **EventOptions:** "crew_b" option 1 has a cash price £400 on day 45, but costs are a share of a day's profit from day 29.
 - **Finance:** a220: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
 - **Finance:** a320: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
 - **Finance:** b737: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
@@ -70,7 +68,8 @@
 - **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 1200, listPrice 9000 → 22000. The workbook wins.
 - **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1800, listPrice 15000 → 36000. The workbook wins.
 - **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900, dayCost 2500 → 3500, listPrice 30000 → 70000. The workbook wins.
-- **Events:** Track B rows (Events, EventOptions, RouteNews) wait for the teacher's autumnTrack switch (D104); the game plays track A.
+- **Events:** D104: the six curveball events are loaded (dub_strike, school_trip, slot_squeeze, snack_supplier, sponsor_club, tanker_offer); their effects are in parts/p5w_d104.js.
+- **Events:** D104: track B rows (Events, EventOptions, RouteNews) are loaded with their track; the game plays the airline's track in chapter 1's autumn (Settings autumnTrack, the teacher's switch).
 - **Events:** events are not in date order (harmless; the game sorts them).
 - **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events undercut_dub, storm, crew; challenges 2, 5. Those choices then differ only in cash.
 
@@ -100,7 +99,7 @@ The Settings rows chapter 3 reads (D78–D81), as loaded.
 - `challengeRewardRule`: a share of a day's profit, or stars
 - `secondCrewCost`: 250
 - `leaseRule`: A220/A320/737 ÷ 1,000 a day (prices not doubled); from the 757 up ÷ 2,000
-- **EventOptions:** 42 option rows for 14 events (a380_offer, ash_cloud, ash_cloud2, blogger, crew, fault, fees_rise, fog, mystery_shopper, overdraft_offer, price_war, storm, storm2, undercut_dub).
+- **EventOptions:** 65 option rows for 24 events (a380_offer, ash_cloud, ash_cloud2, blogger, crew, crew_b, dub_strike, fault, fault_b, fees_rise, fog, mystery_shopper, overdraft_offer, price_war, price_war_b, school_trip, slot_squeeze, snack_supplier, sponsor_club, storm, storm2, storm_b, tanker_offer, undercut_dub).
 - **Two-leg routes:** syd (10,900 km + 6,300 km, 4 days).
 
 ## Working on paper (D86) and chapter 4 (D82–D85) touches

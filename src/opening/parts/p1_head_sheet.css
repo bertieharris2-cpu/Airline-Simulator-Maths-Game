@@ -186,3 +186,6 @@
 body.yr1 .fd2-l{gap:7px}
 body.yr1 .fd2-l .bv-panel{padding-top:10px;padding-bottom:10px}
 body.yr1 .fd2-ph{margin-bottom:8px}
+/* D104: the slot squeeze's line in the plan's footer (year one) */
+body.yr1 .d104-slot{flex:1 1 100%;margin:0 0 6px;font-size:13px;line-height:18px;color:var(--text-soft)}
+body.yr1 .d104-slot.over{color:var(--amber)}
