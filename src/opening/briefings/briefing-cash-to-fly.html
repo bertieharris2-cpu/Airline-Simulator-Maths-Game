@@ -71,6 +71,8 @@ function autoWeek(W, r){ while(W.day < 7){ const n = canBuy(W, r); if(n) buy(W, 
 const flying = W => W.rows.reduce((t, x) => t + x.result, 0);
 
 /* ---------- the scene ---------- */
+let RKEEP = null;   // the line the pupil set, kept when Back plays the briefing again
+K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'Can you afford to run it?', marks:5 });
 const L = K.layers(), defs = K.defs(), hud = K.hud(), svgEl = K.svg(), flat = K.flat;
 const grad = (id, stops, x2, y2) => { const g = sv('linearGradient', { id, x1:0, y1:0, x2, y2 }, defs); stops.forEach(([o, c]) => sv('stop', { offset:o, 'stop-color':c }, g)); };
@@ -109,7 +111,7 @@ function setLevel(v){ shown = v; const y = yOf(v); gold.setAttribute('y', y.toFi
 const levelTo = (to, ms) => { const from = shown; return K.tween(RM ? 0 : ms === undefined ? 700 : ms, k => setLevel(lerp(from, to, k)), 'out').then(() => setLevel(to)); };
 
 /* the reserve line: the one red thing; dragged (or the arrow keys) in steps */
-let R = clamp(Math.round((+D.reserve || 0) / RSTEP) * RSTEP, 0, TOP), rLive = false, touched = false;
+let R = clamp(Math.round((RKEEP !== null ? RKEEP : (+D.reserve || 0)) / RSTEP) * RSTEP, 0, TOP), rLive = false, touched = false;
 const rv = sv('g', { opacity:0 }, L.top);
 sv('line', { x1:GX - 8, y1:0, x2:GX + GW + 12, y2:0, stroke:'#ff5f5f', 'stroke-width':4 }, rv);
 const rHand = sv('g', { tabindex:0, role:'slider', 'aria-label':'Cash to keep for emergencies', 'aria-valuemin':0, 'aria-valuemax':TOP, style:'cursor:ns-resize;touch-action:none;outline:none' }, rv);
@@ -118,7 +120,7 @@ const hRect = sv('rect', { x:GX + GW + 12, y:-15, width:30, height:30, fill:'#ff
 sv('path', { d:`M${GX + GW + 19},-5 L${GX + GW + 35},-5 M${GX + GW + 19},5 L${GX + GW + 35},5`, stroke:'#3a0b10', 'stroke-width':2.4 }, rHand);
 const rWord = txt(rv, GX + GW + 50, -4, 'keep', { 'font-size':18, 'font-weight':700, fill:'#ff5f5f' }), rFig = txt(rv, GX + GW + 50, 17, money(R), { 'font-size':18, 'font-weight':700, fill:'#ff5f5f' });
 const valAt = y => (GB - y) / (GB - GT - 16) * TOP;
-function setR(v, user){ const r = clamp(Math.round(v / RSTEP) * RSTEP, 0, TOP); if(user) touched = true; R = r; rv.setAttribute('transform', `translate(0 ${yOf(R).toFixed(1)})`); rFig.textContent = money(R); rHand.setAttribute('aria-valuenow', R); rHand.setAttribute('aria-valuetext', `keep ${money(R)}`); refresh(); }
+function setR(v, user){ const r = clamp(Math.round(v / RSTEP) * RSTEP, 0, TOP); if(user){ touched = true; RKEEP = r; } R = r; rv.setAttribute('transform', `translate(0 ${yOf(R).toFixed(1)})`); rFig.textContent = money(R); rHand.setAttribute('aria-valuenow', R); rHand.setAttribute('aria-valuetext', `keep ${money(R)}`); refresh(); }
 const worldY = ev => { const b = svgEl.getBoundingClientRect(); return (ev.clientY - b.top) / b.height * 900; };
 let drag = null;
 rHand.addEventListener('pointerdown', ev => { if(!rLive) return; ev.preventDefault(); drag = ev.pointerId; try{ rHand.setPointerCapture(ev.pointerId); }catch(e){} hRect.setAttribute('fill', '#ff7a7a'); });
@@ -230,7 +232,7 @@ function boardClear(W, title){ bTitle.textContent = title; bRows.forEach(b => { 
 /* the controls: Buy under the gauge, Fly under the week */
 const act = (cls, x, y) => { const b = K.h('button', { class:'bk-act ' + cls, type:'button' }, hud, ''); K.pos(b, x, y); b.hidden = true; return b; };
 const buyB = act('', GC, 772), flyB = act('sec', MID, 772);
-const press = (...bs) => new Promise(res => bs.forEach(b => b.onclick = () => { if(b.disabled || b.hidden) return; bs.forEach(x => x.onclick = null); res(b); }));
+const press = (...bs) => K.decide(new Promise(res => bs.forEach((b, i) => b.onclick = () => { if(b.disabled || b.hidden) return; bs.forEach(x => x.onclick = null); res(i); }))).then(i => bs[i]);   // a decision: Next waits for it (kept as which button, so a replay presses the same one)
 let W = week(D.cash, [ME]), stage = 1, stagedBuys = 0;
 function spendLabel(){ const top = yOf(shown), ln = yOf(R), room = shown - R;
   if(stage < 2 || room <= 0 || ln - top < 52){ spend.setAttribute('opacity', 0); spend2.setAttribute('opacity', 0); return; }
@@ -297,7 +299,7 @@ const fadeIn = (el, ms) => K.tween(RM ? 0 : ms || 260, k => el.setAttribute('opa
   await K.cont();
 
   /* ---------- 2 · Decide: how much do you keep back? ---------- */
-  K.mark(1); stage = 2;
+  K.mark(0); stage = 2;
   await K.caption('Before you buy, decide how much cash you\'ll keep for emergencies. There\'s no right amount — it\'s your call.');
   setR(R); rLive = true; await fadeIn(rv, 300); fadeIn(perBlock, 300); keepT.setAttribute('opacity', 1);
   buyB.hidden = false; refresh(); setTimeout(() => { try{ rHand.focus({ preventScroll:true }); }catch(e){} }, 60);
@@ -307,7 +309,7 @@ const fadeIn = (el, ms) => K.tween(RM ? 0 : ms || 260, k => el.setAttribute('opa
   const first = await press(buyB, flyB);
 
   /* ---------- 3 · Buy and fly: the week in stages ---------- */
-  K.mark(2); stage = 3; touched = false;
+  K.mark(0); stage = 3; touched = false;
   if(first === buyB){ await doBuy(canBuy(W, R)); stagedBuys++; await K.caption(`Now fly the week, one day at a time.`); }
   await flyTheWeek(true, first === flyB ? flyB : null);
   const W1 = W;
@@ -315,7 +317,7 @@ const fadeIn = (el, ms) => K.tween(RM ? 0 : ms || 260, k => el.setAttribute('opa
   await K.cont();
 
   /* ---------- 4 · The twist: a plane you can't fuel ---------- */
-  K.mark(3); stage = 4;
+  K.mark(1); stage = 4;
   let bought = false, W2 = null;
   if(NEW){
     // back to Monday
@@ -326,7 +328,7 @@ const fadeIn = (el, ms) => K.tween(RM ? 0 : ms || 260, k => el.setAttribute('opa
       <p>${afford ? (SH.where ? `On ${K.esc(SH.where)} it would need ${num(NEW.litres.reduce((a, v) => a + v, 0))} L of fuel this week, and cost ${money(NEW.idle)} a day to run.` : `It would fly a week like yours: ${num(NEW.litres.reduce((a, v) => a + v, 0))} L of fuel, and ${money(NEW.idle)} a day to run.`) : `That's more than the ${money(D.cash)} you have.`}</p>
       <div class="bk-row">${afford ? '<button class="bk-chip" data-c="buy" type="button">Buy it</button>' : ''}<button class="bk-chip" data-c="no" type="button">${afford ? 'Not now' : 'Go on'}</button></div>`);
     K.pos(card, MID, 290);
-    const pick = await new Promise(res => card.querySelectorAll('[data-c]').forEach(b => b.onclick = () => res(b.getAttribute('data-c'))));
+    const pick = await K.decide(new Promise(res => card.querySelectorAll('[data-c]').forEach(b => b.onclick = () => res(b.getAttribute('data-c'))))); 
     card.classList.add('out'); setTimeout(() => card.remove(), 400);
     if(pick === 'buy'){
       bought = true; W = week(D.cash - NEW.price, [ME, NEW]);
@@ -356,7 +358,7 @@ const fadeIn = (el, ms) => K.tween(RM ? 0 : ms || 260, k => el.setAttribute('opa
   }
 
   /* ---------- 5 · Use: the rules of the game ---------- */
-  K.mark(4); stage = 5; rLive = false; buyB.hidden = flyB.hidden = true;
+  K.mark(2); stage = 5; rLive = false; buyB.hidden = flyB.hidden = true;
   const dim = sv('rect', { x:0, y:0, width:1600, height:900, fill:'#020812', opacity:0 }, L.top); K.tween(RM ? 0 : 400, k => dim.setAttribute('opacity', .82 * k));
   const card = sv('g', { opacity:0 }, L.top);
   if(!K.piece('rules-card', card, { x:440, y:210, w:720 })){   // (a page opened on its own has no kit art: the same card, drawn)
@@ -370,6 +372,7 @@ const fadeIn = (el, ms) => K.tween(RM ? 0 : ms || 260, k => el.setAttribute('opa
   await K.cont(D.next === 'shop' ? 'Back to the shop' : 'Back to the Fuel desk');
   K.done({ reserve:R, boughtPlaneInScene:bought, stagedBuys });
 })();
+});
 </script>
 </body>
 </html>

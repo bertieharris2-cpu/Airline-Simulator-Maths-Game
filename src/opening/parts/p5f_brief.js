@@ -156,7 +156,8 @@ function bfAfterRender(){
   // the first visit to the Fuel desk opens with the Cash, tank, profit briefing
   const fuelHere = st.t === 'fuelDesk' || UI.view === 'fuel';
   // (a save that has already bought fuel has met the desk: no briefing for it)
-  const from = +(WBS().fuelDeskFromDay || 8) || 8, firstVisit = !(S.fo && S.fo.last && S.fo.last.day >= from) && (S.day || 1) >= from && (S.day || 1) <= from + 6;   // Launch Day's order is not a desk visit
+  const from = +(WBS().fuelDeskFromDay || 8) || 8, early = typeof ashFuelEarly === 'function' && ashFuelEarly();   // year one: the desk opens on Launch Day and the first order is placed there (handover 19 Oct, 7.6)
+  const firstVisit = early ? !(S.fo && S.fo.last) : !(S.fo && S.fo.last && S.fo.last.day >= from) && (S.day || 1) >= from && (S.day || 1) <= from + 6;   // Launch Day's order is not a desk visit
   if(fuelHere && firstVisit && bfOn() && bfHas('fuel_cash_tank_profit') && !bfS().seen.fuel_cash_tank_profit && !bfCur && !document.getElementById('bfLayer')){
     const data = bfFuelData(); if(data) bfOpen('fuel_cash_tank_profit', data, () => render());
   }
@@ -308,6 +309,9 @@ function bfToFares(d, data){
     setTimeout(() => { const f = document.querySelector('[data-bvfare]:not([disabled])'); if(f) try{ f.focus(); }catch(e){} }, 80); }, 60);
 }
 function bfFuelData(){
+  // year one (version A, 19 Oct evening): a fixed teaching example from the workbook's BriefingData (D105), like What a fare does;
+  // the page's own defaults are the same example when the workbook has none
+  if(typeof yearOne === 'function' && yearOne()) return Object.assign({ next:'order' }, ((WB && WB.briefingData) || {}).fuel_cash_tank_profit || {});
   const price = fuelPrice(), blk = fuelBlock(), cap = tankCapacity(), max = fdMaxBlocks(price) || 0, litres = Math.max(blk, max * blk);
   let f = null; try{ f = dryRun(() => planFlights()).filter(x => !x.grounded).sort((a, b) => a.dep - b.dep)[0]; }catch(e){}
   if(!f) return null;

@@ -97,3 +97,10 @@ body{background:var(--bg);color:var(--white);font-family:var(--sans);font-varian
 .bk-card th:first-child,.bk-card td:first-child{text-align:left;padding-left:0}
 .bk-card td{text-align:right;padding:.42cqw 0 .42cqw 2cqw;border-top:1px solid rgba(53,96,135,.45);color:var(--white);white-space:nowrap}
 .bk-card td:first-child{color:#c6d8f0}.bk-card td.gold{color:var(--gold);font-weight:700}
+/* the Show / Reveal / Use stepper and Back beside Next (19 Oct 2026, evening: no guesses; Next and Back are always allowed) */
+.bk-steps{gap:6px;margin-left:14px;align-self:stretch;align-items:flex-end;padding-bottom:7px}
+.bk-steps i{width:84px;height:auto;padding-top:5px;border-top:3px solid #1b3558;background:none;font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);line-height:1}
+.bk-steps i.done{background:none;border-top-color:#2c5a8c;color:#9fbde3}
+.bk-steps i.on,.bk.flat .bk-steps i.on{background:none;border-top-color:var(--cy);color:var(--cy)}
+.bk-back{font:inherit;font-size:15px;font-weight:600;height:42px;padding:0 18px;border:1px solid #2b5c9e;background:#0d2346;color:#eaf2ff;cursor:pointer}
+.bk-back:disabled{opacity:.4;cursor:default}.bk-back:focus-visible{outline:2px solid #fff;outline-offset:2px}

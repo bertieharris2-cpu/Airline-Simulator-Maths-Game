@@ -134,6 +134,7 @@ function tkFinFigures(){
   const t = (tkQ('.fin-card') || {}).textContent || '', m = t.replace(/,/g, '').match(/Still to pay: £(\d+(?:\.\d+)?) − £(\d+(?:\.\d+)?)/), n = t.replace(/,/g, '').match(/A month: £(\d+(?:\.\d+)?) ÷ (\d+)/);
   const still = m ? Math.round((+m[1] - +m[2]) * 100) / 100 : null; return { still, pay:n ? Math.round(+n[1] / +n[2] * 100) / 100 : null };
 }
+window.__tkSums = TK_SUMS;   // parts after this block (the Airline Sheet, p5t) add their own recipes here
 function tkFind(){ for(const R of TK_SUMS){ try{ if(!R.test()) continue; const P = R.plan(); if(P) return Object.assign({ what:R.what }, P); }catch(e){} } return null; }
 async function tkAnswer(quiet){ const a = tkFind(); if(!a){ if(!quiet) toast('No sum to answer on this screen'); return null; } a.go(); await tkWait(a.wait || 90); if(!quiet) toast(`Answered ${a.what}: ${typeof a.value === 'number' ? a.value.toLocaleString('en-GB') : a.value}`); tkShowTag(); return a; }
 async function tkAnswerAll(quiet){ let n = 0, last = ''; for(let g = 0; g < 40; g++){ const a = tkFind(); if(!a) break; const sig = a.what + '|' + a.at + '|' + S.si + '|' + S.day; if(sig === last && g > 1){ break; } last = sig; a.go(); n++; await tkWait(a.wait || 110); } if(!quiet) toast(n ? `Answered ${n} sum${n === 1 ? '' : 's'} on this screen` : 'No sum to answer on this screen'); return n; }

@@ -10,11 +10,12 @@
 <body data-brief="full_route">
 <script>
 /* 3 · More demand than seats (the week-1 review). Passengers arrive at the gate through his busiest day; each departure boards
-   its seats and pushes back; after the last plane leaves, a crowd is still standing in the lounge as the lights dim. He taps the
-   crowd and it counts itself. Caption: People you can't carry don't pay. Another plane, a bigger one, or a higher fare. Lands on
+   its seats and pushes back; after the last plane leaves, a crowd is still standing in the lounge as the lights dim. After
+   Next the crowd counts itself (no tap since 19 Oct, evening: no guesses). Caption: People you can't carry don't pay. Another plane, a bigger one, or a higher fare. Lands on
    the capacity observation and the second-plane decision. The day is his own (the route and day with the most turned away). */
 const D = Object.assign({ id:'full_route', route:{ city:'Dublin' }, day:'Saturday', fare:80, want:72, flights:[{ t:'06:00', seats:19, sold:19 }, { t:'09:40', seats:19, sold:19 }, { t:'13:40', seats:19, sold:19 }] }, K.B);
 const money = K.money, num = K.num, city = D.route.city, F = D.flights, sold = F.reduce((t, f) => t + f.sold, 0), left = Math.max(0, D.want - sold);
+K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'More demand than seats' });
 const L = K.layers();
 K.terminal({ horizon:330, glassBottom:520, stand:820, poolX:700 });
@@ -51,24 +52,23 @@ const regroup = () => Promise.all(crowd.map((p, i) => K.walk(p, spots[i][0], spo
   // after the last plane: the lights dim on the people still standing
   clock.say('22:00'); await Promise.all([K.tween(1600, t => night.setAttribute('opacity', t * .75)), K.tween(1600, t => dim.setAttribute('opacity', t * .35))]);
   crowd.forEach(p => p.g.parentNode.appendChild(p.g));
-  K.mark(1); K.question('The last plane has gone. <b>Tap the people still here.</b>');
+  K.question('The last plane has gone.');
   await K.caption('How many are left at the gate?');
-  // he taps the crowd: it counts itself
-  const hit = K.h('button', { type:'button', 'aria-label':'The people still at the gate', style:'position:absolute;background:transparent;border:1px dashed rgba(242,193,78,.6);cursor:pointer' }, K.hud());
-  const xs = crowd.map(p => p.x), ys = crowd.map(p => p.y), x0 = Math.min(...xs, 900) - 40, x1 = Math.max(...xs, 1000) + 40, y0 = Math.min(...ys, 640) - 80, y1 = Math.max(...ys, 640) + 30;
-  K.pos(hit, x0, y0); hit.style.width = (100 * (x1 - x0) / 1600) + '%'; hit.style.height = (100 * (y1 - y0) / 900) + '%';
-  await new Promise(res => hit.onclick = res); hit.remove();
-  K.mark(2); K.question(null);
+  const xs = crowd.map(p => p.x), ys = crowd.map(p => p.y), x0 = Math.min(...xs, 900) - 40, x1 = Math.max(...xs, 1000) + 40, y0 = Math.min(...ys, 640) - 80;
+  await K.cont('Next');
+  // Reveal: the people still at the gate count themselves (no tap: nothing asks for a guess)
+  K.mark(1); K.question(null);
   for(let i = 0; i < crowd.length; i++){ const p = crowd[i], t = K.txt(L.top, p.x, p.y - 64, String(i + 1), { 'font-size':15, 'font-weight':800, 'text-anchor':'middle', fill:'#F2C14E' }); await K.wait(crowd.length > 30 ? 40 : 90); }
   const c = K.call((x0 + x1) / 2, y0 - 30, `<b>${num(left)}</b> people with no seat: <b>${money(left * D.fare)}</b> of tickets you couldn't sell`, '');
   await K.caption(`<b>People you can't carry don't pay.</b> Another plane, a bigger one, or a higher fare.`);
   await K.cont('Go on');
   // Use: the review, with the capacity observation and what a second plane would carry
-  K.mark(3); K.question('Next: the week\'s review, and what more seats would carry');
+  K.mark(2); K.question('Next: the week\'s review, and what more seats would carry');
   await K.caption(`${F.length} flights × ${num(F[0] ? F[0].seats : 19)} seats = ${num(F.reduce((t, f) => t + f.seats, 0))}. ${num(D.want)} wanted to fly.`);
   await K.cont('To the review');
   K.done({ left });
 })();
+});
 </script>
 </body>
 </html>

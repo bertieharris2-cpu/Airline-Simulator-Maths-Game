@@ -9,20 +9,19 @@
 </head>
 <body data-brief="rival_split">
 <script>
-/* 2 · Customers have a choice (Thursday, week 1: Red Kite). Claude Design handover 18 Oct 2026, 3.8 Option A "drag the line
-   through the queue": four beats.
-   1 Context: Red Kite's ATR (its oxblood livery, from the kit) taxis in to the next gate; its fare sign lights beside yours.
-   2 Predict: how many of your passengers will walk? A cyan handle on a track under your queue; dragging it walks that many
-     figures, one by one, across to Red Kite's queue, with a running count; Lock in my guess.
-   3 Reveal: the rule ("For every £10 dearer, 1 in 10 walk") builds in three steps while the queue settles; the guess stays
-     beside the answer. Never "wrong".
-   4 Use: who stays, in rows of ten, then back to the Red Kite card.
+/* 2 · Customers have a choice (Thursday, week 1: Red Kite). Claude Design handover 18 Oct 2026, 3.8 Option A, without the
+   guess (19 Oct, evening): three beats, Show → Reveal → Use.
+   1 Show: Red Kite's ATR (its oxblood livery, from the kit) taxis in to the next gate; its fare sign lights beside yours.
+   2 Reveal, straight after: the rule ("For every £10 dearer, 1 in 10 walk") builds in three steps while that many of the pupil's
+     passengers walk, one by one, across to Red Kite's queue. Never "wrong"; nothing to drag or guess.
+   3 Use: who stays, in rows of ten, then back to the Red Kite card.
    The figures are the game's (the switching rule, his fare, who wants to fly). */
 const D = Object.assign({ id:'rival_split', route:{ city:'Dublin' }, fare:110, rival:50, want:30, stay:12, rivalName:'Red Kite', airline:'Your airline', perTen:.1 }, K.B);
 const money = K.money, num = K.num, city = D.route.city, gap = Math.max(0, D.fare - D.rival), steps = Math.min(10, Math.round(gap / 10));
 // the game's own figures (the card shows the same): who wants to fly at his fare, and who stays with him; the rule for a page opened on its own
 const T = Math.max(1, Math.round(D.want)), stayT = Math.max(0, Math.min(T, D.stay !== undefined ? Math.round(D.stay) : T - Math.round(T * Math.min(1, steps * (D.perTen || .1))))), walkT = T - stayT;
 const per = T > 60 ? Math.ceil(T / 60) : 1, N = Math.ceil(T / per), walkN = Math.round(walkT / per), rk = String(D.rivalName || 'Red Kite');
+K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'Customers have a choice' });
 const L = K.layers(), sv = K.s, flat = !!K.B.kitFlat;
 /* the gates at night: pillars, the apron band, the floor */
@@ -69,7 +68,7 @@ function walkTo(n, gapMs){ n = Math.max(0, Math.min(N, n)); const out = [];
 const arrow = sv('g', { opacity:0 }, L.mid); sv('line', { x1:640, y1:Y0 + 20, x2:960, y2:Y0 + 20, stroke:'#9fbde3', 'stroke-width':3, 'stroke-dasharray':'12 10' }, arrow); sv('path', { d:`M960 ${Y0 + 8} L 980 ${Y0 + 20} L 960 ${Y0 + 32}`, fill:'none', stroke:'#9fbde3', 'stroke-width':3 }, arrow);
 
 (async () => {
-  // 1 Context: his queue; Red Kite taxis in next door, and its fare lights beside his
+  // 1 Show: the pupil's queue; Red Kite taxis in next door, and its fare lights beside theirs
   K.mark(0);
   await Promise.all(Q.map((p, i) => { const x = p.x, y = p.y; p.set(x - 240, y); p.g.style.opacity = 1; return go(p, x, y, 800, i * 10); }));
   if(note) note.out(false);
@@ -77,28 +76,18 @@ const arrow = sv('g', { opacity:0 }, L.mid); sv('line', { x1:640, y1:Y0 + 20, x2
   sB.style.opacity = 1; await K.tween(450, t => { fB.setAttribute('opacity', t); fA.setAttribute('opacity', .4 + .6 * t); }, 'out');
   await K.caption(`${K.esc(rk)} Air is selling ${K.esc(city)} at ${money(D.rival)}. You charge ${money(D.fare)}: <b>${money(gap)} dearer</b>.`);
   await K.cont('Next');
-  // 2 Predict: drag the marker; that many walk across
+  // 2 Reveal, straight after the context: the rule builds in three steps while that many walk across, one by one
   K.mark(1); arrow.setAttribute('opacity', 1);
-  await K.caption(`How many of your ${num(T)} passengers will walk to ${K.esc(rk)}? <b>Drag the marker.</b>`);
-  const RW = (COLS - 1) * DX + 30, RX = AX - 15, RY = Y0 + rows * DY + 10, stops = Array.from({ length:N + 1 }, (_, k) => k);
-  let guess = 0; const tip = K.call(RX, RY - 64, 'Drag: how many walk?', 'quiet');
-  const rail = K.rail({ x:RX, y:RY, w:RW, stops, value:0, label:'How many walk', onMove:v => { guess = v; walkTo(v, 60); tip.move(RX + RW * v / N - 30, RY - 64); tip.say(`You think: <b style="color:#36c6ff">${num(v * per)}</b> walk`); } });
-  // the track's marks: 0, 10, 20, … (in travellers)
-  const tl = sv('g', null, L.top); for(let v = 0; v <= N; v += Math.max(1, Math.round(10 / per))) K.txt(tl, RX + RW * v / N, RY + 40, num(v * per), { 'font-size':15, fill:'#9fbde3', 'text-anchor':'middle' });
-  await new Promise(res => { rail.onEnd = () => { rail.onEnd = null; res(); }; });   // the guess is the pupil's: the button waits for the first move
-  await K.cont('Lock in my guess', 'sec');
-  rail.lock(); await K.wait(250); rail.el.remove(); tl.remove(); tip.out(); arrow.setAttribute('opacity', 0);
-  // 3 Reveal: the rule, in three steps, while the queue settles on what happens
-  K.mark(2);
+  const walking = walkTo(walkN, 110);
   await K.caption(`For every £10 dearer, 1 in 10 walk.`);
-  await K.wait(700); await K.caption(`For every £10 dearer, 1 in 10 walk. <b>${money(gap)} dearer</b>`);
-  await K.wait(700); await K.caption(`For every £10 dearer, 1 in 10 walk. <b>${money(gap)} dearer → ${steps} in 10</b>`);
-  await walkTo(walkN, 50);
+  await K.wait(800); await K.caption(`For every £10 dearer, 1 in 10 walk. <b>${money(gap)} dearer</b>`);
+  await K.wait(800); await K.caption(`For every £10 dearer, 1 in 10 walk. <b>${money(gap)} dearer → ${steps} in 10</b>`);
+  await walking;
   await K.caption(`For every £10 dearer, 1 in 10 walk. <b>${money(gap)} dearer → ${steps} in 10 → ${num(walkT)} of ${num(T)}.</b>`);
-  const res = K.call(800, 800, `Your guess <b>${num(guess * per)}</b> · <b style="color:#f2c14e">${num(walkT)} walked</b>`); res.style.transform = 'translateX(-50%)';
+  arrow.setAttribute('opacity', 0);
   await K.cont('Next');
-  // 4 Use: who stays, in rows of ten
-  K.mark(3); res.out(); if(note) note.out();
+  // 3 Use: who stays, in rows of ten, then back to the Red Kite card
+  K.mark(2); if(note) note.out();
   await Promise.all(Q.map(p => K.tween(300, t => p.g.style.opacity = 1 - t)));
   const box = sv('g', { opacity:0 }, L.front), BW = COLS * DX + 40, bx = 800 - BW / 2, by = 548, sp = Math.round(COLS * (1 - steps * (D.perTen || .1)));
   sv('rect', { x:bx, y:by, width:BW, height:rows * DY + 50, fill:'#05152b', stroke:'#2b5c95', 'stroke-width':2 }, box);
@@ -109,8 +98,9 @@ const arrow = sv('g', { opacity:0 }, L.mid); sv('line', { x1:640, y1:Y0 + 20, x2
   await K.tween(450, t => box.setAttribute('opacity', t), 'out');
   await K.caption(`<b>${num(stayT)} stay with you: ${sp} in every 10.</b> That's the "stay with you" figure on the ${K.esc(rk)} card.`);
   await K.cont('Back to the card');
-  K.done({ guess:guess * per, walked:walkT });
+  K.done({ walked:walkT });
 })();
+});
 </script>
 </body>
 </html>

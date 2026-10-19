@@ -75,28 +75,10 @@ html,body{margin:0;height:100%;background:#020812;overflow:hidden}
 .slab.blk::after{display:none}
 .slab::after{content:"";position:absolute;left:66px;top:0;width:18px;height:100%;background:rgba(120,80,0,.35)}
 
-/* sheet (Work it out page rules) */
-.sheet{position:absolute;border:1px solid rgba(65,122,171,.55);background:linear-gradient(160deg,#092643,#051629)}
-.sheet .r{display:grid;grid-template-columns:var(--cols);align-items:center;height:48px;border-top:1px solid rgba(65,122,171,.3);transition:background .3s}
-.sheet .r.hd{height:40px;border-top:0}
-.sheet .r.tot{border-top:2px solid #4a7fb5}
-.sheet .r.dif{border-bottom:4px double #4a7fb5}
-.sheet .r.lit{background:linear-gradient(155deg,#123e64 0%,#092743 58%,#06192d 100%)}
-.sheet .r.lit .k{font-weight:700;color:var(--text)}
-.sheet .k{padding:0 16px;color:var(--soft);font-size:17px}
-.sheet .h{padding:0 12px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);text-align:right}
-.sheet .v{position:relative;margin:0 10px;height:36px;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;font-size:22px;font-weight:600;border:2px solid transparent;transition:border-color .3s,color .3s}
-.sheet .v.used{border-color:var(--cyan)}
-.sheet .v.used::before{content:attr(data-tag);position:absolute;left:-2px;top:-2px;width:20px;height:20px;background:var(--cyan);color:#021226;font-size:12px;font-weight:800;display:grid;place-items:center}
-.sheet .v.unk{border-color:var(--mag);color:var(--mag)}
-.sheet .v.q{color:var(--muted)}
-.sheet .v.span{grid-column:2 / span 2;justify-content:flex-start;font-size:20px}
+/* the working panel under beat 6's sheet (a demonstration: the game writes each sum out) */
 .work{position:absolute;border:1px solid rgba(65,122,171,.45);background:#05152b;padding:16px 22px}
 .work .ln{font-size:26px;font-weight:600;line-height:1.45;transition:opacity .4s;white-space:nowrap}
 .work .ln.s{font-size:20px;color:var(--soft);font-weight:500}
-.tag{display:inline-grid;place-items:center;width:22px;height:22px;background:var(--cyan);color:#021226;font-size:12px;font-weight:800;vertical-align:3px;margin:0 4px}
-.mg{position:absolute;font-size:14px;color:var(--muted);line-height:1.5}
-.mg b{color:var(--soft);font-weight:600}
 
 /* fare slider */
 .fr{position:absolute;-webkit-appearance:none;appearance:none;height:30px;background:transparent;cursor:pointer;margin:0}
@@ -111,14 +93,40 @@ html,body{margin:0;height:100%;background:#020812;overflow:hidden}
 .brd .rw{display:grid;grid-template-columns:70px 64px 1fr;align-items:center;height:27px;font-size:16px;padding:0 14px 0 16px;border-top:1px solid rgba(65,122,171,.22)}
 .brd .rw.now{background:#0f3355;box-shadow:inset 3px 0 0 var(--cyan)}
 .brd .rw i{display:block;height:10px;background:#9fb3cf;opacity:.8;transition:width .3s}
-.choice{position:absolute;font:inherit;font-size:19px;font-weight:600;height:56px;width:260px;cursor:pointer;color:var(--text);background:#0a2140;border:1px solid #2b5c9e}
-.choice.on{border-color:var(--cyan);background:#0f3355;box-shadow:inset 0 3px 0 var(--cyan)}
+/* beat 6 (design B, 19 Oct evening): the figures sheet in the Airline look, the game's Sheet (DESIGN.md, Sheet): a formula bar,
+   column letters and row numbers, a header band, row labels with icons, money in gold, the rule above Ticket money and the
+   double rule under Difference. The game fills every cell; nothing is typed. */
+.ash{position:absolute;padding:12px 14px 12px;background:linear-gradient(155deg,#0d3159 0%,#081f3d 48%,#05152b 100%);border:1px solid rgba(65,122,171,.55)}
+.ash .afb{display:flex;height:34px;margin-bottom:6px;border:1px solid rgba(54,198,255,.5);background:#020b18;box-shadow:inset 3px 0 0 var(--cyan);font-size:15px}
+.ash .anb{width:62px;display:grid;place-items:center;font-weight:700;color:#cfe4ff;border-right:1px solid rgba(65,122,171,.45)}
+.ash .afx{width:36px;display:grid;place-items:center;font-style:italic;color:var(--soft);border-right:1px solid rgba(65,122,171,.45)}
+.ash .afm{flex:1;display:flex;align-items:center;gap:14px;padding:0 12px;white-space:nowrap;overflow:hidden;color:#fff;font-size:15.5px}
+.ash .afm b{color:var(--cyan);font-weight:700}
+.ash .afm small{font-size:13.5px;color:var(--soft)}
+.ash .ag{display:grid;grid-template-columns:30px 186px 1fr 1fr;grid-template-rows:18px 44px 46px 46px 46px 46px}
+.ash .lt,.ash .rn{display:grid;place-items:center;font-size:11px;font-weight:700;color:#4d6687}
+.ash .c{position:relative;display:flex;align-items:center;padding:0 12px;border-bottom:1px solid rgba(65,122,171,.25);white-space:nowrap;transition:background .3s,box-shadow .3s,color .3s}
+.ash .c.h{justify-content:flex-end;background:linear-gradient(180deg,#123e64,#0a2747);border-bottom:2px solid rgba(54,198,255,.55);font-size:14px;font-weight:700;color:#fff}
+.ash .c.l{gap:9px;font-size:17px;color:#d6e2f3}
+.ash .c.l svg{width:17px;height:17px;flex:none}
+.ash .c.v{justify-content:flex-end;font-size:22px;font-weight:600}
+.ash .c.totr{border-top:1.5px solid #5b88b8}
+.ash .c.fin{border-bottom:3px double #9fbde3}
+.ash .c.lit{background:rgba(16,56,92,.82)}
+.ash .c.l.lit{font-weight:700;color:var(--text)}
+.ash .c.v.used{box-shadow:inset 0 0 0 2px var(--cyan)}
+.ash .c.v.used::before{content:attr(data-tag);position:absolute;left:0;top:0;min-width:16px;height:16px;padding:0 3px;background:var(--cyan);color:#021226;font:800 10px/16px var(--sans);text-align:center}
+.ash .c.v.unk{box-shadow:inset 0 0 0 2px var(--mag);color:var(--mag);background:#020b18}
+.ash .c.v.q{color:var(--muted)}
+.ash .c.span{grid-column:3 / span 2;justify-content:flex-start;font-size:20px}
+.tbar{position:absolute;height:34px}
+.st.lt{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(54,198,255,.55)}
 .tile{position:absolute;width:296px;height:250px}
 .tile .n{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--cyan)}
 .tile .t{font-size:20px;font-weight:600;margin-top:4px;line-height:1.25}
 .tile svg{position:absolute;left:18px;bottom:18px}
-@media (prefers-reduced-motion:reduce){.pp,.coin,.slab,.st,.fade,.work .ln,.sheet .r,.sheet .v,.brd .rw i{transition:none!important}}
-.rm .pp,.rm .coin,.rm .slab,.rm .st,.rm .fade,.rm .work .ln,.rm .sheet .r,.rm .sheet .v{transition:none!important}
+@media (prefers-reduced-motion:reduce){.pp,.coin,.slab,.st,.fade,.work .ln,.ash .c,.brd .rw i{transition:none!important}}
+.rm .pp,.rm .coin,.rm .slab,.rm .st,.rm .fade,.rm .work .ln,.rm .ash .c{transition:none!important}
 </style>
 </head>
 <body data-brief="fare_lever">
@@ -141,13 +149,16 @@ html,body{margin:0;height:100%;background:#020812;overflow:hidden}
 <script>
 /* 1 · What a fare does (Launch Day: as the Studio opens, or as the fare sums open on a save that reached them first). Rebuilt
    to start simple and build up, in seven beats (Bertie, 19 Oct: the old one did not make clear whether it compared possible
-   revenue with one full plane):
+   revenue with one full plane). Since the evening handover there are no guesses in any briefing: Show → Reveal → Use, and
+   Next is always allowed:
    1 Show: tickets make money (Sell a ticket: a passenger boards, a coin flies into Ticket money · revenue).
    2 Show: the fare changes who wants to fly (a slider from the lowest fare to the highest; the crowd in rows of ten).
    3 Show: seats run out (two seat plans; Board the planes; the rest can't buy a ticket, dimmed, never red).
    4 Show: the challenge (a low fare fills the planes, a high fare flies seats empty; the best fare is somewhere between).
-   5 Notice: which plane makes more ticket money, the full one or the dearer one with an empty seat? (his guess, never marked).
-   6 Reveal: the figures sheet works it out row by row, by the Work it out page's rules (Next step × 5).
+   5 Show: which plane makes more ticket money, the full one or the dearer one with an empty seat? (the question as the
+     caption: no choice buttons).
+   6 Reveal (design B): the two planes at 62% turn their seats into gold ticket-money bars, one block a passenger; then the
+     figures sheet in the Airline look works it out row by row (Next step × 5), and +£80 is outlined on the longer bar.
    7 Use: four recap tiles, then Set my fares: back to the fare in his plan.
    A demonstration: the game shows every sum and he types nothing. The numbers are a fixed teaching example kept in the
    workbook (BriefingData, D104), not his routes; the defaults below are the same example, for the page opened on its own. */
@@ -201,8 +212,8 @@ function plain(){ return `<svg width="1366" height="612" style="position:absolut
 const P = (x, y, cls, id) => `<i class="pp ${cls || ''}" ${id ? `id="${id}"` : ''} style="left:${x}px;top:${y}px"></i>`;
 
 /* ---------- beats ---------- */
-const STEPS = ['Show', 'Notice', 'Reveal', 'Use'], BEAT_STEP = { 1:0, 2:0, 3:0, 4:0, 5:1, 6:2, 7:3 };
-let beat = 1, bs = {}, timers = [], guess = null;
+const STEPS = ['Show', 'Reveal', 'Use'], BEAT_STEP = { 1:0, 2:0, 3:0, 4:0, 5:0, 6:1, 7:2 };
+let beat = 1, bs = {}, timers = [];
 const later = (fn, ms) => { const t = setTimeout(fn, T(ms)); timers.push(t); return t; };
 const clearT = () => { timers.forEach(clearTimeout); timers = []; };
 const pic = $('pic'), capt = $('capt'), nx = $('nx'), bk = $('bk');
@@ -278,7 +289,7 @@ function b3(){
   let h = backdrop(false, 110) + `<div class="lbl fade" id="lw" style="left:84px;top:84px;font-size:20px"><b style="font-size:30px">${num(want)}</b>&nbsp; want to fly at <span class="gold" style="font-weight:700">${money(RUN)}</span></div>`;
   for(let i = 0; i < want; i++){ const r = Math.floor(i / 10), c = i % 10; h += P(90 + c * 30, 150 + r * 54, '', 'c' + i); }
   for(let n = 0; n < Math.min(NPL, 2); n++){ const y = n ? 266 : 34; h += `<div class="lbl" style="left:740px;top:${y - 26}px">Plane ${n + 1} · <b>${SEATS1} seats</b></div>${plan('p' + n, 720, y, 0)}<div class="lbl fade hide green" id="f${n}" style="left:1214px;top:${y + 74}px;font-size:22px;font-weight:700"></div>`; }
-  h += `<div class="lbl fade hide" id="sumr" style="left:740px;top:504px;font-size:20px"><b>${num(CAP)}</b> seats · <b>${num(fly)}</b> fly and pay a fare</div>
+  h += `<div class="lbl fade hide" id="sumr" style="left:740px;top:504px;font-size:20px"><b>${num(CAP)}</b> seats · <b>${num(fly)}</b> tickets sold</div>
  <div class="lbl fade hide" id="left" style="left:84px;top:84px;font-size:20px"><b style="font-size:30px">${num(left)}</b>&nbsp; we couldn't carry · no seat, no ticket, no fare</div>
  <button class="act2" id="board" style="left:740px;top:494px">Board the planes</button>`;
   pic.innerHTML = h; bs.want = want; bs.fly = fly; bs.left = left;
@@ -319,68 +330,97 @@ function b4(){
   setNext('Next &#9654;');
 }
 
-// ---- Beat 5 · Which earns more? (Notice: his guess, never marked)
+// ---- Beat 5 · Which earns more? (Show: the question is the caption; no guess, Next is always allowed)
 function seatLine(p){ return p >= SEATS1 ? `<span class="green" style="font-size:20px;font-weight:600">${p} of ${SEATS1} seats ✓</span>` : `<span style="font-size:20px;color:var(--soft);font-weight:600">${p} of ${SEATS1} seats · ${SEATS1 - p} empty</span>`; }
 const gaps = p => Array.from({ length:SEATS1 - p }, (_, i) => p + i);
 function b5(){
-  let h = plain() + `<div style="position:absolute;left:153px;top:22px;display:flex;align-items:baseline;gap:16px"><span class="big gold">${money(CA)}</span>${seatLine(PA)}</div>
+  pic.innerHTML = plain() + `<div style="position:absolute;left:153px;top:22px;display:flex;align-items:baseline;gap:16px"><span class="big gold">${money(CA)}</span>${seatLine(PA)}</div>
  <div style="position:absolute;left:733px;top:22px;display:flex;align-items:baseline;gap:16px"><span class="big gold">${money(CB)}</span>${seatLine(PB)}</div>
  ${plan('pa', 153, 84, PA, 1, gaps(PA))}${plan('pb', 733, 84, PB, 1, gaps(PB))}
  ${PB < SEATS1 ? `<div class="lbl cyan" style="left:${733 + 386}px;top:${84 + 20}px;font-size:14px">empty</div>` : ''}
- <div style="position:absolute;left:0;width:1366px;top:300px;text-align:center;font-size:30px;font-weight:600">Which plane makes more ticket money?</div>
- <div class="lbl cyan fade hide" id="ga" style="left:${153 + 240}px;top:378px;transform:translateX(-50%);font-weight:700">Your guess</div>
- <div class="lbl cyan fade hide" id="gb" style="left:${733 + 240}px;top:378px;transform:translateX(-50%);font-weight:700">Your guess</div>
- <button class="choice" id="cha" style="left:${153 + 110}px;top:406px">The ${money(CA)} plane</button>
- <button class="choice" id="chb" style="left:${733 + 110}px;top:406px">The ${money(CB)} plane</button>`;
-  pic.innerHTML = h;
-  const pick = g => { guess = g; $('cha').classList.toggle('on', g === 'a'); $('chb').classList.toggle('on', g === 'b'); $('ga').classList.toggle('hide', g !== 'a'); $('gb').classList.toggle('hide', g !== 'b');
-    setCap(`Your guess: the <b>${money(g === 'a' ? CA : CB)} plane</b>. Let's work it out.`); setNext('Next &#9654;'); };
-  $('cha').onclick = () => pick('a'); $('chb').onclick = () => pick('b');
-  setCap(`One plane is ${PA >= SEATS1 ? 'full' : 'nearly full'} at ${money(CA)}. The other has ${SEATS1 - PB === 1 ? 'one empty seat' : num(SEATS1 - PB) + ' empty seats'} at ${money(CB)}. <b>Which makes more?</b>`);
-  setNext('Choose a plane', 'wait', true);
-  if(guess) pick(guess);
+ <div style="position:absolute;left:0;width:1366px;top:330px;text-align:center;font-size:32px;font-weight:600">Which plane makes more ticket money?</div>`;
+  const empty = SEATS1 - PB === 1 ? 'one empty seat' : num(SEATS1 - PB) + ' empty seats';
+  setCap(`One plane is ${PA >= SEATS1 ? 'full' : 'nearly full'} at ${money(CA)}. The other has ${empty} at ${money(CB)}. <b>Which makes more ticket money? Let's work it out.</b>`);
+  setNext('Next &#9654;');
 }
 
-// ---- Beat 6 · Work it out (Reveal), design A: the sheet, row by row
+// ---- Beat 6 · Work it out (Reveal), design B: the seats become ticket money, then the sheet works it out
+const ICO = { person:'<circle cx="8" cy="4.5" r="2.6" fill="none" stroke="#9fbde3" stroke-width="1.4"/><path d="M3 15c0-3 2.2-5.2 5-5.2s5 2.2 5 5.2" fill="none" stroke="#9fbde3" stroke-width="1.4"/>',
+  tag:'<path d="M2 8V2.5h5.5L14 9l-5.5 5.5L2 8z" fill="none" stroke="#9fbde3" stroke-width="1.4"/><circle cx="5" cy="5.2" r="1.1" fill="#9fbde3"/>',
+  coins:'<ellipse cx="8" cy="4.5" rx="5.5" ry="2.2" fill="none" stroke="#f2c14e" stroke-width="1.4"/><path d="M2.5 4.5v3.5c0 1.2 2.5 2.2 5.5 2.2s5.5-1 5.5-2.2V4.5M2.5 8v3.5c0 1.2 2.5 2.2 5.5 2.2s5.5-1 5.5-2.2V8" fill="none" stroke="#f2c14e" stroke-width="1.4"/>',
+  scale:'<path d="M8 2v12M4 14h8M2.5 5h11M4.5 5L2 10h5zM11.5 5L9 10h5z" fill="none" stroke="#9fbde3" stroke-width="1.3" stroke-linejoin="round"/>' };
+const ico = k => `<svg viewBox="0 0 16 16" aria-hidden="true">${ICO[k]}</svg>`;
+/* the sheet: A labels, B the first plane, C the second; rows 1 header, 2 Passengers, 3 Fare, 4 Ticket money, 5 Difference */
+function sheetB(x, w){
+  const lab = (r, k, t, cls) => `<span class="rn" style="grid-row:${r + 1}">${r}</span><span class="c l ${cls || ''}" data-row="${r}" style="grid-row:${r + 1};grid-column:2">${ico(k)}${t}</span>`;
+  const val = (r, col, id, t, tag, cls) => `<span class="c v ${cls || ''}" id="${id}" data-row="${r}" ${tag ? `data-tag="${tag}"` : ''} style="grid-row:${r + 1};grid-column:${col}">${t}</span>`;
+  return `<div class="ash" id="sh" style="left:${x}px;top:14px;width:${w}px" aria-label="Figures sheet">
+  <div class="afb" role="group" aria-label="Formula bar"><span class="anb" id="fnb"></span><span class="afx">fx</span><span class="afm"><span id="ffm"></span><small id="fwd"></small></span></div>
+  <div class="ag"><span class="lt" style="grid-row:1;grid-column:1"></span><span class="lt" style="grid-row:1;grid-column:2">A</span><span class="lt" style="grid-row:1;grid-column:3">B</span><span class="lt" style="grid-row:1;grid-column:4">C</span>
+   <span class="rn" style="grid-row:2">1</span><span class="c h" style="grid-row:2;grid-column:2"></span><span class="c h" style="grid-row:2;grid-column:3">${money(CA)} plane</span><span class="c h" style="grid-row:2;grid-column:4">${money(CB)} plane</span>
+   ${lab(2, 'person', 'Passengers')}${val(2, 3, 'a1', PA, 'A')}${val(2, 4, 'b1', PB, 'A')}
+   ${lab(3, 'tag', 'Fare')}${val(3, 3, 'a2', money(CA), 'B')}${val(3, 4, 'b2', money(CB), 'B')}
+   ${lab(4, 'coins', 'Ticket money', 'totr')}${val(4, 3, 'a3', '?', '', 'q totr')}${val(4, 4, 'b3', '?', '', 'q totr')}
+   ${lab(5, 'scale', 'Difference', 'fin')}<span class="c v span q fin" id="d4" data-row="5" style="grid-row:6;grid-column:3 / span 2"></span>
+  </div></div>
+<div class="work" id="wk" style="left:${x}px;top:340px;width:${w}px;height:236px"><div class="ey" style="margin-bottom:6px">Working</div><div id="wl"></div></div>`; }
+/* the bars: one block a passenger, each block the fare × 0.26 px wide (narrower only if a long bar would run into the sheet) */
+const SC = Math.min(0.26, 520 / Math.max(TA, TB, 1)), BX = 44, BY = { a:146, b:402 };
 function b6(){
   bs = { k:0 };
-  pic.innerHTML = plain() + `<div class="sheet" id="sh" style="left:363px;top:14px;width:640px;--cols:1.15fr 1fr 1fr">
- <div class="r hd"><span></span><span class="h">${money(CA)} plane</span><span class="h">${money(CB)} plane</span></div>
- <div class="r" id="r1"><span class="k">Passengers</span><span class="v" id="a1" data-tag="A">${PA}</span><span class="v" id="b1" data-tag="A">${PB}</span></div>
- <div class="r" id="r2"><span class="k">Fare</span><span class="v" id="a2" data-tag="B">${money(CA)}</span><span class="v" id="b2" data-tag="B">${money(CB)}</span></div>
- <div class="r tot" id="r3"><span class="k">Ticket money</span><span class="v q" id="a3">?</span><span class="v q" id="b3">?</span></div>
- <div class="r dif" id="r4"><span class="k">Difference</span><span class="v span q" id="d4"></span></div>
-</div>
-<div class="work" id="wk" style="left:363px;top:262px;width:640px;height:248px"><div class="ey" style="margin-bottom:6px">Working</div><div id="wl"></div></div>
-<div class="mg" style="left:64px;top:110px;width:270px"><b>Where the figures come from</b><br><span class="tag">A</span> passengers<br><span class="tag">B</span> fare</div>
-<div class="mg" style="left:1036px;top:200px;width:270px"><b>Where the answer goes</b><br>→ Ticket money<br>→ Difference</div>`;
+  pic.innerHTML = plain() + `<div class="lbl" style="left:44px;top:6px">${money(CA)} plane · <b>${PA} of ${SEATS1}</b></div>${plan('pa', 40, 24, PA, .62, gaps(PA))}
+ <div class="lbl" style="left:44px;top:262px">${money(CB)} plane · <b>${PB} of ${SEATS1}</b></div>${plan('pb', 40, 280, PB, .62, gaps(PB))}
+ <div class="tbar" id="bara" style="left:${BX}px;top:${BY.a}px"></div><div class="lbl gold fade hide" id="ea" style="top:${BY.a + 4}px;font-weight:700;font-size:20px"></div>
+ <div class="tbar" id="barb" style="left:${BX}px;top:${BY.b}px"></div><div class="lbl gold fade hide" id="eb" style="top:${BY.b + 4}px;font-weight:700;font-size:20px"></div>
+ <div class="fade hide" id="guide" style="position:absolute;top:140px;height:304px;border-left:2px dashed rgba(242,193,78,.55)"></div>
+ <div class="fade hide" id="xtra" style="position:absolute;height:46px;border:2px solid var(--gold)"></div><div class="lbl gold fade hide" id="xl" style="font-weight:700;font-size:18px">+${money(DIFF)}</div>
+ ${sheetB(690, 620)}`;
   step6(0);
 }
+/* step 0: the bar builds block by block (60 ms each) while each seat lights */
+function bar(id, plane, n, f){ const el = $(id); el.innerHTML = ''; const w = f * SC;
+  for(let i = 0; i < n; i++){ const s = document.createElement('i'); s.className = 'slab blk'; s.style.cssText = `left:${(i * w).toFixed(2)}px;top:0;width:${(w - 1.5).toFixed(2)}px;height:34px;opacity:${RM ? 1 : 0}`; el.appendChild(s);
+    later(() => { s.style.opacity = '1'; const st = $(plane + 's' + i); if(st){ st.classList.add('lt'); later(() => st.classList.remove('lt'), 360); } }, 120 + i * 60); } }
+function showEnd(id, v){ const e = $(id); e.textContent = money(v); e.style.left = (BX + v * SC + 12) + 'px'; e.classList.remove('hide'); }
+/* step 3: the part of the longer bar beyond the end of the shorter one, outlined, with the difference under it */
+function showX(){ if(!DIFF) return; const lo = Math.min(TA, TB), hi = Math.max(TA, TB), y = big === 'b' ? BY.b : BY.a, x0 = BX + lo * SC, x1 = BX + hi * SC, e = $('xtra');
+  e.style.left = (x0 - 2) + 'px'; e.style.top = (y - 6) + 'px'; e.style.width = (x1 - x0 + 4) + 'px'; e.classList.remove('hide');
+  const l = $('xl'); l.style.left = (x0 - 6) + 'px'; l.style.top = (y + 46) + 'px'; l.classList.remove('hide');
+  const g = $('guide'); g.style.left = x0 + 'px'; g.classList.remove('hide'); }
+/* the formula bar: the cell being filled, its formula in cell names and in words */
+function fbar(cell, f, w){ $('fnb').textContent = cell || ''; $('ffm').innerHTML = f || ''; $('fwd').textContent = w || ''; }
 function lines(arr){ const wl = $('wl'); wl.innerHTML = ''; arr.forEach((t, i) => { const d = document.createElement('div'); d.className = 'ln' + (t[1] ? ' ' + t[1] : ''); d.innerHTML = t[0]; d.style.opacity = RM ? '1' : '0'; wl.appendChild(d); later(() => { d.style.opacity = '1'; }, 200 + i * 650); }); return 200 + (arr.length - 1) * 650; }
-function clr(){ ['r1', 'r2', 'r3', 'r4'].forEach(r => $(r).classList.remove('lit')); ['a1', 'a2', 'b1', 'b2'].forEach(c => $(c).classList.remove('used')); }
+function clr(){ document.querySelectorAll('#sh .c.lit').forEach(c => c.classList.remove('lit')); ['a1', 'a2', 'b1', 'b2'].forEach(c => $(c).classList.remove('used')); }
+const lit = r => document.querySelectorAll(`#sh .c[data-row="${r}"]`).forEach(c => c.classList.add('lit'));
 function setCell(id, txt){ const c = $(id); c.classList.remove('unk', 'q'); c.classList.add('gold'); c.innerHTML = txt; }
 const big = TB >= TA ? 'b' : 'a', DIFF = Math.abs(TB - TA), BIGF = big === 'b' ? CB : CA;
 function setDiff(){ const c = $('d4'); c.classList.remove('q'); c.innerHTML = DIFF ? `<span class="gold" style="font-weight:700">${money(DIFF)} more</span>&nbsp;<span style="color:var(--soft);font-weight:500;font-size:18px">for the ${money(BIGF)} plane</span>` : '<span class="gold" style="font-weight:700">The same</span>'; }
-function settle(k){ if(k > 1) setCell('a3', money(TA)); if(k > 2) setCell('b3', money(TB)); if(k > 3) setDiff(); }
+function settle(k){ document.querySelectorAll('#bara .slab,#barb .slab').forEach(x => { x.style.opacity = '1'; }); document.querySelectorAll('.st.lt').forEach(x => x.classList.remove('lt'));
+  if(k > 1){ setCell('a3', money(TA)); showEnd('ea', TA); } if(k > 2){ setCell('b3', money(TB)); showEnd('eb', TB); } if(k > 3){ setDiff(); showX(); } }
 /* the working for passengers × fare: one line, or split by place value when the fare has hundreds and tens (18 × £110) */
 function working(p, f){ const t = p * f, hi = Math.floor(f / 100) * 100, lo = f - hi;
   if(!hi || !lo) return [[`${p} × ${money(f)} = <span class="gold">${money(t)}</span>`]];
   return [[`${p} × ${money(f)}`, 's'], [`${p} × ${money(hi)} = ${money(p * hi)}`], [`${p} × ${money(lo)}&nbsp;&nbsp; = ${money(p * lo)}`], [`${money(p * hi)} + ${money(p * lo)} = <span class="gold">${money(t)}</span>`]]; }
 function step6(k){
   bs.k = k; clr(); settle(k);
-  if(k === 0){ $('wl').innerHTML = ''; setCap("Ticket money = passengers × fare. Let's work out each plane."); setNext('Next step &#9654;'); }
-  if(k === 1){ $('r3').classList.add('lit'); $('a1').classList.add('used'); $('a2').classList.add('used'); const c = $('a3'); c.classList.remove('q'); c.classList.add('unk');
-    const t = lines(working(PA, CA)); later(() => setCell('a3', money(TA)), t + 500);
+  const dA = big === 'b' ? 'C4 − B4' : 'B4 − C4', dW = `${money(BIGF)} plane − ${money(big === 'b' ? CA : CB)} plane`;
+  if(k === 0){ $('wl').innerHTML = ''; fbar(); bar('bara', 'pa', PA, CA); bar('barb', 'pb', PB, CB);
+    setCap('Each ticket sold adds one fare to the ticket money.'); setNext('Next step &#9654;'); }
+  if(k === 1){ lit(4); $('a1').classList.add('used'); $('a2').classList.add('used'); const c = $('a3'); c.classList.remove('q'); c.classList.add('unk');
+    fbar('B4', '= <b>B2</b> × <b>B3</b>', 'Passengers × Fare');
+    const t = lines(working(PA, CA)); later(() => { setCell('a3', money(TA)); showEnd('ea', TA); }, t + 500);
     setCap(`${money(CA)} plane: <b>${PA}</b> passengers × <b>${money(CA)}</b> = <span class="g">${money(TA)}</span>.`); }
-  if(k === 2){ $('r3').classList.add('lit'); $('b1').classList.add('used'); $('b2').classList.add('used'); const c = $('b3'); c.classList.remove('q'); c.classList.add('unk');
-    const t = lines(working(PB, CB)); later(() => setCell('b3', money(TB)), t + 500);
+  if(k === 2){ lit(4); $('b1').classList.add('used'); $('b2').classList.add('used'); const c = $('b3'); c.classList.remove('q'); c.classList.add('unk');
+    fbar('C4', '= <b>C2</b> × <b>C3</b>', 'Passengers × Fare');
+    const t = lines(working(PB, CB)); later(() => { setCell('b3', money(TB)); showEnd('eb', TB); }, t + 500);
     setCap(`${money(CB)} plane: <b>${PB}</b> passengers × <b>${money(CB)}</b> = <span class="g">${money(TB)}</span>.`); }
-  if(k === 3){ $('r4').classList.add('lit'); const hi = Math.max(TA, TB), lo = Math.min(TA, TB);
-    const t = lines([[`${money(hi)} − ${money(lo)} = <span class="gold">${money(DIFF)}</span>`]]); later(setDiff, t + 500);
+  if(k === 3){ lit(5); const hi = Math.max(TA, TB), lo = Math.min(TA, TB);
+    fbar('B5', '= ' + dA.replace(/([BC]4)/g, '<b>$1</b>'), 'Ticket money: ' + dW);
+    const t = lines([[`${money(hi)} − ${money(lo)} = <span class="gold">${money(DIFF)}</span>`]]); later(() => { setDiff(); showX(); }, t + 500);
     setCap(DIFF ? `The ${money(BIGF)} plane makes <span class="g">${money(DIFF)} more</span>.` : 'The two planes make the same.'); }
-  if(k === 4){ $('r4').classList.add('lit');
+  if(k === 4){ lit(5); fbar('B5', '= ' + dA.replace(/([BC]4)/g, '<b>$1</b>'), 'Ticket money: ' + dW);
     const head = big === 'b' && PB < PA ? `${SEATS1 - PB === 1 ? 'One empty seat' : num(PA - PB) + ' fewer passengers'}, but <span class="gold">${money(DIFF)} more</span> ticket money.` : `The ${money(BIGF)} plane: <span class="gold">${money(DIFF)} more</span> ticket money.`;
-    lines([[head], ["A full plane isn't always the most money.", 's']].concat(guess ? [[`Your guess: the ${money(guess === 'a' ? CA : CB)} plane.`, 's']] : []));
+    lines([[head], ["A full plane isn't always the most money.", 's']]);
     setCap("A full plane isn't always the most money. <b>Compare the ticket money.</b>"); setNext('Next &#9654;'); }
 }
 /* Next before a step's animation ends: finish it at once */
@@ -408,7 +448,7 @@ function paint(){ const s = BEAT_STEP[beat];
   $('stp').innerHTML = STEPS.map((x, i) => `<span class="${i === s ? 'now' : i < s ? 'done' : ''}">${x}</span>`).join('');
   bk.disabled = beat === 1; R[beat](); try{ nx.focus({ preventScroll:true }); }catch(e){} }
 let ended = false;
-function end(skipped){ if(ended) return; ended = true; if(window.parent === window){ setCap('End of the briefing. In the game, Set my fares goes back to the fares in your plan.'); nx.disabled = true; } K.done(skipped ? { skipped:true } : { guess:guess ? (guess === 'a' ? CA : CB) : null, best:TB >= TA ? CB : CA, next:D.next }); }
+function end(skipped){ if(ended) return; ended = true; if(window.parent === window){ setCap('End of the briefing. In the game, Set my fares goes back to the fares in your plan.'); nx.disabled = true; } K.done(skipped ? { skipped:true } : { best:TB >= TA ? CB : CA, next:D.next }); }
 nx.onclick = () => { if(nx.disabled) return;
   if(beat === 6 && bs.k < 4){ const k = bs.k; finish6(); step6(k + 1); return; }
   if(beat === 7){ end(false); return; }

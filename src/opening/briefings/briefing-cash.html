@@ -11,13 +11,15 @@
 <script>
 /* 11 · Profit is not cash (chapter 3, the Finance desk). Two lines travel across the month together, profit and cash, over a
    strip of the month's events. On the day the plane is bought cash plunges while profit keeps climbing; smaller dips on the
-   fuel orders; cash climbs back with each day's takings. He taps the plunge and it names itself. Caption: Profit: did we earn?
+   fuel orders; cash climbs back with each day's takings. The plunge names itself (in year one after Next; a later chapter keeps the
+   tap). Caption: Profit: did we earn?
    Cash: can we pay? Lands on the Finance desk. Both lines start the month at zero: what the month added to each. */
 const D = Object.assign({ id:'profit_vs_cash', month:'September 2031', days:(() => { const a = []; let p = 0, c = 0; for(let d = 1; d <= 30; d++){ const ev = d === 12 ? { kind:'plane', label:'Bought the ATR 72', amount:-180000 } : [1, 8, 15, 22, 29].includes(d) ? { kind:'fuel', label:'Fuel order', amount:-21000 } : null;
     p += 2600; c += 2600 + 3000 + (ev ? ev.amount : 0); a.push({ d, profit:p, cash:c, ev }); } return a; })() }, K.B);
 const money = K.money, days = D.days, n = days.length, X = i => 170 + (1260 * i) / Math.max(1, n - 1);
 const lo = Math.min(0, ...days.map(d => d.cash), ...days.map(d => d.profit)), hi = Math.max(0, ...days.map(d => d.cash), ...days.map(d => d.profit)), Y = v => 620 - 440 * (v - lo) / Math.max(1, hi - lo);
 const short = v => (v < 0 ? '−' : '+') + (Math.abs(v) >= 1e6 ? '£' + (Math.round(Math.abs(v) / 1e5) / 10) + 'm' : Math.abs(v) >= 1e4 ? '£' + Math.round(Math.abs(v) / 1e3) + 'k' : money(Math.abs(v)));
+K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'Profit is not cash' });
 const L = K.layers(), sv = K.s;
 /* the finance office's big screen */
@@ -42,25 +44,29 @@ const draw = upto => { const k = Math.floor(upto), f = upto - k, pts = (key) => 
   K.mark(0); await K.caption('The month, day by day: profit and cash, both from zero.');
   await K.tween(Math.max(6000, n * 220), t => draw(t * (n - 1)), 'lin');
   await K.wait(500);
-  // he taps the plunge
+  // year one: the plunge is the question (no tap since 19 Oct, evening) and the next beat says what happened
   const pi = days.findIndex(d => d.ev && d.ev.kind === 'plane'), big = pi >= 0 ? pi : days.reduce((b, d, i) => i && days[i].cash - days[i - 1].cash < days[b].cash - days[Math.max(0, b - 1)].cash ? i : b, 1);
-  K.mark(1); K.question('Cash fell hard one day. <b>Tap where it fell</b>');
-  await K.caption('What happened to the money?');
-  const hb = K.h('button', { type:'button', 'aria-label':'The day cash fell', style:'position:absolute;background:transparent;border:1px dashed rgba(242,193,78,.6);cursor:pointer' }, K.hud());
-  K.pos(hb, X(big) - 40, 170); hb.style.width = (100 * 80 / 1600) + '%'; hb.style.height = (100 * 470 / 900) + '%';
-  await new Promise(res => hb.onclick = res); hb.remove();
-  K.mark(2); const ev = days[big].ev || { label:'A big payment', amount:days[big].cash - days[big - 1].cash };
+  if(K.y1){ K.question('Cash fell hard one day.'); await K.caption('What happened to the money?'); await K.cont('Next'); }
+  else {   // a later chapter keeps today's briefing: the pupil taps the plunge
+    K.mark(1); K.question('Cash fell hard one day. <b>Tap where it fell</b>');
+    await K.caption('What happened to the money?');
+    const hb = K.h('button', { type:'button', 'aria-label':'The day cash fell', style:'position:absolute;background:transparent;border:1px dashed rgba(242,193,78,.6);cursor:pointer' }, K.hud());
+    K.pos(hb, X(big) - 40, 170); hb.style.width = (100 * 80 / 1600) + '%'; hb.style.height = (100 * 470 / 900) + '%';
+    await new Promise(res => hb.onclick = res); hb.remove();
+  }
+  K.mark(K.y1 ? 1 : 2); const ev = days[big].ev || { label:'A big payment', amount:days[big].cash - days[big - 1].cash };
   K.call(X(big), Y(days[big].cash) - 20, `<b>${K.esc(ev.label)}</b>: ${short(ev.amount)}. Profit kept climbing.`, '');
   K.question(`Cash ${short(days[n - 1].cash)} this month · profit ${short(days[n - 1].profit)}`);
   await K.caption('The plane is still yours: the money became a plane, not a loss. The fuel orders work the same way.');
   await K.wait(2400);
   await K.caption('<b>Profit: did we earn? Cash: can we pay?</b>');
   await K.cont('Go on');
-  K.mark(3); K.question('Next: the Finance desk: profit and cash, side by side');
+  K.mark(K.y1 ? 2 : 3); K.question('Next: the Finance desk: profit and cash, side by side');
   await K.caption('Watch both: a profitable airline can still run out of cash.');
   await K.cont('To the Finance desk');
   K.done({});
 })();
+});
 </script>
 </body>
 </html>

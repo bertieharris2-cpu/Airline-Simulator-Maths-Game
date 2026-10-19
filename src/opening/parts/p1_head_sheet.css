@@ -1,0 +1,187 @@
+
+/* =====================================================================
+   THE SHEET, IN THE AIRLINE LOOK (Claude Design handover, 19 Oct 2026, evening; DESIGN.md "Sheet", "Sheet Callout",
+   "Calculation Builder"). Year one only: the sheets are drawn only while yearOne() (p5t). Sizes are the handover's
+   reference (sheets/airline-sheet.css) in screen pixels at 1366 × 768: a sheet page zooms its frame by 1 / 0.813, as the
+   batch 2 pages do, so they match the pictures there and grow with the desk at 1920 × 1080.
+   ===================================================================== */
+.dp.ash-page{zoom:1.23;gap:0;height:100%}
+.dp.ash-page > .ash{flex:1;min-height:0}
+.ash{--ash-line:rgba(65,122,171,.25);--ash-rn:#4d6687;position:relative;display:flex;flex-direction:column;min-width:0;color:var(--text);
+  font:15px/1.3 var(--font-sans);font-variant-numeric:tabular-nums lining-nums;
+  background:linear-gradient(155deg,#0d3159 0%,#081f3d 48%,#05152b 100%);border:1px solid rgba(65,122,171,.55);padding:12px 24px 10px}
+.ash *{box-sizing:border-box}
+.ash.ash-small{padding:12px 16px 10px;min-width:420px}
+/* the top: crumb, title, tabs */
+.ash-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;min-height:52px;margin:0 0 6px}
+.ash-crumb{display:block;font:400 13.5px/1.3 var(--font-sans);color:var(--text-soft)}
+.ash-title{margin:2px 0 0;font:600 21px/1.25 var(--font-sans);color:var(--text);letter-spacing:0}
+.ash-tabs{display:flex;gap:3px;margin-top:4px}
+.ash-tab{height:30px;display:inline-flex;align-items:center;gap:6px;padding:0 14px;font:600 12.5px/1 var(--font-sans);white-space:nowrap;cursor:pointer;
+  background:#0a2140;color:var(--text-soft);border:1px solid rgba(127,200,255,.25);border-radius:0}
+.ash-tab.on{background:#0d2b52;color:#fff;border-color:var(--cyan);box-shadow:inset 0 3px 0 var(--cyan);cursor:default}
+.ash-tab.off{color:#4d6687;cursor:default}
+.ash-tab:not(.on):not(.off):hover{border-color:rgba(54,198,255,.7);color:#fff}
+.ash-tab svg{width:16px;height:16px;flex:none}
+/* the formula bar */
+.ash-fb{display:flex;align-items:stretch;height:34px;margin:0 0 10px;font:15px/1 var(--font-sans);border:1px solid rgba(54,198,255,.5);background:#020b18;box-shadow:inset 3px 0 0 var(--cyan)}
+.ash-nb{width:62px;flex:none;display:grid;place-items:center;font-weight:700;color:#cfe4ff;border-right:1px solid rgba(65,122,171,.45)}
+.ash-fx{width:36px;flex:none;display:grid;place-items:center;font-style:italic;color:var(--text-soft);border-right:1px solid rgba(65,122,171,.45)}
+.ash-fm{flex:1;min-width:0;display:flex;align-items:center;gap:14px;padding:0 12px;white-space:nowrap;overflow:hidden}
+.ash-f{font-size:15.5px;color:#fff;display:inline-flex;align-items:center;gap:0}
+.ash-f b{color:var(--cyan);font-weight:700}
+.ash-f i{font-style:normal;margin:0 .45em}
+.ash-w{font:400 13.5px/1 var(--font-sans);color:var(--text-soft);overflow:hidden;text-overflow:ellipsis}
+.ash-w b{color:#fff;font-weight:700}
+.ash-caret{display:inline-block;width:2px;height:18px;background:#fff;margin-left:2px;animation:ashBlink 1.05s steps(1) infinite}
+@keyframes ashBlink{50%{opacity:0}}
+.ash-ops{display:flex;gap:3px;align-items:center;margin-left:auto;padding-right:4px;flex:none}
+.ash-ops button{width:28px;height:26px;display:grid;place-items:center;font:700 15px/1 var(--font-sans);color:#eaf2ff;background:#0d2346;border:1px solid #2b5c9e;border-radius:0;cursor:pointer;padding:0}
+.ash-ops button.u{width:auto;padding:0 8px;font-size:12.5px;font-weight:600}
+.ash-ops button:hover:not(:disabled){border-color:var(--cyan)}
+.ash-ops button:disabled{opacity:.45;cursor:default}
+/* the grid */
+.ash-gridw{position:relative;flex:none}
+.ash-grid{display:grid;position:relative;align-content:start}
+.ash-lt,.ash-rn{display:grid;place-items:center;font:700 11px/1 var(--font-sans);color:var(--ash-rn)}
+.ash-c{position:relative;z-index:1;display:flex;align-items:center;padding:0 10px;white-space:nowrap;min-width:0;border-bottom:1px solid var(--ash-line);border-left:1px solid var(--ash-line)}
+.ash-c.al{border-left:0;font-size:14.5px;color:#d6e2f3;gap:7px}
+.ash-c.al .ash-ln{overflow:hidden;text-overflow:ellipsis}
+.ash-c.al small{font-size:11.5px;color:var(--text-muted)}
+.ash-c.al .ash-lk{font:400 11.5px/1 var(--font-sans);color:#7fd0ff;text-decoration:underline;background:none;border:0;padding:0;cursor:pointer}
+.ash-c.al .ash-new{font:800 10px/1 var(--font-sans);letter-spacing:.08em;color:#021226;background:var(--cyan);padding:2px 5px}
+.ash-c.al .ash-i{width:16px;height:16px;flex:none;display:grid;place-items:center;font:700 11px/1 var(--font-sans);color:var(--cyan);border:1px solid var(--cyan);border-radius:50%;background:none;padding:0;cursor:pointer}
+.ash-c.av{justify-content:flex-end;font-size:15.5px;font-weight:600}
+.ash-c.ah{flex-direction:column;align-items:flex-end;justify-content:center;line-height:1.15;gap:1px;background:linear-gradient(180deg,#123e64,#0a2747);border-bottom:2px solid rgba(54,198,255,.55)}
+.ash-c.ah.al{background:linear-gradient(180deg,#123e64,#0a2747)}
+.ash-c.ah .ash-ht{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-soft)}
+.ash-c.ah b{font-size:14px;color:#fff}
+.ash-c.ah i{font-style:normal;font:800 10px/1.2 var(--font-sans);letter-spacing:.06em;color:var(--green)}
+.ash-c.asub{background:rgba(10,33,64,.8);font-size:12.5px;font-weight:700;color:#d6e2f3}
+.ash-c.asub.av{white-space:normal;text-align:right;line-height:1.1}
+.ash-c.atot,.ash-c.afin{font-weight:700;color:#fff}
+.ash-c.atotr{border-top:1.5px solid #5b88b8}
+.ash-c.afin{border-bottom:3px double #9fbde3}
+.ash-c.agap{border-bottom:0}
+.ash-c .gold{color:var(--gold)} .ash-c .pos{color:var(--green)} .ash-c .soft{color:var(--text-soft)} .ash-c .amb{color:var(--bv-amber)}
+.ash-c .ash-au{position:absolute;left:5px;top:3px;font:italic 400 12px/1 Georgia,serif;color:#7fa7d6}
+.ash-c .ash-bar{position:absolute;left:8px;right:8px;bottom:4px;height:4px;background:#14294a}
+.ash-c .ash-bar i{position:absolute;left:0;top:0;bottom:0}
+.ash-c .ash-chip{font:800 9.5px/14px var(--font-sans);letter-spacing:.05em;padding:0 4px;margin-right:auto;color:var(--green);border:1px solid rgba(60,227,148,.6)}
+.ash-c .ash-sn{position:absolute;right:4px;top:2px;font:700 9.5px/1 var(--font-sans);color:var(--gold);opacity:.85}
+.ash-c .ash-fin{position:absolute;left:4px;bottom:2px;font:800 8.5px/1 var(--font-sans);letter-spacing:.06em;color:var(--text-soft)}
+.ash-c.av .ash-note{white-space:normal;text-align:right;font:400 11.5px/1.2 var(--font-sans);color:var(--text-soft)}
+/* focus: the lit part, the cells used, the answer cell, the rest dimmed */
+.ash-lit{position:relative;z-index:0;margin:-3px;border:2px solid var(--cyan);background:linear-gradient(155deg,rgba(18,62,100,.8),rgba(9,39,67,.65));box-shadow:0 0 20px rgba(54,198,255,.18);pointer-events:none}
+.ash-c.adim,.ash-rn.adim{opacity:.62}
+.ash-c.aref{box-shadow:inset 0 0 0 2px var(--cyan)}
+.ash-c.aref::before{content:attr(data-tag);position:absolute;left:0;top:0;min-width:16px;height:16px;padding:0 3px;background:var(--cyan);color:#021226;font:800 10px/16px var(--font-sans);text-align:center}
+.ash-c.aref[data-tag=""]::before{display:none}
+.ash-c.apick{cursor:pointer}
+.ash-c.apick:hover,.ash-c.apick:focus-visible{box-shadow:inset 0 0 0 2px rgba(54,198,255,.85);outline:0}
+.ash-c.atgt{box-shadow:inset 0 0 0 2px var(--magenta);background:#020b18;justify-content:flex-start}
+.ash-c.atgt.aq{justify-content:flex-end;color:var(--magenta);font-size:19px;font-weight:700;text-shadow:0 0 12px rgba(255,79,216,.35)}
+.ash-c.atgt.aquery{box-shadow:inset 0 0 0 2px var(--bv-amber)}
+.ash-c.atgt .ash-u{color:var(--gold);font-weight:700;margin-right:2px}
+.ash-in{flex:1;min-width:0;height:100%;padding:0 0 0 2px;border:0;outline:0;background:transparent;color:#fff;font:600 15.5px/1 var(--font-sans);font-variant-numeric:tabular-nums;caret-color:#fff}
+.ash-c.afresh{animation:ashFresh var(--t-result,450ms) ease-out 1}
+@keyframes ashFresh{0%{box-shadow:inset 0 0 0 2px var(--green),0 0 18px rgba(60,227,148,.35);background:rgba(60,227,148,.16)}100%{box-shadow:inset 0 0 0 2px transparent;background:transparent}}
+.ash-c.lit-once{animation:ashLit .9s ease-out 1}
+@keyframes ashLit{0%{background:rgba(54,198,255,.14)}100%{background:transparent}}
+/* the line under the grid */
+.ash-line{margin:10px 0 0 30px;font:400 13.5px/1.45 var(--font-sans);color:#cfe0f5;min-height:20px}
+.ash-line b{color:#fff}
+.ash-line b.gold{color:var(--gold)} .ash-line b.pos,.ash-line .pos{color:var(--green)}
+.ash-line .ash-whole{display:block;margin-top:2px;color:var(--text-soft)}
+.ash-line.q{color:var(--bv-amber)} .ash-line.q b{color:#ffd59a}
+.ash-line .ash-hl{margin-left:14px;font:400 13.5px/1 var(--font-sans);color:#7fd0ff;text-decoration:underline;background:none;border:0;padding:0;cursor:pointer}
+.ash-line .ash-hl.quiet{color:#6f9ccc;margin-left:10px}
+.ash-line .ash-key{display:inline-block;margin:0 2px;padding:1px 6px;font:700 12px/1.3 var(--font-sans);color:#fff;background:#0d2346;border:1px solid #2b5c9e;cursor:pointer}
+.ash-hints{margin:4px 0 0 30px;display:flex;flex-direction:column;gap:2px;font:400 13px/1.4 var(--font-sans)}
+.ash-hints span{color:var(--cyan)} .ash-hints span.est{color:var(--gold)}
+.ash-how{margin:6px 0 0 30px;padding:8px 12px;max-width:560px;background:#0c2a4c;border:1px solid rgba(54,198,255,.45);font:400 13px/1.45 var(--font-sans);color:var(--text)}
+.ash-how b{color:var(--cyan)} .ash-how ol{margin:4px 0 0;padding-left:18px} .ash-how li{font-variant-numeric:tabular-nums}
+/* the Sheet Callout: pinned over an empty part of the sheet, never over a figure the sum uses */
+.ash-co{position:relative;z-index:5;align-self:start;justify-self:start;width:400px;max-width:100%;margin:6px 0 0 10px;padding:12px 14px 12px;background:#0c2a4c;border:1.5px solid var(--cyan);
+  box-shadow:0 14px 34px rgba(0,0,0,.42),0 0 22px rgba(54,198,255,.16);color:var(--text);white-space:normal}
+.ash-co .ash-coe{display:block;font:600 11px/1.2 var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.ash-co .ash-cot{display:block;margin:4px 0 4px;font:600 17px/1.25 var(--font-sans);color:#fff}
+.ash-co p{margin:0 0 6px;font:400 13.5px/1.45 var(--font-sans);color:#d6e2f3}
+.ash-co .ash-cor{font-weight:600;color:#fff}
+.ash-co .ash-cor i{display:inline-block;min-width:16px;height:16px;margin:0 3px 0 4px;padding:0 3px;font:800 10px/16px var(--font-sans);font-style:normal;text-align:center;color:#021226;background:var(--cyan);vertical-align:1px}
+.ash-co .ash-coa{display:flex;justify-content:flex-end;margin-top:6px}
+.ash-co .ash-ptr{position:absolute;width:14px;height:14px;background:#0c2a4c;border:1.5px solid var(--cyan);transform:rotate(45deg)}
+.ash-co.pu .ash-ptr{top:-8.5px;border-right:0;border-bottom:0}
+.ash-co.pd .ash-ptr{bottom:-8.5px;border-left:0;border-top:0}
+.ash-co.pl .ash-ptr{left:-8.5px;border-top:0;border-right:0}
+.ash-co.pr .ash-ptr{right:-8.5px;border-bottom:0;border-left:0}
+/* the page's own pieces */
+.ash-page .ash-done-line{color:var(--green);font-weight:700}
+.ash-stamp{display:inline-block;margin-left:8px;padding:1px 6px;font:800 9.5px/1.4 var(--font-sans);letter-spacing:.08em;color:var(--text-soft);border:1px solid rgba(159,189,227,.5)}
+/* small sheets: inside another screen's panel; no title and no tabs */
+.ash.ash-small .ash-top{display:none}
+.ash.ash-small .ash-line{margin-left:30px}
+@media (prefers-reduced-motion:reduce){.ash-caret,.ash-c.afresh,.ash-c.lit-once{animation:none}}
+.ash-pop{position:absolute;z-index:6;left:0;top:100%;margin-top:4px;display:flex;flex-direction:column;gap:3px;min-width:280px;padding:8px 10px;background:#0c2a4c;border:1px solid rgba(54,198,255,.55);box-shadow:0 10px 24px rgba(0,0,0,.4);font:400 12.5px/1.35 var(--font-sans);color:#d6e2f3;white-space:nowrap}
+.ash-pop span{display:flex;justify-content:space-between;gap:16px} .ash-pop b{color:#fff} .ash-pop small{color:var(--text-soft)}
+.actbar .bv-btn.big{min-width:200px}
+.ash-c.aref .ash-chip{margin-left:16px}
+/* the Studio's Change row: Undo */
+.bv-chg .ash-undo{margin-left:8px}
+/* the event sums: the rows of ten, then the small sheet (one column, 760px) */
+.dp.ash-page.ash-ev{display:flex;flex-direction:column;align-items:center;gap:8px;overflow-y:auto}
+.ash-ev .ash-evh{width:760px;max-width:100%}
+.ash-ev .ash-evh h1{margin:2px 0 0;font:600 24px/1.25 var(--font-sans);color:var(--text)}
+.ash-ev .ash-evb{width:760px;max-width:100%;display:flex;flex-direction:column;gap:10px}
+.ash-ev .ash-evb > .ash{flex:none}
+.ash-ev .wio2-ten{margin:0}
+.ash-co.static{width:auto;max-width:520px;margin:0 0 14px 30px;align-self:flex-start}
+/* the Sunday review on the week's sheet (3.5): the sheet is the hero of the middle column; the right column keeps the gold SUM n and the rule */
+.ash-rv .rv2-mid > .ash{flex:none}
+.ash-rv .ash-rvc{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:14px 16px}
+.ash-rv .ash-rvr{margin:0;font:600 17px/1.35 var(--font-sans);color:var(--text)}
+/* the left column fits at 1366 without scrolling: tighter gaps, and the fuel line's figure beside its label */
+.ash-rv .rv2-col{gap:8px}
+.ash-rv .fuel-adv{grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:8px 14px}
+.ash-rv .fuel-adv .kl{grid-column:1;align-self:center}
+.ash-rv .fuel-adv b{grid-column:2;grid-row:1;font-size:20px}
+.ash-rv .fuel-adv span:not(.kl){grid-column:1/-1;font-size:13px;line-height:1.35}
+/* the Fuel desk's order: its small sheet sits in the order panel */
+.ash-fo{margin:6px 0 8px}
+.ash-fo > .ash.ash-small{min-width:0;width:100%}
+.ash-fwd{margin:0 0 8px;font:400 13.5px/1.45 var(--font-sans);color:#cfe0f5}.ash-fwd b{color:#fff}
+/* a small sheet inside a desk panel (the Fuel desk's order): the same parts, closer together */
+.ash.ash-tight{padding:8px 12px 8px;min-width:0}
+.ash.ash-tight .ash-fb{height:30px;margin-bottom:6px}
+.ash.ash-tight .ash-line{margin:6px 0 0 30px;font-size:13px}
+.ash.ash-tight .ash-c.av{font-size:14.5px}
+.ash.ash-tight .ash-c.al{font-size:14px}
+.ash-co.static.tight{display:grid;grid-template-columns:1fr auto;column-gap:14px;align-items:end;max-width:none;margin:0 0 10px 0;padding:8px 12px}
+.ash-co.static.tight .ash-coe{grid-column:1/-1}
+.ash-co.static.tight .ash-cot{grid-column:1;font-size:15px;margin:2px 0}
+.ash-co.static.tight p{grid-column:1;margin:0 0 3px;font-size:12.5px}
+.ash-co.static.tight .ash-coa{grid-column:2;grid-row:2/5;margin:0}
+.ash-co.static.tight .ash-ptr{display:none}
+/* the order's first-time callout beside its small sheet, over the order panel's spare room, so the desk fits at 1366 until Got it */
+.ash.ash-small{position:relative}
+.ash-co.static.aside{position:absolute;right:calc(100% + 18px);bottom:6px;width:312px;margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;align-items:center;padding:8px 12px}
+.ash-co.static.aside .ash-coe{grid-column:1/-1}
+.ash-co.static.aside .ash-cot{grid-column:1;margin:1px 0 2px}
+.ash-co.static.aside .ash-coa{grid-column:2;grid-row:2/span 2;margin:0}
+.ash-co.static.aside p{grid-column:1/-1;margin:0 0 2px}
+.ash-co.static.aside .ash-ptr{display:block;top:auto;bottom:22px}
+/* the order panel: the blocks on the left, the order's small sheet beside them */
+.fd2 .fd-ob.ash-2{display:grid;grid-template-columns:minmax(0,1fr) 404px;column-gap:14px;row-gap:8px;align-items:start}
+.fd2 .fd-ob.ash-2 > *{grid-column:1}
+.fd2 .fd-ob.ash-2 > .rs{grid-column:1/-1}
+.fd2 .fd-ob.ash-2 > .ash-fo{grid-column:2;grid-row:2/span 2;margin:0}
+.fd2 .fd-ob.ash-2 > .fd-tot{grid-column:1/-1}
+.fd2 .fd-ob.ash-2 > .fd-blocks{flex-wrap:wrap;row-gap:6px}
+.fd2 .fd-ob.ash-2 > .fd2-row2{flex-wrap:wrap;row-gap:4px}
+.fd2 .fd-ob.ash-2 > .fd-blocks .fd-b{min-width:74px;padding-left:8px;padding-right:8px}
+.fd2 .fd-ob.ash-2 .fd-lim{font-size:13px}
+.fd2 .fd2-tankw{margin:3px 0 0;font:600 13.5px/1.35 var(--font-sans);color:var(--text)}
+/* the year-one desk holds the tank's words and the order's small sheet at 1366: a little less air between and inside the panels */
+body.yr1 .fd2-l{gap:7px}
+body.yr1 .fd2-l .bv-panel{padding-top:10px;padding-bottom:10px}
+body.yr1 .fd2-ph{margin-bottom:8px}

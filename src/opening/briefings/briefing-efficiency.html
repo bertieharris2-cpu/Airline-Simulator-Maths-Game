@@ -10,12 +10,13 @@
 <body data-brief="aircraft_efficiency">
 <script>
 /* 6 · Two planes, one route (the first aircraft comparison). His plane and the bigger one take off together for the route and
-   fly side by side; under each, its fuel gauge draining and a cutaway of its cabin with its passengers. He taps the one he
-   thinks uses less fuel per passenger. On landing the fuel shares out across the seats. Then the bigger plane flies again half
+   fly side by side; under each, its fuel gauge draining and a cutaway of its cabin with its passengers. The caption asks which
+   uses less fuel per passenger (no guess since 19 Oct, evening); after Next, on landing the fuel shares out across the seats. Then the bigger plane flies again half
    empty and its fuel per passenger leaps. Caption: Bigger is cheaper per seat — when it's full. Lands on the comparison. */
 const D = Object.assign({ id:'aircraft_efficiency', route:{ city:'Dublin' }, a:{ name:'Twin Otter', seats:19, litres:180 }, b:{ name:'Saab 340', seats:34, litres:230 } }, K.B);
 const A = D.a, B2 = D.b, num = K.num, city = D.route.city, per = (l, n) => Math.round(10 * l / Math.max(1, n)) / 10, half = Math.max(1, Math.round(B2.seats / 2));
 const fmtL = v => (Math.round(v * 10) / 10).toLocaleString('en-GB', { minimumFractionDigits:1, maximumFractionDigits:1 });
+K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'Two planes, one route' });
 const L = K.layers(), sv = K.s;
 /* the sky, clouds drifting past, the ground far below */
@@ -49,19 +50,19 @@ async function fly(lanes, fills){
   K.mark(0); await K.caption(`To ${city} and back: your ${A.name} and a ${B2.name}, both full.`);
   await fly(ln, [A.seats, B2.seats]);
   await K.wait(400);
-  // Predict: which used less fuel for each passenger?
-  K.mark(1); K.question('Which used <b>less fuel for each passenger</b>? Tap the plane.');
-  await K.caption('A guess is fine.');
-  const pick = await new Promise(res => ln.forEach((L2, i) => { const b = K.h('button', { type:'button', 'aria-label':L2.P.name, style:'position:absolute;background:transparent;border:1px dashed rgba(242,193,78,.55);cursor:pointer' }, K.hud()); K.pos(b, 100, L2.y - 40); b.style.width = (100 * 1300 / 1600) + '%'; b.style.height = (100 * 210 / 900) + '%'; b.onclick = () => { document.querySelectorAll('.bk-hud button[aria-label]').forEach(x => x.remove()); res(i); }; }));
+  // the question is the caption (no guess since 19 Oct, evening): the next beat answers it
+  K.question('Which used <b>less fuel for each passenger</b>?');
+  await K.caption("Let's work it out.");
+  await K.cont('Next');
   // Reveal: the fuel shares out across the seats
-  K.mark(2); K.question(null);
+  K.mark(1); K.question(null);
   const lp = ln.map(L2 => per(L2.P.litres, L2.P.seats)), best = lp[0] <= lp[1] ? 0 : 1;
   for(let i = 0; i < 2; i++){ const L2 = ln[i];
     L2.seats.forEach((s, k) => { const d = sv('circle', { cx:L2.gx + 130, cy:L2.y + 39, r:4, fill:'#3fb6ff' }, L.top); const sx = 600 + Math.floor(k / 2) * 26 + 10, sy = L2.y + 40 + (k % 2) * 26 + 10; K.wait(k * 25).then(() => K.tween(500, t => { d.setAttribute('cx', K.lerp(L2.gx + 130, sx, t)); d.setAttribute('cy', K.lerp(L2.y + 39, sy, t) - Math.sin(t * Math.PI) * 40); }, 'io')).then(() => d.remove()); });
     await K.wait(L2.seats.length * 25 + 500);
     K.call(L2.gx + 130, L2.y + 150, `${num(L2.P.litres)} L ÷ ${num(L2.P.seats)} = <b>${fmtL(lp[i])} L</b> a passenger`, i === best ? '' : 'quiet');
   }
-  await K.caption(`${pick === best ? 'Yes: ' : ''}the ${ln[best].P.name} uses <b>${fmtL(lp[best])} L</b> a passenger, the ${ln[1 - best].P.name} ${fmtL(lp[1 - best])} L.`);
+  await K.caption(`The ${ln[best].P.name} uses <b>${fmtL(lp[best])} L</b> a passenger, the ${ln[1 - best].P.name} ${fmtL(lp[1 - best])} L.`);
   await K.wait(2400);
   // the bigger plane again, half empty
   await K.caption(`Now the ${B2.name} again, with only ${num(half)} on board.`);
@@ -72,11 +73,12 @@ async function fly(lanes, fills){
   K.question(`Half empty: <b>${fmtL(lh)} L</b> a passenger${lh > lp[0] ? `, more than the ${A.name}'s ${fmtL(lp[0])} L` : ''}`);
   await K.caption('<b>Bigger is cheaper per seat — when it\'s full.</b>');
   await K.cont('Go on');
-  K.mark(3); drift(); K.question('Next: the comparison, with litres for each seat');
+  K.mark(2); drift(); K.question('Next: the comparison, with litres for each seat');
   await K.caption('Look at how full each plane would fly, not only its size.');
   await K.cont('To the comparison');
-  K.done({ pick, best });
+  K.done({ best });
 })();
+});
 </script>
 </body>
 </html>

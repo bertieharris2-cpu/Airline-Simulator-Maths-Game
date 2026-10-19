@@ -9,78 +9,97 @@
 </head>
 <body data-brief="fuel_cash_tank_profit">
 <script>
-/* 5 · Cash, tank, profit (the first Fuel desk visit), reworked to Fable's scene: hangar-side, a cash vault on the left, a large
-   fuel tank in the middle, the week's flight board on the right. Before he buys he predicts what happens to today's profit. He
-   presses Buy: coins stream out of the vault along the pipe into the tank, which fills; the profit display doesn't stir. Then
-   the week runs at speed: each day a plane taxis out, a column of fuel drains from the tank into it and a matching chip of cost
-   drops onto that day's line; tickets come back into the vault. The week ends with the tank still part-full. */
-const D = Object.assign({ id:'fuel_cash_tank_profit', cash:14800, price:1.3, blk:1000, tank:8000, perDay:600, days:7, day:{ tickets:7200, other:3200 },
-  flight:{ dep:'06:00', plane:'Twin Otter', to:'Dublin', litres:180 } }, K.B);
-const money = K.money, num = K.num, price = +D.price || 1.3, blk = D.blk || 1000, days = Math.max(1, Math.min(7, D.days || 7));
-const per = Math.round(D.perDay || 600), weekL = per * days, buyL = D.buyL || Math.min(D.tank || 8000, Math.max(blk, Math.ceil(weekL * 1.3 / blk) * blk)), cost = Math.round(buyL * price);
+/* 5 · Cash, tank, profit (the first Fuel desk visit, before the first order: from Launch Day since 19 Oct, evening). Version A
+   (Claude Design handover 19 Oct, evening, 7.8): no guess anywhere; four beats, Show → Reveal, and Go on is the Use.
+   1 Show, What fuel is: a fuel price board drops in over the airport: today's price a litre and ten weeks of it.
+   2 Show, Buying: the order flows from the vault into the tank; cash falls, the tank fills, profit stays £0.
+   3 Show, The week flies: each day a plane burns its litres; that day's fuel, other costs and tickets land on its row, the
+     profit counts up, and the tank empties.
+   4 Reveal, The rule: the Fuel burned column is framed; the whole bill was paid a day at a time.
+   The figures are a fixed teaching example kept in the workbook (BriefingData, D105), not the pupil's own: the defaults below
+   are the same example, for the page opened on its own. Ticket money is gold and costs are plain figures, as on the Sheet. */
+const D = Object.assign({ id:'fuel_cash_tank_profit', cash:8600, price:1.3, buyL:3000, tank:5000, perDay:600, days:5,
+  day:{ tickets:6660, other:3610 }, history:[1.22, 1.25, 1.3, 1.37, 1.47, 1.41, 1.36, 1.3, 1.35, 1.3], next:'order' }, K.B);
+const money = K.money, num = K.num, price = +D.price || 1.3, days = Math.max(1, Math.min(7, Math.round(+D.days || 5)));
+const per = Math.round(+D.perDay || 600), buyL = Math.round(+D.buyL || per * days), cost = Math.round(buyL * price), cap = Math.max(buyL, Math.round(+D.tank || buyL));
 const fuelDay = Math.round(per * price), tick = Math.round((D.day && D.day.tickets) || 0), other = Math.round((D.day && D.day.other) || 0), dayProfit = tick - fuelDay - other;
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].slice(7 - days);
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].slice(7 - days), HIST = (Array.isArray(D.history) && D.history.length > 1 ? D.history : [price]).map(Number);
+const p2 = v => '£' + (+v).toFixed(2);
+K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'Cash, tank, profit' });
 const L = K.layers();
 K.apron({ horizon:430, hangarX:860, towerX:330 });
 /* the vault, the pipe, the tank */
 const V = K.vault(L.mid, { x:110, y:420, w:240, h:260, value:D.cash });
-const pipe = K.s('path', { d:'M350 560 C 430 560 450 640 520 640 L 600 640', fill:'none', stroke:'url(#gMetal)', 'stroke-width':14, 'stroke-linecap':'round' }, L.mid);
+K.s('path', { d:'M350 560 C 430 560 450 640 520 640 L 600 640', fill:'none', stroke:'url(#gMetal)', 'stroke-width':14, 'stroke-linecap':'round' }, L.mid);
 const T = K.tank(L.mid, { x:600, y:300, w:250, h:380 });
-const tankTitle = K.txt(L.mid, 725, 286, 'YOUR FUEL TANK', { 'font-size':15, 'letter-spacing':3, fill:'#9FBDE3', 'text-anchor':'middle' });
-const out = K.s('path', { d:'M850 640 L 960 640', fill:'none', stroke:'url(#gMetal)', 'stroke-width':12, 'stroke-linecap':'round' }, L.mid);
-/* the week's board, with today's profit over it */
-const bd = K.s('g', { filter:K.B.kitFlat ? undefined : 'url(#fSh)' }, L.mid), BX = 1040, BY = 190, RH = 52;
+K.txt(L.mid, 725, 286, 'YOUR FUEL TANK', { 'font-size':15, 'letter-spacing':3, fill:'#9FBDE3', 'text-anchor':'middle' });
+K.s('path', { d:'M850 640 L 960 640', fill:'none', stroke:'url(#gMetal)', 'stroke-width':12, 'stroke-linecap':'round' }, L.mid);
+/* the week's board: profit this week over its days (ticket money gold, costs plain) */
+const bd = K.s('g', null, L.mid), BX = 1040, BY = 190, RH = 52;
 K.s('rect', { x:BX, y:BY, width:470, height:110 + RH * days, fill:'#050f22', stroke:'#2b5c95', 'stroke-width':2 }, bd);
 K.txt(bd, BX + 18, BY + 34, 'PROFIT THIS WEEK', { 'font-size':15, 'letter-spacing':3, fill:'#F2C14E', 'font-weight':700 });
 const prof = K.txt(bd, BX + 452, BY + 38, money(0), { 'font-size':30, 'font-weight':800, 'text-anchor':'end' });
 K.txt(bd, BX + 18, BY + 84, 'Day', { 'font-size':13, fill:'#8EA6C8' }); K.txt(bd, BX + 156, BY + 84, 'Fuel burned', { 'font-size':13, fill:'#8EA6C8', 'text-anchor':'middle' }); K.txt(bd, BX + 342, BY + 84, 'Other costs', { 'font-size':13, fill:'#8EA6C8', 'text-anchor':'end' }); K.txt(bd, BX + 452, BY + 84, 'Tickets', { 'font-size':13, fill:'#8EA6C8', 'text-anchor':'end' });   // profit = tickets − fuel burned − other costs
 const rows = DAYS.map((d, i) => { const y = BY + 96 + i * RH; K.s('rect', { x:BX + 10, y, width:450, height:RH - 8, fill:'#0b1d38' }, bd); K.txt(bd, BX + 22, y + 29, d, { 'font-size':18, 'font-weight':600 }); return { y }; });
 const plane = K.plane(L.front, { x:930, y:690, w:300 }); plane.style.opacity = 0;
+/* the fuel price board: square, over the airport; today's price in gold and the last ten weeks, today's point cyan */
+const PB = { x:330, y:14, w:940, h:150 }, pb = K.s('g', { transform:'translate(0 -220)' }, L.top);
+K.s('rect', { x:PB.x, y:PB.y, width:PB.w, height:PB.h, fill:'#020812', stroke:'#2b5c95', 'stroke-width':2 }, pb);
+K.txt(pb, PB.x + 28, PB.y + 38, 'FUEL PRICE · A LITRE', { 'font-size':14, 'letter-spacing':2.5, 'font-weight':700, fill:'#9FBDE3' });
+K.txt(pb, PB.x + 28, PB.y + 98, p2(price), { 'font-size':54, 'font-weight':800, fill:'#F2C14E' });
+K.txt(pb, PB.x + 30, PB.y + 128, 'today', { 'font-size':16, fill:'#9FBDE3' });
+const cx0 = PB.x + 300, cx1 = PB.x + PB.w - 60, cy0 = PB.y + 30, cy1 = PB.y + 90, lo = Math.min(...HIST), hi = Math.max(...HIST);
+const hx = i => cx0 + (cx1 - cx0) * i / Math.max(1, HIST.length - 1), hy = v => cy1 - (cy1 - cy0) * (v - lo) / Math.max(0.01, hi - lo);
+[cy0, cy1].forEach(y => K.s('line', { x1:cx0, y1:y, x2:cx1, y2:y, stroke:'#2b5c95', 'stroke-dasharray':'4 6', 'stroke-width':1.5 }, pb));
+K.s('path', { d:HIST.map((v, i) => `${i ? 'L' : 'M'}${hx(i).toFixed(1)} ${hy(v).toFixed(1)}`).join(' '), fill:'none', stroke:'#9FBDE3', 'stroke-width':3 }, pb);
+HIST.forEach((v, i) => K.s('circle', { cx:hx(i), cy:hy(v), r:i === HIST.length - 1 ? 8 : 4.5, fill:i === HIST.length - 1 ? '#36C6FF' : '#9FBDE3' }, pb));
+const iLo = HIST.indexOf(lo), iHi = HIST.indexOf(hi);
+K.txt(pb, hx(iLo), hy(lo) + 24, p2(lo), { 'font-size':15, 'text-anchor':'middle', fill:'#EAF2FF' }); K.txt(pb, hx(iHi), hy(hi) - 12, p2(hi), { 'font-size':15, 'text-anchor':'middle', fill:'#EAF2FF' });
+K.txt(pb, cx0, PB.y + PB.h - 8, `${HIST.length} weeks ago`, { 'font-size':14, fill:'#8EA6C8' }); K.txt(pb, cx1, PB.y + PB.h - 8, 'today', { 'font-size':14, 'text-anchor':'end', fill:'#36C6FF' });
 
 (async () => {
+  // 1 Show · What fuel is: the price board drops in
   K.mark(0); T.set(0, 0, '0 litres', '£0 of fuel');
-  await K.caption('Your cash, your fuel tank, and this week\'s flights.');
-  await K.wait(1600);
-  // Predict: what does buying do to profit?
-  K.mark(1); K.question(`You are buying <b>${num(buyL)} litres</b> for <b>${money(cost)}</b>. What happens to today's profit?`);
-  await K.caption('Tap what you think. A guess is fine.');
-  const ch = K.chips({ x:800, y:118, center:true, label:'Profit', items:[{ label:'It goes down', value:'down' }, { label:'It stays the same', value:'same' }, { label:'It goes up', value:'up' }] });
-  ch.btns.forEach(b => b.style.width = '12cqw');
-  const guess = await ch.wait(); ch.set(guess, 'mine'); ch.off();
-  // Reveal: he buys; the cash moves into the tank; profit does not stir
-  K.mark(2); K.question('Press <b>Buy fuel</b>');
-  const buy = K.h('button', { class:'bk-chip', type:'button', style:'position:absolute;width:13cqw;border-color:#F2C14E' }, K.hud(), `Buy fuel<small>${num(buyL)} L at £${price.toFixed(2)} a litre</small>`); K.pos(buy, 655, 772);
-  await new Promise(res => buy.onclick = res); buy.remove(); ch.remove();
-  K.question(null);
-  await Promise.all([K.coins(L.top, [300, 540], [640, 610], 16, 1800), V.set(D.cash - cost, 1600), T.set(buyL / (D.tank || buyL), 1700, `${num(buyL)} litres`, `${money(cost)} of fuel`)]);
-  const still = K.call(BX + 360, BY - 10, 'Profit: <b>not moved</b>', '');
-  await K.caption(`${money(cost)} moved from cash into the tank. Profit didn't move: ${guess === 'same' ? 'as you thought.' : 'nothing has been burned yet.'}`);
-  await K.wait(2200); still.out();
-  // the week at speed: each day a flight burns its fuel; tickets come back
-  await K.caption('Now the week flies.');
+  await K.tween(700, t => pb.setAttribute('transform', `translate(0 ${(-220 * (1 - t)).toFixed(1)})`), 'out');
+  await K.caption(`Every plane needs fuel to fly. Its price goes up and down, like petrol at a garage. You can't stop that, but <b>when the price is good you can buy extra and keep it in your tank.</b>`);
+  await K.cont('Next');
+  // 2 Show · Buying: the order flows from the vault into the tank; profit doesn't stir
+  K.mark(0);
+  const tag = K.call(450, 520, `−${money(cost)} →`, 'quiet');
+  await Promise.all([K.coins(L.top, [300, 540], [640, 610], 16, 1800), V.set(D.cash - cost, 1600), T.set(buyL / cap, 1700, `${num(buyL)} litres`, `${money(cost)} of fuel`)]);
+  await K.caption(`You buy ${num(buyL)} litres at ${p2(price)} a litre. ${money(cost)} leaves the bank and the fuel waits in your tank. <b>Nothing has flown yet, so profit is still £0.</b>`);
+  await K.cont('Fly the week');
+  // 3 Show · The week flies: each day burns its fuel, and that day's fuel comes off that day's profit
+  K.mark(0); tag.out();
   let left = buyL, p = 0;
   for(let i = 0; i < days; i++){
     const r = rows[i]; plane.style.opacity = 1;
     const go = K.tween(700, t => K.at(plane, 930 + t * 520, 690 - t * 40), 'in');
-    left -= per; const drain = T.set(Math.max(0, left) / (D.tank || buyL), 650, `${num(Math.max(0, left))} litres`, `${money(Math.max(0, left) * price)} of fuel`);
-    const chip = K.s('g', { opacity:0 }, L.top); K.s('rect', { x:BX + 82, y:r.y + 8, width:148, height:28, fill:'#3b2330', stroke:'#c9d6e6', 'stroke-opacity':.3 }, chip); K.txt(chip, BX + 156, r.y + 28, `${num(per)} L · −${money(fuelDay)}`, { 'font-size':14, 'font-weight':700, 'text-anchor':'middle' });
-    const chip2 = K.txt(L.top, BX + 452, r.y + 29, '', { 'font-size':16, 'font-weight':700, 'text-anchor':'end', fill:'#4ADE9B' }), chip3 = K.txt(L.top, BX + 342, r.y + 29, '', { 'font-size':15, 'font-weight':600, 'text-anchor':'end', fill:'#c9d6e6' });
+    left -= per; const drain = T.set(Math.max(0, left) / cap, 650, `${num(Math.max(0, left))} litres`, `${money(Math.max(0, left) * price)} of fuel`);
+    const chip = K.s('g', { opacity:0 }, L.top); K.s('rect', { x:BX + 82, y:r.y + 8, width:148, height:28, fill:'#0d2648', stroke:'#5b86b8', 'stroke-opacity':.55 }, chip); K.txt(chip, BX + 156, r.y + 28, `${num(per)} L · −${money(fuelDay)}`, { 'font-size':14, 'font-weight':700, 'text-anchor':'middle', fill:'#EAF2FF' });
+    const tk = K.txt(L.top, BX + 452, r.y + 29, '', { 'font-size':16, 'font-weight':700, 'text-anchor':'end', fill:'#F2C14E' }), oc = K.txt(L.top, BX + 342, r.y + 29, '', { 'font-size':15, 'font-weight':600, 'text-anchor':'end', fill:'#c9d6e6' });
     await Promise.all([go, drain, K.tween(400, t => { chip.setAttribute('opacity', t); chip.setAttribute('transform', `translate(0 ${-14 * (1 - t)})`); }, 'out')]);
-    chip2.textContent = money(tick); chip3.textContent = '−' + money(other); p += dayProfit; K.count(prof, p - dayProfit, p, 300, money);
+    tk.textContent = money(tick); oc.textContent = '−' + money(other); p += dayProfit; K.count(prof, p - dayProfit, p, 300, money);
     K.coins(L.top, [BX + 420, r.y + 20], [250, 520], 5, 700); V.set(D.cash - cost + (tick - other) * (i + 1), 500);   // the day's takings, less its other costs
     plane.style.opacity = 0; K.at(plane, 930, 690); await K.wait(250);
   }
   const keep = Math.max(0, left);
-  K.call(725, 300, `Still in the tank: <b>${num(keep)} L</b>, <b>${money(keep * price)}</b>`, '');
-  K.question(null);
-  await K.caption('Buying fuel moves cash into the tank. <b>Profit only counts what your flights burn.</b>');
-  await K.cont('Go on');
-  K.mark(3); K.question(D.next === 'order' ? `Next: your fuel order, <b>${num(buyL / blk)} blocks × the price of ${num(blk)} L</b>` : 'Next: your first fuel order');
-  await K.caption('Buy what the week needs, at a good price, and keep cash for the rest.');
-  await K.cont(D.next === 'order' ? 'To the fuel order' : 'To the Fuel desk');
-  K.done({ guess });
+  K.call(725, 300, `Still in the tank: <b>${num(keep)} L, ${money(keep * price)}</b>`, '');
+  await K.caption(`Each day your planes burn ${num(per)} litres. <b>That day's fuel, ${money(fuelDay)}, comes off that day's profit.</b>`);
+  await K.cont('Next');
+  // 4 Reveal · The rule: the Fuel burned column framed; the whole bill, a day at a time
+  K.mark(1);
+  const fy0 = rows[0].y + 2, fy1 = rows[days - 1].y + RH - 6;
+  const fr = K.s('rect', { x:BX + 74, y:fy0, width:164, height:fy1 - fy0, fill:'none', stroke:'#36C6FF', 'stroke-width':3, opacity:0 }, L.top);
+  await K.tween(400, t => fr.setAttribute('opacity', t), 'out');
+  const note = K.h('div', { class:'bk-call', style:'transform:none;white-space:normal;width:29%;text-align:left;border:0;background:none;box-shadow:none;padding:0;font-weight:400;color:#c6d8f0' }, K.hud(), `${DAYS[0]} to ${DAYS[days - 1]}: ${days} × ${money(fuelDay)} = <b style="color:#F2C14E">${money(fuelDay * days)}</b>, the whole bill, a day at a time`);
+  K.pos(note, BX, BY + 110 + RH * days + 14);
+  await K.caption(`The fuel's cost doesn't come off all at once. <b>Each day pays for the fuel it burns.</b>`);
+  await K.cont(D.next === 'order' ? 'Go on' : 'To the Fuel desk');
+  K.done({});
 })();
+});
 </script>
 </body>
 </html>

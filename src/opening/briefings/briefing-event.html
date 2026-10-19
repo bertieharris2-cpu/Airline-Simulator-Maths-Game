@@ -11,13 +11,14 @@
 <script>
 /* 8 · One big Saturday (the All Blacks announcement, week 4). His week as a row of seven gates, the route's usual passengers at
    each, his flights in place. An event card drops onto the match weekend and a wave of supporters floods those gates while
-   the rest stay calm; his flights don't move. He taps the day that changed. Caption: An event changes one weekend, not every
+   the rest stay calm; his flights don't move. After Next the match weekend lights (no tap since 19 Oct, evening). Caption: An event changes one weekend, not every
    weekend. Lands on the Operations Request for changing one particular date (the day_override upgrade: the request is noted;
    the systems team builds it later). */
 const D = Object.assign({ id:'event_weekend', route:'Dublin', title:'IRELAND v NEW ZEALAND', when:'SAT 5 OCT', want:[48, 45, 47, 50, 61, 71, 66], mult:[1, 1, 1, 1, 1, 2, 2], seats:[57, 57, 57, 57, 57, 57, 57],
   flights:[{ t:'06:00' }, { t:'09:40' }, { t:'13:40' }], options:['Change one particular date', 'Change weekends', 'Change every day'] }, K.B);
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], want = D.want, ev = want.map((v, k) => Math.round(v * (D.mult[k] || 1))), hit = D.mult.map((m, k) => m > 1 ? k : -1).filter(k => k >= 0);
 const per = Math.max(1, Math.ceil(Math.max(...ev, ...D.seats) / 48)), num = K.num;
+K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'One big Saturday' });
 const L = K.layers();
 K.terminal({ horizon:250, glassBottom:360, tower:false, pane:205, poolX:800 });
@@ -50,33 +51,31 @@ function fill(k, n, kind){ const b = bays[k]; for(let i = b.people.length; i < n
     K.count(b.cnt, want[k], ev[k], 600).then(() => b.cnt.textContent = `${num(ev[k])} want`); }
   await K.caption(flies ? 'Your flights stay where they are.' : 'Twice the usual people, and no flights of yours to carry them.');
   await K.wait(800);
-  K.mark(1); K.question('Which days <b>changed</b>? Tap them');
-  const taps = new Set();
-  await new Promise(res => { bays.forEach((b, k) => { const el = K.h('button', { type:'button', 'aria-label':DAYS[k], style:'position:absolute;background:transparent;border:0;cursor:pointer' }, K.hud()); K.pos(el, b.x + 4, 370); el.style.width = (100 * 192 / 1600) + '%'; el.style.height = (100 * 410 / 900) + '%';
-    el.onclick = () => { taps.has(k) ? taps.delete(k) : taps.add(k); b.out.setAttribute('opacity', taps.has(k) ? .95 : 0); if(hit.every(h => taps.has(h)) || taps.size >= hit.length) setTimeout(res, 500); }; }); });
-  document.querySelectorAll('.bk-hud button[aria-label]').forEach(e => e.remove());
-  K.mark(2); hit.forEach(k => { bays[k].out.setAttribute('stroke', '#F2C14E'); bays[k].out.setAttribute('opacity', 1); });
+  await K.cont('Next');
+  // Reveal: the days that changed light by themselves (no tap since 19 Oct, evening)
+  K.mark(1); hit.forEach(k => { bays[k].out.setAttribute('stroke', '#F2C14E'); bays[k].out.setAttribute('opacity', 1); });
   const extra = hit.reduce((t, k) => t + Math.max(0, ev[k] - D.seats[k]), 0);
   K.question(`${hit.map(k => DAYS[k]).join(' and ')}: <b>twice</b> the usual.${flies && extra ? ` ${num(extra)} more than your seats.` : ''}`);
   await K.caption(`<b>An event changes one weekend, not every weekend.</b>`);
   await K.cont('Go on');
   // the Operations Request: one date
-  K.mark(3); K.question('<b>Operations request:</b> what should the planner let you do?');
+  K.mark(2); K.question('<b>Operations request:</b> what should the planner let you do?');
   await K.caption('Choose the change that fits an event.');
   let chosen = null;
   for(;;){
     const ch = K.chips({ x:800, y:150, center:true, label:'Operations request', items:[1, 0, 2].map(i => ({ label:D.options[i], value:i })) });
     ch.btns.forEach(b => { b.style.width = '19cqw'; b.style.padding = '.9cqw 1cqw'; });
-    chosen = await ch.wait(); ch.off();
+    chosen = await K.decide(ch.wait()); ch.off();   // a decision (an Operations Request), not a guess: it stays
     await K.caption(chosen === 0 ? 'One date: extra flights for the match weekend only; the next weekend goes back to normal.' : chosen === 1 ? 'Every weekend: the extra flights would fly every Saturday and Sunday, mostly empty.' : 'Every day: the extra flights would fly all week, empty except for the match.');
     await K.wait(1800); ch.remove(); if(chosen === 0) break;
     const again = K.chips({ x:800, y:160, center:true, label:'Again', items:[{ label:'Choose again', value:'a' }, { label:'Keep this choice', value:'k' }] });
-    const a = await again.wait(); again.remove(); if(a === 'k') break;
+    const a = await K.decide(again.wait()); again.remove(); if(a === 'k') break;
   }
   await K.caption(chosen === 0 ? 'Noted: the systems team will build changes for one date. This time, plan the match week on its own plan.' : 'Noted. The systems team will look at it.');
   await K.cont('Back to the plan');
   K.done({ chosen, right:chosen === 0 });
 })();
+});
 </script>
 </body>
 </html>

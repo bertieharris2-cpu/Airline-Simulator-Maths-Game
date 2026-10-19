@@ -10,12 +10,13 @@
 <body data-brief="flight_time">
 <script>
 /* 7 · How long will it take? (the first Flight times page). A map strip from London to the new city, with a ruler of equal
-   hour-long chunks laid along the route; his plane at the start. He presses Fly one hour and the plane covers one chunk;
-   again; a quarter-hour button for the last bit; it lands and the clock stops. The triangle appears and he taps the letter to
-   find. Caption: Time = distance ÷ speed. Lands on the first flight-time sum. */
+   hour-long chunks laid along the route; his plane at the start. The plane flies there an hour at a time, one chunk each, the last bit a quarter hour at a time;
+   it lands and the clock stops. The triangle appears and the T, the letter to find, lights (no buttons or taps since 19 Oct,
+   evening: Show → Reveal → Use). Caption: Time = distance ÷ speed. Lands on the first flight-time sum. */
 const D = Object.assign({ id:'flight_time', route:{ city:'Amsterdam', km:450 }, plane:{ name:'Twin Otter', speed:300 } }, K.B);
 const km = D.route.km, sp = D.plane.speed, city = D.route.city, num = K.num, hours = km / sp;
 const hm = m => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, '0')}`, total = Math.round(hours * 60);
+K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'How long will it take?' });
 const L = K.layers(), sv = K.s;
 /* the map: the sea, the land either side, the route */
@@ -40,38 +41,38 @@ const fly = async (k, m) => { const a = at; at = Math.min(km, at + k); await K.t
 (async () => {
   K.mark(0); await K.caption(`Your ${D.plane.name} flies at <b>${num(sp)} km an hour</b>. ${city} is ${num(km)} km away.`);
   await K.tween(700, t => rul.setAttribute('opacity', t)); await K.caption('Each block of the ruler is one hour of flying.');
-  K.mark(1); K.question('Fly it there: <b>one hour at a time</b>');
-  const b1 = K.h('button', { class:'bk-chip', type:'button', style:'position:absolute;width:14cqw' }, K.hud(), `Fly one hour<small>${num(sp)} km</small>`), bq = K.h('button', { class:'bk-chip', type:'button', style:'position:absolute;width:14cqw' }, K.hud(), `Fly a quarter hour<small>${num(sp / 4)} km</small>`);
-  K.pos(b1, 560, 720); K.pos(bq, 820, 720);
-  const left = () => km - at;
-  await new Promise(res => {
-    const upd = () => { b1.disabled = left() < sp - 1e-6; bq.disabled = left() < 1e-6; if(left() < 1e-6) res(); };
-    b1.onclick = async () => { if(left() < sp - 1e-6) return; b1.disabled = bq.disabled = true; await fly(sp, 60); upd(); if(left() > 1e-6 && left() < sp - 1e-6) K.caption('Less than an hour to go: fly the rest a quarter hour at a time.'); };
-    bq.onclick = async () => { b1.disabled = bq.disabled = true; await fly(Math.min(sp / 4, left()), 15); upd(); };
-    upd();
-  });
-  b1.remove(); bq.remove();
-  K.mark(2); K.question(null); await K.caption(`Landed in ${city}: <b>${hm(mins)}</b>. ${num(km)} km at ${num(sp)} km an hour.`);
+  // it flies there on its own, an hour at a time, then the last part a quarter hour at a time (no buttons since 19 Oct, evening)
+  K.question('Flying there: <b>one hour at a time</b>');
+  const left = () => km - at; let quarter = false;
+  while(left() > 1e-6){
+    if(left() >= sp - 1e-6) await fly(sp, 60);
+    else { if(!quarter){ quarter = true; K.caption('Less than an hour to go: the rest a quarter hour at a time.'); } await fly(Math.min(sp / 4, left()), 15); }
+    await K.wait(300);
+  }
+  await K.cont('Next');
+
+  K.mark(1); K.question(null); await K.caption(`Landed in ${city}: <b>${hm(mins)}</b>. ${num(km)} km at ${num(sp)} km an hour.`);
   await K.wait(1200);
-  // the triangle: he taps the letter to find
+  // the triangle, and the letter to find
   const tri = sv('g', { opacity:0 }, L.top), TX = 800, TY = 650;
   sv('path', { d:`M${TX} ${TY - 150} L ${TX + 170} ${TY + 120} L ${TX - 170} ${TY + 120} Z`, fill:'#0b2246', stroke:'#F2C14E', 'stroke-width':3 }, tri);
   sv('line', { x1:TX - 98, y1:TY + 5, x2:TX + 98, y2:TY + 5, stroke:'#F2C14E', 'stroke-width':2 }, tri); sv('line', { x1:TX, y1:TY + 5, x2:TX, y2:TY + 120, stroke:'#F2C14E', 'stroke-width':2 }, tri);
   const LT = { D:[TX, TY - 30, 'Distance'], S:[TX - 62, TY + 80, 'Speed'], T:[TX + 62, TY + 80, 'Time'] }, letters = {};
   Object.entries(LT).forEach(([k, [x, y, w]]) => { letters[k] = K.txt(tri, x, y, k, { 'font-size':54, 'font-weight':800, 'text-anchor':'middle' }); K.txt(tri, x, y + 26, w, { 'font-size':15, 'text-anchor':'middle', fill:'#9FBDE3' }); });
   clock.out(); await K.tween(500, t => tri.setAttribute('opacity', t));
-  K.question('Which letter do you want to find? <b>Tap it</b>');
-  const pick = await new Promise(res => Object.entries(LT).forEach(([k, [x, y]]) => { const b = K.h('button', { type:'button', 'aria-label':LT[k][2], style:'position:absolute;width:7cqw;height:7cqw;transform:translate(-50%,-70%);background:transparent;border:0;cursor:pointer' }, K.hud()); K.pos(b, x, y); b.onclick = () => { document.querySelectorAll('.bk-hud button[aria-label]').forEach(e => e.remove()); res(k); }; }));
+  const pick = 'T';   // the letter to find for a flight time lights by itself (no tap since 19 Oct, evening)
+  await K.wait(500);
   const say = { T:`Cover the T: <b>D ÷ S</b>. ${num(km)} ÷ ${num(sp)} = ${Math.round(hours * 100) / 100} hours = <b>${hm(total)}</b>`, D:`Cover the D: <b>S × T</b>. ${num(sp)} × ${Math.round(hours * 100) / 100} = ${num(km)} km`, S:`Cover the S: <b>D ÷ T</b>. ${num(km)} ÷ ${Math.round(hours * 100) / 100} = ${num(sp)} km an hour` };
   Object.keys(letters).forEach(k => letters[k].setAttribute('fill', k === pick ? '#F2C14E' : '#EAF2FF'));
   K.question(say[pick] + (pick === 'T' ? '' : ` · <span style="color:#9FBDE3">For the time, cover the T.</span>`));
   await K.caption('<b>Time = distance ÷ speed.</b>');
   await K.cont('Go on');
-  K.mark(3); K.question(`Next: the flight time to ${city}, worked out`);
+  K.mark(2); K.question(`Next: the flight time to ${city}, worked out`);
   await K.caption('Hours, then the part of an hour left over, in minutes.');
   await K.cont('To the flight times');
-  K.done({ pick });
+  K.done({});
 })();
+});
 </script>
 </body>
 </html>

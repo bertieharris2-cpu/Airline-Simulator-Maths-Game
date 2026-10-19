@@ -11,8 +11,8 @@
 <script>
 /* 4 · Weekdays and weekends (the week-2 review), reworked to Fable's scene: seven day columns, each a little gate lounge. Through
    the week business travellers (briefcases, cyan) fill the columns; at the weekend families and holidaymakers (orange, pale)
-   take their place and the columns swell past the glowing seats line, the extra left standing. He taps the days that look
-   different while it happens. His own timetable slides in beneath: the same flights every day. Then the Operations Request;
+   take their place and the columns swell past the glowing seats line, the extra left standing, and the weekend lights by itself
+   (no taps since 19 Oct, evening: Show → Reveal → Use). His own timetable slides in beneath: the same flights every day. Then the Operations Request;
    granted, the weekend's timetable changes and the waiting travellers fly. The game is told the choice (chosen, right). */
 const D = Object.assign({ id:'weekend_demand', route:'Dublin', want:[48, 45, 47, 50, 61, 83, 77], seats:[57, 57, 57, 57, 57, 57, 57],
   flights:[{ t:'09:40', n:19 }, { t:'14:50', n:19 }, { t:'19:10', n:19 }],
@@ -22,6 +22,7 @@ const BIZ = [.7, .71, .7, .72, .66, .15, .13], FAM = [.13, .11, .13, .12, .16, .
 const biz = D.biz || want.map((v, i) => Math.round(v * BIZ[i])), fam = D.fam || want.map((v, i) => Math.round(v * FAM[i])), lei = D.lei || want.map((v, i) => v - biz[i] - fam[i]);
 const avg = a => a.reduce((t, v) => t + v, 0) / Math.max(1, a.length), wd = avg(want.slice(0, 5)), we = avg(want.slice(5)), up = we >= wd, pct = Math.round(Math.abs(we - wd) / Math.max(1, wd) * 100);
 const per = Math.max(1, Math.ceil(Math.max(...want, ...seats) / 40)), num = K.num;
+K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'Weekdays and weekends' });
 const L = K.layers();
 K.terminal({ horizon:250, glassBottom:360, tower:false, pane:205, poolX:800 });
@@ -54,14 +55,11 @@ function crowd(k){
   for(let i = kinds.length - 1; i > 0; i--){ const j = Math.floor(((i * 7919 + k * 104729) % 1000) / 1000 * (i + 1)); [kinds[i], kinds[j]] = [kinds[j], kinds[i]]; }
   return kinds.slice(0, 54).map((kind, i) => { const r = Math.floor(i / 6), c = i % 6, sc = 1 - r * .035; const P = K.person(b.g, COLX(k, c) + (r % 2 ? 6 : -6), ROWY(r), kind, { scale:sc, child:false }); P.g.style.opacity = 0; P.r = r; P.over = i >= seatFig(k); return P; });
 }
-let taps = new Set(), tapping = true, leftCall = null;   // leftCall: the 'left at the gate' label, gone once they fly
-const hitbox = bays.map((b, k) => { const el = K.h('button', { 'aria-label':DAYS[k], type:'button', style:'position:absolute;background:transparent;border:0;cursor:pointer' }, K.hud()); K.pos(el, b.x + 4, 370); el.style.width = (100 * 192 / 1600) + '%'; el.style.height = (100 * 530 / 900) + '%';
-  el.onclick = () => { if(!tapping) return; taps.has(k) ? taps.delete(k) : taps.add(k); b.outline.setAttribute('opacity', taps.has(k) ? .95 : 0); }; return el; });
+let leftCall = null;   // the 'left at the gate' label, gone once they fly
 
 (async () => {
   K.mark(0); K.caption(`${D.route} last week: who wanted to fly, day by day.`);
-  K.question('Tap the days that look <b>different</b>');
-  // the week fills, a day at a time
+  // the week fills, a day at a time: the crowds rise over the seats line on their own (no taps since 19 Oct, evening)
   for(let k = 0; k < 7; k++){
     const P = crowd(k); bays[k].people = P;
     bays[k].line.setAttribute('opacity', 1);
@@ -70,12 +68,10 @@ const hitbox = bays.map((b, k) => { const el = K.h('button', { 'aria-label':DAYS
     K.count(bays[k].cnt, 0, want[k], 400).then(() => { bays[k].cnt.textContent = `${num(want[k])} want`; });
     await K.wait(k >= 5 ? 700 : 420);
   }
-  // he taps at least one day (any days: a guess is never wrong)
-  K.mark(1); if(!taps.size){ K.caption('Tap the days that look different from the rest.'); await new Promise(res => { const t = setInterval(() => { if(taps.size){ clearInterval(t); res(); } }, 150); }); await K.wait(900); }
-  tapping = false; hitbox.forEach(h => h.remove());
+  await K.caption('Some days look different from the rest.');
+  await K.cont('Next');
   // the weekend shows itself
-  K.mark(2); [5, 6].forEach(k => { bays[k].outline.setAttribute('stroke', '#F2C14E'); bays[k].outline.setAttribute('opacity', 1); });
-  [0, 1, 2, 3, 4].forEach(k => { if(taps.has(k)) bays[k].outline.setAttribute('opacity', .35); });
+  K.mark(1); [5, 6].forEach(k => { bays[k].outline.setAttribute('stroke', '#F2C14E'); bays[k].outline.setAttribute('opacity', 1); });   // the weekend lights by itself
   const overW = [5, 6].some(k => want[k] > seats[k]);
   K.question(`Saturday and Sunday: <b>${pct}% ${up ? 'more' : 'fewer'}</b> people, and different ones`);
   await K.caption(up ? 'Business travel stops at the weekend; families and holidaymakers take its place, more of them.' : 'Business travel fills the weekdays; at the weekend fewer people fly.');
@@ -87,18 +83,18 @@ const hitbox = bays.map((b, k) => { const el = K.h('button', { 'aria-label':DAYS
   await K.wait(1400);
   await K.cont('Go on');
   // the Operations Request
-  K.mark(3); K.question('<b>Operations request:</b> what should the planner let you do?');
+  K.mark(2); K.question('<b>Operations request:</b> what should the planner let you do?');
   await K.caption('Choose the change that fits this week.');
   const order = [1, 0, 2].filter(i => i < D.options.length);
   let chosen = null;
   for(;;){
     const ch = K.chips({ x:800, y:150, center:true, label:'Operations request', items:order.map(i => ({ label:D.options[i][0], small:D.options[i][1], value:i })) });
     ch.btns.forEach(b => { b.style.width = '20cqw'; b.style.fontSize = '1.15cqw'; b.style.padding = '.8cqw 1cqw'; });
-    chosen = await ch.wait(); ch.off();
+    chosen = await K.decide(ch.wait()); ch.off();   // a decision (an Operations Request), not a guess: it stays
     const shown = await consequence(chosen); ch.remove();
     if(chosen === 0) break;
     const again = K.chips({ x:800, y:160, center:true, label:'Again', items:[{ label:'Choose again', value:'a' }, { label:'Keep this choice', value:'k' }] });
-    const a = await again.wait(); again.remove(); if(a === 'k') break; reset(shown);
+    const a = await K.decide(again.wait()); again.remove(); if(a === 'k') break; reset(shown);
   }
   await K.caption(chosen === 0 ? 'Approved: from Monday each flight has <b>Days</b> — every day, Mon–Fri or Sat–Sun.' : 'Noted. The systems team will look at it again.');
   await K.cont(chosen === 0 ? 'To next week' : 'Continue');
@@ -129,6 +125,7 @@ function raise(out){ const extra = (D.flights[0] && D.flights[0].n) || 19;
     K.tween(600, s => b.line.setAttribute('transform', `translate(0 ${(ny - b.lineY) * s})`), 'out');
     out.push({ remove:() => { b.line.removeAttribute('transform'); if(t) t.textContent = `${num(seats[k])} seats`; } }); }); }
 function reset(out){ if(leftCall) leftCall.out(false); out.forEach(o => { if(o.P){ o.P.forEach(p => { p.g.style.opacity = 1; }); const k = o.k; let i = 0; bays[k].people.forEach((p, j) => { const r = Math.floor(j / 6), c = j % 6; p.set(COLX(k, c) + (r % 2 ? 6 : -6), ROWY(r)); }); } else o.remove(); }); }
+});
 </script>
 </body>
 </html>

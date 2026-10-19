@@ -1,5 +1,6 @@
 /* Operations briefings: the shared kit (Fable's plan, 18 Oct 2026). Short animated scenes inside the airline's world:
-   Show → Predict → Reveal → Use, advanced by doing, the pupil's own airline and numbers (window.BRIEF, with fallbacks).
+   Show → Reveal → Use (no guesses since 19 Oct 2026, evening: nothing asks the pupil to predict, tap or pick an answer), the
+   pupil's own airline and numbers (window.BRIEF, with fallbacks). Back and Next are always there (K.run, below).
    The game inlines this file into each briefing page; opened on its own, a page loads it from kit/.
    - K.start({ title }) builds the frame: a quiet bar (BRIEFING, the title, four progress marks, Pause & discuss, Skip in test
      mode), the scene (an SVG 1600 × 900 with an HTML layer over it in the same coordinates) and the caption line.
@@ -18,15 +19,18 @@ const K = (() => {
      upper left, square corners, aircraft at 12 px = 1 m facing left with a blank tail for the pupil's colour, Red Kite in
      its own oxblood. Without it (a later chapter, or a page opened on its own) the earlier look stays. */
   const ART = window.KIT_ART || {}, FLAT = B.kitFlat === true && !!ART['aircraft-twin-otter'], PCACHE = {}; let PN = 0;
+  /* year one (the game sends kitFlat), or a page opened on its own: the Show / Reveal / Use stepper, Back, and Next always on.
+     A briefing in a later chapter keeps today's frame (CLAUDE.md: new design goes into year one only). */
+  const Y1 = B.kitFlat === true || !window.BRIEF;
 
   /* ---------- the scene clock ---------- */
   let T = 0, last = 0, paused = false; const ticks = new Set();
   function loop(now){ const dt = last ? Math.min(64, now - last) : 16; last = now; if(!paused){ T += dt; [...ticks].forEach(f => f(T)); } requestAnimationFrame(loop); }
   requestAnimationFrame(loop);
-  const wait = ms => new Promise(res => { const t0 = T, f = t => { if(t - t0 >= ms){ ticks.delete(f); res(); } }; ticks.add(f); });
+  const wait = ms => fast() ? Promise.resolve() : new Promise(res => { const t0 = T, f = t => { if(t - t0 >= ms){ ticks.delete(f); res(); } }; ticks.add(f); });
   const EASE = { io:t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, out:t => 1 - Math.pow(1 - t, 3), lin:t => t, in:t => t * t * t };
   function tween(ms, fn, ease){ const e = EASE[ease || 'io'] || EASE.io;
-    if(RM || ms <= 0){ fn(1); return Promise.resolve(); }
+    if(RM || fast() || ms <= 0){ fn(1, 1); return Promise.resolve(); }
     return new Promise(res => { const t0 = T, f = t => { const k = clamp((t - t0) / ms, 0, 1); fn(e(k), k); if(k >= 1){ ticks.delete(f); res(); } }; ticks.add(f); }); }
   /* a repeating motion (a propeller, a gauge needle's shiver) that stops with pause and is off with reduced motion */
   function every(fn){ if(RM) return () => {}; ticks.add(fn); return () => ticks.delete(fn); }
@@ -37,15 +41,17 @@ const K = (() => {
   const at = (g, x, y, sc, rot) => { g.setAttribute('transform', `translate(${(+x).toFixed(2)} ${(+y).toFixed(2)})${sc !== undefined && sc !== 1 ? ` scale(${sc})` : ''}${rot ? ` rotate(${rot})` : ''}`); return g; };
   const txt = (parent, x, y, str, a) => { const t = s('text', Object.assign({ x, y, fill:'#EAF2FF', 'font-size':22 }, a || {}), parent); t.textContent = str; return t; };
 
-  let world, svg, defs, hud, cap, goBtn, ask, marks, layers = {};
+  let world, svg, defs, hud, cap, goBtn, backBtn, ask, marks, keysOn = false, layers = {};
+  const STEPS = ['Show', 'Reveal', 'Use'];
   function start(o){
     o = o || {};
     document.title = 'Operations briefing — ' + (o.title || '');
-    document.body.innerHTML = `<div class="bk${RM ? ' rm' : ''}${FLAT ? ' flat' : ''}"><header class="bk-bar"><span class="bk-eye">Briefing</span><span class="bk-title">${esc(o.title || '')}</span><span class="bk-marks">${'<i></i>'.repeat(o.marks || 4)}</span><span class="bk-grow"></span>
+    document.body.innerHTML = `<div class="bk${RM ? ' rm' : ''}${FLAT ? ' flat' : ''}"><header class="bk-bar"><span class="bk-eye">Briefing</span><span class="bk-title">${esc(o.title || '')}</span>${Y1 ? `<span class="bk-marks bk-steps">${(o.steps || STEPS).map(x => `<i>${esc(x)}</i>`).join('')}</span>` : `<span class="bk-marks">${'<i></i>'.repeat(o.marks || 4)}</span>`}<span class="bk-grow"></span>
       <button class="bk-btn" id="bkPause" title="Freeze the scene to talk about it">Pause &amp; discuss</button>${B.test ? '<button class="bk-btn" id="bkSkip" title="Teacher test mode">Skip</button>' : ''}</header>
       <main class="bk-stage"><div class="bk-world"></div><div class="bk-pz"><div><b>Paused</b><small>Talk it through, then carry on.</small><p style="margin:12px 0 0"><button class="bk-btn" id="bkResume">Resume</button></p></div></div></main>
-      <footer class="bk-foot"><p class="bk-cap" aria-live="polite"></p><button class="bk-go" hidden>Continue &#9654;</button></footer></div>`;
-    world = document.querySelector('.bk-world'); cap = document.querySelector('.bk-cap'); goBtn = document.querySelector('.bk-go'); marks = [...document.querySelectorAll('.bk-marks i')];
+      <footer class="bk-foot"><p class="bk-cap" aria-live="polite"></p>${Y1 ? '<button class="bk-back" type="button" disabled>&#9664; Back</button><button class="bk-go" type="button">Next &#9654;</button>' : '<button class="bk-go" hidden>Continue &#9654;</button>'}</footer></div>`;
+    world = document.querySelector('.bk-world'); cap = document.querySelector('.bk-cap'); goBtn = document.querySelector('.bk-go'); backBtn = document.querySelector('.bk-back'); marks = [...document.querySelectorAll('.bk-marks i')];
+    if(Y1){ goBtn.onclick = next; backBtn.onclick = back; setGo(); }
     svg = s('svg', { viewBox:'0 0 1600 900', preserveAspectRatio:'xMidYMid meet', role:'img', 'aria-label':o.title || 'Briefing scene' }, world); defs = s('defs', null, svg);
     ['back', 'mid', 'front', 'top'].forEach(k => layers[k] = s('g', { class:'ly-' + k }, svg));
     hud = h('div', { class:'bk-hud' }, world); ask = h('div', { class:'bk-ask out' }, hud);
@@ -53,14 +59,41 @@ const K = (() => {
     document.getElementById('bkPause').onclick = () => pause(!paused);
     document.getElementById('bkResume').onclick = () => pause(false);
     const sk = document.getElementById('bkSkip'); if(sk) sk.onclick = () => done({ skipped:true });
-    document.addEventListener('keydown', e => { if(e.key === 'Enter' && !goBtn.hidden && document.activeElement !== goBtn){ e.preventDefault(); goBtn.click(); } if((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey) pause(!paused); });
+    if(!keysOn){ keysOn = true;   // once: a replay (Back) builds the frame again
+      document.addEventListener('keydown', e => { const a = document.activeElement; if(e.key === 'Enter' && !goBtn.hidden && a !== goBtn && !(a && a.tagName === 'BUTTON' && a !== document.body)){ e.preventDefault(); goBtn.click(); } if((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey) pause(!paused); }); }
     return K;
   }
   function pause(v){ paused = !!v; document.querySelector('.bk').classList.toggle('paused', paused); const b = document.getElementById('bkPause'); if(b) b.textContent = paused ? 'Resume' : 'Pause & discuss'; if(!paused) document.getElementById('bkPause').focus(); }
   function mark(n){ marks.forEach((m, i) => { m.className = i < n ? 'done' : i === n ? 'on' : ''; }); }
-  async function caption(html){ if(!cap) return; if(cap.innerHTML === html) return; cap.classList.add('out'); await wait(RM ? 0 : 260); cap.innerHTML = html || ''; cap.classList.remove('out'); }
+  async function caption(html){ if(!cap) return; if(cap.innerHTML === html) return; if(fast()){ cap.innerHTML = html || ''; cap.classList.remove('out'); return; } cap.classList.add('out'); await wait(RM ? 0 : 260); cap.innerHTML = html || ''; cap.classList.remove('out'); }
   function question(html){ if(!html){ ask.classList.add('out'); return; } ask.innerHTML = html; ask.classList.remove('out'); }
-  function cont(label, kind){ return new Promise(res => { goBtn.classList.toggle('sec', kind === 'sec'); goBtn.innerHTML = (label || 'Continue') + (kind === 'sec' ? '' : ' &#9654;'); goBtn.hidden = false; setTimeout(() => goBtn.focus(), 30); goBtn.onclick = () => { goBtn.hidden = true; goBtn.onclick = null; res(); }; }); }
+  /* ---------- Back and Next (19 Oct 2026, evening: "Next and Back are always allowed") ----------
+     The briefing's script runs inside K.run(body); each K.cont() ends a beat. Next is always there: at a K.cont() it goes on,
+     and while a beat is still playing it finishes the beat at once and goes on. Back plays the script again from the top with
+     every wait, tween and caption instant (as under reduced motion) to the start of the beat before, which then plays as
+     normal. A decision the scene waits for (an Operations Request, the reserve line) holds Next until it is made, and a replay
+     passes through it with the choice already made: K.decide(promise). */
+  let BODY = null, FF = 0, SKIP = false, BEATS = 0, pend = null, HOLD = 0, DN = 0, goL = null; const ANS = [];
+  function fast(){ return FF > 0 || SKIP; }
+  function run(body){ BODY = body; replay(0); return K; }
+  function replay(target){ ticks.clear(); paused = false; FF = target; SKIP = false; BEATS = 0; pend = null; HOLD = 0; DN = 0; goL = null; BODY(); }
+  function setGo(){ if(!goBtn || !Y1) return; const L = pend && goL ? goL : { label:'Next' }; goBtn.hidden = !pend && HOLD > 0;
+    goBtn.classList.toggle('sec', L.kind === 'sec'); goBtn.innerHTML = (L.label || 'Next') + (L.kind === 'sec' ? '' : ' &#9654;'); backBtn.disabled = BEATS < 1; }
+  function cont(label, kind){
+    if(!Y1) return new Promise(res => { goBtn.classList.toggle('sec', kind === 'sec'); goBtn.innerHTML = (label || 'Continue') + (kind === 'sec' ? '' : ' &#9654;'); goBtn.hidden = false; setTimeout(() => goBtn.focus(), 30); goBtn.onclick = () => { goBtn.hidden = true; goBtn.onclick = null; res(); }; });
+    if(FF > 0){ FF--; BEATS++; setGo(); return Promise.resolve(); }
+    if(SKIP){ SKIP = false; BEATS++; setGo(); return Promise.resolve(); }
+    return new Promise(res => { pend = res; goL = { label:label || 'Next', kind }; setGo(); setTimeout(() => { try{ goBtn.focus({ preventScroll:true }); }catch(e){} }, 30); }); }
+  function next(){
+    if(pend){ const r = pend; pend = null; goL = null; BEATS++; setGo(); r(); return; }
+    if(HOLD > 0) return;
+    SKIP = true; T += 1e7; [...ticks].forEach(f => f(T));   // what is playing now ends at once; the rest of the beat is instant
+  }
+  function back(){ if(BEATS < 1) return; replay(BEATS - 1); }
+  async function decide(p){ if(!Y1) return p; const i = DN++;
+    if(FF > 0 && i < ANS.length) return ANS[i];   // replaying for Back: the choice already made
+    FF = 0; SKIP = false;   // a choice not made yet: a replay or a skip (Next mid-beat) stops here and waits for it
+    HOLD++; setGo(); try{ const v = await p; ANS[i] = v; ANS.length = i + 1; return v; } finally { HOLD--; setGo(); } }
   function done(extra){
     const msg = Object.assign({ type:'briefing-done', id:B.id || (document.body.dataset && document.body.dataset.brief) || '' }, extra || {});
     if(window.parent && window.parent !== window) window.parent.postMessage(msg, '*');
@@ -433,6 +466,6 @@ const K = (() => {
     return { g, x:o.x, y:o.y, w, h:hh, set:(x, ms) => { const f = val; val = x; return count(v, f, x, ms === undefined ? 700 : ms, money); }, text:v };
   }
 
-  return { B, RM, s, h, at, txt, start, pause, mark, caption, question, cont, done, call, chips, rail, count, wait, tween, every, pos,
+  return { B, RM, y1:Y1, s, h, at, txt, start, run, decide, fast, pause, mark, caption, question, cont, done, call, chips, rail, count, wait, tween, every, pos,
     terminal, apron, plane, person, walk, priceTag, gate, stack, tank, vault, coins, board, piece, flat:FLAT, money, num, esc, clamp, lerp, layers:() => layers, hud:() => hud, svg:() => svg, defs:() => defs, isPaused:() => paused };
 })();
