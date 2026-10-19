@@ -246,7 +246,7 @@ function ashChangeSpec(ch, i, n){
     rows = [{ r:1, t:'hdr' }, { r:2, label:'Passengers a day', ic:'person' }, { r:3, label:'Empty seats', ic:'person' }, { r:4, label:'Fare', ic:'tag' }, { r:5, label:'Ticket revenue a day', ic:'coins', gold:true, words:'Ticket revenue a day' }, { r:6, label:'Over a week (× 7)', ic:'cal', gold:true }, { r:7, t:'gap' }, { r:8, label:'Worth keeping?', ic:'scale', t:'tot' }];
     Object.assign(v, { B2:{ t:num(ra.pax), bar:sa ? ra.pax / sa : null }, C2:{ t:num(rb.pax), bar:sb ? rb.pax / sb : null }, D2:{ t:ashSigned(rb.pax - ra.pax) }, B3:{ t:num(Math.max(0, sa - ra.pax)) }, C3:{ t:num(Math.max(0, sb - rb.pax)) }, D3:{ t:ashSigned((sb - rb.pax) - (sa - ra.pax)) },
       B4:{ t:money(ch.f0) }, C4:{ t:money(ch.f1) }, D4:{ t:ashSigned(ch.f1 - ch.f0, true) }, B5:{ t:money(t0), f:true }, C5:{ t:money(t1), f:true }, B6:{ t:money(t0 * 7), f:true }, C6:{ t:money(t1 * 7), f:true } });
-    if(done){ v.D5 = { t:ashSigned(d, true), cls:d > 0 ? 'pos' : '', fin:!!C.shown }; v.D6 = { t:ashSigned(d * 7, true), f:true, cls:d > 0 ? 'pos' : '' }; v.D8 = { t:d > 0 ? `✓ Yes, ${ashSigned(d, true)} a day` : `Not worth keeping: ${ashSigned(d, true)} a day`, cls:d > 0 ? 'pos' : '' }; }
+    if(done){ v.D5 = { t:ashSigned(d, true), cls:d > 0 ? 'pos' : '', fin:!!C.shown }; v.D6 = { t:ashSigned(d * 7, true), f:true, cls:d > 0 ? 'pos' : '' }; v.D8 = { t:d > 0 ? `✓ Yes, ${ashSigned(d, true)} a day` : `Not worth keeping: ${ashSigned(d, true)} a day`, cls:d > 0 ? 'pos' : '', wide:'B' }; }
     words = `the ${r.city} fare ${money(ch.f0)} → ${money(ch.f1)}`;
     sum = { tgt:'D5', refs:['C5', 'B5'], vals:[t1, t0], want:d, rowW:'ticket revenue a day', ptrRow:5 }; }
   else { const pa = La.v, pb = Lb.v, fl = p => normPlan(p).fleet.reduce((t, x) => t + x.sched.length, 0), sa = La.seats || 0, sb = Lb.seats || 0, d = pb.profit - pa.profit; gain = d;
@@ -257,7 +257,7 @@ function ashChangeSpec(ch, i, n){
       B4:{ t:num(Math.max(0, sa - La.pax)) }, C4:{ t:num(Math.max(0, sb - Lb.pax)) }, D4:{ t:ashSigned((sb - Lb.pax) - (sa - La.pax)) }, B5:{ t:money(pa.rev), f:true }, C5:{ t:money(pb.rev), f:true }, D5:{ t:ashSigned(pb.rev - pa.rev, true) },
       B6:{ t:money(pa.cost), f:true }, C6:{ t:money(pb.cost), f:true }, D6:{ t:ashSigned(pb.cost - pa.cost, true) }, B7:{ t:money(pa.profit), f:true, cls:pa.profit < 0 ? 'soft' : '' }, C7:{ t:money(pb.profit), f:true, cls:pb.profit < 0 ? 'soft' : '' },
       B8:{ t:money(pa.profit * 7), f:true, cls:pa.profit < 0 ? 'soft' : '' }, C8:{ t:money(pb.profit * 7), f:true, cls:pb.profit < 0 ? 'soft' : '' } });
-    if(done){ v.D7 = { t:ashSigned(d, true), cls:d > 0 ? 'pos' : '', fin:!!C.shown }; v.D8 = { t:ashSigned(d * 7, true), f:true, cls:d > 0 ? 'pos' : '' }; v.D10 = { t:d > 0 ? `✓ Yes, ${ashSigned(d, true)} a day` : `Not worth keeping: ${ashSigned(d, true)} a day`, cls:d > 0 ? 'pos' : '' }; }
+    if(done){ v.D7 = { t:ashSigned(d, true), cls:d > 0 ? 'pos' : '', fin:!!C.shown }; v.D8 = { t:ashSigned(d * 7, true), f:true, cls:d > 0 ? 'pos' : '' }; v.D10 = { t:d > 0 ? `✓ Yes, ${ashSigned(d, true)} a day` : `Not worth keeping: ${ashSigned(d, true)} a day`, cls:d > 0 ? 'pos' : '', wide:'B' }; }
     words = 'your timetable change';
     sum = { tgt:'D7', refs:['C7', 'B7'], vals:[pb.profit, pa.profit], want:d, rowW:'profit a day', ptrRow:7 }; }
   const key = 'chg:' + ch.key, d = sum.want;
@@ -281,6 +281,7 @@ function ashChangeSpec(ch, i, n){
       text:[`You changed ${esc(words)}. The sheet puts Now next to With your change. The Difference column shows what the change is worth.`], rule:'Difference = <i>A</i> With your change − <i>B</i> Now' } };
   const J = UI.ashJust && UI.ashJust.sheet === 'changes:' + ch.key ? S1 : null, act = !done && !J ? S1 : null;
   const meaning = gain > 0 ? `<b class="pos">${ashSigned(gain, true)} a day</b>, ${ashSigned(gain * 7, true)} a week: the change is worth keeping.` : gain < 0 ? `The change loses ${money(Math.abs(Math.round(gain)))} a day (${ashSigned(gain * 7, true)} a week): it isn't worth keeping. Back returns to the plan to undo it or try something else.` : 'The change makes no difference a day.';
+  if(J) J.val = ashSigned(d, true);
   if(J) J.doneLine = C.shown ? `Finance has filled this one in: ${ashSigned(d, true)} a day. Copy it into your book beside Sum ${S1.no}. ${meaning}` : `${meaning} · Sum ${S1.no} in your record`;
   return { id:'changes:' + ch.key, crumb:nm + (n > 1 ? ` · change ${i + 1} of ${n}` : ''), title:'Is the change worth it?', tabs:ashTabs('changes'), lw:250, cols, rows, v, sums:[S1], act, just:J,
     doneF:!act && !J ? Object.assign({}, { tgt:sum.tgt, refs:sum.refs, ops:['−'], words:'With your change − Now', val:ashSigned(d, true) }) : null, doneLine:`<span class="pos">✓</span> ${meaning}`, ch };
@@ -320,7 +321,7 @@ function ashTableSpec(t, o){
         hints:() => ashHintsFor(o.rel || (op === '−' ? 'revenue − costs' : 'passengers × fare'), op, a, b, val, r.unit === '£'), how2:() => ashHowFor(op, a, b, unitB, `${lab} = ${ops.map(x => (o.labels && o.labels[x.id]) || operandLabel(t, x.id)).join(` ${op} `)}`),
         co:o.co ? o.co(r, ref, rowNo) : null })); } }); });
   const J = UI.ashJust && UI.ashJust.sheet === (o.id || t.id) ? sums.find(s => s.id === UI.ashJust.sum) : null, act = J ? null : sums.find(s => !s.done) || null;
-  if(J){ J.doneLine = (J.shown ? `Finance has filled this one in: ${esc(J.answerText)}. Copy it into your book beside Sum ${J.no}.` : `${J.doneLine} · Sum ${J.no} in your record`) + (UI.ashJust.note ? ` <span class="ash-whole">${esc(UI.ashJust.note)}</span>` : ''); }
+  if(J){ J.val = J.answerText; J.doneLine = (J.shown ? `Finance has filled this one in: ${esc(J.answerText)}. Copy it into your book beside Sum ${J.no}.` : `${J.doneLine} · Sum ${J.no} in your record`) + (UI.ashJust.note ? ` <span class="ash-whole">${esc(UI.ashJust.note)}</span>` : ''); }
   // all done: the formula bar keeps the last sum, with its answer
   const L = !act && !J && sums.length ? sums[sums.length - 1] : null;
   return { id:o.id || t.id, crumb:o.crumb, title:o.title, tabs:o.tabs, small:!!o.small, lw:o.lw || 265, cols, rows, v, sums, act, just:J, doneLine:o.doneLine ? o.doneLine(sums) : '',

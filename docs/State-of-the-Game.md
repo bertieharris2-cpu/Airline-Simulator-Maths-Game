@@ -10,6 +10,33 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zd. Year one on the Sheet (Claude Design handover 19 Oct 2026, evening)
+
+Every year-one sum is on one Sheet component, and the briefings have no guesses. Year one only (`ashOn()`, `yearOne()`, `body.yr1`); from day 365 everything is as before. Report: `docs/Year-One-Sheet-Report.md`; screenshots: `docs/screenshots/evening-19oct/`.
+- **Files.** `parts/p5t_sheet.js` (the Sheet: grid, formula bar, cell-click builder, Sheet Callout, the two tries), `p5u_sheet_pages.js` (the Launch Day sheet, the Studio's changes, the Changes tab, the event sums and the Monday sheet, `R.workings` in year one), `p5v_sheet_more.js` (the Fuel desk from Launch Day, the order's small sheet, the Sunday review), styles in `p1_head_sheet.css`. They only reassign, so `overrides.txt` stays at 120.
+- **Test hooks.** `window.__ash = { plan, go, live, seen }`:
+  - `plan()` returns the sum on screen: its sheet, target cell, number, whether it is a Build, the cells and operators still to click, the answer, and whether a callout is up.
+  - `go(P, value)` presses Got it, or builds the sum and types the answer.
+  - The teacher's test kit has recipes for a sum on the sheet, Next sum and the Changes tab's Next (`window.__tkSums`).
+- **The Launch Day sheet** (`ashLaunchSpec`): columns from the day's tables (the market's three fares, the other route, Your plan), rows 1–13. Fuel burned is the day's (£0 on Launch Day); nothing about fuel is asked.
+- **The Studio**: `dsWorth` returns nothing and the Worth Sum Callout is removed in year one. `setPlan` keeps an undo list for the plan step (the Change row's Undo). The go button reads Work out my plan.
+- **The Changes tab** (`ashChanges`, `ashChangeSpec`): the plan when the Studio first opened that day (`S.rnd.planWas`) against the plan now. Each fare change on a route already flown is its own sheet (D5 = C5 − B5); anything else is one timetable sheet (D7 = C7 − B7). The answer keeps the change's worth for the teacher (`dsWorthKeep`, with the route the change touched).
+- **The Fuel desk from Launch Day** (Settings `fuelDeskOpensDay`): `deskModeAt`, `fuelContract`, `moduleOn` and the Launch Day steps open it on day 1. Week 1's need counts only the days that pay (Wednesday on). An order on a free day is a forward order: it goes into the tank at once, at Wednesday's price, and is paid from cash when it arrives (`S.fuelDue`). The order's sum is a small sheet (`ashFoSpec`); orders go on the Fuel tab.
+- **The Sunday review** (`ashReviewRender`): three columns, the week's sheet in the middle with Days flown, every sum clicked then typed into its cell; D87's words for the missed profit follow the sign-off.
+- **Sums from the workbook.** The SheetSums sheet (`WB.sheetSums`, read by `ashSum(id)`) says whose each sum is and how it is done; hints come from WorkingMethods' hint templates.
+- **Briefings.** The kit (`briefings/kit/brief-kit.js`), in year one (`kitFlat`) and on a page opened on its own:
+  - the Show · Reveal · Use stepper (`K.mark(0|1|2)`), with Back and Next always there;
+  - `K.run(body)` replays a scene to the beat before for Back;
+  - `K.decide(promise)` holds Next while an Operations Request or a Briefing 13 choice is open, and remembers the choice for a replay;
+  - test hooks `K.waiting()`, `K.held()` and `K.beats()`.
+
+  The taps, drags and guesses are gone from every year-one scene. Cash, tank, profit is version A, on the workbook's example. What a fare does has beat 5 without buttons and beat 6 design B.
+- **Fixed on the way.**
+  - **The run board's Aircraft shop, in every chapter (verified).** The button worked while the day still showed "is flying". A plane bought then moved its services before that day flew, so the day lost them: in the fleetshop test, Tuesday's Dublin flight. `openShopNow` now flies the day first (`runDayQuick`; it stops there if the airline closed), and then opens the shop.
+  - **What a fare does, beat 6:** the closing line wraps (`.work .ln.w`) instead of running past the working panel.
+  - **Chapter 2's day-127 check:** v6.0's fuel (£1.73 on 6 January) is within 50p of a chapter-1 pupil's last order, so Premium's first fuel order is a Build. The test now follows that rule.
+- **Known:** HQ is 3–4 px too tall on day 8 in most week runs (since 18 Oct), and once tonight on day 303.
+
 ## 0zc. What a fare does, rebuilt (Claude Design handover 19 Oct 2026, D104)
 
 - **Page.** `briefings/briefing-fare.html` is the clickable mock-up's 1366 × 768 stage, scaled to the frame, in seven beats (Show ×4, Notice, Reveal, Use; design A for beats 2 and 6). It has its own header, stepper and caption band. It does not use the kit's `K.start` frame, but it does use `K.B`, `K.done`, `K.RM` and the kit's flat Twin Otter with the pupil's tail colour.

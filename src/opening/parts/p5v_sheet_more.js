@@ -142,7 +142,7 @@ function ashReviewSpec(W, items){
   const total = rbValue(T), proj = Math.round(W.projected || 0), ok = id => rbState(store, id).ok;
   v['B' + rProj] = { t:money(proj) }; if(M) v['B' + rDays] = { t:num(M.div) };
   if(ok('tot')) v['B' + rTot] = { t:money(total), cls:total < 0 ? 'soft' : '', fin:!!rbState(store, 'tot').ashown };
-  if(ok('diff')) v['B' + rDiff] = { t:rbResultWords(D), fin:!!rbState(store, 'diff').ashown };
+  if(ok('diff')) v['B' + rDiff] = { t:rbValue(D) ? rbResultWords(D).replace(/ than .*$/, '') : 'On plan', fin:!!rbState(store, 'diff').ashown };   // "£813 less": the row's label says from what; the line under the sheet has the whole sentence
   if(M && ok('mean')) v['B' + rMean] = { t:money(rbValue(M)), fin:!!rbState(store, 'mean').ashown };
   const larger = proj >= total ? 'B' + rProj : 'B' + rTot, smaller = larger === 'B' + rProj ? 'B' + rTot : 'B' + rProj;
   const mk = (it, o) => { const st = rbState(store, it.id), key = 'rb:' + it.id;
@@ -156,10 +156,10 @@ function ashReviewSpec(W, items){
         return { note:ashWrong(it.kind === 'sum' ? '+' : it.kind === 'diff' ? '−' : '÷', it.kind === 'mean' ? [it.total, it.div] : it.kind === 'diff' ? [Math.max(proj, total), Math.min(proj, total)] : [], val, want, '£') }; },
       hints:() => ashHintFill("week's total and the mean", {}).map(t => ({ t })).concat([{ t:`Check: about ${money(ashRound(rbValue(it)))}.`, est:true }]),
       how2:() => '', answerText:it.kind === 'diff' ? rbResultWords(it) : money(rbValue(it)), rule:o.rule }, o); };
-  const sums = [mk(T, { title:'Profit this week', tgt:'B' + rTot, refs:days.map(d => 'B' + rowOf['d' + d]), ops:days.slice(1).map(() => '+'), words:days.map(d => rbShort(d)).join(' + '), commute:true, how:ashSum('week.total').how === 'book' ? 'book' : 'build',
+  const sums = [mk(T, { title:'Profit this week', tgt:'B' + rTot, refs:days.map(d => 'B' + rowOf['d' + d]), ops:days.slice(1).map(() => '+'), words:days.length > 3 ? `${rbShort(days[0])} + … + ${rbShort(days[days.length - 1])}` : days.map(d => rbShort(d)).join(' + '), commute:true, how:ashSum('week.total').how === 'book' ? 'book' : 'build',
       rule:`Profit this week = add the ${['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'][days.length] || days.length} days`, name:'the profit this week', doneLine:`Profit this week: <b class="gold">${money(total)}</b>`,
       why:ref => ashRef(ref).r > rTot ? 'That is below the days. This week\'s profit adds up the days: which cells hold them?' : null }),
-    mk(D, { title:'Difference from the plan', tgt:'B' + rDiff, refs:[larger, smaller], ops:['−'], words:larger === 'B' + rProj ? 'Projected on Monday − Profit this week' : 'Profit this week − Projected on Monday', commute:false, how:ashSum('week.difference').how === 'book' ? 'book' : 'build',
+    mk(D, { title:'Difference from the plan', tgt:'B' + rDiff, refs:[larger, smaller], ops:['−'], words:larger === 'B' + rProj ? 'Projected − Profit this week' : 'Profit this week − Projected', commute:false, how:ashSum('week.difference').how === 'book' ? 'book' : 'build',
       rule:'Difference = the larger − the smaller', name:'the difference from the plan', orderWhy:'a difference starts from the larger amount, so it doesn\'t go below zero.', doneLine:`Difference from the plan: <b class="gold">${esc(rbResultWords(D))}</b>`,
       why:ref => { const p = ashRef(ref).r; return p !== rProj && p !== rTot ? 'The difference compares what was planned with what happened: which two cells are those?' : null; } })];
   if(M) sums.push(mk(M, { title:'Average a day', tgt:'B' + rMean, refs:['B' + rTot, 'B' + rDays], ops:['÷'], words:'Profit this week ÷ Days flown', commute:false, how:ashSum('week.average').how === 'book' ? 'book' : 'build',
@@ -170,7 +170,7 @@ function ashReviewSpec(W, items){
   if(J) J.doneLine = J.shown || rbState(store, J.id.split(':').pop()).ashown ? `Finance has filled this one in: ${esc(J.answerText)}. Copy it into your book beside Sum ${J.no}.` : `${J.doneLine} · Sum ${J.no} in your record`;
   const last = sums[sums.length - 1];
   return { id:'week:' + wk, crumb:'', title:'The week, day by day', tabs:null, small:true, tight:true, lw:220, cols:[{ c:'B', w:170, top:fmtRange(W.from, W.from + 6), main:'Profit' }], rows, v, sums, act, just:J,
-    doneF:!act && !J ? { tgt:last.tgt, refs:last.refs, ops:last.ops, words:last.words, val:last.answerText } : null, doneLine:`<span class="pos">✓</span> Week ${wk}'s accounts are signed off.` };
+    doneF:!act && !J ? { tgt:last.tgt, refs:last.refs, ops:last.ops, words:last.words } : null, doneLine:`<span class="pos">✓</span> Week ${wk}'s accounts are signed off.` };   // no answer in this narrow bar: it is in the cell
 }
 function ashReviewRender(st){
   const W = S.wk || { from:S.day - 6, rows:[], projected:0 }, h = weekSummary(W), items = weekReviewItems(W, h), wk = weekNo(W.from);

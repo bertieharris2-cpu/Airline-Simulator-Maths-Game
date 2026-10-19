@@ -56,7 +56,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
     if(t === 'intro'){ for(let pg = 0; pg < 3; pg++) if(await p.$('#niNext')) await p.click('#niNext'); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled).catch(() => false); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); return t; }
     if(t === 'event'){ for(let i = 0; i < 8 && await p.$('[data-seep]'); i++) await p.click('[data-seep]'); await p.click('[data-o="0"]').catch(() => {}); await p.click('#nx'); return t; }
     if(t === 'workings' && await vis('.so-page')){ await signs(); await p.waitForTimeout(300); await p.click('#nx'); return t; }
-    if(t === 'workings'){ await solveW(); await p.click('#nx'); return t; }
+    if(t === 'workings'){ await solveW(); if(await vis('.so-page')) return t; await p.click('#nx'); return t; }   // the Changes tab first, then the week's Sign-offs page
     if(t === 'fuelDesk'){ const bn = await p.$('[data-fdb="2"]:not([disabled])'); if(bn){ await bn.click(); await p.waitForTimeout(60);
         await ashSolve(); if(await p.$('#foChk')){ const FO = JSON.parse(await E('JSON.stringify(foPlan())')); if(FO.level === 'build'){ for(const x of FO.seq) await p.click(x === '×' ? '[data-foop="×"]' : `[data-fofig="${x}"]`); } else await p.fill('#foIn', FO.answer); await p.click('#foChk'); await p.waitForTimeout(60); }
         if(await p.$('#fdBuy:not([disabled])')) await p.click('#fdBuy'); await p.waitForTimeout(80); } await p.click('#nx'); return t; }

@@ -56,7 +56,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
       if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.evaluate(() => window.__tk.answer(true)); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } continue; }   // flight times before the timetable
       if(t === 'plan'){ await shot(`${tag}-plan`); await p.click('#nx'); continue; }
       if(t === 'workings' && await p.$('.so-page')){ await shot(`${tag}-signoffs`); typed = typed.concat(await signs()); await p.click('#nx'); await p.waitForTimeout(80); continue; }   // v4.9: the week's Build cards and flight-time sums before the sheet
-      if(t === 'workings'){ typed = typed.concat(await solveW()); await shot(`${tag}-workings`); await p.click('#nx'); continue; }
+      if(t === 'workings'){ typed = typed.concat(await solveW()); await shot(`${tag}-workings`); if(await p.$('.so-page')) continue; await p.click('#nx'); continue; }   // the Changes tab first, then the week's Sign-offs page
       if(t === 'fuelPlan'){ if(await p.$eval('#nx', e => e.disabled)) await p.click('[data-oq]:nth-child(2)'); await p.click('#nx'); continue; }
       if(t === 'fuelDesk'){ await shot(`${tag}-fueldesk`); await p.click('#nx'); continue; }
       if(t === 'ready'){ const en = await p.$eval('#startOps', e => !e.disabled); ok(`${tag}: ready to fly`, en); if(!en) break; await p.click('#startOps'); continue; }

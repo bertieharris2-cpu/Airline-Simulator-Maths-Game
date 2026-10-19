@@ -153,6 +153,7 @@
 /* a small sheet inside a desk panel (the Fuel desk's order): the same parts, closer together */
 .ash.ash-tight{padding:8px 12px 8px;min-width:0}
 .ash.ash-tight .ash-fb{height:30px;margin-bottom:6px}
+.ash.ash-tight .ash-nb{width:50px}.ash.ash-tight .ash-fm{gap:10px;padding:0 10px}.ash.ash-tight .ash-f{font-size:14.5px}.ash.ash-tight .ash-w{font-size:12.5px}   /* the narrow bars (the review, the fuel order): room for the formula and its words */
 .ash.ash-tight .ash-line{margin:6px 0 0 30px;font-size:13px}
 .ash.ash-tight .ash-c.av{font-size:14.5px}
 .ash.ash-tight .ash-c.al{font-size:14px}

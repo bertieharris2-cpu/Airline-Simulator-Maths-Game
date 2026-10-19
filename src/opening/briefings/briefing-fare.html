@@ -79,6 +79,7 @@ html,body{margin:0;height:100%;background:#020812;overflow:hidden}
 .work{position:absolute;border:1px solid rgba(65,122,171,.45);background:#05152b;padding:16px 22px}
 .work .ln{font-size:26px;font-weight:600;line-height:1.45;transition:opacity .4s;white-space:nowrap}
 .work .ln.s{font-size:20px;color:var(--soft);font-weight:500}
+.work .ln.w{white-space:normal;text-wrap:balance}
 
 /* fare slider */
 .fr{position:absolute;-webkit-appearance:none;appearance:none;height:30px;background:transparent;cursor:pointer;margin:0}
@@ -420,7 +421,7 @@ function step6(k){
     setCap(DIFF ? `The ${money(BIGF)} plane makes <span class="g">${money(DIFF)} more</span>.` : 'The two planes make the same.'); }
   if(k === 4){ lit(5); fbar('B5', '= ' + dA.replace(/([BC]4)/g, '<b>$1</b>'), 'Ticket money: ' + dW);
     const head = big === 'b' && PB < PA ? `${SEATS1 - PB === 1 ? 'One empty seat' : num(PA - PB) + ' fewer passengers'}, but <span class="gold">${money(DIFF)} more</span> ticket money.` : `The ${money(BIGF)} plane: <span class="gold">${money(DIFF)} more</span> ticket money.`;
-    lines([[head], ["A full plane isn't always the most money.", 's']]);
+    lines([[head, 'w'], ["A full plane isn't always the most money.", 's']]);
     setCap("A full plane isn't always the most money. <b>Compare the ticket money.</b>"); setNext('Next &#9654;'); }
 }
 /* Next before a step's animation ends: finish it at once */

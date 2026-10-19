@@ -29,13 +29,14 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   // answer is worked out in the book, typed into its cell and Enter checks it. The first answer is ten times out once; Launch Day's profit is wrong twice (Finance fills
   // it in); the first Build gets a wrong operation once. Returns true when it did something.
   let ashQ = false, ashFin = false, ashB = false, ashChg = false;
+  const ashSel = id => `[data-ash="${String(id).replace(/["\\]/g, '\\$&')}"]`;   // a timetable change's sheet id holds the plan's key, quotes and all
   const sheetW = async (tag, seen) => { const P = await p.evaluate(() => window.__ash && window.__ash.plan());
     if(!P){ if(await p.$('#ashNext:not([disabled])')){ await p.click('#ashNext'); await p.waitForTimeout(60); return true; }
       if(await p.$('#ashChgGo')){ if(!ashChg){ ashChg = true; const w = await p.$$eval('[data-ash^="changes:"] .ash-c[data-ref="D8"], [data-ash^="changes:"] .ash-c[data-ref="D10"]', es => es.map(e => e.textContent.replace(/\s+/g, ' ').trim()));
           ok(`${tag}: the Changes tab: Worth keeping? says so in words once the difference is in`, w.some(x => /^✓ Yes, \+£[\d,]+ a day$|^Not worth keeping: −£[\d,]+ a day$/.test(x)), w); await shot('changes-done'); }
         await p.click('#ashChgGo'); await p.waitForTimeout(80); return true; }
       return false; }
-    const R = `[data-ash="${P.sheet}"]`, kind = P.sheet.split(':')[0], line = () => p.$eval(`${R} .ash-line`, e => ({ q:e.classList.contains('q'), t:e.textContent.replace(/\s+/g, ' ').trim() })).catch(() => ({ t:'' }));
+    const R = ashSel(P.sheet), kind = P.sheet.split(':')[0], line = () => p.$eval(`${R} .ash-line`, e => ({ q:e.classList.contains('q'), t:e.textContent.replace(/\s+/g, ' ').trim() })).catch(() => ({ t:'' }));
     if(P.co){ seen.push(kind + ':' + P.tgt + ' callout'); await p.click(`${R} [data-ashgot]`); await p.waitForTimeout(60); return true; }
     if(kind === 'changes' && !seen.includes('changes formula')){ seen.push('changes formula'); const want = P.tgt === 'D5' ? 'C5 − B5' : 'C7 − B7';
       ok(`${tag}: a plan change is worked out on the Changes tab: ${P.tgt} = ${want} (With your change − Now, 7.4)`, ['D5', 'D7'].includes(P.tgt) && (!P.build || P.seq.map(x => x.ref || x.op).join(' ') === want), P); await shot('changes-sheet'); }
@@ -395,6 +396,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       await shot(`d${day}-plan`); ok(`plan ${day}: continue enabled`, await p.$eval('#nx', e => !e.disabled), await p.evaluate(() => window.__sim.currentPlan().fleet.map(x => x.sched.join('/') + ' ' + (x.deps || []).join(',')))); await p.click('#nx'); continue; }
     if(t === 'workings' && await vis('.so-page')){ await fits('signoffs ' + day); await shot(`d${day}-signoffs`); await signs('work ' + day); await p.waitForTimeout(700); await shot(`d${day}-signoffs-done`); await p.click('#nx'); await p.waitForTimeout(80); continue; }
     if(t === 'workings'){ await fits('workings ' + day); const typed = await solveW(`work ${day}`); await shot(`d${day}-workings`);
+      if(await vis('.so-page')) continue;   // the Changes tab came first; the week's Sign-offs page follows on the same step
       if(s.phase === 'setup'){ const cells = typed.filter(x => /^launch:[A-Z]\d+$/.test(x)).map(x => x.slice(7));   // year one (handover 19 Oct evening, 7.3): the Launch Day sheet
         ok('launch (year one): every Launch Day sum is a cell on the Launch Day sheet: tickets at three fares (B4, C4, D4) and Dublin\'s (E4) typed from the book, the profit (F9), cabin sales twice (B13, C13), the first built by clicking its cells; no fuel sum (the order is on the Fuel desk, D105)', JSON.stringify(cells) === JSON.stringify(['B4', 'C4', 'D4', 'E4', 'F9', 'B13', 'C13']) && JSON.stringify(typed.filter(x => / build$/.test(x))) === '["launch:B13 build"]', typed);
         const L = await p.evaluate(() => { const r = document.querySelector('[data-ash^="launch:"]'); if(!r) return null; const c = ref => ((r.querySelector(`.ash-c[data-ref="${ref}"]`) || {}).textContent || '').replace(/\s+/g, ' ').trim();
@@ -464,10 +466,10 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     if(t === 'results'){ await shot(`d${day}-results`); await p.click('#nx'); continue; }
     if(t === 'weekRun'){ const d0 = day; for(let k = 0; k < 120 && await T() === 'weekRun' && (await S()).day === d0; k++) await p.waitForTimeout(150); if(d0 !== lastDay){ await shot(`d${d0}-board`); lastDay = d0; } continue; }
     if(t === 'weekReview' && await vis('.ash-rv')){ await fits('review ' + day); await shot(`d${day}-review`); const seen = [];   // year one (3.5): the week's sheet with its formula bar; each sum clicked (a Build), then typed into its cell
-      if(day === 7){ let P = await p.evaluate(() => window.__ash.plan()); for(let g = 0; g < 3 && P && P.co; g++){ await p.click(`[data-ash="${P.sheet}"] [data-ashgot]`); await p.waitForTimeout(60); P = await p.evaluate(() => window.__ash.plan()); }
+      if(day === 7){ let P = await p.evaluate(() => window.__ash.plan()); for(let g = 0; g < 3 && P && P.co; g++){ await p.click(`${ashSel(P.sheet)} [data-ashgot]`); await p.waitForTimeout(60); P = await p.evaluate(() => window.__ash.plan()); }
         const G = await p.evaluate(() => { const r = document.querySelector('.ash-rv [data-ash^="week:"]'); if(!r) return null; return { rows:[...r.querySelectorAll('.ash-c.al .ash-ln')].map(e => e.textContent), b12:((r.querySelector('.ash-c[data-ref="B12"]') || {}).textContent || '').trim(), fb:!!r.querySelector('.ash-fb'), card:((document.querySelector('.ash-rvc') || {}).textContent || '').replace(/\s+/g, ' ').trim() }; });
         ok('review 7 (year one): the week\'s sheet in the middle: the seven days, Profit this week, Projected on Monday, Difference from the plan, Days flown (7) and Average a day, with its formula bar; on the right only the SUM n badge and the rule in words (3.5)', !!G && G.rows.length === 12 && G.rows.slice(7).join('|') === 'Profit this week|Projected on Monday|Difference from the plan|Days flown|Average a day' && G.b12 === '7' && G.fb && /^Sum \d+ ?Profit this week = add the seven days$/.test(G.card), G);
-        if(P && P.build && P.tgt === 'B9'){ const R = `[data-ash="${P.sheet}"]`; await p.click(`${R} [data-ashref="${P.seq[0].ref}"]`); await p.click(`${R} [data-ashop="×"]`); await p.waitForTimeout(60);
+        if(P && P.build && P.tgt === 'B9'){ const R = ashSel(P.sheet); await p.click(`${R} [data-ashref="${P.seq[0].ref}"]`); await p.click(`${R} [data-ashop="×"]`); await p.waitForTimeout(60);
           const L1 = await p.$eval(`${R} .ash-line`, e => ({ q:e.classList.contains('q'), t:e.textContent.replace(/\s+/g, ' ') }));
           ok('review 7: a wrong operation is a question with a plain hint', L1.q && /which operation joins them/.test(L1.t), L1); if(BRIEF) await shot(`d${day}-review-query`);
           for(const x of (await p.evaluate(() => window.__ash.plan())).seq) await p.click(x.ref ? `${R} [data-ashref="${x.ref}"]` : `${R} [data-ashop="${x.op}"]`); await p.waitForTimeout(60);

@@ -25,6 +25,8 @@ function shopClosedWhy(){
 function openShopNow(){
   if(shopClosedWhy()) { toast(shopClosedWhy()); return; }
   if(UI.wkTimer){ clearTimeout(UI.wkTimer); UI.wkTimer = null; }
+  // on the board while the day "is flying": its flights land first, on today's plan (what he buys flies from tomorrow)
+  if(step().t === 'weekRun' && S.wk && S.wk.dayDone !== S.day){ runDayQuick(); publish(); if(S.bust && S.bust.closed){ save(); render(); return; } }
   // the shop's own steps find "the" shop2, so a visit earlier today steps aside
   for(let k = S.si - 1; k >= 0; k--) if(SHOP_CHAIN.includes(S.steps[k].t)){ S.steps.splice(k, 1); S.si--; if(S.rnd.returnTo !== undefined && S.rnd.returnTo > k) S.rnd.returnTo--; }
   const t = step().t;

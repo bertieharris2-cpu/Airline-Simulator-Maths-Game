@@ -57,7 +57,10 @@ function ashInLit(L, ref){ const p = ashRef(ref), ci = ashCol(p.c); return ci >=
 function ashRowLabel(sp, ref){ const p = ashRef(ref), row = sp.rows.find(x => x.r === p.r); return row ? (row.words || row.label || '') : ref; }
 /* the formula so far, in cell names and in words */
 function ashFormula(sp, sum, tokens){
-  const f = tokens.map(t => t.ref ? `<b>${t.ref}</b>` : `<i>${t.op}</i>`).join(''), w = tokens.map(t => t.ref ? (sum.wordsOf ? sum.wordsOf(t.ref) : ashRowLabel(sp, t.ref)) : t.op).join(' ');
+  // a long sum (a week's seven days) keeps its first cell and its latest in view: "= B2 + … + B8"
+  const refs = tokens.filter(t => t.ref); let tk = tokens;
+  if(refs.length > 4){ const i1 = tokens.indexOf(refs[0]), iL = tokens.lastIndexOf(refs[refs.length - 1]); tk = [tokens[i1], tokens[i1 + 1], { gap:true }].concat(tokens.slice(iL - 1)); }
+  const f = tk.map(t => t.gap ? '<i>…</i>' : t.ref ? `<b>${t.ref}</b>` : `<i>${t.op}</i>`).join(''), w = tk.map(t => t.gap ? '…' : t.ref ? (sum.wordsOf ? sum.wordsOf(t.ref) : ashRowLabel(sp, t.ref)) : t.op).join(' ');
   return { f:'= ' + f, w };
 }
 function ashFullTokens(sum){ const out = []; sum.refs.forEach((r, i) => { if(i) out.push({ op:sum.ops[i - 1] }); out.push({ ref:r }); }); return out; }
@@ -77,11 +80,14 @@ function ashHtml(sp){
   const just = sp.just || null;
   let g = `<span class="ash-lt" style="grid-column:1;grid-row:1"></span>` + cols.map(k => `<span class="ash-lt" style="grid-column:${gc[k.c]};grid-row:1">${k.c}</span>`).join('');
   if(L) g += `<div class="ash-lit" style="grid-column:${gc[L[0]]}/${gc[L[2]] + 1};grid-row:${gr[L[1]]}/${gr[L[3]] + 1}"></div>`;
+  // a value that needs its row's width (Worth keeping?) names the column it starts from (V.wide): it spans to its own column, over the empty cells
+  const wide = {}; sp.rows.forEach(row => cols.forEach(k => { const V = (sp.v || {})[k.c + row.r]; if(V && V.wide && gc[V.wide]) wide[row.r] = { from:gc[V.wide], to:gc[k.c] }; }));
   sp.rows.forEach(row => {
-    const t = row.t || 'data', y = gr[row.r];
+    const t = row.t || 'data', y = gr[row.r], W2 = wide[row.r];
     g += `<span class="ash-rn ${L && !(row.r >= L[1] && row.r <= L[3]) ? 'adim' : ''}" style="grid-column:1;grid-row:${y}">${row.r}</span>`;
     cols.forEach(k => {
-      const ref = k.c + row.r, V = (sp.v || {})[ref] || {}, x = gc[k.c];
+      if(W2 && gc[k.c] >= W2.from && gc[k.c] < W2.to) return;   // under the wide cell
+      const ref = k.c + row.r, V = (sp.v || {})[ref] || {}, x = W2 && gc[k.c] === W2.to ? `${W2.from}/${W2.to + 1}` : gc[k.c];
       let cls = 'ash-c', inner = '', attr = '';
       if(t === 'gap'){ g += `<div class="ash-c agap" style="grid-column:${x};grid-row:${y}"></div>`; return; }
       if(t === 'hdr'){ cls += ' ah' + (k.lab ? ' al' : '');
