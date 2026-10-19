@@ -77,6 +77,13 @@ def live(name, rows):
     return keep
 
 
+# v6.0 (D104): a second autumn (track B) for pupils who have played before, and six curveball events with no best answer.
+# The game plays track A (Settings autumnTrack) until the teacher's switch is built; the curveballs wait for their effects.
+D104_PENDING = {'school_trip', 'dub_strike', 'snack_supplier', 'sponsor_club', 'slot_squeeze', 'tanker_offer'}
+def on_track(r, key):
+    t = str(r.get('track') or 'both').strip().lower()
+    return t in ('a', 'both') and r.get(key) not in D104_PENDING
+
 # ---------- small parsers ----------
 def num(s):
     s = str(s).strip().replace('£', '').replace(',', '')
@@ -173,7 +180,9 @@ for a in arche:
                        'timeSensitiveShare': a['timeSensitiveShare'], 'fareSensitivity': a['fareSensitivity'],
                        'businessShare': a['businessShare'], 'growthPerWeek': a['growthPerWeek'], 'growthCeiling': a['growthCeiling'],
                        'season': {s: a['season' + s.title()] for s in ('spring', 'summer', 'autumn', 'winter')},
-                       'story': a['story'], 'status': a['status']})
+                       'story': a['story'], 'status': a['status'],
+                       # v6.0 (D104): growth responds to how the route is served
+                       'growthFillBonus': a.get('growthFillBonus'), 'growthFareDrag': a.get('growthFareDrag'), 'growthDropDecay': a.get('growthDropDecay')})
 
 all_routes = sheet(wb, 'Routes')
 routes = []
@@ -187,7 +196,9 @@ for r in live('Routes', all_routes):
                    # v5.0 (D68): a long-haul route flies out and back the same day or as an overnight rotation; a season override replaces the archetype's
                    'rotation': r.get('rotation') or 'same-day', 'seasonOverride': season_override(r.get('seasonOverride')),
                    # v5.3 (D79): a two-leg route lists its legs and how many days a rotation takes (1 same-day, 2 overnight, 4 two-leg)
-                   'legs': legs(r.get('legs')), 'rotationDays': r.get('rotationDays')})
+                   'legs': legs(r.get('legs')), 'rotationDays': r.get('rotationDays'),
+                   # v6.0 (D104): Paris and Dublin are known from the start; a new route shows a range until it has flown a week
+                   'demandKnown': r.get('demandKnown')})
 
 catalogue = [{'id': r['id'], 'city': r['city'], 'country': r['country'], 'airport': r['code'], 'km': r['distanceKm'],
               'archetype': r['archetype'], 'haul': r['haul'], 'baseFare': r['baseFare'], 'legHours': r['legHours'],
@@ -251,7 +262,9 @@ market = [{'week': m['week'], 'weekStart': m['weekStart'], 'season': m['season']
           for m in live('Market', all_market)]
 
 all_events = sheet(wb, 'Events')
-ev_rows = live('Events', all_events)
+ev_rows = [e for e in live('Events', all_events) if on_track(e, 'eventId')]
+for e_ in sorted({e['eventId'] for e in all_events if e.get('eventId') in D104_PENDING}): issue('check', 'Events', f'{e_}: a D104 curveball event, loaded once its effects are built.')
+if any(str(e.get('track') or '').strip().lower() == 'b' for e in all_events): issue('note', 'Events', 'Track B rows (Events, EventOptions, RouteNews) wait for the teacher\'s autumnTrack switch (D104); the game plays track A.')
 events, by_id = [], {}
 for e in ev_rows:
     x = by_id.get(e['eventId'])
@@ -271,7 +284,7 @@ for e in ev_rows:
 # eventCostScaleFromDay; from then costShare × a day's profit. The game reads these for chapters 2–3 (chapter 1 keeps its Events rows: Bertie, 14 Oct).
 all_eo = sheet(wb, 'EventOptions') if 'EventOptions' in wb.sheetnames else []
 eventOptions = {}
-for o in live('EventOptions', all_eo):
+for o in [o for o in live('EventOptions', all_eo) if on_track(o, 'eventId')]:
     eventOptions.setdefault(o['eventId'], []).append({'n': o['option'], 'label': o['label'], 'sub': o.get('subLine'), 'cash': o.get('cash'),
         'costShare': o.get('costShare'), 'stars': o.get('stars'), 'other': o.get('otherEffect')})
 for v in eventOptions.values(): v.sort(key=lambda x: x['n'])
@@ -391,8 +404,10 @@ if 'Campaign' not in wb.sheetnames: issue('note', 'Campaign', 'no Campaign sheet
 # v4.5 (D56): route news, a demand multiplier on named routes between two dates (announced the week before, or a surprise)
 routeNews = [{'id': r['newsId'], 'announce': r['announceDate'], 'start': r['startDate'], 'end': r['endDate'], 'kind': r.get('kind'),
               'routes': words(r.get('routes') or ''), 'mult': r['demandMultiplier'], 'segment': r.get('segment') or 'all', 'announced': bool(r.get('announced')),
-              'headline': r.get('headline'), 'goodResponse': r.get('goodResponse'), 'status': r['status']}
-             for r in live('RouteNews', opt_sheet('RouteNews'))]
+              'headline': r.get('headline'), 'goodResponse': r.get('goodResponse'), 'status': r['status'],
+              # v6.0 (D90): news in the same week that the pupil chooses between; a festival's 'about' line for the pupil
+              'clashGroup': r.get('clashGroup'), 'about': r.get('aboutForThePupil') or r.get('about')}
+             for r in live('RouteNews', opt_sheet('RouteNews')) if on_track(r, 'newsId')]
 if 'RouteNews' not in wb.sheetnames: issue('error', 'RouteNews', 'no RouteNews sheet: the world report has no route news.')
 # Livery (v4.3 draft, CR5): the paint shop's fixed choices, grouped by kind
 all_livery = opt_sheet('Livery')

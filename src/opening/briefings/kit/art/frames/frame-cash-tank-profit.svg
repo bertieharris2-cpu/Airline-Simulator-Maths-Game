@@ -103,5 +103,5 @@
 <!-- briefing caption -->
 <text x="80" y="54" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="1.32" fill="#36c6ff">OPERATIONS BRIEFING</text>
 <text x="80" y="92" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="34" font-weight="600" fill="#eaf2ff">Cash, tank, profit</text>
-<text x="80" y="124" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="19" fill="#9fbde3">Buying fuel moves cash into the tank. Profit doesn't change until the fuel is used.</text>
+<text x="80" y="124" font-family="Segoe UI Variable Text, Segoe UI, system-ui, sans-serif" font-size="19" fill="#9fbde3">Fuel you buy waits in your tank. Each day pays for the fuel it burns.</text>
 </svg>

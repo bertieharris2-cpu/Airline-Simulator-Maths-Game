@@ -142,7 +142,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
     checks.push('stopped at ' + t + ' day ' + day); await shot('fs-stop'); break; }
   s = await S(); const H = s.history || [], sf = s.fleet[1];
   ok('the airline ends week 2 with two aircraft', s.fleet.length === 2, s.fleet.map(f => f.planeId));
-  if(rented && sf){ const flew = d => (s.record ? 0 : 0) + H.filter(h => h.from === d).length; info.days = H.filter(h => h.from >= 9 && h.from <= 14).map(h => ({ d:h.from, trips:h.trips, seats:h.seats, pax:h.pax, cost:Math.round(h.costs || 0), routes:Object.keys(h.routes || {}).map(k => k + ':' + (h.routes[k].trips || 0)) }));
+  if(rented && sf){ const flew = d => (s.record ? 0 : 0) + H.filter(h => h.from === d).length; info.days = H.filter(h => h.from >= 8 && h.from <= 14).map(h => ({ d:h.from, trips:h.trips, seats:h.seats, pax:h.pax, cost:Math.round(h.costs || 0), routes:Object.keys(h.routes || {}).map(k => k + ':' + (h.routes[k].trips || 0)) }));
     const d9 = H.find(h => h.from === rented.day), d10 = H.find(h => h.from === rented.day + 1); ok('the purchase day costs what the day before cost; from the next day the second Twin Otter flies and is paid for', !!(d9 && d10 && d10.seats > d9.seats && Math.round(d10.costs) > Math.round(d9.costs) && Math.round(d9.costs) === Math.round((H.find(h => h.from === rented.day - 1) || {}).costs || -1)), info.days); }
   ok('the pad\'s working is kept in the pupil record', /true/.test(info.padRecord || ''), info.padRecord);
   // the free pad, from the top bar, on any screen

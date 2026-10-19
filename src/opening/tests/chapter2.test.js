@@ -3,7 +3,7 @@
 // CODE is a save code at chapter 1's review, written by: UPTO=200 SAVE=<file> node week.test.js
 // The pupil carries on from chapter 1's end: Christmas and New Year fly by themselves, then on Monday 6 January 2031 they
 // lease a Boeing 757 and fly New York at £510 at 06:30. Checked: the long-haul block and the local-time arrival, the
-// refused second service, Balance Report v5.0 §2 (£47,426 a day for a full 757 at £510, within £10), the week's run and
+// refused second service, Balance Report v5.0 §2 (a full 757 at £510: £52,871 a day at v6.0's £1.73 fuel, within £10), the week's run and
 // review, the overnight rotation (Delhi, tried early), growth from the opening week, and the beats on to February.
 // Push 3: the events with options (a choice per event and type: CHOICE), a month that pauses on the event's day, the
 // ash cloud's closure, the Captain's challenges (Value says Not today first, then plays it from HQ) and the hunts (Value
@@ -227,8 +227,8 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
         info.bags = JSON.parse(await E("JSON.stringify((() => { const X = dayExtras(planFlights()); return { bags:X.bags, bagRev:X.bagRev, nyc:(X.byRoute.nyc || {}).bags, nycPax:(X.byRoute.nyc || {}).pax }; })())"));
         if(TYPE === 'value') ok('Value: the Bags line: passengers × 4 tenths × £20 on every route (New York: 200 × 0.4 = 80 bags × £20 = £1,600)', info.bags.nyc === 80 && info.bags.nycPax === 200 && info.bags.bagRev === info.bags.bags * 20 && info.bags.bags > 80, info.bags);
         else ok(`${TYPE}: no bag fee`, !info.bags.bagRev, info.bags);
-        ok('Balance Report v5.0 §2: a full 757 to New York at £510 makes £47,426 a day (within £10)', full && Math.abs(full.profit - 47426) <= 10, full);
-        ok('the lines: 12,375 L at £2.17, 12.5 h at £1,600, landing £520, £5 a passenger, £500 crew, £4,200 day cost, £1,500 rent', full && full.fuelL === 12375 && full.ppl === 2.17 && full.fly === 20000 && full.land === 520 && full.pax === 1000 && full.crew === 500 && full.day === 4200 && full.rent === 1500, full);
+        ok('Balance Report v5.0 §2 at v6.0\'s fuel (£1.73 on 6 Jan 2031): a full 757 to New York at £510 makes £52,871 a day (within £10)', full && Math.abs(full.profit - 52871) <= 10, full);
+        ok('the lines: 12,375 L at £1.73 (v6.0), 12.5 h at £1,600, landing £520, £5 a passenger, £500 crew, £4,200 day cost, £1,500 rent', full && full.fuelL === 12375 && full.ppl === 1.73 && full.fly === 20000 && full.land === 520 && full.pax === 1000 && full.crew === 500 && full.day === 4200 && full.rent === 1500, full);
         await shot('c2-08-day128-board'); }
       for(let k = 0; k < 150 && await T() === 'weekRun' && (await S()).day === d0; k++) await p.waitForTimeout(150); continue; }
     if(t === 'weekReview' && await vis('.rbw')){ await shot(`c2-d${day}-weekreview`); if(day === 133){ const x = await txt('#screen'); ok('day 133: the first long-haul week\'s review: the seven days, the total and projected − actual', /How did week 19 go/.test(x), x.slice(0, 160)); }

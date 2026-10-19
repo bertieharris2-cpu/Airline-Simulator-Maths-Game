@@ -66,16 +66,19 @@ BertieV4 is an airline-management simulator for upper-primary pupils (Years 5–
 
 ## Maths in the airline
 
-- Sums live inside the business context in a **Calculation Instrument**: dark instrument surface, focus rail, integrated recessed answer field (`radius-field`, `field-inset`, cyan caret), the unknown highlighted.
-- When solved: the "?" becomes the answer, lights `green` once (`t-result`), the airline value it feeds updates and lights too — "my calculation changed the airline".
-- Worked examples sit behind "Show me how" / "Give me a hint", and use exactly the structure of the pupil's own sum. No grid method.
-- **The Week 1 flow for every sum** (decided 18 Oct 2026): 1 build the sum from four figure tiles and an operation → 2 work it out in the book and type the answer → 3 done. The screen never asks for working. Decoy tiles are always real figures from the same screen. See **Calculation Builder**.
-- **Sum number.** Every sum has a number (SUM n, gold badge) that links the screen, the pupil's book and the printed learning record. It appears in the working panel, in the "work it out in your book" strip, and as a small gold tag in the sheet cell it fills.
-- **Work it out page:** one centred column: the figures sheet and its panel as one object (640px), the working panel directly under it at the same width. Spreadsheet emphasis: the row being worked out is lit (panel-active, bold label), a 2px rule sits above Total revenue and a 4px double rule under Profit. No route strips (removed 18 Oct). The side margins carry a labels-only picture diagram: left, where the figures come from (tiles tagged A and B); right, where the answer goes (→ Total revenue → Profit). The figures the sum uses are outlined cyan and tagged A and B; the cell being filled has a magenta outline and "?".
-- **Event sums** (Stay with you, Business travellers and others that come from an event, not the plan) have no figures sheet. In its place a "rows of ten" model: the group as person figures in rows of ten, 7 of each 10 lit and the rest dimmed, a bracket "7 in every 10 = 0.7", and one caption tying it to the event.
-- **Review sums** (Sunday review) are built by tapping the sheet's own cells into a formula bar above the sheet; the working panel shrinks to the SUM n badge, the formula in words, the answer and Check.
-- **A worth sum belongs to the thing it changes.** When a plan change needs a sum (a fare rise, a new service), it appears in a **Worth Sum Callout** pinned to that object, not in a distant panel.
-- **Unknown colour.** The unknown in a sum is `magenta` (the "?" and the outline of the cell it fills); `gold` is for money. The Launch Day screens chosen on 18 Oct 2026 all use this. A callout or panel changes state once and never pulses.
+- **Every sum happens on the airline's spreadsheet** (decided 19 Oct 2026). Sums live inside the business, on its own **Sheet**, never on a worksheet. The Studio and the other planning screens are for playing with the plan only (moving flights, changing fares, watching seats fill), with no pop-up sums; one button, **Work out my plan ▶**, opens the sheet with his choices as columns.
+- **One look for every sheet: Airline** (decided 19 Oct 2026). A real spreadsheet (column letters, row numbers, a formula bar, click cells, type in the cell) dressed for the airline (flags in column headers, line icons in row labels, seat-fill bars and FULL chips, a header band with a cyan underline, ƒ on cells the airline works out, NEW on new rows, icon tabs). The look never changes during the game; the sheet grows. See **Sheet**.
+- **How a sum is built in year one:** the part being worked lights (2px cyan frame, active gradient) and the rest of the sheet dims to 62%; he clicks the cells the sum uses (cyan outline and an A / B tag; the cell names go into the formula bar, "= F5 − F8", with the words after them, "Total revenue − Total costs"); operators are typed or chosen from × ÷ + −; the answer cell becomes the input (magenta outline, £ and a caret); he works it out in his book, writes Sum n beside it, types the answer in the cell and presses Enter. **The figures stay on the sheet and are never written out as the sum. No tile box.** See **Calculation Builder**.
+- When solved: the cell fills (money in gold) and lights `green` once (`t-result`), and whatever it feeds updates and lights too: "my calculation changed the airline".
+- Worked examples sit behind "Show me how" / "Give me a hint", and use exactly the structure of the pupil's own sum. No grid method. Nothing forces a worked example on him.
+- **Sum number.** Every sum has a number (SUM n, gold) that links the screen, the pupil's book and the printed learning record. It is named in the line under the sheet ("Write Sum 9 beside it") and shown as a small gold tag on the cell it fills.
+- **Work it out page = the sheet** (19 Oct 2026). One sheet stays on screen for all of the day's sums: on Launch Day his options are the columns (Dublin at £80, £90, £100, Paris at £90) and then **Your plan**, with the costs under Your plan like a balance sheet (Total revenue, Other costs, Fuel burned, Total costs, Profit) and a Cabin sales block. Each sum lights its part in turn. The one-sum pages, their margins diagram and the separate working panel are retired.
+- **The sheet's Fuel line is the fuel burned that day** (Launch Day £0, "free on Launch Day"). The week's fuel order is placed on the Fuel desk.
+- **Mastered sums fill themselves** (ƒ). Which sums are his and which are ƒ is set per sum in the workbook's sum list. Each new idea arrives as NEW rows and is the one sum he does; a **Sheet Callout** introduces it in words the first time.
+- **Plan changes** are worked out on the sheet as three columns: **Now · With your change · Difference** ("Is the change worth it?").
+- **Event sums** (Stay with you, Business travellers and others that come from an event, not the plan) keep the "rows of ten" model as the picture of why (the group as person figures in rows of ten, 7 of each 10 lit and the rest dimmed, a bracket "7 in every 10 = 0.7", one caption tying it to the event). The sum itself is built on a small sheet under it, the same way as every other sum.
+- **Review sums** (Sunday review) are built on the week's sheet the same way: click the day cells into the formula bar (outlined, without tags when there are more than two), type the answer in the cell, Enter. Every figure a sum uses is a cell on the sheet, including the 7 days for an average. The column beside the sheet keeps only the gold SUM n badge and the rule in words.
+- **Unknown colour.** The unknown in a sum is `magenta` (the "?" and the outline of the cell it fills); `gold` is for money. A callout or panel changes state once and never pulses.
 
 ## Event cards
 
@@ -83,7 +86,7 @@ Every event card (Storm, Red Kite, crew sickness and the rest) is one centred co
 
 ## Desks decided 18 Oct
 
-- **Fuel desk:** three panels. Your position is the largest (big square tank with this week's need marked; In the tank, This week needs, Already secured, Still to buy in amber), the purchase order directly under it, and one Market panel (chart with next week's range drawn on it, one summary line, the two news lines). Square corners everywhere. First-visit tour: one panel at a time gets the active gradient and cyan focus rail with a callout; nothing is dimmed and nothing turns amber.
+- **Fuel desk:** unlocked from Launch Day (19 Oct 2026); the week's fuel order is placed here, and worked examples only sit behind "Show me how". Three panels. Your position is the largest (big square tank with this week's need marked; In the tank, This week needs, Already secured, Still to buy in amber), the purchase order directly under it (its sum is a small Sheet inside the order panel, built and answered like every other sum), and one Market panel (chart with next week's range drawn on it, one summary line, the two news lines). Square corners everywhere. First-visit tour: one panel at a time gets the active gradient and cyan focus rail with a callout; nothing is dimmed and nothing turns amber.
 - **Week plan opener:** one primary action (Keep this plan, in the footer) and one secondary (Edit plan). Everything worth knowing sits in one "This week" list of plain rows with small "›" links; tips are messages, never buttons.
 
 ## Motion
@@ -100,7 +103,7 @@ Screen energy: calculation very calm · planning moderately responsive · fuel p
 
 ## Operations Briefings illustration
 
-The eleven Operations Briefings are short animated scenes drawn as **stylised operational illustration**: a night-time airport rendered as clean vector shapes, semi-realistic and simplified, never cartoon and never flat icons. The kit (two style frames and 25 scene pieces) lives in the "Operations Briefings Style Frames" canvas; every scene matches it.
+The eleven Operations Briefings are short animated scenes drawn as **stylised operational illustration**: a night-time airport rendered as clean vector shapes, semi-realistic and simplified, never cartoon and never flat icons. The kit (three style frames and 37 scene pieces) lives in the "Operations Briefings Style Frames" canvas; every scene matches it.
 
 - **Ground and light.** The scene sits on `bg-0`/`bg-1`, darker towards the top of the sky. Light comes from the upper left: object gradients run light top-left to dark bottom-right, lit top surfaces get a thin pale edge, and a soft cyan pool (10–13 %) sits on the floor near the light.
 - **Depth (2.5D).** Boxes show a lit top face and a darker right face; cylinders a lit top ellipse. Every grounded object has its own soft shadow ellipse, a separate shape so a plane can lift away from it.
@@ -132,7 +135,7 @@ Can a pupil tell where to look first within two seconds? Is there one obvious cu
 
 ## Component library
 
-Every part listed in the BertieV4 spec is built as a live preview (the Focus Rail lives inside Focus Panel), plus four drawn from the game itself (Button, Nav Item, Header Stat, Status Eyebrow) — 33 in all: Button, Focus Panel, Nav Item, Header Stat, Status Eyebrow, Calculation Instrument, Calculation Builder, Give Me a Hint, Result Plate, Decision Card, Investment Business Case, Payback Indicator, Aircraft Card, Aircraft Comparison, Fixed Inspector, Collapsed Route Summary, Demand Strip, Passenger Mix, Compact KPI, Trend Indicator, Weekly Trend Chart, Review Insight, Fuel Tank, Fuel Price Instrument, Route Opportunity Tile, Market Signal Tile, New Intelligence Alert, Operations Briefing, Operations Request, Live Flight Status, Operations Feed, Progress / Coming Up, and Worth Sum Callout (added 18 Oct 2026). Each part's guidelines say which example figures come from the spec, the game file, or are illustrative; real values always come from the workbook. The game's map, timetable editor and Operations Wall are drawn in its own code and are not copied here.
+Every part listed in the BertieV4 spec is built as a live preview (the Focus Rail lives inside Focus Panel), plus four drawn from the game itself (Button, Nav Item, Header Stat, Status Eyebrow) — 34 in all: Button, Focus Panel, Nav Item, Header Stat, Status Eyebrow, Calculation Instrument, Calculation Builder, Give Me a Hint, Result Plate, Decision Card, Investment Business Case, Payback Indicator, Aircraft Card, Aircraft Comparison, Fixed Inspector, Collapsed Route Summary, Demand Strip, Passenger Mix, Compact KPI, Trend Indicator, Weekly Trend Chart, Review Insight, Fuel Tank, Fuel Price Instrument, Route Opportunity Tile, Market Signal Tile, New Intelligence Alert, Operations Briefing, Operations Request, Live Flight Status, Operations Feed, Progress / Coming Up, and Sheet and Sheet Callout (added 19 Oct 2026; the Sheet Callout replaces the Worth Sum Callout of 18 Oct). Each part's guidelines say which example figures come from the spec, the game file, or are illustrative; real values always come from the workbook. The game's map, timetable editor and Operations Wall are drawn in its own code and are not copied here.
 
 ## Decisions log
 
@@ -148,7 +151,19 @@ Every part listed in the BertieV4 spec is built as a live preview (the Focus Rai
 
 **18 October 2026 — week 1 and 2 screens, batch 2.** Event card template (Storm: the departures board), Red Kite card (See profit, row by row), Work it out page (one object, spreadsheet rules, margins; route strips removed), event sums as rows of ten, Sunday review formula bar, Fuel desk three panels, plan opener one list, Customers have a choice rebuilt. Briefing 13 (Can you afford to run it?) designed. Game rules confirmed by Bertie for Briefing 13: the pupil sets his own cash reserve (starts at £0, replaces the fixed £1,000); going bust (three grounded days in a week) closes the airline and he starts again from Launch Day, no loans; the year-one aim card stays on Home until January. These rules live in the workbook (Settings and the Design Register), not here.
 
-**19 October 2026 — What a fare does, rebuilt.** The briefing now builds up in seven beats: tickets make revenue; a fare slider against a crowd in rows of ten; seats run out (two seat plans, 38 fly and 42 can't); the challenge (fill the seats and make the most money); a guess (£100 full or £110 with one empty seat); the figures sheet works it out (£1,900 against £1,980, £80 more); back to his fares. A demonstration: the game shows every sum and he types nothing. Its example numbers live in the workbook. Seat plans added to the briefing illustration rules.
+**19 October 2026 — What a fare does, rebuilt.** The briefing now builds up in seven beats: tickets make revenue; a fare slider against a crowd in rows of ten; seats run out (two seat plans, 38 fly and 42 can't); the challenge (fill the seats and make the most money); the question (£100 full or £110 with one empty seat; asked as a caption, no guess since batch 3); the seats turn into ticket money and the figures sheet works it out (£1,900 against £1,980, £80 more; design B since batch 3); back to his fares. A demonstration: the game shows every sum and he types nothing. Its example numbers live in the workbook. Seat plans added to the briefing illustration rules.
+
+**19 October 2026 — play-test batch 3** (chosen by Bertie, one decision at a time)
+1. **All sums happen on the spreadsheet.** The Studio is only for playing with the plan; "Work out my plan ▶" opens the sheet; plan changes become Now · With your change · Difference columns. The Worth Sum Callout is replaced by the **Sheet Callout**, which introduces new sums and rows in words.
+2. **Launch Day sheet: a real spreadsheet** (column letters, row numbers, formula bar, click cells, type the answer in the cell), one sheet for all of the day's sums.
+3. **Spreadsheet style: Airline, for every sheet in the game** (the **Sheet** component). The look stays the same all game; the sheet grows.
+4. **Year one sums are built by clicking the sheet's cells** (no tile box); the rule is shown in words; the figures stay on the sheet with A / B tags. Calculation Builder rewritten.
+5. **The sheet's Fuel line is the fuel burned that day**; the Fuel desk is unlocked from Launch Day and takes the week's order; no forced worked example.
+6. **No guesses in any Operations Briefing**: Show → Reveal → Use. What a fare does: beat 5 asks the question as a caption and beat 6 works it out (this replaces the guess). Customers have a choice: the drag-the-line guess goes. Operations Requests stay.
+7. **Fuel Tank wording:** "Fuel you buy waits in your tank. Each day pays for the fuel it burns."
+8. **Cash, tank, profit briefing: version A** (a fuel price chart opens it; the Fuel burned column is framed with "5 × £780 = £3,900, the whole bill, a day at a time").
+9. **What a fare does, beat 6: design B** (the seats turn into gold ticket-money bars beside the sheet, then the sheet works it out).
+10. **Sheet details for building:** tabs (Launch Day, one per week, Changes, Fuel); a small Sheet for event sums and the Fuel desk's order; seat-fill bars green or amber, never red; which sums are ƒ is set in the workbook's sum list; A / B tags in click order, none on sums of three or more cells; £ in the answer cell only for money.
 
 ## Tokens (CSS custom properties)
 
@@ -321,23 +336,24 @@ Square buttons with a tiny physical response: a 1px rise on hover, settling back
 - The game currently writes white labels on the green button (low contrast); `on-go` fixes that.
 
 ### CalculationBuilder
-The pupil builds the calculation from the airline's own numbers, then works it out on paper and types the answer. This is the Week 1 flow for every sum (decided 18 Oct 2026, Launch Day item 2). Use it for relationships ("which numbers, which operation?"); the arithmetic happens in the pupil's book.
+How the pupil builds a sum in year one: **by clicking the sheet's own cells**, as in a real spreadsheet, then working it out in his book and typing the answer into the cell (decided 19 Oct 2026; this replaces the four-tile builder and the separate working panel). Use it for relationships ("which numbers, which operation?"); the arithmetic happens in the pupil's book.
 
-**Three steps, in one working panel:**
-1. **Build the sum.** The equation shows empty slots ("Cabin sales = ? × ?"), the empty slot in `magenta`. The pupil taps two of four figure tiles and an operation. Tiles sit four across, label above the figure; operation buttons are square; Undo is a plain button; "That's my sum ▶" confirms. A wrong pairing gets an `amber` question about the numbers chosen, never "wrong" or red.
-2. **Work it out and type the answer.** The built sum shows large with a `magenta` "?" and a small green "✓ sum built · change". A gold-edged strip with a large **SUM n** badge says "Work it out in your book. Write Sum n beside your working, then type your answer." Answer field and Check sit side by side. The screen never asks for working.
-3. **Done.** The "?" becomes the answer in `green` (`t-result`, once), the sheet cell it feeds fills in green, and a line says "✓ … added to the sheet · Sum n in your record".
+1. **Build.** The part being worked lights (Sheet focus) and the answer cell shows a `magenta` "?". The formula bar's name box shows the answer cell ("B13") and the formula starts "= ". Clicking a cell adds its name to the formula ("= B11"), outlines the cell `cyan` and tags it A (then B), in the order he clicks (a sum of three or more cells, such as a week's total, gets the outlines without tags); the words after the formula build at the same time ("Passengers buying snacks ×"). Operators are typed or chosen from square keys × ÷ + − at the right end of the formula bar, with Undo. A cell or operator that doesn't fit gets an `amber` question about its meaning in the line under the grid ("21 people buy snacks at £5. This sum is for snacks at £3: which column is that?"), never "wrong" or red.
+2. **Work it out and type it.** When the formula is complete, the answer cell becomes the input (`magenta` outline, a gold "£" when the answer is money, caret) and the line under the grid says: "Work it out in your book. Write **Sum n** beside it, then type the answer in **B13** and press Enter." He types into the cell and presses Enter. The screen never asks for working.
+3. **Done.** The cell fills (money in `gold`) and lights `green` once (`t-result`); anything it feeds updates; the line says "✓ Cabin sales at £3: £111 a day · Sum 10 in your record". The footer's **Next sum ▶** lights and moves the focus to the next sum; after the last one the footer offers the next step (on Launch Day, **Take off ▶**).
 
-**Decoy tiles** are always real figures that appear elsewhere on the same screen or sheet (never invented numbers), so the pupil chooses by meaning, not by spotting the odd one out. Always four tiles.
+- **Wrong answer:** the cell's outline turns `amber` and the line under the grid gives a number-specific hint ("Check your working in the book: 37 lots of £3."); never a red cross. Two tries, then the figure is shown (as the Calculation Instrument). "Give me a hint" sits at the end of the line; "Show me how" is a quieter link.
+- **The figures stay on the sheet.** They are never copied out as a sum ("£6,660 − £3,610"): the formula uses cell names, the words say the rule, and the A / B tags link them. No tile box.
+- **Sum number.** SUM n links the screen, the pupil's book and the printed learning record: it is named in the line under the grid and shown as a small gold tag on the cell it fills.
+- **The first time** a kind of sum appears, a **Sheet Callout** introduces it in words before he builds it.
+- Operations Briefings are different: they are demonstrations, so the game shows every sum and the pupil types nothing.
 
-**Sum number.** SUM n is the link between the screen, the pupil's book and the printed learning record. Show it as a gold `bv-sumtag` in the panel header, large in the step-2 strip, and as a small gold "Sum n" tag in the sheet cell it fills.
-
-**Page layout (Work it out page).** One centred column: the figures sheet and its panel as one object 640px wide, with spreadsheet emphasis (lit working row, rule above Total revenue, double rule under Profit), the working panel directly under it at the same width. No route strips. Side margins carry the labels-only "where it comes from / where it goes" diagram. Event sums replace the sheet with a rows-of-ten model. The figures the sum uses are outlined in `cyan` on the sheet and tagged A and B; the formula line carries the same letters; the cell being filled has a `magenta` outline and "?".
-
-Example figures (31 buyers × £3 = £93, Sum 7) come from the game's Launch Day; real values always come from the workbook.
+Example figures (Cabin sales = 37 × £3 = £111, Sum 10; Profit = Total revenue − Total costs = £3,050, Sum 9) come from the game's Launch Day; real values always come from the workbook.
 
 ### CalculationInstrument
 A sum inside the business: the facts, the calculation with its unknown, and a recessed answer field, all on a dark instrument surface. It replaces every white worksheet card.
+
+- **In year one every sum is built on the Sheet** (19 Oct 2026; see Sheet and Calculation Builder). The sheet's answer cell does this instrument's job: asking (magenta outline, cyan caret), confirming once, the amber query with a number-specific hint, and two tries before the figure is shown. Don't build a separate instrument panel for a sum.
 
 - Supply: an eyebrow naming the business context, two or three facts, the expression, the unit.
 - Asking: `.bv-panel.active` (focus rail), the unknown in `.bv-unknown` (`magenta` with a soft glow, may breathe slowly), the field with a cyan caret.
@@ -367,7 +383,7 @@ A small figure with its label and, optionally, a trend: secondary context, not a
 ### DecisionCard
 A decision laid out in the order a pupil should meet it: why it exists, what they need to know, one useful calculation, what it means, then the choice.
 
-- Supply: a question title (`screen-title`), a "why" sentence naming the real problem, the two or three facts that matter, at most one calculation (solved in place, as a Calculation Instrument would), the consequence, and two or three choices.
+- Supply: a question title (`screen-title`), a "why" sentence naming the real problem, the two or three facts that matter, at most one calculation (built and answered on the Sheet, 19 Oct 2026: the card opens the sheet with the sum lit and then shows its result, with a link back to the row), the consequence, and two or three choices.
 - Steps carry numbered eyebrows so the attention order is explicit; the calculation step's eyebrow is `magenta`, the consequence `gold`.
 - Payback is shown as blocks (one per operating day) lighting in `gold`, not as a formula.
 - Choices sit together at the foot: one `go` button for committing, plain buttons for Wait or Compare. Never a single right answer: several plans should be defensible.
@@ -412,11 +428,11 @@ Today's fuel price with a seven-day line, so the pupil can decide whether to buy
 - The prices in the preview are illustrative (ending at the £1.50 used in the Fuel Tank example).
 
 ### FuelTank
-Fuel shown as something stored and used: buying it moves cash into the tank; flying it moves its value into flight cost.
+Fuel shown as something stored and used. In words (decided 19 Oct 2026): **"Fuel you buy waits in your tank. Each day pays for the fuel it burns."** (This replaces "buying it moves cash into the tank".)
 
-- Supply: cash balance, litres in the tank, tank capacity, today's price a litre, and (after flying) the value of fuel used.
-- Buying: the cash figure falls, a gold mote flows along the line, and the tank level rises over `t-fuel` with a cyan surface and a light top edge. Profit is unchanged, and the panel says so in words.
-- Flying (the same instrument later): the level falls, and the value used flows into the FLIGHT COST figure, which lights once.
+- Supply: cash balance, litres in the tank, tank capacity, today's price a litre, and (after flying) the value of fuel burned that day.
+- Buying: the cash figure falls, a gold mote flows along the line, and the tank level rises over `t-fuel` with a cyan surface and a light top edge. Profit is unchanged, and the panel says so in words: "Fuel you buy waits in your tank."
+- Flying (the same instrument later): the level falls, and the value burned that day becomes that day's **Fuel burned** cost, which lights once. A sheet's Fuel line is always the fuel burned that day (on Launch Day £0, "free on Launch Day").
 - The tank is a plain physical shape (square, ticks at quarters), never cartoonish. Under reduced motion the level changes at once; the words still carry the meaning.
 - Example figures here (7,000 L at £1.50) come from the BertieV4 spec. The game's figures come from the workbook.
 
@@ -424,7 +440,7 @@ Fuel shown as something stored and used: buying it moves cash into the tank; fly
 Help that arrives one step at a time and always uses the numbers in the pupil's own sum.
 
 - Supply: two or three hints written for this exact calculation, ending with an estimate check ("expect an answer near 50").
-- The button sits under the Calculation Instrument; each press adds one hint (sliding in over `t-data`) and counts down what's left. Hints never replace the pupil's working.
+- The button sits under the Calculation Instrument (on the Sheet: a small link at the end of the line under the grid); each press adds one hint (sliding in over `t-data`) and counts down what's left. Hints never replace the pupil's working.
 - The estimate check is marked `gold`; step hints are `cyan`.
 - Make the button more prominent only after a first wrong answer, or when a genuinely new method appears.
 - Never show a generic list (estimate, partition, formal method), and never teach a harder method than the sum needs. No grid method.
@@ -443,7 +459,7 @@ A cell in the live header strip: an icon, a quiet label and one value, separated
 The full screen for a big purchase: it should feel significant, never like a spreadsheet.
 
 - Flow strip across the top: Why consider it? → Check one key number → See what it means → Decide. The current step is `cyan`.
-- Left: the aircraft picture, name and three facts (seats, speed, the job it would do). Right: the capacity problem, routes it could serve (as small opportunity chips), the one key calculation (solved in place), and a Payback Indicator.
+- Left: the aircraft picture, name and three facts (seats, speed, the job it would do). Right: the capacity problem, routes it could serve (as small opportunity chips), the one key calculation (built and answered on the Sheet, 19 Oct 2026: "Check one key number" opens the sheet with the sum lit and the case then shows its result), and a Payback Indicator.
 - Supply: aircraft, the problem with its number, two or three routes, the calculation, payback days, and price from the workbook (shown with the aircraft facts when known).
 - Actions at the foot: `go` Buy, plain Wait and Compare. Several plans must be defensible.
 - Figures (80 seats, 870 km/h, 80 × £240, about 8 days, 180 passengers) come from the BertieV4 spec. The E175's price isn't in the spec or the game file yet, so it isn't shown.
@@ -489,12 +505,14 @@ News from outside the airline, shown at one of three levels so the pupil can tel
 ### OperationsBriefing
 A short, full-screen piece of teaching inside the game: one airline idea shown with animation, driven step by step by the pupil. It is never called a lesson.
 
-- Four steps, shown in the stepper: **Show** (animate the thing happening), **Notice** (pause and ask the pupil to pick something), **Reveal** (show why), **Use** (put it next to their own plan, then go straight back to a related decision).
-- Supply: a title, the data for the picture, the Notice question with its accepted answer, the Reveal explanation (one sentence), and the decision it leads to.
-- The normal interface recedes: `bg-0` room, no sidebar, only Back and Next. Next waits until the Notice question is answered; Back is always allowed.
+- Three steps, shown in the stepper: **Show** (animate the thing happening), **Reveal** (show why), **Use** (put it next to their own plan, then go straight back to a related decision).
+- **No guesses** (decided 19 Oct 2026). A briefing never asks the pupil to predict, guess or pick an answer, and nothing is marked right or wrong. A question can be posed as the caption ("Which plane makes more ticket money? Let's work it out.") and the next beat answers it.
+- Supply: a title, the data for the picture, the beats with their captions, the Reveal explanation (one sentence), and the decision it leads to.
+- The normal interface recedes: `bg-0` room, no sidebar, only Back and Next. **Next and Back are always allowed.**
 - Words are short; the picture does the explaining. The reveal recolours what is already on screen (here, business travellers in `blue`, leisure in `gold`) rather than adding new panels.
-- Cinematic but controlled. Under reduced motion the bars appear at full height and the steps still work.
-- Good uses: weekend demand, an event (a rugby Saturday), seasons, why fuel bought isn't fuel used. A briefing can end in an Operations Request ("What would you want the planner to let you change?").
+- Sums in a briefing are demonstrations: the game shows every sum and the pupil types nothing (no SUM n).
+- Cinematic but controlled. Under reduced motion every animation jumps to its end state and the steps still work.
+- Good uses: weekend demand, an event (a rugby Saturday), seasons, why fuel bought isn't fuel used. A briefing can end in an **Operations Request** ("What would you want the planner to let you change?"): that is a decision about his planner, not a guess, and stays.
 - The weekly numbers in this preview are an illustrative shape, not game data.
 
 ### OperationsFeed
@@ -568,6 +586,53 @@ A compact tile for one route or destination: where, which way it's heading, one 
 - The selected tile takes the cyan rail.
 - Only the Marrakech figure comes from the BertieV4 spec; the other tiles are illustrative.
 
+### Sheet
+The airline's own spreadsheet. **Every sum in the game happens on a Sheet** (decided 19 Oct 2026), and every sheet uses one look, **Airline**: a real spreadsheet (column letters, row numbers, a formula bar, click cells, type in the cell) dressed for the airline. The look never changes during the game; what changes is what is on the sheet.
+
+**The spreadsheet parts (always):**
+- Column letters above the grid (A is the label column) and row numbers down the left: 11px bold, `#4d6687`, no boxes.
+- A formula bar above the grid, full width: name box (the answer cell, "F9"), "fx" in italic `text-soft`, the formula in cell names with the names bold `cyan` ("= F5 − F8"), then the same in words, 13.5px `text-soft` ("Total revenue − Total costs"). Done: the words end "= £3,050". Background `#020b18`, 1px border `rgba(54,198,255,.5)`, a 3px `cyan` inset on the left. Same `sans` as everything else, tabular figures (no monospace).
+- Clicking a cell puts its name in the formula; the answer is typed into the answer cell itself (see **Calculation Builder**).
+
+**The airline dress:**
+- The sheet is one main panel: `linear-gradient(155deg, #0d3159 0%, #081f3d 48%, #05152b 100%)`, 1px border `rgba(65,122,171,.55)`, square corners. Title at the top left (21–22px semibold, "Launch Day sheet"); **icon tabs** at the top right, one for each part of the airline (Launch Day, Week 1, Fuel …): 30px high, 12.5px semibold with a 16px line icon; the open tab `#0d2b52` with a `cyan` border and a 3px `cyan` top edge; tabs that aren't open yet are dimmed (`#4d6687`).
+- **Header band** (row 1): `linear-gradient(180deg, #123e64, #0a2747)` with a 2px `rgba(54,198,255,.55)` underline. Column headers in two lines, right-aligned: a small `text-soft` top line (with the destination's flag, 18 × 12) and a 14px bold main line. A chosen option carries "✓ IN YOUR PLAN" (10px, `green`) under its header.
+- **Row labels** carry a 16px line icon (person = passengers, tag = a price, coins = money in, in `gold`; receipt = costs, drum = fuel, chart = profit, with a `green` line; cup = cabin sales; calendar = days; scales = a judgement); a route row carries its flag instead. Label 14.5px `#d6e2f3`; a note in the label's line 11.5px `text-muted` ("free on Launch Day"); a link 11.5px underlined `#7fd0ff` ("What's in this?").
+- Faint column separators (1px `rgba(65,122,171,.25)`) and hairline row lines. A 1.5px `#5b88b8` rule above a total row (Total revenue, Total costs); a 3px double `text-soft` rule under the final row (Profit). Total and Profit labels are bold.
+- Figures 15.5–17px semibold, right-aligned, tabular. **Money results** (ticket revenue, totals, profit, cabin sales) in `gold`; inputs such as a fare, a price or a cost, and counts, in `text`. A difference is coloured by its **meaning**, set per cell, never automatically by its sign ("+£60 a day" `green`; "+3 empty seats" stays `text`).
+- **Passenger cells** carry a seat-fill bar (4px, along the bottom of the cell: `green` 80% full or more, `amber` below that; never red) and a small green-outlined **FULL** chip when every seat is sold.
+- **ƒ** (small italic, `#7fa7d6`, top-left of the cell) marks a figure the airline works out with a sum he has already mastered. Which sums are his and which are ƒ is set per sum in the workbook's sum list, never in code. Figures that are simply given (a fare, Other costs) carry no mark.
+- **NEW** (10px, dark on `cyan`) after the label of rows that bring this week's or this month's new idea.
+- A sub-block (Cabin sales) starts with its own header row in a darker band.
+
+**Focus (a sum being worked):** the part the sum uses lights: a 2px `cyan` frame with the active panel gradient around those cells and the answer cell; the cells used get a 2px `cyan` inset outline and an A / B tag (`cyan` square, top-left), given in the order he clicks them (a sum of three or more cells, such as a week's total, gets the outlines without tags); the answer cell becomes the input (2px `magenta` inset outline, `#020b18`, a gold "£" when the answer is money, and a caret); **the rest of the sheet dims to 62%** (the sheet only, never the screen). One line under the grid says what to do: "Work it out in your book. Write **Sum n** beside it, then type the answer in **F9** and press Enter." with "Give me a hint" as a small link at its end. **Done:** nothing dims; the line becomes a `green` ✓ and one sentence of meaning ("Every Launch Day sum is done. Profit £3,050 a day.").
+
+**Tabs.** The tabs show the sheets that exist so far, and the open tab is the sheet on screen: Launch Day; one tab per week (the day-by-day sheet the Sunday review uses); **Changes** (each plan change he keeps, newest first); **Fuel** (his fuel orders, once he has placed one). Tabs for sheets that don't exist yet are dimmed.
+
+**Small Sheet.** Where a sum belongs to another screen (an event sum under its rows-of-ten picture, the Fuel desk's order), use a small Sheet: the same component with only the rows that sum needs, no title and no tabs (the panel it sits in has the title), but still with column letters, row numbers, the formula bar and the line under the grid, so building a sum works exactly the same. At least 420px wide.
+
+**Size.** At 1366 × 768 the sheet fills the page's content panel without scrolling: rows 31px (header 46px), label column about 265px, option columns about 150px. At 1920 × 1080 rows and columns grow; the type does not shrink below these sizes.
+
+**How the sheet grows through the game** (the look stays the same):
+- **Columns are the things being compared:** his options (Launch Day), **Now · With your change · Difference** when he changes his plan, the days of the week, then months.
+- **Mastered sums fill themselves** (ƒ). Each new idea arrives as NEW rows, introduced in words by a **Sheet Callout**, and is the one sum he does.
+- **Tabs** add up as the airline grows (Launch Day, Week 1, Week 2, Fuel, then Months, Fleet, Finance).
+- **Spreadsheet skills step up later** (direction, not for year one): click cells → type the formula himself → =SUM and =AVERAGE → fill a formula along a row.
+
+Example figures (Launch Day: Dublin at £80, £90, £100, Paris at £90, profit £3,050; week 2: Paris £90 → £100, +£60 a day) come from the game's first two weeks; the January month sheet in the handover pictures is illustrative. Real values always come from the workbook.
+
+### SheetCallout
+A callout on the sheet that introduces something new **in words**: a new kind of sum, NEW rows, or the columns of a plan change. Decided 19 Oct 2026; it replaces the Worth Sum Callout, because every sum, including "is my change worth it?", now happens on the Sheet and the Studio holds no sums.
+
+- **When:** the first time a kind of sum appears (ticket revenue on Launch Day, the difference on his first plan change, the 787's rent in January) and whenever NEW rows arrive. Sums he has already mastered get no callout (they fill themselves, ƒ).
+- **Where:** pinned to the row, column or cell it introduces, with a pointer, sitting over an empty part of the sheet and **never over a figure the sum uses**. About 360–440px wide.
+- **Inside:** a `cyan` eyebrow (NEW SUM, NEW ROWS, NEW · YOUR CHANGE); a title in words ("Is the change worth it?"); one or two short sentences on what it means and why the airline needs it ("You moved Paris from £90 to £100. The sheet puts Now next to With your change. The Difference column shows what the change is worth."); the rule in words with A / B tags in the order the formula reads ("Difference = A With your change − B Now"; on the sheet the tags follow his clicks); a small primary **Got it**. It never holds the figures written out as a sum and never the answer: they stay on the sheet.
+- **After Got it** the callout closes and the sum lights on the sheet (Sheet focus). A small `cyan` "i" at the end of the row's label brings it back.
+- **Plan changes:** the Studio is only for playing with the plan (moving flights, changing fares, watching seats fill), with no pop-up sums. "Work out my plan ▶" opens the sheet. A change he keeps is worked out there as **Now · With your change · Difference** columns.
+- **Look:** panel `#0c2a4c`, 1.5px `cyan` border, soft shadow and a faint cyan glow, square corners, pointer. It changes state once and never pulses.
+
+Example figures (Paris £90 → £100, +£60 a day, Sum 16) come from the game's week 2; real values always come from the workbook.
+
 ### StatusEyebrow
 A small uppercase label that says what kind of information follows: a quiet navigational cue, never a badge.
 
@@ -590,16 +655,4 @@ How the airline is doing over weeks, so the pupil can answer "is my airline impr
 - Default to weeks (week 1 → week 8), not Monday → Sunday; daily detail is a drill-down.
 - Always add the plain-words reading underneath, with a Trend Indicator.
 - Week 8's £128,042 comes from the BertieV4 spec; earlier weeks are illustrative.
-
-### WorthSumCallout
-When a change to the plan needs a sum to prove it is worth it (a fare rise, a new service), the sum appears in a callout pinned to the thing that changed — not in a panel somewhere else. Decided 18 Oct 2026 (Launch Day item 1, Studio Option D).
-
-- **Where:** above the selected object (in the Studio, the flight block in the timetable), about 440px wide, with a pointer down to it; the object itself gets the cyan selection outline. The selected-flight panel under the timetable stays where it is and only holds the top row and a "Change" row (the fare as a − / + stepper with seats at each fare, and a small "was £90" after a change).
-- **Inside:** an eyebrow heading ("PARIS FARE RISE: WHAT IT DOES"), a compact before → after table with the figures close together (Fare £90 → £100; Passengers a day 38 → 37; Paris tickets a day £3,420 → ?), then the sum, following the Calculation Builder's Week 1 flow, with Check.
-- **Waiting:** the callout edge is `magenta` and the unknown is a `magenta` "?".
-- **Done:** the same callout turns `green` once (`t-result`): the "?" becomes the answer with its difference ("£3,700 (+£280 a day)"), a one-line meaning ("£100 with one empty seat earns more than £90 full") and Done. It never pulses. The plan summary figure it feeds lights green once.
-- **Closes** on Done, on choosing another object, or on clicking elsewhere.
-- **Apply to every change that needs a worth sum**, not only fares.
-
-Example figures come from the game's Launch Day (Paris fare £90 → £100); real values always come from the workbook.
 

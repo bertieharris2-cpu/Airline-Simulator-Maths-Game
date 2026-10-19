@@ -2,23 +2,23 @@
 
 *Written by `tools/import_world.py` on 19 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 24 to check, 7 notes.**
+**0 to fix, 27 to check, 7 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 173 | 173 live, 9 placeholder |
-| Archetypes | 5 | 2 later, 5 live |
+| Settings | 209 | 209 live, 10 placeholder |
+| Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved to Routes |
 | Aircraft | 15 | 15 live, 1 note row, 1 removed |
 | Finance | 16 | 16 live, 2 note row |
 | Airports | 1 | 1 later, 1 live, 3 removed |
 | Calendar | 49 | 49 live |
-| Market | 156 | 260 later, 156 live |
-| Events | 33 rows → 27 events | 3 later, 33 live, 3 placeholder, 2 removed |
-| EventOptions | 40 | 40 live, 1 note row |
+| Market | 416 | 416 live |
+| Events | 46 rows → 28 events | 3 later, 46 live, 1 note row, 3 placeholder, 2 removed |
+| EventOptions | 65 | 65 live, 1 note row |
 | Challenges | 6 | 6 live, 2 placeholder |
 | Mechanics | 17 | 3 later, 17 live |
 | Chapters | 4 | 2 later, 4 live, 1 note row |
@@ -28,27 +28,30 @@
 | Milestones | 18 | 18 live, 1 note row |
 | DailyColour | 10 | 10 live, 1 note row |
 | Upgrades | 5 | 5 live, 1 note row |
-| Briefings | 11 | 11 live, 1 note row |
+| Briefings | 13 | 13 live, 1 note row |
 | Roadmap | 13 | 13 live, 1 note row |
-| RouteNews | 71 | 71 live, 1 note row |
+| RouteNews | 99 | 99 live, 2 note row |
 | Livery | 35 | 35 live, 1 note row |
 | Hunts | 5 | 5 live, 1 note row, 2 placeholder |
 
 ## To check
 
-- **Events:** "overdraft_offer" is dated 2031-09-02, but the Calendar puts it on day 365 (2031-09-01). The game follows the Calendar.
-- **Finance:** a220: the column is monthlyPayment now (D83) but the row still reads £4,000 × 52, the weekly terms. The game keeps it weekly until the row has monthly terms (finance opens in chapter 4).
+- **Events:** dub_strike: a D104 curveball event, loaded once its effects are built.
+- **Events:** school_trip: a D104 curveball event, loaded once its effects are built.
+- **Events:** slot_squeeze: a D104 curveball event, loaded once its effects are built.
+- **Events:** snack_supplier: a D104 curveball event, loaded once its effects are built.
+- **Events:** sponsor_club: a D104 curveball event, loaded once its effects are built.
+- **Events:** tanker_offer: a D104 curveball event, loaded once its effects are built.
 - **Finance:** a220: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
-- **Finance:** a320: the column is monthlyPayment now (D83) but the row still reads £5,000 × 52, the weekly terms. The game keeps it weekly until the row has monthly terms (finance opens in chapter 4).
 - **Finance:** a320: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
-- **Finance:** b737: the column is monthlyPayment now (D83) but the row still reads £5,000 × 52, the weekly terms. The game keeps it weekly until the row has monthly terms (finance opens in chapter 4).
 - **Finance:** b737: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
-- **Market:** week 19 fuel is £2.16, but the Calendar has £2.17 on its days. Time skips use the Market price, so the two should agree.
-- **Market:** week 53 fuel is £2.20, but the Calendar has £2.24 on its days. Time skips use the Market price, so the two should agree.
 - **Milestones:** experimenter: waits for its measure in the game (D87 experiments logged with a prediction), not built yet; the teacher panel leaves it out for now.
 - **Milestones:** worthIt: waits for its measure in the game (D88's worth line on a kept change), not built yet; the teacher panel leaves it out for now.
 - **Milestones:** charterWinner: waits for the Charter desk (D90), not built yet; the teacher panel leaves it out for now.
 - **Milestones:** clashServed: waits for clashing weeks (D90), not built yet; the teacher panel leaves it out for now.
+- **RouteNews:** hajj_2031: route `none` is not on the Routes sheet.
+- **RouteNews:** hajj_2032: route `none` is not on the Routes sheet.
+- **RouteNews:** hajj_2033: route `none` is not on the Routes sheet.
 - **Routes:** ist is loaded, but its archetype "long_haul_mixed" is not live. The game uses the route's own demand table and applies no business/leisure or season multipliers to it.
 - **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Boeing 787 Dreamliner 20 min, Airbus A350 20 min, Boeing 747 20 min, Airbus A380 20 min, Embraer E175 20 min, Boeing 757 20 min, Airbus A340 20 min, Boeing 777 20 min.
 - **Routes:** yyz (5700 km): legs not on a quarter hour: Saab 340 760 min, ATR 72 760 min, Embraer E190 380 min, Airbus A220 380 min, Airbus A320 380 min, Boeing 737 380 min, Boeing 787 Dreamliner 380 min, Airbus A350 380 min, Boeing 747 380 min, Airbus A380 380 min, Embraer E175 380 min, Boeing 757 380 min, Airbus A340 380 min, Boeing 777 380 min.
@@ -67,7 +70,7 @@
 - **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 1200, listPrice 9000 → 22000. The workbook wins.
 - **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1800, listPrice 15000 → 36000. The workbook wins.
 - **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900, dayCost 2500 → 3500, listPrice 30000 → 70000. The workbook wins.
-- **EventOptions:** "ash_cloud2" has option rows but no Events row (it is a RouteNews item; the game builds the card from the news).
+- **Events:** Track B rows (Events, EventOptions, RouteNews) wait for the teacher's autumnTrack switch (D104); the game plays track A.
 - **Events:** events are not in date order (harmless; the game sorts them).
 - **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events undercut_dub, storm, crew; challenges 2, 5. Those choices then differ only in cash.
 
@@ -93,11 +96,11 @@ The Settings rows chapter 3 reads (D78–D81), as loaded.
 - `missedHuntH1Effect`: chapter-3 opening cash shown £2,000 high until the first audit
 - `twoLegRotation`: Sydney via Singapore
 - `bigPlanePriceRule`: doubled from v5.2
-- `chapter3SetUpDays`: 5
+- `chapter3SetUpDays`: 7
 - `challengeRewardRule`: a share of a day's profit, or stars
 - `secondCrewCost`: 250
-- `leaseRule`: price ÷ 2,000 a day from the A220 up
-- **EventOptions:** 40 option rows for 13 events (a380_offer, ash_cloud, ash_cloud2, blogger, crew, fault, fees_rise, fog, mystery_shopper, overdraft_offer, storm, storm2, undercut_dub).
+- `leaseRule`: A220/A320/737 ÷ 1,000 a day (prices not doubled); from the 757 up ÷ 2,000
+- **EventOptions:** 42 option rows for 14 events (a380_offer, ash_cloud, ash_cloud2, blogger, crew, fault, fees_rise, fog, mystery_shopper, overdraft_offer, price_war, storm, storm2, undercut_dub).
 - **Two-leg routes:** syd (10,900 km + 6,300 km, 4 days).
 
 ## Working on paper (D86) and chapter 4 (D82–D85) touches
@@ -107,15 +110,15 @@ The Settings rows these read, as loaded.
 - `workingOnPaper`: True
 - `twoTriesRule`: True
 - `sumNumbering`: running number per pupil, never reset
-- `launchDaySums`: tickets at 3 fares; profit; the fuel order (blocks × price per 1,000 L); snacks as Build
+- `launchDaySums`: tickets at 3 fares; profit; snacks as Build
 - `fuelHandSum`: the weekly order: blocks × price per 1,000 L
 - `signOffCapPerWeek`: 3
 - `financeFromDate`: 2032-09-06
 - `financeShape`: deposit, then 40 monthly payments
-- `chapter4SetUpDays`: 5
+- `chapter4SetUpDays`: 7
 - `a380FillQuestion`: demand ÷ seats
 - `campaignProjectDate`: 2032-10-04
-- **Finance:** b757 £1,000,000 + £50,000 × 40 a month, b787 £4,000,000 + £200,000 × 40 a month, a340 £2,000,000 + £200,000 × 40 a month, b777 £8,000,000 + £400,000 × 40 a month, a350 £10,000,000 + £500,000 × 40 a month, b747 £16,000,000 + £600,000 × 40 a month, a380 £20,000,000 + £1,000,000 × 40 a month.
+- **Finance:** a220 £100,000 + £5,000 × 40 a month, a320 £120,000 + £7,000 × 40 a month, b737 £120,000 + £7,000 × 40 a month, b757 £1,000,000 + £50,000 × 40 a month, b787 £4,000,000 + £200,000 × 40 a month, a340 £2,000,000 + £200,000 × 40 a month, b777 £8,000,000 + £400,000 × 40 a month, a350 £10,000,000 + £500,000 × 40 a month, b747 £16,000,000 + £600,000 × 40 a month, a380 £20,000,000 + £1,000,000 × 40 a month.
 - **Campaign:** project (live), brief (live), choices (live), portfolio (live), aiSignals (live), focusGroup (live), reach (placeholder), funnel (placeholder), honesty (live), teacherOverride (live).
 
 ## Decision support (D87) and what a change was worth (D88) touches
@@ -163,8 +166,8 @@ Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `operationsBriefings`: full screen; 30–60 s; advance by doing, never by Next; a Pause & discuss state at each stop
 - `flightDaysFromDay`: earned: week-2 review (day 14); fallback day 21
 - **DailyColour:** hen_party (Tue, every 3), school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), birthday_cake (Sat, every 4), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
-- **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91), fuel_farm → The fuel farm on the Fuel desk (D89).
-- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), full_route (briefing-capacity.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), cash_to_fly (briefing-cash-to-fly.html).
+- **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91) and fleet groups: short-, medium- and long-haul fleets, each with its own planning view, fuel_farm → The fuel farm on the Fuel desk (D89).
+- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), full_route (briefing-capacity.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), flight_time (flight-time-tutorial.html, not built yet), cash_to_fly (briefing-cash-to-fly.html), cabin_sales (briefing-cabin.html, not built yet).
 
 ## Screens brief 3 (D101–D102) touches
 
@@ -190,14 +193,14 @@ Taken from v5.17 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `aircraftCardMeasure`: extra profit for the airline (incremental), one measure on the whole screen
 - `demandStripMode`: follows the selected flight's route; otherwise route tabs (each route · All)
 - **Roadmap:** Week 3 (day 8), Week 4 (day 15), Week 5 (day 22), Week 6 (day 29), Week 7 (day 36), Week 9 (day 50), Week 9 (day 50), December (day 78), January 2031 (day 85), January 2031 (day 106), June 2031 (day 240), September 2031 (day 330), September 2032 (day 700).
-- **Fuel, weeks 1–8:** £1.20 · £1.47 · £1.68 · £1.62 · £1.74 · £1.97 · £2.94 · £2.13.
+- **Fuel, weeks 1–8:** £1.20 · £1.47 · £1.68 · £1.62 · £1.74 · £1.97 · £2.94 · £2.43.
 
 ## D103 touches (Briefing 13)
 
 Bertie's rules of 18 Oct 2026, added to the installed workbook: the Settings rows the game reads, as loaded.
 
-- `pupilReserve`: 0
-- `bustRule`: 3 grounded days in a week
+- `pupilReserve`: set by the pupil; default £0
+- `bustRule`: 3 grounded days in a week; the airline closes and starts again from Launch Day
 - `standingAim`: Make as much money as you can. | In January you'll choose what kind of airline you are. | Keep cash for emergencies: you decide how much. | Run out of cash and the airline closes. | You start again from Launch Day. No loans.
 
 ## D104 touches (What a fare does, rebuilt)
