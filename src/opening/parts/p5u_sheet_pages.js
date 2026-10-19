@@ -11,7 +11,7 @@
 const ASH_SUMS = { 'launch.tickets':{ whose:'pupil', how:'book' }, 'launch.otherTickets':{ whose:'pupil', how:'book' }, 'launch.profit':{ whose:'pupil', how:'book' }, 'launch.cabin':{ whose:'pupil', how:'build' },
   'changes.difference':{ whose:'pupil', how:'build once' }, 'week.total':{ whose:'pupil', how:'build' }, 'week.difference':{ whose:'pupil', how:'build' }, 'week.average':{ whose:'pupil', how:'build' },
   'event.stay':{ whose:'pupil', how:'book' }, 'event.business':{ whose:'pupil', how:'book' }, 'fuel.order':{ whose:'pupil', how:'book' } };
-function ashSum(id){ const w = (WORLD.sheetSums || []).find(x => x.sum === id); return Object.assign({}, ASH_SUMS[id] || {}, w ? { whose:w.whose || (ASH_SUMS[id] || {}).whose, how:w.how || (ASH_SUMS[id] || {}).how } : {}); }
+function ashSum(id){ const w = (((typeof WB !== 'undefined' && WB && WB.sheetSums) || WORLD.sheetSums) || []).find(x => x.sum === id);   /* the workbook's SheetSums (D105) */ return Object.assign({}, ASH_SUMS[id] || {}, w ? { whose:w.whose || (ASH_SUMS[id] || {}).whose, how:w.how || (ASH_SUMS[id] || {}).how } : {}); }
 const ashPupils = id => !/^(ƒ|f|airline)$/i.test(String(ashSum(id).whose || 'pupil').trim());
 
 /* ---------- Launch Day: the day's sums, as the sum list sets them; no fuel order on the sheet ---------- */
@@ -104,7 +104,8 @@ function ashLaunchSpec(){
         co:{ at:['B', 5, ASH_LET[Math.max(2, ci - 2)], 9], side:'pu', ptr:`left:${Math.max(30, ashCol(k.c) * 150 - 150 + 60)}px`, eyebrow:'NEW SUM', title:'Ticket revenue',
           text:['Every passenger pays the fare, so the tickets bring in the passengers times the fare. Work out each column: the sheet then shows which fare earns most.'], rule:'Ticket revenue = <i>A</i> Passengers × <i>B</i> Fare' } })); } });
   if(profT){ const t = profT.t, C = t.cols[0], V = C.values, sP = ashTyped(t, C.id, 'profit'), fuel = V.fuel || 0;
-    v[P + 5] = sums.some(s => s.kind === 'tickets' && !s.done) ? {} : { t:money(V.rev) };   // Total revenue adds up the ticket revenue: it fills once those are done v[P + 6] = { t:money(V.cost - fuel), title:'Flying, landing and terminal charges, and the aircraft\'s day' }; v[P + 7] = { t:money(fuel) }; v[P + 8] = { t:money(V.cost) };
+    v[P + 5] = sums.some(s => s.kind === 'tickets' && !s.done) ? {} : { t:money(V.rev) };   // Total revenue adds up the ticket revenue: it fills once those are done
+    v[P + 6] = { t:money(V.cost - fuel), title:'Flying, landing and terminal charges, and the aircraft\'s day' }; v[P + 7] = { t:money(fuel) }; v[P + 8] = { t:money(V.cost) };
     v[P + 9] = ashShows(sP) ? { t:money(V.profit), cls:V.profit < 0 ? 'soft' : 'gold', fin:!!(S.rnd.paperShown || {})[t.id + '|' + cellId(C.id, 'profit')] } : {};
     if(sP === 'enter' || sP === 'wait' || sP === 'done') sums.push(ashTableSum({ id:t.id + '|profit', t, col:C.id, row:'profit', tgt:P + 9, refs:[P + 5, P + 8], ops:['−'], words:'Total revenue − Total costs', kind:'profit', commute:false,
       how:ashSum('launch.profit').how === 'build' ? 'build' : 'book', name:'profit', aria:'Profit, your plan', orderWhy:'profit is what is left of the revenue after the costs, so the revenue comes first.',
@@ -225,6 +226,15 @@ function ashChanges(){
   return out;
 }
 function ashChgS(){ return S.rnd.ashChg || (S.rnd.ashChg = {}); }
+/* what a timetable change did, for the review's "Your Paris extra flight was worth …": the route whose flights changed most (or whose times moved) */
+function ashChgWhat(ch){
+  const per = p => { const m = {}; normPlan(p).fleet.forEach(x => x.sched.forEach((r, k) => { (m[r] = m[r] || []).push((x.deps || [])[k]); })); return m; }, a = per(ch.from), b = per(ch.to);
+  const ids = [...new Set(Object.keys(a).concat(Object.keys(b)))], n = id => ((b[id] || []).length - (a[id] || []).length);
+  const big = ids.slice().sort((x, y) => Math.abs(n(y)) - Math.abs(n(x)))[0];
+  if(big && n(big)) return { route:big, what:n(big) > 0 ? (n(big) > 1 ? 'extra flights' : 'extra flight') : (n(big) < -1 ? 'flights cut' : 'flight cut') };
+  const moved = ids.find(id => JSON.stringify((a[id] || []).slice().sort()) !== JSON.stringify((b[id] || []).slice().sort()));
+  return { route:moved || ids[0], what:moved ? 'new times' : 'timetable change' };
+}
 const ashSigned = (v, m) => `${v < 0 ? '−' : v > 0 ? '+' : ''}${m ? money(Math.abs(Math.round(v))) : num(Math.abs(Math.round(v)))}`;
 function ashChangeSpec(ch, i, n){
   const La = planLines(ch.from), Lb = planLines(ch.to), C = ashChgS()[ch.key] || {}, done = !!C.done, v = {}, nm = `${S.airline.name || 'Airline'} HQ · Work out my plan`;
@@ -261,7 +271,7 @@ function ashChangeSpec(ch, i, n){
       let e = null; try{ e = recOpen(key, S1.recO); }catch(x){}
       const ok = Math.abs(val - d) < 0.5; try{ recAttempt(e, { ok, given:raw, value:val, method:'worked on paper, answer typed' }); }catch(x){}
       if(ok || ((st.tries || 0) + 1 >= 2 && twoTriesOn())){ c.done = true; if(!ok){ c.shown = true; try{ paperRecShown(key); }catch(x){} }
-        try{ dsWorthKeep({ kind:ch.kind === 'fare' ? 'fare' : 'service', route:ch.route || [...new Set(normPlan(ch.to).fleet.flatMap(x => x.sched))][0], what:ch.kind === 'fare' ? (ch.f1 > ch.f0 ? 'fare rise' : 'fare cut') : 'timetable change', value:d }); }catch(x){}
+        try{ const W = ch.kind === 'fare' ? { route:ch.route, what:ch.f1 > ch.f0 ? 'fare rise' : 'fare cut' } : ashChgWhat(ch); dsWorthKeep({ kind:ch.kind === 'fare' ? 'fare' : 'service', route:W.route, what:W.what, value:d }); }catch(x){}
         try{ soLog(`Is the change worth it? (${build ? 'Build, then the sum' : 'Calculate'})`); }catch(x){}
         return ok ? { ok:true } : { shown:true }; }
       return { note:ashWrong('−', sum.vals, val, d, '£') }; },
@@ -285,6 +295,8 @@ function ashChangesPage(st, CH){
   ashBind(sp); on('ashChgGo', () => { UI.ashJust = null; resetEntry(); const c = S0[ch.key] || (S0[ch.key] = {}); c.seen = true; c.passed = true; render(); });
 }
 function ashChgDone(c){ const x = ashChgS()[c.key]; return !!(x && x.done && x.passed); }
+/* the teacher's test kit: once a change is worked out, its Next (or Next change) goes on */
+if(window.__tkSums) window.__tkSums.unshift({ what:'the next change', test:() => !!document.getElementById('ashChgGo'), plan:() => ({ at:'#ashChgGo', value:'Next change', go:() => document.getElementById('ashChgGo').click() }) });
 
 /* ---------- the Monday sheet and the event sums: the game's own tables on the sheet ----------
    A sum the day's rules ask for (a new route's ticket revenue, the tenths of an event) is a cell in one of the game's

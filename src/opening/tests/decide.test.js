@@ -36,7 +36,14 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
       if(P.level === 'build'){ for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-soop="${k}|${x}"]` : `[data-sofig="${k}|${x}"]`); }
       else await p.fill(`[data-soin="${k}"]`, P.answer);
       await p.click(`[data-sochk="${k}"]`); await p.waitForTimeout(80); } };
+  // year one (19 Oct evening): every sum is a cell on the Sheet; the game's own hook clicks a Build's cells and types the answer (window.__ash)
+  const ashSolve = async () => { let n = 0; for(let g = 0; g < 40; g++){ const P = await p.evaluate(() => window.__ash && window.__ash.plan());
+      if(P){ n++; await p.evaluate(P => window.__ash.go(P), P); await p.waitForTimeout(80); continue; }
+      if(await p.$('#ashNext:not([disabled])')){ await p.click('#ashNext'); await p.waitForTimeout(60); continue; }
+      if(await p.$('#ashChgGo')){ await p.click('#ashChgGo'); await p.waitForTimeout(80); continue; }
+      break; } return n; };
   const solveW = async () => { for(let g = 0; g < 80; g++){ if(await T() !== 'workings') break;
+      if(await ashSolve()) continue;
       if(await p.$('#wkTutNext')){ await p.click('#wkTutNext'); continue; } if(await p.$('#wkTutGo')){ await p.click('#wkTutGo'); continue; }
       if(await p.$('#pbChk')){ const P = JSON.parse(await E('JSON.stringify(paperPlan())')); for(const x of P.seq) await p.click(['+', '−', '×', '÷'].includes(x) ? `[data-pbop="${x}"]` : `[data-pbfig="${x}"]`); await p.click('#pbChk'); await p.waitForTimeout(60); continue; }
       if(await p.$('#cellAns')){ await p.evaluate(() => { const t = window.__sim.currentTable(), c = t.cols.find(x => x.id === t.active.col); document.getElementById('cellAns').value = String(c.values[t.active.row]); }); await p.press('#cellAns', 'Enter'); await p.waitForTimeout(60); continue; }
@@ -51,7 +58,7 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
     if(t === 'workings' && await vis('.so-page')){ await signs(); await p.waitForTimeout(300); await p.click('#nx'); return t; }
     if(t === 'workings'){ await solveW(); await p.click('#nx'); return t; }
     if(t === 'fuelDesk'){ const bn = await p.$('[data-fdb="2"]:not([disabled])'); if(bn){ await bn.click(); await p.waitForTimeout(60);
-        if(await p.$('#foChk')){ const FO = JSON.parse(await E('JSON.stringify(foPlan())')); if(FO.level === 'build'){ for(const x of FO.seq) await p.click(x === '×' ? '[data-foop="×"]' : `[data-fofig="${x}"]`); } else await p.fill('#foIn', FO.answer); await p.click('#foChk'); await p.waitForTimeout(60); }
+        await ashSolve(); if(await p.$('#foChk')){ const FO = JSON.parse(await E('JSON.stringify(foPlan())')); if(FO.level === 'build'){ for(const x of FO.seq) await p.click(x === '×' ? '[data-foop="×"]' : `[data-fofig="${x}"]`); } else await p.fill('#foIn', FO.answer); await p.click('#foChk'); await p.waitForTimeout(60); }
         if(await p.$('#fdBuy:not([disabled])')) await p.click('#fdBuy'); await p.waitForTimeout(80); } await p.click('#nx'); return t; }
     if(t === 'audit'){ await signs(); await p.click('#nx'); return t; }
     if(t === 'ready'){ await p.click('#startOps'); return t; }
@@ -83,21 +90,11 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   await shot('ds-02-nbn-find-work');
   // a Paris flight on the Saab: the line after the change, and the first "what was it worth" Build (an extra flight)
   await p.selectOption(`[data-addsel="0|${saab}"]`, 'par'); await p.waitForTimeout(250);
-  // batch 1 (Claude Design, 18 Oct): the change opens the Worth Sum Callout over the new flight, in place of the line above it
-  const wsc = await txt('#bvWsc'); info.callout = wsc;
-  ok('NBN: the first extra flight opens the Worth Sum Callout over it: what it does, flights and passengers before → after, the day\'s tickets as the unknown (magenta edge)', await vis('#bvWsc.wait') && /extra flight: what it does/i.test(wsc) && /Flights a day\s*[\d,]+\s*→\s*[\d,]+/.test(wsc) && /Passengers a day\s*[\d,]+\s*→\s*[\d,]+/.test(wsc) && /Paris tickets a day\s*£[\d,]+\s*→\s*\?/.test(wsc) && await vis('.s2-tt .ad-blk.bv-anchor'), wsc);
-  ok('NBN: the callout\'s sum is built from four tiles, two of them real figures from the callout', (await p.$$('#bvWsc [data-wsf]')).length === 4, await p.$$eval('#bvWsc [data-wsf]', es => es.map(e => e.textContent)));
-  await shot('ds-03-nbn-worth-build');
-  const dec = await E("(UI.dsWorth.tiles.find(t => t.dis) || {}).k"); await p.click(`[data-wsf="${dec}"]`); await p.click('[data-wso="×"]'); await p.click('[data-wsf="fare"]'); await p.click('#wsChk'); await p.waitForTimeout(120);
-  ok('NBN: a figure that is not part of it is a Query with one more try', /Query: .* is not part of .*One more try/.test(await txt('#wsMsg')), await txt('#wsMsg'));
-  await p.click('[data-wsf="pax"]'); await p.click('[data-wso="×"]'); await p.click('[data-wsf="fare"]'); await p.click('#wsChk'); await p.waitForTimeout(150);
-  ok('NBN: passengers × fare built: the sum shows large with its SUM number, the book strip and the answer box', await vis('#bvWsc #wsAns') && /SUM \d+/.test(await txt('#bvWsc .bv-book')) && /= \?/.test(await txt('#bvWsc .bv-big')), await txt('#bvWsc'));
-  await p.fill('#wsAns', String(await E('UI.dsWorth.answer'))); await p.click('#wsCheck'); await p.waitForTimeout(200);
-  const B1 = await J('dsReport()'); info.built = B1.built; const wsc2 = await txt('#bvWsc');
-  ok('NBN: the answer is right: the callout turns green with the tickets and the difference a day, a line of meaning and Done; the line is in the plan summary', !!B1.built.service && await vis('#bvWsc.done') && /£[\d,]+ \([+−±]£[\d,]+ a day\)/.test(wsc2) && /extra flight costs/.test(wsc2) && await vis('#wsDone') && /One more flight: [\d,]+ × £[\d,]+ − £[\d,]+ costs = /.test(await txt('.s2-sum')), [wsc2, await txt('.s2-sum')]);
-  await shot('ds-03b-nbn-worth-done'); await p.click('#wsDone'); await p.waitForTimeout(150);
-  ok('NBN: Done closes the callout', !(await vis('#bvWsc')));
-  ok('NBN: the plan improved: Plan improved: seats a → b · result £x → £y, in the plan summary', /Plan improved: seats [\d,]+ → [\d,]+ · result/.test(await txt('.s2-sum')), await txt('.s2-sum'));
+  // year one (19 Oct evening, 7.2): the Studio is for playing with the plan: the change opens no sum (no Worth Sum Callout) and shows at once;
+  // it is worked out on the Changes tab after Work out my plan, and the review then says what it was worth
+  const fl = await txt('.ds-flash'); info.flash = fl;
+  ok('NBN (year one): the first extra flight opens no sum in the Studio; the Saab has its Paris flight and the line says what the change does', !(await vis('#bvWsc')) && (await J(`currentPlan().fleet[${saab}].sched`)).includes('par') && /This change — seats [\d,]+ → [\d,]+/.test(fl), fl);
+  ok('NBN (year one): the button to the sums reads Work out my plan', /^Work out my plan/.test(await txt('#nx')), await txt('#nx'));
   await shot('ds-04-nbn-improved');
   // the fare chips on a full route with people turned away
   await p.click('[data-s2fare="dub"]'); await p.waitForTimeout(200);
@@ -143,10 +140,11 @@ const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process
   if(await T() === 'weekReview'){
     // year one (batch 2, 3.5): while the sums are worked the right column holds only the sum; "How good was the plan?" follows the sign-off
     ok('the review holds "How good was the plan?" back until the accounts are signed off', !(await vis('.wk-missed')) && !(await vis('#dsFix')));
-    await shot('ds-10-review-before'); await builds(); await p.waitForTimeout(200);
-    const box = await txt('.wk-missed'), M = await J('S.wk.missed'); info.review = { box, M };
+    await shot('ds-10-review-before'); if(await vis('.ash-rv')) await ashSolve(); else await builds(); await p.waitForTimeout(200);
+    const box = await txt('.wk-missed'), M = await J('S.wk.missed'); info.review = { box, M, worth:await J('dsS().worth') };
     ok('the review says how good the plan was in words (a large improvement / a better plan / a good plan), never the best plan\'s figure', /a large improvement is available|a better plan is available|a good plan/.test(box) && !/Best plan/i.test(box) && !box.includes((M.best || 0).toLocaleString('en-GB')) && !(await txt('#screen')).includes('£' + (M.best || 0).toLocaleString('en-GB')), box);
     ok('the review names the biggest missed opportunity and offers Fix next week\'s … plan', /Biggest missed opportunity:/.test(box) && /Fix next week's/.test(await txt('#dsFix')), box);
+    ok('year one: the extra flight, worked out on the Changes tab, is kept for the teacher as what it was worth (the Paris extra flight, its difference a day); the review itself leaves those lines out (D96)', ((info.review.worth || {})[2] || []).some(x => x.route === 'par' && x.what === 'extra flight' && x.value > 0) && !/was worth/.test(box), info.review.worth);
     const fixTip = await J('dsS().reviews[dsS().reviews.length - 1]'); info.fixTip = fixTip;
     ok('the teacher keeps the figures: the week\'s actual, the best plan and the missed profit', fixTip && fixTip.best === M.best && fixTip.missed === M.missed, fixTip);
     await shot('ds-11-review'); const fixed = await p.$eval('#dsFix', e => !e.disabled).catch(() => false); ok('Fix next week\'s plan is enabled once the accounts are signed', fixed);

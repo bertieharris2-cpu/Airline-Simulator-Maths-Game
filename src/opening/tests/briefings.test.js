@@ -1,7 +1,8 @@
 // Run: NODE_PATH=<playwright node_modules> node briefings.test.js   (env: OUT, GAME, ONLY=id,id, W, H)
 // Operations briefings (Fable's plan, 18 Oct 2026; Briefing 13 from the 18 Oct handover): twelve short scenes in the airline's world. Part 1 plays each page on its own
-// (its fallback figures, the kit loaded from briefings/kit/) and checks the shared frame and its rules: the title and its
-// progress marks (four; five for Briefing 13); after a context beat's Continue, none before the pupil acts; Pause freezes the scene; the end is reached; with reduced motion too.
+// (its fallback figures, the kit loaded from briefings/kit/) and checks the shared frame and its rules since 19 Oct, evening (7.7, no guesses): the title, the
+// Show · Reveal · Use stepper, Back and Next always allowed (Back replays to the beat before), nothing to tap or guess; a decision (an Operations Request,
+// Briefing 13's buy and fly) holds Next until it is made; Pause freezes the scene; the end is reached; with reduced motion too.
 // Part 2 opens each at its moment in the game with the pupil's own figures (the Jump to airlines), plays one to the end, and
 // checks it is marked seen, sits on the Home shelf and plays again from there; Skip shows in test mode only.
 const { chromium } = require('playwright');
@@ -11,26 +12,33 @@ const OUT = (process.env.OUT || os.tmpdir() + '/airline-briefings') + '/', ONLY 
 const checks = [], errors = [], ok = (name, cond, x) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (x !== undefined ? ' ' + JSON.stringify(x).slice(0, 300) : ''));
 const want = id => !ONLY.length || ONLY.includes(id), myResV = r => r && r.v > 0 ? r.v : 0, VW = +(process.env.W || 1366), VH = +(process.env.H || 768);
 
-/* how a pupil does each page: the first interaction is awaited (Continue must still be hidden then), the rest drive it to the end */
+/* how a pupil does each page (19 Oct, evening): Next, beat after beat, waiting for each beat to finish; a decision is made with the chip named in pick (or the first) */
 const W = async (p, sel, ms) => p.waitForSelector(sel, { timeout:ms || 30000 });
-const go = async p => { await W(p, '.bk-go:not([hidden])', 45000); await p.waitForTimeout(250); await p.click('.bk-go'); };
+const kit = p => p.evaluate(() => ({ w:K.waiting(), h:K.held(), n:K.beats(), cap:(document.querySelector('.bk-cap') || {}).textContent || '' }));
+const settle = async (p, ms) => { for(let g = 0; g < (ms || 60000) / 150; g++){ const k = await kit(p); if(k.w || k.h || await p.$('.bk-pz[style*="grid"]')) return k; await p.waitForTimeout(150); } return kit(p); };
+async function playY1(p, P){ const picks = (P.pick || []).slice(), seen = { held:0, nextWhileHeld:false };
+  for(let g = 0; g < 300; g++){ if(await p.$('.bk-pz[style*="grid"]')) return seen; const k = await settle(p);
+    if(k.h){ seen.held++; if(await p.$eval('.bk-go', e => !e.hidden)) seen.nextWhileHeld = true;
+      const want = picks[0], chip = want ? await p.$(`.bk-chip:has-text("${want}"):visible`) : null;
+      if(chip){ picks.shift(); await chip.click(); await p.waitForTimeout(250); continue; }
+      const c = await p.$('.bk-card [data-c="no"]:visible') || await p.$('.bk-act.sec:not([hidden]):not([disabled])') || await p.$('.bk-act:not([hidden]):not([disabled])') || await p.$('.bk-chip:visible');
+      if(c){ await c.click(); await p.waitForTimeout(300); } else await p.waitForTimeout(200); continue; }
+    if(k.w){ await p.click('.bk-go'); await p.waitForTimeout(120); continue; } }
+  throw new Error('did not reach the end'); }
 const drag = async (p, sel, frac) => { const r = await p.$(sel), b = await r.boundingBox(); await p.mouse.move(b.x + 2, b.y + b.height / 2); await p.mouse.down(); await p.mouse.move(b.x + b.width * frac, b.y + b.height / 2, { steps:10 }); await p.mouse.up(); };
-const dragTo = async (p, sel, x, y) => { const el = await p.$(sel), bb = await el.boundingBox(), box = await (await p.$('.bk-world')).boundingBox(); await p.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2); await p.mouse.down(); await p.mouse.move(box.x + box.width * x / 1600, box.y + box.height * y / 900, { steps:12 }); await p.mouse.up(); };
 const PAGES = [
   { id:'fare_lever', file:'briefing-fare.html', title:'What a fare does', own:true },   // rebuilt 19 Oct (D104): its own frame, tested in part 1b
-  { id:'rival_split', file:'briefing-rival.html', title:'Customers have a choice', pre:go, first:'.bk-rail', play:async p => { await drag(p, '.bk-rail', .3); await go(p); await go(p); await go(p); } },
-  { id:'full_route', file:'briefing-capacity.html', title:'More demand than seats', first:'.bk-hud button[aria-label="The people still at the gate"]', play:async p => { await p.click('.bk-hud button[aria-label="The people still at the gate"]'); await go(p); await go(p); } },
-  { id:'weekend_demand', file:'briefing-weekend.html', title:'Weekdays and weekends', first:'.bk-hud button[aria-label="Sat"]', play:async p => { await p.click('.bk-hud button[aria-label="Sat"]'); await p.click('.bk-hud button[aria-label="Sun"]'); await go(p); await W(p, '.bk-chip'); await p.click('.bk-chip:has-text("Change weekdays and weekends separately")'); await go(p); } },
-  { id:'fuel_cash_tank_profit', file:'briefing-fuel.html', title:'Cash, tank, profit', first:'.bk-chip', play:async p => { await p.click('.bk-chip >> nth=1'); await W(p, '.bk-hud button.bk-chip:has-text("Buy fuel")'); await p.click('.bk-hud button.bk-chip:has-text("Buy fuel")'); await go(p); await go(p); } },
-  { id:'aircraft_efficiency', file:'briefing-efficiency.html', title:'Two planes, one route', first:'.bk-hud button[aria-label]', play:async p => { await p.click('.bk-hud button[aria-label] >> nth=0'); await go(p); await go(p); } },
-  { id:'flight_time', file:'briefing-time.html', title:'How long will it take?', first:'.bk-hud button.bk-chip', play:async p => { await p.click('.bk-hud button:has-text("Fly one hour")'); await p.waitForTimeout(1300); for(let i = 0; i < 2; i++){ await p.click('.bk-hud button:has-text("Fly a quarter")'); await p.waitForTimeout(1200); } await W(p, '.bk-hud button[aria-label="Time"]'); await p.click('.bk-hud button[aria-label="Time"]'); await go(p); await go(p); } },
-  { id:'event_weekend', file:'briefing-event.html', title:'One big Saturday', first:'.bk-hud button[aria-label="Sat"]', play:async p => { await p.click('.bk-hud button[aria-label="Sat"]'); await p.click('.bk-hud button[aria-label="Sun"]'); await go(p); await W(p, '.bk-chip'); await p.click('.bk-chip:has-text("Change one particular date")'); await go(p); } },
-  { id:'seasons', file:'briefing-seasons.html', title:'A year of demand', first:'.bk-hud [role=button]', play:async p => { await dragTo(p, '.bk-hud [role=button]', 525, 700); await go(p); await W(p, '.bk-chip'); await p.click('.bk-chip:has-text("Plans that switch with the season")'); await go(p); } },
-  { id:'lease_money', file:'briefing-lease.html', title:'Renting a plane', first:'.bk-rail', play:async p => { await drag(p, '.bk-rail', .6); await go(p); await go(p); } },
-  { id:'cash_to_fly', file:'briefing-cash-to-fly.html', title:'Can you afford to run it?', marks:5, pre:go, first:'.bk-act:not([hidden]):not([disabled])', play:async p => { await p.click('.bk-act:not([hidden]):not([disabled]) >> nth=0');
-      for(let g = 0; g < 240 && !(await p.$('.bk-go:not([hidden])')); g++){ const b = await p.$('.bk-act.sec:not([hidden]):not([disabled])'); if(b) await b.click(); await p.waitForTimeout(400); }
-      await go(p); await W(p, '.bk-card [data-c="no"]'); await p.click('.bk-card [data-c="no"]'); await go(p); await go(p); } },
-  { id:'profit_vs_cash', file:'briefing-cash.html', title:'Profit is not cash', first:'.bk-hud button[aria-label="The day cash fell"]', play:async p => { await p.click('.bk-hud button[aria-label="The day cash fell"]'); await go(p); await go(p); } },
+  { id:'rival_split', file:'briefing-rival.html', title:'Customers have a choice' },
+  { id:'full_route', file:'briefing-capacity.html', title:'More demand than seats' },
+  { id:'weekend_demand', file:'briefing-weekend.html', title:'Weekdays and weekends', pick:['Change weekdays and weekends separately'] },
+  { id:'fuel_cash_tank_profit', file:'briefing-fuel.html', title:'Cash, tank, profit' },
+  { id:'aircraft_efficiency', file:'briefing-efficiency.html', title:'Two planes, one route' },
+  { id:'flight_time', file:'briefing-time.html', title:'How long will it take?' },
+  { id:'event_weekend', file:'briefing-event.html', title:'One big Saturday', pick:['Change one particular date'] },
+  { id:'seasons', file:'briefing-seasons.html', title:'A year of demand', pick:['Plans that switch with the season'] },
+  { id:'lease_money', file:'briefing-lease.html', title:'Renting a plane' },
+  { id:'cash_to_fly', file:'briefing-cash-to-fly.html', title:'Can you afford to run it?', decides:true },
+  { id:'profit_vs_cash', file:'briefing-cash.html', title:'Profit is not cash' },
 ];
 
 /* What a fare does, played through by a pupil (a page, or the briefing's frame in the game); returns what each beat showed */
@@ -43,10 +51,11 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
   await nx(); await f.locator('#board').click(); await sleep(3400);
   R.b3x = [await txt('#f0'), await txt('#f1'), await txt('#left'), await f.locator('.pp.dim').count()]; R.b3 = R.b3x[0] === '19/19 ✓' && R.b3x[1] === '19/19 ✓' && /42/.test(R.b3x[2]) && R.b3x[3] === 42;
   await nx(); R.b4x = (await txt('#pic')).replace(/\s+/g, ' '); R.b4 = /£70/.test(R.b4x) && /42 left behind/.test(R.b4x) && /£140/.test(R.b4x) && /20 seats fly empty/.test(R.b4x);
-  await nx(); const w5 = await dis(); await f.locator('#chb').click(); await sleep(300); R.b5 = w5 && !(await dis()) && !/hide/.test(await f.locator('#gb').getAttribute('class')) && !/wrong|right|correct/i.test(await txt('#capt'));
+  await nx(); R.b5x = [(await txt('#pic')).replace(/\s+/g, ' ').slice(-60), (await txt('#capt')).replace(/\s+/g, ' ')];
+  R.b5 = !(await dis()) && !(await f.locator('#chb, .chb, #pic button').count()) && /Which plane makes more ticket money\?/.test(R.b5x[0]) && /Let's work it out\./.test(R.b5x[1]) && !/guess|wrong|right|correct/i.test(R.b5x[1]);
   await nx(); const cells = []; for(let k = 1; k <= 4; k++){ await nx(); if(slow) await sleep(k === 2 ? 3300 : 1700); cells.push([await txt('#a3'), await txt('#b3'), (await txt('#d4')).replace(/\s+/g, ' '), (await txt('#wl')).replace(/\s+/g, ' ')]); }
   await sleep(400); const last = [await txt('#a3'), await txt('#b3'), (await txt('#d4')).replace(/\s+/g, ' ')];
-  R.b6x = { cells, last }; R.b6 = last[0] === '£1,900' && last[1] === '£1,980' && /£80 more for the £110 plane/.test(last[2]) && /18 × £100 = £1,800/.test(cells[1][3]) && /18 × £10 = £180/.test(cells[1][3].replace(/\u00a0/g, ' ').replace(/ +/g, ' ')) && /Your guess: the £110 plane/.test(cells[3][3]);
+  R.b6x = { cells, last }; R.b6 = last[0] === '£1,900' && last[1] === '£1,980' && /£80 more for the £110 plane/.test(last[2]) && /18 × £100 = £1,800/.test(cells[1][3]) && /18 × £10 = £180/.test(cells[1][3].replace(/\u00a0/g, ' ').replace(/ +/g, ' ')) && /One empty seat, but £80 more ticket money/.test(cells[3][3]) && !/guess/i.test(cells[3][3]);
   await nx(); R.b7x = [await f.locator('.tile').count(), await txt('#nx'), await f.locator('#nx').getAttribute('class')]; R.b7 = R.b7x[0] === 4 && /Set my fares/.test(R.b7x[1]) && /go/.test(R.b7x[2]);
   await nx(); await sleep(400); return R; }
 
@@ -60,17 +69,19 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
       try{
         await p.goto('file://' + path.join(DIR, P.file));
         await W(p, '.bk-title', 8000);
-        ok(`${tag}: the frame: BRIEFING, the title, ${P.marks || 4} progress marks, Pause & discuss, no Skip outside test mode`, (await p.textContent('.bk-title')) === P.title && (await p.$$('.bk-marks i')).length === (P.marks || 4) && !!(await p.$('#bkPause')) && !(await p.$('#bkSkip')), await p.textContent('.bk-title'));
-        if(P.pre) await P.pre(p);   // a scene that opens on its context: Continue, then the pupil's first move
-        await W(p, P.first, 40000); await p.waitForTimeout(300);
-        ok(`${tag}: the scene waits for him: no Continue before he acts`, await p.$eval('.bk-go', e => e.hidden), await p.textContent('.bk-cap'));
+        const steps = await p.$$eval('.bk-steps i', es => es.map(e => e.textContent));
+        ok(`${tag}: the frame: BRIEFING, the title, the Show · Reveal · Use stepper, Pause & discuss, Back (off at the start) and Next, no Skip outside test mode`, (await p.textContent('.bk-title')) === P.title && steps.join('|') === 'Show|Reveal|Use' && !!(await p.$('#bkPause')) && !(await p.$('#bkSkip')) && await p.$eval('.bk-back', e => e.disabled) && await p.$eval('.bk-go', e => !e.hidden), { title:await p.textContent('.bk-title'), steps });
+        const k1 = await settle(p);
+        ok(`${tag}: nothing to guess or tap: the first beat waits on Next${P.decides ? '' : ', with no hit boxes, sliders or drag handles in the scene'}`, k1.w && (P.decides || !(await p.$('.bk-rail, .bk-hud [role=button], .bk-hud [role=slider], .bk-hud button[aria-label]'))), k1);
         if(!rm) await p.screenshot({ path:`${OUT}${P.id}-1.png` });
         if(P.id === 'full_route' && !rm){   // Pause & discuss freezes the scene (its clock stops)
           await p.click('#bkPause'); const paused = await p.$eval('.bk', e => e.classList.contains('paused')); const s1 = await p.evaluate(() => K.isPaused()); await p.click('#bkResume');
           ok('Pause & discuss: the scene freezes for talk, and Resume carries on', paused && s1 && !(await p.evaluate(() => K.isPaused()))); }
-        await P.play(p);
-        await W(p, '.bk-pz[style*="grid"]', 15000);
+        if(k1.w){ const c1 = k1.cap; await p.click('.bk-go'); const k2 = await settle(p); await p.click('.bk-back'); const k3 = await settle(p);   // Back replays the scene to the beat before
+          ok(`${tag}: Back is always allowed: after Next it returns to the first beat, its words again`, k2.n === 1 && k3.n === 0 && k3.cap === c1 && await p.$eval('.bk-back', e => e.disabled), { c1:c1.slice(0, 70), n2:k2.n, n3:k3.n, c3:k3.cap.slice(0, 70) }); }
+        const R = await playY1(p, P);
         ok(`${tag}: played to the end (in the game it folds back into the screen it prepared)`, /End of the briefing/.test(await p.textContent('.bk-stage')));
+        if(P.pick || P.decides) ok(`${tag}: ${P.pick ? 'the Operations Request stays, and holds' : 'each decision holds'} Next until it is made`, R.held > 0 && !R.nextWhileHeld, R);
         if(!rm) await p.screenshot({ path:`${OUT}${P.id}-2.png` });
       }catch(e){ ok(`${tag}: played to the end`, false, e.message.split('\n')[0]); await p.screenshot({ path:`${OUT}${P.id}-stuck.png` }).catch(() => {}); }
       ok(`${tag}: no errors`, !errs.length, errs); await p.close(); } }
@@ -80,14 +91,14 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
     const p = await b.newPage({ viewport:{ width:VW, height:VH } }), errs = [], tag = 'What a fare does' + (rm ? ' (reduced motion)' : ''); p.on('pageerror', e => errs.push(e.message)); if(rm) await p.emulateMedia({ reducedMotion:'reduce' });
     try{
       await p.goto('file://' + path.join(DIR, 'briefing-fare.html')); await W(p, '#nx', 8000);
-      ok(`${tag}: the frame: OPERATIONS BRIEFING, the title, Show · Notice · Reveal · Use, Back and Next, no Skip outside test mode`, (await p.textContent('.bh .tt')) === 'What a fare does' && /Show.*Notice.*Reveal.*Use/i.test(await p.textContent('#stp')) && !(await p.$('#skip')));
+      ok(`${tag}: the frame: OPERATIONS BRIEFING, the title, Show · Reveal · Use, Back and Next, no Skip outside test mode`, (await p.textContent('.bh .tt')) === 'What a fare does' && (await p.textContent('#stp')) === 'ShowRevealUse' && !(await p.$('#skip')), await p.textContent('#stp'));
       const res = await playFare(p, rm ? 0 : 1);
       ok(`${tag}: beat 1: Back is off, Next is always allowed, each ticket sold adds the fare to Ticket money · revenue`, res.b1);
       ok(`${tag}: beat 2: the slider moves the crowd; after three fares the pattern line shows`, res.b2, res.b2x);
       ok(`${tag}: beat 3: 80 want at £70, the planes board to 19/19 and 19/19, 42 can't (dimmed, not red)`, res.b3, res.b3x);
       ok(`${tag}: beat 4: £70 full with 42 left behind against £140 with 20 seats flying empty`, res.b4, res.b4x);
-      ok(`${tag}: beat 5 (Notice): Next waits for his guess, then "Your guess" (never marked)`, res.b5);
-      ok(`${tag}: beat 6 (Reveal): the sheet works it out in five steps: £1,900, £1,980 (18 × £100 + 18 × £10), £80 more for the £110 plane`, res.b6, res.b6x);
+      ok(`${tag}: beat 5 (Show): the question is the caption, no guess and no buttons, Next always allowed`, res.b5, res.b5x);
+      ok(`${tag}: beat 6 (Reveal), design B: the bars, then the Airline-look sheet works it out: £1,900, £1,980 (18 × £100 + 18 × £10), £80 more for the £110 plane; no guess line`, res.b6, res.b6x);
       ok(`${tag}: beat 7 (Use): four recap tiles and the green Set my fares`, res.b7, res.b7x);
       if(!rm) await p.screenshot({ path:`${OUT}fare_lever-2.png` });
     }catch(e){ ok(`${tag}: played to the end`, false, e.message.split('\n')[0]); await p.screenshot({ path:`${OUT}fare_lever-stuck.png` }).catch(() => {}); }
@@ -117,17 +128,20 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
       ok('fare_lever in the game: all seven beats, then Set my fares: back in the Studio with a flight selected and its fare stepper ready', R.b1 && R.b3 && R.b6 && R.b7 && !(await open()) && (await E('step().t')) === 'plan' && !!(await p.$('[data-bvfare]')) && /bvfare/.test(await p.evaluate(() => document.activeElement && document.activeElement.outerHTML.slice(0, 80))), R.b6x); }
     else ok('fare_lever in the game: opens again for the play-through', false);
   }catch(e){ ok('fare_lever in the game: played through', false, e.message.split('\n')[0]); }
+  // year one (D105, 7.6): the Fuel desk opens on Launch Day after the sheet; its first visit opens Cash, tank, profit (version A, the workbook's example), then the tour and the order
   if(want('fuel_launch')){ try{ for(let g = 0; g < 8 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('decision')); await p.waitForTimeout(600); }
-      const t = await title(), st = await E('step().t'), tb = JSON.parse(await E('JSON.stringify((t => t && { stage:t.stage, v:t.cols[0].values })(currentTable()))'));
-      const fr = p.frames().find(f => f !== p.mainFrame()), B = fr ? await fr.evaluate(() => window.BRIEF) : {};
-      ok('Cash, tank, profit: opens on Launch Day before the fuel order, with the order\'s own figures', /Cash, tank, profit/.test(t) && st === 'workings' && tb && tb.stage === 'fuelorder' && B.buyL === tb.v.blocks * 1000 && Math.abs(B.price * 1000 - tb.v.blk) < 0.01 && B.next === 'order' && B.cash > 0, { t, st, tb, B:{ buyL:B.buyL, price:B.price, cash:B.cash, days:B.days, perDay:B.perDay, next:B.next } });
-      await p.waitForTimeout(3000); await p.screenshot({ path:`${OUT}game-fuel-launch.png` }); await p.evaluate(() => window.__bf.skip()); await p.waitForTimeout(300); }
+      const t = await title(), st = await E('step().t'), day = await E('S.day || 1'), fr = p.frames().find(f => f !== p.mainFrame()), B = fr ? await fr.evaluate(() => window.BRIEF) : {};
+      ok('Cash, tank, profit: opens on Launch Day, on the first visit to the Fuel desk (after the sheet, before the order), with the workbook\'s example (version A: £8,600; 3,000 L at £1.30)', /Cash, tank, profit/.test(t) && st === 'fuelDesk' && day === 1 && B.next === 'order' && B.cash === 8600 && B.buyL === 3000 && Math.abs(B.price - 1.3) < 1e-9 && B.kitFlat === true, { t, st, day, B:{ cash:B.cash, buyL:B.buyL, price:B.price, perDay:B.perDay, days:B.days, next:B.next, kitFlat:B.kitFlat } });
+      await p.waitForTimeout(3000); await p.screenshot({ path:`${OUT}game-fuel-launch.png` }); await p.evaluate(() => window.__bf.skip()); await p.waitForTimeout(400);
+      ok('Cash, tank, profit: skipped, the desk is underneath with its tour, and the scene does not open again', !(await open()) && await E('step().t') === 'fuelDesk' && !!(await p.$('.fd2-tour')) && !!(await E('(S.brief.seen.fuel_cash_tank_profit) || 0')));
+      for(let k = 0; k < 3 && await p.$('#fd2Next'); k++){ await p.click('#fd2Next'); await p.waitForTimeout(80); } }
     catch(e){ ok('Cash, tank, profit on Launch Day', false, e.message.split('\n')[0]); } }
   // Thursday: Red Kite; Sunday: the week-1 review
   await at('rival_split', async () => { for(let g = 0; g < 6 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('decision')); await p.waitForTimeout(600); } }, D => D.rival === 50 && D.fare > D.rival && D.stay < D.want && D.stayAd > D.stay);
   await at('full_route', async () => { for(let g = 0; g < 6 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('review')); await p.waitForTimeout(600); } }, D => D.want > D.flights.reduce((t, f) => t + f.sold, 0));
   // week 2: the Fuel desk; the shop's first comparison
-  await at('fuel_cash_tank_profit', async () => { await load(8); await p.click('[data-nav="fuel"]'); await p.waitForTimeout(1500); }, D => D.cash > 0 && D.perDay > 0 && D.day.tickets > 0);
+  if(want('fuel_cash_tank_profit')){ await load(8); const D = await data('fuel_cash_tank_profit');   // its moment is Launch Day now (above); in year one its figures are the workbook's, whatever the day
+    ok('fuel_cash_tank_profit: in year one the scene\'s figures are the workbook\'s example (BriefingData), on any day', D && D.cash === 8600 && D.buyL === 3000 && D.next === 'order' && D.perDay > 0 && D.tickets > 0, D); }
   // Briefing 13 (D103): straight after the fuel scene on the week-2 Fuel desk, with the pupil's own week, planes and the shop's cheapest plane
   await at('cash_to_fly', async () => { if(!(await open())){ await load(8); await E('((S.brief = S.brief || { seen:{} }).seen.fuel_cash_tank_profit = 8, 1)'); await p.click('[data-nav="fuel"]'); await p.waitForTimeout(1500); } },
     D => D.cash > 0 && D.days.length === 7 && D.days.every(x => x.litres >= 0 && x.tickets >= 0) && D.price > 0 && D.blockLitres > 0 && D.planes.length >= 1 && D.reserve === 0);
@@ -149,9 +163,9 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
     await E('((S.brief = S.brief || { seen:{} }).seen.cash_to_fly = 8, 1)');   // (Briefing 13 has its own checks above)
     await shopOpen(); if(await open()){ const F = p.frameLocator('#bfLayer iframe');
       ok('in the game, out of test mode: no Skip button', !(await F.locator('#bkSkip').count()));
-      await F.locator('.bk-hud button[aria-label]').first().waitFor({ timeout:30000 }); await F.locator('.bk-hud button[aria-label]').first().click();
-      for(let i = 0; i < 2; i++){ await F.locator('.bk-go').waitFor({ timeout:45000 }); await p.waitForTimeout(250); await F.locator('.bk-go').click(); }
-      await p.waitForTimeout(500); ok('played to the end: the frame closes on the shop it prepared, and it is marked seen', !(await open()) && await E('step().t') === 'shop2' && !!(await E('(S.brief.seen.aircraft_efficiency) || 0'))); }
+      const fr = p.frames().find(f => f !== p.mainFrame()), labels = [];   // no taps since 19 Oct, evening: three beats, each ended with Next
+      for(let i = 0; i < 3; i++){ for(let g = 0; g < 400 && !(await fr.evaluate(() => K.waiting())); g++) await p.waitForTimeout(150); labels.push((await F.locator('.bk-go').textContent()).trim()); await F.locator('.bk-go').click(); await p.waitForTimeout(200); }
+      await p.waitForTimeout(500); ok('played to the end: Next, Go on, To the comparison; the frame closes on the shop it prepared, and it is marked seen', /^Next/.test(labels[0]) && /^Go on/.test(labels[1]) && /^To the comparison/.test(labels[2]) && !(await open()) && await E('step().t') === 'shop2' && !!(await E('(S.brief.seen.aircraft_efficiency) || 0')), labels); }
     // Home with two briefings seen: the shelf
     await load(8); await E('(S.brief = { seen:{ aircraft_efficiency:8, fare_lever:1 } }, UI.view = null, render(), 1)'); await p.waitForTimeout(500);
     const shelf = await p.$('#bfHomeBtn'); ok('Home: a Briefings button beside Plan the week lists what he has seen', !!shelf, shelf ? await shelf.textContent() : null);

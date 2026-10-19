@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 209 | 209 live, 10 placeholder |
+| Settings | 210 | 210 live, 10 placeholder |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved to Routes |
@@ -217,6 +217,39 @@ The briefing's fixed teaching example, as loaded from the BriefingData sheet (no
 - `fare_lever` · `startFare`: 100
 - `fare_lever` · `seatsRunOutFare`: 70
 - `fare_lever` · `compareFares`: 100 · 110
+- `fuel_cash_tank_profit` · `cash`: 8600
+- `fuel_cash_tank_profit` · `price`: 1.3
+- `fuel_cash_tank_profit` · `history`: 1.22 · 1.25 · 1.3 · 1.37 · 1.47 · 1.41 · 1.36 · 1.3 · 1.35 · 1.3
+- `fuel_cash_tank_profit` · `buyL`: 3000
+- `fuel_cash_tank_profit` · `tank`: 5000
+- `fuel_cash_tank_profit` · `perDay`: 600
+- `fuel_cash_tank_profit` · `days`: 5
+- `fuel_cash_tank_profit` · `tickets`: 6660
+- `fuel_cash_tank_profit` · `otherCosts`: 3610
+
+## D105 touches (every sum on the Sheet)
+
+The handover of 19 Oct (evening), section 7.10: the Settings row, the SheetSums sheet and the hints, as loaded. Cash, tank, profit's example is under D104's list.
+
+- `fuelDeskOpensDay`: 1
+- **Launch Day** `B4 · C4 · D4` Ticket revenue: = B2 × B3 (and C, D) (Passengers × Fare) · pupil · book · `launch.tickets`
+- **Launch Day** `E4` Ticket revenue: = E2 × E3 (Passengers × Fare) · pupil · book · `launch.otherTickets`
+- **Launch Day** `F5` Total revenue: = the plan's ticket revenue (Ticket revenue (the plan)) · ƒ · airline
+- **Launch Day** `F6` Other costs: given (What's in this?) · ƒ · airline
+- **Launch Day** `F7` Fuel burned: £0 (free on Launch Day) · ƒ · airline
+- **Launch Day** `F8` Total costs: = F6 + F7 (Other costs + Fuel burned) · ƒ · airline
+- **Launch Day** `F9` Profit: = F5 − F8 (Total revenue − Total costs) · pupil · book · `launch.profit`
+- **Launch Day** `B13 · C13` Cabin sales: = B11 × B12 (Passengers buying snacks × Snack price) · pupil · build · `launch.cabin`
+- **Changes (week 2 on)** `B2…C7` Passengers a day, Empty seats, Fare, Ticket revenue a day, Over a week: given and ƒ (Now · With your change) · ƒ · airline
+- **Changes (week 2 on)** `D5` Difference (a fare change: ticket revenue a day): = C5 − B5 (With your change − Now) · pupil · build once · `changes.difference`
+- **Changes (week 2 on)** `D7` Difference (a plan change: profit a day): = C7 − B7 (With your change − Now) · pupil · build once · `changes.difference`
+- **Event sums** `B4` Stay with you: = B2 × B3 (Your passengers × Stay with you, in every 10) · pupil · book · `event.stay`
+- **Event sums** `B4` Business travellers today: = B2 × B3 (Business travellers on a weekday × Fly on a Saturday, in every 10) · pupil · book · `event.business`
+- **Sunday review** `B9` Profit this week: = B2 + B3 + … + B8 (Mon + Tue + … + Sun) · pupil · build · `week.total`
+- **Sunday review** `B11` Difference from the plan: = B10 − B9 (the larger first) (Projected on Monday − Profit this week) · pupil · build · `week.difference`
+- **Sunday review** `B13` Average a day: = B9 ÷ B12 (Profit this week ÷ Days flown) · pupil · build · `week.average`
+- **Fuel desk** `B4` Cost of this order: = B2 × B3 (Litres to buy × Price a litre) · pupil · book · `fuel.order`
+- **WorkingMethods hints:** 11 of 31 relationships have a hint template.
 
 ## Identity and photos (CR5)
 

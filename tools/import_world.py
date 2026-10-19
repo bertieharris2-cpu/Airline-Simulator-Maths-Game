@@ -326,7 +326,8 @@ def codes(s): return [re.sub(r'\s*\(.*?\)', '', c).strip() for c in str(s or '')
 workingMethods = [{'relationship': r['relationship'], 'level': r['level'], 'where': r.get('whereItLives'),
                    'methods': [m.strip() for m in str(r.get('methodsOffered') or '').split('|') if m.strip()], 'example': r.get('example'),
                    'notes': None if r.get('notes') == 'live' else r.get('notes'),   # v5.1's six new rows carry 'live' in the notes column
-                   'bettws': codes(r.get('bettwsStatements')), 'bettwsText': r.get('bettwsStatements')}
+                   'bettws': codes(r.get('bettwsStatements')), 'bettwsText': r.get('bettwsStatements'),
+                   'hint': r.get('hintTemplate')}   # D105: the Sheet's hints in the pupil's own numbers ('Hint 1: … Hint 2: …', {placeholders})
                   for r in opt_sheet('WorkingMethods') if r.get('relationship') and r.get('level')]
 if 'WorkingMethods' not in wb.sheetnames: issue('error', 'WorkingMethods', 'no WorkingMethods sheet: the workbench has no methods to offer.')
 # v4.10 (D66): the Operating Plan Studio's live tips, each a condition the game checks on the projected plan
@@ -374,6 +375,20 @@ def bd_value(v):
     if '|' in s: return [bd_value(x) for x in s.split('|')]
     try: return int(s) if re.fullmatch(r'-?\d+', s) else float(s) if re.fullmatch(r'-?\d+\.\d+', s) else s
     except ValueError: return s
+# D105 (19 Oct 2026, evening, handover 7.10): every year-one sheet's sums: the cells, the formula and its words, whose it is
+# (the pupil's, or ƒ: the airline's) and how it is done (book: the formula on the bar, worked out in the book; build: built by
+# clicking the cells; build once: built the first time). The game reads whose and how by sumId; the rest is the record.
+SS_HOW = {'book', 'build', 'build once', 'airline'}
+sheetSums = []
+for r in opt_sheet('SheetSums'):
+    if not r.get('sheet') or not r.get('cell'): continue
+    row = {'sheet': r['sheet'], 'cell': r['cell'], 'row': r.get('row'), 'formula': r.get('formula'), 'words': r.get('words'),
+           'whose': 'ƒ' if str(r.get('whose') or '').strip() in ('ƒ', 'f', 'airline') else 'pupil', 'how': r.get('how'), 'sumNo': r.get('sumNo'),
+           'sum': r.get('sumId'), 'notes': r.get('notes')}
+    if row['how'] not in SS_HOW: issue('error', 'SheetSums', f'{row["sheet"]} {row["cell"]}: how is "{row["how"]}", not one of {", ".join(sorted(SS_HOW))}.')
+    if row['whose'] == 'pupil' and not row['sum']: issue('error', 'SheetSums', f'{row["sheet"]} {row["cell"]}: a pupil\'s sum needs a sumId.')
+    sheetSums.append(row)
+if 'SheetSums' not in wb.sheetnames: issue('check', 'SheetSums', 'no SheetSums sheet: the game uses its own list of which sums are the pupil\'s (p5u).')
 briefingData = {}
 for r in opt_sheet('BriefingData'):
     if r.get('briefingId') and r.get('key'): briefingData.setdefault(r['briefingId'], {})[r['key']] = bd_value(r.get('value'))
@@ -453,7 +468,7 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
          'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips, 'teacherMilestones': teacherMilestones,
          'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview, 'campaign': campaign,
-         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings, 'briefingData': briefingData, 'roadmap': roadmap}
+         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings, 'briefingData': briefingData, 'roadmap': roadmap, 'sheetSums': sheetSums}
 
 
 # ---------- checks ----------
@@ -817,6 +832,15 @@ out += ['', '## D103 touches (Briefing 13)', '', "Bertie's rules of 18 Oct 2026,
 # D104 (19 Oct 2026): What a fare does, rebuilt; its teaching example on the BriefingData sheet
 t104 = [f'- `{b}` · `{k}`: ' + (' · '.join(map(str, v)) if isinstance(v, list) else str(v)) for b, kv in briefingData.items() for k, v in kv.items()] or ['- **BriefingData:** none.']
 out += ['', '## D104 touches (What a fare does, rebuilt)', '', "The briefing's fixed teaching example, as loaded from the BriefingData sheet (not live route data).", ''] + t104
+
+# D105 (19 Oct 2026, evening): every sum on the Sheet; the Fuel desk from Launch Day; Cash, tank, profit's example
+t105 = []
+st105 = settings_status.get('fuelDeskOpensDay')
+t105.append('- **Settings:** `fuelDeskOpensDay` is not on the sheet.' if st105 is None else f'- `fuelDeskOpensDay`: {settings.get("fuelDeskOpensDay")}' if st105 in LOAD else f'- **Settings:** `fuelDeskOpensDay` is `{st105}`: not loaded.')
+if st105 is None: issue('check', 'Settings', 'fuelDeskOpensDay is not on the sheet (D105): the Fuel desk opens on Launch Day by default.')
+t105 += [f'- **{x["sheet"]}** `{x["cell"]}` {x["row"]}: {x["formula"]} ({x["words"]}) · {x["whose"]} · {x["how"]}' + (f' · `{x["sum"]}`' if x['sum'] else '') for x in sheetSums] or ['- **SheetSums:** none.']
+t105.append(f'- **WorkingMethods hints:** {sum(1 for m in workingMethods if m.get("hint"))} of {len(workingMethods)} relationships have a hint template.')
+out += ['', '## D105 touches (every sum on the Sheet)', '', "The handover of 19 Oct (evening), section 7.10: the Settings row, the SheetSums sheet and the hints, as loaded. Cash, tank, profit's example is under D104's list.", ''] + t105
 
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'

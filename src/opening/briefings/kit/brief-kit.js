@@ -467,5 +467,5 @@ const K = (() => {
   }
 
   return { B, RM, y1:Y1, s, h, at, txt, start, run, decide, fast, pause, mark, caption, question, cont, done, call, chips, rail, count, wait, tween, every, pos,
-    terminal, apron, plane, person, walk, priceTag, gate, stack, tank, vault, coins, board, piece, flat:FLAT, money, num, esc, clamp, lerp, layers:() => layers, hud:() => hud, svg:() => svg, defs:() => defs, isPaused:() => paused };
+    terminal, apron, plane, person, walk, priceTag, gate, stack, tank, vault, coins, board, piece, flat:FLAT, money, num, esc, clamp, lerp, layers:() => layers, hud:() => hud, svg:() => svg, defs:() => defs, isPaused:() => paused, waiting:() => !!pend, held:() => HOLD > 0, beats:() => BEATS };
 })();
