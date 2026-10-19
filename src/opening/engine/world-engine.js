@@ -105,6 +105,20 @@
              revenue:r2(rev), costs:r2(cost), profit:r2(rev - cost) };
   }
 
-  const WE = { day, timeline, backToBack, legMin, bandOf, rules, home, roundSchool, clock, hm };
+  /* D104 (workbook v6.0, Settings growthResponds): one week of a route's growth, from how the week served it.
+     m is the route's demand multiplier (1 = its opening demand). w = { flown, fill (0–1), turnedAway, fareRank (0 = the top
+     fare option, 1 = second from top, 2+ = lower) }. Flown: + growthPerWeek, + growthFillBonus when fill ≥ 80% and people
+     were turned away, the sum × growthFareDrag at the top fare (half the drag second from top); never past growthCeiling.
+     Not flown: − growthDropDecay, back towards the opening demand (never below 1). Percentages, as the Archetypes sheet. */
+  function growthStep(arch, m, w){
+    const a = arch || {}, pct = x => (+x || 0) / 100;
+    if(!w || !w.flown) return Math.max(1, m - pct(a.growthDropDecay));
+    const drag = a.growthFareDrag === undefined || a.growthFareDrag === null ? 1 : +a.growthFareDrag;
+    const keep = w.fareRank === 0 ? drag : w.fareRank === 1 ? (1 + drag) / 2 : 1;
+    const g = (pct(a.growthPerWeek) + (w.fill >= 0.8 - 1e-9 && w.turnedAway > 0 ? pct(a.growthFillBonus) : 0)) * keep;
+    return Math.min(a.growthCeiling || Infinity, m + g);
+  }
+
+  const WE = { day, timeline, backToBack, legMin, bandOf, rules, home, roundSchool, clock, hm, growthStep };
   if(typeof module !== 'undefined' && module.exports) module.exports = WE; else root.WE = WE;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

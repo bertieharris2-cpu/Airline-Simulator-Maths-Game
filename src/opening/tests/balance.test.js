@@ -194,5 +194,22 @@ console.log('D101: one flight on a route catches some of the people who wanted a
   ok(`adaptToOnlyFlight ${ADAPT}: Madrid's lone 06:30 ATR at £180 carries more (${off} → ${on}), never over its ${P('at72').seats} seats`, ADAPT > 0 && on > off && on <= P('at72').seats, [off, on]);
   ok('a second service the other side of the day still carries more than one alone', two > on, [on, two]); }
 
+console.log('v6.0 (D104): growth responds to how a route is served (Archetypes growthFillBonus / growthFareDrag / growthDropDecay)');
+{ const A = id => W.archetypes.find(a => a.id === id), g = (id, m, w) => Math.round(WE.growthStep(A(id), m, w) * 1e4) / 1e4;
+  const full = { flown:true, fill:0.9, turnedAway:5, fareRank:3 }, half = { flown:true, fill:0.6, turnedAway:0, fareRank:3 };
+  ok('the Archetypes carry v6.0\'s parameters: base 1 / 1 / 3 / 2 %, bonus 2 / 2 / 3 / 3, decay 3 / 3 / 4 / 4, no growth at the top fare, ceilings 1.5 / 1.6 / 1.8 / 1.8',
+    ['business_shuttle', 'city_break_mixed', 'leisure_short', 'sun_holiday'].map(id => [A(id).growthPerWeek, A(id).growthFillBonus, A(id).growthDropDecay, A(id).growthFareDrag, A(id).growthCeiling].join('/')).join(' ') === '1/2/3/0/1.5 1/2/3/0/1.6 3/3/4/0/1.8 2/3/4/0/1.8',
+    ['business_shuttle', 'city_break_mixed', 'leisure_short', 'sun_holiday'].map(id => A(id)));
+  ok('a full business route with people turned away grows 1% + 2% a week', g('business_shuttle', 1, full) === 1.03, g('business_shuttle', 1, full));
+  ok('half full, nobody turned away: the base 1% only', g('business_shuttle', 1, half) === 1.01, g('business_shuttle', 1, half));
+  ok('at the top fare option: no growth; second from top: half', g('business_shuttle', 1.1, Object.assign({}, full, { fareRank:0 })) === 1.1 && g('business_shuttle', 1.1, Object.assign({}, full, { fareRank:1 })) === 1.115,
+    [g('business_shuttle', 1.1, Object.assign({}, full, { fareRank:0 })), g('business_shuttle', 1.1, Object.assign({}, full, { fareRank:1 }))]);
+  ok('a week not flown loses 3% (business) or 4% (leisure), back towards the opening demand and never below it', g('business_shuttle', 1.2, { flown:false }) === 1.17 && g('leisure_short', 1.02, { flown:false }) === 1, [g('business_shuttle', 1.2, { flown:false }), g('leisure_short', 1.02, { flown:false })]);
+  ok('a well-served leisure route grows 3% + 3% a week, up to its ceiling (1.8)', g('leisure_short', 1, full) === 1.06 && g('leisure_short', 1.78, full) === 1.8, [g('leisure_short', 1, full), g('leisure_short', 1.78, full)]);
+  // Balance Report v6.0 §"What this shows" 2: by December (15 weeks of growth from week 2) a well-served Dublin, cheap and full, against one at the top fare
+  let cheap = 1, top = 1; for(let w = 2; w <= 16; w++){ cheap = WE.growthStep(A('business_shuttle'), cheap, full); top = WE.growthStep(A('business_shuttle'), top, Object.assign({}, full, { fareRank:0 })); }
+  ok(`by mid-December a cheap, full Dublin has grown to ×${cheap.toFixed(2)} (the ceiling is 1.5); one held at the top fare has not grown`, cheap >= 1.4 && cheap <= 1.5 && top === 1, [cheap, top]);
+  noted++; console.log(`note v6.0 §2 says a "cheap and build" Dublin reaches about 1.6× by December; with the sheet's parameters (3% a week of the opening demand, from week 2) it reaches ×${cheap.toFixed(2)}, and business_shuttle's ceiling is 1.5.`); }
+
 console.log(fails ? `${fails} FAILED` : `All Balance Report figures reproduced (${noted} known differences noted above).`);
 process.exit(fails ? 1 : 0);
