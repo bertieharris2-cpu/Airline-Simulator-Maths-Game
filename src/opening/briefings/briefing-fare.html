@@ -6,120 +6,417 @@
 <title>Operations briefing — What a fare does</title>
 <link rel="stylesheet" href="kit/brief-kit.css" data-kit>
 <script src="kit/brief-kit.js" data-kit></script>
+<style>
+/* What a fare does, rebuilt (Claude Design handover 19 Oct 2026, section 6; Bertie chose design A for beats 2 and 6). The page is
+   the clickable mock-up's 1366 × 768 briefing stage, scaled to fit the frame; its drawing rules are the mock-up's own. */
+:root{color-scheme:dark;--bg0:#020812;--text:#eaf2ff;--soft:#9fbde3;--muted:#6f86a8;--line:rgba(65,122,171,.48);
+ --cyan:#36c6ff;--gold:#f2c14e;--green:#3ce394;--amber:#ffb547;--mag:#ff4fd8;--head:#c4d4ea;--neutral:#9fb3cf;
+ --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+html,body{margin:0;height:100%;background:#020812;overflow:hidden}
+.fitw{position:fixed;inset:0;overflow:hidden;background:#020812}
+.stage{position:absolute;left:0;top:0;width:1366px;height:768px;transform-origin:0 0}
+.bbtn.skip{height:30px;font-size:13px;padding:0 12px;margin-left:12px}
+/* ===================== the briefing (BertieV4) ===================== */
+.bf{position:absolute;inset:0;background:var(--bg0);font:16px/1.4 var(--sans);color:var(--text);overflow:hidden;font-variant-numeric:tabular-nums}
+.bf *{box-sizing:border-box}
+.bh{position:absolute;left:0;top:0;width:1366px;height:64px;display:flex;align-items:center;gap:18px;padding:0 28px;border-bottom:1px solid rgba(65,122,171,.3);background:#020a17}
+.bh .ey{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+.bh .tt{font-size:22px;font-weight:600;letter-spacing:-.01em}
+.stp{margin-left:auto;display:flex;gap:6px}
+.stp span{width:92px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:8px;border-top:3px solid #1b3558}
+.stp span.done{color:var(--soft);border-top-color:#2c5a8c}
+.stp span.now{color:var(--cyan);border-top-color:var(--cyan)}
+.pic{position:absolute;left:0;top:64px;width:1366px;height:612px;overflow:hidden}
+.bc{position:absolute;left:0;top:676px;width:1366px;height:92px;background:#06142a;border-top:1px solid rgba(65,122,171,.35);display:flex;align-items:center;gap:14px;padding:0 24px 0 32px}
+.capt{font-size:21px;line-height:1.35;color:var(--text);flex:1;min-width:0}
+.capt b{font-weight:700}
+.capt .g{color:var(--gold);font-weight:700}
+.bbtn{font:inherit;font-size:16px;font-weight:600;height:46px;padding:0 20px;cursor:pointer;color:var(--text);background:#0d2346;border:1px solid #2b5c9e}
+.bbtn.next{background:linear-gradient(180deg,#2486ff,#1260dc);border-color:#5cb0ff;color:#eaf3ff;min-width:150px}
+.bbtn.go{color:#04231a;background:linear-gradient(180deg,#22c97a,#118f55);border-color:#5ff0a8;min-width:170px}
+.bbtn:disabled{opacity:.4;cursor:default}
+.bbtn.wait{background:#0d2346;border-color:#2b5c9e;color:var(--soft)}
+.act2{position:absolute;font:inherit;font-size:17px;font-weight:600;height:48px;padding:0 22px;cursor:pointer;color:var(--cyan);background:#06182f;border:1px solid var(--cyan)}
+.act2:disabled{color:var(--muted);border-color:#24426c;cursor:default}
+
+.pn{position:absolute;background:linear-gradient(155deg,#0d3159 0%,#081f3d 48%,#05152b 100%);border:1px solid rgba(65,122,171,.55);box-shadow:inset 0 1px 0 rgba(150,205,255,.16)}
+.pn.act{background:linear-gradient(155deg,#123e64 0%,#092743 58%,#06192d 100%);border-color:rgba(54,198,255,.7);box-shadow:inset 3px 0 0 #36c6ff}
+.ey{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--soft)}
+.ey.c{color:var(--cyan)} .ey.g{color:var(--gold)}
+.lbl{position:absolute;font-size:16px;color:var(--soft);white-space:nowrap}
+.lbl b{color:var(--text);font-weight:700}
+.big{font-size:44px;font-weight:700;letter-spacing:-.01em;line-height:1}
+.gold{color:var(--gold)} .green{color:var(--green)} .cyan{color:var(--cyan)}
+.fade{transition:opacity .45s}
+.hide{opacity:0}
+
+/* people (no faces) */
+.pp{position:absolute;width:18px;height:45px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 30'%3E%3Ccircle cx='6' cy='4' r='3.6' fill='%23c4d4ea'/%3E%3Crect x='2' y='8.5' width='8' height='11' rx='3' fill='%239fb3cf'/%3E%3Crect x='2.8' y='18' width='6.4' height='12' rx='2' fill='%237389a8'/%3E%3C/svg%3E") center/100% 100% no-repeat;transition:left .7s ease,top .7s ease,opacity .4s}
+.pp.s{width:16px;height:40px}
+.pp.l{width:24px;height:60px}
+.pp.xs{width:9px;height:22px}
+.pp.dim{opacity:.45}
+.pp.gone{opacity:0}
+
+/* seat plan (top-down Twin Otter, nose left) */
+.plan{position:absolute;width:480px;height:176px;transform-origin:0 0}
+.plan svg{position:absolute;left:0;top:0}
+.st{position:absolute;width:24px;height:22px;background:#0a2446;border:1.5px solid #2c5a8c;transition:background .25s,border-color .25s}
+.st::before{content:"";position:absolute;right:-1.5px;top:-1.5px;width:6px;height:calc(100% + 3px);background:#2c5a8c}
+.st.on{background:#7f95b3;border-color:#9fb3cf}
+.st.on::before{background:#5d7393}
+.st.on::after{content:"";position:absolute;left:3px;top:3.5px;width:12px;height:12px;border-radius:50%;background:#c4d4ea}
+.st.gap{border:2px dashed var(--cyan);background:transparent}
+.st.gap::before{background:#1d4f7a}
+
+/* money */
+.coin{position:absolute;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff1bf,#f2c14e 55%,#a87a12);color:#3a2700;font:700 12px var(--sans);display:grid;place-items:center;transition:left .8s ease,top .8s ease,opacity .3s}
+.slab{position:absolute;width:150px;height:18px;background:linear-gradient(180deg,#ffe08a,#f2c14e 45%,#c08f1d);border-top:1px solid #fff1bf;transition:opacity .4s}
+.slab.blk::after{display:none}
+.slab::after{content:"";position:absolute;left:66px;top:0;width:18px;height:100%;background:rgba(120,80,0,.35)}
+
+/* sheet (Work it out page rules) */
+.sheet{position:absolute;border:1px solid rgba(65,122,171,.55);background:linear-gradient(160deg,#092643,#051629)}
+.sheet .r{display:grid;grid-template-columns:var(--cols);align-items:center;height:48px;border-top:1px solid rgba(65,122,171,.3);transition:background .3s}
+.sheet .r.hd{height:40px;border-top:0}
+.sheet .r.tot{border-top:2px solid #4a7fb5}
+.sheet .r.dif{border-bottom:4px double #4a7fb5}
+.sheet .r.lit{background:linear-gradient(155deg,#123e64 0%,#092743 58%,#06192d 100%)}
+.sheet .r.lit .k{font-weight:700;color:var(--text)}
+.sheet .k{padding:0 16px;color:var(--soft);font-size:17px}
+.sheet .h{padding:0 12px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);text-align:right}
+.sheet .v{position:relative;margin:0 10px;height:36px;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;font-size:22px;font-weight:600;border:2px solid transparent;transition:border-color .3s,color .3s}
+.sheet .v.used{border-color:var(--cyan)}
+.sheet .v.used::before{content:attr(data-tag);position:absolute;left:-2px;top:-2px;width:20px;height:20px;background:var(--cyan);color:#021226;font-size:12px;font-weight:800;display:grid;place-items:center}
+.sheet .v.unk{border-color:var(--mag);color:var(--mag)}
+.sheet .v.q{color:var(--muted)}
+.sheet .v.span{grid-column:2 / span 2;justify-content:flex-start;font-size:20px}
+.work{position:absolute;border:1px solid rgba(65,122,171,.45);background:#05152b;padding:16px 22px}
+.work .ln{font-size:26px;font-weight:600;line-height:1.45;transition:opacity .4s;white-space:nowrap}
+.work .ln.s{font-size:20px;color:var(--soft);font-weight:500}
+.tag{display:inline-grid;place-items:center;width:22px;height:22px;background:var(--cyan);color:#021226;font-size:12px;font-weight:800;vertical-align:3px;margin:0 4px}
+.mg{position:absolute;font-size:14px;color:var(--muted);line-height:1.5}
+.mg b{color:var(--soft);font-weight:600}
+
+/* fare slider */
+.fr{position:absolute;-webkit-appearance:none;appearance:none;height:30px;background:transparent;cursor:pointer;margin:0}
+.fr::-webkit-slider-runnable-track{height:6px;background:linear-gradient(90deg,#36c6ff var(--p),#24426c var(--p))}
+.fr::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:30px;margin-top:-12px;background:#36c6ff;border:2px solid #bfeeff}
+.fr::-moz-range-track{height:6px;background:#24426c}
+.fr::-moz-range-progress{height:6px;background:#36c6ff}
+.fr::-moz-range-thumb{width:20px;height:28px;border-radius:0;background:#36c6ff;border:2px solid #bfeeff}
+.fr:focus-visible{outline:2px solid var(--cyan);outline-offset:6px}
+.tk{position:absolute;font-size:13px;color:var(--soft);transform:translateX(-50%)}
+.tk.on{color:var(--text);font-weight:700}
+.brd .rw{display:grid;grid-template-columns:70px 64px 1fr;align-items:center;height:27px;font-size:16px;padding:0 14px 0 16px;border-top:1px solid rgba(65,122,171,.22)}
+.brd .rw.now{background:#0f3355;box-shadow:inset 3px 0 0 var(--cyan)}
+.brd .rw i{display:block;height:10px;background:#9fb3cf;opacity:.8;transition:width .3s}
+.choice{position:absolute;font:inherit;font-size:19px;font-weight:600;height:56px;width:260px;cursor:pointer;color:var(--text);background:#0a2140;border:1px solid #2b5c9e}
+.choice.on{border-color:var(--cyan);background:#0f3355;box-shadow:inset 0 3px 0 var(--cyan)}
+.tile{position:absolute;width:296px;height:250px}
+.tile .n{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--cyan)}
+.tile .t{font-size:20px;font-weight:600;margin-top:4px;line-height:1.25}
+.tile svg{position:absolute;left:18px;bottom:18px}
+@media (prefers-reduced-motion:reduce){.pp,.coin,.slab,.st,.fade,.work .ln,.sheet .r,.sheet .v,.brd .rw i{transition:none!important}}
+.rm .pp,.rm .coin,.rm .slab,.rm .st,.rm .fade,.rm .work .ln,.rm .sheet .r,.rm .sheet .v{transition:none!important}
+</style>
 </head>
 <body data-brief="fare_lever">
+<div class="fitw"><div class="stage" id="stage">
+ <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+   <linearGradient id="fusg" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#16406b"/><stop offset=".55" stop-color="#0c2a4c"/><stop offset="1" stop-color="#071a33"/></linearGradient>
+   <linearGradient id="skin" x1="0" y1="0" x2="0.15" y2="1"><stop offset="0" stop-color="#f8fbff"/><stop offset="0.55" stop-color="#d9e2ee"/><stop offset="1" stop-color="#9aabc3"/></linearGradient>
+   <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020812"/><stop offset="1" stop-color="#0b2246"/></linearGradient>
+   <linearGradient id="flr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a2141"/><stop offset="1" stop-color="#040f20"/></linearGradient>
+   <radialGradient id="pool" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#36c6ff" stop-opacity=".12"/><stop offset="1" stop-color="#36c6ff" stop-opacity="0"/></radialGradient>
+   <linearGradient id="dtop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d4c7c"/><stop offset="1" stop-color="#0d3159"/></linearGradient>
+   <symbol id="ot" viewBox="0 0 190 70"><path d="M6,38 C6,30 12,25.5 24,24.5 L138,23.5 C150,23.5 166,24.5 182,26.5 L183,31 C170,33 156,37 144,40.5 L30,45.5 C15,45.5 6,43 6,38 Z" fill="url(#skin)"/><path d="M150,24 L166,3 C167,1.8 168,1.5 170,1.5 L180,1.5 C182,1.5 183,3 183,5 L183,27 Z" fill="#1f5fae"/><path d="M160,25.5 L190,24 L190,27 L160,28.5 Z" fill="#cfd9e6"/><rect x="46" y="19" width="56" height="4.5" rx="1" fill="#e6edf6"/><path d="M31,17.5 L70,17.5 L70,26.5 C60,28 42,28 35,26.5 C32,25.5 31,22 31,17.5 Z" fill="#cdd7e4"/><path d="M12,30.5 L20,26.8 L28,26.3 L28,31 L14,32.2 Z" fill="#0f284c"/><g fill="#0f284c"><rect x="74" y="28.5" width="5" height="5" rx="1"/><rect x="84" y="28.4" width="5" height="5" rx="1"/><rect x="94" y="28.3" width="5" height="5" rx="1"/><rect x="104" y="28.2" width="5" height="5" rx="1"/><rect x="114" y="28.1" width="5" height="5" rx="1"/><rect x="124" y="28" width="5" height="5" rx="1"/></g><line x1="22" y1="44" x2="22" y2="60" stroke="#62748f" stroke-width="2"/><circle cx="22" cy="64" r="6" fill="#0b1830"/><line x1="84" y1="43" x2="90" y2="59" stroke="#62748f" stroke-width="2.4"/><circle cx="90" cy="63.5" r="6.5" fill="#0b1830"/></symbol>
+  </defs></svg>
+ <div class="bf" id="bf">
+  <div class="bh"><span class="ey">Operations briefing</span><span class="tt">What a fare does</span><div class="stp" id="stp"></div><span id="skipw"></span></div>
+  <div class="pic" id="pic"></div>
+  <div class="bc"><div class="capt" id="capt" aria-live="polite"></div><button class="bbtn" id="bk">&#9664; Back</button><button class="bbtn next" id="nx">Next &#9654;</button></div>
+ </div>
+</div></div>
 <script>
-/* 1 · What a fare does (Launch Day, before the fare sums). A gate at Heathrow, his plane outside, the queue for the route
-   with a price tag on each passenger. He guesses which fare brings in the most ticket money, then drags the fare up: people
-   step out of the queue, the tags on those who stay grow, and the stack of ticket money rises, then falls. The numbers are his
-   plan's at each fare (the ones the sums use next). Bertie, 18 Oct: "the higher the ticket the lower the demand ... one lost
-   seat is sometimes OK if they're paying more". Caption: Ticket money = passengers × fare. Both move. */
-const D = Object.assign({ id:'fare_lever', route:{ city:'Dublin', code:'DUB' }, gate:7, times:'06:00 · 13:40', seats:38, flights:2, planeSeats:19, start:80,
-  fares:[{ f:70, want:80, pax:38 }, { f:80, want:72, pax:38 }, { f:90, want:62, pax:38 }, { f:100, want:44, pax:38 }, { f:110, want:30, pax:27 }], sums:[90, 100, 110] }, K.B);
-const F = D.fares.slice().sort((a, b) => a.f - b.f), city = D.route.city, money = K.money, num = K.num;
-const tk = x => x.pax * x.f, best = F.reduce((a, b) => tk(b) > tk(a) ? b : a, F[0]);
-K.start({ title:'What a fare does' });
-const L = K.layers();
-K.terminal({ horizon:330, glassBottom:520, stand:900, poolX:900 });
-const pl = K.plane(L.back, { x:560, y:226, w:600 });
-const gate = K.gate(L.mid, { x:205, y:700, gate:D.gate, city, flag:D.route.flag, times:D.times, fare:D.start });
+/* 1 · What a fare does (Launch Day: as the Studio opens, or as the fare sums open on a save that reached them first). Rebuilt
+   to start simple and build up, in seven beats (Bertie, 19 Oct: the old one did not make clear whether it compared possible
+   revenue with one full plane):
+   1 Show: tickets make money (Sell a ticket: a passenger boards, a coin flies into Ticket money · revenue).
+   2 Show: the fare changes who wants to fly (a slider from the lowest fare to the highest; the crowd in rows of ten).
+   3 Show: seats run out (two seat plans; Board the planes; the rest can't buy a ticket, dimmed, never red).
+   4 Show: the challenge (a low fare fills the planes, a high fare flies seats empty; the best fare is somewhere between).
+   5 Notice: which plane makes more ticket money, the full one or the dearer one with an empty seat? (his guess, never marked).
+   6 Reveal: the figures sheet works it out row by row, by the Work it out page's rules (Next step × 5).
+   7 Use: four recap tiles, then Set my fares: back to the fare in his plan.
+   A demonstration: the game shows every sum and he types nothing. The numbers are a fixed teaching example kept in the
+   workbook (BriefingData, D104), not his routes; the defaults below are the same example, for the page opened on its own. */
+const D = Object.assign({ id:'fare_lever', route:'Dublin', plane:'Twin Otter', seatsPerPlane:19, planes:2,
+  fares:[60, 70, 80, 90, 100, 110, 120, 130, 140], wantToFly:[100, 80, 64, 50, 40, 36, 30, 24, 18],
+  sellFare:100, startFare:100, seatsRunOutFare:70, compareFares:[100, 110], next:'studio' }, K.B);
+const $ = id => document.getElementById(id), RM = K.RM, money = K.money, num = K.num;
+const FARES = D.fares.map(Number), WANT = {}; FARES.forEach((f, i) => { WANT[f] = Math.round(+D.wantToFly[i] || 0); });
+const SEATS1 = Math.max(1, Math.round(+D.seatsPerPlane || 19)), NPL = Math.max(1, Math.round(+D.planes || 2)), CAP = SEATS1 * NPL;
+const per = f => Math.min(SEATS1, Math.floor((WANT[f] || 0) / NPL));            // passengers on each plane at a fare
+const near = (f, d) => FARES.includes(+f) ? +f : d;
+const SELL = +D.sellFare || 100, START = near(D.startFare, FARES[Math.floor(FARES.length / 2)]), RUN = near(D.seatsRunOutFare, FARES[1]);
+const LOW = RUN, HIGH = FARES[FARES.length - 1], CA = near((D.compareFares || [])[0], 100), CB = near((D.compareFares || [])[1], 110);
+const PA = per(CA), PB = per(CB), TA = PA * CA, TB = PB * CB, MAXC = Math.min(100, Math.max(...FARES.map(f => WANT[f])));
+const T = ms => RM ? 0 : ms;
+if(RM) document.body.classList.add('rm');
+if(D.test) $('skipw').innerHTML = '<button class="bbtn skip" id="skip" title="Teacher test mode">Skip</button>';
 
-/* the queue: lane 1 from the desk to the right (the seats), lane 2 snaking back (no seat); the rope after the last seat */
-const SP = 24, X0 = 340, LANE = 40, slot = i => i < LANE ? [X0 + i * SP, 700] : [X0 + (2 * LANE - 1 - i) * SP, 800];
-const ropeAt = Math.min(D.seats, 2 * LANE) - .5, rope = K.s('g', null, L.mid);
-{ const [x, y] = slot(Math.floor(ropeAt)), xx = x + (ropeAt < LANE ? SP / 2 : -SP / 2);
-  K.s('rect', { x:xx - 3, y:y - 46, width:6, height:46, fill:'#8fa9c6' }, rope); K.s('circle', { cx:xx, cy:y - 48, r:6, fill:'#cfe0f2' }, rope);
-  K.s('path', { d:`M${xx} ${y - 40} Q ${xx + 30} ${y + 20} ${xx} ${y + 60}`, fill:'none', stroke:'#c44', 'stroke-width':3, opacity:.0 }, rope);
-  const sg = K.s('g', { transform:`translate(${xx - 60} ${y - 128})` }, rope); K.s('rect', { x:0, y:0, width:120, height:40, fill:'#0a1a33', stroke:'#2b5c95', 'stroke-width':1.5 }, sg);
-  K.txt(sg, 60, 17, `${num(D.seats)} SEATS`, { 'font-size':14, 'font-weight':700, 'text-anchor':'middle', 'letter-spacing':1.5 }); K.txt(sg, 60, 33, `${D.flights} flights × ${D.planeSeats}`, { 'font-size':12, fill:'#9FBDE3', 'text-anchor':'middle' }); }
-/* empty seats: dashed places in the seat lane */
-const ghosts = K.s('g', null, L.mid), ghostAt = [];
-for(let i = 0; i < Math.min(D.seats, LANE); i++){ const [x, y] = slot(i), g = K.s('g', { opacity:0 }, ghosts); K.s('ellipse', { cx:x, cy:y, rx:10, ry:3.4, fill:'none', stroke:'#F2C14E', 'stroke-width':1.4, 'stroke-dasharray':'3 2' }, g); K.s('rect', { x:x - 8, y:y - 40, width:16, height:26, rx:7, fill:'none', stroke:'#F2C14E', 'stroke-opacity':.55, 'stroke-width':1.2, 'stroke-dasharray':'3 3' }, g); ghostAt.push(g); }
+/* ---------- fit the 1366 × 768 stage to the frame ---------- */
+function size(){ const W = innerWidth, H = innerHeight, s = Math.min(W / 1366, H / 768); $('stage').style.transform = `translate(${(W - 1366 * s) / 2}px,${(H - 768 * s) / 2}px) scale(${s})`; }
+addEventListener('resize', size); size();
 
-/* the people: as many as want to fly at the cheapest fare; the queue is the ones who want to fly at this fare */
-const ppl = K.s('g', null, L.front), maxWant = Math.max(...F.map(x => x.want)), P = [];
-for(let i = 0; i < Math.min(maxWant, 2 * LANE); i++){ const p = K.person(ppl, -60, 760, 'pax'); p.g.style.opacity = 0; P.push(p); }
-let Q = [], fare = D.start;
-/* the money: ticket money a day, by the gate's window */
-const st = K.stack(L.front, { x:1460, y:640, unit:200, w:96, bh:10, fs:30 });
-const say = K.call(1160, 470, '', ''); say.out();
+/* ---------- seat plan: a Twin Otter from above, nose left, six rows of 1 + 2 and one seat at the back ---------- */
+const SEATS = []; for(let r = 0; r < 6; r++){ const x = 122 + r * 44; SEATS.push([x, 42], [x, 94], [x, 118]); } SEATS.push([122 + 6 * 44, 42]);
+const FUS = `<svg width="480" height="176" viewBox="0 0 480 176" aria-hidden="true">
+ <path d="M188,30 L198,4 L250,4 L246,30 Z M188,150 L198,172 L250,172 L246,150 Z" fill="#0b2546" stroke="#2c5a8c" stroke-width="1.2"/>
+ <path d="M432,36 L446,10 L470,10 L468,52 Z M432,144 L446,166 L470,166 L468,128 Z" fill="#0b2546" stroke="#2c5a8c" stroke-width="1.2"/>
+ <path d="M64,30 L428,30 C450,30 470,66 476,90 C470,114 450,150 428,150 L64,150 C30,150 6,122 6,90 C6,58 30,30 64,30 Z" fill="url(#fusg)" stroke="#3b6ea6" stroke-width="1.5"/>
+ <path d="M30,64 C24,78 24,102 30,116" fill="none" stroke="#36c6ff" stroke-opacity=".45" stroke-width="3"/>
+ <line x1="104" y1="34" x2="104" y2="146" stroke="#2c5a8c" stroke-width="1.5"/>
+ <rect x="418" y="146" width="22" height="5" fill="#36c6ff" opacity=".35"/>
+</svg>`;
+function plan(id, x, y, filled, s, gaps){ s = s || 1; gaps = gaps || []; let h = `<div class="plan" id="${id}" style="left:${x}px;top:${y}px;transform:scale(${s})">${FUS}`;
+  SEATS.slice(0, SEATS1).forEach((p, i) => { h += `<i class="st${i < filled ? ' on' : ''}${gaps.includes(i) ? ' gap' : ''}" id="${id}s${i}" style="left:${p[0]}px;top:${p[1]}px"></i>`; }); return h + '</div>'; }
 
-const at = f => F.find(x => x.f === f) || F[0];
-function lit(){ const x = at(fare); Q.forEach((p, i) => { p.g.classList.toggle('dim', i >= x.pax); if(p.tagText){ p.tagText.textContent = money(fare); } if(p.tag) p.tag.style.opacity = i < x.pax ? 1 : 0; }); ghostAt.forEach((g, i) => g.setAttribute('opacity', i >= x.pax && i < Math.min(D.seats, LANE) ? .9 : 0)); }
-function tagOn(p, f){ const g = K.priceTag(p, money(f)); g.querySelector('path').setAttribute('d', 'M-13 -8 L 11 -8 L 15 0 L 11 8 L -13 8 Z'); p.tagText.setAttribute('font-size', 10.5); const i = Q.indexOf(p); g.setAttribute('transform', `translate(0 ${i % 2 ? -82 : -64})`); }
-async function toFare(f, quick){
-  const x = at(f), from = at(fare), w = Math.min(x.want, P.length), moves = []; fare = f; gate.fare(f);
-  if(w < Q.length){ // some step out of the queue and walk away
-    const leave = Q.map((p, i) => [p, i]).sort(() => Math.random() - .5).slice(0, Q.length - w).map(z => z[0]);
-    Q = Q.filter(p => !leave.includes(p)); leave.forEach((p, k) => { p.g.classList.remove('dim'); moves.push(K.walk(p, -60, 600 + (k % 6) * 30, quick ? 500 : 1100, k * 25).then(() => { p.g.style.opacity = 0; })); });
-  } else if(w > Q.length){ const back = P.filter(p => !Q.includes(p)).slice(0, w - Q.length); back.forEach(p => { p.set(-60, 700 + Math.random() * 100); p.g.style.opacity = 1; }); Q = Q.concat(back); }
-  Q.forEach((p, i) => { const [sx, sy] = slot(i); if(!p.tag) tagOn(p, f); if(Math.abs(p.x - sx) > 1 || Math.abs(p.y - sy) > 1) moves.push(K.walk(p, sx, sy, quick ? 600 : 1000, quick ? i * 6 : 200 + i * 8)); });
-  // the tags grow with the fare
-  Q.forEach((p, i) => { if(p.tag){ const y0 = i % 2 ? -82 : -64; K.tween(400, k => p.tag.setAttribute('transform', `translate(0 ${y0}) scale(${1 + .25 * Math.sin(k * Math.PI)})`)); } });
-  lit();
-  const v = tk(x), d = v - tk(from);
-  await Promise.all([st.set(v, quick ? 300 : 900, `${num(x.pax)} × ${money(f)}`), Promise.all(moves)]);
-  return { x, from, d };
+/* ---------- the scene ---------- */
+function backdrop(withPlane, g){ g = g || 250; return `<svg width="1366" height="612" style="position:absolute;left:0;top:0" aria-hidden="true">
+ <rect width="1366" height="${g}" fill="url(#sky)"/>
+ ${withPlane ? `<rect y="214" width="1366" height="36" fill="#0c2242"/><ellipse cx="1050" cy="226" rx="200" ry="10" fill="#020812" opacity=".5"/><g id="parked"></g>` : ''}
+ <g fill="#0a2247">${[0, 170, 340, 510, 680, 850, 1020, 1190, 1358].map(x => `<rect x="${x}" y="0" width="8" height="${g}"/>`).join('')}</g>
+ ${g > 120 ? '<rect y="58" width="1366" height="4" fill="#0a2247"/>' : ''}<rect y="${g - 4}" width="1366" height="6" fill="#123e64"/>
+ <rect y="${g + 2}" width="1366" height="${610 - g}" fill="url(#flr)"/>
+ <ellipse cx="330" cy="${g + 80}" rx="420" ry="90" fill="url(#pool)"/>
+</svg>`; }
+/* his plane parked outside: the kit's Twin Otter (white, his tail colour) when the game sends the kit, else the mock-up's drawing */
+function parkPlane(){ const g = $('parked'); if(!g) return; const w = 380, x = 850, y = 92;
+  const p = K.flat && K.piece ? K.piece('aircraft-twin-otter', g, { w, x, y:y + 140 - w * 70 / 190, mirror:false }) : null;
+  if(p){ if(K.B.kitTail) p.parts('tail').forEach(e => e.setAttribute('fill', K.B.kitTail)); }
+  else g.innerHTML = `<use href="#ot" x="${x}" y="${y}" width="${w}" height="140"/>`; }
+function plain(){ return `<svg width="1366" height="612" style="position:absolute;left:0;top:0" aria-hidden="true"><rect width="1366" height="612" fill="#020812"/><ellipse cx="420" cy="80" rx="600" ry="160" fill="url(#pool)"/></svg>`; }
+const P = (x, y, cls, id) => `<i class="pp ${cls || ''}" ${id ? `id="${id}"` : ''} style="left:${x}px;top:${y}px"></i>`;
+
+/* ---------- beats ---------- */
+const STEPS = ['Show', 'Notice', 'Reveal', 'Use'], BEAT_STEP = { 1:0, 2:0, 3:0, 4:0, 5:1, 6:2, 7:3 };
+let beat = 1, bs = {}, timers = [], guess = null;
+const later = (fn, ms) => { const t = setTimeout(fn, T(ms)); timers.push(t); return t; };
+const clearT = () => { timers.forEach(clearTimeout); timers = []; };
+const pic = $('pic'), capt = $('capt'), nx = $('nx'), bk = $('bk');
+const setCap = h => { capt.innerHTML = h; };
+function setNext(label, cls, disabled){ nx.innerHTML = label; nx.className = 'bbtn ' + (cls || 'next'); nx.disabled = !!disabled; }
+
+// ---- Beat 1 · Tickets make money
+function b1(){
+  bs = { sold:0 };
+  let h = backdrop(true) + `<svg width="1366" height="612" style="position:absolute;left:0;top:0" aria-hidden="true">
+  <ellipse cx="640" cy="424" rx="110" ry="12" fill="#020812" opacity=".55"/>
+  <path d="M556,350 L700,350 L724,336 L580,336 Z" fill="url(#dtop)"/><path d="M556,350 L700,350 L700,420 L556,420 Z" fill="#0a2446"/><path d="M700,350 L724,336 L724,404 L700,420 Z" fill="#071a33"/><path d="M558,351 L699,351" stroke="#5f95cc" stroke-opacity=".6"/>
+  <rect x="626" y="262" width="4" height="74" fill="#123e64"/>
+ </svg>
+ <div class="pn" style="left:520px;top:206px;width:240px;height:66px;padding:9px 14px;background:#020812;border-color:rgba(65,122,171,.7)"><div style="display:flex;justify-content:space-between;font-weight:700;font-size:16px"><span>GATE 1</span><span style="color:var(--soft);font-weight:600">${K.esc(D.route).toUpperCase()}</span></div><div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:2px"><span style="color:var(--soft);font-size:14px">Fare</span><span class="gold" style="font-size:22px;font-weight:700">${money(SELL)}</span></div></div>`;
+  for(let k = 0; k < 5; k++) h += P(500 - k * 46, 352, 'l', 'q' + k);
+  h += `<button class="act2" id="sell" style="left:556px;top:452px">Sell a ticket</button>
+ <div class="pn" style="left:960px;top:296px;width:340px;height:286px;padding:16px 20px">
+  <div class="ey g" id="mt">Ticket money</div>
+  <div class="big gold" id="mv" style="margin-top:10px">£0</div>
+  <div style="color:var(--soft);font-size:17px;margin-top:8px" id="mf">0 tickets × ${money(SELL)}</div>
+ </div>
+ <div class="lbl" style="left:770px;top:420px" id="bl"></div>`;
+  pic.innerHTML = h; parkPlane();
+  setCap('Passengers buy tickets. Each ticket costs the <b>fare</b>.');
+  setNext('Next &#9654;');
+  $('sell').onclick = sell;
+}
+function sell(){
+  if(bs.sold >= 5) return; const k = bs.sold; bs.sold++;
+  const q = $('q' + k); q.style.left = (738 + k * 34) + 'px';
+  later(() => { q.style.opacity = '.55'; }, 700);
+  for(let j = k + 1; j < 5; j++){ const e = $('q' + j); e.style.left = (500 - (j - k - 1) * 46) + 'px'; }
+  const n = bs.sold, c = document.createElement('div'); c.className = 'coin'; c.textContent = money(SELL); c.style.left = '606px'; c.style.top = '318px'; pic.appendChild(c);
+  const land = () => { c.style.opacity = '0'; const s = document.createElement('i'); s.className = 'slab'; s.style.left = '1056px'; s.style.top = (546 - n * 20) + 'px'; pic.appendChild(s);
+    $('mv').textContent = money(n * SELL); $('mf').textContent = `${n} ${n === 1 ? 'ticket' : 'tickets'} × ${money(SELL)} = ${money(n * SELL)}`;
+    $('mt').textContent = 'Ticket money · revenue'; $('bl').innerHTML = `<b>${n}</b> ${n === 1 ? 'passenger' : 'passengers'} boarding`;
+    setCap('Each passenger pays the fare. All the ticket money together is your <b>revenue</b>.'); };
+  if(RM) land(); else { requestAnimationFrame(() => requestAnimationFrame(() => { c.style.left = '1108px'; c.style.top = (522 - n * 20) + 'px'; })); later(land, 850); }
+  if(bs.sold >= 5){ const b = $('sell'); b.disabled = true; b.textContent = 'Queue empty'; }
 }
 
-(async () => {
-  // Show: the queue forms at the start fare
-  K.mark(0); const x0 = at(D.start);
-  K.caption(`${city} at <b>${money(D.start)}</b>: ${num(x0.want)} people want to fly. Your ${D.flights} flights have ${num(D.seats)} seats.`);
-  Q = P.slice(0, Math.min(x0.want, P.length)); Q.forEach((p, i) => { p.g.style.opacity = 1; p.set(-40 - (i % 5) * 20, 690 + (i % 7) * 18); });
-  await Promise.all(Q.map((p, i) => { const [sx, sy] = slot(i); return K.walk(p, sx, sy, 1400, i * 28); }));
-  Q.forEach(p => tagOn(p, D.start)); lit();
-  await st.set(tk(x0), 900, `${num(x0.pax)} × ${money(D.start)}`);
-  K.call(1460, 688, 'ticket money a day', 'quiet');
-  await K.wait(1200);
-  // Predict: which fare brings in the most?
-  K.mark(1); K.question('Which fare brings in the <b>most ticket money</b>?');
-  await K.caption('Tap the fare you think. A guess is fine.');
-  const ch = K.chips({ x:800, y:118, center:true, label:'Fares', items:F.map(z => ({ label:money(z.f), small:`${num(z.want)} want`, value:z.f })) });
-  ch.btns.forEach(b => b.style.width = '5.8cqw');
-  const guess = await ch.wait(); ch.set(guess, 'mine'); const gb = ch.btns.find(b => b.val === guess); gb.insertAdjacentHTML('beforeend', '<small style="color:#F2C14E">your guess</small>');
-  // Reveal: he moves the fare up, a stop at a time
-  K.mark(2); K.question('Now move the fare: <b>drag along the fares</b>, or tap them');
-  await K.caption('Watch the queue, the empty seats and the money.');
-  ch.btns.forEach(b => { b.setAttribute('aria-pressed', 'false'); b.classList.toggle('now', b.val === fare); });
-  const seen = new Set([fare]); let busy = false, queued = null;
-  const go = async f => { if(f === fare) return; if(busy){ queued = f; return; } busy = true; ch.btns.forEach(b => b.classList.toggle('now', b.val === f)); seen.add(f);
-    const r = await toFare(f); const full = r.x.pax >= D.seats, lost = r.from.pax - r.x.pax;
-    if(r.d > 0 && lost > 0) say.say(`<b>${num(lost)} ${lost === 1 ? 'seat' : 'seats'} empty</b> — and still <b>${money(r.d)}</b> more`);
-    else if(r.d > 0) say.say(full ? `Still full, each paying more: <b>${money(r.d)}</b> more` : `<b>${money(r.d)}</b> more`);
-    else if(r.d < 0 && lost > 0) say.say(`<b>${num(lost)}</b> fewer passengers: <b>${money(-r.d)}</b> less`);
-    else if(r.d < 0) say.say(`Cheaper, the same passengers: <b>${money(-r.d)}</b> less`);
-    else say.say('The same money');
-    say.out(false); st.glow(f === best.f);
-    busy = false; if(queued !== null){ const q = queued; queued = null; go(q); } };
-  ch.btns.forEach(b => { b.onclick = () => go(b.val); });
-  // dragging across the chips moves the fare to the chip under the finger
-  const box = ch.box; let dragging = false; box.style.touchAction = 'none';
-  const under = e => { const el = document.elementFromPoint(e.clientX, e.clientY), b = el && el.closest('.bk-chip'); return b && box.contains(b) ? b : null; };
-  box.addEventListener('pointerdown', e => { dragging = true; box.setPointerCapture(e.pointerId); const b = under(e); if(b) go(b.val); });
-  box.addEventListener('pointermove', e => { if(!dragging) return; const b = under(e); if(b) go(b.val); });
-  ['pointerup', 'pointercancel'].forEach(t => box.addEventListener(t, () => { dragging = false; }));
-  // on when he has been to the top fare and seen the most
-  await new Promise(res => { const t = setInterval(() => { if(!busy && seen.has(F[F.length - 1].f) && seen.has(best.f)){ clearInterval(t); res(); } }, 200); });
-  ch.set(best.f, 'best'); st.glow(fare === best.f);
-  const gx = at(guess);
-  K.question(guess === best.f ? `Your guess, <b>${money(best.f)}</b>, brings in the most: <b>${money(tk(best))}</b>` : `<b>${money(best.f)}</b> brings in the most: <b>${money(tk(best))}</b>. Your guess, ${money(guess)}: ${money(tk(gx))}`);
-  await K.caption('Ticket money = <b>passengers × fare</b>. Both move.');
-  await K.cont('Go on');
-  // Use: what the pupil does next (before the Studio: the plan, where a changed fare asks what it is worth; at the sums: the ticket money)
-  K.mark(3); say.out(); ch.off();
-  if(D.next === 'studio'){
-    K.question('Next: <b>your plan</b>. Change a fare, and it asks what the change is worth a day');
-    await K.caption('More money a ticket, but count who still flies: passengers × fare.');
-    await K.cont('To your plan');
-  } else {
-    const sums = (D.sums || []).filter(f => at(f)).map(f => money(f));
-    K.question(`Next: the ticket money at ${sums.length > 1 ? sums.slice(0, -1).join(', ') + ' and ' + sums[sums.length - 1] : sums[0] || 'each fare'}`);
-    await K.caption(`Passengers × fare, for each fare. The most is not always the fullest plane.`);
-    await K.cont('Work out the ticket money');
-  }
-  K.done({ guess, best:best.f });
-})();
+// ---- Beat 2 · The fare changes who wants to fly (design A)
+function crowdPos(i, x0, y0){ const row = Math.floor(i / 20), blk = Math.floor((i % 20) / 10), col = i % 10; return [x0 + blk * 296 + col * 26, y0 + row * 58]; }
+function b2(){
+  const i0 = FARES.indexOf(START); bs = { tried:new Set([START]) };
+  let h = backdrop(false, 110) + `<div class="pn act" style="left:56px;top:28px;width:560px;height:178px;padding:18px 22px 0 26px">
+  <div class="ey c">Decision</div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:6px"><span style="font-size:22px;font-weight:600">Fare to ${K.esc(D.route)}</span><span class="big" id="fv">${money(START)}</span></div>
+ </div>
+ <input type="range" class="fr" id="fr" min="0" max="${FARES.length - 1}" step="1" value="${i0}" aria-label="Fare to ${K.esc(D.route)}" style="left:84px;top:132px;width:500px">
+ ${FARES.map((f, i) => `<span class="tk" id="tk${i}" style="left:${95 + i * (478 / (FARES.length - 1))}px;top:170px">£${f}</span>`).join('')}
+ <div style="position:absolute;left:690px;top:26px;display:flex;align-items:baseline;gap:14px"><span class="big" id="dv">${WANT[START]}</span><span style="font-size:20px;color:var(--soft)" id="dl">people want to fly at ${money(START)}</span></div>`;
+  for(let i = 0; i < MAXC; i++){ const p = crowdPos(i, 690, 150); h += P(p[0], p[1], 's' + (i < WANT[START] ? '' : ' gone'), 'c' + i); }
+  h += `<div class="lbl fade hide" id="pat" style="left:690px;top:452px;font-size:20px;color:var(--text)">Fare up <span class="cyan">↑</span> → fewer people.&nbsp;&nbsp;Fare down <span class="cyan">↓</span> → more people.</div>`;
+  pic.innerHTML = h;
+  setCap('You choose the fare. Drag it and watch how many people want to fly.');
+  setNext('Next &#9654;');
+  const fr = $('fr'); fr.oninput = () => setFare(+fr.value); setFare(i0);
+}
+function setFare(i){
+  const f = FARES[i], d = WANT[f]; bs.fi = i; bs.tried.add(f);
+  $('fr').style.setProperty('--p', (i / (FARES.length - 1) * 100) + '%');
+  $('fv').textContent = money(f); $('dv').textContent = num(d); $('dl').textContent = 'people want to fly at ' + money(f);
+  FARES.forEach((x, j) => $('tk' + j).classList.toggle('on', j === i));
+  for(let k = 0; k < MAXC; k++) $('c' + k).classList.toggle('gone', k >= d);
+  if(bs.tried.size >= 3) $('pat').classList.remove('hide');
+}
+
+// ---- Beat 3 · Seats run out
+function b3(){
+  const want = Math.min(WANT[RUN], 100), fly = Math.min(want, CAP), left = want - fly; bs = { done:false };
+  let h = backdrop(false, 110) + `<div class="lbl fade" id="lw" style="left:84px;top:84px;font-size:20px"><b style="font-size:30px">${num(want)}</b>&nbsp; want to fly at <span class="gold" style="font-weight:700">${money(RUN)}</span></div>`;
+  for(let i = 0; i < want; i++){ const r = Math.floor(i / 10), c = i % 10; h += P(90 + c * 30, 150 + r * 54, '', 'c' + i); }
+  for(let n = 0; n < Math.min(NPL, 2); n++){ const y = n ? 266 : 34; h += `<div class="lbl" style="left:740px;top:${y - 26}px">Plane ${n + 1} · <b>${SEATS1} seats</b></div>${plan('p' + n, 720, y, 0)}<div class="lbl fade hide green" id="f${n}" style="left:1214px;top:${y + 74}px;font-size:22px;font-weight:700"></div>`; }
+  h += `<div class="lbl fade hide" id="sumr" style="left:740px;top:504px;font-size:20px"><b>${num(CAP)}</b> seats · <b>${num(fly)}</b> fly and pay a fare</div>
+ <div class="lbl fade hide" id="left" style="left:84px;top:84px;font-size:20px"><b style="font-size:30px">${num(left)}</b>&nbsp; we couldn't carry · no seat, no ticket, no fare</div>
+ <button class="act2" id="board" style="left:740px;top:494px">Board the planes</button>`;
+  pic.innerHTML = h; bs.want = want; bs.fly = fly; bs.left = left;
+  setCap(`<b>${num(want)}</b> people want to fly at ${money(RUN)}. You have ${NPL === 2 ? 'two' : num(NPL)} planes.`);
+  setNext('Next &#9654;');
+  $('board').onclick = board;
+}
+function board(){
+  if(bs.done) return; bs.done = true; const b = $('board'); b.disabled = true; const fly = Math.min(bs.fly, SEATS1 * 2);
+  for(let i = 0; i < fly; i++){ const n = i < SEATS1 ? 0 : 1, si = i % SEATS1, s = SEATS[si], oy = n ? 266 : 34;
+    later(() => { const e = $('c' + i); e.style.left = (720 + s[0] + 3) + 'px'; e.style.top = (oy + s[1] - 12) + 'px'; e.style.zIndex = 2;
+      later(() => { e.style.opacity = '0'; $('p' + n + 's' + si).classList.add('on'); }, 650); }, i * 45); }
+  later(() => { for(let i = fly; i < bs.want; i++){ const j = i - fly, r = Math.floor(j / 10), c = j % 10, e = $('c' + i); e.style.left = (90 + c * 30) + 'px'; e.style.top = (150 + r * 54) + 'px'; e.classList.add('dim'); }
+    for(let n = 0; n < Math.min(NPL, 2); n++){ const k = Math.min(SEATS1, Math.max(0, fly - n * SEATS1)); const f = $('f' + n); f.textContent = k >= SEATS1 ? `${k}/${SEATS1} ✓` : `${k}/${SEATS1}`; f.classList.remove('hide'); }
+    ['sumr', 'left'].forEach(x => $(x).classList.remove('hide')); $('lw').classList.add('hide'); b.style.display = 'none';
+    setCap(`${num(bs.want)} want to fly, but you only have <b>${num(CAP)} seats</b>. The other <b>${num(bs.left)}</b> can't buy a ticket, so they pay nothing.`); }, fly * 45 + 800);
+}
+
+// ---- Beat 4 · The challenge
+function b4(){
+  let h = plain();
+  const panel = (x, ey, fare, fill, line1, crowd) => { let c = `<div class="pn" style="left:${x}px;top:16px;width:594px;height:398px;padding:16px 20px"><div class="ey">${ey}</div><div class="big gold" style="margin-top:6px">${money(fare)}</div></div>`;
+    c += plan('m' + x + 'a', x + 22, 118, fill, .55) + plan('m' + x + 'b', x + 308, 118, fill, .55);
+    const lab = fill >= SEATS1 ? `<span class="green">${SEATS1}/${SEATS1} ✓</span>` : `${fill} of ${SEATS1}`;
+    c += `<div class="lbl" style="left:${x + 24}px;top:224px;font-size:15px">${lab}</div><div class="lbl" style="left:${x + 310}px;top:224px;font-size:15px">${lab}</div>`;
+    c += `<div class="lbl" style="left:${x + 24}px;top:352px;font-size:19px;color:var(--text)">${line1}</div>`;
+    if(crowd){ const lb = Math.max(0, Math.min(WANT[fare], 100) - CAP); for(let i = 0; i < Math.min(lb, 42); i++){ const r = Math.floor(i / 21), cc = i % 21; c += P(x + 24 + cc * 13, 262 + r * 26, 'xs dim'); } c += `<div class="lbl" style="left:${x + 316}px;top:276px;font-size:15px">${num(lb)} left behind</div>`; }
+    else c += `<div class="lbl" style="left:${x + 24}px;top:276px;font-size:15px">${num(CAP - fill * NPL)} seats fly empty</div>`;
+    return c; };
+  h += panel(56, 'Low fare', LOW, per(LOW), `Planes full · but only <span class="gold">${money(LOW)}</span> a ticket`, true);
+  h += panel(716, 'High fare', HIGH, per(HIGH), `<span class="gold">${money(HIGH)}</span> a ticket · but seats fly empty`, false);
+  h += `<svg width="1366" height="160" style="position:absolute;left:0;top:432px" aria-hidden="true"><line x1="250" y1="70" x2="1116" y2="70" stroke="#2c5a8c" stroke-width="4"/><path d="M262,58 L238,70 L262,82" fill="none" stroke="#2c5a8c" stroke-width="4"/><path d="M1104,58 L1128,70 L1104,82" fill="none" stroke="#2c5a8c" stroke-width="4"/><rect x="673" y="52" width="20" height="36" fill="#36c6ff"/></svg>
+ <div class="lbl" style="left:56px;top:488px;font-size:19px;color:var(--text);font-weight:600">Fill the seats</div>
+ <div class="lbl" style="left:1140px;top:476px;font-size:19px;color:var(--text);font-weight:600;white-space:normal;width:190px;line-height:1.25">More money for each ticket</div>
+ <div class="lbl cyan" style="left:683px;top:540px;font-size:19px;font-weight:600;transform:translateX(-50%)">Best fare: somewhere between</div>`;
+  pic.innerHTML = h;
+  setCap('Your challenge: <b>fill the seats</b> and <b>make the most money</b>.');
+  setNext('Next &#9654;');
+}
+
+// ---- Beat 5 · Which earns more? (Notice: his guess, never marked)
+function seatLine(p){ return p >= SEATS1 ? `<span class="green" style="font-size:20px;font-weight:600">${p} of ${SEATS1} seats ✓</span>` : `<span style="font-size:20px;color:var(--soft);font-weight:600">${p} of ${SEATS1} seats · ${SEATS1 - p} empty</span>`; }
+const gaps = p => Array.from({ length:SEATS1 - p }, (_, i) => p + i);
+function b5(){
+  let h = plain() + `<div style="position:absolute;left:153px;top:22px;display:flex;align-items:baseline;gap:16px"><span class="big gold">${money(CA)}</span>${seatLine(PA)}</div>
+ <div style="position:absolute;left:733px;top:22px;display:flex;align-items:baseline;gap:16px"><span class="big gold">${money(CB)}</span>${seatLine(PB)}</div>
+ ${plan('pa', 153, 84, PA, 1, gaps(PA))}${plan('pb', 733, 84, PB, 1, gaps(PB))}
+ ${PB < SEATS1 ? `<div class="lbl cyan" style="left:${733 + 386}px;top:${84 + 20}px;font-size:14px">empty</div>` : ''}
+ <div style="position:absolute;left:0;width:1366px;top:300px;text-align:center;font-size:30px;font-weight:600">Which plane makes more ticket money?</div>
+ <div class="lbl cyan fade hide" id="ga" style="left:${153 + 240}px;top:378px;transform:translateX(-50%);font-weight:700">Your guess</div>
+ <div class="lbl cyan fade hide" id="gb" style="left:${733 + 240}px;top:378px;transform:translateX(-50%);font-weight:700">Your guess</div>
+ <button class="choice" id="cha" style="left:${153 + 110}px;top:406px">The ${money(CA)} plane</button>
+ <button class="choice" id="chb" style="left:${733 + 110}px;top:406px">The ${money(CB)} plane</button>`;
+  pic.innerHTML = h;
+  const pick = g => { guess = g; $('cha').classList.toggle('on', g === 'a'); $('chb').classList.toggle('on', g === 'b'); $('ga').classList.toggle('hide', g !== 'a'); $('gb').classList.toggle('hide', g !== 'b');
+    setCap(`Your guess: the <b>${money(g === 'a' ? CA : CB)} plane</b>. Let's work it out.`); setNext('Next &#9654;'); };
+  $('cha').onclick = () => pick('a'); $('chb').onclick = () => pick('b');
+  setCap(`One plane is ${PA >= SEATS1 ? 'full' : 'nearly full'} at ${money(CA)}. The other has ${SEATS1 - PB === 1 ? 'one empty seat' : num(SEATS1 - PB) + ' empty seats'} at ${money(CB)}. <b>Which makes more?</b>`);
+  setNext('Choose a plane', 'wait', true);
+  if(guess) pick(guess);
+}
+
+// ---- Beat 6 · Work it out (Reveal), design A: the sheet, row by row
+function b6(){
+  bs = { k:0 };
+  pic.innerHTML = plain() + `<div class="sheet" id="sh" style="left:363px;top:14px;width:640px;--cols:1.15fr 1fr 1fr">
+ <div class="r hd"><span></span><span class="h">${money(CA)} plane</span><span class="h">${money(CB)} plane</span></div>
+ <div class="r" id="r1"><span class="k">Passengers</span><span class="v" id="a1" data-tag="A">${PA}</span><span class="v" id="b1" data-tag="A">${PB}</span></div>
+ <div class="r" id="r2"><span class="k">Fare</span><span class="v" id="a2" data-tag="B">${money(CA)}</span><span class="v" id="b2" data-tag="B">${money(CB)}</span></div>
+ <div class="r tot" id="r3"><span class="k">Ticket money</span><span class="v q" id="a3">?</span><span class="v q" id="b3">?</span></div>
+ <div class="r dif" id="r4"><span class="k">Difference</span><span class="v span q" id="d4"></span></div>
+</div>
+<div class="work" id="wk" style="left:363px;top:262px;width:640px;height:248px"><div class="ey" style="margin-bottom:6px">Working</div><div id="wl"></div></div>
+<div class="mg" style="left:64px;top:110px;width:270px"><b>Where the figures come from</b><br><span class="tag">A</span> passengers<br><span class="tag">B</span> fare</div>
+<div class="mg" style="left:1036px;top:200px;width:270px"><b>Where the answer goes</b><br>→ Ticket money<br>→ Difference</div>`;
+  step6(0);
+}
+function lines(arr){ const wl = $('wl'); wl.innerHTML = ''; arr.forEach((t, i) => { const d = document.createElement('div'); d.className = 'ln' + (t[1] ? ' ' + t[1] : ''); d.innerHTML = t[0]; d.style.opacity = RM ? '1' : '0'; wl.appendChild(d); later(() => { d.style.opacity = '1'; }, 200 + i * 650); }); return 200 + (arr.length - 1) * 650; }
+function clr(){ ['r1', 'r2', 'r3', 'r4'].forEach(r => $(r).classList.remove('lit')); ['a1', 'a2', 'b1', 'b2'].forEach(c => $(c).classList.remove('used')); }
+function setCell(id, txt){ const c = $(id); c.classList.remove('unk', 'q'); c.classList.add('gold'); c.innerHTML = txt; }
+const big = TB >= TA ? 'b' : 'a', DIFF = Math.abs(TB - TA), BIGF = big === 'b' ? CB : CA;
+function setDiff(){ const c = $('d4'); c.classList.remove('q'); c.innerHTML = DIFF ? `<span class="gold" style="font-weight:700">${money(DIFF)} more</span>&nbsp;<span style="color:var(--soft);font-weight:500;font-size:18px">for the ${money(BIGF)} plane</span>` : '<span class="gold" style="font-weight:700">The same</span>'; }
+function settle(k){ if(k > 1) setCell('a3', money(TA)); if(k > 2) setCell('b3', money(TB)); if(k > 3) setDiff(); }
+/* the working for passengers × fare: one line, or split by place value when the fare has hundreds and tens (18 × £110) */
+function working(p, f){ const t = p * f, hi = Math.floor(f / 100) * 100, lo = f - hi;
+  if(!hi || !lo) return [[`${p} × ${money(f)} = <span class="gold">${money(t)}</span>`]];
+  return [[`${p} × ${money(f)}`, 's'], [`${p} × ${money(hi)} = ${money(p * hi)}`], [`${p} × ${money(lo)}&nbsp;&nbsp; = ${money(p * lo)}`], [`${money(p * hi)} + ${money(p * lo)} = <span class="gold">${money(t)}</span>`]]; }
+function step6(k){
+  bs.k = k; clr(); settle(k);
+  if(k === 0){ $('wl').innerHTML = ''; setCap("Ticket money = passengers × fare. Let's work out each plane."); setNext('Next step &#9654;'); }
+  if(k === 1){ $('r3').classList.add('lit'); $('a1').classList.add('used'); $('a2').classList.add('used'); const c = $('a3'); c.classList.remove('q'); c.classList.add('unk');
+    const t = lines(working(PA, CA)); later(() => setCell('a3', money(TA)), t + 500);
+    setCap(`${money(CA)} plane: <b>${PA}</b> passengers × <b>${money(CA)}</b> = <span class="g">${money(TA)}</span>.`); }
+  if(k === 2){ $('r3').classList.add('lit'); $('b1').classList.add('used'); $('b2').classList.add('used'); const c = $('b3'); c.classList.remove('q'); c.classList.add('unk');
+    const t = lines(working(PB, CB)); later(() => setCell('b3', money(TB)), t + 500);
+    setCap(`${money(CB)} plane: <b>${PB}</b> passengers × <b>${money(CB)}</b> = <span class="g">${money(TB)}</span>.`); }
+  if(k === 3){ $('r4').classList.add('lit'); const hi = Math.max(TA, TB), lo = Math.min(TA, TB);
+    const t = lines([[`${money(hi)} − ${money(lo)} = <span class="gold">${money(DIFF)}</span>`]]); later(setDiff, t + 500);
+    setCap(DIFF ? `The ${money(BIGF)} plane makes <span class="g">${money(DIFF)} more</span>.` : 'The two planes make the same.'); }
+  if(k === 4){ $('r4').classList.add('lit');
+    const head = big === 'b' && PB < PA ? `${SEATS1 - PB === 1 ? 'One empty seat' : num(PA - PB) + ' fewer passengers'}, but <span class="gold">${money(DIFF)} more</span> ticket money.` : `The ${money(BIGF)} plane: <span class="gold">${money(DIFF)} more</span> ticket money.`;
+    lines([[head], ["A full plane isn't always the most money.", 's']].concat(guess ? [[`Your guess: the ${money(guess === 'a' ? CA : CB)} plane.`, 's']] : []));
+    setCap("A full plane isn't always the most money. <b>Compare the ticket money.</b>"); setNext('Next &#9654;'); }
+}
+/* Next before a step's animation ends: finish it at once */
+function finish6(){ clearT(); const k = bs.k; settle(k + 1); document.querySelectorAll('#wl .ln').forEach(d => { d.style.opacity = '1'; }); }
+
+// ---- Beat 7 · Use
+function b7(){
+  const tiles = [['1','Tickets make revenue',`<svg width="250" height="110" aria-hidden="true"><use href="#none"/><circle cx="54" cy="18" r="11" fill="#c4d4ea"/><rect x="40" y="33" width="28" height="38" rx="9" fill="#9fb3cf"/><rect x="43" y="66" width="22" height="40" rx="7" fill="#7389a8"/><path d="M96,58 L150,58" stroke="#6f86a8" stroke-width="3"/><path d="M142,50 L152,58 L142,66" fill="none" stroke="#6f86a8" stroke-width="3"/><circle cx="196" cy="58" r="30" fill="#f2c14e"/><text x="196" y="64" text-anchor="middle" font-size="15" font-weight="700" fill="#3a2700" font-family="Segoe UI,system-ui,sans-serif">${money(SELL)}</text></svg>`],
+  ['2','Fare up, fewer people',`<svg width="250" height="110" aria-hidden="true">${Array.from({length:8},(_,i)=>`<g opacity="${i<3?1:.28}"><circle cx="${14+i*30}" cy="12" r="7" fill="#c4d4ea"/><rect x="${7+i*30}" y="22" width="14" height="22" rx="5" fill="#9fb3cf"/><rect x="${9+i*30}" y="42" width="10" height="16" rx="3" fill="#7389a8"/></g>`).join('')}<rect x="0" y="92" width="250" height="5" fill="#24426c"/><rect x="0" y="92" width="190" height="5" fill="#36c6ff"/><rect x="182" y="80" width="16" height="28" fill="#36c6ff"/><text x="0" y="82" font-size="14" fill="#9fbde3" font-family="Segoe UI,system-ui,sans-serif">${money(FARES[0])}</text><text x="250" y="82" text-anchor="end" font-size="14" fill="#9fbde3" font-family="Segoe UI,system-ui,sans-serif">${money(HIGH)}</text></svg>`],
+  ['3','Seats run out',`<svg width="250" height="110" aria-hidden="true">${Array.from({length:19},(_,i)=>{const r=Math.floor(i/7),c=i%7;return `<rect x="${c*34}" y="${4+r*34}" width="26" height="24" fill="${'#7f95b3'}" stroke="#9fb3cf"/><circle cx="${c*34+10}" cy="${4+r*34+12}" r="6" fill="#c4d4ea"/>`;}).join('')}</svg>`],
+  ['4','Compare the ticket money',`<svg width="250" height="110" aria-hidden="true"><rect x="0" y="22" width="190" height="28" fill="#f2c14e" opacity=".8"/><rect x="0" y="66" width="198" height="28" fill="#f2c14e"/><rect x="190" y="62" width="8" height="36" fill="none" stroke="#f2c14e" stroke-width="2"/><text x="203" y="86" font-size="15" font-weight="700" fill="#f2c14e" font-family="Segoe UI,system-ui,sans-serif">+${money(DIFF)}</text></svg>`]];
+  let h = plain();
+  tiles.forEach((t, i) => { h += `<div class="pn tile" style="left:${56 + i * 318}px;top:24px;padding:16px 18px"><div class="n">${t[0]}</div><div class="t">${t[1]}</div>${t[2]}</div>`; });
+  h += `<div style="position:absolute;left:56px;top:330px;font-size:34px;font-weight:600">Now set your fares.</div>
+ <div style="position:absolute;left:56px;top:384px;font-size:22px;color:var(--soft);max-width:900px">Don't just fill the planes: compare the ticket money at each fare.</div>`;
+  pic.innerHTML = h;
+  setCap('Find the fare that fills your seats <b>and</b> makes the most ticket money.');
+  if(D.next === 'sums') setNext('Work out the ticket money &#9654;'); else setNext('Set my fares &#9654;', 'go');
+}
+
+/* ---------- moving through ---------- */
+const R = { 1:b1, 2:b2, 3:b3, 4:b4, 5:b5, 6:b6, 7:b7 };
+function go(n){ clearT(); beat = n; paint(); }
+function paint(){ const s = BEAT_STEP[beat];
+  $('stp').innerHTML = STEPS.map((x, i) => `<span class="${i === s ? 'now' : i < s ? 'done' : ''}">${x}</span>`).join('');
+  bk.disabled = beat === 1; R[beat](); try{ nx.focus({ preventScroll:true }); }catch(e){} }
+let ended = false;
+function end(skipped){ if(ended) return; ended = true; if(window.parent === window){ setCap('End of the briefing. In the game, Set my fares goes back to the fares in your plan.'); nx.disabled = true; } K.done(skipped ? { skipped:true } : { guess:guess ? (guess === 'a' ? CA : CB) : null, best:TB >= TA ? CB : CA, next:D.next }); }
+nx.onclick = () => { if(nx.disabled) return;
+  if(beat === 6 && bs.k < 4){ const k = bs.k; finish6(); step6(k + 1); return; }
+  if(beat === 7){ end(false); return; }
+  go(beat + 1); };
+bk.onclick = () => { if(beat === 6 && bs.k > 0){ const k = bs.k - 1; clearT(); b6(); if(k > 0){ clearT(); settle(k); step6(k); } return; } if(beat > 1) go(beat - 1); };
+document.addEventListener('keydown', e => { if(e.key === 'Enter' && document.activeElement && document.activeElement.tagName === 'BUTTON' && document.activeElement !== nx) return; if(e.key === 'Enter' && !nx.disabled){ e.preventDefault(); nx.click(); } });
+if($('skip')) $('skip').onclick = () => end(true);
+paint();
 </script>
 </body>
 </html>

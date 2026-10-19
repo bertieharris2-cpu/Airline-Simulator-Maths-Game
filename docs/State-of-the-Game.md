@@ -10,6 +10,16 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zc. What a fare does, rebuilt (Claude Design handover 19 Oct 2026, D104)
+
+- **Page.** `briefings/briefing-fare.html` is the clickable mock-up's 1366 × 768 stage, scaled to the frame, in seven beats (Show ×4, Notice, Reveal, Use; design A for beats 2 and 6). It has its own header, stepper and caption band. It does not use the kit's `K.start` frame, but it does use `K.B`, `K.done`, `K.RM` and the kit's flat Twin Otter with the pupil's tail colour.
+- **Data.** The workbook's new BriefingData sheet (briefingId, key, value) is read by `tools/import_world.py` as `briefingData`, with checks, and the import report has a "D104 touches" section. `bfFareData()` (p5f) sends `WB.briefingData.fare_lever`. The page holds the same numbers for a workbook without the sheet.
+- **Ending.**
+  - From the Studio (`next:'studio'`), the green Set my fares ends it, and `bfToFares` selects the first Dublin flight so its fare stepper is focused.
+  - From the sums (`next:'sums'`, a save that reached them first), it ends with "Work out the ticket money".
+- **DESIGN.md** is the 19 Oct copy (Seat plans; decisions log).
+- **Tests.** `briefings.test.js` part 1b plays the seven beats (with and without reduced motion); part 2 plays it in the game back to the fare stepper. Report: `docs/What-a-Fare-Does-Report.md`; screenshots: `docs/screenshots/fare-19oct/`.
+
 ## 0zb. Claude Design batch 2, year one (18 Oct 2026)
 
 From Claude Design's handover of 18 Oct, for year one only (Launch Day, day 1, to the year-1 accounts, day 364).

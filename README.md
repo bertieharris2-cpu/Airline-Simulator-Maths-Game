@@ -380,6 +380,9 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### What a fare does, rebuilt (19 Oct 2026)
+*Claude Design's handover of 19 Oct, section 6: the Launch Day briefing in seven beats (tickets make money, the fare slider, seats run out, the challenge, £100 full or £110 with one empty seat, the sheet works it out, back to the fares). It is a demonstration, and the pupil types nothing. Its numbers are a fixed teaching example on the workbook's BriefingData sheet (D104). The report is `docs/What-a-Fare-Does-Report.md`; screenshots are in `docs/screenshots/fare-19oct/`.*
+
 ### Claude Design batch 2: year one (18 Oct 2026)
 *Claude Design's handover of 18 Oct, in year one only (Launch Day to the year-1 accounts, 31 Aug 2031); chapters 3 and 4 keep today's screens. The report, with the screens changed beyond those named and the flags, is `docs/Batch-2-Report.md`; screenshots at 1366 × 768 and 1920 × 1080 are in `docs/screenshots/batch2/`.*
 - **The screens.**

@@ -355,6 +355,24 @@ for u in upgrades:
 briefings = [{'id': r['briefingId'], 'trigger': r.get('trigger'), 'title': r.get('title'), 'show': r.get('beat1'), 'predict': r.get('beat2'), 'reveal': r.get('beat3'),
               'use': r.get('beat4'), 'leadsInto': r.get('leadsInto'), 'seconds': r.get('seconds'), 'html': r.get('html')}
              for r in live('Briefings', opt_sheet('Briefings')) if r.get('briefingId')]
+# D104 (19 Oct 2026): a briefing's fixed teaching example (What a fare does), one value per row; lists are separated by |
+def bd_value(v):
+    s = str(v).strip() if v is not None else ''
+    if '|' in s: return [bd_value(x) for x in s.split('|')]
+    try: return int(s) if re.fullmatch(r'-?\d+', s) else float(s) if re.fullmatch(r'-?\d+\.\d+', s) else s
+    except ValueError: return s
+briefingData = {}
+for r in opt_sheet('BriefingData'):
+    if r.get('briefingId') and r.get('key'): briefingData.setdefault(r['briefingId'], {})[r['key']] = bd_value(r.get('value'))
+fl_ = briefingData.get('fare_lever')
+if fl_:
+    fs_, wt_ = fl_.get('fares') or [], fl_.get('wantToFly') or []
+    if len(fs_) != len(wt_): issue('error', 'BriefingData', f'fare_lever: {len(fs_)} fares but {len(wt_)} wantToFly figures.')
+    for k_ in ('sellFare', 'startFare', 'seatsRunOutFare'):
+        if fl_.get(k_) not in fs_ and k_ != 'sellFare': issue('error', 'BriefingData', f'fare_lever: {k_} {fl_.get(k_)} is not one of the fares.')
+    cf_ = fl_.get('compareFares') or []
+    if len(cf_) != 2 or any(f not in fs_ for f in cf_): issue('error', 'BriefingData', 'fare_lever: compareFares must be two of the fares.')
+elif 'Briefings' in wb.sheetnames: issue('check', 'BriefingData', 'no fare_lever example: What a fare does uses the numbers built into its page.')
 for n_ in ('DailyColour', 'Upgrades', 'Briefings'):
     if n_ not in wb.sheetnames: issue('check', n_, f'no {n_} sheet: the game runs without it.')
 # v5.17 (D101): the Roadmap behind Home's Coming up strip. 'shown from' reads 'day 22'; the line is the pupil's words.
@@ -420,7 +438,7 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
          'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips, 'teacherMilestones': teacherMilestones,
          'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview, 'campaign': campaign,
-         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings, 'roadmap': roadmap}
+         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings, 'briefingData': briefingData, 'roadmap': roadmap}
 
 
 # ---------- checks ----------
@@ -780,6 +798,10 @@ for k in NEEDED_D103:
     elif st_ not in LOAD: t103.append(f'- **Settings:** `{k}` is `{st_}`: not loaded.')
     else: t103.append(f'- `{k}`: {settings.get(k)}')
 out += ['', '## D103 touches (Briefing 13)', '', "Bertie's rules of 18 Oct 2026, added to the installed workbook: the Settings rows the game reads, as loaded.", ''] + t103
+
+# D104 (19 Oct 2026): What a fare does, rebuilt; its teaching example on the BriefingData sheet
+t104 = [f'- `{b}` · `{k}`: ' + (' · '.join(map(str, v)) if isinstance(v, list) else str(v)) for b, kv in briefingData.items() for k, v in kv.items()] or ['- **BriefingData:** none.']
+out += ['', '## D104 touches (What a fare does, rebuilt)', '', "The briefing's fixed teaching example, as loaded from the BriefingData sheet (not live route data).", ''] + t104
 
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'

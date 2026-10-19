@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 18 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 19 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **0 to fix, 24 to check, 7 notes.**
 
@@ -199,6 +199,21 @@ Bertie's rules of 18 Oct 2026, added to the installed workbook: the Settings row
 - `pupilReserve`: 0
 - `bustRule`: 3 grounded days in a week
 - `standingAim`: Make as much money as you can. | In January you'll choose what kind of airline you are. | Keep cash for emergencies: you decide how much. | Run out of cash and the airline closes. | You start again from Launch Day. No loans.
+
+## D104 touches (What a fare does, rebuilt)
+
+The briefing's fixed teaching example, as loaded from the BriefingData sheet (not live route data).
+
+- `fare_lever` · `route`: Dublin
+- `fare_lever` · `plane`: Twin Otter
+- `fare_lever` · `seatsPerPlane`: 19
+- `fare_lever` · `planes`: 2
+- `fare_lever` · `fares`: 60 · 70 · 80 · 90 · 100 · 110 · 120 · 130 · 140
+- `fare_lever` · `wantToFly`: 100 · 80 · 64 · 50 · 40 · 36 · 30 · 24 · 18
+- `fare_lever` · `sellFare`: 100
+- `fare_lever` · `startFare`: 100
+- `fare_lever` · `seatsRunOutFare`: 70
+- `fare_lever` · `compareFares`: 100 · 110
 
 ## Identity and photos (CR5)
 

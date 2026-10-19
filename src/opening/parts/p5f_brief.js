@@ -173,7 +173,7 @@ function bfMore(st, root){
   // 1 · What a fare does: Launch Day, as the Studio opens (before a fare can be changed, and the change's worth asked)
   if(st.t === 'plan' && S.phase === 'setup' && !seen.fare_lever && bfHas('fare_lever') && root.querySelector('.ad-blk')){
     let W = null; try{ W = workTables(currentPlan()); }catch(e){}
-    const data = bfFareData(W && W.tables.find(x => x.stage === 'fare')); if(data){ data.next = 'studio'; bfOpen('fare_lever', data, () => render()); return; }
+    const data = bfFareData(W && W.tables.find(x => x.stage === 'fare')); if(data){ data.next = 'studio'; bfOpen('fare_lever', data, d => bfToFares(d, data)); return; }
   }
   // 5 · Cash, tank, profit: Launch Day, before the fuel order (blocks × the price of a block, for the days from Wednesday)
   if(st.t === 'workings' && S.phase === 'setup' && !seen.fuel_cash_tank_profit && bfHas('fuel_cash_tank_profit')){
@@ -183,7 +183,7 @@ function bfMore(st, root){
   // 1 · (a save that reached the sums without it) as the fare sums open (before the first is answered)
   if(st.t === 'workings' && S.phase === 'setup' && !seen.fare_lever && bfHas('fare_lever')){
     let W = null; try{ W = workTables(currentPlan()); }catch(e){}
-    const t = W && W.tables.find(x => x.stage === 'fare'); if(t && !Object.keys(t.done || {}).length && !UI.justDone){ const data = bfFareData(t); if(data) bfOpen('fare_lever', data, () => render()); return; }
+    const t = W && W.tables.find(x => x.stage === 'fare'); if(t && !Object.keys(t.done || {}).length && !UI.justDone){ const data = bfFareData(t); if(data){ data.next = 'sums'; bfOpen('fare_lever', data, () => render()); } return; }
   }
   // 2 · Customers have a choice: Red Kite's card, before he decides
   if(st.t === 'event' && S.rnd && S.rnd.event && S.rnd.event.rivalFare && S.rnd.eventChoice === undefined && !seen.rival_split && bfHas('rival_split')){ const data = bfRivalData(); if(data){ bfOpen('rival_split', data, () => render()); return; } }
@@ -298,17 +298,14 @@ function bfCapacityData(){
 }
 /* a flag drawn out in full (the game's flags point at symbols the briefing's page does not have) */
 function bfFlag(id, h){ const sym = document.getElementById('flag-' + id), a = (typeof FLAG_ASPECT !== 'undefined' && FLAG_ASPECT[id]) || 1.5; return sym ? `<svg viewBox="${sym.getAttribute('viewBox') || `0 0 ${a * 10} 10`}" width="${a * h}" height="${h}" preserveAspectRatio="none">${sym.innerHTML}</svg>` : ''; }
-/* the fare table's route at each of its fares: who wants to fly, and who flies on his plan (the figures the sums use) */
-function bfFareData(t){
-  const pl = normPlan(currentPlan()), rid = (t && tRows(t).map(r => r.route).find(Boolean)) || S.market, r = routeById(rid); if(!r) return null;
-  let fl = []; try{ fl = withPlan(pl, () => planFlights()).filter(x => x.route === rid && !x.grounded && !x.homeLeg).sort((a, b) => a.dep - b.dep); }catch(e){}
-  const seats = fl.reduce((a, x) => a + (x.seats || 0), 0) || 19, one = fl[0] ? fl[0].seats || 19 : 19;
-  const fares = (r.fares || [r.basePrice]).map(f => { const p2 = JSON.parse(JSON.stringify(pl)); p2.prices[rid] = f; let pax = 0; try{ pax = ((planLines(p2).routes || []).find(z => z.id === rid) || {}).pax || 0; }catch(e){} return { f, want:Math.round(paxWant(r, f)), pax:Math.round(pax) }; });
-  const sums = t ? t.cols.map(c => +((c.values || {})['fare_' + rid] || String(c.id).replace(/\D/g, ''))).filter(Boolean) : [];
-  const fs = fares.map(x => x.f), i0 = sums.length ? fs.indexOf(sums[0]) : -1, start = i0 > 0 ? fs[i0 - 1] : fs[0];
-  const f0 = fl[0] && S.fleet.find(z => z.uid === fl[0].uid) || S.fleet[0];
-  let art = ''; try{ art = f0 ? aircraftArt(typeof ensureIdentity === 'function' ? ensureIdentity(f0) : f0) : ''; }catch(e){}
-  return { route:{ id:rid, city:r.city, code:r.code || rid.toUpperCase(), flag:bfFlag(r.flag, 22) }, gate:7, times:fl.map(x => fmtTime(x.dep)).join(' · '), seats, flights:fl.length || 1, planeSeats:one, fares, start, sums, art };
+/* What a fare does (rebuilt 19 Oct, D104): a fixed teaching example from the workbook's BriefingData sheet, not the pupil's routes
+   (the page carries the same numbers for a workbook without the sheet). Set my fares returns to the fare stepper in his plan. */
+function bfFareData(){ return Object.assign({}, (WB.briefingData || {}).fare_lever || {}); }
+function bfToFares(d, data){
+  render(); if(d && d.skipped) return;
+  setTimeout(() => { const blks = [...screen().querySelectorAll('.s2-tt .ad-blk[data-tl]')], city = (data && data.route) || '';
+    const b = blks.find(x => city && x.textContent.includes(city)) || blks[0]; if(!b) return; b.click();
+    setTimeout(() => { const f = document.querySelector('[data-bvfare]:not([disabled])'); if(f) try{ f.focus(); }catch(e){} }, 80); }, 60);
 }
 function bfFuelData(){
   const price = fuelPrice(), blk = fuelBlock(), cap = tankCapacity(), max = fdMaxBlocks(price) || 0, litres = Math.max(blk, max * blk);
