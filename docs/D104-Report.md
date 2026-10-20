@@ -122,6 +122,7 @@ On the final build, at 1366 × 768 unless named. Chapters 3 and 4 were run to sh
 | `week.test.js` to day 15 | 109 passed, none failed |
 | `week.test.js` to chapter 1's review (`UPTO=200`), track A | 254 passed, none failed, no errors. Ends on £728,554 at day 118 |
 | `week.test.js` to chapter 1's review, `TRACK=B` | 245 passed, none failed, no errors. Ends on £726,712 at day 118 |
+| The same runs' layout check | Home 3–4px taller than the screen on days 8 and 15 (track A) and 8 and 22 (track B), at the moment the day changes over. It is the blip noted in `docs/Batch-2-Report.md`, there before D104 (day 8 on 19 Oct); which days it lands on varies from run to run. Nothing is cut off |
 | `chapter2.test.js` Value, from the new chapter-1 save | 111 passed, none failed. At the chapter-2 review: £14,801,749 (before D104: £15,260,963) |
 | `chapter2.test.js` Premium, from the same save | 105 passed, none failed. At the review: £14,755,338 (before D104: £15,056,234) |
 | `chapter3.test.js`, `chapter4.test.js` (Value), from the same saves as before | Chapter 3: 66 passed, none failed, ending on £31,529,103. Chapter 4: 58 passed and one failed (the D89 fuel-farm check, which fails on 5ca2944 too), ending on £58,865,752. Both exactly as before D104 |
