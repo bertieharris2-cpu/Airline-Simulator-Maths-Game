@@ -229,8 +229,8 @@ if(d104RP0) R.plan = st => {
   const r = d104RP0(st), s = d104SlotState(); if(!s) return r;
   const list = s.deps.map(x => `${fmtTime(x.t)} ${routeById(x.route) ? routeById(x.route).city : x.route}`).join(', ');
   const msg = s.over ? `Heathrow allows two departures before 09:00 this week (${fmtRange(Math.max(s.D.from, S.day), s.D.to)}). Your plan has ${s.deps.length}: ${list}. Move ${s.over === 1 ? 'one' : s.over} of them to 09:00 or later.` : `Heathrow allows two departures before 09:00 this week. Your plan has ${s.deps.length}${list ? `: ${list}` : ''}. That fits.`;
-  const host = screen().querySelector('.tf-foot, footer, .foot');
-  if(host) host.insertAdjacentHTML('afterbegin', `<p class="d104-slot ${s.over ? 'over' : ''}" role="status">${esc(msg)}</p>`);
+  const host = screen().querySelector('.actbar .ab-hint');   // the footer's line says it (in place of its hint)
+  if(host) host.innerHTML = `<span class="d104-slot ${s.over ? 'over' : ''}" role="status">${esc(msg)}</span>`;
   if(s.over){ const nx = $('nx'); if(nx){ nx.disabled = true; nx.title = msg; } }
   return r;
 };
@@ -246,3 +246,189 @@ function d104TeacherRender(){
 }
 const d104SoT0 = soTeacherRender;
 soTeacherRender = function(){ d104SoT0.apply(this, arguments); try{ d104TeacherRender(); }catch(x){ console.error(x); } };
+
+/* =====================================================================
+   3. Growth responds to how a route is served (Settings growthResponds; WE.growthStep). S.g104 keeps each route's
+   multiplier (1 = its opening demand), stepped once for each calendar week played, from the history rows. Week 1 sets
+   nothing (weeks 1 and 2 stay flat, as before); from week 2 on, how a week served a route sets the next week's demand.
+   A row that spans several weeks (a month) gives each of them its average; a week with no rows (the holiday) is skipped.
+   A step counts from the day after the row that completed it, so a week or a month keeps the demand it started with
+   and its projection holds. Year one only (afterwards the old rule, growthPerWeek from week 3); long haul keeps its own.
+   ===================================================================== */
+const d104GrowthOn = () => { const v = D104S().growthResponds; return v === true || /^(true|yes|1)$/i.test(String(v === undefined || v === null ? '' : v)); };
+const d104Grows = r => !!(r && r.arch && r.archId !== 'long_haul' && r.arch.growthFillBonus !== undefined && r.arch.growthFillBonus !== null);
+/* 0 = the top fare of the route's table, 1 = second from top (the airline type's extra fares count as the top) */
+function d104FareRank(r, fare){ const F = (r._fares0 && r._fares0.length ? r._fares0 : r.fares) || []; return F.filter(f => f > fare + 1e-9).length; }
+const d104NewG = () => ({ v:1, upTo:0, wk:0, done:0, acc:{}, days:0, free:true, m:{}, snaps:[], ta:{}, freeLast:0, since:[] });
+function d104Sync(){
+  if(!S || QUIET || !Array.isArray(S.history) || !S.history.length) return;
+  if(!S.g104 && (S.day || 1) > y1Last()) return;   // later chapters: nothing to keep
+  const G = S.g104 || (S.g104 = d104NewG()), last = y1Last(), all = S.history.filter(h => h && (h.to || 0) > G.upTo);
+  const rows = all.filter(h => (h.from || 1) <= last).sort((a, b) => (a.from || 0) - (b.from || 0) || (a.to || 0) - (b.to || 0));
+  const quiet = rows.length > 1 && G.upTo === 0 && (S.day || 1) > 8;   // an older save, rebuilt from its history: growth only, no stars
+  const free = !!(onboardOf() || {}).free && !quiet;
+  rows.forEach(h => d104Row(G, h, quiet, free));
+  all.forEach(h => { G.upTo = Math.max(G.upTo, h.to || 0); });
+}
+function d104Row(G, h, quiet, free){
+  const a = Math.max(1, h.from || 1), z = Math.max(a, h.to || a), n = z - a + 1;
+  for(let k = weekNo(a); k <= weekNo(z); k++){
+    const ka = Math.max(a, 7 * k - 6), kz = Math.min(z, 7 * k), share = (kz - ka + 1) / n;
+    if(G.wk !== k){ G.wk = k; G.acc = {}; G.days = 0; G.free = true; }
+    Object.keys(h.routes || {}).forEach(id => { const x = h.routes[id] || {}, y = G.acc[id] || (G.acc[id] = { pax:0, seats:0, want:0, trips:0, fare:x.fare });
+      y.pax += (x.pax || 0) * share; y.seats += (x.seats || 0) * share; y.want += (x.want || 0) * share; y.trips += (x.trips || 0) * share; if(x.fare) y.fare = x.fare; });
+    G.days += kz - ka + 1; G.free = G.free && free;
+    if(kz === 7 * k && G.done !== k) d104Week(G, k, z, quiet);
+  }
+}
+function d104Week(G, k, z, quiet){
+  G.done = k; const end = 7 * k;
+  if(k >= 2 && d104GrowthOn() && yearOne(end)){
+    let moved = false;
+    WORLD.routes.forEach(r => {
+      if(!d104Grows(r)) return; const x = G.acc[r.id], m = G.m[r.id] || 1; if(!(x && x.trips > 0) && m <= 1) return;
+      const w = x && x.trips > 0 ? { flown:true, fill:x.seats > 0 ? x.pax / x.seats : 0, turnedAway:Math.max(0, Math.round(x.want - x.pax)), fareRank:d104FareRank(r, x.fare) } : { flown:false };
+      const m2 = Math.round(WE.growthStep(r.arch, m, w) * 1e4) / 1e4; if(m2 !== m){ G.m[r.id] = m2; moved = true; }
+    });
+    if(moved) G.snaps.push({ from:Math.max(end, z) + 1, wk:k, m:Object.assign({}, G.m) });
+  }
+  try{ d104Drivers(G, k, quiet); }catch(e){ console.error(e); }
+}
+/* the day's multiplier: the last step that had counted by that day (a beat to come: its first day) */
+const d104Growth0 = growthOf;
+growthOf = function(route, n){
+  if(!S || !d104Grows(route) || !d104GrowthOn()) return d104Growth0.apply(this, arguments);
+  const day = dayFor(n === undefined ? S.round : n); if(!yearOne(day)) return d104Growth0.apply(this, arguments);
+  const G = S.g104, s = G && G.snaps; if(!s || !s.length) return 1;
+  for(let i = s.length - 1; i >= 0; i--) if(s[i].from <= day) return s[i].m[route.id] || 1;
+  return 1;
+};
+/* how much a route has grown since it opened, for the screens (1 = its opening demand) */
+function d104Mult(id, day){ const r = routeById(id); return r ? withDay(day === undefined ? (S.day || 1) : day, () => growthOf(r)) : 1; }
+const d104AR0 = applyResults;
+applyResults = function(){ const r = d104AR0.apply(this, arguments); try{ d104Sync(); }catch(e){ console.error(e); } return r; };
+const d104APR0 = applyPeriodResults;
+applyPeriodResults = function(){ const r = d104APR0.apply(this, arguments); try{ d104Sync(); }catch(e){ console.error(e); } return r; };
+
+/* =====================================================================
+   4. Stars from week 3 (Settings reputationFromDay). The rating goes public on day 15 with its card (an older save past
+   day 15: at the start of its next day or week), not on 6 January; from then, chapter 1's four drivers move it (judged
+   from week 3: in weeks 1 and 2 one small plane turns people away on every route, whatever the pupil does):
+   - a route turning away 1 in 5 of the people who want to fly, two weeks running: −½, once a route;
+   - a plane grounded with no fuel (D103): −½ for the day;
+   - free snacks two weeks running: +½, once;
+   - each month's review (the week that holds the turn of the month): +½ if a week since the last review ran on time
+     with no choice that cost stars or stopped flights; and −½ once if the plainer snacks were sold (the snack supplier).
+   Event choices keep their own stars. Before day 15 everything is banked and shown on the card.
+   ===================================================================== */
+const d104RepDay = () => { const d = +D104S().reputationFromDay; return d > 0 ? d : null; };
+const d104StarsOn = () => d104RepDay() !== null;
+const d104RFD0 = repFromDay;
+repFromDay = function(){ const d = d104RepDay(); return d !== null ? d : d104RFD0.apply(this, arguments); };
+function d104Star(n, what, day){
+  if(!S || !n) return;
+  const r = S.rnd, keep = r ? r.event : undefined; if(r) r.event = null;
+  try{ bankStars(n); } finally { if(r) r.event = keep; }
+  const L = S.repLog || [], x = L[L.length - 1]; if(x && x.n === n && !x.ev){ x.what = what; x.day = day; x.d104 = 1; }
+  (d104D().stars || (d104D().stars = [])).push({ day, n, what });
+  addNews([{ tag:'STARS', text:`${what}: ${starText(n)}.`, cls:n > 0 ? 'good' : 'warn' }]);
+  try{ rec().pend.events.push({ day, title:'Stars', choice:`${what}: ${starText(n)}`, cost:0 }); }catch(e){}
+}
+/* a week on time: no choice that cost stars or stopped or delayed flights, no day grounded with no fuel */
+function d104OffWeek(k){
+  const a = 7 * k - 6, z = 7 * k, inW = d => d >= a && d <= z, D = S.d104 || {};
+  return (S.repLog || []).some(x => x.ev && x.n < 0 && inW(x.day)) || Object.values(D.off || {}).some(inW) || !!(S.bust && (S.bust.g || []).some(inW));
+}
+function d104Drivers(G, k, quiet){
+  const end = 7 * k, D = d104D(), A = G.acc, star = (n, what) => { if(!quiet) d104Star(n, what, end); };
+  if(!d104StarsOn() || k < weekNo(d104RepDay()) || 7 * k - 6 > d104Ch1End()) return;   // chapter 1's weeks from week 3, when the card has explained them
+  G.since.push({ k, on:!d104OffWeek(k) });
+  Object.keys(A).forEach(id => { const x = A[id], share = x.want > 0 ? Math.max(0, x.want - x.pax) / x.want : 0, r = routeById(id);
+    if(share < 0.2 - 1e-9) return;
+    if(G.ta[id] === k - 1 && !(D.taHit && D.taHit[id])){ (D.taHit || (D.taHit = {}))[id] = k; star(-0.5, `${r ? r.city : id} turned away more than 1 in 5 of the people who wanted to fly, two weeks running`); }
+    G.ta[id] = k; });
+  if(G.free && G.days >= 7){ if(G.freeLast === k - 1 && !D.freeHit){ D.freeHit = k; star(0.5, 'Free snacks two weeks running'); } G.freeLast = k; }
+  if(calDate(end).getUTCDate() <= 7){   // the month's review
+    const weeks = G.since.splice(0), mo = monthName(end - 7);
+    if(weeks.some(w => w.on)) star(0.5, `${mo}'s review: a week on time, with no choice that cost stars`);
+    if(D.snack && D.snack.sold && !D.snack.told){ D.snack.told = k; star(-0.5, `${mo}'s review: passengers complained about the plainer snacks`); }
+  }
+}
+/* the choices that stop or delay flights (and so spoil an on-time week); the last choice on a card counts */
+const d104Apply1 = applyEventNow;
+applyEventNow = function(choice){
+  const ev = S.rnd && S.rnd.event, opt = ev && ev.options && ev.options[choice], e = (opt && opt.effects) || {};
+  const r = d104Apply1.apply(this, arguments);
+  try{ if(ev){ const D = d104D(), off = D.off || (D.off = {}), stop = /DELAYED|CANCELLED/.test(e.status || '') || e.groundNext || e.refund || e.d104 === 'strikeFly' || e.d104 === 'strikeCancel';
+    if(stop) off[ev.id] = e.d104 === 'strikeFly' || e.d104 === 'strikeCancel' ? d104NextDow(ev.day || S.day, 5) : (ev.day || S.day); else delete off[ev.id]; } }catch(x){ console.error(x); }
+  return r;
+};
+/* a plane grounded with no fuel */
+if(typeof bustGrounded === 'function'){ const d104BG0 = bustGrounded;
+  bustGrounded = function(x){ const r = d104BG0.apply(this, arguments); try{ if(d104StarsOn() && x && x.day <= d104Ch1End()) d104Star(-0.5, `Grounded on ${dateShort(x.day)}: no fuel and no cash to buy it`, x.day); }catch(e){ console.error(e); } return r; }; }
+/* the rating goes public with its card (not silently at the start of the day) */
+const d104Rev0 = revealReputation;
+revealReputation = function(){
+  if(S && !S.repRevealed && d104StarsOn() && yearOne() && !(Array.isArray(S.steps) && S.steps[S.si] && S.steps[S.si].t === 'stars')) return;
+  return d104Rev0.apply(this, arguments);
+};
+/* day 15: the card after HQ (and after the day's introductions); day 127 keeps only the airline type */
+function d104StarsAt(st){ const i = st.findIndex(x => x.t === 'hq'); if(i < 0) return false; let j = i + 1; while(st[j] && st[j].t === 'intro') j++; st.splice(j, 0, { t:'stars' }); return true; }
+const d104DS0 = daySteps;
+daySteps = function(n, w){
+  const st = d104DS0.apply(this, arguments), d = beatDay(n); if(!Array.isArray(st) || !d104StarsOn()) return st;
+  if(d === d104RepDay() && yearOne(d) && !(S && S.repRevealed) && !st.some(x => x.t === 'stars')) d104StarsAt(st);
+  if(CH2_DAY && d === CH2_DAY && S && S.repRevealed){ const i = st.findIndex(x => x.t === 'stars'); if(i >= 0) st.splice(i, 1); }
+  return st;
+};
+const d104C2F0 = ch2StepsFix;
+ch2StepsFix = function(){
+  if(!(S && d104StarsOn() && S.repRevealed)) return d104C2F0.apply(this, arguments);
+  if(!CH2_DAY || S.day !== CH2_DAY || !Array.isArray(S.steps) || S.phase !== 'round' || !T2().on || S.steps.some(x => x.t === 'atype')) return;
+  const shop = S.steps.findIndex(x => x.t === 'shop2' || x.t === 'plan'); if(shop < 0 || S.si > shop) return;
+  S.steps.splice(shop, 0, { t:'atype' });
+};
+/* an older save past day 15 with the stars still hidden: the card at the start of its next day or week (not the holiday) */
+function d104StarsStep(){
+  if(!S || S.phase !== 'round' || S.repRevealed || !d104StarsOn() || !yearOne() || (S.day || 1) < d104RepDay() || !Array.isArray(S.steps) || S.steps.some(x => x.t === 'stars')) return;
+  if(S.period && S.period.type === 'gap') return;
+  const i = S.steps.findIndex(x => x.t === 'hq'); if(i < 0 || S.si !== i) return;
+  d104StarsAt(S.steps);
+}
+const d104Render1 = render;
+render = function(){ try{ if(S && Array.isArray(S.history) && S.history.length && (!S.g104 || (S.history[S.history.length - 1].to || 0) > S.g104.upTo)) d104Sync(); d104StarsStep(); }catch(e){ console.error(e); } return d104Render1.apply(this, arguments); };
+/* the event card's stars: public from Monday of week 3 */
+if(typeof ev2Plate === 'function'){ const d104Plate0 = ev2Plate;
+  ev2Plate = function(){ const h = d104Plate0.apply(this, arguments), d = d104RepDay(); return d && yearOne() ? h.replace(/ · public from [A-Z][a-z]+/, ` · public from ${dateShort(d)} (week ${weekNo(d)})`) : h; }; }
+
+/* ---------- the card: your star rating is public (week 3) ---------- */
+function d104StarsCardHtml(){
+  const day = S.day || 1, first = day <= (d104RepDay() || 15) + 6, upTo = S.repReveal ? S.repReveal.day : day, pct = Math.round(T2().per * 100);
+  const L = (S.repLog || []).filter(x => !x.live && x.day < upTo), cls = n => n > 0 ? 'up' : 'down';
+  const moves = L.length ? `<table class="d104-rv-t"><thead><tr><th>When</th><th>What happened</th><th class="num">Stars</th></tr></thead><tbody>${L.map(x => `<tr><td>${esc(dateShort(x.day))}</td><td>${esc(x.what)}</td><td class="num ${cls(x.n)}">${esc(starText(x.n))}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><th colspan="2">Start at 3, ${L.map(x => starText(x.n).replace(/ stars?$/, '')).join(' ')}</th><th class="num">${esc(ratingText(S.rep))}</th></tr></tfoot></table>`
+    : `<p class="d104-rv-l">Nothing moved your stars ${first ? 'in your first two weeks' : 'so far'}, so you start at 3.</p>`;
+  const h = Math.round(S.rep * 2) - 6, sum = h > 0 ? `${esc(ratingText(S.rep))}: ${h} half-star${h > 1 ? 's' : ''} above 3, so ${h} × ${pct}% = <b>${h * pct}% more</b> people want to fly on every route.`
+    : h < 0 ? `${esc(ratingText(S.rep))}: ${-h} half-star${h < -1 ? 's' : ''} below 3, so ${-h} × ${pct}% = <b>${-h * pct}% fewer</b> people want to fly on every route.` : `3 stars: no half-stars above or below 3, so <b>no change</b> yet.`;
+  const own = d104Owned().map(id => routeById(id)).filter(Boolean), r = own[0] || routeById('dub'); let eg = '';
+  if(r){ const fare = S.prices[r.id] || r.basePrice, keep = S.rep; let base; try{ S.rep = 3; base = paxWant(r, fare); } finally { S.rep = keep; } const now = paxWant(r, fare);
+    eg = h ? `<p class="d104-rv-l">${esc(r.city)} at ${money(fare)}: ${num(base)} want to fly a day at 3 stars; ${num(now)} at ${esc(ratingText(S.rep))}.</p>` : `<p class="d104-rv-l">${esc(r.city)} at ${money(fare)}: ${num(now)} want to fly a day. Half a star more would make it ${num(Math.round(base * (1 + T2().per)))}.</p>`; }
+  const drivers = [['up', '+½', 'at each month\'s review, if a week ran on time with no choice that cost stars'], ['up', '+½', 'once, for free snacks two weeks running'],
+    ['down', '−½', 'once for a route that turns away more than 1 in 5 of the people who want to fly, two weeks running'], ['down', '−½', 'for each day a plane is grounded with no fuel']];
+  return `<div class="d104-rvg">
+    <section class="bv-panel active d104-rv-score"><span class="bv-eyebrow d104-eb">Result</span><h2>Your star rating</h2><div class="rv-big"><span class="stars">${deskStars(S.rep)}</span><b>${esc(ratingText(S.rep))}</b><p>Passengers can see it now, and it changes how many want to fly with you.</p></div></section>
+    <section class="bv-panel support d104-rv-moves"><h2>What moved it ${first ? 'in your first two weeks' : 'so far'}</h2>${moves}</section>
+    <section class="bv-panel support d104-rv-worth"><span class="bv-eyebrow d104-eb model">Model</span><h2>What it is worth</h2><div class="d104-rv-rule"><span>Each half-star above 3</span><b class="up">+${pct}%</b><span>Each half-star below 3</span><b class="down">−${pct}%</b></div><p class="d104-rv-sum">${sum}</p>${eg}</section>
+    <section class="bv-panel support d104-rv-drv"><h2>What moves it from now</h2><ul>${drivers.map(([c, n, t]) => `<li><b class="${c}">${n}</b><span>${esc(t)}</span></li>`).join('')}</ul><p class="d104-rv-l">Your choices on the event cards move it too.</p></section></div>`;
+}
+const d104RStars0 = R.stars;
+R.stars = st => {
+  if(!d104StarsOn() || !yearOne() || (CH2_DAY && (S.day || 1) >= CH2_DAY)) return d104RStars0(st);
+  revealReputation(); const first = (S.day || 1) <= (d104RepDay() || 15) + 6;
+  screen().innerHTML = shell(deskPage({ title:'Your star rating is public', sub:first ? 'For two weeks, how you treated passengers has been noted. From today it counts.' : 'Since Launch Day, how you treated passengers has been noted. From today it counts.', cls:'rv-page d104-rvp', body:d104StarsCardHtml() }),
+    deskBar('Full planes, on-time weeks and your choices move your stars.', `<button class="btn primary big" id="nx">Next &#9654;</button>`));
+  on('nx', () => { UI.justDone = null; next(); });
+};
+/* the event card's departures board: with a notice line under it (an event not about one flight), two rows, not three */
+if(typeof ev2BoardRows === 'function'){ const d104EBR0 = ev2BoardRows;
+  ev2BoardRows = function(ev, F){ const B = d104EBR0.apply(this, arguments); if(!F && B && B.rows && B.rows.length > 2) B.rows = B.rows.slice(0, 2); return B; }; }

@@ -187,5 +187,29 @@ body.yr1 .fd2-l{gap:7px}
 body.yr1 .fd2-l .bv-panel{padding-top:10px;padding-bottom:10px}
 body.yr1 .fd2-ph{margin-bottom:8px}
 /* D104: the slot squeeze's line in the plan's footer (year one) */
-body.yr1 .d104-slot{flex:1 1 100%;margin:0 0 6px;font-size:13px;line-height:18px;color:var(--text-soft)}
+body.yr1 .d104-slot{color:var(--text)}
 body.yr1 .d104-slot.over{color:var(--amber)}
+/* D104: the stars card of week 3 (two by two: the rating, what moved it; what it is worth, what moves it now) */
+body.yr1 .d104-rvg{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:var(--s4);align-items:start}
+body.yr1 .d104-rvg h2{margin:2px 0 10px;font-size:17px;line-height:22px;font-weight:600;color:var(--text);text-transform:none;letter-spacing:0}
+body.yr1 .d104-rvg .stars .st{color:rgba(150,190,240,.28)}
+body.yr1 .d104-rvg .stars .st.on{color:var(--gold)}
+body.yr1 .d104-rvg .stars .st.half{background:linear-gradient(90deg,var(--gold) 50%,rgba(150,190,240,.28) 50%);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.yr1 .d104-eb{display:block;margin-bottom:4px;color:var(--green)}
+body.yr1 .d104-eb.model{color:var(--cyan)}
+body.yr1 .d104-rvg .up{color:var(--green)}
+body.yr1 .d104-rvg .down{color:var(--amber)}
+body.yr1 .d104-rv-t{width:100%;border-collapse:collapse;font-size:14px;line-height:19px}
+body.yr1 .d104-rv-t th,body.yr1 .d104-rv-t td{padding:5px 8px;border-bottom:1px solid var(--line-soft);text-align:left;color:var(--text);vertical-align:top}
+body.yr1 .d104-rv-t thead th{font-size:12px;font-weight:600;color:var(--text-soft)}
+body.yr1 .d104-rv-t .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums lining-nums}
+body.yr1 .d104-rv-t tfoot th{border-bottom:0;font-weight:600}
+body.yr1 .d104-rv-t td:first-child{white-space:nowrap}
+body.yr1 .d104-rv-l{margin:8px 0 0;font-size:14.5px;line-height:20px;color:var(--text-soft)}
+body.yr1 .d104-rv-rule{display:grid;grid-template-columns:auto auto auto auto;gap:4px 14px;align-items:baseline;justify-content:start;font-size:14.5px;color:var(--text-soft)}
+body.yr1 .d104-rv-rule b{font-size:20px;font-variant-numeric:tabular-nums lining-nums}
+body.yr1 .d104-rv-sum{margin:10px 0 0;font-size:15px;line-height:21px;color:var(--text)}
+body.yr1 .d104-rv-sum b{font-weight:600}
+body.yr1 .d104-rv-drv ul{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+body.yr1 .d104-rv-drv li{display:grid;grid-template-columns:34px 1fr;gap:8px;font-size:14.5px;line-height:20px;color:var(--text)}
+body.yr1 .d104-rv-drv li b{font-size:16px;font-variant-numeric:tabular-nums lining-nums}
