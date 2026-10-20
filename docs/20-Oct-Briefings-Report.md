@@ -100,8 +100,39 @@ Once Bertie has ticked or changed them, the briefings can be rebuilt scene by sc
 
 ## Tests
 
-The regression is running; its results go here.
+All on the final build. Chapters 3 and 4 start from their own saves (days 364 and 730), as CLAUDE.md asks, to show nothing changed there.
+
+| Test | Result |
+| --- | --- |
+| `briefings.test.js` | 138 passed, none failed |
+| `week.test.js` to chapter 1's review, track A | 254 passed, none failed; £733,014 on day 118 |
+| `week.test.js` to chapter 1's review, track B | 246 passed, none failed; £732,277 |
+| `week.test.js` to day 15 | 109 passed, none failed. Launch Day's sums are B4, C4, D4, E4 and F9: no Cabin sales rows |
+| `chapter2.test.js` Value, from the new chapter 1 save | 108 passed, none failed; £14,806,209 at the review. Three checks were skipped (below) |
+| `chapter2.test.js` Premium, from the same save | 105 passed, none failed; £14,759,798 |
+| `chapter3.test.js` | 66 passed, none failed; £31,529,103 on day 730 |
+| `chapter4.test.js` | 58 passed, 1 failed; £58,865,752 on day 1,095. The failure is the D89 fuel-farm check, which fails in v6.1 too |
+| `d104.test.js` | 58 passed, none failed |
+| `decide`, `record`, `migrate`, `screens3`, `playnotes`, `fleetshop`, `milestones`, `engine` | 34, 18, 31, 24, 14, 36, 27 and 10 passed, none failed |
+
+- **Migrate and fleetshop** are run on their own. With other tests running beside them, each has a check that reads the day while the board is still running, and it can catch the next day.
+- **Chapter 2 Value** has three checks on day 128, the New York 757. If the machine is busy, the board can run past day 128 before the test looks, so those checks are skipped, not failed. It is being run again with less going on.
 
 ## Balance
 
-Chapter 1's figures without snacks go here once the run ends.
+The test pupils never sold snacks, so dropping snacks doesn't move their totals. The only change they meet is the daily colours: the hen party's 17 Tuesdays are quiet now, and without snacks the hen party had no money in it. So every chapter ends exactly where v6.1 did:
+
+| Run | v6.1 | Now |
+| --- | --- | --- |
+| Chapter 1, track A (day 118) | £733,014 | £733,014 |
+| Chapter 1, track B | £732,277 | £732,277 |
+| Chapter 2, Value (day 364) | £14,806,209 | £14,806,209 |
+| Chapter 2, Premium | £14,759,798 | £14,759,798 |
+| Chapter 3 (day 730) | £31,529,103 | £31,529,103 |
+| Chapter 4 (day 1,095) | £58,865,752 | £58,865,752 |
+
+What snacks were worth to a pupil in v6.1, which year one now leaves out:
+- **Week 2** (57 passengers a day): selling at £3 made £56 a day, and at £5 £64 a day. Free snacks cost £114 a day.
+- **December** (176 passengers a day): selling at £3 made £176 a day, and at £5 £208 a day. Free snacks cost £352 a day.
+
+Before settling on quiet Tuesdays, I tried giving each hen party day another colour that was due that week. On three days (10 December, 25 March and 8 July) that was a late bus, two passengers missing a flight, and chapter 1 ended £190 lower. Leaving the day empty keeps every other day as it was.

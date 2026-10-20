@@ -387,6 +387,7 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Money is never a liquid.** In Can you afford to run it? the cash is coins stacked in an open vault.
 - **More demand than seats and Snacks on board are removed.** Their workbook status is `removed`; the old page is in `briefings/retired/`.
 - **No snacks in year one** (`parts/p5x_nosnacks.js`, Settings `snacksInYearOne` off). There is no snack choice, no snack money, and no Cabin sales rows or sums, so the Launch Day sheet has Sums 1–5. Old saves fly without snacks. The hen party, the one daily colour that only touched snack sales, is left out, so those Tuesdays have no colour. The snack supplier event is removed, and Calendar day 1 and the chapter 1 card no longer mention snacks. Chapters 3 and 4 keep snacks until Bertie says "extend".
+- **Balance:** every chapter's test run ends exactly where v6.1 did, because the test pupils never sold snacks. A pupil who did sell them makes £56 to £64 a day less in week 2, and £176 to £208 a day less by December. The tests and figures are in the report.
 
 ### Workbook v6.1 (20 Oct 2026)
 *Fable's v6.1, which answers the D104 report's flags, in year one only. The report, with the flags for Fable, is `docs/v6.1-Report.md`; screenshots at 1366 × 768 and 1920 × 1080 are in `docs/screenshots/v61/`. The code is in `src/opening/parts/p5w_d104.js`.*
