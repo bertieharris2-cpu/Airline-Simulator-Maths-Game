@@ -171,7 +171,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     studio.push({ tag, tips, active:R.active.map(a => `${a.id} ${a.fare} ${a.want} ${a.n} ${a.pct}%`), blocks:blk }); };
   const identity = async () => { if(await T() === 'code'){ await p.click('#nx'); } if(await T() === 'logo'){ await p.click('#nx'); }
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
-    if(await T() === 'reveal'){ await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); } if(await T() === 'cert') await p.click('#nx'); };
+    if(await T() === 'reveal'){ await p.click('#skipReveal', { timeout:4000 }).catch(() => {}); /* (the reveal may end by itself first on a busy machine) */ await p.waitForTimeout(150); await p.click('#nx'); } if(await T() === 'cert') await p.click('#nx'); };
   // setup
   await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await identity();
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');

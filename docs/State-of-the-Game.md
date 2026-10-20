@@ -10,6 +10,48 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zg. Bertie's briefings review in the game (DESIGN.md of 20 Oct 2026)
+
+Year one only. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are in `docs/screenshots/o20/`.
+
+**The kit** (`briefings/kit/brief-kit.js`, `.css`). With `Y1` (the game sends `kitFlat` in year one; a page opened on its own counts too):
+- `.bk.y1` frame:
+  - the header holds BRIEFING, the title and the stepper;
+  - the foot holds Pause & discuss, Back and Next;
+  - the art (`.bk-art`, the SVG and its HTML layer) is drawn at `artK` (0.94) from its foot;
+  - the words plate (`.bk-words`) sits in the world, outside the art's scaling. It holds the question line (`K.question`), the caption (`K.caption`), a prediction's chips and the "You predicted" line.
+- `place()` maps scene units to the world through `artK`. `K.start({ words })` sets a briefing's place; `K.caption(html, where)` and `K.words(where)` move it.
+- `K.predict({ q, items, where, next })`:
+  - adds Not sure;
+  - `HOLD` hides Next until the first tap; he can change his chip until Next;
+  - the answer goes in `ANS` for Back, and the predict call counts as one beat (one `cont`);
+  - `recall()` keeps "You predicted: …" until the end of the next beat (`beatEnd`).
+- Later chapters keep the old frame.
+
+**What a fare does** has its own frame (`briefing-fare.html`):
+- the words are in `#words`, placed per beat (`CAP_AT`), and the bar holds Back and Next;
+- beat 5 asks with `#pchips` and keeps `PRED` for Back, with Next hidden until a tap;
+- beat 6 shows `#recall`.
+
+**The other briefings:**
+- Cash, tank, profit: the vault, tank, week and plane move down `SH` (100) and the week board 150 more; the words go under the price board.
+- Renting a plane: the words sit over the left sky.
+- Can you afford to run it?: the words sit in the week's column. The cash gauge is now an open vault with a coin stack: `COINS` are drawn up to `yOf(cash)` in steps of `CH`, and the "to spend" tag sits on the stack.
+
+**Removed:** `full_route` and `cabin_sales` have status `removed`. `briefing-capacity.html` moved to `briefings/retired/`, which the build does not embed (11 briefings).
+
+**No snacks** (`parts/p5x_nosnacks.js`, Settings `snacksInYearOne`):
+- `nsOff(d)` is `yearOne(d)` unless the setting is on.
+- Wrapped: `onboardOf()` (Nothing on board) and `snacksOn()` (false), so H.snacks never arrives: no snack stage, no Cabin sales rows, and the running sum numbers close up.
+- Also wrapped: `currentPlan()` and `render()`, which put S.onboard back to none.
+- Lines that would only read £0 are stripped:
+  - `s2Insights` (Money);
+  - `omPlanTable` (the On board line) and `omResults` (On-board sales);
+  - `svcCardHtml`;
+  - the free-snacks line on `d104StarsCardHtml`.
+- `p5e_colour.js`'s `dcFor0` skips a colour when `nsSkipColour(c, d)` is true (that part is a block, so it asks rather than being wrapped).
+- Workbook: the Calendar day 1 headline and the Chapters 1 text drop "snacks"; Events `snack_supplier` and its options are `removed`; the mystery shopper's option 1 reads "Seats, service, signs"; the SheetSums Cabin sales row is noted.
+
 ## 0zf. Workbook v6.1 (20 Oct 2026)
 
 Year one only, in `parts/p5w_d104.js`; from day 365 everything is as before. Report and flags: `docs/v6.1-Report.md`; screenshots: `docs/screenshots/v61/`.

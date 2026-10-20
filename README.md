@@ -380,6 +380,14 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Bertie's briefings review in the game (20 Oct 2026)
+*From the DESIGN.md of 20 Oct 2026 (Bertie's review of every briefing), in year one only. The scene-by-scene re-plan of the briefings waits for Bertie to check the "Operations Briefings — scene by scene" doc. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are in `docs/screenshots/o20/`.*
+- **The words sit inside the picture.** They show on a soft dark plate near what they describe, and the art moves down a little to make room. The bottom bar holds only Pause & discuss, Back and Next. The kit (`briefings/kit/`) places the words; each briefing can move them (`K.caption(html, { x, y, w })`, `K.words`). In Cash, tank, profit they sit under the price board.
+- **Predictions are back** (`K.predict`): two or three chips and Not sure. Next appears once he taps one, nothing is marked right or wrong, and the next scene shows "You predicted: …". They are in What a fare does (which plane earns more?), Customers have a choice (what will some passengers do?) and Weekdays and weekends (which days look different?).
+- **Money is never a liquid.** In Can you afford to run it? the cash is coins stacked in an open vault.
+- **More demand than seats and Snacks on board are removed.** Their workbook status is `removed`; the old page is in `briefings/retired/`.
+- **No snacks in year one** (`parts/p5x_nosnacks.js`, Settings `snacksInYearOne` off). There is no snack choice, no snack money, and no Cabin sales rows or sums, so the Launch Day sheet has Sums 1–5. Old saves fly without snacks, and the snack-only daily colours give way to others. The snack supplier event is removed, and Calendar day 1 and the chapter 1 card no longer mention snacks. Chapters 3 and 4 keep snacks until Bertie says "extend".
+
 ### Workbook v6.1 (20 Oct 2026)
 *Fable's v6.1, which answers the D104 report's flags, in year one only. The report, with the flags for Fable, is `docs/v6.1-Report.md`; screenshots at 1366 × 768 and 1920 × 1080 are in `docs/screenshots/v61/`. The code is in `src/opening/parts/p5w_d104.js`.*
 - **Softer stars:** a route loses half a star when it turns away 1 in 3 or more, two weeks running, counted from week 5 (30 September).
