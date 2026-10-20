@@ -37,7 +37,8 @@ svcCardHtml = function(){ const h = nsSvc0.apply(this, arguments); return nsOff(
 const nsStars0 = d104StarsCardHtml;
 d104StarsCardHtml = function(){ const h = nsStars0.apply(this, arguments); return nsOff() ? h.replace(/<li><b class="up">\+½<\/b><span>once, for free snacks two weeks running<\/span><\/li>/, '') : h; };
 
-/* the snack-only daily colours give way to another of the day's (p5e_colour.js asks, from inside its own block) */
+/* the snack-only daily colours give way to another of the day's (p5e_colour.js's dcSwap asks, from inside its own block; its
+   chain of weeks is left alone, so the weeks after year one pick exactly as before) */
 const nsSnackColour = c => /snack|cake trolley/i.test(String(c.effect || '') + ' ' + String(c.line || ''));
 const nsSkipColour = (c, d) => nsSnackColour(c) && nsOff(d);
 

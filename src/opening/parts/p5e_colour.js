@@ -15,7 +15,7 @@ const dcS = () => S.dcLog || (S.dcLog = {});
 function dcFor0(d){
   if(!dcOn() || !d) return null; const w = weekNo(d); if(w < 2) return null;
   const wd = WDAY[calDate(d).getUTCDay()].slice(0, 3);
-  return dcRows().find(c => c.weekday === wd && c.everyWeeks > 0 && w % c.everyWeeks === 0 && !(typeof nsSkipColour === 'function' && nsSkipColour(c, d))) || null;   // (no snack colours while there are no snacks: p5x)
+  return dcRows().find(c => c.weekday === wd && c.everyWeeks > 0 && w % c.everyWeeks === 0) || null;
 }
 /* D101 (Settings dailyColourLimit): at most two a week, never an item the week before had, never the same item twice in a week */
 const dcWeekMemo = {};
@@ -25,9 +25,17 @@ function dcWeek(w){
   for(let d = (w - 1) * 7 + 1; d <= w * 7 && out.length < 2; d++){ const c = dcFor0(d); if(c && !prev.has(c.id) && !out.some(x => x.c.id === c.id)) out.push({ d, c }); }
   return (dcWeekMemo[w] = out);
 }
+/* no snack colours while there are no snacks (p5x_nosnacks.js, year one): a day whose colour only touches snack sales takes
+   another of that day's rows instead, if one is free that week. The chain of weeks (dcWeek) is left as it was, so the weeks
+   after year one pick exactly as before. */
+function dcSwap(c, d){
+  if(!c || !(typeof nsSkipColour === 'function' && nsSkipColour(c, d))) return c;
+  const w = weekNo(d), wd = WDAY[calDate(d).getUTCDay()].slice(0, 3), taken = new Set(dcWeek(w).concat(dcWeek(w - 1)).map(x => x.c.id));
+  return dcRows().find(x => x !== c && !nsSkipColour(x, d) && !taken.has(x.id) && x.weekday === wd && x.everyWeeks > 0 && w % x.everyWeeks === 0) || null;
+}
 function dcFor(d){
-  if(!d) return null; if(WBS().dailyColourLimit === undefined) return dcFor0(d);
-  if(!dcOn()) return null; const x = dcWeek(weekNo(d)).find(z => z.d === d); return x ? x.c : null;
+  if(!d) return null; if(WBS().dailyColourLimit === undefined) return dcSwap(dcFor0(d), d);
+  if(!dcOn()) return null; const x = dcWeek(weekNo(d)).find(z => z.d === d); return x ? dcSwap(x.c, d) : null;
 }
 const dcPct = (c, dflt) => { const m = /([+−-])\s*(\d+(?:\.\d+)?)\s*%/.exec(String(c.effect || '') + ' ' + String(c.size || '')); return m ? (m[1] === '+' ? 1 : -1) * +m[2] / 100 : dflt; };
 const dcRange = (c, lo, hi) => { const m = /£\s*(\d+)\D+£\s*(\d+)/.exec(String(c.size || '')); return m ? [+m[1], +m[2]] : [lo, hi]; };

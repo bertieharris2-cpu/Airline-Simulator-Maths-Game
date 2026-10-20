@@ -49,7 +49,7 @@ Year one only. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are 
   - `omPlanTable` (the On board line) and `omResults` (On-board sales);
   - `svcCardHtml`;
   - the free-snacks line on `d104StarsCardHtml`.
-- `p5e_colour.js`'s `dcFor0` skips a colour when `nsSkipColour(c, d)` is true (that part is a block, so it asks rather than being wrapped).
+- `p5e_colour.js`'s `dcSwap` gives a day whose colour only touches snack sales (`nsSkipColour(c, d)`) another of that day's rows, or none. It runs after the week chain (`dcWeek`, where each week avoids the week before) has picked as before, so the weeks after year one pick exactly as before. That part is a block, so it asks rather than being wrapped.
 - Workbook: the Calendar day 1 headline and the Chapters 1 text drop "snacks"; Events `snack_supplier` and its options are `removed`; the mystery shopper's option 1 reads "Seats, service, signs"; the SheetSums Cabin sales row is noted.
 
 ## 0zf. Workbook v6.1 (20 Oct 2026)
