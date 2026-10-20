@@ -56,7 +56,7 @@ function d104Opt(id, o){
 }
 function d104Event(id){
   const base = eventById(id); if(!base) return null; const tw = D104_TWIN[id], twin = tw ? eventById(tw) : null;
-  let ge = gameEvent(id) || (tw ? gameEvent(tw) : null);   // the storm keeps its Events-row choices on track B
+  let ge = gameEvent(id) || (tw === 'storm' ? gameEvent(tw) : null);   // the storm keeps its Events-row choices on track B (the board's afternoon); the others take their own EventOptions rows
   if(!ge){ const eo = d104Opts(id); if(!eo.length) return null;
     const share = eo.filter(o => +o.costShare > 0).map(o => `${d104Key(o)} ${o.costShare}`).join(' / ');
     ge = { costShare:share || undefined, options:eo.map(o => d104Opt(id, o)) }; }
@@ -89,7 +89,7 @@ d104Patch(d104DefaultTrack());
 const d104Render0 = render;
 render = function(){ try{ d104Ensure(); }catch(e){ console.error(e); } return d104Render0.apply(this, arguments); };
 const d104SBB0 = startBeatBase;
-startBeatBase = function(b){ try{ d104Ensure(); d104WarEnd(); }catch(e){ console.error(e); } const r = d104SBB0.apply(this, arguments); try{ d104Queue(roundData(b)); }catch(e){ console.error(e); } return r; };
+startBeatBase = function(b){ try{ d104Ensure(); d104WarEnd(beatDay(b)); }catch(e){ console.error(e); } const r = d104SBB0.apply(this, arguments); try{ d104Queue(roundData(b)); }catch(e){ console.error(e); } return r; };
 if(typeof enterRunDay === 'function'){ const d104ERD0 = enterRunDay; enterRunDay = function(){ try{ d104Ensure(); }catch(e){ console.error(e); } return d104ERD0.apply(this, arguments); }; }
 
 /* ---------- route news on the track: track B's concert and Amsterdam fair in place of the rugby and Milan's fair ---------- */
@@ -164,8 +164,8 @@ function d104Effect(ev, opt, tag){
     D.war = { from:at, to:at + ((ev.durationDays || 7) - 1), kind:tag, before }; refreshPlan(); }
 }
 /* the matched fares go back at the next beat after the week (unless the pupil has changed them since) */
-function d104WarEnd(){
-  const D = S && S.d104, W = D && D.war; if(!W || (S.day || 0) <= W.to) return;
+function d104WarEnd(day){
+  const D = S && S.d104, W = D && D.war, d = day === undefined ? (S.day || 0) : day; if(!W || d <= W.to) return;   // the day of the beat about to start
   if(W.kind === 'warMatch' && W.before) Object.keys(W.before).forEach(id => { const cut = Math.max(5, Math.round(W.before[id] * 0.8 / 5) * 5); if(S.prices[id] === cut) S.prices[id] = W.before[id]; });
   delete D.war;
 }
@@ -298,8 +298,9 @@ function d104Week(G, k, z, quiet){
 /* the day's multiplier: the last step that had counted by that day (a beat to come: its first day) */
 const d104Growth0 = growthOf;
 growthOf = function(route, n){
-  if(!S || !d104Grows(route) || !d104GrowthOn()) return d104Growth0.apply(this, arguments);
-  const day = dayFor(n === undefined ? S.round : n); if(!yearOne(day)) return d104Growth0.apply(this, arguments);
+  if(n === undefined && S) n = S.round;
+  if(!S || !d104Grows(route) || !d104GrowthOn()) return d104Growth0.call(this, route, n);
+  const day = dayFor(n); if(!yearOne(day)) return d104Growth0.call(this, route, n);
   const G = S.g104, s = G && G.snaps; if(!s || !s.length) return 1;
   for(let i = s.length - 1; i >= 0; i--) if(s[i].from <= day) return s[i].m[route.id] || 1;
   return 1;

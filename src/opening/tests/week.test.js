@@ -5,6 +5,7 @@ const path = require('path'), fs = require('fs'), FILE = 'file://' + path.resolv
 const BRIEF = process.env.BRIEFINGS === '1';   // D99: play the Operations Briefings (off in the regression run)
 const W = +(process.env.W || 1366), H = +(process.env.H || 768), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 15);
 const V2 = true;   // the game is the revised Studio (one file since 13 Oct 2026): opener, operating plan, change network
+const TRACK = process.env.TRACK === 'B' ? 'B' : 'A';   // D104: the autumn track (B: the second autumn)
 const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CAP : null, BOARD_SHARE = process.env.BOARD_SHARE !== undefined ? +process.env.BOARD_SHARE : null;   // COAST: the plan never changes after day 22; CAP: the teacher's dial
 (async () => {
   const ftpSeen = [];
@@ -12,7 +13,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
   let modelWide = false, openerSeen = false, newsSeen = false, d67 = null; const errors = [], checks = [], overflow = [], sums = {}, audits = [], boards = [], changes = [], dumped = {}, studio = [], foLevels = [], caps = [];
   p.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n')[1])); p.on('console', m => { if(m.type() === 'error') errors.push('console: ' + m.text()); }); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
-  await p.evaluate(b => { const st = window.__sim.settings(); st.briefings = b; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; }, BRIEF);
+  await p.evaluate(([b, tr]) => { const st = window.__sim.settings(); st.briefings = b; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; st.autumnTrack = tr; window.__sim.evalIn(`(S.track = '${tr}', d104Ensure(), 1)`); }, [BRIEF, TRACK]);
   const T = () => p.evaluate(() => window.__sim.step().t), S = () => p.evaluate(() => window.__sim.S());
   const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));
   // D102: JUMPS=<dir> saves the airline at each of the teacher's Jump to… points on the way (tools/make_jumps.sh)
@@ -249,7 +250,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
       ok(`day ${day}: Buy is greyed until affordable (cash ${cash} against ${price} + the ${reserve} reserve)`, buy === (cash < price + reserve), txt);
       ok(`day ${day}: chapter 1 is buy only: Rent and Finance are off`, await p.$eval('[data-terms="lease"]', e => e.disabled).catch(() => true) && await p.$eval('[data-terms="finance"]', e => e.disabled).catch(() => true));
       if(!buy){ await p.click('[data-terms="buy"]'); await p.click('#nx'); info.atrBought = info.atrBought || day; } else await p.click('#noBuy'); continue; }
-    if(t === 'event'){ await fits('event ' + day); await shot(`d${day}-event`); for(let i = 0; i < 8 && await p.$('[data-seep]'); i++) await p.click('[data-seep]'); const o = day === 5 ? 2 : 1; await p.click(await p.$(`[data-o="${o}"]`) ? `[data-o="${o}"]` : '[data-o="0"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
+    if(t === 'event'){ await fits('event ' + day); await shot(`d${day}-event`); for(let i = 0; i < 8 && await p.$('[data-seep]'); i++) await p.click('[data-seep]'); const o = day === 5 ? 2 : 1; await p.click(await p.$(`[data-o="${o}"]`) ? `[data-o="${o}"]` : '[data-o="0"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event' && await p.$eval('#nx', e => !e.hidden && !e.disabled).catch(() => false)) await p.click('#nx'); continue; }
     // the shop never opens by itself (Bertie, 14 Oct): the test pupil opens it from the Fleet desk on day 8, on a plan day while saving, and from day 22 until the ATR is bought
     if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.evaluate(() => window.__tk.answer(true)); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } continue; }   // flight times before the timetable
     if(t === 'plan' && s.phase === 'round' && !shopVisit[day] && (day === 8 || (s.waitFor && day > 8) || (day >= 22 && s.fleet.length === 2 && !s.fleet.some(f => f.planeId === 'at72')))){ shopVisit[day] = true;
