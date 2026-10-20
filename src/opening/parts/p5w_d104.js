@@ -503,3 +503,6 @@ function d104StarsLine(from, to){
 }
 const d104Sur0 = surprisesLine;
 surprisesLine = function(from, to){ return d104Sur0.apply(this, arguments) + d104StarsLine(from, to); };
+/* a one-day range is the day ("5 October", not "5–5 October": track B's concert) */
+const d104FR0 = fmtRange;
+fmtRange = function(a, b){ if(a === b && yearOne(a)){ const A = calDate(a); return `${A.getUTCDate()} ${MONTH[A.getUTCMonth()]}`; } return d104FR0.apply(this, arguments); };

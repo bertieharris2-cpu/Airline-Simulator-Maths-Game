@@ -188,6 +188,8 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   await load(365);
   const Y = await J(`(() => { render(); const r = routeById('par'), a = r.arch, old = Math.min(a.growthCeiling || Infinity, 1 + a.growthPerWeek / 100 * Math.max(0, weekNo(beatDay(S.round)) - 2)); return { g:growthOf(r), old, g104:!!S.g104, unk:d104UnknownSet(), known:d104Known('fra') }; })()`);
   ok('chapter 3 (day 365): growth is the old rule, no ranges, nothing kept for D104', Y.g === Y.old && !Y.g104 && Y.unk === null && Y.known === true, Y);
+  const FR = await J(`[fmtRange(dayOfDate('2030-10-05'), dayOfDate('2030-10-05')), fmtRange(dayOfDate('2030-10-14'), dayOfDate('2030-10-20')), fmtRange(400, 400)]`);
+  ok('a one-day range in year one is the day ("5 October", the concert); ranges and later chapters as before', FR[0] === '5 October' && FR[1] === '14–20 October' && /^(\d+)–\1 /.test(FR[2]), FR);
 
   console.log(checks.join('\n')); console.log('ERRORS', errors.length ? errors : 'none'); await b.close();
 })();

@@ -69,7 +69,7 @@ How the game uses it:
   - free snacks two weeks running: +½★, once;
   - each month's review: +½★ if a week since the last review ran on time.
 - **The month's review** is at the end of the week that holds the turn of the month (it ends on the 1st–7th). A week is on time with no choice that cost stars, stopped or delayed flights, and no day grounded with no fuel. The plainer snacks' −½★ also comes at a review.
-- **Every move** goes into the news ("STARS") and the pupil's record. The rating stays within 1–5.
+- **Every move** is named on the review of its week or month ("Stars this week", with the rating now), and goes into the news ("STARS") and the pupil's record. The rating stays within 1–5.
 
 ## 5. New routes show a range
 
@@ -91,6 +91,7 @@ The game's own sums and projections keep the true figure (see flag 9).
 | Day 127 | The stars card is gone (they are already public); the airline-type page stays. |
 | Event cards | The six curveballs and track B's events. The departures board shows two rows when a notice line is under it; three rows used to run into the notice. |
 | Operating Plan Studio | The footer line in the slot-squeeze week; ranges for new routes (routes, route editor, fare lists, demand strip). |
+| Sunday review, period results | A "Stars this week" line when the stars moved, with the rating now. |
 | Change network | Ranges on the route cards of routes not yet flown for a week. |
 | Network, World report | Ranges for new routes. |
 | Teacher panel | Autumn track (D104). |
@@ -113,12 +114,41 @@ The game's own sums and projections keep the true figure (see flag 9).
 
 ## Tests
 
-TESTS-PLACEHOLDER
+On the final build, at 1366 × 768 unless named. Chapters 3 and 4 were run to show nothing changed there.
+
+| Suite | Result |
+| --- | --- |
+| `d104.test.js` (new) | 50 passed, none failed: both autumns' beats and news; each curveball's choices through the game's own `applyEventNow` (school trip, Dublin strike, snack supplier, sponsorship, slot squeeze, tanker, the fault on a week and on a board day, the price war's three answers); growth on made-up weeks; the stars' drivers; the ranges on the Network and the World report; the teacher's switch; a one-day date range ("5 October"); day 365 unchanged |
+| `week.test.js` to day 15 | 109 passed, none failed |
+| `week.test.js` to chapter 1's review (`UPTO=200`), track A | 254 passed, none failed, no errors. Ends on £728,554 at day 118 |
+| `week.test.js` to chapter 1's review, `TRACK=B` | 245 passed, none failed, no errors. Ends on £726,712 at day 118 |
+| `chapter2.test.js` Value, from the new chapter-1 save | 111 passed, none failed. At the chapter-2 review: £14,801,749 (before D104: £15,260,963) |
+| `chapter2.test.js` Premium, from the same save | 105 passed, none failed. At the review: £14,755,338 (before D104: £15,056,234) |
+| `chapter3.test.js`, `chapter4.test.js` (Value), from the same saves as before | Chapter 3: 66 passed, none failed, ending on £31,529,103. Chapter 4: 58 passed and one failed (the D89 fuel-farm check, which fails on 5ca2944 too), ending on £58,865,752. Both exactly as before D104 |
+| `briefings.test.js` | 121 passed, none failed |
+| `decide`, `record`, `migrate`, `screens3`, `playnotes`, `fleetshop`, `milestones` | 34, 18, 31, 24, 14, 36 and 27 passed, none failed |
+| `engine`, `balance` | 10 and 94 passed, none failed (`balance` has seven D104 checks on `WE.growthStep`) |
+
+**Test changes.**
+- `week`: the stars card on day 15 (its rating is 3 + what was banked); a one-choice card (the slot squeeze) and a two-card week; `TRACK=B` plays the second autumn; the D104 line at the end (track, stars, moves, growth).
+- `decide`: the stars card on day 15 is one more page on the way to the next Monday's plan.
+- `fleetshop`: the school trip's card comes before Tuesday's board, which then flies, so the shop opens from the first board day it meets (Tuesday or Wednesday), with a tap rather than a wait for the moving board to stand still.
+- `migrate`: an old save past day 15 has the stars card after HQ; the "current save loads unchanged" check reads the code as UTF-8 (a step now holds a £).
 
 ## Balance
 
-BALANCE-PLACEHOLDER
+Chapter 1 for the regression's test pupil (the same plans and choices every run, mostly the second answer on each card):
+
+| | Before D104 (19 Oct) | Track A | Track B |
+| --- | --- | --- | --- |
+| Cash at chapter 1's review (day 118) | £763,057 | £728,554 | £726,712 |
+| Stars at the review | (hidden until 6 January) | 3★ | 2½★ |
+| Paris, Amsterdam, Madrid demand (× opening) | ×1.15, ×1.15, ×1.45 (the old rule: 1% or 3% a week from week 3, flown or not; Dublin ×1.15 too) | ×1.34, ×1.42, ×1.72 (Dublin ×1) | ×1.35, ×1.42, ×1.72 (Dublin ×1) |
+
+- **Growth.** Madrid (a leisure route: +3% a week, and 3% more in a week it is full) reaches ×1.72 of its 1.8 ceiling by the review. Paris (a city route) and Amsterdam (a business route), both +1% a week and 2% more when full, reach ×1.34 and ×1.42. Dublin, flown only in weeks 1, 2 and 5, grows to ×1.03 and then falls back to its opening demand. Before D104 every route grew the same 1% or 3% a week from week 3, flown or not, so served routes now grow faster and unserved ones not at all.
+- **Stars.** Both start at 3★ on day 15 (track A banked +½ for cancelling in the storm and −½ for cancelling in the crew sickness). The test pupil loses ½ for Paris (weeks 3–4), Madrid (weeks 6–7) and Amsterdam (weeks 9–10 on track A, 7–8 on track B), each turning away more than 1 in 5 two weeks running, and gains ½ at each month's review (6 Oct, 3 Nov, 1 Dec). Track B also loses ½ for cancelling a day in the crew sickness (week 7), so it is on 1½★ for week 9 and ends on 2½★.
+- **Cash.** £34,503 less than before on track A and £36,345 less on track B. With the plane the limit in the first weeks, the extra demand adds little; the weeks below 3★ and the events' costs take a little more.
 
 ## Screenshots
 
-SHOTS-PLACEHOLDER
+58 screenshots, 29 screens at 1366 × 768 and 1920 × 1080, are in `docs/screenshots/d104/` with a README that says what each shows: the stars card, every curveball's card and result, the slot squeeze in the Studio (over the limit, then fitting), the tanker with a full tank, track B's fault, storm, crew sickness and concert, the demand ranges in the route editor, on Change network, the Network and the World report, and the teacher's Autumn track switch.
