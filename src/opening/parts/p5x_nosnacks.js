@@ -8,7 +8,7 @@
    - a save from before that chose snacks flies without them (its choice is kept, for chapter 3, but sells nothing here);
    - lines that could only read £0 now are left off: On-board sales in the Studio's Money, the Operations Model and a
      service's costs card, and the star rule for free snacks on the Reputation desk;
-   - the daily colours that only touch snack sales (a hen party, a birthday cake) give way to another of that day's.
+   - the daily colours that only touch snack sales (a hen party, a birthday cake) are left out: that day has no colour.
    The workbook's year-one words lost "snacks" too (Calendar day 1, Chapters 1), and the snack supplier event is removed.
    Chapters 3 and 4 keep snacks until Bertie says "extend" (CLAUDE.md): a pupil meets them there as new.
    ===================================================================== */
@@ -39,8 +39,8 @@ svcCardHtml = function(){ const h = nsSvc0.apply(this, arguments); return nsOff(
 const nsStars0 = d104StarsCardHtml;
 d104StarsCardHtml = function(){ const h = nsStars0.apply(this, arguments); return nsOff() ? h.replace(/<li><b class="up">\+½<\/b><span>once, for free snacks two weeks running<\/span><\/li>/, '') : h; };
 
-/* the snack-only daily colours give way to another of the day's (p5e_colour.js's dcSwap asks, from inside its own block; its
-   chain of weeks is left alone, so the weeks after year one pick exactly as before) */
+/* the snack-only daily colours are left out (p5e_colour.js's dcSkip asks, from inside its own block; its chain of weeks is left
+   alone, so the weeks after year one pick exactly as before) */
 const nsSnackColour = c => /snack|cake trolley/i.test(String(c.effect || '') + ' ' + String(c.line || ''));
 const nsSkipColour = (c, d) => nsSnackColour(c) && nsOff(d);
 

@@ -97,7 +97,7 @@ let leftCall = null;   // the 'left at the gate' label, gone once they fly
     const again = K.chips({ x:800, y:160, center:true, label:'Again', items:[{ label:'Choose again', value:'a' }, { label:'Keep this choice', value:'k' }] });
     const a = await K.decide(again.wait()); again.remove(); if(a === 'k') break; reset(shown);
   }
-  await K.caption(chosen === 0 ? 'Approved: from Monday each flight has <b>Days</b> — every day, Mon–Fri or Sat–Sun.' : 'Noted. The systems team will look at it again.');
+  await K.caption(chosen === 0 ? 'Approved: from Monday each flight has <b>Days</b> — every day, Mon–⁠Fri or Sat–⁠Sun.' : 'Noted. The systems team will look at it again.');   // a word joiner after each dash keeps Mon–Fri and Sat–Sun on one line
   await K.cont(chosen === 0 ? 'To next week' : 'Continue');
   K.done({ chosen, right:chosen === 0 });
 })();

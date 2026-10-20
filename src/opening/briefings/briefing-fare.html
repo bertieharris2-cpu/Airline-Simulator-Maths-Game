@@ -236,7 +236,7 @@ const pic = $('pic'), capt = $('capt'), nx = $('nx'), bk = $('bk'), words = $('w
 const tidyW = () => words.classList.toggle('empty', !capt.innerHTML && pch.hidden && !rec.textContent);
 const setCap = h => { capt.innerHTML = h; tidyW(); };
 /* where the words sit in each beat (stage px: the plate's top centre and its widest), next to what they are about */
-const CAP_AT = { 1:[560, 592, 760], 2:[683, 392, 1000], 3:[683, 606, 1040], 4:[683, 612, 1000], 5:[683, 342, 1000], 6:[362, 566, 640], 7:[683, 522, 1000] };
+const CAP_AT = { 1:[560, 592, 760], 2:[683, 392, 1000], 3:[683, 606, 1040], 4:[683, 636, 1000], 5:[683, 342, 1000], 6:[362, 566, 640], 7:[683, 522, 1000] };
 function placeWords(n){ const a = CAP_AT[n] || [683, 560, 1000]; words.style.left = a[0] + 'px'; words.style.top = a[1] + 'px'; words.style.maxWidth = a[2] + 'px'; }
 let PRED = null;   // his prediction at beat 5 ({ value, label }), kept for Back
 function setNext(label, cls, disabled){ nx.innerHTML = label; nx.className = 'bbtn ' + (cls || 'next'); nx.disabled = !!disabled; }

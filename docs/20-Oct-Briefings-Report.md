@@ -20,8 +20,8 @@ Screenshots of the briefings as they look in the game are in `docs/screenshots/o
 - **Where the words sit:**
   - **Cash, tank, profit:** just under the £1.30 price board, as Bertie asked. The vault, tank, week and plane moved down to make room.
   - **Renting a plane:** over the sky on the left, clear of the price and the rent stack.
-  - **Can you afford to run it?:** in the week's column, above the plane.
-  - **What a fare does:** next to each beat's picture.
+  - **Can you afford to run it?:** in the week's column, above the plane. The shop card and the end-of-week comparison are narrower now, so they stay clear of the flight board, and the comparison sits under the words.
+  - **What a fare does:** next to each beat's picture. In beat 4 they sit under the "Best fare: somewhere between" label.
   - **The rest:** at the top of the scene, where they cover nothing.
 - **Chapter 3's Profit is not cash** keeps its old frame (year one only).
 
@@ -60,7 +60,7 @@ Screenshots of the briefings as they look in the game are in `docs/screenshots/o
   - **No Cabin sales rows.** The Launch Day sheet has rows 1–9: tickets at the three fares, the other route, and the profit. Its sums are Sums 1–5, and everything after numbers on from 6. The Monday sheets have no Cabin sales row either.
   - **Old saves.** A save from before that sold snacks flies on without them in year one. Its choice is kept, so a save taken at the year-1 accounts carries its snacks into chapter 3 as before.
   - **No £0 lines.** On-board sales lines that could only read £0 are left off: the Studio's Money, the model's results and a service's costs card.
-  - **Daily colours.** The hen party and the birthday cake only touch snack sales, so they give way to another colour that day. Year one now has none of them.
+  - **Daily colours.** The hen party and the birthday cake only touch snack sales, so year one leaves them out and that day has no colour. Only the hen party was due in year one, every third Tuesday (17 days). Nothing takes its place, so every other day plays as before.
 - **Workbook changes:**
   - Settings `snacksInYearOne` = off. This is the switch: set it to on and snacks come back as before.
   - Calendar day 1's headline now reads "timetable, fare, fuel", and the chapter 1 card no longer says "snacks".

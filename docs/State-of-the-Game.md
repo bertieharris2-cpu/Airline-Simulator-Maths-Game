@@ -29,7 +29,7 @@ Year one only. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are 
 - Later chapters keep the old frame.
 
 **What a fare does** has its own frame (`briefing-fare.html`):
-- the words are in `#words`, placed per beat (`CAP_AT`), and the bar holds Back and Next;
+- the words are in `#words`, placed per beat (`CAP_AT`; beat 4's sit under the "Best fare" label), and the bar holds Back and Next;
 - beat 5 asks with `#pchips` and keeps `PRED` for Back, with Next hidden until a tap;
 - beat 6 shows `#recall`.
 
@@ -37,6 +37,7 @@ Year one only. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are 
 - Cash, tank, profit: the vault, tank, week and plane move down `SH` (100) and the week board 150 more; the words go under the price board.
 - Renting a plane: the words sit over the left sky.
 - Can you afford to run it?: the words sit in the week's column. The cash gauge is now an open vault with a coin stack: `COINS` are drawn up to `yOf(cash)` in steps of `CH`, and the "to spend" tag sits on the stack.
+  - In year one the shop card, the "If you had bought it" card and the comparison are at most 42% of the scene wide, so they stay clear of the flight board, and the comparison sits at y 350, under the words.
 
 **Removed:** `full_route` and `cabin_sales` have status `removed`. `briefing-capacity.html` moved to `briefings/retired/`, which the build does not embed (11 briefings).
 
@@ -49,7 +50,7 @@ Year one only. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are 
   - `omPlanTable` (the On board line) and `omResults` (On-board sales);
   - `svcCardHtml`;
   - the free-snacks line on `d104StarsCardHtml`.
-- `p5e_colour.js`'s `dcSwap` gives a day whose colour only touches snack sales (`nsSkipColour(c, d)`) another of that day's rows, or none. It runs after the week chain (`dcWeek`, where each week avoids the week before) has picked as before, so the weeks after year one pick exactly as before. That part is a block, so it asks rather than being wrapped.
+- `p5e_colour.js`'s `dcSkip` leaves a day whose colour only touches snack sales (`nsSkipColour(c, d)`) with no colour. Nothing takes its place, so every other day plays as before. It runs after the week chain (`dcWeek`, where each week avoids the week before) has picked as before, so the weeks after year one pick exactly as before. That part is a block, so it asks rather than being wrapped.
 - Workbook: the Calendar day 1 headline and the Chapters 1 text drop "snacks"; Events `snack_supplier` and its options are `removed`; the mystery shopper's option 1 reads "Seats, service, signs"; the SheetSums Cabin sales row is noted.
 
 ## 0zf. Workbook v6.1 (20 Oct 2026)

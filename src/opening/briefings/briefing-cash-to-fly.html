@@ -337,7 +337,7 @@ const fadeIn = (el, ms) => K.tween(RM ? 0 : ms || 260, k => el.setAttribute('opa
     const card = K.h('div', { class:'bk-card' }, hud, `<span class="ey">The shop</span><h3>The shop has a ${K.esc(NEW.name)} for ${money(NEW.price)}. ${afford ? 'Buy it?' : ''}</h3>
       <p>${afford ? (SH.where ? `On ${K.esc(SH.where)} it would need ${num(NEW.litres.reduce((a, v) => a + v, 0))} L of fuel this week, and cost ${money(NEW.idle)} a day to run.` : `It would fly a week like yours: ${num(NEW.litres.reduce((a, v) => a + v, 0))} L of fuel, and ${money(NEW.idle)} a day to run.`) : `That's more than the ${money(D.cash)} you have.`}</p>
       <div class="bk-row">${afford ? '<button class="bk-chip" data-c="buy" type="button">Buy it</button>' : ''}<button class="bk-chip" data-c="no" type="button">${afford ? 'Not now' : 'Go on'}</button></div>`);
-    K.pos(card, MID, 290);
+    K.pos(card, MID, 290); if(K.y1) card.style.maxWidth = '42%';   // clear of the flight board, so the question wraps
     const pick = await K.decide(new Promise(res => card.querySelectorAll('[data-c]').forEach(b => b.onclick = () => res(b.getAttribute('data-c'))))); 
     card.classList.add('out'); setTimeout(() => card.remove(), 400);
     if(pick === 'buy'){
@@ -354,16 +354,17 @@ const fadeIn = (el, ms) => K.tween(RM ? 0 : ms || 260, k => el.setAttribute('opa
       for(const x of W1.log){ if(x.buy) await doBuy(x.buy, true); else await doFly(true); }
       if(afford){ W2 = autoWeek(week(D.cash - NEW.price, [ME, NEW]), R);
         const q = K.h('div', { class:'bk-card' }, hud, `<span class="ey">If you had bought it</span><p>The cash would have dropped to <b>${money(D.cash - NEW.price)}</b> on Monday, and two planes would have needed ${num(weekL(W2))} L this week.</p>`);
-        K.pos(q, MID, 290); await W8(2600); q.classList.add('out'); setTimeout(() => q.remove(), 400); }
+        K.pos(q, MID, 290); if(K.y1) q.style.maxWidth = '42%'; await W8(2600); q.classList.add('out'); setTimeout(() => q.remove(), 400); }
       await K.caption(afford ? 'Before buying a plane, ask: <b>can I still afford to run the planes I\'ll have?</b>' : 'Fuel first, then planes.');
     }
     if(W2){
       const A = W1, B2 = W2, row = (label, a, b, cls) => `<tr><td>${label}</td><td class="${cls || ''}">${a}</td><td class="${cls || ''}">${b}</td></tr>`;
-      const plate = K.h('div', { class:'bk-card' }, hud, `<span class="ey">The same week, twice</span><table><thead><tr><th></th><th>Without the ${K.esc(NEW.name)}</th><th>With it</th></tr></thead><tbody>
+      const plate = K.h('div', { class:'bk-card' }, hud, `<span class="ey">The same week, twice</span><table><thead><tr><th></th><th${K.y1 ? ' style="white-space:normal"' : ''}>Without the ${K.esc(NEW.name)}</th><th>With it</th></tr></thead><tbody>
         ${row('Cash on Sunday night', money(A.cash), money(B2.cash), 'gold')}${row('Bought fuel', times(A.buys), times(B2.buys))}
         ${row(`Days on fuel at +${PENCE}p`, num(A.dear), num(B2.dear))}${row('Days with a plane grounded', num(A.grounded), num(B2.grounded))}
         ${row('The week\'s flying', money(flying(A)), money(flying(B2)))}</tbody></table>`);
-      K.pos(plate, MID, 290); await K.cont(); plate.classList.add('out');
+      K.pos(plate, MID, K.y1 ? 350 : 290); if(K.y1) plate.style.maxWidth = '42%';   // under the words, clear of the flight board
+      await K.cont(); plate.classList.add('out');
     } else await K.cont();
   }
 
