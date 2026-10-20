@@ -12,7 +12,7 @@
 /* 4 · Weekdays and weekends (the week-2 review), reworked to Fable's scene: seven day columns, each a little gate lounge. Through
    the week business travellers (briefcases, cyan) fill the columns; at the weekend families and holidaymakers (orange, pale)
    take their place and the columns swell past the glowing seats line, the extra left standing, and the weekend lights by itself
-   (no taps since 19 Oct, evening: Show → Reveal → Use). His own timetable slides in beneath: the same flights every day. Then the Operations Request;
+   (Show → Reveal → Use; since 20 Oct 2026 the Show ends with a prediction, which days look different from the rest?, Not sure counts). His own timetable slides in beneath: the same flights every day. Then the Operations Request;
    granted, the weekend's timetable changes and the waiting travellers fly. The game is told the choice (chosen, right). */
 const D = Object.assign({ id:'weekend_demand', route:'Dublin', want:[48, 45, 47, 50, 61, 83, 77], seats:[57, 57, 57, 57, 57, 57, 57],
   flights:[{ t:'09:40', n:19 }, { t:'14:50', n:19 }, { t:'19:10', n:19 }],
@@ -68,8 +68,9 @@ let leftCall = null;   // the 'left at the gate' label, gone once they fly
     K.count(bays[k].cnt, 0, want[k], 400).then(() => { bays[k].cnt.textContent = `${num(want[k])} want`; });
     await K.wait(k >= 5 ? 700 : 420);
   }
-  await K.caption('Some days look different from the rest.');
   await K.cont('Next');
+  // 1b Show · the prediction (20 Oct 2026: predictions are back; Not sure always counts, nothing is marked)
+  await K.predict({ q:'Which days look different from the rest?', items:[{ label:'Mon to Fri', value:'weekdays' }, { label:'Sat and Sun', value:'weekend' }] });
   // the weekend shows itself
   K.mark(1); [5, 6].forEach(k => { bays[k].outline.setAttribute('stroke', '#F2C14E'); bays[k].outline.setAttribute('opacity', 1); });   // the weekend lights by itself
   const overW = [5, 6].some(k => want[k] > seats[k]);

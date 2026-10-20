@@ -9,11 +9,12 @@
 </head>
 <body data-brief="rival_split">
 <script>
-/* 2 · Customers have a choice (Thursday, week 1: Red Kite). Claude Design handover 18 Oct 2026, 3.8 Option A, without the
-   guess (19 Oct, evening): three beats, Show → Reveal → Use.
-   1 Show: Red Kite's ATR (its oxblood livery, from the kit) taxis in to the next gate; its fare sign lights beside yours.
-   2 Reveal, straight after: the rule ("For every £10 dearer, 1 in 10 walk") builds in three steps while that many of the pupil's
-     passengers walk, one by one, across to Red Kite's queue. Never "wrong"; nothing to drag or guess.
+/* 2 · Customers have a choice (Thursday, week 1: Red Kite). Claude Design handover 18 Oct 2026, 3.8 Option A: Show → Reveal →
+   Use, with its prediction back (20 Oct 2026, Bertie's briefings review).
+   1 Show: Red Kite's ATR (its oxblood livery, from the kit) taxis in to the next gate; its fare sign lights beside yours. Then
+     the prediction: what will some of your passengers do? (Stay with us, Move to Red Kite, Not sure; never marked.)
+   2 Reveal: the rule ("For every £10 dearer, 1 in 10 walk") builds in three steps while that many of the pupil's passengers
+     walk, one by one, across to Red Kite's queue, with "You predicted: …" small in the words. Never "wrong".
    3 Use: who stays, in rows of ten, then back to the Red Kite card.
    The figures are the game's (the switching rule, his fare, who wants to fly). */
 const D = Object.assign({ id:'rival_split', route:{ city:'Dublin' }, fare:110, rival:50, want:30, stay:12, rivalName:'Red Kite', airline:'Your airline', perTen:.1 }, K.B);
@@ -76,6 +77,8 @@ const arrow = sv('g', { opacity:0 }, L.mid); sv('line', { x1:640, y1:Y0 + 20, x2
   sB.style.opacity = 1; await K.tween(450, t => { fB.setAttribute('opacity', t); fA.setAttribute('opacity', .4 + .6 * t); }, 'out');
   await K.caption(`${K.esc(rk)} Air is selling ${K.esc(city)} at ${money(D.rival)}. You charge ${money(D.fare)}: <b>${money(gap)} dearer</b>.`);
   await K.cont('Next');
+  // 1b Show · the prediction (20 Oct 2026: predictions are back; Not sure always counts, nothing is marked)
+  await K.predict({ q:`${K.esc(rk)} is <b>${money(gap)} cheaper</b>. What will some of your passengers do?`, items:[{ label:'Stay with us', value:'stay' }, { label:`Move to ${rk}`, value:'move' }] });
   // 2 Reveal, straight after the context: the rule builds in three steps while that many walk across, one by one
   K.mark(1); arrow.setAttribute('opacity', 1);
   const walking = walkTo(walkN, 110);

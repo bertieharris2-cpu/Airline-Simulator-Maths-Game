@@ -1,6 +1,7 @@
 /* Operations briefings: the shared kit (Fable's plan, 18 Oct 2026). Short animated scenes inside the airline's world:
-   Show → Reveal → Use (no guesses since 19 Oct 2026, evening: nothing asks the pupil to predict, tap or pick an answer), the
-   pupil's own airline and numbers (window.BRIEF, with fallbacks). Back and Next are always there (K.run, below).
+   Show → Reveal → Use, the pupil's own airline and numbers (window.BRIEF, with fallbacks). Back and Next are always there
+   (K.run, below). Since 20 Oct 2026 (Bertie's briefings review) a scene can ask for a prediction (K.predict: Not sure always
+   counts, nothing is marked), and in year one the words sit inside the picture (K.caption, K.words).
    The game inlines this file into each briefing page; opened on its own, a page loads it from kit/.
    - K.start({ title }) builds the frame: a quiet bar (BRIEFING, the title, four progress marks, Pause & discuss, Skip in test
      mode), the scene (an SVG 1600 × 900 with an HTML layer over it in the same coordinates) and the caption line.
@@ -42,19 +43,30 @@ const K = (() => {
   const txt = (parent, x, y, str, a) => { const t = s('text', Object.assign({ x, y, fill:'#EAF2FF', 'font-size':22 }, a || {}), parent); t.textContent = str; return t; };
 
   let world, svg, defs, hud, cap, goBtn, backBtn, ask, marks, keysOn = false, layers = {};
+  /* year one, 20 Oct 2026 (Bertie's briefings review; DESIGN.md, Operations Briefing): the words sit inside the picture, centred
+     near what they describe, on a soft dark plate; the art moves down a little (it is drawn at ART_K of the scene's size from
+     its foot) to make room; the bottom bar holds only Pause & discuss, Back and Next. WORDS is the plate: the question line
+     (K.question), the caption (K.caption), a prediction's chips (K.predict) and "You predicted" (K.recall). */
+  let words = null, wq = null, wp = null, wr = null, WHERE = null, ART_K = 1;
   const STEPS = ['Show', 'Reveal', 'Use'];
   function start(o){
     o = o || {};
     document.title = 'Operations briefing — ' + (o.title || '');
-    document.body.innerHTML = `<div class="bk${RM ? ' rm' : ''}${FLAT ? ' flat' : ''}"><header class="bk-bar"><span class="bk-eye">Briefing</span><span class="bk-title">${esc(o.title || '')}</span>${Y1 ? `<span class="bk-marks bk-steps">${(o.steps || STEPS).map(x => `<i>${esc(x)}</i>`).join('')}</span>` : `<span class="bk-marks">${'<i></i>'.repeat(o.marks || 4)}</span>`}<span class="bk-grow"></span>
-      <button class="bk-btn" id="bkPause" title="Freeze the scene to talk about it">Pause &amp; discuss</button>${B.test ? '<button class="bk-btn" id="bkSkip" title="Teacher test mode">Skip</button>' : ''}</header>
+    const pauseB = '<button class="bk-btn" id="bkPause" title="Freeze the scene to talk about it">Pause &amp; discuss</button>';
+    document.body.innerHTML = `<div class="bk${RM ? ' rm' : ''}${FLAT ? ' flat' : ''}${Y1 ? ' y1' : ''}"><header class="bk-bar"><span class="bk-eye">Briefing</span><span class="bk-title">${esc(o.title || '')}</span>${Y1 ? `<span class="bk-marks bk-steps">${(o.steps || STEPS).map(x => `<i>${esc(x)}</i>`).join('')}</span>` : `<span class="bk-marks">${'<i></i>'.repeat(o.marks || 4)}</span>`}<span class="bk-grow"></span>
+      ${Y1 ? '' : pauseB}${B.test ? '<button class="bk-btn" id="bkSkip" title="Teacher test mode">Skip</button>' : ''}</header>
       <main class="bk-stage"><div class="bk-world"></div><div class="bk-pz"><div><b>Paused</b><small>Talk it through, then carry on.</small><p style="margin:12px 0 0"><button class="bk-btn" id="bkResume">Resume</button></p></div></div></main>
-      <footer class="bk-foot"><p class="bk-cap" aria-live="polite"></p>${Y1 ? '<button class="bk-back" type="button" disabled>&#9664; Back</button><button class="bk-go" type="button">Next &#9654;</button>' : '<button class="bk-go" hidden>Continue &#9654;</button>'}</footer></div>`;
-    world = document.querySelector('.bk-world'); cap = document.querySelector('.bk-cap'); goBtn = document.querySelector('.bk-go'); backBtn = document.querySelector('.bk-back'); marks = [...document.querySelectorAll('.bk-marks i')];
+      <footer class="bk-foot">${Y1 ? pauseB + '<span class="bk-grow"></span><button class="bk-back" type="button" disabled>&#9664; Back</button><button class="bk-go" type="button">Next &#9654;</button>' : '<p class="bk-cap" aria-live="polite"></p><button class="bk-go" hidden>Continue &#9654;</button>'}</footer></div>`;
+    world = document.querySelector('.bk-world'); goBtn = document.querySelector('.bk-go'); backBtn = document.querySelector('.bk-back'); marks = [...document.querySelectorAll('.bk-marks i')];
     if(Y1){ goBtn.onclick = next; backBtn.onclick = back; setGo(); }
-    svg = s('svg', { viewBox:'0 0 1600 900', preserveAspectRatio:'xMidYMid meet', role:'img', 'aria-label':o.title || 'Briefing scene' }, world); defs = s('defs', null, svg);
+    const art = Y1 ? h('div', { class:'bk-art' }, world) : world;
+    ART_K = Y1 ? clamp(o.artK === undefined ? .94 : +o.artK, .8, 1) : 1; if(Y1) art.style.transform = ART_K < 1 ? `scale(${ART_K})` : '';
+    svg = s('svg', { viewBox:'0 0 1600 900', preserveAspectRatio:'xMidYMid meet', role:'img', 'aria-label':o.title || 'Briefing scene' }, art); defs = s('defs', null, svg);
     ['back', 'mid', 'front', 'top'].forEach(k => layers[k] = s('g', { class:'ly-' + k }, svg));
-    hud = h('div', { class:'bk-hud' }, world); ask = h('div', { class:'bk-ask out' }, hud);
+    hud = h('div', { class:'bk-hud' }, art);
+    if(Y1){ words = h('div', { class:'bk-words empty' }, world); wq = h('p', { class:'bk-q' }, words); cap = h('p', { class:'bk-cap', 'aria-live':'polite' }, words);
+      wp = h('div', { class:'bk-predict', hidden:'' }, words); wr = h('p', { class:'bk-recall' }, words); ask = wq; WHERE = null; place(o.words || { x:800, y:-46 }); }
+    else { cap = document.querySelector('.bk-cap'); ask = h('div', { class:'bk-ask out' }, hud); }
     commonDefs();
     document.getElementById('bkPause').onclick = () => pause(!paused);
     document.getElementById('bkResume').onclick = () => pause(false);
@@ -65,8 +77,36 @@ const K = (() => {
   }
   function pause(v){ paused = !!v; document.querySelector('.bk').classList.toggle('paused', paused); const b = document.getElementById('bkPause'); if(b) b.textContent = paused ? 'Resume' : 'Pause & discuss'; if(!paused) document.getElementById('bkPause').focus(); }
   function mark(n){ marks.forEach((m, i) => { m.className = i < n ? 'done' : i === n ? 'on' : ''; }); }
-  async function caption(html){ if(!cap) return; if(cap.innerHTML === html) return; if(fast()){ cap.innerHTML = html || ''; cap.classList.remove('out'); return; } cap.classList.add('out'); await wait(RM ? 0 : 260); cap.innerHTML = html || ''; cap.classList.remove('out'); }
-  function question(html){ if(!html){ ask.classList.add('out'); return; } ask.innerHTML = html; ask.classList.remove('out'); }
+  /* the words plate (year one): where = { x, y, w } in scene units is the plate's top centre and its widest (y may be above
+     the art, in the room the art left when it moved down); the words stay there until moved again */
+  function place(where){ if(!words || !where) return; WHERE = Object.assign({ x:800, y:-46 }, WHERE || {}, where);
+    const k = ART_K, X = 50 + (100 * WHERE.x / 1600 - 50) * k, Y = 100 * (1 - k) + 100 * WHERE.y / 900 * k;
+    words.style.left = X.toFixed(2) + '%'; words.style.top = Math.max(.6, Y).toFixed(2) + '%'; words.style.maxWidth = WHERE.w ? (100 * WHERE.w / 1600 * k).toFixed(2) + '%' : ''; }
+  function tidy(){ if(words) words.classList.toggle('empty', !cap.innerHTML && !wq.innerHTML && wp.hidden && !wr.innerHTML); }
+  async function caption(html, where){ if(!cap) return; if(where) place(where); html = html || '';
+    if(cap.innerHTML === html){ tidy(); return; } if(fast()){ cap.innerHTML = html; cap.classList.remove('out'); tidy(); return; }
+    cap.classList.add('out'); await wait(RM ? 0 : 260); cap.innerHTML = html; cap.classList.remove('out'); tidy(); }
+  function question(html){ if(words){ wq.innerHTML = html || ''; tidy(); return; } if(!html){ ask.classList.add('out'); return; } ask.innerHTML = html; ask.classList.remove('out'); }
+  /* a prediction (20 Oct 2026, DESIGN.md: Operations Briefing): the question in the words, two or three answers as chips and
+     Not sure, which always counts. Next appears once he has tapped one, and he can change his mind until he presses it.
+     Nothing is ever marked right or wrong: the scene after it shows what really happens, with "You predicted: …" kept small in
+     the words, in the same quiet style whatever he chose, until that scene ends (K.recall to change or keep it). A replay
+     (Back) passes through with his answer. o: { q, items:[{ label, value, say }], where, next }; resolves with { value, label, say }. */
+  let RECALL = 0;
+  function recall(text, beats){ if(!wr) return; wr.textContent = text || ''; RECALL = text ? (beats === undefined ? 1 : beats) : 0; tidy(); }
+  async function predict(o){
+    if(!Y1){ if(o.q) await caption(o.q); return { value:null, label:'' }; }
+    const items = o.items.concat(o.notSure === false ? [] : [{ label:'Not sure', value:'not sure' }]);
+    await caption(o.q || '', o.where);
+    wp.innerHTML = '<span class="ey">Predict</span>'; wp.hidden = false; recall(null);
+    let picked = null; const btns = items.map(it => { const b = h('button', { class:'bk-pchip', type:'button', 'aria-pressed':'false' }, wp, esc(it.label)); b.val = it.value; b.lab = it.label; b.say = it.say || it.label; return b; });
+    const press = b => { btns.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false')); picked = { value:b.val, label:b.lab, say:b.say }; };
+    const i = DN++, end = () => { wp.hidden = true; wp.innerHTML = ''; recall('You predicted: ' + picked.say); };
+    if(FF > 0 && i < ANS.length){ const b = btns.find(x => x.val === ANS[i].value) || btns[btns.length - 1]; press(b); tidy(); await cont(o.next); end(); return picked; }
+    FF = 0; SKIP = false; HOLD++; setGo(); tidy();
+    try{ await new Promise(res => btns.forEach(b => b.onclick = () => { press(b); res(); })); } finally { HOLD--; }
+    btns.forEach(b => b.onclick = () => press(b));
+    await cont(o.next); ANS[i] = picked; ANS.length = i + 1; end(); return picked; }
   /* ---------- Back and Next (19 Oct 2026, evening: "Next and Back are always allowed") ----------
      The briefing's script runs inside K.run(body); each K.cont() ends a beat. Next is always there: at a K.cont() it goes on,
      and while a beat is still playing it finishes the beat at once and goes on. Back plays the script again from the top with
@@ -76,16 +116,17 @@ const K = (() => {
   let BODY = null, FF = 0, SKIP = false, BEATS = 0, pend = null, HOLD = 0, DN = 0, goL = null; const ANS = [];
   function fast(){ return FF > 0 || SKIP; }
   function run(body){ BODY = body; replay(0); return K; }
-  function replay(target){ ticks.clear(); paused = false; FF = target; SKIP = false; BEATS = 0; pend = null; HOLD = 0; DN = 0; goL = null; BODY(); }
+  function replay(target){ ticks.clear(); paused = false; FF = target; SKIP = false; BEATS = 0; pend = null; HOLD = 0; DN = 0; goL = null; RECALL = 0; BODY(); }
+  function beatEnd(){ BEATS++; if(RECALL > 0 && --RECALL === 0) recall(null); }   // "You predicted" stays for the scene after the prediction
   function setGo(){ if(!goBtn || !Y1) return; const L = pend && goL ? goL : { label:'Next' }; goBtn.hidden = !pend && HOLD > 0;
     goBtn.classList.toggle('sec', L.kind === 'sec'); goBtn.innerHTML = (L.label || 'Next') + (L.kind === 'sec' ? '' : ' &#9654;'); backBtn.disabled = BEATS < 1; }
   function cont(label, kind){
     if(!Y1) return new Promise(res => { goBtn.classList.toggle('sec', kind === 'sec'); goBtn.innerHTML = (label || 'Continue') + (kind === 'sec' ? '' : ' &#9654;'); goBtn.hidden = false; setTimeout(() => goBtn.focus(), 30); goBtn.onclick = () => { goBtn.hidden = true; goBtn.onclick = null; res(); }; });
-    if(FF > 0){ FF--; BEATS++; setGo(); return Promise.resolve(); }
-    if(SKIP){ SKIP = false; BEATS++; setGo(); return Promise.resolve(); }
+    if(FF > 0){ FF--; beatEnd(); setGo(); return Promise.resolve(); }
+    if(SKIP){ SKIP = false; beatEnd(); setGo(); return Promise.resolve(); }
     return new Promise(res => { pend = res; goL = { label:label || 'Next', kind }; setGo(); setTimeout(() => { try{ goBtn.focus({ preventScroll:true }); }catch(e){} }, 30); }); }
   function next(){
-    if(pend){ const r = pend; pend = null; goL = null; BEATS++; setGo(); r(); return; }
+    if(pend){ const r = pend; pend = null; goL = null; beatEnd(); setGo(); r(); return; }
     if(HOLD > 0) return;
     SKIP = true; T += 1e7; [...ticks].forEach(f => f(T));   // what is playing now ends at once; the rest of the beat is instant
   }
@@ -466,6 +507,6 @@ const K = (() => {
     return { g, x:o.x, y:o.y, w, h:hh, set:(x, ms) => { const f = val; val = x; return count(v, f, x, ms === undefined ? 700 : ms, money); }, text:v };
   }
 
-  return { B, RM, y1:Y1, s, h, at, txt, start, run, decide, fast, pause, mark, caption, question, cont, done, call, chips, rail, count, wait, tween, every, pos,
+  return { B, RM, y1:Y1, s, h, at, txt, start, run, decide, fast, pause, mark, caption, question, predict, recall, words:place, cont, done, call, chips, rail, count, wait, tween, every, pos,
     terminal, apron, plane, person, walk, priceTag, gate, stack, tank, vault, coins, board, piece, flat:FLAT, money, num, esc, clamp, lerp, layers:() => layers, hud:() => hud, svg:() => svg, defs:() => defs, isPaused:() => paused, waiting:() => !!pend, held:() => HOLD > 0, beats:() => BEATS };
 })();

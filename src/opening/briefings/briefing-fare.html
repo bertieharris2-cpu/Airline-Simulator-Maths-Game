@@ -26,8 +26,22 @@ html,body{margin:0;height:100%;background:#020812;overflow:hidden}
 .stp span{width:92px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:8px;border-top:3px solid #1b3558}
 .stp span.done{color:var(--soft);border-top-color:#2c5a8c}
 .stp span.now{color:var(--cyan);border-top-color:var(--cyan)}
-.pic{position:absolute;left:0;top:64px;width:1366px;height:612px;overflow:hidden}
-.bc{position:absolute;left:0;top:676px;width:1366px;height:92px;background:#06142a;border-top:1px solid rgba(65,122,171,.35);display:flex;align-items:center;gap:14px;padding:0 24px 0 32px}
+.pic{position:absolute;left:0;top:64px;width:1366px;height:640px;overflow:hidden}
+.bc{position:absolute;left:0;top:704px;width:1366px;height:64px;background:#06142a;border-top:1px solid rgba(65,122,171,.35);display:flex;align-items:center;justify-content:flex-end;gap:14px;padding:0 24px 0 32px}
+/* 20 Oct 2026 (Bertie's briefings review; DESIGN.md, Operations Briefing): the words sit inside the picture, centred near what
+   they describe, on a soft dark plate (each beat places them, CAP_AT); the bar keeps Back and Next. Beat 5's question is a
+   prediction again: chips and Not sure, nothing marked; beat 6 keeps "You predicted: …" small in the words. */
+.words{position:absolute;z-index:6;transform:translateX(-50%);width:max-content;max-width:1000px;padding:10px 22px 12px;text-align:center;background:rgba(3,11,25,.8);box-shadow:0 0 26px 8px rgba(3,11,25,.55);transition:opacity .3s}
+.words.empty{opacity:0;pointer-events:none}
+.words .capt{flex:none}
+.pchips{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin-top:12px}
+.pchips[hidden]{display:none}
+.pchips .ey{color:var(--cyan);margin-right:4px}
+.pchip{font:inherit;font-size:17px;font-weight:600;min-height:44px;padding:8px 18px;color:var(--text);background:#0d2346;border:1px solid #2b5c9e;cursor:pointer}
+.pchip:hover{border-color:var(--cyan)}
+.pchip[aria-pressed="true"]{border-color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan);background:#0f3355}
+.pchip:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.recall{font-size:14.5px;color:var(--soft);margin-top:6px}.recall:empty{display:none}
 .capt{font-size:21px;line-height:1.35;color:var(--text);flex:1;min-width:0}
 .capt b{font-weight:700}
 .capt .g{color:var(--gold);font-weight:700}
@@ -144,7 +158,8 @@ html,body{margin:0;height:100%;background:#020812;overflow:hidden}
  <div class="bf" id="bf">
   <div class="bh"><span class="ey">Operations briefing</span><span class="tt">What a fare does</span><div class="stp" id="stp"></div><span id="skipw"></span></div>
   <div class="pic" id="pic"></div>
-  <div class="bc"><div class="capt" id="capt" aria-live="polite"></div><button class="bbtn" id="bk">&#9664; Back</button><button class="bbtn next" id="nx">Next &#9654;</button></div>
+  <div class="words empty" id="words"><div class="capt" id="capt" aria-live="polite"></div><div class="pchips" id="pchips" hidden></div><div class="recall" id="recall"></div></div>
+  <div class="bc"><button class="bbtn" id="bk">&#9664; Back</button><button class="bbtn next" id="nx">Next &#9654;</button></div>
  </div>
 </div></div>
 <script>
@@ -217,8 +232,13 @@ const STEPS = ['Show', 'Reveal', 'Use'], BEAT_STEP = { 1:0, 2:0, 3:0, 4:0, 5:0, 
 let beat = 1, bs = {}, timers = [];
 const later = (fn, ms) => { const t = setTimeout(fn, T(ms)); timers.push(t); return t; };
 const clearT = () => { timers.forEach(clearTimeout); timers = []; };
-const pic = $('pic'), capt = $('capt'), nx = $('nx'), bk = $('bk');
-const setCap = h => { capt.innerHTML = h; };
+const pic = $('pic'), capt = $('capt'), nx = $('nx'), bk = $('bk'), words = $('words'), pch = $('pchips'), rec = $('recall');
+const tidyW = () => words.classList.toggle('empty', !capt.innerHTML && pch.hidden && !rec.textContent);
+const setCap = h => { capt.innerHTML = h; tidyW(); };
+/* where the words sit in each beat (stage px: the plate's top centre and its widest), next to what they are about */
+const CAP_AT = { 1:[560, 592, 760], 2:[683, 392, 1000], 3:[683, 606, 1040], 4:[683, 612, 1000], 5:[683, 342, 1000], 6:[362, 566, 640], 7:[683, 522, 1000] };
+function placeWords(n){ const a = CAP_AT[n] || [683, 560, 1000]; words.style.left = a[0] + 'px'; words.style.top = a[1] + 'px'; words.style.maxWidth = a[2] + 'px'; }
+let PRED = null;   // his prediction at beat 5 ({ value, label }), kept for Back
 function setNext(label, cls, disabled){ nx.innerHTML = label; nx.className = 'bbtn ' + (cls || 'next'); nx.disabled = !!disabled; }
 
 // ---- Beat 1 · Tickets make money
@@ -340,10 +360,17 @@ function b5(){
  <div style="position:absolute;left:733px;top:22px;display:flex;align-items:baseline;gap:16px"><span class="big gold">${money(CB)}</span>${seatLine(PB)}</div>
  ${plan('pa', 153, 84, PA, 1, gaps(PA))}${plan('pb', 733, 84, PB, 1, gaps(PB))}
  ${PB < SEATS1 ? `<div class="lbl cyan" style="left:${733 + 386}px;top:${84 + 20}px;font-size:14px">empty</div>` : ''}
- <div style="position:absolute;left:0;width:1366px;top:330px;text-align:center;font-size:32px;font-weight:600">Which plane makes more ticket money?</div>`;
+`;
   const empty = SEATS1 - PB === 1 ? 'one empty seat' : num(SEATS1 - PB) + ' empty seats';
-  setCap(`One plane is ${PA >= SEATS1 ? 'full' : 'nearly full'} at ${money(CA)}. The other has ${empty} at ${money(CB)}. <b>Which makes more ticket money? Let's work it out.</b>`);
-  setNext('Next &#9654;');
+  setCap(`One plane is ${PA >= SEATS1 ? 'full' : 'nearly full'} at ${money(CA)}. The other has ${empty} at ${money(CB)}. <b>Which makes more ticket money?</b>`);
+  /* the prediction (20 Oct 2026, predictions are back): the two planes and Not sure, which always counts. Next appears once he
+     has tapped one, he can change his mind until he presses it, and nothing is marked: beat 6 works it out beside his answer */
+  const opts = [{ value:'a', label:`The ${money(CA)} plane` }, { value:'b', label:`The ${money(CB)} plane` }, { value:'not sure', label:'Not sure' }];
+  pch.innerHTML = '<span class="ey">Predict</span>' + opts.map(o => `<button class="pchip" type="button" data-v="${o.value}" aria-pressed="${!!PRED && PRED.value === o.value}">${K.esc(o.label)}</button>`).join('');
+  pch.hidden = false; tidyW();
+  const shown = () => { nx.style.visibility = PRED ? '' : 'hidden'; nx.disabled = !PRED; };
+  pch.querySelectorAll('.pchip').forEach(b => b.onclick = () => { PRED = opts.find(o => o.value === b.dataset.v); pch.querySelectorAll('.pchip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); shown(); try{ nx.focus({ preventScroll:true }); }catch(e){} });
+  setNext('Next &#9654;'); shown();
 }
 
 // ---- Beat 6 · Work it out (Reveal), design B: the seats become ticket money, then the sheet works it out
@@ -448,7 +475,8 @@ const R = { 1:b1, 2:b2, 3:b3, 4:b4, 5:b5, 6:b6, 7:b7 };
 function go(n){ clearT(); beat = n; paint(); }
 function paint(){ const s = BEAT_STEP[beat];
   $('stp').innerHTML = STEPS.map((x, i) => `<span class="${i === s ? 'now' : i < s ? 'done' : ''}">${x}</span>`).join('');
-  bk.disabled = beat === 1; R[beat](); try{ nx.focus({ preventScroll:true }); }catch(e){} }
+  pch.hidden = true; pch.innerHTML = ''; nx.style.visibility = ''; rec.textContent = beat === 6 && PRED ? 'You predicted: ' + PRED.label : ''; placeWords(beat);
+  bk.disabled = beat === 1; R[beat](); tidyW(); try{ nx.focus({ preventScroll:true }); }catch(e){} }
 let ended = false;
 function end(skipped){ if(ended) return; ended = true; if(window.parent === window){ setCap('End of the briefing. In the game, Set my fares goes back to the fares in your plan.'); nx.disabled = true; } K.done(skipped ? { skipped:true } : { best:TB >= TA ? CB : CA, next:D.next }); }
 nx.onclick = () => { if(nx.disabled) return;

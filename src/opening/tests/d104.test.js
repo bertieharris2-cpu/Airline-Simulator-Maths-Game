@@ -22,13 +22,13 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   await load(8, 'A');
   const beats = () => J(`WORLD.rounds.filter(w => w.day <= 80).map(w => { const ev = w.event ? [w.event] : (w.events || []); return ev.length ? { day:w.day, ev:ev.map(e => e.id + ':' + ((e.options || []).length)) } : null; }).filter(Boolean)`);
   const A = await beats(), at = (L, d) => (L.find(x => x.day === d) || { ev:[] }).ev;
-  ok('track A: the undercut (day 4), the storm (5), the school trip (9), crew (11), the Dublin strike (17), the snack supplier (23)', at(A, 4)[0] === 'undercut_dub:3' && at(A, 5)[0] === 'storm:3' && at(A, 9)[0] === 'school_trip:2' && at(A, 11)[0] === 'crew:3' && at(A, 17)[0] === 'dub_strike:2' && at(A, 23)[0] === 'snack_supplier:2', A.slice(0, 8));
+  ok('track A: the undercut (day 4), the storm (5), the school trip (9), crew (11), the Dublin strike (17); no snack supplier on day 23 (removed with the snacks, 20 Oct 2026)', at(A, 4)[0] === 'undercut_dub:3' && at(A, 5)[0] === 'storm:3' && at(A, 9)[0] === 'school_trip:2' && at(A, 11)[0] === 'crew:3' && at(A, 17)[0] === 'dub_strike:2' && !A.some(x => x.ev.some(e => /^snack_supplier/.test(e))), A.slice(0, 8));
   ok('track A weeks: the sponsorship (29), the slot squeeze (36), the tanker beside the fuel shock (43), the fault with its three choices (50), the price war with three (71)', at(A, 29).includes('sponsor_club:2') && at(A, 36).includes('slot_squeeze:1') && at(A, 43).includes('tanker_offer:2') && at(A, 43).some(x => /^fuel_shock/.test(x)) && at(A, 50).includes('fault:3') && at(A, 71).includes('price_war:3'), A.filter(x => x.day >= 29));
   const newsA = await J(`WORLD.routeNews.filter(n => n.start < '2030-12-01').map(n => n.id)`);
   await E(`(S.track = 'B', d104Ensure(), 1)`);
   const B = await beats(), newsB = await J(`WORLD.routeNews.filter(n => n.start < '2030-12-01').map(n => n.id)`);
   ok('track B: Red Kite\'s undercut on day 4 as on track A (v6.1); no Dublin strike, sponsorship or slot squeeze; the fault moves to day 18 and the storm to day 24', at(B, 4)[0] === 'undercut_dub:3' && !B.some(x => x.ev.some(e => /^(dub_strike|sponsor_club|slot_squeeze)/.test(e))) && at(B, 18)[0] === 'fault_b:3' && at(B, 24)[0] === 'storm_b:3', B);
-  ok('track B: the curveballs on both tracks stay (school trip 9, snack supplier 23, tanker 43); crew sickness joins the tanker; the price war is week 8 (day 50)', at(B, 9)[0] === 'school_trip:2' && at(B, 23)[0] === 'snack_supplier:2' && at(B, 43).includes('tanker_offer:2') && at(B, 43).includes('crew_b:3') && at(B, 50).includes('price_war_b:3'), B.filter(x => x.day >= 43));
+  ok('track B: the curveballs on both tracks stay (school trip 9, tanker 43; the snack supplier is removed); crew sickness joins the tanker; the price war is week 8 (day 50)', at(B, 9)[0] === 'school_trip:2' && !B.some(x => x.ev.some(e => /^snack_supplier/.test(e))) && at(B, 43).includes('tanker_offer:2') && at(B, 43).includes('crew_b:3') && at(B, 50).includes('price_war_b:3'), B.filter(x => x.day >= 43));
   ok('track B news: the Dublin concert and the Amsterdam fair (their RouteNews rows, v6.1) replace the rugby and Milan\'s fair', newsB.includes('dub_concert_b') && newsB.includes('ams_fair_b') && !newsB.includes('dub_concert') && !newsB.includes('dub_rugby') && !newsB.includes('mxp_trade_fair') && newsA.includes('dub_rugby') && newsA.includes('mxp_trade_fair') && !newsA.includes('dub_concert_b'), { A:newsA, B:newsB });
   const conc = await J(`WORLD.routeNews.find(n => n.id === 'dub_concert_b')`);
   ok('the concert: Dublin ×1.8 on Saturday 5 October, announced on 23 September, in the row\'s words', conc && conc.mult === 1.8 && conc.start === '2030-10-05' && conc.announce === '2030-09-23' && conc.routes[0] === 'dub' && /stadium concert/.test(conc.headline), conc);
@@ -56,12 +56,10 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   await load(15, 'A'); const bank0 = await E('S.repBank || 0');
   k = await choose('dub_strike', 0, 17); fri = await day3(19);
   ok('Dublin strike, Fly with delays: the flights go, late, and it costs half a star', fri.filter(f => f.route === 'dub').every(f => !f.cancelled && /Delayed by the Dublin ground staff strike/.test(f.why)) && Math.abs(k.bank - bank0 + 0.5) < 1e-9, { fri:fri.map(f => f.why), bank:[bank0, k.bank] });
-  // the snack supplier: 50p an item from the day it is chosen
+  // no snacks in year one (DESIGN.md of 20 Oct 2026, Settings snacksInYearOne off): this save chose snacks at £5 before; it now flies none
   await load(22, 'A');
-  const ob0 = await J(`(() => { const fl = withDay(23, () => planFlights()); return withDay(23, () => dayExtras(fl)); })()`);
-  k = await choose('snack_supplier', 0, 23);
-  const ob1 = await J(`(() => { const fl = withDay(23, () => planFlights()); return withDay(23, () => dayExtras(fl)); })()`);
-  ok('snack supplier, Switch: the stock costs half as much from that day (50p an item, not £1)', k.d.snack && k.d.snack.cost === 0.5 && (ob0.free || !ob0.buyers || Math.abs(ob1.obCost - ob0.obCost / 2) < 0.02), { before:ob0.obCost, after:ob1.obCost, buyers:ob1.buyers });
+  const ob1 = await J(`(() => { const fl = withDay(23, () => planFlights()); const x = withDay(23, () => dayExtras(fl)); return { obRev:x.obRev, obCost:x.obCost, buyers:x.buyers || 0, on:S.onboard, snacks:snacksOn() }; })()`);
+  ok('no snacks in year one: a save that sold snacks flies without them (no snack money or stock on day 23, nothing to choose)', ob1.obRev === 0 && ob1.obCost === 0 && !ob1.buyers && ob1.on === 'none' && !ob1.snacks, ob1);
   // the sponsorship: Dublin × 1.05 for four weeks
   await load(29, 'A');
   const dm0 = await J(`[demandMult(routeById('dub'), 30), demandMult(routeById('dub'), 56), demandMult(routeById('dub'), 57)]`);
@@ -166,7 +164,7 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   const snk = await J(`(() => { const G = d104NewG(), D = d104D(), n0 = (S.repLog || []).length; D.snack = { from:23, cost:0.5, sold:true }; G.acc = {}; G.days = 7; d104Drivers(G, 9, false); d104Drivers(G, 13, false); return (S.repLog || []).slice(n0).filter(x => /plainer snacks/.test(x.what)).map(x => [x.day, x.n]); })()`);
   ok('stars: the plainer snacks were sold: −½ at the next month\'s review (October\'s, 3 November), once', snk.length === 1 && snk[0][0] === 63 && snk[0][1] === -0.5, snk);
   const drv = await J(`(() => { const d = S.day; S.day = 15; try{ return d104StarsCardHtml().replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' '); } finally { S.day = d; } })()`);
-  ok('the stars card on day 15: a route that turns away 1 in 3 or more, two weeks running, counted from Mon 30 Sep', /turns away 1 in 3 or more of the people who want to fly, two weeks running \(counted from Mon 30 Sep\)/.test(drv), (drv.match(/[^.]*turns away[^)]*\)?/) || [''])[0]);
+  ok('the stars card on day 15: a route that turns away 1 in 3 or more, two weeks running, counted from Mon 30 Sep; no rule for free snacks (no snacks in year one)', /turns away 1 in 3 or more of the people who want to fly, two weeks running \(counted from Mon 30 Sep\)/.test(drv) && !/free snacks/i.test(drv), (drv.match(/[^.]*turns away[^)]*\)?/) || [''])[0]);
   const off = await J(`(() => { const D = d104D(); D.off = { storm:5 }; return [d104OffWeek(1), d104OffWeek(6)]; })()`);
   ok('stars: a week with a choice that stopped or delayed flights is not on time', off[0] === true && off[1] === false, off);
   await load(8, 'A');

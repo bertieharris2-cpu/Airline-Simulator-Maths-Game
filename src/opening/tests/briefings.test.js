@@ -1,8 +1,10 @@
 // Run: NODE_PATH=<playwright node_modules> node briefings.test.js   (env: OUT, GAME, ONLY=id,id, W, H)
-// Operations briefings (Fable's plan, 18 Oct 2026; Briefing 13 from the 18 Oct handover): twelve short scenes in the airline's world. Part 1 plays each page on its own
-// (its fallback figures, the kit loaded from briefings/kit/) and checks the shared frame and its rules since 19 Oct, evening (7.7, no guesses): the title, the
-// Show · Reveal · Use stepper, Back and Next always allowed (Back replays to the beat before), nothing to tap or guess; a decision (an Operations Request,
-// Briefing 13's buy and fly) holds Next until it is made; Pause freezes the scene; the end is reached; with reduced motion too.
+// Operations briefings (Fable's plan, 18 Oct 2026; Briefing 13 from the 18 Oct handover): short scenes in the airline's world. Part 1 plays each page on its own
+// (its fallback figures, the kit loaded from briefings/kit/) and checks the shared frame and its rules: the title, the Show · Reveal · Use stepper, Back and Next
+// always allowed (Back replays to the beat before); since 20 Oct 2026 (Bertie's briefings review) the words sit inside the picture, the bottom bar holds only
+// Pause & discuss, Back and Next, and a prediction (chips and Not sure) hides Next until he taps one, marks nothing, and the scene after it shows "You predicted";
+// a decision (an Operations Request, Briefing 13's buy and fly) holds Next until it is made; Pause freezes the scene; the end is reached; with reduced motion too.
+// More demand than seats (full_route) is retired (20 Oct): its page sits in briefings/retired/ and the game never opens it.
 // Part 2 opens each at its moment in the game with the pupil's own figures (the Jump to airlines), plays one to the end, and
 // checks it is marked seen, sits on the Home shelf and plays again from there; Skip shows in test mode only.
 const { chromium } = require('playwright');
@@ -16,8 +18,14 @@ const want = id => !ONLY.length || ONLY.includes(id), myResV = r => r && r.v > 0
 const W = async (p, sel, ms) => p.waitForSelector(sel, { timeout:ms || 30000 });
 const kit = p => p.evaluate(() => ({ w:K.waiting(), h:K.held(), n:K.beats(), cap:(document.querySelector('.bk-cap') || {}).textContent || '' }));
 const settle = async (p, ms) => { for(let g = 0; g < (ms || 60000) / 150; g++){ const k = await kit(p); if(k.w || k.h || await p.$('.bk-pz[style*="grid"]')) return k; await p.waitForTimeout(150); } return kit(p); };
-async function playY1(p, P){ const picks = (P.pick || []).slice(), seen = { held:0, nextWhileHeld:false };
+async function playY1(p, P){ const picks = (P.pick || []).slice(), seen = { held:0, nextWhileHeld:false, pred:null, recall:'' };
   for(let g = 0; g < 300; g++){ if(await p.$('.bk-pz[style*="grid"]')) return seen; const k = await settle(p);
+    if(seen.pred && !seen.recall && k.w) seen.recall = await p.$eval('.bk-recall', e => e.textContent).catch(() => '');
+    const pc = await p.$$('.bk-pchip');   // a prediction (20 Oct 2026): Next stays hidden until a chip is tapped; nothing is marked
+    if(pc.length && !seen.pred){ const labels = await p.$$eval('.bk-pchip', es => es.map(e => e.textContent)), hidden = await p.$eval('.bk-go', e => e.hidden), q = await p.$eval('.bk-cap', e => e.textContent);
+      const want = P.predict && labels.includes(P.predict) ? P.predict : labels[0]; await p.click(`.bk-pchip:has-text("${want}")`); await p.waitForTimeout(250);
+      seen.pred = { q, labels, hidden, after:await p.$eval('.bk-go', e => !e.hidden), pressed:await p.$$eval('.bk-pchip[aria-pressed="true"]', es => es.map(e => e.textContent)), marks:await p.$$eval('.bk-words', es => es.map(e => e.textContent).join(' ')), want };
+      await p.click('.bk-go'); await p.waitForTimeout(150); continue; }
     if(k.h){ seen.held++; if(await p.$eval('.bk-go', e => !e.hidden)) seen.nextWhileHeld = true;
       const want = picks[0], chip = want ? await p.$(`.bk-chip:has-text("${want}"):visible`) : null;
       if(chip){ picks.shift(); await chip.click(); await p.waitForTimeout(250); continue; }
@@ -28,9 +36,9 @@ async function playY1(p, P){ const picks = (P.pick || []).slice(), seen = { held
 const drag = async (p, sel, frac) => { const r = await p.$(sel), b = await r.boundingBox(); await p.mouse.move(b.x + 2, b.y + b.height / 2); await p.mouse.down(); await p.mouse.move(b.x + b.width * frac, b.y + b.height / 2, { steps:10 }); await p.mouse.up(); };
 const PAGES = [
   { id:'fare_lever', file:'briefing-fare.html', title:'What a fare does', own:true },   // rebuilt 19 Oct (D104): its own frame, tested in part 1b
-  { id:'rival_split', file:'briefing-rival.html', title:'Customers have a choice' },
-  { id:'full_route', file:'briefing-capacity.html', title:'More demand than seats' },
-  { id:'weekend_demand', file:'briefing-weekend.html', title:'Weekdays and weekends', pick:['Change weekdays and weekends separately'] },
+  { id:'rival_split', file:'briefing-rival.html', title:'Customers have a choice', predict:'Move to Red Kite' },
+  { id:'full_route', file:'retired/briefing-capacity.html', title:'More demand than seats', retired:true },   // retired 20 Oct 2026 (DESIGN.md)
+  { id:'weekend_demand', file:'briefing-weekend.html', title:'Weekdays and weekends', pick:['Change weekdays and weekends separately'], predict:'Sat and Sun' },
   { id:'fuel_cash_tank_profit', file:'briefing-fuel.html', title:'Cash, tank, profit' },
   { id:'aircraft_efficiency', file:'briefing-efficiency.html', title:'Two planes, one route' },
   { id:'flight_time', file:'briefing-time.html', title:'How long will it take?' },
@@ -51,19 +59,22 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
   await nx(); await f.locator('#board').click(); await sleep(3400);
   R.b3x = [await txt('#f0'), await txt('#f1'), await txt('#left'), await f.locator('.pp.dim').count()]; R.b3 = R.b3x[0] === '19/19 ✓' && R.b3x[1] === '19/19 ✓' && /42/.test(R.b3x[2]) && R.b3x[3] === 42;
   await nx(); R.b4x = (await txt('#pic')).replace(/\s+/g, ' '); R.b4 = /£70/.test(R.b4x) && /42 left behind/.test(R.b4x) && /£140/.test(R.b4x) && /20 seats fly empty/.test(R.b4x);
-  await nx(); R.b5x = [(await txt('#pic')).replace(/\s+/g, ' ').slice(-60), (await txt('#capt')).replace(/\s+/g, ' ')];
-  R.b5 = !(await dis()) && !(await f.locator('#chb, .chb, #pic button').count()) && /Which plane makes more ticket money\?/.test(R.b5x[0]) && /Let's work it out\./.test(R.b5x[1]) && !/guess|wrong|right|correct/i.test(R.b5x[1]);
-  await nx(); const cells = []; for(let k = 1; k <= 4; k++){ await nx(); if(slow) await sleep(k === 2 ? 3300 : 1700); cells.push([await txt('#a3'), await txt('#b3'), (await txt('#d4')).replace(/\s+/g, ' '), (await txt('#wl')).replace(/\s+/g, ' ')]); }
+  // beat 5, the prediction (20 Oct 2026): the question in the words, the two planes and Not sure; Next hidden until he taps one, nothing marked
+  await nx(); R.b5x = [(await txt('#capt')).replace(/\s+/g, ' '), await f.locator('#pchips .pchip').allTextContents(), await dis(), await f.locator('#nx').evaluate(e => getComputedStyle(e).visibility)];
+  await f.locator('#pchips .pchip', { hasText:'The £110 plane' }).click(); await sleep(200);
+  R.b5x.push(await dis(), await f.locator('#pchips .pchip[aria-pressed="true"]').allTextContents(), await f.locator('#nx').evaluate(e => getComputedStyle(e).visibility));
+  R.b5 = R.b5x[2] && R.b5x[3] === 'hidden' && /Which makes more ticket money\?/.test(R.b5x[0]) && R.b5x[1].join('|') === 'The £100 plane|The £110 plane|Not sure' && !R.b5x[4] && R.b5x[5].join() === 'The £110 plane' && R.b5x[6] === 'visible' && !/guess|wrong|right|correct/i.test(R.b5x[0]) && !(await f.locator('#pic button').count());
+  await nx(); R.b6r = await txt('#recall'); const cells = []; for(let k = 1; k <= 4; k++){ await nx(); if(slow) await sleep(k === 2 ? 3300 : 1700); cells.push([await txt('#a3'), await txt('#b3'), (await txt('#d4')).replace(/\s+/g, ' '), (await txt('#wl')).replace(/\s+/g, ' ')]); }
   await sleep(400); const last = [await txt('#a3'), await txt('#b3'), (await txt('#d4')).replace(/\s+/g, ' ')];
-  R.b6x = { cells, last }; R.b6 = last[0] === '£1,900' && last[1] === '£1,980' && /£80 more for the £110 plane/.test(last[2]) && /18 × £100 = £1,800/.test(cells[1][3]) && /18 × £10 = £180/.test(cells[1][3].replace(/\u00a0/g, ' ').replace(/ +/g, ' ')) && /One empty seat, but £80 more ticket money/.test(cells[3][3]) && !/guess/i.test(cells[3][3]);
+  R.b6x = { cells, last, recall:R.b6r }; R.b6 = R.b6r === 'You predicted: The £110 plane' && last[0] === '£1,900' && last[1] === '£1,980' && /£80 more for the £110 plane/.test(last[2]) && /18 × £100 = £1,800/.test(cells[1][3]) && /18 × £10 = £180/.test(cells[1][3].replace(/\u00a0/g, ' ').replace(/ +/g, ' ')) && /One empty seat, but £80 more ticket money/.test(cells[3][3]) && !/guess/i.test(cells[3][3]);
   await nx(); R.b7x = [await f.locator('.tile').count(), await txt('#nx'), await f.locator('#nx').getAttribute('class')]; R.b7 = R.b7x[0] === 4 && /Set my fares/.test(R.b7x[1]) && /go/.test(R.b7x[2]);
   await nx(); await sleep(400); return R; }
 
 (async () => {
   const b = await chromium.launch();
   /* ---------- part 1: each page on its own ---------- */
-  for(const P of PAGES){ if(!want(P.id) || P.own) continue;
-    for(const rm of [false, true]){ if(rm && !['full_route'].includes(P.id)) continue;
+  for(const P of PAGES){ if(!want(P.id) || P.own || P.retired) continue;
+    for(const rm of [false, true]){ if(rm && !['rival_split'].includes(P.id)) continue;
       const p = await b.newPage({ viewport:{ width:VW, height:VH } }), errs = []; p.on('pageerror', e => errs.push(e.message)); if(rm) await p.emulateMedia({ reducedMotion:'reduce' });
       const tag = P.id + (rm ? ' (reduced motion)' : '');
       try{
@@ -74,7 +85,8 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
         const k1 = await settle(p);
         ok(`${tag}: nothing to guess or tap: the first beat waits on Next${P.decides ? '' : ', with no hit boxes, sliders or drag handles in the scene'}`, k1.w && (P.decides || !(await p.$('.bk-rail, .bk-hud [role=button], .bk-hud [role=slider], .bk-hud button[aria-label]'))), k1);
         if(!rm) await p.screenshot({ path:`${OUT}${P.id}-1.png` });
-        if(P.id === 'full_route' && !rm){   // Pause & discuss freezes the scene (its clock stops)
+        ok(`${tag}: the words sit inside the picture (a plate in the scene, not in the bar), and the bottom bar holds only Pause & discuss, Back and Next`, !!(await p.$('.bk-world .bk-words .bk-cap')) && !(await p.$('.bk-foot .bk-cap')) && (await p.$$eval('.bk-foot button', es => es.map(e => e.id || e.className).join('|'))) === 'bkPause|bk-back|bk-go' && !(await p.$('.bk-bar #bkPause')));
+        if(P.id === 'rival_split' && !rm){   // Pause & discuss freezes the scene (its clock stops)
           await p.click('#bkPause'); const paused = await p.$eval('.bk', e => e.classList.contains('paused')); const s1 = await p.evaluate(() => K.isPaused()); await p.click('#bkResume');
           ok('Pause & discuss: the scene freezes for talk, and Resume carries on', paused && s1 && !(await p.evaluate(() => K.isPaused()))); }
         if(k1.w){ const c1 = k1.cap; await p.click('.bk-go'); const k2 = await settle(p); await p.click('.bk-back'); const k3 = await settle(p);   // Back replays the scene to the beat before
@@ -82,6 +94,9 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
         const R = await playY1(p, P);
         ok(`${tag}: played to the end (in the game it folds back into the screen it prepared)`, /End of the briefing/.test(await p.textContent('.bk-stage')));
         if(P.pick || P.decides) ok(`${tag}: ${P.pick ? 'the Operations Request stays, and holds' : 'each decision holds'} Next until it is made`, R.held > 0 && !R.nextWhileHeld, R);
+        if(P.predict) ok(`${tag}: the prediction: a question in the words, ${P.predict}, Not sure; Next hidden until he taps one, his chip outlined (nothing marked right or wrong), and the next scene shows "You predicted: ${P.predict}"`,
+          R.pred && R.pred.hidden && R.pred.after && R.pred.labels.includes('Not sure') && R.pred.labels.includes(P.predict) && R.pred.pressed.join() === P.predict && !/correct|wrong|right!|✓|✗/i.test(R.pred.marks) && R.recall === 'You predicted: ' + P.predict, R.pred && Object.assign({}, R.pred, { recall:R.recall }));
+        else ok(`${tag}: no prediction`, !R.pred, R.pred);
         if(!rm) await p.screenshot({ path:`${OUT}${P.id}-2.png` });
       }catch(e){ ok(`${tag}: played to the end`, false, e.message.split('\n')[0]); await p.screenshot({ path:`${OUT}${P.id}-stuck.png` }).catch(() => {}); }
       ok(`${tag}: no errors`, !errs.length, errs); await p.close(); } }
@@ -92,13 +107,14 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
     try{
       await p.goto('file://' + path.join(DIR, 'briefing-fare.html')); await W(p, '#nx', 8000);
       ok(`${tag}: the frame: OPERATIONS BRIEFING, the title, Show · Reveal · Use, Back and Next, no Skip outside test mode`, (await p.textContent('.bh .tt')) === 'What a fare does' && (await p.textContent('#stp')) === 'ShowRevealUse' && !(await p.$('#skip')), await p.textContent('#stp'));
+      ok(`${tag}: the words sit inside the picture (20 Oct 2026), and the bar holds only Back and Next`, !!(await p.$('.bf > #words #capt')) && !(await p.$('.bc #capt')) && (await p.$$eval('.bc button', es => es.map(e => e.id).join('|'))) === 'bk|nx');
       const res = await playFare(p, rm ? 0 : 1);
       ok(`${tag}: beat 1: Back is off, Next is always allowed, each ticket sold adds the fare to Ticket money · revenue`, res.b1);
       ok(`${tag}: beat 2: the slider moves the crowd; after three fares the pattern line shows`, res.b2, res.b2x);
       ok(`${tag}: beat 3: 80 want at £70, the planes board to 19/19 and 19/19, 42 can't (dimmed, not red)`, res.b3, res.b3x);
       ok(`${tag}: beat 4: £70 full with 42 left behind against £140 with 20 seats flying empty`, res.b4, res.b4x);
-      ok(`${tag}: beat 5 (Show): the question is the caption, no guess and no buttons, Next always allowed`, res.b5, res.b5x);
-      ok(`${tag}: beat 6 (Reveal), design B: the bars, then the Airline-look sheet works it out: £1,900, £1,980 (18 × £100 + 18 × £10), £80 more for the £110 plane; no guess line`, res.b6, res.b6x);
+      ok(`${tag}: beat 5 (Show), the prediction: the question in the words, The £100 plane, The £110 plane and Not sure; Next hidden until he taps one, his chip outlined, nothing marked`, res.b5, res.b5x);
+      ok(`${tag}: beat 6 (Reveal), design B: "You predicted: The £110 plane" small in the words, the bars, then the Airline-look sheet works it out: £1,900, £1,980 (18 × £100 + 18 × £10), £80 more for the £110 plane`, res.b6, res.b6x);
       ok(`${tag}: beat 7 (Use): four recap tiles and the green Set my fares`, res.b7, res.b7x);
       if(!rm) await p.screenshot({ path:`${OUT}fare_lever-2.png` });
     }catch(e){ ok(`${tag}: played to the end`, false, e.message.split('\n')[0]); await p.screenshot({ path:`${OUT}fare_lever-stuck.png` }).catch(() => {}); }
@@ -138,7 +154,8 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
     catch(e){ ok('Cash, tank, profit on Launch Day', false, e.message.split('\n')[0]); } }
   // Thursday: Red Kite; Sunday: the week-1 review
   await at('rival_split', async () => { for(let g = 0; g < 6 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('decision')); await p.waitForTimeout(600); } }, D => D.rival === 50 && D.fare > D.rival && D.stay < D.want && D.stayAd > D.stay);
-  await at('full_route', async () => { for(let g = 0; g < 6 && !(await open()); g++){ await p.evaluate(() => window.__tk.run('review')); await p.waitForTimeout(600); } }, D => D.want > D.flights.reduce((t, f) => t + f.sold, 0));
+  if(want('full_route')){ const L = await p.evaluate(() => window.__bf.list().map(x => x.id));
+    ok('full_route: retired (20 Oct 2026): not in the game (nor Snacks on board), so the week-1 review opens no briefing; eleven briefings play', !L.includes('full_route') && !L.includes('cabin_sales') && L.length === 11, L); }
   // week 2: the Fuel desk; the shop's first comparison
   if(want('fuel_cash_tank_profit')){ await load(8); const D = await data('fuel_cash_tank_profit');   // its moment is Launch Day now (above); in year one its figures are the workbook's, whatever the day
     ok('fuel_cash_tank_profit: in year one the scene\'s figures are the workbook\'s example (BriefingData), on any day', D && D.cash === 8600 && D.buyL === 3000 && D.next === 'order' && D.perDay > 0 && D.tickets > 0, D); }

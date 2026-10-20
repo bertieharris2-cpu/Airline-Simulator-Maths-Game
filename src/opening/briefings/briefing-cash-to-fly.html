@@ -11,8 +11,8 @@
 <script>
 /* 13 · Can you afford to run it? (week 2: the Fuel desk after Cash, tank, profit, or the shop if the pupil gets there first).
    Fable's brief (18 Oct 2026), drawn to the kit's style frame (Claude Design handover 18 Oct, section 5). Five beats:
-   1 Show: the week as seven stands with the fuel each day needs standing on them as drums; the planes at Monday; cash in a
-     tall glass gauge.
+   1 Show: the week as seven stands with the fuel each day needs standing on them as drums; the planes at Monday; the cash
+     as coins stacked in an open vault (20 Oct 2026: money is never drawn as a liquid).
    2 Decide: a red reserve line across the gauge, dragged up from £0 (or the line set before); the Buy button and the
      caption say what fits above it.
    3 Buy and fly: the drums fill from Monday; Fly flies one day: its drum empties, the tickets drop into the gauge, the board
@@ -73,7 +73,7 @@ const flying = W => W.rows.reduce((t, x) => t + x.result, 0);
 /* ---------- the scene ---------- */
 let RKEEP = null;   // the line the pupil set, kept when Back plays the briefing again
 K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
-K.start({ title:'Can you afford to run it?', marks:5 });
+K.start({ title:'Can you afford to run it?', marks:5, words:{ x:735, y:78, w:720 } });   // the words in the week's column, above the plane
 const L = K.layers(), defs = K.defs(), hud = K.hud(), svgEl = K.svg(), flat = K.flat;
 const grad = (id, stops, x2, y2) => { const g = sv('linearGradient', { id, x1:0, y1:0, x2, y2 }, defs); stops.forEach(([o, c]) => sv('stop', { offset:o, 'stop-color':c }, g)); };
 grad('b13gold', [[0, '#ffd76b'], [.5, '#f2c14e'], [1, '#b98a1c']], 1, 0); grad('b13fuel', [[0, '#7fd9ff'], [.45, '#36c6ff'], [1, '#1a6fb5']], 1, 0);
@@ -86,28 +86,38 @@ sv('line', { x1:414, y1:474, x2:1146, y2:474, stroke:'#eaf2ff', 'stroke-opacity'
 const head = (x, s) => txt(L.back, x, 50, s, { 'font-size':17, 'font-weight':600, 'letter-spacing':2.2, fill:'#9fbde3', 'text-anchor':'middle' });
 head(198, 'CASH'); head(794, 'THIS WEEK'); head(1373, 'FLIGHT BOARD');
 
-/* the cash gauge: a tall glass, gold to the cash, the figure under it */
 const netOf = P => P.tickets.reduce((t, v, i) => t + v - P.cost[i] - P.litres[i] * PL, 0);
 let TOP = Math.max(D.cash, D.cash + netOf(ME), NEW ? D.cash - NEW.price + netOf(ME) + netOf(NEW) : 0) * 1.06;
 const TSTEP = [500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000, 200000, 250000, 500000, 1000000].find(s => TOP / s <= 7) || 1000000;
 TOP = Math.max(TSTEP, Math.ceil(TOP / TSTEP) * TSTEP);
 const RSTEP = TOP <= 20000 ? 250 : TOP <= 60000 ? 500 : TOP <= 200000 ? 1000 : 5000;
 const GX = 110, GW = 176, GT = 104, GB = 580, GC = GX + GW / 2, yOf = v => GB - (GB - GT - 16) * clamp(v / TOP, 0, 1);
-const gauge = sv('g', null, L.mid);
+/* the cash is a bank, never a liquid (20 Oct 2026, Bertie's review; DESIGN.md): an open vault, the coins stacked inside it up
+   to the cash (one coin for each step of CH scene units, the scale up its side), the balance under it */
+const gauge = sv('g', null, L.mid), VD = 18, CH = 10, CRX = (GW - 44) / 2;
 sv('ellipse', { cx:GC + 8, cy:GB + 24, rx:128, ry:10, fill:flat ? 'url(#gShadowF)' : '#000', opacity:flat ? 1 : .3 }, gauge);
+sv('path', { d:`M${GX - 10},${GT - 8} L${GX + GW + 10},${GT - 8} L${GX + GW + 10 + VD},${GT - 8 - VD} L${GX - 10 + VD},${GT - 8 - VD} Z`, fill:'#1d4c7c' }, gauge);   // the vault's lit top
+sv('path', { d:`M${GX + GW + 10},${GT - 8} L${GX + GW + 10 + VD},${GT - 8 - VD} L${GX + GW + 10 + VD},${GB - VD} L${GX + GW + 10},${GB} Z`, fill:'#071a33' }, gauge);   // its darker right face
+sv('rect', { x:GX - 10, y:GT - 8, width:GW + 20, height:GB - GT + 8, fill:'#0d2a4c', stroke:'#5b86b8', 'stroke-opacity':.7, 'stroke-width':2 }, gauge);
+sv('rect', { x:GX + 4, y:GT + 6, width:GW - 8, height:GB - GT - 6, fill:'#061528' }, gauge);   // open: the inside
+sv('line', { x1:GX - 9, y1:GT - 7, x2:GX + GW + 9, y2:GT - 7, stroke:'#9cc4f0', 'stroke-opacity':.55, 'stroke-width':1.5 }, gauge);
 sv('rect', { x:GX - 22, y:GB, width:GW + 44, height:22, fill:'#16305a' }, gauge); sv('line', { x1:GX - 22, y1:GB + .5, x2:GX + GW + 22, y2:GB + .5, stroke:'#9cc4f0', 'stroke-opacity':.5 }, gauge);
-const gold = sv('rect', { x:GX + 14, y:GB, width:GW - 28, height:0, fill:'url(#b13gold)' }, gauge), goldTop = sv('ellipse', { cx:GC, cy:GB, rx:(GW - 28) / 2, ry:9, fill:'#ffe28f', opacity:0 }, gauge);
-const spend = txt(gauge, GC, 0, '', { 'font-size':18, 'font-weight':700, fill:'#3a2a00', 'text-anchor':'middle', opacity:0 }), spend2 = txt(gauge, GC, 0, 'to spend', { 'font-size':16, fill:'#3a2a00', 'text-anchor':'middle', opacity:0 });
-sv('path', { d:`M${GX},${GT} L${GX},${GB} M${GX + GW},${GT} L${GX + GW},${GB}`, stroke:'#9fc8f4', 'stroke-opacity':.45, 'stroke-width':2 }, gauge);
-sv('ellipse', { cx:GC, cy:GT, rx:GW / 2, ry:12, fill:'none', stroke:'#9fc8f4', 'stroke-opacity':.45, 'stroke-width':2 }, gauge);
-sv('rect', { x:GX + 14, y:GT + 12, width:11, height:GB - GT - 22, fill:'#fff', opacity:.08 }, gauge);
+grad('b13coin', [[0, '#b9780f'], [.45, '#ffd76a'], [1, '#c58412']], 1, 0);
+const coinsG = sv('g', null, gauge), COINS = Array.from({ length:Math.ceil((GB - GT) / CH) + 2 }, () => { const g = sv('g', { opacity:0 }, coinsG);
+  sv('rect', { x:GC - CRX, y:-CH, width:CRX * 2, height:CH, fill:'url(#b13coin)' }, g);   // the coin's edge
+  sv('ellipse', { cx:GC, cy:0, rx:CRX, ry:7, fill:'url(#b13coin)', stroke:'#8a5a08', 'stroke-width':.8 }, g);   // its rim (the one above covers the face)
+  sv('ellipse', { cx:GC, cy:-CH, rx:CRX, ry:7, fill:'#ffe08a', stroke:'#c58412', 'stroke-width':.8 }, g); return g; });
+const spendBg = sv('rect', { x:GC - 64, y:0, width:128, height:48, fill:'#061528', stroke:'#f2c14e', 'stroke-opacity':.55, opacity:0 }, gauge);   // "to spend" hangs on the stack as a tag
+const spend = txt(gauge, GC, 0, '', { 'font-size':18, 'font-weight':700, fill:'#f2c14e', 'text-anchor':'middle', opacity:0 }), spend2 = txt(gauge, GC, 0, 'to spend', { 'font-size':15, fill:'#c6d8f0', 'text-anchor':'middle', opacity:0 });
 for(let v = 0; v <= TOP + .5; v += TSTEP){ const y = yOf(v); txt(gauge, GX - 12, y + 5, money(v), { 'font-size':15.5, fill:'#9fbde3', 'text-anchor':'end' }); if(v) sv('line', { x1:GX - 7, y1:y, x2:GX, y2:y, stroke:'#9fbde3', 'stroke-opacity':.5 }, gauge); }
 const figure = txt(L.mid, GC, 652, money(0), { 'font-size':38, 'font-weight':600, fill:'#f2c14e', 'text-anchor':'middle' });
 const keepT = txt(L.mid, GC, 684, '', { 'font-size':18, fill:'#9fbde3', 'text-anchor':'middle' });
 const hint1 = txt(L.mid, GC, 708, 'If something goes wrong,', { 'font-size':16.5, fill:'#8ea6c8', 'text-anchor':'middle', opacity:0 }), hint2 = txt(L.mid, GC, 728, 'this is all you\'ll have.', { 'font-size':16.5, fill:'#8ea6c8', 'text-anchor':'middle', opacity:0 });
 const perBlock = txt(L.mid, GC, 830, `${money(PR)} a block (${num(BL)} L)`, { 'font-size':16.5, fill:'#9fbde3', 'text-anchor':'middle', opacity:0 });
 let shown = 0;
-function setLevel(v){ shown = v; const y = yOf(v); gold.setAttribute('y', y.toFixed(1)); gold.setAttribute('height', Math.max(0, GB - y).toFixed(1)); goldTop.setAttribute('cy', y.toFixed(1)); goldTop.setAttribute('opacity', v > 0 ? 1 : 0); figure.textContent = money(v); spendLabel(); }
+function setLevel(v){ shown = v; const n = v > 0 ? Math.max(1, Math.round((GB - yOf(v)) / CH)) : 0;   // the coins up to the cash
+  COINS.forEach((c, k) => { if(k < n){ c.setAttribute('opacity', 1); c.setAttribute('transform', `translate(0 ${GB - k * CH})`); } else c.setAttribute('opacity', 0); });
+  figure.textContent = money(v); spendLabel(); }
 const levelTo = (to, ms) => { const from = shown; return K.tween(RM ? 0 : ms === undefined ? 700 : ms, k => setLevel(lerp(from, to, k)), 'out').then(() => setLevel(to)); };
 
 /* the reserve line: the one red thing; dragged (or the arrow keys) in steps */
@@ -128,7 +138,7 @@ rHand.addEventListener('pointermove', ev => { if(drag === ev.pointerId) setR(val
 const letGo = () => { if(drag === null) return; drag = null; hRect.setAttribute('fill', '#ff5f5f'); };
 rHand.addEventListener('pointerup', letGo); rHand.addEventListener('pointercancel', letGo);
 rHand.addEventListener('keydown', ev => { if(!rLive) return; const up = ev.key === 'ArrowUp' || ev.key === 'ArrowRight', dn = ev.key === 'ArrowDown' || ev.key === 'ArrowLeft'; if(!up && !dn) return; ev.preventDefault(); setR(R + (up ? RSTEP : -RSTEP), true); });
-/* a tap on the glass moves the line there */
+/* a tap on the vault moves the line there */
 const glassHit = sv('rect', { x:GX, y:GT, width:GW, height:GB - GT, fill:'#fff', opacity:0, style:'cursor:pointer;touch-action:none' }, L.top);
 glassHit.addEventListener('pointerdown', ev => { if(!rLive) return; ev.preventDefault(); setR(valAt(worldY(ev)), true); });
 
@@ -235,8 +245,8 @@ const buyB = act('', GC, 772), flyB = act('sec', MID, 772);
 const press = (...bs) => K.decide(new Promise(res => bs.forEach((b, i) => b.onclick = () => { if(b.disabled || b.hidden) return; bs.forEach(x => x.onclick = null); res(i); }))).then(i => bs[i]);   // a decision: Next waits for it (kept as which button, so a replay presses the same one)
 let W = week(D.cash, [ME]), stage = 1, stagedBuys = 0;
 function spendLabel(){ const top = yOf(shown), ln = yOf(R), room = shown - R;
-  if(stage < 2 || room <= 0 || ln - top < 52){ spend.setAttribute('opacity', 0); spend2.setAttribute('opacity', 0); return; }
-  const y = (top + ln) / 2; spend.textContent = money(room); spend.setAttribute('y', (y - 2).toFixed(1)); spend2.setAttribute('y', (y + 18).toFixed(1)); spend.setAttribute('opacity', 1); spend2.setAttribute('opacity', 1); }
+  if(stage < 2 || room <= 0 || ln - top < 56){ spend.setAttribute('opacity', 0); spend2.setAttribute('opacity', 0); spendBg.setAttribute('opacity', 0); return; }
+  const y = (top + ln) / 2; spend.textContent = money(room); spend.setAttribute('y', (y - 2).toFixed(1)); spend2.setAttribute('y', (y + 18).toFixed(1)); spend.setAttribute('opacity', 1); spend2.setAttribute('opacity', 1); spendBg.setAttribute('y', (y - 26).toFixed(1)); spendBg.setAttribute('opacity', .94); }
 function sayBuy(){ const n = canBuy(W, R), all = Math.ceil(stillNeed(W) / BL - 1e-9);
   if(!all) return 'The fuel for the rest of the week is bought.';
   if(!n) return W.cash <= R ? `Keeping ${money(R)} leaves nothing to spend on fuel.` : `Above your line there isn't enough for a block (${money(PR)}).`;

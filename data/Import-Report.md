@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 212 | 212 live, 10 placeholder |
+| Settings | 213 | 213 live, 10 placeholder |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved to Routes |
@@ -17,8 +17,8 @@
 | Airports | 1 | 1 later, 1 live, 3 removed |
 | Calendar | 49 | 49 live |
 | Market | 416 | 416 live |
-| Events | 46 rows → 40 events | 3 later, 46 live, 1 note row, 3 placeholder, 2 removed |
-| EventOptions | 65 | 65 live, 1 note row |
+| Events | 45 rows → 39 events | 3 later, 45 live, 1 note row, 3 placeholder, 3 removed |
+| EventOptions | 63 | 63 live, 1 note row, 2 removed |
 | Challenges | 6 | 6 live, 2 placeholder |
 | Mechanics | 17 | 3 later, 17 live |
 | Chapters | 4 | 2 later, 4 live, 1 note row |
@@ -28,7 +28,7 @@
 | Milestones | 18 | 18 live, 1 note row |
 | DailyColour | 10 | 10 live, 1 note row |
 | Upgrades | 5 | 5 live, 1 note row |
-| Briefings | 12 | 1 dropped, 12 live, 1 note row |
+| Briefings | 11 | 11 live, 1 note row, 2 removed |
 | Roadmap | 13 | 13 live, 1 note row |
 | RouteNews | 101 | 101 live, 2 note row |
 | Livery | 35 | 35 live, 1 note row |
@@ -69,7 +69,7 @@
 - **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 1200, listPrice 9000 → 22000. The workbook wins.
 - **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1800, listPrice 15000 → 36000. The workbook wins.
 - **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900, dayCost 2500 → 3500, listPrice 30000 → 70000. The workbook wins.
-- **Events:** D104: the six curveball events are loaded (dub_strike, school_trip, slot_squeeze, snack_supplier, sponsor_club, tanker_offer); their effects are in parts/p5w_d104.js.
+- **Events:** D104: 5 curveball events are loaded (dub_strike, school_trip, slot_squeeze, sponsor_club, tanker_offer); not loaded: snack_supplier; their effects are in parts/p5w_d104.js.
 - **Events:** D104: track B rows (Events, EventOptions, RouteNews) are loaded with their track; the game plays the airline's track in chapter 1's autumn (Settings autumnTrack, the teacher's switch).
 - **Events:** events are not in date order (harmless; the game sorts them).
 - **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events undercut_dub, storm, crew; challenges 2, 5. Those choices then differ only in cash.
@@ -78,6 +78,7 @@
 
 Rows dated on or before 28 Dec 2030 (chapter 1's review) that the game would read but are not `live`, and values the chapter-1 flow needs that the workbook lacks. The game reports these; it never invents a value.
 
+- **Events:** snack_supplier on 24 Sep 2030 is `removed`: not loaded.
 - **Routes:** ist opens on day 57 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
 - **Settings:** `timeSkip` is `placeholder`: not loaded (the game builds teacher skips of 0 / 1 / 4 / 8 weeks from the brief and reports it here).
 - **Settings:** `reputationFromDate` is `placeholder`: not loaded (a date gate only in chapter 1).
@@ -100,7 +101,7 @@ The Settings rows chapter 3 reads (D78–D81), as loaded.
 - `challengeRewardRule`: a share of a day's profit, or stars
 - `secondCrewCost`: 250
 - `leaseRule`: A220/A320/737 ÷ 1,000 a day (prices not doubled); from the 757 up ÷ 2,000
-- **EventOptions:** 65 option rows for 24 events (a380_offer, ash_cloud, ash_cloud2, blogger, crew, crew_b, dub_strike, fault, fault_b, fees_rise, fog, mystery_shopper, overdraft_offer, price_war, price_war_b, school_trip, slot_squeeze, snack_supplier, sponsor_club, storm, storm2, storm_b, tanker_offer, undercut_dub).
+- **EventOptions:** 63 option rows for 23 events (a380_offer, ash_cloud, ash_cloud2, blogger, crew, crew_b, dub_strike, fault, fault_b, fees_rise, fog, mystery_shopper, overdraft_offer, price_war, price_war_b, school_trip, slot_squeeze, sponsor_club, storm, storm2, storm_b, tanker_offer, undercut_dub).
 - **Two-leg routes:** syd (10,900 km + 6,300 km, 4 days).
 
 ## Working on paper (D86) and chapter 4 (D82–D85) touches
@@ -167,7 +168,7 @@ Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `flightDaysFromDay`: earned: week-2 review (day 14); fallback day 21
 - **DailyColour:** hen_party (Tue, every 3), school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), birthday_cake (Sat, every 4), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
 - **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91) and fleet groups: short-, medium- and long-haul fleets, each with its own planning view, fuel_farm → The fuel farm on the Fuel desk (D89).
-- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), full_route (briefing-capacity.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), flight_time (flight-time-tutorial.html, not built yet), cash_to_fly (briefing-cash-to-fly.html).
+- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), flight_time (flight-time-tutorial.html, not built yet), cash_to_fly (briefing-cash-to-fly.html).
 
 ## Screens brief 3 (D101–D102) touches
 

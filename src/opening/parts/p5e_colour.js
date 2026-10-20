@@ -15,7 +15,7 @@ const dcS = () => S.dcLog || (S.dcLog = {});
 function dcFor0(d){
   if(!dcOn() || !d) return null; const w = weekNo(d); if(w < 2) return null;
   const wd = WDAY[calDate(d).getUTCDay()].slice(0, 3);
-  return dcRows().find(c => c.weekday === wd && c.everyWeeks > 0 && w % c.everyWeeks === 0) || null;
+  return dcRows().find(c => c.weekday === wd && c.everyWeeks > 0 && w % c.everyWeeks === 0 && !(typeof nsSkipColour === 'function' && nsSkipColour(c, d))) || null;   // (no snack colours while there are no snacks: p5x)
 }
 /* D101 (Settings dailyColourLimit): at most two a week, never an item the week before had, never the same item twice in a week */
 const dcWeekMemo = {};

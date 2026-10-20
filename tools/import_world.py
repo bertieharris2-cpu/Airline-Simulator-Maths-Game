@@ -264,8 +264,9 @@ market = [{'week': m['week'], 'weekStart': m['weekStart'], 'season': m['season']
 
 all_events = sheet(wb, 'Events')
 ev_rows = live('Events', all_events)
-cb = sorted({e['eventId'] for e in all_events if e.get('eventId') in D104_CURVEBALLS})
-if cb: issue('note', 'Events', f'D104: the six curveball events are loaded ({", ".join(cb)}); their effects are in parts/p5w_d104.js.')
+cb = sorted({e['eventId'] for e in ev_rows if e.get('eventId') in D104_CURVEBALLS})
+cb_gone = sorted(set(D104_CURVEBALLS) - set(cb))   # (the snack supplier was removed on 20 Oct 2026 with the snacks)
+if cb: issue('note', 'Events', f'D104: {len(cb)} curveball events are loaded ({", ".join(cb)}){"; not loaded: " + ", ".join(cb_gone) if cb_gone else ""}; their effects are in parts/p5w_d104.js.')
 if any(track_of(e) == 'B' for e in all_events): issue('note', 'Events', 'D104: track B rows (Events, EventOptions, RouteNews) are loaded with their track; the game plays the airline\'s track in chapter 1\'s autumn (Settings autumnTrack, the teacher\'s switch).')
 events, by_id = [], {}
 for e in ev_rows:
