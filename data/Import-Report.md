@@ -28,7 +28,7 @@
 | Milestones | 18 | 18 live, 1 note row |
 | DailyColour | 10 | 10 live, 1 note row |
 | Upgrades | 5 | 5 live, 1 note row |
-| Briefings | 13 | 13 live, 1 note row |
+| Briefings | 12 | 1 dropped, 12 live, 1 note row |
 | Roadmap | 13 | 13 live, 1 note row |
 | RouteNews | 101 | 101 live, 2 note row |
 | Livery | 35 | 35 live, 1 note row |
@@ -167,7 +167,7 @@ Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `flightDaysFromDay`: earned: week-2 review (day 14); fallback day 21
 - **DailyColour:** hen_party (Tue, every 3), school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), birthday_cake (Sat, every 4), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
 - **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91) and fleet groups: short-, medium- and long-haul fleets, each with its own planning view, fuel_farm → The fuel farm on the Fuel desk (D89).
-- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), full_route (briefing-capacity.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), flight_time (flight-time-tutorial.html, not built yet), cash_to_fly (briefing-cash-to-fly.html), cabin_sales (briefing-cabin.html, not built yet).
+- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), full_route (briefing-capacity.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), flight_time (flight-time-tutorial.html, not built yet), cash_to_fly (briefing-cash-to-fly.html).
 
 ## Screens brief 3 (D101–D102) touches
 

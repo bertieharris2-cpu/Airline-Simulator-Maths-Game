@@ -82,14 +82,14 @@ html,body{margin:0;height:100%;background:#020812;overflow:hidden}
 .work .ln.w{white-space:normal;text-wrap:balance}
 
 /* fare slider */
-.fr{position:absolute;-webkit-appearance:none;appearance:none;height:30px;background:transparent;cursor:pointer;margin:0}
+.fr{position:absolute;-webkit-appearance:none;appearance:none;height:30px;padding:8px 0;box-sizing:content-box;margin:-8px 0 0;background:transparent;cursor:pointer;touch-action:none}
 .fr::-webkit-slider-runnable-track{height:6px;background:linear-gradient(90deg,#36c6ff var(--p),#24426c var(--p))}
 .fr::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:30px;margin-top:-12px;background:#36c6ff;border:2px solid #bfeeff}
 .fr::-moz-range-track{height:6px;background:#24426c}
 .fr::-moz-range-progress{height:6px;background:#36c6ff}
 .fr::-moz-range-thumb{width:20px;height:28px;border-radius:0;background:#36c6ff;border:2px solid #bfeeff}
 .fr:focus-visible{outline:2px solid var(--cyan);outline-offset:6px}
-.tk{position:absolute;font-size:13px;color:var(--soft);transform:translateX(-50%)}
+.tk{position:absolute;font-size:13px;color:var(--soft);transform:translateX(-50%);padding:4px 6px;cursor:pointer}
 .tk.on{color:var(--text);font-weight:700}
 .brd .rw{display:grid;grid-template-columns:70px 64px 1fr;align-items:center;height:27px;font-size:16px;padding:0 14px 0 16px;border-top:1px solid rgba(65,122,171,.22)}
 .brd .rw.now{background:#0f3355;box-shadow:inset 3px 0 0 var(--cyan)}
@@ -274,6 +274,7 @@ function b2(){
   setCap('You choose the fare. Drag it and watch how many people want to fly.');
   setNext('Next &#9654;');
   const fr = $('fr'); fr.oninput = () => setFare(+fr.value); setFare(i0);
+  FARES.forEach((x, j) => { const tk = $('tk' + j); tk.onclick = () => { fr.value = j; setFare(j); fr.focus(); }; });   // a fare can also be pressed (20 Oct: Bertie found the slider hard to move)
 }
 function setFare(i){
   const f = FARES[i], d = WANT[f]; bs.fi = i; bs.tried.add(f);
