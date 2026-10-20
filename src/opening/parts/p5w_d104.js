@@ -26,7 +26,7 @@ const D104_NEWS_EV = { dub_concert:1, ams_fair:1 };   // track B's two demand it
 const D104_TAG = { 'school_trip:1':'school', 'dub_strike:1':'strikeFly', 'dub_strike:2':'strikeCancel', 'snack_supplier:1':'snackCheap', 'sponsor_club:1':'sponsor',
   'slot_squeeze:1':'slots', 'tanker_offer:1':'tanker', 'price_war:1':'warHold', 'price_war:2':'warMatch', 'price_war:3':'warAd' };
 const D104_WHY = {
-  'school_trip:1':'You took the school\'s booking. Thursday\'s first Paris flight goes full at £60 a seat.',
+  'school_trip:1':'You took the school\'s booking: 19 seats at £60 on Thursday\'s first Paris flight. The plane goes full.',
   'school_trip:2':'You kept Thursday\'s seats for your own passengers at your fare.',
   'dub_strike:1':'Friday\'s Dublin flights will go, but late. Passengers wait at the gate.',
   'dub_strike:2':'Friday\'s Dublin flights are cancelled and every fare refunded. The plane stays at home.',
@@ -150,7 +150,7 @@ ev2Money = function(ev, opt, before){ const c = opt && opt.effects && opt.effect
 function d104Owned(){ return (typeof ownedRoutes === 'function' ? ownedRoutes() : []).filter(id => routeById(id)); }
 function d104Effect(ev, opt, tag){
   const D = d104D(), at = ev.day || S.day, M = S.rnd.weekMods || (S.rnd.weekMods = { demandMod:{}, notes:[] });
-  if(tag === 'school') D.school = { day:d104NextDow(at, 4), route:'par', fare:60 };
+  if(tag === 'school'){ const m = /(\d+) seats/.exec(ev.text || ''); D.school = { day:d104NextDow(at, 4), route:'par', fare:60, seats:m ? +m[1] : 19 }; }
   else if(tag === 'strikeFly' || tag === 'strikeCancel') D.strike = { day:d104NextDow(at, 5), route:'dub', cancel:tag === 'strikeCancel' };
   else if(tag === 'snackCheap') D.snack = { from:S.day, cost:0.5, sold:false };
   else if(tag === 'sponsor') D.sponsor = { route:'dub', mult:1.05, from:S.day, to:S.day + 27 };
@@ -181,12 +181,13 @@ function d104Flights(out){
     if(D.strike.cancel) d104Cancel(x, 'Cancelled: the Dublin ground staff strike. Fares refunded.'); else x.reasons = (x.reasons || []).concat(['Delayed by the Dublin ground staff strike: passengers waited at the gate.']); });
   if(D.slots && d >= D.slots.from && d <= D.slots.to){
     out.filter(x => !x.grounded && x.dep < D.slots.before).sort((a, b) => a.dep - b.dep).slice(D.slots.max).forEach(x => d104Cancel(x, 'No early slot: Heathrow allows two departures before 09:00 this week.')); }
-  if(D.school && D.school.day === d){
+  if(D.school && D.school.day === d){   // the school's seats (19) on the first Paris flight at £60; any seats left sell at the fare as usual
     const xs = out.filter(x => x.route === D.school.route && !x.grounded).sort((a, b) => a.dep - b.dep), F = xs[0];
-    if(F){ let left = F.flexible || 0;   // the flexible passengers it would have carried take seats on the route's other flights
-      xs.slice(1).forEach(x => { const n = Math.min(left, Math.max(0, x.seats - x.sold)); if(n > 0){ x.sold += n; x.flexible = (x.flexible || 0) + n; x.revenue = x.sold * x.price; x.termCost = x.sold * termCharge(); left -= n; } });
-      Object.assign(F, { sold:F.seats, locked:0, flexible:0, price:D.school.fare, revenue:F.seats * D.school.fare, termCost:F.seats * termCharge(), charter:true,
-        reasons:[`School trip: all ${F.seats} seats at £${D.school.fare}, booked on ${dateShort(D.school.day - 2)}.`] }); } }
+    if(F){ const n = Math.min(D.school.seats || 19, F.seats), keep = Math.min(F.sold, F.seats - n), off = F.sold - keep, lock = Math.min(F.locked || 0, keep);
+      let left = Math.min(off, F.flexible || 0);   // the flexible passengers it can no longer carry take seats on the route's other flights
+      xs.slice(1).forEach(x => { const k = Math.min(left, Math.max(0, x.seats - x.sold)); if(k > 0){ x.sold += k; x.flexible = (x.flexible || 0) + k; x.revenue = x.sold * x.price; x.termCost = x.sold * termCharge(); left -= k; } });
+      Object.assign(F, { sold:n + keep, school:n, locked:lock, flexible:keep - lock, revenue:n * D.school.fare + keep * F.price, termCost:(n + keep) * termCharge(), charter:true,
+        reasons:[`School trip: ${n} seats at £${D.school.fare}${keep ? ` and ${keep} at your fare` : ''}, booked on ${dateShort(D.school.day - 2)}.`] }); } }
   return out;
 }
 /* the plainer snacks: 50p an item */
@@ -494,3 +495,11 @@ function d104Observe(){
 }
 const d104Render2 = render;
 render = function(){ const r = d104Render2.apply(this, arguments); try{ d104Observe(); d104Ranges(document.getElementById('screen')); }catch(e){ console.error(e); } return r; };
+/* the review of a week or a month names the star moves in it (the drivers; a grounded day), with the rating now */
+function d104StarsLine(from, to){
+  if(!S || !d104StarsOn() || !yearOne(to)) return '';
+  const L = ((S.d104 && S.d104.stars) || []).filter(x => x.day >= from && x.day <= to); if(!L.length) return '';
+  return `<div class="fuel-adv d104-st"><span class="kl">Stars ${to - from > 6 ? 'in this period' : 'this week'}</span>${L.map(x => `<span><b class="${x.n > 0 ? 'up' : 'down'}">${esc(starText(x.n))}</b> ${esc(x.what)}.</span>`).join('')}<span>Your rating now: <b>${esc(ratingText(S.rep))}</b>.</span></div>`;
+}
+const d104Sur0 = surprisesLine;
+surprisesLine = function(from, to){ return d104Sur0.apply(this, arguments) + d104StarsLine(from, to); };

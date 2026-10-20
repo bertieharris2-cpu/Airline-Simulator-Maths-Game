@@ -135,7 +135,7 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=8
     if(t === 'sim'){ for(let k = 0; k < 200 && await T() === 'sim'; k++) await p.waitForTimeout(150); continue; }
     if(t === 'results'){ await p.click('#nx'); continue; }
     if(t === 'weekRun'){
-      if(day === 9 && !boardShop){ ok("Tuesday's board has the Aircraft shop button", await vis('#boardShop:not([disabled])')); await shot('fs-01b-board'); await p.click('#boardShop'); await p.waitForTimeout(150); boardShop = true; continue; }
+      if(day >= 9 && !boardShop){ ok("the board has the Aircraft shop button (Wednesday's, after Tuesday's school trip card, D104)", await vis('#boardShop:not([disabled])'), day); await shot('fs-01b-board'); await p.$eval('#boardShop', b => b.click()); await p.waitForTimeout(150); boardShop = true; continue; }   // (the board redraws as it flies: a tap, not a wait for it to stand still)
       const d0 = day; for(let k = 0; k < 150 && await T() === 'weekRun' && (await S()).day === d0; k++) await p.waitForTimeout(150); continue; }
     if(t === 'weekReview' && await vis('.rbw')){ await builds(); await p.click('#nx'); continue; }
     if(t === 'weekReview'){ await p.click('#nx'); continue; }

@@ -216,3 +216,5 @@ body.yr1 .d104-rv-drv li b{font-size:16px;font-variant-numeric:tabular-nums lini
 /* D104: a new route's demand as a range until flown for a week */
 body.yr1 .d104-rng{white-space:nowrap}
 body.yr1 .d104-unc{margin:4px 0 0;font-size:13px;line-height:18px;color:var(--text-soft)}
+body.yr1 .d104-st .up{color:var(--green)}
+body.yr1 .d104-st .down{color:var(--amber)}

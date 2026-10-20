@@ -43,7 +43,8 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   const par0 = (await flights(11)).filter(f => f.route === 'par'), wed0 = (await flights(10)).map(f => f.sold);
   const sc = await choose('school_trip', 0, 9);
   const par1 = (await flights(11)).filter(f => f.route === 'par');
-  ok('school trip, Take the booking: on Thursday 12 September the first Paris flight is the charter, every seat at £60', sc.d.school && sc.d.school.day === 11 && par1[0] && par1[0].charter && par1[0].sold === par1[0].seats && par1[0].price === 60 && par1[0].revenue === par1[0].seats * 60, { school:sc.d.school, first:par1[0] });
+  const n19 = Math.min(19, par1[0] ? par1[0].seats : 0), keep = par1[0] ? par1[0].sold - n19 : 0;
+  ok('school trip, Take the booking: on Thursday 12 September the first Paris flight carries the school\'s 19 seats at £60 (any other seats at the fare)', sc.d.school && sc.d.school.day === 11 && sc.d.school.seats === 19 && par1[0] && par1[0].charter && par1[0].sold === par1[0].seats && par1[0].revenue === n19 * 60 + keep * par1[0].price, { school:sc.d.school, first:par1[0] });
   ok('school trip: the passengers the charter displaces can take the later Paris flights (never more than their seats)', par1.slice(1).every((f, i) => f.sold >= par0[i + 1].sold && f.sold <= f.seats), { before:par0.map(f => f.sold), after:par1.map(f => f.sold) });
   const wed1 = await flights(10);
   ok('school trip: no other day changes (Wednesday the 11th as before)', par0.length >= 2 && JSON.stringify(wed1.map(f => f.sold)) === JSON.stringify(wed0) && !wed1.some(f => f.charter), { wed0, wed1:wed1.map(f => f.sold) });

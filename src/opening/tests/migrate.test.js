@@ -52,6 +52,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
       if(t === 'hq'){ await shot(`${tag}-hq`); await p.click('#startDay'); continue; }
       if(t === 'intro'){ for(let pg = 0; pg < 2; pg++) if(await p.$('#niNext')) await p.click('#niNext'); if(await p.$('#pqIn')) await practice(); const n = (await p.$$('[data-ni]')).length; for(let k = 0; k < n && await p.$eval('#nx', e => e.disabled); k++) await p.click(`[data-ni="${k}"]`); await p.click('#nx'); continue; }
       if(t === 'shop2'){ await p.click('#skipShop'); continue; }
+      if(t === 'stars'){ await shot(`${tag}-stars`); await p.click('#nx'); continue; }   // D104
       if(t === 'event'){ await shot(`${tag}-event`); for(let i = 0; i < 8 && await p.$('[data-seep]'); i++) await p.click('[data-seep]'); await p.click('[data-o="1"]'); await p.click('#nx'); await p.waitForTimeout(80); if(await T() === 'event') await p.click('#nx'); continue; }
       if(t === 'plan' && await p.$('.ftp-page')){ ftpSeen.push(await p.evaluate(() => JSON.stringify([window.__sim.S().day, window.__sim.evalIn('ftpPlan()'), (document.querySelector('.ft-cmp') || {}).textContent || '']))); for(let g = 0; g < 8; g++){ const P = await p.evaluate(() => JSON.parse(JSON.stringify(window.__sim.evalIn('ftpPlan()')))); if(!P) break; if(P.next){ await p.evaluate(() => window.__tk.answer(true)); await p.waitForTimeout(60); } else { await p.click('#ftpGo'); await p.waitForTimeout(150); } } continue; }   // flight times before the timetable
       if(t === 'plan'){ await shot(`${tag}-plan`); await p.click('#nx'); continue; }
@@ -90,7 +91,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
   await fresh(); const v4 = FIX('wind-dragon-ASIM4.txt'); await loadViaPanel(v4);
   { const s = await S(), m = s.migrated || {};
     ok('v4: loads as the old prototype', m.from === 'proto-v4' && s.airline.name === 'wind dragon airways', m.from);
-    ok('v4: lands on day 16 at HQ, a one-off planning day (no sums record), with the fuel desk before Ready', s.day === 16 && s.round === 15 && await T() === 'hq' && s.period.type === 'day' && s.oneOffDay === 16 && s.steps.map(x => x.t).join() === 'hq,plan,workings,fuelDesk,ready,fly,results', [s.day, s.round, await T(), s.oneOffDay, s.steps.map(x => x.t)]);
+    ok('v4: lands on day 16 at HQ, a one-off planning day (no sums record), with the stars card after HQ (D104: they went public in week 3) and the fuel desk before Ready', s.day === 16 && s.round === 15 && await T() === 'hq' && s.period.type === 'day' && s.oneOffDay === 16 && s.steps.map(x => x.t).join() === 'hq,stars,plan,workings,fuelDesk,ready,fly,results', [s.day, s.round, await T(), s.oneOffDay, s.steps.map(x => x.t)]);
     ok('v4: airline, cash, fleet and fares kept', s.cash === 27936 && s.fleet.length === 1 && s.fleet[0].schedule.join() === 'dub,dub,par' && s.prices.dub === 90 && s.prices.par === 100 && s.onboard === 'low', [s.cash, s.fleet[0].schedule, s.prices, s.onboard]);
     ok('v4: history shifted onto the new calendar', s.history.length === 7 && s.history[0].from === 1 && s.history[6].to === 15 && s.ledger.rev[1] === 4560, [s.history[0].from, s.history[6].to, s.ledger.rev.slice(0, 3)]);
     ok('v4: a logo from the old colours (coral → orange, amber → yellow)', s.airline.logo && s.airline.logo.c1 === 'orange' && s.airline.logo.c2 === 'yellow', s.airline.logo);
@@ -108,7 +109,7 @@ const decode = code => JSON.parse(b64d(code.split('.', 2)[1])), encode = (v, s) 
     const r = await playDay('full-game'); ok('full game: the day completes onto the board', r.seen.includes('next-day board'), r.seen); }
 
   // 5. a current save is untouched; loading an old code twice gives the same landing
-  { const cur = await p.evaluate(() => { const c = window.__sim.saveCode(); const j = JSON.parse(atob(c.split('.')[1])); delete j.migrated; const s = window.__sim.migrate(j); return { same: JSON.stringify(s.steps) === JSON.stringify(window.__sim.S().steps), touched: !!s.migrated }; });
+  { const cur = await p.evaluate(() => { const c = window.__sim.saveCode(); const j = JSON.parse(decodeURIComponent(escape(atob(c.split('.')[1])))); /* the code is UTF-8 (a £ in a step's data) */ delete j.migrated; const s = window.__sim.migrate(j); return { same: JSON.stringify(s.steps) === JSON.stringify(window.__sim.S().steps), touched: !!s.migrated }; });
     ok('a current save loads unchanged', cur.same && !cur.touched, cur);
     await fresh(); await loadViaPanel(v5); const a1 = await S(); await fresh(); await loadViaPanel(v5); const a2 = await S();
     ok('loading the same old code twice lands in the same place', a1.si === a2.si && JSON.stringify(a1.steps) === JSON.stringify(a2.steps) && a1.cash === a2.cash); }
