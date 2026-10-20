@@ -259,7 +259,7 @@ const d104GrowthOn = () => { const v = D104S().growthResponds; return v === true
 const d104Grows = r => !!(r && r.arch && r.archId !== 'long_haul' && r.arch.growthFillBonus !== undefined && r.arch.growthFillBonus !== null);
 /* 0 = the top fare of the route's table, 1 = second from top (the airline type's extra fares count as the top) */
 function d104FareRank(r, fare){ const F = (r._fares0 && r._fares0.length ? r._fares0 : r.fares) || []; return F.filter(f => f > fare + 1e-9).length; }
-const d104NewG = () => ({ v:1, upTo:0, wk:0, done:0, acc:{}, days:0, free:true, m:{}, snaps:[], ta:{}, freeLast:0, since:[] });
+const d104NewG = () => ({ v:1, upTo:0, wk:0, done:0, acc:{}, days:0, free:true, m:{}, snaps:[], ta:{}, freeLast:0, since:[], first:{} });
 function d104Sync(){
   if(!S || QUIET || !Array.isArray(S.history) || !S.history.length) return;
   if(!S.g104 && (S.day || 1) > y1Last()) return;   // later chapters: nothing to keep
@@ -271,7 +271,8 @@ function d104Sync(){
   all.forEach(h => { G.upTo = Math.max(G.upTo, h.to || 0); });
 }
 function d104Row(G, h, quiet, free){
-  const a = Math.max(1, h.from || 1), z = Math.max(a, h.to || a), n = z - a + 1;
+  const a = Math.max(1, h.from || 1), z = Math.max(a, h.to || a), n = z - a + 1, F = G.first || (G.first = {});
+  Object.keys(h.routes || {}).forEach(id => { if((h.routes[id] || {}).trips > 0 && !(F[id] <= a)) F[id] = a; });   // the day a route was first flown (its demand is known a week later)
   for(let k = weekNo(a); k <= weekNo(z); k++){
     const ka = Math.max(a, 7 * k - 6), kz = Math.min(z, 7 * k), share = (kz - ka + 1) / n;
     if(G.wk !== k){ G.wk = k; G.acc = {}; G.days = 0; G.free = true; }
@@ -432,3 +433,63 @@ R.stars = st => {
 /* the event card's departures board: with a notice line under it (an event not about one flight), two rows, not three */
 if(typeof ev2BoardRows === 'function'){ const d104EBR0 = ev2BoardRows;
   ev2BoardRows = function(ev, F){ const B = d104EBR0.apply(this, arguments); if(!F && B && B.rows && B.rows.length > 2) B.rows = B.rows.slice(0, 2); return B; }; }
+
+/* =====================================================================
+   5. New routes show their demand as a range until flown for a week (Settings newRouteUncertainty; Routes demandKnown):
+   "about 70–95", the true figure × (1 ± 0.15) widened to the nearest 5. Paris and Dublin are known from the start; the
+   others from the day a week after their first flight. The model's own sums keep the true figure. The ranges are put
+   in after a screen is drawn (one pass over the places that show a route's demand), so every way of drawing them gets it.
+   ===================================================================== */
+const d104Unc = () => { const u = +D104S().newRouteUncertainty; return u > 0 && u < 1 ? u : 0; };
+const d104WBR = id => ((WB && WB.routes) || []).find(x => x.id === id) || {};
+function d104Known(id, day){
+  if(!S || !d104Unc() || !routeById(id)) return true; day = day === undefined ? (S.day || 1) : day; if(!yearOne(day)) return true;
+  const k = String(d104WBR(id).demandKnown || 'yes').trim().toLowerCase(); if(k === 'yes' || k === 'true') return true;
+  const f = d104First()[id]; return f !== undefined && f + 7 <= day;
+}
+/* the day each route was first flown (kept as the history is read; worked out from the history if missing) */
+function d104First(){
+  const G = S && S.g104; if(!G) return {}; if(G.first) return G.first; const F = G.first = {};
+  (S.history || []).slice().sort((a, b) => (a.from || 0) - (b.from || 0)).forEach(h => { const a = Math.max(1, h.from || 1); Object.keys(h.routes || {}).forEach(id => { if((h.routes[id] || {}).trips > 0 && !(F[id] <= a)) F[id] = a; }); });
+  return F;
+}
+function d104Range(n){ const u = d104Unc(), k = n >= 20 ? 5 : 1; return [Math.max(0, Math.floor(n * (1 - u) / k) * k), Math.max(1, Math.ceil(n * (1 + u) / k) * k)]; }   // to the nearest 5 outside (whole numbers under 20)
+const d104RangeTxt = (n, prose) => { const [a, b] = d104Range(n); return `${prose ? 'about ' : ''}${num(a)}–${num(b)}`; };
+let D104_UNK = { key:null, set:null };
+function d104UnknownSet(){
+  if(!S || !d104Unc() || !yearOne()) return null;
+  const key = `${S.day}|${S.g104 ? S.g104.upTo : 0}|${Object.keys(d104First()).length}`; if(D104_UNK.key === key) return D104_UNK.set;
+  const out = new Set(WORLD.routes.filter(r => !d104Known(r.id)).map(r => r.id)); D104_UNK = { key, set:out.size ? out : null }; return D104_UNK.set;
+}
+const d104Num = el => { const m = /(\d[\d,]*)/.exec(el ? el.textContent : ''); return m ? +m[1].replace(/,/g, '') : null; };
+const D104_TIP = 'A new route: a range until you have flown it for a week';
+function d104SetRange(el, prose){ if(!el || el.dataset.d104r) return; const n = d104Num(el); if(n === null) return; el.dataset.d104r = String(n); el.textContent = el.textContent.replace(/\d[\d,]*/, d104RangeTxt(n, prose)); el.title = `${D104_TIP}. Your sums use the true figure.`; el.classList.add('d104-rng'); }
+const d104CityId = txt => { const t = String(txt || '').replace(/\s+/g, ' ').trim(); const r = WORLD.routes.find(x => t === x.city || t.indexOf(x.city + ' ') === 0); return r ? r.id : null; };
+function d104Ranges(root){
+  const U = d104UnknownSet(); if(!U || !root) return; const unk = id => !!id && U.has(id), q = (sel, el) => Array.from((el || root).querySelectorAll(sel));
+  q('[data-s2r]').forEach(row => { if(unk(row.dataset.s2r)) d104SetRange(row.querySelector('.s2-n')); });   // the Studio's active routes
+  const ed = root.querySelector('.s2-ed'), eid = UI.s2 && UI.s2.route;   // the route editor: every fare
+  if(ed && unk(eid) && !ed.dataset.d104r){ ed.dataset.d104r = '1'; q('.s2-ft tbody td.num', ed).forEach(td => d104SetRange(td)); d104SetRange(ed.querySelector('.s2-cmp span:first-child b'));
+    const p = ed.querySelector('.s2-cmp p'); if(p) p.textContent = 'You will know the demand after a week of flying. Until then, plan for the range.';
+    const n = ed.querySelector('.s2-ed-n'); if(n) n.insertAdjacentHTML('afterend', `<p class="d104-unc">${D104_TIP}.</p>`); }
+  q('select[data-s2fr]').forEach(sel => { if(!unk(sel.dataset.s2fr) || sel.dataset.d104r) return; sel.dataset.d104r = '1';
+    Array.from(sel.options).forEach(o => { o.textContent = o.textContent.replace(/· (\d[\d,]*) want/, (m0, n) => `· ${d104RangeTxt(+n.replace(/,/g, ''), true)} want`); }); });
+  q('[data-stroute]').forEach(card => { if(!unk(card.dataset.stroute)) return;   // the route cards (Add / change routes)
+    const many = q('.fch', card).length > 6;   // nine fares: only the chosen fare's range fits over its bar (the others say it when pointed at)
+    q('.fch', card).forEach(b => { const sm = b.querySelector('small'); if(many && !b.classList.contains('on')){ if(sm && !sm.dataset.d104r){ sm.dataset.d104r = '1'; sm.textContent = ''; } } else d104SetRange(sm); if(b.title && !b.dataset.d104t){ b.dataset.d104t = '1'; b.title = b.title.replace(/: (\d[\d,]*) people/, (m0, n) => `: ${d104RangeTxt(+n.replace(/,/g, ''), true)} people`); } });
+    const cap = card.querySelector('.st-cap b'); if(cap && !cap.dataset.d104r){ const m = /: (\d[\d,]*)$/.exec(cap.textContent); if(m){ cap.dataset.d104r = m[1]; cap.textContent = cap.textContent.replace(/: \d[\d,]*$/, `: ${d104RangeTxt(+m[1].replace(/,/g, ''), true)}`); cap.title = D104_TIP; } } });
+  q('.st-strip[data-strip]').forEach(st => { if(!unk(st.dataset.strip) || st.dataset.d104r) return; st.dataset.d104r = '1';   // the demand strip
+    q('.st-sl b', st).forEach(b => { b.childNodes.forEach(t => { if(t.nodeType === 3) t.textContent = t.textContent.replace(/: (\d[\d,]*) want to fly/, (m0, n) => `: ${d104RangeTxt(+n.replace(/,/g, ''), true)} want to fly`); }); });
+    q('.ds-n', st).forEach(e => d104SetRange(e)); });
+  q('.net-dest tbody tr').forEach(tr => { const td = tr.children; if(td.length > 4 && unk(d104CityId(td[0].textContent))) d104SetRange(td[4]); });   // Network: Destinations
+  q('.wr-rk tbody tr').forEach(tr => { const td = tr.children; if(td.length > 3 && unk(d104CityId(td[0].textContent.replace(/not flown/, '')))) d104SetRange(td[3]); });   // Home: the rival's fares
+  const dem = root.querySelector('.wr-dem'), wr = $('wrRoute'); if(dem && wr && unk(wr.value) && !dem.dataset.d104r){ dem.dataset.d104r = '1'; q('.wr-b .wr-n', dem).forEach(e => d104SetRange(e)); const l = dem.querySelector('.wr-l'); if(l) l.insertAdjacentHTML('beforeend', ` <span class="d104-unc">${D104_TIP}.</span>`); }
+}
+let D104_OBS = null, D104_PEND = false;
+function d104Observe(){
+  if(D104_OBS || typeof MutationObserver === 'undefined') return; const host = document.getElementById('screen'); if(!host) return;
+  D104_OBS = new MutationObserver(() => { if(D104_PEND) return; D104_PEND = true; Promise.resolve().then(() => { D104_PEND = false; try{ d104Ranges(host); }catch(e){ console.error(e); } }); });
+  D104_OBS.observe(host, { childList:true, subtree:true });
+}
+const d104Render2 = render;
+render = function(){ const r = d104Render2.apply(this, arguments); try{ d104Observe(); d104Ranges(document.getElementById('screen')); }catch(e){ console.error(e); } return r; };

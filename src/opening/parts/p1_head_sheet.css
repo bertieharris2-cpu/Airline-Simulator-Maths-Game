@@ -213,3 +213,6 @@ body.yr1 .d104-rv-sum b{font-weight:600}
 body.yr1 .d104-rv-drv ul{display:grid;gap:8px;margin:0;padding:0;list-style:none}
 body.yr1 .d104-rv-drv li{display:grid;grid-template-columns:34px 1fr;gap:8px;font-size:14.5px;line-height:20px;color:var(--text)}
 body.yr1 .d104-rv-drv li b{font-size:16px;font-variant-numeric:tabular-nums lining-nums}
+/* D104: a new route's demand as a range until flown for a week */
+body.yr1 .d104-rng{white-space:nowrap}
+body.yr1 .d104-unc{margin:4px 0 0;font-size:13px;line-height:18px;color:var(--text-soft)}
