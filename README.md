@@ -380,6 +380,14 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Workbook v6.1 (20 Oct 2026)
+*Fable's v6.1, which answers the D104 report's flags, in year one only. The report, with the flags for Fable, is `docs/v6.1-Report.md`; screenshots at 1366 × 768 and 1920 × 1080 are in `docs/screenshots/v61/`. The code is in `src/opening/parts/p5w_d104.js`.*
+- **Softer stars:** a route loses half a star when it turns away 1 in 3 or more, two weeks running, counted from week 5 (30 September).
+- **Track B** has Red Kite's undercut in week 1. Its concert and fair come from their RouteNews rows.
+- **The fault's £800** comes from its EventOptions row, and the card gives only the cost for its day.
+- **New routes are planned on the middle of their range** and the plan says "about" (the Studio's flights, routes line and profit; the Changes sheet's column; the Ready page). The day flown uses the true demand.
+- **Long haul grows by how it is served** in chapter 2 too. Growth after year one waits for Bertie's "extend".
+
 ### D104: a richer first eight weeks (20 Oct 2026)
 *Fable's D104 from workbook v6.0, in year one only; chapters 3 and 4 are unchanged. The report, with the flags for Fable, is `docs/D104-Report.md`; screenshots at 1366 × 768 and 1920 × 1080 are in `docs/screenshots/d104/`. The code is `src/opening/parts/p5w_d104.js`.*
 - **Two autumns.** Track A is the standard autumn. Track B is a second autumn for pupils who have played before: the storm, the fault, crew sickness and the price war move; a Dublin concert and an Amsterdam fair replace the rugby and Milan's fair. The teacher panel's Autumn track switch sets it for the airline.
@@ -737,7 +745,7 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Tests** (Playwright, with the pre-installed Chromium; `NODE_PATH=/opt/node-tools/node_modules`):
   - `node src/opening/tests/week.test.js` plays chapter 1 a week at a time (v4.4) with the Balance Report's plans (`UPTO` day, `OUT` for screenshots): every year-one sum on the Sheet (the Launch Day sheet, the Changes tab, the event sums, the fuel order's small sheet and the Sunday review), the Fuel desk on Launch Day, the board, the Sunday reviews, Buy now or wait on day 8 (it waits for the Saab and signs off the time to afford), the Saab bought on day 15, Amsterdam, the ATR waited for on day 22 and bought on day 29 for Madrid; it checks the Calculate count for weeks 1–4, that the sweep's best plan beats the pupil's, Buy greyed in week 2 and the neglect lines from week 3.
   - The game is the revised Studio, so `week.test.js` also plays the launch flow on Choose where to fly, the opener, a news review, the route and flight editors and the drawer. Every test takes the game file from `GAME` (default `airline-opening-prototype.html`).
-  - D104: `week.test.js` plays the stars card on day 15 and the one-choice and two-card weeks; `TRACK=B` plays the second autumn. `node src/opening/tests/d104.test.js` (50 checks, from the Jump to… saves) covers both autumns' beats and news, every curveball's choices through the game's own `applyEventNow`, growth on made-up weeks, the stars' drivers, the demand ranges on the Network and the World report, the teacher's switch, and that nothing changes on day 365.
+  - D104: `week.test.js` plays the stars card on day 15 and the one-choice and two-card weeks; `TRACK=B` plays the second autumn. `node src/opening/tests/d104.test.js` (58 checks, from the Jump to… saves, with v6.1's) covers both autumns' beats and news, every curveball's choices through the game's own `applyEventNow`, growth on made-up weeks, the stars' drivers, the demand ranges on the Network and the World report, the teacher's switch, and that nothing changes on day 365.
   - `CODE=<day-8 save> node src/opening/tests/fleetshop.test.js` (36 checks; `fixtures/jumps/day-8.txt` will do) covers:
     - Not today on day 8, the shop in the Fleet panel, and Tuesday's board shop button;
     - Buy now or wait mid-week: the time to afford signed, its ÷ step through the bus-stop pad, with a Query for 4.02 days;

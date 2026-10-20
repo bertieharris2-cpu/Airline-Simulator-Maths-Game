@@ -10,6 +10,20 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zf. Workbook v6.1 (20 Oct 2026)
+
+Year one only, in `parts/p5w_d104.js`; from day 365 everything is as before. Report and flags: `docs/v6.1-Report.md`; screenshots: `docs/screenshots/v61/`.
+- **Data.** v6.1's changed rows are merged into the game's workbook. Our own sheets and rows stay: SheetSums, BriefingData and the handover settings. v6.1 as sent is in `data/incoming/`.
+- **Stars.** `d104TA()` reads Settings `starsTurnedAwayRule`, giving "1 in N" and "(day D)" (defaults 1 in 5 from day 15). `d104Drivers` counts a week from `weekNo(D)` when a third or more was turned away. `d104TAWords()` writes the card's, the review's and the news' words.
+- **Track B news.** `d104BNews()` builds the concert and the fair only when there are no track-B RouteNews rows for Dublin and Amsterdam (v6.1 has them).
+- **Fault.** The £800 comes from the EventOptions row (`d104Opt`). `d104Sub(s, day)` keeps the part of a "…: £X (before day N); Y after" sub-line that fits the event's day.
+- **Growth.** `d104Grows` takes long haul too (`growthPerWeek` > 0). `d104Arch` turns its 0.05 into the engine's 5.
+- **Middle of the range** (Settings `unflownProjection`).
+  - `paxWant` is wrapped: outside a real day (`D104_LIVE`), a route in `d104UnknownSet()` wants the middle of `d104Range(true)`.
+  - `D104_LIVE` is set by wrappers on runDayQuick, startFlight, applyResults, applyPeriodResults and simulateDays outside QUIET.
+  - `D104_MIDR` maps that middle back to its range for the range displays (`d104RangeOf(n, id)`, so `d104SetRange` and `d104RangeTxt` take the route id).
+  - `d104About(root)` runs after each render and on the MutationObserver. It adds "about" to the Studio's blocks, routes line and chips, the routes table's seat fill, the plan summary's profit, the Changes sheet's header (`.ash-ht`, for the plan with such a route, or for `S.rnd.planWas`), and the Ready page's profit row and `.cx` panel.
+
 ## 0ze. D104: a richer first eight weeks (workbook v6.0, 20 Oct 2026)
 
 Year one only (`yearOne()`, `body.yr1`); from day 365 everything is as before. Report and flags: `docs/D104-Report.md`; screenshots: `docs/screenshots/d104/`; tests: `tests/d104.test.js`, and `week.test.js` with `TRACK=B`.

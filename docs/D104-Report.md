@@ -2,6 +2,8 @@
 
 *Claude Code, 20 October 2026, for Bertie and Fable. The brief is Fable's D104 in workbook v6.0 (installed on 19 Oct, commit 5ca2944, "data now, D104 after"): growth that responds to how a route is served, stars from week 3, demand ranges for new routes, six curveball events with no best answer, and a second autumn (track B) for pupils who have played before.*
 
+> **Since then: workbook v6.1 (20 Oct).** Several flags below are answered in v6.1. The turned-away rule is now 1 in 3 from week 5, Red Kite's undercut plays on both tracks, track B's news come from their own rows, the fault's £800 comes from its row, new routes are planned on the middle of their range with "about", and long haul grows by service in chapter 2. See `docs/v6.1-Report.md`. Screenshot 17 is retaken: the first take showed the World report.
+
 Everything here is in year one only (Launch Day, day 1, to the year-1 accounts, day 364), gated as before: `yearOne()` for behaviour and `body.yr1` for CSS. From day 365 every rule and screen is as it was; the chapter 3 and 4 tests are unchanged (see Tests). The code is one new part, `src/opening/parts/p5w_d104.js`, which only reassigns, so `overrides.txt` stays at 120. Styles are in `p1_head_sheet.css`.
 
 ## 1. Two autumns: track A and track B

@@ -1,14 +1,14 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 19 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 20 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 25 to check, 8 notes.**
+**0 to fix, 26 to check, 8 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 210 | 210 live, 10 placeholder |
+| Settings | 212 | 212 live, 10 placeholder |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved to Routes |
@@ -30,12 +30,13 @@
 | Upgrades | 5 | 5 live, 1 note row |
 | Briefings | 13 | 13 live, 1 note row |
 | Roadmap | 13 | 13 live, 1 note row |
-| RouteNews | 99 | 99 live, 2 note row |
+| RouteNews | 101 | 101 live, 2 note row |
 | Livery | 35 | 35 live, 1 note row |
 | Hunts | 5 | 5 live, 1 note row, 2 placeholder |
 
 ## To check
 
+- **EventOptions:** "fault" option 1 has a cash price £800 on day 53, but costs are a share of a day's profit from day 29.
 - **EventOptions:** "sponsor_club" option 1 has a cash price £500 on day 30, but costs are a share of a day's profit from day 29.
 - **EventOptions:** "tanker_offer" option 1 has a cash price £12000 on day 43, but costs are a share of a day's profit from day 29.
 - **EventOptions:** "fault_b" option 1 has a costShare on day 18, before day 29.

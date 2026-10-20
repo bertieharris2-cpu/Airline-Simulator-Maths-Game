@@ -27,11 +27,11 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   const newsA = await J(`WORLD.routeNews.filter(n => n.start < '2030-12-01').map(n => n.id)`);
   await E(`(S.track = 'B', d104Ensure(), 1)`);
   const B = await beats(), newsB = await J(`WORLD.routeNews.filter(n => n.start < '2030-12-01').map(n => n.id)`);
-  ok('track B: no undercut, Dublin strike, sponsorship or slot squeeze; the fault moves to day 18 and the storm to day 24', !at(B, 4).length && !B.some(x => x.ev.some(e => /^(undercut_dub|dub_strike|sponsor_club|slot_squeeze)/.test(e))) && at(B, 18)[0] === 'fault_b:3' && at(B, 24)[0] === 'storm_b:3', B);
+  ok('track B: Red Kite\'s undercut on day 4 as on track A (v6.1); no Dublin strike, sponsorship or slot squeeze; the fault moves to day 18 and the storm to day 24', at(B, 4)[0] === 'undercut_dub:3' && !B.some(x => x.ev.some(e => /^(dub_strike|sponsor_club|slot_squeeze)/.test(e))) && at(B, 18)[0] === 'fault_b:3' && at(B, 24)[0] === 'storm_b:3', B);
   ok('track B: the curveballs on both tracks stay (school trip 9, snack supplier 23, tanker 43); crew sickness joins the tanker; the price war is week 8 (day 50)', at(B, 9)[0] === 'school_trip:2' && at(B, 23)[0] === 'snack_supplier:2' && at(B, 43).includes('tanker_offer:2') && at(B, 43).includes('crew_b:3') && at(B, 50).includes('price_war_b:3'), B.filter(x => x.day >= 43));
-  ok('track B news: the Dublin concert and the Amsterdam fair replace the rugby and Milan\'s fair', newsB.includes('dub_concert') && newsB.includes('ams_fair') && !newsB.includes('dub_rugby') && !newsB.includes('mxp_trade_fair') && newsA.includes('dub_rugby') && newsA.includes('mxp_trade_fair') && !newsA.includes('dub_concert'), { A:newsA, B:newsB });
-  const conc = await J(`WORLD.routeNews.find(n => n.id === 'dub_concert')`);
-  ok('the concert: Dublin ×1.8 on Saturday 5 October, announced on 23 September', conc && conc.mult === 1.8 && conc.start === '2030-10-05' && conc.announce === '2030-09-23' && conc.routes[0] === 'dub', conc);
+  ok('track B news: the Dublin concert and the Amsterdam fair (their RouteNews rows, v6.1) replace the rugby and Milan\'s fair', newsB.includes('dub_concert_b') && newsB.includes('ams_fair_b') && !newsB.includes('dub_concert') && !newsB.includes('dub_rugby') && !newsB.includes('mxp_trade_fair') && newsA.includes('dub_rugby') && newsA.includes('mxp_trade_fair') && !newsA.includes('dub_concert_b'), { A:newsA, B:newsB });
+  const conc = await J(`WORLD.routeNews.find(n => n.id === 'dub_concert_b')`);
+  ok('the concert: Dublin ×1.8 on Saturday 5 October, announced on 23 September, in the row\'s words', conc && conc.mult === 1.8 && conc.start === '2030-10-05' && conc.announce === '2030-09-23' && conc.routes[0] === 'dub' && /stadium concert/.test(conc.headline), conc);
   // the week with two cards (track B, week 7): the crew card follows the tanker's, both before the plan
   const st43 = await J(`stepsFor(WORLD.rounds.findIndex(w => w.day === 43)).map(x => x.t)`);
   ok('track B week 7: the cards come before the plan', st43.indexOf('event') >= 0 && st43.indexOf('event') < st43.indexOf('plan'), st43);
@@ -106,6 +106,11 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   k = await choose('fault_b', 1, 18);
   const g19 = await flights(19), uid = k.d.ground && k.d.ground.uid;
   ok('fault (track B, a board day), Wait a day: that aircraft\'s flights the next day are grounded', k.d.ground && k.d.ground.day === 19 && g19.filter(f => f.uid === uid).length > 0 && g19.filter(f => f.uid === uid).every(f => f.cancelled && /Grounded/.test(f.why)), { ground:k.d.ground, g19:g19.map(f => [f.uid, f.cancelled]) });
+  await load(15, 'B'); await E('(S.day = 18, 1)');
+  k = await choose('fault_b', 0, 18);
+  ok('fault (track B, day 18), Fix it today: £800, from its EventOptions row (v6.1), before day 29', k.cost === 800, k.cost);
+  const subs = await J(`[d104Event('fault_b').options[0].sub, d104Event('fault').options[0].sub]`);
+  ok('the fault\'s card says the cost for its day: £800 on day 18 (track B), half a day\'s profit on day 53 (track A)', subs[0] === 'Engineers in overnight: £800' && subs[1] === 'Engineers in overnight: half a day\'s profit', subs);
   // the price war: hold (the switching rule), match (a fifth off, back after the week), advertise (half as many switch)
   await load(57, 'A');
   const pw0 = await J('Object.assign({}, S.prices)'), own = await J('d104Owned()');
@@ -135,6 +140,10 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   ok('growth: week 2 full and turning people away at a middle fare: Paris +1% +2% (×1.03); Dublin at its top fare: no growth; Amsterdam half full: +1% only', G.w2.par === 1.03 && !G.w2.dub && G.w2.ams === 1.01, G.w2);
   ok('growth: week 3 not flown: Paris falls back 3% (never below its opening demand); Dublin second from the top: half the drag (+1.5%)', G.w3.par === 1 && G.w3.dub === 1.015 && G.w3.ams === 1, G.w3);
   ok('growth: each step counts from the next week (days 15 and 22)', JSON.stringify(G.snaps) === '[15,22]', G.snaps);
+  const LH = await J(`(() => { const r = WORLD.routes.find(x => x.archId === 'long_haul'); if(!r) return null; const G = d104NewG(); G.m = {};
+    G.acc = { [r.id]:{ pax:300, seats:300, want:300, trips:7, fare:r.basePrice } }; G.days = 7; d104Week(G, 20, 140, true); const a = G.m[r.id];
+    G.acc = {}; d104Week(G, 21, 147, true); return { id:r.id, grows:d104Grows(r), flown:a, notFlown:G.m[r.id] }; })()`);
+  ok('growth: long haul grows by how it is served in year one too (v6.1): a week flown +5% (its 0.05 a week); a week not flown keeps it (no decay given)', LH && LH.grows && LH.flown === 1.05 && LH.notFlown === 1.05, LH);
   const gr = await J(`(() => { const keep = S.g104; S.g104 = { snaps:[{ from:22, m:{ par:1.2 } }] }; const r = routeById('par'), a = withDay(21, () => growthOf(r)), b = withDay(22, () => growthOf(r)), c = withDay(400, () => growthOf(r)); S.g104 = keep; return [a, b, c]; })()`);
   ok('growth: a day takes the last step that counted by then; after year one the old rule', gr[0] === 1 && gr[1] === 1.2 && gr[2] !== 1.2, gr);
 
@@ -143,16 +152,21 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   const ST = await J(`(() => { S.repRevealed = true; const G = d104NewG(), n0 = (S.repLog || []).length, D = d104D(); delete D.taHit; delete D.freeHit;
     const wk = (k, acc, free) => { G.acc = acc; G.free = !!free; G.days = 7; d104Drivers(G, k, false); };
     const ta = { par:{ pax:133, seats:133, want:200, trips:7, fare:90 } };
+    const ta2 = { par:ta.par, ams:{ pax:150, seats:150, want:200, trips:7, fare:120 } };   // Paris 1 in 3 turned away, Amsterdam 1 in 4
     wk(2, ta, true); const a = (S.repLog || []).length - n0;
     wk(3, ta, true); const b = (S.repLog || []).length - n0;
     wk(4, ta, true); const c = (S.repLog || []).slice(n0).map(x => [x.day, x.n, x.what]);
-    wk(5, {}, false); const d = (S.repLog || []).slice(n0).map(x => [x.day, x.n, x.what]);
-    return { a, b, c, d }; })()`);
+    wk(5, ta2, false); const d = (S.repLog || []).slice(n0).map(x => [x.day, x.n, x.what]);
+    wk(6, ta2, false); const e = (S.repLog || []).slice(n0).map(x => [x.day, x.n, x.what]);
+    return { a, b, c, d, e }; })()`);
   ok('stars: nothing is judged in weeks 1 and 2 (one small plane turns people away whatever the pupil does)', ST.a === 0, ST);
-  ok('stars: week 4 after a week 3 turning away more than 1 in 5 on Paris: −½, once; free snacks two weeks running: +½, once', ST.c.length === 2 && ST.c.some(x => x[1] === -0.5 && /Paris turned away/.test(x[2])) && ST.c.some(x => x[1] === 0.5 && /Free snacks/.test(x[2])), ST.c);
-  ok('stars: the week that holds the turn of the month (ends Sun 6 Oct) is September\'s review: +½ for an on-time week', ST.d.length === 3 && ST.d[2][1] === 0.5 && /September's review/.test(ST.d[2][2]) && ST.d[2][0] === 35, ST.d);
+  ok('stars: turning people away in weeks 3 and 4 costs nothing (v6.1: counted from week 5); free snacks two weeks running: +½, once', ST.c.length === 1 && ST.c[0][1] === 0.5 && /Free snacks/.test(ST.c[0][2]), ST.c);
+  ok('stars: the week that holds the turn of the month (ends Sun 6 Oct) is September\'s review: +½ for an on-time week', ST.d.length === 2 && ST.d[1][1] === 0.5 && /September's review/.test(ST.d[1][2]) && ST.d[1][0] === 35, ST.d);
+  ok('stars: weeks 5 and 6 turning away 1 in 3 on Paris: −½ on day 42, once, in the rule\'s words; Amsterdam turning away 1 in 4: nothing', ST.e.length === 3 && ST.e[2][0] === 42 && ST.e[2][1] === -0.5 && /^Paris turned away 1 in 3 or more of the people who wanted to fly, two weeks running$/.test(ST.e[2][2]) && !ST.e.some(x => /Amsterdam/.test(x[2])), ST.e);
   const snk = await J(`(() => { const G = d104NewG(), D = d104D(), n0 = (S.repLog || []).length; D.snack = { from:23, cost:0.5, sold:true }; G.acc = {}; G.days = 7; d104Drivers(G, 9, false); d104Drivers(G, 13, false); return (S.repLog || []).slice(n0).filter(x => /plainer snacks/.test(x.what)).map(x => [x.day, x.n]); })()`);
   ok('stars: the plainer snacks were sold: −½ at the next month\'s review (October\'s, 3 November), once', snk.length === 1 && snk[0][0] === 63 && snk[0][1] === -0.5, snk);
+  const drv = await J(`(() => { const d = S.day; S.day = 15; try{ return d104StarsCardHtml().replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' '); } finally { S.day = d; } })()`);
+  ok('the stars card on day 15: a route that turns away 1 in 3 or more, two weeks running, counted from Mon 30 Sep', /turns away 1 in 3 or more of the people who want to fly, two weeks running \(counted from Mon 30 Sep\)/.test(drv), (drv.match(/[^.]*turns away[^)]*\)?/) || [''])[0]);
   const off = await J(`(() => { const D = d104D(); D.off = { storm:5 }; return [d104OffWeek(1), d104OffWeek(6)]; })()`);
   ok('stars: a week with a choice that stopped or delayed flights is not on time', off[0] === true && off[1] === false, off);
   await load(8, 'A');
@@ -175,13 +189,26 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   ok('ranges: the World report\'s demand bars for Amsterdam are ranges, with the reason', wr.length > 2 && wr.every(t => /^\d+–\d+$/.test(t)) && /a range until you have flown it for a week/.test(await p.$eval('.wr-dem', e => e.textContent)), wr);
   await E(`(UI.view = null, render(), 1)`);
 
+  // ---------- 5b · v6.1: a plan with a route not yet flown a week works with the middle of its range, and says "about" ----------
+  await load(29, 'A');
+  const MP = await J(`(() => { const r = routeById('fra'), A = routeById('ams'), F = r.fares || [r.basePrice], real = (x, f) => { D104_LIVE++; try{ return paxWant(x, f); } finally { D104_LIVE--; } };
+    return { rows:F.map(f => { const n = real(r, f), [a, b] = d104Range(n); return { f, n, mid:Math.round((a + b) / 2), plan:paxWant(r, f) }; }), ams:[paxWant(A, 90), real(A, 90)] }; })()`);
+  ok('v6.1: Frankfurt (not flown) is planned on the middle of its range at every fare; the day flown uses the true demand; Amsterdam (flown a week) is planned on its true demand', MP.rows.every(x => x.plan === x.mid) && MP.ams[0] === MP.ams[1], MP);
+  await E(`(() => { UI.view = null; S.si = S.steps.findIndex(x => x.t === 'plan'); UI.s2 = UI.s2 || {}; render(); UI.s2.mode = 'plan'; const pl = JSON.parse(JSON.stringify(currentPlan())), j = pl.fleet.findIndex(f => f.sched.includes('ams')); pl.fleet[j].sched = pl.fleet[j].sched.map((x, k) => k === pl.fleet[j].sched.length - 1 ? 'fra' : x); setPlan(0, pl); render(); return 1; })()`); await p.waitForTimeout(150);
+  const AB = await p.evaluate(() => { const s = document.getElementById('screen'), t = sel => [...s.querySelectorAll(sel)].map(e => e.textContent.replace(/\s+/g, ' ').trim());
+    return { blocks:[...s.querySelectorAll('.s2-blk')].map(b => [b.getAttribute('aria-label').split(' ')[0], b.querySelector('.st-bs').textContent]), line:t('.s3-line b')[0], profit:(s.querySelector('.s2-sum b[data-nov="sum:Projected profit"]') || {}).previousElementSibling ? s.querySelector('.s2-sum b[data-nov="sum:Projected profit"]').previousElementSibling.textContent : null }; });
+  ok('v6.1: the Studio says "about" on the Frankfurt flight, the routes line and the projected profit, and not on Paris or Amsterdam', AB.blocks.some(x => x[0] === 'Frankfurt' && /^about \d+\/\d+$/.test(x[1])) && AB.blocks.filter(x => x[0] !== 'Frankfurt').every(x => /^\d+\/\d+$/.test(x[1])) && /about \d+% filled/.test(AB.line) && AB.profit === 'about', AB);
+  await E(`(S.si = S.steps.findIndex(x => x.t === 'workings'), render(), 1)`); await p.waitForTimeout(150);
+  const HT = await p.$$eval('#screen .ash-ht', e => e.map(x => x.textContent.trim()));
+  ok('v6.1: the Changes sheet marks the plan with Frankfurt "about"; the figures in its cells stay whole numbers for the sum', HT.includes('With your change · about') && HT.includes('Now'), HT);
+
   // ---------- 6 · the teacher's switch ----------
   await load(8, 'A');
   await E('teacherOpen()'); await p.waitForTimeout(150);
   ok('the teacher panel has the Autumn track switch for this airline', !!(await p.$('#tTrackSel')) && (await p.$eval('#tTrackSel', e => e.value)) === 'A');
   await p.selectOption('#tTrackSel', 'B'); await p.waitForTimeout(150);
   const sw = await J(`({ track:S.track, setting:settings.autumnTrack, d4:(WORLD.rounds.find(w => w.day === 4) || {}).eventId || null, d18:((WORLD.rounds.find(w => w.day === 18) || {}).event || {}).id || null })`);
-  ok('switching to track B: the airline\'s autumn and the teacher\'s default are B, and the beats follow', sw.track === 'B' && sw.setting === 'B' && !sw.d4 && sw.d18 === 'fault_b', sw);
+  ok('switching to track B: the airline\'s autumn and the teacher\'s default are B, and the beats follow', sw.track === 'B' && sw.setting === 'B' && sw.d4 === 'undercut_dub' && sw.d18 === 'fault_b', sw);
   await p.selectOption('#tTrackSel', 'A'); await p.waitForTimeout(100); await E('teacherClose()');
 
   // ---------- 7 · after year one: nothing changes ----------

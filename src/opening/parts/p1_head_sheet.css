@@ -215,6 +215,8 @@ body.yr1 .d104-rv-drv li{display:grid;grid-template-columns:34px 1fr;gap:8px;fon
 body.yr1 .d104-rv-drv li b{font-size:16px;font-variant-numeric:tabular-nums lining-nums}
 /* D104: a new route's demand as a range until flown for a week */
 body.yr1 .d104-rng{white-space:nowrap}
+body.yr1 .d104-ab, body.yr1 .cx dd small.d104-ab{display:inline;font-family:var(--font-sans,inherit);font-size:.72em;font-weight:500;color:var(--text-muted,#8aa0bd);margin-right:.35em;letter-spacing:0;text-transform:none}
+body.yr1 .ash-ht .d104-ab{font-size:inherit;margin:0}
 body.yr1 .d104-unc{margin:4px 0 0;font-size:13px;line-height:18px;color:var(--text-soft)}
 body.yr1 .d104-st .up{color:var(--green)}
 body.yr1 .d104-st .down{color:var(--amber)}

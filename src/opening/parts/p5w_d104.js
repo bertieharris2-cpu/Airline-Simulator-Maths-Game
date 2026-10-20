@@ -44,22 +44,23 @@ const D104_WHY = {
   'crew:1':'An agency pilot flew the day.', 'crew:2':'The plane stayed on the ground. Passengers were refunded and annoyed.', 'crew:3':'The co-pilot flew it. That is against the rules, and there is an incident report.' };
 const d104Key = o => String(o.label || '').toLowerCase().split(/\s+/)[0].replace(/[^a-z-]/g, '') || 'opt' + o.n;
 function d104Opts(id){ const O = (WB && WB.eventOptions) || {}; return (O[id] && O[id].length ? O[id] : O[D104_TWIN[id]]) || []; }
-function d104Opt(id, o){
+/* v6.1's fault row says both costs ("…: £800 (before day 29); half a day's profit after"): the card says the one for its day */
+function d104Sub(s, day){ const m = /^(.*?): £([\d,]+) \(before day (\d+)\); (.+?) after$/.exec(s || ''); return !m || !day ? (s || '') : day < +m[3] ? `${m[1]}: £${m[2]}` : `${m[1]}: ${m[4]}`; }
+function d104Opt(id, o, day){
   const base = D104_TWIN[id] || id, k = `${base}:${o.n}`, e = {}, txt = `${o.other || ''} ${o.sub || ''}`;
   if(+o.cash > 0) e.cash = -(+o.cash);
-  if(base === 'fault' && o.n === 1 && !e.cash) e.cash = -800;   // the fault's Events row: "fix £800" (the cost before day 29; from then half a day's profit)
   if(o.stars) e.rep = +o.stars;
   if(/grounded tomorrow/i.test(txt)) e.groundNext = true; else if(/plane's day lost/i.test(txt)) e.status = 'CANCELLED';
   if(D104_TAG[k]) e.d104 = D104_TAG[k];
   if(e.d104 === 'tanker'){ e.d104Cost = -(e.cash || 0); delete e.cash; }   // the fuel is bought (and paid) through buyFuel, not as the event's cost
-  return { key:d104Key(o), label:o.label, sub:o.sub || '', why:D104_WHY[k] || '', effects:e };
+  return { key:d104Key(o), label:o.label, sub:d104Sub(o.sub, day), why:D104_WHY[k] || '', effects:e };
 }
 function d104Event(id){
   const base = eventById(id); if(!base) return null; const tw = D104_TWIN[id], twin = tw ? eventById(tw) : null;
   let ge = gameEvent(id) || (tw === 'storm' ? gameEvent(tw) : null);   // the storm keeps its Events-row choices on track B (the board's afternoon); the others take their own EventOptions rows
   if(!ge){ const eo = d104Opts(id); if(!eo.length) return null;
     const share = eo.filter(o => +o.costShare > 0).map(o => `${d104Key(o)} ${o.costShare}`).join(' / ');
-    ge = { costShare:share || undefined, options:eo.map(o => d104Opt(id, o)) }; }
+    ge = { costShare:share || undefined, options:eo.map(o => d104Opt(id, o, dayOfDate(base.date))) }; }
   const src = twin || base;
   return Object.assign({}, ge, { id, date:base.date, day:dayOfDate(base.date), title:base.title, text:base.text || (twin && twin.text) || ge.text || '', d104:true,
     rivalFare:src.rivalFare, rivalFareCut:src.rivalFareCut, durationDays:src.durationDays, advertiseCost:src.advertiseCost,
@@ -95,10 +96,10 @@ if(typeof enterRunDay === 'function'){ const d104ERD0 = enterRunDay; enterRunDay
 /* ---------- route news on the track: track B's concert and Amsterdam fair in place of the rugby and Milan's fair ---------- */
 const D104_NEWS_RAW = (WORLD.routeNews || []).slice();
 function d104BNews(){
-  const c = eventById('dub_concert'), a = eventById('ams_fair'), out = [];
-  if(c) out.push({ id:'dub_concert', announce:'2030-09-23', start:c.date, end:c.date, kind:'music', routes:['dub'], mult:1.8, segment:'all', announced:true, status:'live', track:'B',
+  const c = eventById('dub_concert'), a = eventById('ams_fair'), out = [], has = id => D104_NEWS_RAW.some(n => n.track === 'B' && (n.routes || []).includes(id));   // v6.1 has RouteNews rows for both
+  if(c && !has('dub')) out.push({ id:'dub_concert', announce:'2030-09-23', start:c.date, end:c.date, kind:'music', routes:['dub'], mult:1.8, segment:'all', announced:true, status:'live', track:'B',
     headline:c.text, goodResponse:'Raise the Dublin fare for Saturday, and put the bigger plane on Dublin.' });
-  if(a) out.push({ id:'ams_fair', announce:a.date, start:'2030-10-14', end:'2030-10-20', kind:'economic', routes:['ams'], mult:1.4, segment:'business', announced:true, status:'live', track:'B',
+  if(a && !has('ams')) out.push({ id:'ams_fair', announce:a.date, start:'2030-10-14', end:'2030-10-20', kind:'economic', routes:['ams'], mult:1.4, segment:'business', announced:true, status:'live', track:'B',
     headline:a.text, goodResponse:'Add an Amsterdam service for the week, or raise the fare a step.' });
   return out; }
 let D104_NEWS = {};
@@ -242,7 +243,7 @@ function d104TeacherRender(){
   if(!el){ const sec = so.closest('.tsec'); if(!sec) return; sec.insertAdjacentHTML('afterend', `<div class="tsec" style="grid-column:1/-1"><h3>Autumn track (D104)</h3><div id="tTrack"></div></div>`); el = $('tTrack'); }
   const t = d104Track(), started = (S.day || 1) > 1;
   el.innerHTML = `<div class="row"><span>This airline's autumn</span><select id="tTrackSel"><option value="A" ${t === 'A' ? 'selected' : ''}>Track A: the standard autumn</option><option value="B" ${t === 'B' ? 'selected' : ''}>Track B: a second autumn (played before)</option></select></div>
-    <p class="small muted">Track B moves the storm (week 4), the fault (week 3), crew sickness (week 7) and the price war (week 8); a Dublin concert replaces the rugby, an Amsterdam fair replaces Milan's; no Red Kite undercut, Dublin strike, sponsorship or slot squeeze. The school trip, the snack supplier and the tanker play on both.${started ? ' A change takes effect from the next day or week not yet started.' : ''}</p>`;
+    <p class="small muted">Track B moves the storm (week 4), the fault (week 3), crew sickness (week 7) and the price war (week 8); a Dublin concert replaces the rugby, an Amsterdam fair replaces Milan's; no Dublin strike, sponsorship or slot squeeze. Red Kite's undercut in week 1, the school trip, the snack supplier and the tanker play on both.${started ? ' A change takes effect from the next day or week not yet started.' : ''}</p>`;
   const sel = $('tTrackSel'); if(sel) sel.onchange = () => { S.track = sel.value === 'B' ? 'B' : 'A'; try{ settings.autumnTrack = S.track; saveSettings(); }catch(e){} d104Ensure(); save(); d104TeacherRender(); };
 }
 const d104SoT0 = soTeacherRender;
@@ -254,10 +255,14 @@ soTeacherRender = function(){ d104SoT0.apply(this, arguments); try{ d104TeacherR
    nothing (weeks 1 and 2 stay flat, as before); from week 2 on, how a week served a route sets the next week's demand.
    A row that spans several weeks (a month) gives each of them its average; a week with no rows (the holiday) is skipped.
    A step counts from the day after the row that completed it, so a week or a month keeps the demand it started with
-   and its projection holds. Year one only (afterwards the old rule, growthPerWeek from week 3); long haul keeps its own.
+   and its projection holds. Year one only (afterwards the old rule, growthPerWeek from week 3). v6.1 withdraws the old rule
+   everywhere, so long haul grows this way too in year one, with its own columns (growthPerWeek 0.05 is a fraction: 5%;
+   no fill bonus or decay given). Past year one waits for Bertie's "extend" (CLAUDE.md).
    ===================================================================== */
 const d104GrowthOn = () => { const v = D104S().growthResponds; return v === true || /^(true|yes|1)$/i.test(String(v === undefined || v === null ? '' : v)); };
-const d104Grows = r => !!(r && r.arch && r.archId !== 'long_haul' && r.arch.growthFillBonus !== undefined && r.arch.growthFillBonus !== null);
+const d104Grows = r => !!(r && r.arch && (r.archId === 'long_haul' ? +r.arch.growthPerWeek > 0 : r.arch.growthFillBonus !== undefined && r.arch.growthFillBonus !== null));
+/* the archetype in the engine's units (per cent a week): long haul's growthPerWeek is written as a fraction (p4zh) */
+const d104Arch = r => { const a = r.arch, g = +a.growthPerWeek; return g > 0 && g < 1 ? Object.assign({}, a, { growthPerWeek:g * 100 }) : a; };
 /* 0 = the top fare of the route's table, 1 = second from top (the airline type's extra fares count as the top) */
 function d104FareRank(r, fare){ const F = (r._fares0 && r._fares0.length ? r._fares0 : r.fares) || []; return F.filter(f => f > fare + 1e-9).length; }
 const d104NewG = () => ({ v:1, upTo:0, wk:0, done:0, acc:{}, days:0, free:true, m:{}, snaps:[], ta:{}, freeLast:0, since:[], first:{} });
@@ -290,7 +295,7 @@ function d104Week(G, k, z, quiet){
     WORLD.routes.forEach(r => {
       if(!d104Grows(r)) return; const x = G.acc[r.id], m = G.m[r.id] || 1; if(!(x && x.trips > 0) && m <= 1) return;
       const w = x && x.trips > 0 ? { flown:true, fill:x.seats > 0 ? x.pax / x.seats : 0, turnedAway:Math.max(0, Math.round(x.want - x.pax)), fareRank:d104FareRank(r, x.fare) } : { flown:false };
-      const m2 = Math.round(WE.growthStep(r.arch, m, w) * 1e4) / 1e4; if(m2 !== m){ G.m[r.id] = m2; moved = true; }
+      const m2 = Math.round(WE.growthStep(d104Arch(r), m, w) * 1e4) / 1e4; if(m2 !== m){ G.m[r.id] = m2; moved = true; }
     });
     if(moved) G.snaps.push({ from:Math.max(end, z) + 1, wk:k, m:Object.assign({}, G.m) });
   }
@@ -317,7 +322,8 @@ applyPeriodResults = function(){ const r = d104APR0.apply(this, arguments); try{
    4. Stars from week 3 (Settings reputationFromDay). The rating goes public on day 15 with its card (an older save past
    day 15: at the start of its next day or week), not on 6 January; from then, chapter 1's four drivers move it (judged
    from week 3: in weeks 1 and 2 one small plane turns people away on every route, whatever the pupil does):
-   - a route turning away 1 in 5 of the people who want to fly, two weeks running: −½, once a route;
+   - a route turning away 1 in 3 of the people who want to fly, two weeks running, counted from week 5 (v6.1, Settings
+     starsTurnedAwayRule; v6.0 had 1 in 5 from week 3): −½, once a route;
    - a plane grounded with no fuel (D103): −½ for the day;
    - free snacks two weeks running: +½, once;
    - each month's review (the week that holds the turn of the month): +½ if a week since the last review ran on time
@@ -325,6 +331,10 @@ applyPeriodResults = function(){ const r = d104APR0.apply(this, arguments); try{
    Event choices keep their own stars. Before day 15 everything is banked and shown on the card.
    ===================================================================== */
 const d104RepDay = () => { const d = +D104S().reputationFromDay; return d > 0 ? d : null; };
+/* the turned-away rule from its Settings words: "1 in 3" and "(day 29)" (v6.1); 1 in 5 from day 15 without them */
+function d104TA(){ const s = String(D104S().starsTurnedAwayRule || ''), n = /1 in (\d+)/.exec(s), d = /day (\d+)/.exec(s);
+  return { n:n ? +n[1] : 5, from:d ? +d[1] : (d104RepDay() || 15) }; }
+const d104TAWords = () => `1 in ${d104TA().n} or more of the people who wanted to fly`;
 const d104StarsOn = () => d104RepDay() !== null;
 const d104RFD0 = repFromDay;
 repFromDay = function(){ const d = d104RepDay(); return d !== null ? d : d104RFD0.apply(this, arguments); };
@@ -347,8 +357,8 @@ function d104Drivers(G, k, quiet){
   if(!d104StarsOn() || k < weekNo(d104RepDay()) || 7 * k - 6 > d104Ch1End()) return;   // chapter 1's weeks from week 3, when the card has explained them
   G.since.push({ k, on:!d104OffWeek(k) });
   Object.keys(A).forEach(id => { const x = A[id], share = x.want > 0 ? Math.max(0, x.want - x.pax) / x.want : 0, r = routeById(id);
-    if(share < 0.2 - 1e-9) return;
-    if(G.ta[id] === k - 1 && !(D.taHit && D.taHit[id])){ (D.taHit || (D.taHit = {}))[id] = k; star(-0.5, `${r ? r.city : id} turned away more than 1 in 5 of the people who wanted to fly, two weeks running`); }
+    if(k < weekNo(d104TA().from) || share < 1 / d104TA().n - 1e-9) return;
+    if(G.ta[id] === k - 1 && !(D.taHit && D.taHit[id])){ (D.taHit || (D.taHit = {}))[id] = k; star(-0.5, `${r ? r.city : id} turned away ${d104TAWords()}, two weeks running`); }
     G.ta[id] = k; });
   if(G.free && G.days >= 7){ if(G.freeLast === k - 1 && !D.freeHit){ D.freeHit = k; star(0.5, 'Free snacks two weeks running'); } G.freeLast = k; }
   if(calDate(end).getUTCDate() <= 7){   // the month's review
@@ -417,7 +427,7 @@ function d104StarsCardHtml(){
   if(r){ const fare = S.prices[r.id] || r.basePrice, keep = S.rep; let base; try{ S.rep = 3; base = paxWant(r, fare); } finally { S.rep = keep; } const now = paxWant(r, fare);
     eg = h ? `<p class="d104-rv-l">${esc(r.city)} at ${money(fare)}: ${num(base)} want to fly a day at 3 stars; ${num(now)} at ${esc(ratingText(S.rep))}.</p>` : `<p class="d104-rv-l">${esc(r.city)} at ${money(fare)}: ${num(now)} want to fly a day. Half a star more would make it ${num(Math.round(base * (1 + T2().per)))}.</p>`; }
   const drivers = [['up', '+½', 'at each month\'s review, if a week ran on time with no choice that cost stars'], ['up', '+½', 'once, for free snacks two weeks running'],
-    ['down', '−½', 'once for a route that turns away more than 1 in 5 of the people who want to fly, two weeks running'], ['down', '−½', 'for each day a plane is grounded with no fuel']];
+    ['down', '−½', `once for a route that turns away ${d104TAWords().replace('wanted', 'want')}, two weeks running${d104TA().from > (S.day || 1) ? ` (counted from ${dateShort(d104TA().from)})` : ''}`], ['down', '−½', 'for each day a plane is grounded with no fuel']];
   return `<div class="d104-rvg">
     <section class="bv-panel active d104-rv-score"><span class="bv-eyebrow d104-eb">Result</span><h2>Your star rating</h2><div class="rv-big"><span class="stars">${deskStars(S.rep)}</span><b>${esc(ratingText(S.rep))}</b><p>Passengers can see it now, and it changes how many want to fly with you.</p></div></section>
     <section class="bv-panel support d104-rv-moves"><h2>What moved it ${first ? 'in your first two weeks' : 'so far'}</h2>${moves}</section>
@@ -456,7 +466,9 @@ function d104First(){
   return F;
 }
 function d104Range(n){ const u = d104Unc(), k = n >= 20 ? 5 : 1; return [Math.max(0, Math.floor(n * (1 - u) / k) * k), Math.max(1, Math.ceil(n * (1 + u) / k) * k)]; }   // to the nearest 5 outside (whole numbers under 20)
-const d104RangeTxt = (n, prose) => { const [a, b] = d104Range(n); return `${prose ? 'about ' : ''}${num(a)}–${num(b)}`; };
+/* v6.1: a plan works with the middle of the range, so a figure on screen may be that middle: it shows the range it came from */
+const D104_MIDR = new Map(), d104RangeOf = (n, id) => (id && D104_MIDR.get(id + '|' + n)) || d104Range(n);
+const d104RangeTxt = (n, prose, id) => { const [a, b] = d104RangeOf(n, id); return `${prose ? 'about ' : ''}${num(a)}–${num(b)}`; };
 let D104_UNK = { key:null, set:null };
 function d104UnknownSet(){
   if(!S || !d104Unc() || !yearOne()) return null;
@@ -465,36 +477,73 @@ function d104UnknownSet(){
 }
 const d104Num = el => { const m = /(\d[\d,]*)/.exec(el ? el.textContent : ''); return m ? +m[1].replace(/,/g, '') : null; };
 const D104_TIP = 'A new route: a range until you have flown it for a week';
-function d104SetRange(el, prose){ if(!el || el.dataset.d104r) return; const n = d104Num(el); if(n === null) return; el.dataset.d104r = String(n); el.textContent = el.textContent.replace(/\d[\d,]*/, d104RangeTxt(n, prose)); el.title = `${D104_TIP}. Your sums use the true figure.`; el.classList.add('d104-rng'); }
+function d104SetRange(el, prose, id){ if(!el || el.dataset.d104r) return; const n = d104Num(el); if(n === null) return; el.dataset.d104r = String(n); el.textContent = el.textContent.replace(/\d[\d,]*/, d104RangeTxt(n, prose, id)); el.title = d104MidOn() ? `${D104_TIP}. Your plan works with the middle of it.` : `${D104_TIP}. Your sums use the true figure.`; el.classList.add('d104-rng'); }
 const d104CityId = txt => { const t = String(txt || '').replace(/\s+/g, ' ').trim(); const r = WORLD.routes.find(x => t === x.city || t.indexOf(x.city + ' ') === 0); return r ? r.id : null; };
 function d104Ranges(root){
   const U = d104UnknownSet(); if(!U || !root) return; const unk = id => !!id && U.has(id), q = (sel, el) => Array.from((el || root).querySelectorAll(sel));
-  q('[data-s2r]').forEach(row => { if(unk(row.dataset.s2r)) d104SetRange(row.querySelector('.s2-n')); });   // the Studio's active routes
+  q('[data-s2r]').forEach(row => { if(unk(row.dataset.s2r)) d104SetRange(row.querySelector('.s2-n'), false, row.dataset.s2r); });   // the Studio's active routes
   const ed = root.querySelector('.s2-ed'), eid = UI.s2 && UI.s2.route;   // the route editor: every fare
-  if(ed && unk(eid) && !ed.dataset.d104r){ ed.dataset.d104r = '1'; q('.s2-ft tbody td.num', ed).forEach(td => d104SetRange(td)); d104SetRange(ed.querySelector('.s2-cmp span:first-child b'));
+  if(ed && unk(eid) && !ed.dataset.d104r){ ed.dataset.d104r = '1'; q('.s2-ft tbody td.num', ed).forEach(td => d104SetRange(td, false, eid)); d104SetRange(ed.querySelector('.s2-cmp span:first-child b'), false, eid);
     const p = ed.querySelector('.s2-cmp p'); if(p) p.textContent = 'You will know the demand after a week of flying. Until then, plan for the range.';
     const n = ed.querySelector('.s2-ed-n'); if(n) n.insertAdjacentHTML('afterend', `<p class="d104-unc">${D104_TIP}.</p>`); }
   q('select[data-s2fr]').forEach(sel => { if(!unk(sel.dataset.s2fr) || sel.dataset.d104r) return; sel.dataset.d104r = '1';
-    Array.from(sel.options).forEach(o => { o.textContent = o.textContent.replace(/· (\d[\d,]*) want/, (m0, n) => `· ${d104RangeTxt(+n.replace(/,/g, ''), true)} want`); }); });
-  q('[data-stroute]').forEach(card => { if(!unk(card.dataset.stroute)) return;   // the route cards (Add / change routes)
+    Array.from(sel.options).forEach(o => { o.textContent = o.textContent.replace(/· (\d[\d,]*) want/, (m0, n) => `· ${d104RangeTxt(+n.replace(/,/g, ''), true, sel.dataset.s2fr)} want`); }); });
+  q('[data-stroute]').forEach(card => { const cid = card.dataset.stroute; if(!unk(cid)) return;   // the route cards (Add / change routes)
     const many = q('.fch', card).length > 6;   // nine fares: only the chosen fare's range fits over its bar (the others say it when pointed at)
-    q('.fch', card).forEach(b => { const sm = b.querySelector('small'); if(many && !b.classList.contains('on')){ if(sm && !sm.dataset.d104r){ sm.dataset.d104r = '1'; sm.textContent = ''; } } else d104SetRange(sm); if(b.title && !b.dataset.d104t){ b.dataset.d104t = '1'; b.title = b.title.replace(/: (\d[\d,]*) people/, (m0, n) => `: ${d104RangeTxt(+n.replace(/,/g, ''), true)} people`); } });
-    const cap = card.querySelector('.st-cap b'); if(cap && !cap.dataset.d104r){ const m = /: (\d[\d,]*)$/.exec(cap.textContent); if(m){ cap.dataset.d104r = m[1]; cap.textContent = cap.textContent.replace(/: \d[\d,]*$/, `: ${d104RangeTxt(+m[1].replace(/,/g, ''), true)}`); cap.title = D104_TIP; } } });
-  q('.st-strip[data-strip]').forEach(st => { if(!unk(st.dataset.strip) || st.dataset.d104r) return; st.dataset.d104r = '1';   // the demand strip
-    q('.st-sl b', st).forEach(b => { b.childNodes.forEach(t => { if(t.nodeType === 3) t.textContent = t.textContent.replace(/: (\d[\d,]*) want to fly/, (m0, n) => `: ${d104RangeTxt(+n.replace(/,/g, ''), true)} want to fly`); }); });
-    q('.ds-n', st).forEach(e => d104SetRange(e)); });
-  q('.net-dest tbody tr').forEach(tr => { const td = tr.children; if(td.length > 4 && unk(d104CityId(td[0].textContent))) d104SetRange(td[4]); });   // Network: Destinations
-  q('.wr-rk tbody tr').forEach(tr => { const td = tr.children; if(td.length > 3 && unk(d104CityId(td[0].textContent.replace(/not flown/, '')))) d104SetRange(td[3]); });   // Home: the rival's fares
-  const dem = root.querySelector('.wr-dem'), wr = $('wrRoute'); if(dem && wr && unk(wr.value) && !dem.dataset.d104r){ dem.dataset.d104r = '1'; q('.wr-b .wr-n', dem).forEach(e => d104SetRange(e)); const l = dem.querySelector('.wr-l'); if(l) l.insertAdjacentHTML('beforeend', ` <span class="d104-unc">${D104_TIP}.</span>`); }
+    q('.fch', card).forEach(b => { const sm = b.querySelector('small'); if(many && !b.classList.contains('on')){ if(sm && !sm.dataset.d104r){ sm.dataset.d104r = '1'; sm.textContent = ''; } } else d104SetRange(sm, false, cid); if(b.title && !b.dataset.d104t){ b.dataset.d104t = '1'; b.title = b.title.replace(/: (\d[\d,]*) people/, (m0, n) => `: ${d104RangeTxt(+n.replace(/,/g, ''), true, cid)} people`); } });
+    const cap = card.querySelector('.st-cap b'); if(cap && !cap.dataset.d104r){ const m = /: (\d[\d,]*)$/.exec(cap.textContent); if(m){ cap.dataset.d104r = m[1]; cap.textContent = cap.textContent.replace(/: \d[\d,]*$/, `: ${d104RangeTxt(+m[1].replace(/,/g, ''), true, cid)}`); cap.title = D104_TIP; } } });
+  q('.st-strip[data-strip]').forEach(st => { const sid = st.dataset.strip; if(!unk(sid) || st.dataset.d104r) return; st.dataset.d104r = '1';   // the demand strip
+    q('.st-sl b', st).forEach(b => { b.childNodes.forEach(t => { if(t.nodeType === 3) t.textContent = t.textContent.replace(/: (\d[\d,]*) want to fly/, (m0, n) => `: ${d104RangeTxt(+n.replace(/,/g, ''), true, sid)} want to fly`); }); });
+    q('.ds-n', st).forEach(e => d104SetRange(e, false, sid)); });
+  q('.net-dest tbody tr').forEach(tr => { const td = tr.children, id = td.length > 4 && d104CityId(td[0].textContent); if(unk(id)) d104SetRange(td[4], false, id); });   // Network: Destinations
+  q('.wr-rk tbody tr').forEach(tr => { const td = tr.children, id = td.length > 3 && d104CityId(td[0].textContent.replace(/not flown/, '')); if(unk(id)) d104SetRange(td[3], false, id); });   // Home: the rival's fares
+  const dem = root.querySelector('.wr-dem'), wr = $('wrRoute'); if(dem && wr && unk(wr.value) && !dem.dataset.d104r){ dem.dataset.d104r = '1'; q('.wr-b .wr-n', dem).forEach(e => d104SetRange(e, false, wr.value)); const l = dem.querySelector('.wr-l'); if(l) l.insertAdjacentHTML('beforeend', ` <span class="d104-unc">${D104_TIP}.</span>`); }
 }
 let D104_OBS = null, D104_PEND = false;
 function d104Observe(){
   if(D104_OBS || typeof MutationObserver === 'undefined') return; const host = document.getElementById('screen'); if(!host) return;
-  D104_OBS = new MutationObserver(() => { if(D104_PEND) return; D104_PEND = true; Promise.resolve().then(() => { D104_PEND = false; try{ d104Ranges(host); }catch(e){ console.error(e); } }); });
+  D104_OBS = new MutationObserver(() => { if(D104_PEND) return; D104_PEND = true; Promise.resolve().then(() => { D104_PEND = false; try{ d104Ranges(host); d104About(host); }catch(e){ console.error(e); } }); });
   D104_OBS.observe(host, { childList:true, subtree:true });
 }
 const d104Render2 = render;
-render = function(){ const r = d104Render2.apply(this, arguments); try{ d104Observe(); d104Ranges(document.getElementById('screen')); }catch(e){ console.error(e); } return r; };
+render = function(){ const r = d104Render2.apply(this, arguments); try{ d104Observe(); d104Ranges(document.getElementById('screen')); d104About(document.getElementById('screen')); }catch(e){ console.error(e); } return r; };
+/* =====================================================================
+   6. v6.1 (Settings unflownProjection): until a route has flown a week, the plan's projection works with the middle of
+   its shown range (seats filled at each fare, profit, Change network's sort) and says "about"; the days actually flown
+   use the true demand (D104_LIVE: set while a day is flown for real, as p5e's daily colour). Year one only, like the ranges.
+   ===================================================================== */
+let D104_LIVE = 0;
+const d104Live = f0 => function(){ D104_LIVE++; try{ return f0.apply(this, arguments); } finally { D104_LIVE--; } };
+runDayQuick = d104Live(runDayQuick); startFlight = d104Live(startFlight); applyResults = d104Live(applyResults); applyPeriodResults = d104Live(applyPeriodResults);
+const d104Sim0 = simulateDays;
+simulateDays = function(){ if(QUIET) return d104Sim0.apply(this, arguments); D104_LIVE++; try{ return d104Sim0.apply(this, arguments); } finally { D104_LIVE--; } };
+const d104MidOn = () => !!d104Unc() && /middle|midpoint/i.test(String(D104S().unflownProjection || ''));
+function d104Proj(route){ if(D104_LIVE || !route || !d104MidOn()) return false; const U = d104UnknownSet(); return !!(U && U.has(route.id)); }
+const d104PW1 = paxWant;
+paxWant = function(route, fare){
+  const n = d104PW1.apply(this, arguments); if(!d104Proj(route)) return n;
+  const [a, b] = d104Range(n), m = Math.round((a + b) / 2); D104_MIDR.set(route.id + '|' + m, [a, b]); return m;
+};
+/* the plan's routes that are not yet known, and "about" on the projected figures that use them */
+function d104PlanUnknown(){ const U = d104UnknownSet(); if(!U || !d104MidOn()) return []; try{ return [...new Set(currentPlan().fleet.flatMap(f => f.sched || []))].filter(id => U.has(id)); }catch(e){ return []; } }
+function d104About(root){
+  const unk = root ? d104PlanUnknown() : [], U = unk.length || !root ? null : d104MidOn() && d104UnknownSet();
+  const was = !!(root && S.rnd && S.rnd.planWas && (unk.length || U) && (S.rnd.planWas.fleet || []).some(f => (f.sched || []).some(id => (U || d104UnknownSet()).has(id))));   // the plan the Studio opened with
+  if(!unk.length && !was) return; const q = (sel, el) => Array.from((el || root).querySelectorAll(sel));
+  q('.ash-ht').forEach(h => { const tx = h.textContent.trim(); if(h.dataset.d104a || !((tx === 'With your change' && unk.length) || (tx === 'Now' && was))) return;   // the Changes sheet: a plan with a route not yet known
+    h.dataset.d104a = '1'; h.insertAdjacentHTML('beforeend', ' <small class="d104-ab">· about</small>'); });
+  if(!unk.length) return;
+  const ab = (el, inside) => { if(!el || el.dataset.d104a || !/\d/.test(el.textContent)) return; el.dataset.d104a = '1'; el.insertAdjacentHTML(inside ? 'afterbegin' : 'beforebegin', '<small class="d104-ab">about</small>'); };
+  q('.s2-blk').forEach(b => { const al = b.getAttribute('aria-label') || '', id = d104CityId(al); if(!unk.includes(id)) return;   // the timetable: a flight of a route not yet known
+    const s = b.querySelector('.st-bs'); if(s && !s.dataset.d104a){ s.dataset.d104a = '1'; s.textContent = `about ${s.textContent}`; }
+    if(!/about \d/.test(al)) b.setAttribute('aria-label', al.replace(/, (\d+) of (\d+) seats filled/, ', about $1 of $2 seats filled')); });
+  q('[data-s2r]').forEach(row => { if(unk.includes(row.dataset.s2r)) ab(row.querySelector('.s2-fl b')); });   // the routes table's seat fill
+  q('[data-s3chip]').forEach(c => { if(unk.includes(c.dataset.s3chip) && !/about/.test(c.title)) c.title = c.title.replace(/(\d+)% filled/, 'about $1% filled'); });
+  const line = root.querySelector('.s3-line b'); if(line && !line.dataset.d104a){ line.dataset.d104a = '1'; line.textContent = line.textContent.replace(/(\d+)% filled/, 'about $1% filled'); }
+  q('.s2-sum b[data-nov]').forEach(b => { if(/Projected profit/.test(b.dataset.nov)) ab(b); });   // the plan summary: its profit (each flight says its own)
+  q('.op-row').forEach(r => { const l = r.querySelector('.op-l'); if(l && /profit/i.test(l.textContent)) q('.op-v .mono', r).forEach(ab); });   // the Ready page
+  q('.cx dl.kvs dd .mono').forEach(e => ab(e, true));   // its panel: the plan's revenue, costs and profit
+}
 /* the review of a week or a month names the star moves in it (the drivers; a grounded day), with the rating now */
 function d104StarsLine(from, to){
   if(!S || !d104StarsOn() || !yearOne(to)) return '';
