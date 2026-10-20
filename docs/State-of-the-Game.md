@@ -43,7 +43,7 @@ Year one only. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are 
 **No snacks** (`parts/p5x_nosnacks.js`, Settings `snacksInYearOne`):
 - `nsOff(d)` is `yearOne(d)` unless the setting is on.
 - Wrapped: `onboardOf()` (Nothing on board) and `snacksOn()` (false), so H.snacks never arrives: no snack stage, no Cabin sales rows, and the running sum numbers close up.
-- Also wrapped: `currentPlan()` and `render()`, which put S.onboard back to none.
+- Also wrapped: `serviceFigures` and `recPlanNow`, which read Nothing on board. An old save's own S.onboard is kept, so a save taken on day 364 carries its snacks into chapter 3 as before; in year one it sells nothing.
 - Lines that would only read £0 are stripped:
   - `s2Insights` (Money);
   - `omPlanTable` (the On board line) and `omResults` (On-board sales);

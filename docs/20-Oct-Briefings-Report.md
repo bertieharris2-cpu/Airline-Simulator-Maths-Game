@@ -58,7 +58,7 @@ Screenshots of the briefings as they look in the game are in `docs/screenshots/o
   - **No snack choice.** The Studio's On board choice and the Operations Model's On board line are gone.
   - **No snack money.** There are no sales, stock or free-snack costs, and no star for free snacks.
   - **No Cabin sales rows.** The Launch Day sheet has rows 1–9: tickets at the three fares, the other route, and the profit. Its sums are Sums 1–5, and everything after numbers on from 6. The Monday sheets have no Cabin sales row either.
-  - **Old saves.** A save from before that sold snacks flies on without them.
+  - **Old saves.** A save from before that sold snacks flies on without them in year one. Its choice is kept, so a save taken at the year-1 accounts carries its snacks into chapter 3 as before.
   - **No £0 lines.** On-board sales lines that could only read £0 are left off: the Studio's Money, the model's results and a service's costs card.
   - **Daily colours.** The hen party and the birthday cake only touch snack sales, so they give way to another colour that day. Year one now has none of them.
 - **Workbook changes:**

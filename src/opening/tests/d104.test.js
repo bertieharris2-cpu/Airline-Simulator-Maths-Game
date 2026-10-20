@@ -59,7 +59,7 @@ const JUMP = d => fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', `day
   // no snacks in year one (DESIGN.md of 20 Oct 2026, Settings snacksInYearOne off): this save chose snacks at £5 before; it now flies none
   await load(22, 'A');
   const ob1 = await J(`(() => { const fl = withDay(23, () => planFlights()); const x = withDay(23, () => dayExtras(fl)); return { obRev:x.obRev, obCost:x.obCost, buyers:x.buyers || 0, on:S.onboard, snacks:snacksOn() }; })()`);
-  ok('no snacks in year one: a save that sold snacks flies without them (no snack money or stock on day 23, nothing to choose)', ob1.obRev === 0 && ob1.obCost === 0 && !ob1.buyers && ob1.on === 'none' && !ob1.snacks, ob1);
+  ok('no snacks in year one: a save that sold snacks flies without them (no snack money or stock on day 23, nothing to choose; its choice is kept for chapter 3)', ob1.obRev === 0 && ob1.obCost === 0 && !ob1.buyers && !ob1.snacks, ob1);
   // the sponsorship: Dublin × 1.05 for four weeks
   await load(29, 'A');
   const dm0 = await J(`[demandMult(routeById('dub'), 30), demandMult(routeById('dub'), 56), demandMult(routeById('dub'), 57)]`);

@@ -5,7 +5,7 @@
    - no snack choice and no snack money: snacksOn() is false and onboardOf() is Nothing on board, so the Studio has no On
      board choice, the Launch Day sheet no Cabin sales rows (its Sums 6 and 7 go, and the later sums number on from 6), and
      the Monday sheets no Cabin sales row;
-   - a save from before that carries snacks flies without them (its S.onboard goes back to none);
+   - a save from before that chose snacks flies without them (its choice is kept, for chapter 3, but sells nothing here);
    - lines that could only read £0 now are left off: On-board sales in the Studio's Money, the Operations Model and a
      service's costs card, and the star rule for free snacks on the Reputation desk;
    - the daily colours that only touch snack sales (a hen party, a birthday cake) give way to another of that day's.
@@ -18,10 +18,12 @@ const nsOb0 = onboardOf;
 onboardOf = function(){ return nsOff() && ONBOARD.none ? ONBOARD.none : nsOb0.apply(this, arguments); };
 const nsOn0 = snacksOn;
 snacksOn = function(){ return nsOff() ? false : nsOn0.apply(this, arguments); };
-const nsCur0 = currentPlan;
-currentPlan = function(){ const p = nsCur0.apply(this, arguments); if(p && p.onboard && p.onboard !== 'none' && nsOff()) p.onboard = 'none'; return p; };
-const nsRender0 = render;
-render = function(){ try{ if(S && S.onboard && S.onboard !== 'none' && nsOff(S.day || 1)) S.onboard = 'none'; }catch(e){} return nsRender0.apply(this, arguments); };
+/* a save from before that chose snacks keeps its choice (so a save taken at the year-1 accounts carries on into chapter 3 as
+   it was), but in year one it sells nothing: the service card's figures and the pupil record's plan read Nothing on board */
+const nsSvcF0 = serviceFigures;
+serviceFigures = function(uid, k, pl){ if(nsOff()) pl = Object.assign({}, normPlan(pl || currentPlan()), { onboard:'none' }); return nsSvcF0.apply(this, [uid, k, pl].concat([].slice.call(arguments, 3))); };
+const nsRec0 = recPlanNow;
+recPlanNow = function(){ const r = nsRec0.apply(this, arguments); if(r && nsOff()) r.onboard = 'none'; return r; };
 
 /* lines that could only read £0 */
 const nsIns0 = s2Insights;
