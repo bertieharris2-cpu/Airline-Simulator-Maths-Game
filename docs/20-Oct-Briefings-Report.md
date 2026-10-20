@@ -108,7 +108,7 @@ All on the final build. Chapters 3 and 4 start from their own saves (days 364 an
 | `week.test.js` to chapter 1's review, track A | 254 passed, none failed; £733,014 on day 118 |
 | `week.test.js` to chapter 1's review, track B | 246 passed, none failed; £732,277 |
 | `week.test.js` to day 15 | 109 passed, none failed. Launch Day's sums are B4, C4, D4, E4 and F9: no Cabin sales rows |
-| `chapter2.test.js` Value, from the new chapter 1 save | 108 passed, none failed; £14,806,209 at the review. Three checks were skipped (below) |
+| `chapter2.test.js` Value, from the new chapter 1 save | 111 passed, none failed; £14,806,209 at the review |
 | `chapter2.test.js` Premium, from the same save | 105 passed, none failed; £14,759,798 |
 | `chapter3.test.js` | 66 passed, none failed; £31,529,103 on day 730 |
 | `chapter4.test.js` | 58 passed, 1 failed; £58,865,752 on day 1,095. The failure is the D89 fuel-farm check, which fails in v6.1 too |
@@ -116,7 +116,7 @@ All on the final build. Chapters 3 and 4 start from their own saves (days 364 an
 | `decide`, `record`, `migrate`, `screens3`, `playnotes`, `fleetshop`, `milestones`, `engine` | 34, 18, 31, 24, 14, 36, 27 and 10 passed, none failed |
 
 - **Migrate and fleetshop** are run on their own. With other tests running beside them, each has a check that reads the day while the board is still running, and it can catch the next day.
-- **Chapter 2 Value** has three checks on day 128, the New York 757. If the machine is busy, the board can run past day 128 before the test looks, so those checks are skipped, not failed. It is being run again with less going on.
+- **Chapter 2 Value** has three checks on day 128, the New York 757. If the machine is busy, the board can run past day 128 before the test looks. In the full run, with other tests beside it, those three were skipped (108 passed, none failed). Run again with less going on, all 111 passed.
 
 ## Balance
 
