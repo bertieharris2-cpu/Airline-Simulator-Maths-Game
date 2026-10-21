@@ -12,6 +12,9 @@ const ASH_SUMS = { 'launch.tickets':{ whose:'pupil', how:'book' }, 'launch.other
   'changes.difference':{ whose:'pupil', how:'build once' }, 'week.total':{ whose:'pupil', how:'build' }, 'week.difference':{ whose:'pupil', how:'build' }, 'week.average':{ whose:'pupil', how:'build' },
   'event.stay':{ whose:'pupil', how:'book' }, 'event.business':{ whose:'pupil', how:'book' }, 'fuel.order':{ whose:'pupil', how:'book' } };
 function ashSum(id){ const w = (((typeof WB !== 'undefined' && WB && WB.sheetSums) || WORLD.sheetSums) || []).find(x => x.sum === id);   /* the workbook's SheetSums (D105) */ return Object.assign({}, ASH_SUMS[id] || {}, w ? { whose:w.whose || (ASH_SUMS[id] || {}).whose, how:w.how || (ASH_SUMS[id] || {}).how } : {}); }
+/* one sum done differently by cell (21 Oct 2026: Launch Day's first ticket column B4 is a Build, C4 and D4 Calculate): the row that lists the cell */
+function ashSumAt(id, cell){ const rows = (((typeof WB !== 'undefined' && WB && WB.sheetSums) || WORLD.sheetSums) || []).filter(x => x.sum === id), w = rows.find(x => String(x.cell || '').split(/\s*·\s*/).includes(cell));
+  return w ? Object.assign({}, ashSum(id), { whose:w.whose || ashSum(id).whose, how:w.how || ashSum(id).how }) : ashSum(id); }
 const ashPupils = id => !/^(ƒ|f|airline)$/i.test(String(ashSum(id).whose || 'pupil').trim());
 
 /* ---------- Launch Day: the day's sums, as the sum list sets them; no fuel order on the sheet ---------- */
@@ -98,7 +101,7 @@ function ashLaunchSpec(){
     v[k.c + 4] = ashShows(st.tk) ? { t:money(V['tk_' + route]), fin:!!(S.rnd.paperShown || {})[t.id + '|' + cellId(col, 'tk_' + route)] } : {};
     if(st.tk === 'enter' || st.tk === 'wait' || st.tk === 'done'){ const other = route !== mk, sid = other ? 'launch.otherTickets' : 'launch.tickets';
       sums.push(ashTableSum({ id:t.id + '|' + col + '|tk', t, col, row:'tk_' + route, tgt:k.c + 4, refs:[k.c + 2, k.c + 3], ops:['×'], words:'Passengers × Fare', kind:'tickets', commute:true,
-        how:ashSum(sid).how === 'build' ? 'build' : 'book', name:`ticket revenue at ${money(V['fare_' + route])}`, aria:`${routeById(route).city} ticket revenue at ${money(V['fare_' + route])}`,
+        how:ashSumAt(sid, k.c + 4).how === 'build' ? 'build' : 'book', name:`ticket revenue at ${money(V['fare_' + route])}`, aria:`${routeById(route).city} ticket revenue at ${money(V['fare_' + route])}`,
         doneLine:`${esc(routeById(route).city)} ticket revenue at ${money(V['fare_' + route])}: <b class="gold">${money(V['tk_' + route])}</b> a day`,
         hints:() => ashHintsFor('passengers × fare', '×', pax, V['fare_' + route], V['tk_' + route], true), how2:() => ashHowFor('×', pax, V['fare_' + route], '£', 'Ticket revenue = Passengers × Fare'),
         co:{ at:['B', 5, ASH_LET[Math.max(2, ci - 2)], 9], side:'pu', ptr:`left:${Math.max(30, ashCol(k.c) * 150 - 150 + 60)}px`, eyebrow:'NEW SUM', title:'Ticket revenue',

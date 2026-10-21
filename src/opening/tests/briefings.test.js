@@ -41,7 +41,7 @@ const PAGES = [
   { id:'weekend_demand', file:'briefing-weekend.html', title:'Weekdays and weekends', pick:['Change weekdays and weekends separately'], predict:'Sat and Sun' },
   { id:'fuel_cash_tank_profit', file:'briefing-fuel.html', title:'Cash, tank, profit' },
   { id:'aircraft_efficiency', file:'briefing-efficiency.html', title:'Two planes, one route' },
-  { id:'flight_time', file:'briefing-time.html', title:'How long will it take?' },
+  { id:'flight_time', file:'briefing-time.html', title:'How long will it take?', predict:'1 h 30' },   // rebuilt 21 Oct 2026 in Bertie's order (part 1c)
   { id:'event_weekend', file:'briefing-event.html', title:'One big Saturday', pick:['Change one particular date'] },
   { id:'seasons', file:'briefing-seasons.html', title:'A year of demand', pick:['Plans that switch with the season'] },
   { id:'lease_money', file:'briefing-lease.html', title:'Renting a plane' },
@@ -120,6 +120,44 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
     }catch(e){ ok(`${tag}: played to the end`, false, e.message.split('\n')[0]); await p.screenshot({ path:`${OUT}fare_lever-stuck.png` }).catch(() => {}); }
     ok(`${tag}: no errors`, !errs.length, errs); await p.close(); }
 
+  /* ---------- part 1c: How long will it take?, rebuilt in Bertie's order (21 Oct 2026, scene-by-scene doc section 10): why it matters
+     first, then the sum worked on screen a step at a time, then the ruler last, as the check; a later chapter keeps the scenes from before ---------- */
+  if(want('flight_time')){
+    const p = await b.newPage({ viewport:{ width:VW, height:VH } }), errs = []; p.on('pageerror', e => errs.push(e.message)); const B = [];
+    try{
+      await p.goto('file://' + path.join(DIR, 'briefing-time.html')); await W(p, '.bk-title', 8000);
+      for(let g = 0; g < 12; g++){ if(await p.$('.bk-pz[style*="grid"]')) break; const k = await settle(p);
+        const x = await p.evaluate(() => { const rt = [...document.querySelectorAll('svg text')].find(t => /^1 hour · /.test(t.textContent));
+          return { step:[...document.querySelectorAll('.bk-steps i')].findIndex(i => i.className === 'on'), words:(document.querySelector('.bk-words') || {}).innerText || '',
+            work:document.querySelector('.work.out') ? [] : [...document.querySelectorAll('.work .ln')].filter(e => getComputedStyle(e).display !== 'none').map(e => e.textContent.replace(/\s+/g, ' ').trim()),
+            calls:[...document.querySelectorAll('.bk-call:not(.out)')].map(e => e.textContent), svg:[...document.querySelectorAll('svg text')].map(t => t.textContent).join(' · '), rul:rt ? +(rt.parentNode.getAttribute('opacity') || 1) : null,
+            use:(document.querySelector('.ftu:not(.out)') || {}).innerText || '', chips:[...document.querySelectorAll('.bk-pchip')].map(e => e.textContent), go:(document.querySelector('.bk-go') || {}).textContent || '' }; });
+        B.push(x); if(B.length <= 6) await p.screenshot({ path:`${OUT}flight_time-s${B.length}.png` });
+        if(x.chips.length){ await p.click('.bk-pchip:has-text("1 h 30")'); await p.waitForTimeout(250); await p.click('.bk-go'); await p.waitForTimeout(150); continue; }
+        if(k.w){ await p.click('.bk-go'); await p.waitForTimeout(150); continue; } }
+      const at = i => B[i] || { words:'', work:[], calls:[], svg:'', use:'', chips:[], go:'' }, tag = 'flight_time, six scenes (21 Oct)';
+      ok(`${tag}: in Bertie's order: Show, the prediction (the last moment of Show), Reveal three times (the whole hours, the part left over, the ruler), Use`, B.length === 6 && B.map(x => x.step).join() === '0,0,1,1,1,2', B.map(x => x.step));
+      ok(`${tag}: 1 Show · why it matters: a Saab 340 at 450 km/h and his Twin Otter at 300 km/h leave London for Amsterdam, 450 km; the Saab lands after 1 hour and turns round while the Twin Otter is still flying; "A faster plane fits more flights into a day, but it can cost more in fuel"`,
+        /A faster plane fits more flights into a day, but it can cost more in fuel/.test(at(0).words) && at(0).calls.some(c => /Landed: 1 h 00/.test(c)) && at(0).calls.some(c => /Still flying/.test(c)) && /Saab 340 · 450 km\/h/.test(at(0).svg) && /Your Twin Otter · 300 km\/h/.test(at(0).svg) && /London · Amsterdam · 450 km/.test(at(0).svg), { words:at(0).words, calls:at(0).calls });
+      ok(`${tag}: 2 Predict: "How long will the Twin Otter take?" 1 hour · 1 h 30 · 2 hours · Not sure; it is two-thirds of the way there when the Saab lands`, at(1).chips.join('|') === '1 hour|1 h 30|2 hours|Not sure' && /How long will the Twin Otter take\?/.test(at(1).words) && /two-thirds of the way there/.test(at(1).words) && /Two-thirds of the way after 1 hour/.test(at(1).svg), { words:at(1).words, chips:at(1).chips });
+      ok(`${tag}: 3 Reveal · the whole hours, set out on screen: 450 km ÷ 300 km/h; 300 goes into 450 once: 1 whole hour; 150 km left over; "You predicted: 1 h 30" beside it`, at(2).work.join(' | ') === '450 km ÷ 300 km/h | 300 goes into 450 once: 1 whole hour | 450 − 300 = 150 km left over' && /You predicted: 1 h 30/.test(at(2).words), { work:at(2).work, words:at(2).words });
+      ok(`${tag}: 4 Reveal · the part left over: 150 km is half of 300 km: 30 minutes; 1 hour + 30 minutes = 1 h 30 min`, at(3).work.slice(3).join(' | ') === '150 km is half of 300 km: 30 minutes | 1 hour + 30 minutes = 1 h 30 min' && /Hours first, then the minutes/.test(at(3).words), at(3).work);
+      ok(`${tag}: 5 Reveal · only now the ruler, as the check: one hour to the 300 km mark, then the last 150 km in quarter hours; it lands at 1 h 30, the same as the sum`, at(2).rul === 0 && at(3).rul === 0 && at(4).rul === 1 && /¼ h · ¼ h/.test(at(4).svg) && at(4).calls.some(c => /Landed: 1 h 30/.test(c)) && /the same as the sum\. The sum and the ruler agree/.test(at(4).words), { rul:B.map(x => x.rul), calls:at(4).calls, words:at(4).words });
+      ok(`${tag}: 6 Use · his routes: the Flight times sheet, hours and minutes, then To the flight times`, /Flight times · your new routes/i.test(at(5).use) && /\? h \? min/.test(at(5).use) && /To the flight times/.test(at(5).go), { use:at(5).use, go:at(5).go });
+      ok(`${tag}: the caption "one hour at a time, less than an hour to go" is gone, the triangle is out, and never a decimal`, !B.some(x => /one hour at a time|less than an hour to go|Cover the T|\b1\.5\b/i.test(x.words + ' ' + x.work.join(' ') + ' ' + x.use + ' ' + x.svg)));
+      ok(`${tag}: played to the end`, /End of the briefing/.test(await p.textContent('.bk-stage')));
+    }catch(e){ ok('flight_time, six scenes (21 Oct): played to the end', false, e.message.split('\n')[0]); await p.screenshot({ path:`${OUT}flight_time-stuck.png` }).catch(() => {}); }
+    ok('flight_time, six scenes (21 Oct): no errors', !errs.length, errs); await p.close();
+    // a later chapter (the game sends no kitFlat): the scenes from before 21 Oct, in today's frame (CLAUDE.md: new design in year one only)
+    const q = await b.newPage({ viewport:{ width:VW, height:VH } }), qe = []; q.on('pageerror', e => qe.push(e.message));
+    try{
+      await q.addInitScript(() => { window.BRIEF = { id:'flight_time', route:{ id:'ams', city:'Amsterdam', km:450 }, plane:{ name:'DHC-6 Twin Otter', speed:300 } }; });
+      await q.goto('file://' + path.join(DIR, 'briefing-time.html')); await W(q, '.bk-title', 8000); const caps = [];
+      for(let g = 0; g < 6; g++){ if(await q.$('.bk-pz[style*="grid"]')) break; try{ await q.waitForSelector('.bk-go:not([hidden])', { timeout:30000 }); }catch(e){ break; } caps.push(await q.textContent('.bk-cap')); await q.click('.bk-go'); await q.waitForTimeout(200); }
+      ok('flight_time in a later chapter: the scenes from before 21 Oct (the ruler an hour at a time, then the triangle), no stepper', !(await q.$('.bk-steps')) && (await q.$$('.bk-marks i')).length === 4 && caps.some(c => /Time = distance ÷ speed/.test(c)) && /End of the briefing/.test(await q.textContent('.bk-stage')), caps);
+    }catch(e){ ok('flight_time in a later chapter: the scenes from before 21 Oct', false, e.message.split('\n')[0]); }
+    ok('flight_time in a later chapter: no errors', !qe.length, qe); await q.close(); }
+
   /* ---------- part 2: in the game, at their moments ---------- */
   const p = await b.newPage({ viewport:{ width:VW, height:VH } }); p.on('pageerror', e => errors.push(e.message)); p.on('dialog', d => d.accept());
   await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload();
@@ -167,7 +205,8 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
   // the shop in week 2: Briefing 13 first (if the Fuel desk has not played it), then the efficiency scene before the comparison
   await at('aircraft_efficiency', async () => { await load(8); await shopOpen(); if((await title()).includes('Can you afford')){ await p.evaluate(() => window.__bf.skip()); await p.waitForTimeout(1500); } }, D => D.a.seats < D.b.seats && D.a.litres / D.a.seats > D.b.litres / D.b.seats);
   // week 3: the first Flight times page; week 4: the All Blacks announcement
-  await at('flight_time', async () => { await load(15); await p.evaluate(() => window.__tk.enter()); await p.evaluate(() => window.__tk.run('plan')); await p.waitForTimeout(1200); }, D => D.route.km > 0 && D.plane.speed > 0);
+  await at('flight_time', async () => { await load(15); await p.evaluate(() => window.__tk.enter()); await p.evaluate(() => window.__tk.run('plan')); await p.waitForTimeout(1200); }, D => D.route.km > 0 && D.plane.speed > 0   // and in year one (21 Oct) the teaching example and his new routes for the Use scene
+    && D.ex && D.ex.city === 'Amsterdam' && D.ex.km === 450 && D.ex.slow.speed === 300 && D.ex.fast.speed === 450 && /^kit:dhc6\|/.test(D.ex.slow.art) && D.use && D.use.rows.some(r => r.his) && D.use.rows.every(r => r.km > 0));
   await at('event_weekend', async () => { await load(22); await p.evaluate(() => window.__tk.enter()); await p.evaluate(() => window.__tk.run('plan')); await p.waitForTimeout(1200); }, D => D.mult.filter(m => m > 1).length >= 1 && D.title.length > 3);
   // chapter 2: renting opens; chapter 3: the Finance desk (only after a purchase or an overdrawn month)
   await at('lease_money', async () => { await load(127); await shopOpen(); }, D => D.price / D.rent === 2000);

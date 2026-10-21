@@ -228,9 +228,19 @@ function bfEffData(){
   const pb = ['sf34', 'at72', 'e175'].map(planeById).filter(p => p && p.seats > pa.seats && (typeof planeCanFly !== 'function' || planeCanFly(p, r)))[0]; if(!pb) return null;
   return { route:{ id:rid, city:r.city }, a:{ name:pa.name, seats:pa.seats, litres:fuelForTrip(pa, r), art:bfArt(mine.uid) }, b:{ name:pb.name, seats:pb.seats, litres:fuelForTrip(pb, r), art:bfPlain(pb) } };
 }
-/* 7: the first new pair on the Flight times page */
+/* 7: the first new pair on the Flight times page. Year one (21 Oct 2026, Bertie's order) adds the fixed teaching example, a
+   Saab 340 and his Twin Otter to Amsterdam (the workbook's speeds and distance), and his new routes for the Use scene, as the
+   Flight times sheet sets them out (his sums, and the ones the sheet works out: ƒ). */
 function bfTimeData(){ let k = null; try{ k = (ftNew() || [])[0]; }catch(e){} if(!k) return null; const [pid, rid] = k.split('|'), p = planeById(pid), r = routeById(rid); if(!p || !r) return null;
-  const f = S.fleet.find(z => z.planeId === pid); return { route:{ id:rid, city:r.city, km:Math.round(routeKm(r)) }, plane:{ name:p.name, speed:p.speed }, art:f ? bfArt(f.uid) : bfPlain(p) }; }
+  const f = S.fleet.find(z => z.planeId === pid), D = { route:{ id:rid, city:r.city, km:Math.round(routeKm(r)) }, plane:{ name:p.name, speed:p.speed }, art:f ? bfArt(f.uid) : bfPlain(p) };
+  if(typeof yearOne === 'function' && yearOne()) try{
+    const nm = q => typeof shortPlane === 'function' ? shortPlane(q) : q.name, lo = planeById('dhc6'), hi = planeById('sf34'), xr = routeById('ams') || r, own = S.fleet.find(z => z.planeId === 'dhc6');
+    if(lo && hi) D.ex = { city:xr.city, km:Math.round(routeKm(xr)), slow:{ name:nm(lo), speed:lo.speed, art:own ? bfArt(own.uid) : bfPlain(lo) }, fast:{ name:nm(hi), speed:hi.speed, art:bfPlain(hi) } };
+    const P = typeof ftPage === 'function' ? ftPage() : null, t = P && planeById(P.types[0]);
+    if(t){ const mine = new Set(P.items.map(x => x.k)); D.use = { plane:nm(t), speed:t.speed, rows:P.rids.map(id => { const q = routeById(id);
+      return { city:q.city, km:Math.round(routeKm(q)), his:mine.has(t.id + '|' + id), far:typeof planeCanFly === 'function' && !planeCanFly(t, q) }; }) }; }
+  }catch(e){}
+  return D; }
 /* 8: an announced event on a route he flies: last week's people a day there, the event's days doubled, his seats */
 function bfEventData(){
   const n = (announcedFor(S.day || 1) || []).find(x => (x.mult || 1) > 1 && (x.routes || []).some(id => routeById(id))); if(!n) return null;

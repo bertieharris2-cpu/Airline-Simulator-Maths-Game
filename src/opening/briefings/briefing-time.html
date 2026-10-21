@@ -6,17 +6,189 @@
 <title>Operations briefing — How long will it take?</title>
 <link rel="stylesheet" href="kit/brief-kit.css" data-kit>
 <script src="kit/brief-kit.js" data-kit></script>
+<style>
+/* year one (21 Oct 2026): the sum, written out the way he would set it out in his book (a demonstration: nothing is typed) */
+.work{position:absolute;transform:translateX(-50%);min-width:36cqw;padding:1cqw 2cqw 1.15cqw;text-align:left;background:#05152b;border:1px solid rgba(65,122,171,.55);box-shadow:0 1cqw 2.4cqw rgba(0,0,0,.4);transition:opacity .35s}
+.work.out{opacity:0}
+.work .ey{display:block;margin-bottom:.3cqw;font-size:.95cqw;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#36c6ff}
+.work .ln{font-size:1.6cqw;font-weight:500;line-height:1.55;white-space:nowrap;color:#eaf2ff;animation:lnIn .45s ease-out}
+.work .ln.big{font-size:2.05cqw;font-weight:600}
+.work .ln.off{display:none}
+.rm .work .ln{animation:none}
+@keyframes lnIn{from{opacity:0;transform:translateY(.4cqw)}to{opacity:1;transform:none}}
+.work.short .ln.mid{display:none}
+.work .ln b{color:#fff;font-weight:700}
+.work .ln i{font-style:normal;color:#9fbde3;font-weight:500}
+.work .ans{display:inline-block;padding:0 .55cqw;box-shadow:inset 0 0 0 2px #36c6ff}
+/* the Use scene: his new routes as the Flight times sheet sets them out */
+.ftu{position:absolute;transform:translate(-50%,-50%);padding:1.2cqw 1.6cqw 1.1cqw;background:linear-gradient(155deg,#0d3159 0%,#081f3d 48%,#05152b 100%);border:1px solid rgba(65,122,171,.55);box-shadow:0 1cqw 2.4cqw rgba(0,0,0,.45);transition:opacity .4s}
+.ftu.out{opacity:0}
+.ftu .ey{display:block;font-size:.95cqw;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#36c6ff}
+.ftu table{border-collapse:collapse;margin-top:.7cqw;font-size:1.3cqw}
+.ftu th{padding:.5cqw 0 .5cqw 2.4cqw;font-size:1.05cqw;font-weight:700;color:#fff;text-align:right;white-space:nowrap;background:linear-gradient(180deg,#123e64,#0a2747);border-bottom:2px solid rgba(54,198,255,.55)}
+.ftu th:first-child,.ftu td:first-child{text-align:left;padding-left:.8cqw}
+.ftu th:last-child,.ftu td:last-child{padding-right:.8cqw}
+.ftu td{padding:.55cqw 0 .55cqw 2.4cqw;text-align:right;white-space:nowrap;color:#eaf2ff;border-bottom:1px solid rgba(65,122,171,.25)}
+.ftu td.q{color:#ff4fd8;font-weight:700}
+.ftu td.f{color:#8fa6c4}
+.ftu td.f i{font-style:italic;font-family:Georgia,serif;margin-right:.3cqw}
+.ftu p{margin:.7cqw 0 0;font-size:1cqw;color:#9fbde3}
+</style>
 </head>
 <body data-brief="flight_time">
 <script>
+/* 10 · How long will it take? (the first Flight times page).
+   Year one, in Bertie's order from the 21 Oct 2026 play-test (Operations Briefings — scene by scene, section 10): why it matters
+   first, then the sum worked on screen a step at a time, then the ruler last, as the check. A fixed teaching example (a Saab 340
+   and his Twin Otter to Amsterdam, the workbook's speeds and distance); his own routes in the Use scene.
+   1 Show · Why it matters: the two planes leave London side by side; the Saab lands and turns round for its next flight while the
+     Twin Otter is still flying (the game's turnaround at Amsterdam is 45 minutes, so the Saab is not shown leaving before the
+     Twin Otter lands). "A faster plane fits more flights into a day, but it can cost more in fuel."
+   2 Predict · How long will the Twin Otter take? 1 hour · 1 h 30 · 2 hours · Not sure (never marked). It is two-thirds of the
+     way there when the Saab lands.
+   3 Reveal · The whole hours: 450 km ÷ 300 km/h; 300 goes into 450 once: 1 whole hour, 150 km left over. "You predicted: …".
+   4 Reveal · The part left over: 150 km is half of 300 km: 30 minutes. 1 hour + 30 minutes = 1 h 30 min.
+   5 Reveal · The ruler checks it: one hour to the 300 km mark, then the last 150 km in quarter hours. It lands at 1 h 30.
+   6 Use · His routes: the Flight times sheet, in hours and minutes, never as a decimal.
+   A later chapter keeps the briefing as it was before 21 Oct (CLAUDE.md: new design goes into year one only). */
+const D = Object.assign({ id:'flight_time', route:{ city:'Amsterdam', km:450 }, plane:{ name:'Twin Otter', speed:300 } }, K.B);
+const km = D.route.km, sp = D.plane.speed, city = D.route.city, num = K.num, hours = km / sp;
+const hm = m => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, '0')}`, total = Math.round(hours * 60);
+K.run(() => K.y1 ? scenes() : before21());   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
+
+/* ===================== year one: six scenes (21 Oct 2026) ===================== */
+function scenes(){
+const E = Object.assign({ city:'Amsterdam', km:450, slow:{ name:'Twin Otter', speed:300 }, fast:{ name:'Saab 340', speed:450 } }, D.ex || {});
+const KM = E.km, VS = E.slow.speed, VF = E.fast.speed, CITY = E.city, SN = K.esc(E.slow.name), FN = K.esc(E.fast.name);
+const TS = KM / VS, TF = KM / VF, WHOLE = Math.floor(TS + 1e-9), LEFT = Math.round(KM - WHOLE * VS), MINS = Math.round((TS - WHOLE) * 60), QS = Math.round((TS - WHOLE) * 4);
+const AT1 = Math.round(VS * TF);   // where the slower plane is when the faster one lands
+const FR = [[1, 2, 'half'], [1, 3, 'a third'], [2, 3, 'two-thirds'], [1, 4, 'a quarter'], [3, 4, 'three-quarters']];
+const frac = (a, b) => { const f = FR.find(([n, d]) => Math.abs(a / b - n / d) < 1e-6); return f ? f[2] : null; };
+const times = n => n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`, say = n => ['no', 'one', 'two', 'three'][n] || String(n);
+const hrs = h => { const m = Math.round(h * 60), a = Math.floor(m / 60), b = m % 60; return b ? `${a} h ${b}` : `${a} hour${a === 1 ? '' : 's'}`; };   // 1 hour · 1 h 30 · 2 hours
+const hmin = m => { const a = Math.floor(m / 60), b = Math.round(m % 60); return `${a ? a + ' h' : ''}${a && b ? ' ' : ''}${b ? b + ' min' : ''}` || '0 min'; };
+const clockT = h => hm(Math.round(h * 60));
+const part = frac(AT1, KM), half = frac(LEFT, VS);
+K.start({ title:'How long will it take?' });
+const L = K.layers(), sv = K.s;
+/* the map: the sea, the land either side, two tracks from London to the city */
+sv('rect', { x:0, y:0, width:1600, height:900, fill:'#0a2347' }, L.back);
+for(let i = 0; i < 12; i++) sv('path', { d:`M0 ${80 + i * 70} Q 400 ${60 + i * 70} 800 ${85 + i * 70} T 1600 ${75 + i * 70}`, fill:'none', stroke:'#1b4777', 'stroke-opacity':.35, 'stroke-width':1 }, L.back);
+sv('path', { d:'M0 120 L 150 90 L 230 160 L 210 260 L 260 330 L 240 430 L 300 520 L 250 610 L 120 660 L 0 640 Z', fill:'#15365e' }, L.back);
+sv('path', { d:'M1600 60 L 1330 90 L 1260 180 L 1300 300 L 1240 380 L 1280 520 L 1220 650 L 1300 780 L 1600 840 Z', fill:'#15365e' }, L.back);
+const X0 = 250, X1 = 1350, PX = X1 - X0, kmX = k => X0 + PX * k / KM, YA = 360, YB = 500, YC = 225;   // the tracks sit under the words
+const map = sv('g', null, L.mid);
+[X0, X1].forEach(x => sv('line', { x1:x, y1:YC + 20, x2:x, y2:YB + 40, stroke:'#9fc3ea', 'stroke-width':1.5, opacity:.3 }, map));
+[[X0, 'London'], [X1, CITY]].forEach(([x, n]) => K.txt(map, x, YC, n, { 'font-size':26, 'font-weight':700, 'text-anchor':'middle' }));
+K.txt(map, (X0 + X1) / 2, YC, `${num(KM)} km`, { 'font-size':22, 'text-anchor':'middle', fill:'#9FBDE3' });
+const track = (y, label) => { const g = sv('g', null, map); sv('line', { x1:X0, y1:y, x2:X1, y2:y, stroke:'#9fc3ea', 'stroke-width':2.5, 'stroke-dasharray':'10 8', opacity:.6 }, g);
+  [X0, X1].forEach(x => sv('circle', { cx:x, cy:y, r:8, fill:'#EAF2FF' }, g)); K.txt(g, X0 + 120, y - 88, label, { 'font-size':19, 'font-weight':600, fill:'#c6d8f0' }); return g; };
+const tA = track(YA, `${FN} · ${num(VF)} km/h`), tB = track(YB, `Your ${SN} · ${num(VS)} km/h`);
+/* the two planes at one scale (the kit's 12 px = 1 m, × 0.8), facing the way they fly */
+const slowArt = E.slow.art !== undefined ? E.slow.art : (K.flat ? 'kit:dhc6|' + (K.B.kitTail || '') : '');
+function craft(y, o){ const W = sv('g', null, L.front), pl = K.plane(W, Object.assign({ shadow:false }, o)); K.at(pl, -o.w / 2, -pl.h); return { W, pl, y, s:1, k:0 }; }
+const pA = craft(YA - 4, { w:189, piece:'sf34', plain:true, art:E.fast.art !== undefined ? E.fast.art : '' }), pB = craft(YB - 4, { w:152, art:slowArt });
+const put = (P, k) => { P.k = k; P.W.setAttribute('transform', `translate(${kmX(k).toFixed(1)} ${P.y}) scale(${P.s.toFixed(3)} 1)`); };
+put(pA, 0); put(pB, 0);
+const clock = K.call(800, 645, `<b>${clockT(0)}</b> since take-off`, 'cy');
+const setT = h => { put(pA, Math.min(KM, VF * h)); put(pB, Math.min(KM, VS * h)); clock.say(`<b>${clockT(h)}</b> since take-off`); };
+const fade = (el, to, ms) => { const a = +(el.getAttribute('opacity') || 1); return K.tween(ms || 450, t => el.setAttribute('opacity', K.lerp(a, to, t))); };
+/* scene 2: the slower plane's track in thirds, and how far it had come when the faster one landed */
+const marks = sv('g', { opacity:0 }, L.mid);
+for(let i = 1; i < 3; i++) sv('line', { x1:kmX(KM * i / 3), y1:YB - 12, x2:kmX(KM * i / 3), y2:YB + 12, stroke:'#9fc3ea', 'stroke-width':2 }, marks);
+sv('path', { d:`M${X0} ${YB + 22} L ${X0} ${YB + 32} L ${kmX(AT1)} ${YB + 32} L ${kmX(AT1)} ${YB + 22}`, fill:'none', stroke:'#36c6ff', 'stroke-width':2.5 }, marks);
+K.txt(marks, (X0 + kmX(AT1)) / 2, YB + 62, `${part ? part[0].toUpperCase() + part.slice(1) : `${num(AT1)} of ${num(KM)} km`} of the way after ${hrs(TF)}`, { 'font-size':19, 'font-weight':700, 'text-anchor':'middle', fill:'#36c6ff' });
+sv('path', { d:`M${kmX(AT1)} ${YB + 32} L ${X1} ${YB + 32}`, fill:'none', stroke:'#9fc3ea', 'stroke-width':2, 'stroke-dasharray':'6 6', opacity:.7 }, marks);
+K.txt(marks, (kmX(AT1) + X1) / 2, YB + 62, 'still to go', { 'font-size':17, 'text-anchor':'middle', fill:'#9FBDE3' });
+/* scene 5: the ruler under the slower plane's track: one block an hour of flying, then quarter hours */
+const rul = sv('g', { opacity:0 }, L.mid);
+for(let h = 0; h < WHOLE; h++){ const a = kmX(h * VS), b = kmX((h + 1) * VS); sv('rect', { x:a, y:YB + 24, width:b - a - 2, height:36, fill:h % 2 ? '#1f5fa8' : '#2b78c9' }, rul); K.txt(rul, (a + b) / 2, YB + 49, `1 hour · ${num(VS)} km`, { 'font-size':17, 'font-weight':700, 'text-anchor':'middle' }); }
+for(let q = 0; q < QS; q++){ const a = kmX(WHOLE * VS + q * VS / 4), b = kmX(Math.min(KM, WHOLE * VS + (q + 1) * VS / 4)); sv('rect', { x:a, y:YB + 24, width:b - a - 2, height:36, fill:q % 2 ? '#2a6b6b' : '#338383' }, rul); K.txt(rul, (a + b) / 2, YB + 49, '¼ h', { 'font-size':17, 'font-weight':700, 'text-anchor':'middle' }); }
+/* scenes 3 and 4: the sum, set out a step at a time */
+const work = K.h('div', { class:'work out' }, K.hud(), `<span class="ey">The sum</span>
+  <div class="ln big off" data-l="1">${num(KM)} km ÷ ${num(VS)} km/h</div>
+  <div class="ln mid off" data-l="2">${num(VS)} goes into ${num(KM)} <b>${times(WHOLE)}</b>: <b>${WHOLE} whole hour${WHOLE === 1 ? '' : 's'}</b></div>
+  <div class="ln mid off" data-l="3">${num(KM)} − ${num(WHOLE * VS)} = <b>${num(LEFT)} km</b> <i>left over</i></div>
+  <div class="ln mid off" data-l="4">${num(LEFT)} km is ${half || 'part'} of ${num(VS)} km: <b>${MINS} minutes</b></div>
+  <div class="ln off" data-l="5">${WHOLE} hour${WHOLE === 1 ? '' : 's'} + ${MINS} minutes = <span class="ans"><b>${hmin(TS * 60)}</b></span></div>`);
+K.pos(work, 800, 612);
+const line = n => work.querySelector(`[data-l="${n}"]`).classList.remove('off');
+
+(async () => {
+  // 1 Show · Why it matters
+  K.mark(0);
+  await K.caption(`A ${FN} and your ${SN} set off from London for ${K.esc(CITY)}, ${num(KM)} km away.`);
+  await K.wait(500);
+  await K.tween(2800, t => setT(t * TF), 'lin');
+  const landed = K.call(X1, YA - 78, `Landed: <b>${clockT(TF)}</b>`, 'cy'), flying = K.call(kmX(AT1), YB - 72, 'Still flying', 'quiet');
+  await K.tween(700, t => { pA.s = Math.cos(t * Math.PI); put(pA, KM); }, 'io');   // it turns round for its next flight
+  await K.caption(`The ${FN} lands after <b>${hrs(TF)}</b> and turns round for its next flight. Your ${SN} is still flying.`);
+  await K.wait(2600);
+  await K.caption('Planes fly at different speeds, so the same trip takes different times.');
+  await K.wait(2400);
+  await K.caption(`<b>A faster plane fits more flights into a day</b>, but it can cost more in fuel. That's what you weigh up.`);
+  await K.cont('Next');
+
+  // 2 Predict · The Twin Otter
+  landed.out(); flying.out(); await fade(marks, 1);
+  K.question(`The ${FN} took <b>${hrs(TF)}</b>. When it landed, your ${SN} was <b>${part || `${num(AT1)} km`}</b> of the way there.`);
+  const opts = [...new Set([TF, TS, WHOLE + 1].map(h => Math.round(h * 4) / 4))].sort((a, b) => a - b);
+  await K.predict({ q:`How long will the ${SN} take?`, items:opts.map(h => ({ label:hrs(h), value:String(h) })) });
+
+  // 3 Reveal · The whole hours
+  K.mark(1); K.question(null); clock.out(); fade(marks, .35);
+  work.classList.remove('out'); line(1);
+  await K.caption(`First the whole hours: how many ${num(VS)}s fit into ${num(KM)}?`);
+  await K.wait(1500); line(2);
+  await K.wait(1300); line(3);
+  await K.caption(`${num(VS)} goes into ${num(KM)} ${times(WHOLE)}: <b>${WHOLE} whole hour${WHOLE === 1 ? '' : 's'}</b>, with <b>${num(LEFT)} km</b> left over.`);
+  await K.cont('Next');
+
+  // 4 Reveal · The part left over
+  line(4);
+  await K.caption(`${num(LEFT)} km is ${half || 'part'} of ${num(VS)} km, so it takes ${half === 'half' ? 'half an hour' : half ? half + ' of an hour' : 'part of an hour'}: <b>${MINS} minutes</b>.`);
+  await K.wait(1600); line(5);
+  await K.caption(`Hours first, then the minutes for the part left over: <b>${hmin(TS * 60)}</b>.`);
+  await K.cont('Next');
+
+  // 5 Reveal · The ruler checks it
+  work.classList.add('short'); K.pos(work, 800, 700);
+  await Promise.all([fade(marks, 0), fade(tA, .25), fade(pA.W, .25)]);
+  await fade(pB.W, 0, 300); setT(0); put(pA, KM); clock.say(`<b>${clockT(0)}</b> since take-off`); clock.out(false); await fade(pB.W, 1, 300);
+  await fade(rul, 1, 600);
+  await K.caption(`The ruler checks it. Each long block is one hour of flying: ${num(VS)} km.`);
+  await K.wait(600);
+  for(let h = 0; h < WHOLE; h++){ const a = h * VS; await K.tween(1500, t => { put(pB, a + VS * t); clock.say(`<b>${clockT(h + t)}</b> since take-off`); }, 'lin'); await K.wait(300); }
+  await K.caption(`Then the last ${num(LEFT)} km in quarter hours: ${say(QS)} quarter${QS === 1 ? '' : 's'}, ${MINS} minutes.`);
+  for(let q = 0; q < QS; q++){ const a = WHOLE * VS + q * VS / 4; await K.tween(700, t => { put(pB, Math.min(KM, a + VS / 4 * t)); clock.say(`<b>${clockT(WHOLE + (q + t) / 4)}</b> since take-off`); }, 'lin'); await K.wait(300); }
+  K.call(X1, YB - 72, `Landed: <b>${clockT(TS)}</b>`, 'cy');
+  await K.caption(`It lands at <b>${hrs(TS)}</b>, the same as the sum. The sum and the ruler agree.`);
+  await K.cont('Next');
+
+  // 6 Use · His routes
+  K.mark(2); document.querySelectorAll('.bk-call').forEach(c => c.classList.add('out')); work.classList.add('out');
+  await Promise.all([fade(map, .12), fade(rul, 0), fade(pA.W, 0), fade(pB.W, 0)]);
+  const U = D.use || { plane:E.slow.name, speed:VS, rows:[{ city:CITY, km:KM, his:true }] };
+  const cell = r => r.far ? '<td class="f">too far</td>' : r.his ? '<td class="q">? h ? min</td>' : '<td class="f"><i>ƒ</i>the sheet</td>';
+  const anyF = U.rows.some(r => !r.his && !r.far);
+  const use = K.h('div', { class:'ftu out' }, K.hud(), `<span class="ey">Flight times · your new routes</span>
+    <table><thead><tr><th>Route</th><th>Distance</th><th>${K.esc(U.plane)} speed</th><th>Flight time</th></tr></thead>
+    <tbody>${U.rows.map(r => `<tr><td>${K.esc(r.city)}</td><td>${num(r.km)} km</td><td>${num(U.speed)} km/h</td>${cell(r)}</tr>`).join('')}</tbody></table>
+    ${anyF ? '<p>ƒ: the sheet works these out for you.</p>' : ''}`);
+  K.pos(use, 800, 470); await K.wait(50); use.classList.remove('out');
+  K.question('Flight time = distance ÷ speed');
+  await K.caption('Now your new routes, on the Flight times sheet: <b>hours first, then the minutes</b> for the part left over.');
+  await K.cont('To the flight times');
+  K.done({});
+})();
+}
+
+/* ===================== before 21 Oct 2026 (a later chapter keeps it) ===================== */
+function before21(){
 /* 7 · How long will it take? (the first Flight times page). A map strip from London to the new city, with a ruler of equal
    hour-long chunks laid along the route; his plane at the start. The plane flies there an hour at a time, one chunk each, the last bit a quarter hour at a time;
    it lands and the clock stops. The triangle appears and the T, the letter to find, lights (no buttons or taps since 19 Oct,
    evening: Show → Reveal → Use). Caption: Time = distance ÷ speed. Lands on the first flight-time sum. */
-const D = Object.assign({ id:'flight_time', route:{ city:'Amsterdam', km:450 }, plane:{ name:'Twin Otter', speed:300 } }, K.B);
-const km = D.route.km, sp = D.plane.speed, city = D.route.city, num = K.num, hours = km / sp;
-const hm = m => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, '0')}`, total = Math.round(hours * 60);
-K.run(() => {   // Back plays the briefing again from here (the kit: Next and Back are always allowed)
 K.start({ title:'How long will it take?' });
 const L = K.layers(), sv = K.s;
 /* the map: the sea, the land either side, the route */
@@ -72,7 +244,7 @@ const fly = async (k, m) => { const a = at; at = Math.min(km, at + k); await K.t
   await K.cont('To the flight times');
   K.done({});
 })();
-});
+}
 </script>
 </body>
 </html>
