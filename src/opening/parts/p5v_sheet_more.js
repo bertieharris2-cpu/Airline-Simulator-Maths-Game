@@ -146,34 +146,48 @@ function ashReviewSpec(W, items){
   const total = rbValue(T), proj = Math.round(W.projected || 0), ok = id => rbState(store, id).ok;
   v['B' + rProj] = { t:money(proj) }; if(M) v['B' + rDays] = { t:num(M.div) };
   if(ok('tot')) v['B' + rTot] = { t:money(total), cls:total < 0 ? 'soft' : '', fin:!!rbState(store, 'tot').ashown };
-  if(ok('diff')) v['B' + rDiff] = { t:rbValue(D) ? rbResultWords(D).replace(/ than .*$/, '') : 'On plan', fin:!!rbState(store, 'diff').ashown };   // "£813 less": the row's label says from what; the line under the sheet has the whole sentence
+  if(ok('diff')) v['B' + rDiff] = total > proj ? { t:'+' + money(rbValue(D)), cls:'pos', fin:!!rbState(store, 'diff').ashown } : { t:rbValue(D) ? rbResultWords(D).replace(/ than .*$/, '') : 'On plan', fin:!!rbState(store, 'diff').ashown };   // "£813 less": the row's label says from what; the line under the sheet has the whole sentence
   if(M && ok('mean')) v['B' + rMean] = { t:money(rbValue(M)), fin:!!rbState(store, 'mean').ashown };
   const larger = proj >= total ? 'B' + rProj : 'B' + rTot, smaller = larger === 'B' + rProj ? 'B' + rTot : 'B' + rProj;
-  const mk = (it, o) => { const st = rbState(store, it.id), key = 'rb:' + it.id;
-    return Object.assign({ id:'rv:' + wk + ':' + it.id, kind:'review:' + it.id, built:!!st.built, unit:'£', done:!!st.ok, want:rbValue(it), recKey:key, get no(){ return sumNo(key); },
+  // 21 Oct 2026 (Bertie): the sheet does the adding. A formula-only sum (SheetSums how = formula: Profit this week, Average a day) is
+  // built by clicking its cells and the sheet works it out: no book, no Sum number. From the week 3 review (Calendar skills: sumDrag)
+  // Profit this week is added with Σ SUM, dragged down the Profit column.
+  const howOf = id => { const h = ashSum(id).how; return h === 'formula' ? 'formula' : h === 'book' ? 'book' : 'build'; }, sumDrag = typeof h21SumDragOn === 'function' && h21SumDragOn(W.from + 6);
+  const d0 = days[0], dL = days[days.length - 1], wd = d => WDAY[calDate(d).getUTCDay()], nDays = typeof h21Words === 'function' ? h21Words(days.length) : String(days.length);
+  const mk = (it, o) => { const st = rbState(store, it.id), key = 'rb:' + it.id, formula = o.how === 'formula';
+    return Object.assign({ id:'rv:' + wk + ':' + it.id, kind:'review:' + it.id, built:!!st.built, unit:'£', done:!!st.ok, want:rbValue(it), recKey:key, get no(){ return formula ? null : sumNo(key); }, get sumText(){ return st.sumText; },
       recO:{ type:'build', relKey:it.kind === 'sum' ? 'weekTotal' : it.kind === 'diff' ? 'projectedVsActual' : 'meanDay', doc:`Week ${wk} accounts: ${o.title}`, ask:o.rule, unit:'£', correct:rbValue(it), correctText:money(rbValue(it)), level:'Build' },
-      onBuilt:() => { st.built = true; st.formula = o.words; },
-      answer:(raw, val, s2) => { const want = rbValue(it), good = Math.abs(val - want) < 0.5; try{ rv2Rec(it, good, raw, val); }catch(x){}
+      onBuilt:() => { st.built = true; st.formula = o.words; }, onSum:txt => { st.sumText = txt; }, onSumKey:() => { if(typeof ashSee === 'function' && !ashSeen('sumKey')) ashSee('sumKey'); },
+      answer:(raw, val, s2) => { const want = rbValue(it), good = Math.abs(val - want) < 0.5; if(formula){ st.ok = true; st.q = false; return { ok:true }; }   // the sheet worked it out: the build is the record
+        try{ rv2Rec(it, good, raw, val); }catch(x){}
         if(good){ st.ok = true; st.q = false; return { ok:true }; }
         st.atries = (st.atries || 0) + 1;
         if(st.atries >= 2 && twoTriesOn()){ st.ok = true; st.ashown = true; try{ paperRecShown(key); }catch(x){} return { shown:true }; }
         return { note:ashWrong(it.kind === 'sum' ? '+' : it.kind === 'diff' ? '−' : '÷', it.kind === 'mean' ? [it.total, it.div] : it.kind === 'diff' ? [Math.max(proj, total), Math.min(proj, total)] : [], val, want, '£') }; },
       hints:() => ashHintFill("week's total and the mean", {}).map(t => ({ t })).concat([{ t:`Check: about ${money(ashRound(rbValue(it)))}.`, est:true }]),
       how2:() => '', answerText:it.kind === 'diff' ? rbResultWords(it) : money(rbValue(it)), rule:o.rule }, o); };
-  const sums = [mk(T, { title:'Profit this week', tgt:'B' + rTot, refs:days.map(d => 'B' + rowOf['d' + d]), ops:days.slice(1).map(() => '+'), words:days.length > 3 ? `${rbShort(days[0])} + … + ${rbShort(days[days.length - 1])}` : days.map(d => rbShort(d)).join(' + '), commute:true, how:ashSum('week.total').how === 'book' ? 'book' : 'build',
-      rule:`Profit this week = add the ${['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'][days.length] || days.length} days`, name:'the profit this week', doneLine:`Profit this week: <b class="gold">${money(total)}</b>`,
+  const tHow = howOf('week.total'), tSum = tHow === 'formula' && sumDrag, tRefs = days.map(d => 'B' + rowOf['d' + d]), tRange = `${tRefs[0]}:${tRefs[tRefs.length - 1]}`;
+  const tx = (id, v) => { const X = typeof h21Text === 'function' ? h21Text(id, v) : { text:[] }; return X; }, TV = { days:nDays, range:tRange, first:wd(d0).slice(0, 3), last:wd(dL).slice(0, 3), lastDay:wd(dL), cell:tRefs[tRefs.length - 1], total:money(total), mean:M ? money(rbValue(M)) : '' };
+  const sums = [mk(T, { title:'Profit this week', tgt:'B' + rTot, refs:tRefs, ops:days.slice(1).map(() => '+'), words:days.length > 3 ? `${rbShort(days[0])} + … + ${rbShort(days[days.length - 1])}` : days.map(d => rbShort(d)).join(' + '), commute:true, how:tHow,
+      noGap:tHow === 'formula', sumKey:tSum, sumWords:`add ${TV.first} to ${TV.last}`, barWords:tHow === 'formula' ? '' : undefined,
+      sumLine:st2 => (st2.sumA ? tx('review.sum.drag', TV) : st2.sigma ? tx('review.sum.go', TV) : tx('review.sum.wait', TV)).text.map(h21Html).join(' ').replace(/press Enter\.?$/, 'press <button class="ash-key" data-ashsumgo>Enter</button>.'),
+      lineBuild:tHow === 'formula' ? tx('review.total.card', TV).text.map(h21Html).join(' ') : undefined,
+      sumWhy:(c, r1, r2) => r2 > rowOf['d' + dL] ? `That goes past ${wd(dL)}: the week's profit is the days only. Drag from ${wd(d0)}'s profit to ${wd(dL)}'s.` : r1 > rowOf['d' + d0] ? `That leaves out ${wd(d0)}. Drag from ${wd(d0)}'s profit to ${wd(dL)}'s.` : r2 < rowOf['d' + dL] ? `That stops before ${wd(dL)}. Drag from ${wd(d0)}'s profit to ${wd(dL)}'s.` : null,
+      sumWrongCol:() => `Those are the days' names. Drag down the Profit column (B), from ${wd(d0)}'s profit to ${wd(dL)}'s.`,
+      rule:`Profit this week = add the ${['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'][days.length] || days.length} days`, name:'the profit this week', doneLine:tHow === 'formula' ? tx('review.total.done', TV).text.map(h21Html).join(' ').replace(/^✓\s*/, '') : `Profit this week: <b class="gold">${money(total)}</b>`,
       why:ref => ashRef(ref).r > rTot ? 'That is below the days. This week\'s profit adds up the days: which cells hold them?' : null }),
-    mk(D, { title:'Difference from the plan', tgt:'B' + rDiff, refs:[larger, smaller], ops:['−'], words:larger === 'B' + rProj ? 'Projected − Profit this week' : 'Profit this week − Projected', commute:false, how:ashSum('week.difference').how === 'book' ? 'book' : 'build',
+    mk(D, { title:'Difference from the plan', tgt:'B' + rDiff, refs:[larger, smaller], ops:['−'], words:larger === 'B' + rProj ? 'Projected − Profit this week' : 'Profit this week − Projected', commute:false, how:howOf('week.difference') === 'formula' ? 'build' : howOf('week.difference'),
       rule:'Difference = the larger − the smaller', name:'the difference from the plan', orderWhy:'a difference starts from the larger amount, so it doesn\'t go below zero.', doneLine:`Difference from the plan: <b class="gold">${esc(rbResultWords(D))}</b>`,
       why:ref => { const p = ashRef(ref).r; return p !== rProj && p !== rTot ? 'The difference compares what was planned with what happened: which two cells are those?' : null; } })];
-  if(M) sums.push(mk(M, { title:'Average a day', tgt:'B' + rMean, refs:['B' + rTot, 'B' + rDays], ops:['÷'], words:'Profit this week ÷ Days flown', commute:false, how:ashSum('week.average').how === 'book' ? 'book' : 'build',
-    rule:`Average a day = Profit this week ÷ ${M.div}`, name:'the average a day', orderWhy:'an average shares the total out, so the total comes first.', doneLine:`Average a day: <b class="gold">${money(rbValue(M))}</b>`,
+  if(M) sums.push(mk(M, { title:'Average a day', tgt:'B' + rMean, refs:['B' + rTot, 'B' + rDays], ops:['÷'], words:'Profit ÷ Days flown', commute:false, how:howOf('week.average'),
+    lineBuild:howOf('week.average') === 'formula' ? tx('review.average.card', TV).text.map(h21Html).join(' ') : undefined,
+    rule:`Average a day = Profit this week ÷ ${M.div}`, name:'the average a day', orderWhy:'an average shares the total out, so the total comes first.', doneLine:howOf('week.average') === 'formula' ? tx('review.average.done', TV).text.map(h21Html).join(' ').replace(/^✓\s*/, '') : `Average a day: <b class="gold">${money(rbValue(M))}</b>`,
     why:ref => { const p = ashRef(ref).r; return p < rTot ? 'An average shares the week\'s total between the days: start with the total, then the number of days.' : null; } }));
   sums.forEach((s, i) => { s.locked = i > 0 && !sums[i - 1].done; });
   const J = UI.ashJust && UI.ashJust.sheet === 'week:' + wk ? sums.find(s => s.id === UI.ashJust.sum) : null, act = J ? null : sums.find(s => !s.done) || null;
-  if(J) J.doneLine = J.shown || rbState(store, J.id.split(':').pop()).ashown ? `Finance has filled this one in: ${esc(J.answerText)}. Copy it into your book beside Sum ${J.no}.` : `${J.doneLine} · Sum ${J.no} in your record`;
+  if(J){ J.val = J.barWords === '' && !J.sumText ? undefined : J.answerText; /* the week added cell by cell: the bar keeps the whole formula, the total is in B9 */ J.doneLine = J.how === 'formula' ? J.doneLine : J.shown || rbState(store, J.id.split(':').pop()).ashown ? `Finance has filled this one in: ${esc(J.answerText)}. Copy it into your book beside Sum ${J.no}.` : `${J.doneLine} · Sum ${J.no} in your record`; }
   const last = sums[sums.length - 1];
-  return { id:'week:' + wk, crumb:'', title:'The week, day by day', tabs:null, small:true, tight:true, lw:220, cols:[{ c:'B', w:170, top:fmtRange(W.from, W.from + 6), main:'Profit' }], rows, v, sums, act, just:J,
+  return { id:'week:' + wk, crumb:'', title:'The week, day by day', tabs:null, small:true, tight:true, lw:220, cols:[{ c:'B', w:170, top:fmtRange(W.from, W.from + 6), main:'Profit' }], rows, v, sums, act, just:J, tv:TV,
     doneF:!act && !J ? { tgt:last.tgt, refs:last.refs, ops:last.ops, words:last.words } : null, doneLine:`<span class="pos">✓</span> Week ${wk}'s accounts are signed off.` };   // no answer in this narrow bar: it is in the cell
 }
 function ashReviewRender(st){
@@ -181,22 +195,24 @@ function ashReviewRender(st){
   items.forEach(it => { it.title = RV2_TITLE[it.id] || it.title; });
   const sp = ashReviewSpec(W, items), allOk = items.every(it => rbState(W, it.id).ok);
   if(allOk && !W.logged){ W.logged = true; rbSkill('weekTotal'); rbSkill('projectedVsActual'); if(items.some(x => x.id === 'mean')) rbSkill('meanDay');
-    rbLog(['Week total (Build, then the sum)', 'Projected − actual (Build, then the sum)'].concat(items.some(x => x.id === 'mean') ? ['Average a day (Build, then the sum)'] : [])); const mean = items.find(x => x.id === 'mean'); if(mean){ (S.means = S.means || {})[wk] = rbValue(mean); } }
+    const lv = id => ashSum(id).how === 'formula' ? 'Formula' : 'Build, then the sum';
+    rbLog([`Week total (${lv('week.total')})`, 'Projected − actual (Build, then the sum)'].concat(items.some(x => x.id === 'mean') ? [`Average a day (${lv('week.average')})`] : [])); const mean = items.find(x => x.id === 'mean'); if(mean){ (S.means = S.means || {})[wk] = rbValue(mean); } }
   if(allOk && !sp.just) ashKeep('week', sp, wk);
   if(!W.missed && WBS().missedProfitLine !== false){ W.missed = missedProfitLine(h.profit, 7, W.from); }
   if(!W.neglect) W.neglect = neglectUpdate(W.from, W.from + 6);
   const dayLines = (W.rows || []).filter(r => (r.ev && r.ev.length) || r.dc).map(r => `<li><b>${esc(rbShort(r.d))}</b> ${(r.ev || []).map(n => `<span>${esc(rv2DayLine(n))}</span>`).join(' ')}${r.dc ? ` <span class="dc ${r.dc.delta < 0 ? 'dn' : ''}">${esc(r.dc.line)} ${r.dc.delta < 0 ? '−' : '+'}${money(Math.abs(r.dc.delta))}</span>` : ''}</li>`).join('');
-  const neg = W.neglect && W.neglect.length ? `<div class="wk-neglect rv2-neg">${rv2Neglect(W.neglect)}</div>` : '';
+  const NG = typeof h21Unflown === 'function' ? h21Unflown(W.neglect || []) : { rest:W.neglect || [], chance:'' };
+  const neg = (NG.rest.length ? `<div class="wk-neglect rv2-neg">${rv2Neglect(NG.rest)}</div>` : '') + NG.chance;
   const what = `<div class="rv2-col rv2-what"><p class="bv-eyebrow rv2-ch">What happened</p>${rv2SeatHtml(h)}${dayLines ? `<section class="bv-panel support rv2-days"><div class="rv2-ph"><h2>Each day</h2></div><ul>${dayLines}</ul></section>` : ''}${surprisesLine(W.from, W.from + 6)}${fuelAdvantageLine(wk)}${neg}${rv2RoutesHtml(h)}</div>`;
   // the last sum's answer stays on the sheet's line; the right-hand panel signs the accounts off at once, with the missed-profit line
   const Mi = W.missed, miss = Mi ? `<div class="wk-missed ${Mi.missed > 0 ? 'warn' : 'ok'}"><span class="kl">What the best plan would have earned</span><div class="wm-row"><span>Your plan <b class="mono">${money(Mi.yours)}</b></span><span>Best plan with your planes <b class="mono">${money(Mi.best)}</b></span><span>Missed <b class="mono ${Mi.missed > 0 ? 'orange' : 'green'}">${money(Mi.missed)}</b></span></div><p class="small muted">Best plan: ${esc(Mi.bestPlan)} · about ${money(Mi.bestDay)} a day. No cash is taken.</p></div>` : '';
-  const a = allOk ? null : sp.act || sp.just, card = a ? `<section class="bv-panel active ash-rvc" data-rbcard="${a.id.split(':').pop()}"><span class="bv-sumtag">Sum ${a.no}</span><p class="ash-rvr">${esc(a.rule)}</p></section>`
+  const a = allOk ? null : sp.act || sp.just, card = a ? (typeof h21RvCard === 'function' ? h21RvCard(a, sp) : '') || `<section class="bv-panel active ash-rvc" data-rbcard="${a.id.split(':').pop()}"><span class="bv-sumtag">Sum ${a.no}</span><p class="ash-rvr">${esc(a.rule)}</p></section>`
     : `<div class="rv-signed rv2-signed">${ICO2.check}<span>Accounts signed off. The formulas stay on the sheet.</span></div>${miss}`;
   const body = `<div class="bv rv2 rbw ash-rv">${what}<div class="rv2-col rv2-mid">${ashHtml(sp)}</div><div class="rv2-col rv2-ins">${card}</div></div>`;
   const btn = allOk ? `<button class="bv-btn go big" id="nx">On to next week &#9654;</button>` : `<button class="bv-btn primary big" id="ashNext" ${sp.just ? '' : 'disabled'}>Next sum &#9654;</button>`;
   screen().innerHTML = shell(deskPage({ title:`How did week ${wk} go?`, sub:`Passengers ${num(h.pax)} of ${num(h.seats)} seats · cash ${money(Math.round(S.cash))}`, cls:'rbw-page rv-page rv2-page ash-rvp', body }),
-    deskBar(allOk ? 'Signed off. On to next week.' : 'Click the cells for each sum, work it out in your book, then type the answer in the cell and press Enter.', btn));
-  ashBind(sp); on('ashNext', ashNextSum);
+    deskBar(allOk ? 'Signed off. On to next week.' : sp.sums.some(x => x.how === 'formula') && typeof h21Text === 'function' ? h21Text('review.footer').text.join(' ') : 'Click the cells for each sum, work it out in your book, then type the answer in the cell and press Enter.', btn));
+  ashBind(sp); on('ashNext', ashNextSum); if(typeof h21RvBind === 'function') h21RvBind(sp);
   on('nx', () => { if(!items.every(it => rbState(W, it.id).ok)) return; UI.ashJust = null; resetEntry(); UI.justDone = null; S.rnd.applied = true; closeDay(); });
 }
 const ashRv0 = renderWeekReviewBuild;

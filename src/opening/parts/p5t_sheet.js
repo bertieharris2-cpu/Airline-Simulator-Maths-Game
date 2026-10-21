@@ -41,7 +41,7 @@ const ashRef = ref => ({ c:ref.replace(/\d+$/, ''), r:+ref.replace(/^[A-Z]+/, ''
 const ashMoney = v => money(Math.round(v * 100) / 100);
 /* the sheet's state on screen: the tokens clicked so far, the line's message, the hints shown (one sheet, one sum at a time) */
 function ashSt(id){ const A = UI.ashS || (UI.ashS = {}); return A[id] || (A[id] = { sum:null, tokens:[], msg:'', q:false, hint:0, how:false, entry:'', tries:0, co:null }); }
-function ashReset(st, sumId){ Object.assign(st, { sum:sumId, tokens:[], msg:'', q:false, hint:0, how:false, entry:'', tries:0 }); }
+function ashReset(st, sumId){ Object.assign(st, { sum:sumId, tokens:[], msg:'', q:false, hint:0, how:false, entry:'', entryM:0, tries:0, sigma:false, sumA:null, sumB:null, sumOne:false, drag:false }); }
 /* the kinds of sum already introduced by a Sheet Callout (kept in the save: a callout comes once in the game) */
 function ashSeen(kind){ return !!(S.ashSeen && S.ashSeen[kind]); }
 function ashSee(kind){ (S.ashSeen = S.ashSeen || {})[kind] = S.day || 1; save(); }
@@ -59,7 +59,7 @@ function ashRowLabel(sp, ref){ const p = ashRef(ref), row = sp.rows.find(x => x.
 function ashFormula(sp, sum, tokens){
   // a long sum (a week's seven days) keeps its first cell and its latest in view: "= B2 + … + B8"
   const refs = tokens.filter(t => t.ref); let tk = tokens;
-  if(refs.length > 4){ const i1 = tokens.indexOf(refs[0]), iL = tokens.lastIndexOf(refs[refs.length - 1]); tk = [tokens[i1], tokens[i1 + 1], { gap:true }].concat(tokens.slice(iL - 1)); }
+  if(refs.length > 4 && !sum.noGap){ const i1 = tokens.indexOf(refs[0]), iL = tokens.lastIndexOf(refs[refs.length - 1]); tk = [tokens[i1], tokens[i1 + 1], { gap:true }].concat(tokens.slice(iL - 1)); }
   const f = tk.map(t => t.gap ? '<i>…</i>' : t.ref ? `<b>${t.ref}</b>` : `<i>${t.op}</i>`).join(''), w = tk.map(t => t.gap ? '…' : t.ref ? (sum.wordsOf ? sum.wordsOf(t.ref) : ashRowLabel(sp, t.ref)) : t.op).join(' ');
   return { f:'= ' + f, w };
 }
@@ -70,7 +70,7 @@ function ashHtml(sp){
   const st = ashSt(sp.id), act = sp.act || null;
   if(act && st.sum !== act.id) ashReset(st, act.id);
   const coKind = act && act.co && (!ashSeen(act.kind) || st.co === act.kind) ? act.kind : null, co = coKind ? act.co : null;
-  const focus = act && !co, building = focus && ashBuilding(act), typing = focus && !building;
+  const focus = act && !co, building = focus && ashBuilding(act), typing = focus && !building, sumOn = building && !!act.sumKey && !!st.sigma;   // Σ SUM pressed (21 Oct 2026)
   const tokens = !act ? [] : building ? st.tokens : ashFullTokens(act), used = tokens.filter(t => t.ref).map(t => t.ref);
   const tagged = act && act.refs.length <= 2, tagOf = ref => { const i = used.indexOf(ref); return i < 0 ? null : tagged ? ASH_LET[i] : ''; };
   const L = focus ? ashLitBox(act) : null, RH = sp.rh || (sp.tight ? ASH_RH_TIGHT : sp.small ? ASH_RH_SMALL : ASH_RH);
@@ -79,7 +79,8 @@ function ashHtml(sp){
   const tmplC = '30px ' + cols.map(k => k.w + 'px').join(' '), tmplR = '18px ' + sp.rows.map(r => (RH[r.t || 'data'] || 31) + 'px').join(' ');
   const just = sp.just || null;
   let g = `<span class="ash-lt" style="grid-column:1;grid-row:1"></span>` + cols.map(k => `<span class="ash-lt" style="grid-column:${gc[k.c]};grid-row:1">${k.c}</span>`).join('');
-  if(L) g += `<div class="ash-lit" style="grid-column:${gc[L[0]]}/${gc[L[2]] + 1};grid-row:${gr[L[1]]}/${gr[L[3]] + 1}"></div>`;
+  if(L) g += `<div class="ash-lit ${sumOn && st.sumA ? 'adrag' : ''}" style="grid-column:${gc[L[0]]}/${gc[L[2]] + 1};grid-row:${gr[L[1]]}/${gr[L[3]] + 1}"></div>`;
+  if(sumOn && st.sumA){ const a = ashRef(st.sumA), b = ashRef(st.sumB || st.sumA); g += `<div class="ash-drag" style="grid-column:${gc[a.c]};grid-row:${gr[Math.min(a.r, b.r)]}/${gr[Math.max(a.r, b.r)] + 1}"></div>`; }
   // a value that needs its row's width (Worth keeping?) names the column it starts from (V.wide): it spans to its own column, over the empty cells
   const wide = {}; sp.rows.forEach(row => cols.forEach(k => { const V = (sp.v || {})[k.c + row.r]; if(V && V.wide && gc[V.wide]) wide[row.r] = { from:gc[V.wide], to:gc[k.c] }; }));
   sp.rows.forEach(row => {
@@ -133,16 +134,19 @@ function ashHtml(sp){
     else g += `<div class="ash-co ${side}" role="dialog" aria-label="${esc(co.title)}" style="grid-column:${gc[at[0]]}/${gc[at[2]] + 1};grid-row:${gr[at[1]]}/${gr[at[3]] + 1}">${inner}</div>`; }
   // the formula bar
   let nb = '', fm = '', words = '', ops = '';
-  if(focus){ const F = ashFormula(sp, act, tokens); nb = act.tgt; fm = F.f + (building ? '<span class="ash-caret"></span>' : '');
-    words = building ? (F.w + (tokens.length % 2 === 0 ? (tokens.length ? ` (now click the ${esc(ashNextWord(sp, act, tokens))})` : '(click the cells it uses)') : '')) : esc(act.words);
-    if(building) ops = `<span class="ash-ops">${['×', '÷', '+', '−'].map(o => `<button data-ashop="${o}" aria-label="${o}">${o}</button>`).join('')}<button class="u" data-ashop="undo" ${tokens.length ? '' : 'disabled'}>Undo</button></span>`; }
+  if(focus){ const F = ashFormula(sp, act, tokens); nb = act.tgt; fm = sumOn ? `=SUM(${st.sumA ? ashSumTxt(st, true) : ''}<span class="ash-caret"></span>` : F.f + (building ? '<span class="ash-caret"></span>' : '');
+    words = sumOn ? '' : building ? (F.w + (tokens.length % 2 === 0 ? (tokens.length ? ` (now click the ${esc(ashNextWord(sp, act, tokens))})` : act.sumKey ? '' : '(click the cells it uses)') : '')) : esc(act.words);
+    if(building && act.sumKey && !tokens.length && !st.sigma) fm = '=<span class="ash-caret"></span>';
+    if(building) ops = `<span class="ash-ops">${act.sumKey ? `<button class="sum" data-ashop="sum" aria-pressed="${!!st.sigma}" title="Add a whole column: press, then drag down it">Σ SUM</button>` : ''}${['×', '÷', '+', '−'].map(o => `<button data-ashop="${o}" aria-label="${o}">${o}</button>`).join('')}<button class="u" data-ashop="undo" ${tokens.length || st.sigma ? '' : 'disabled'}>Undo</button></span>`; }
   else if(co && act){ nb = act.tgt; words = esc(act.words); }
-  else { const d = just || (!act ? sp.doneF : null) || null; if(d && d.tgt){ const F = ashFormula(sp, d, ashFullTokens(d)); nb = d.tgt; fm = F.f; words = `${esc(d.words)}${d.val !== undefined ? ` = <b>${esc(d.val)}</b>` : ''}`; } }
+  else { const d = just || (!act ? sp.doneF : null) || null; if(d && d.tgt){ const F = ashFormula(sp, d, ashFullTokens(d)); nb = d.tgt; fm = F.f; words = `${esc(d.words)}${d.val !== undefined ? ` = <b>${esc(d.val)}</b>` : ''}`;
+    if(d.sumText){ fm = '=' + esc(d.sumText).replace(/([A-Z]+\d+)/g, '<b>$1</b>'); words = `${esc(d.sumWords || '')}${d.val !== undefined ? ` = <b>${esc(d.val)}</b>` : ''}`; }
+    else if(d.barWords !== undefined) words = d.barWords; } }
   const fb = `<div class="ash-fb" role="group" aria-label="Formula bar"><span class="ash-nb">${nb}</span><span class="ash-fx">fx</span><span class="ash-fm"><span class="ash-f">${fm.replace(/^= /, '=&nbsp;')}</span><small class="ash-w">${words}</small></span>${ops}</div>`;
   // the line under the grid
   let line = '', lcls = '';
   if(just){ line = `<span class="pos">✓</span> ${just.doneLine || ''}`; }
-  else if(focus && building){ line = st.msg ? esc(st.msg) : act.lineBuild || `Click the cells to build the formula. Then work it out in your book and type the answer in <b>${act.tgt}</b>.`; if(st.q) lcls = 'q'; }
+  else if(focus && building){ line = st.msg ? esc(st.msg) : (act.sumKey && act.sumLine ? act.sumLine(st) : '') || act.lineBuild || `Click the cells to build the formula. Then work it out in your book and type the answer in <b>${act.tgt}</b>.`; if(st.q) lcls = 'q'; }
   else if(focus){ line = st.msg ? `${esc(st.msg)}` : act.lineType || ashLineBook(act); if(st.q) lcls = 'q';
     line += `${act.hints ? `<button class="ash-hl" data-ashhint>${st.hint ? 'Another hint' : 'Give me a hint'}</button>` : ''}${act.how2 ? `<button class="ash-hl quiet" data-ashhow>${st.how ? 'Hide the example' : 'Show me how'}</button>` : ''}`; }
   else if(co) line = co.line || 'Read the note on the sheet, then press Got it.';
@@ -150,7 +154,7 @@ function ashHtml(sp){
   const hints = focus && typing && st.hint && act.hints ? act.hints().slice(0, st.hint) : [];
   const how = focus && typing && st.how && act.how2 ? act.how2() : '';
   const top = sp.small ? '' : `<header class="ash-top"><div class="ash-tt">${sp.crumb ? `<span class="ash-crumb">${esc(sp.crumb)}</span>` : ''}<h1 class="ash-title">${esc(sp.title || '')}</h1></div>${sp.tabs ? `<nav class="ash-tabs" aria-label="Sheets">${sp.tabs.map(t => `<button class="ash-tab ${t.on ? 'on' : ''} ${t.off ? 'off' : ''}" data-ashtab="${esc(t.id)}" ${t.off || t.on ? 'aria-disabled="true"' : ''} title="${esc(t.off ? `${t.label}: not on the sheet yet` : t.label)}">${ashIco(t.ic)}${esc(t.label)}</button>`).join('')}</nav>` : ''}</header>`;
-  return `<section class="ash ${sp.small ? 'ash-small' : ''} ${sp.tight ? 'ash-tight' : ''} ${focus ? 'ash-work' : 'ash-done'}" data-ash="${esc(sp.id)}" aria-label="${esc(sp.title || 'Sheet')}">${top}${coBlock}${fb}
+  return `<section class="ash ${sp.small ? 'ash-small' : ''} ${sp.tight ? 'ash-tight' : ''} ${focus ? 'ash-work' : 'ash-done'} ${sumOn ? 'ash-sumon' : ''}" data-ash="${esc(sp.id)}" aria-label="${esc(sp.title || 'Sheet')}">${top}${coBlock}${fb}
     <div class="ash-gridw"><div class="ash-grid" role="grid" style="grid-template-columns:${tmplC};grid-template-rows:${tmplR}">${g}</div>${coOut}</div>
     <p class="ash-line ${lcls}" role="status">${line}</p>${hints.length ? `<div class="ash-hints">${hints.map(h => `<span class="${h.est ? 'est' : ''}">${esc(h.t)}</span>`).join('')}</div>` : ''}${how ? `<div class="ash-how">${how}</div>` : ''}</section>`;
 }
@@ -159,7 +163,7 @@ function ashNextWord(sp, sum, tokens){ const n = tokens.filter(t => t.ref).lengt
 /* ---------- the builder: cells and operations, each checked against what the sum means ---------- */
 function ashLive(){ return UI.ashLive && document.querySelector(`[data-ash="${CSS.escape(UI.ashLive.id)}"]`) ? UI.ashLive : null; }
 function ashPick(sp, ref){
-  const act = sp.act, st = ashSt(sp.id); if(!act || !ashBuilding(act)) return;
+  const act = sp.act, st = ashSt(sp.id); if(!act || !ashBuilding(act) || st.sigma) return;
   const n = st.tokens.length; st.q = false;
   if(n % 2 === 1){ st.msg = 'Next, an operation: × ÷ + or − at the end of the formula bar.'; render(); return; }
   if(ref === act.tgt){ st.msg = `${act.tgt} is where the answer goes. Which cells make it?`; st.q = true; render(); return; }
@@ -174,7 +178,10 @@ function ashPick(sp, ref){
 }
 function ashOp(sp, op){
   const act = sp.act, st = ashSt(sp.id); if(!act || !ashBuilding(act)) return;
-  if(op === 'undo'){ st.tokens.pop(); st.msg = ''; st.q = false; render(); return; }
+  if(op === 'undo'){ if(st.sigma){ if(st.sumA){ st.sumA = st.sumB = null; st.sumOne = false; } else st.sigma = false; st.msg = ''; st.q = false; render(); return; } st.tokens.pop(); st.msg = ''; st.q = false; render(); return; }
+  if(op === 'sum'){ if(!act.sumKey) return; if(st.tokens.length){ st.msg = 'Σ SUM starts a formula of its own: press Undo to clear the cells first.'; st.q = true; render(); return; }
+    st.sigma = true; st.sumA = st.sumB = null; st.sumOne = false; st.msg = ''; st.q = false; if(act.onSumKey) act.onSumKey(); render(); return; }
+  if(st.sigma){ st.msg = act.sumOpWhy || 'Σ SUM adds every cell you drag over: drag down the column, then press Enter.'; st.q = true; render(); return; }
   const n = st.tokens.length; st.q = false;
   if(n % 2 === 0){ st.msg = n ? 'Next, a cell from the sheet.' : 'Start with a cell from the sheet.'; render(); return; }
   const want = act.ops[(n - 1) / 2];
@@ -183,6 +190,26 @@ function ashOp(sp, op){
 }
 const ASH_OPWHY = { '×':'Each one is the same amount: which operation repeats it for every one?', '+':'This puts amounts together: which operation joins them?',
   '−':'This is what is left after taking one amount away: which operation takes away?', '÷':'This shares an amount out equally: which operation shares?' };
+/* Σ SUM (21 Oct 2026): the range on the sheet, "B2:B8" (cells bold), and Enter: the range must be every cell the sum adds */
+function ashSumTxt(st, html){ const a = ashRef(st.sumA), b = ashRef(st.sumB || st.sumA), r1 = Math.min(a.r, b.r), r2 = Math.max(a.r, b.r);
+  return html ? `<b>${a.c}${r1}</b>:<b>${a.c}${r2}</b>` : `${a.c}${r1}:${a.c}${r2}`; }
+function ashSumEnter(sp){
+  const act = sp.act, st = ashSt(sp.id); if(!act || !act.sumKey || !st.sigma || st.drag) return;
+  if(!st.sumA){ st.msg = act.sumAsk || 'Drag down the column first, then press Enter.'; st.q = false; render(); return; }
+  const a = ashRef(st.sumA), b = ashRef(st.sumB || st.sumA), r1 = Math.min(a.r, b.r), r2 = Math.max(a.r, b.r), W = act.refs.map(ashRef), w1 = Math.min(...W.map(x => x.r)), w2 = Math.max(...W.map(x => x.r)), txt = `SUM(${ashSumTxt(st)})`;
+  if(a.c !== W[0].c || r1 !== w1 || r2 !== w2){ const msg = (act.sumWhy && act.sumWhy(a.c, r1, r2)) || 'That is not every cell this sum adds. Drag again.'; st.msg = msg; st.q = true; ashBuildRec(act, [{ ref:txt }], false, msg); st.sumA = st.sumB = null; st.sumOne = false; render(); return; }
+  if(act.onSum) act.onSum(txt); st.tokens = [{ ref:txt }]; st.sigma = false; ashBuilt(sp, act, st); render();
+}
+/* while dragging, the range and the bar follow the pointer without redrawing the page */
+function ashSumPaint(sp, root, st){
+  const grid = root.querySelector('.ash-grid'); if(!grid || !st.sumA) return; let d = grid.querySelector('.ash-drag');
+  const a = ashRef(st.sumA), b = ashRef(st.sumB || st.sumA), cell = r => grid.querySelector(`.ash-c[data-ref="${a.c}${r}"]`), c1 = cell(Math.min(a.r, b.r)), c2 = cell(Math.max(a.r, b.r)); if(!c1 || !c2) return;
+  if(!d){ d = document.createElement('div'); d.className = 'ash-drag'; grid.appendChild(d); }
+  d.style.gridColumn = c1.style.gridColumn; d.style.gridRow = `${c1.style.gridRow} / ${+c2.style.gridRow + 1}`;
+  const lit = grid.querySelector('.ash-lit'); if(lit) lit.classList.add('adrag');
+  const f = root.querySelector('.ash-f'); if(f) f.innerHTML = `=SUM(${ashSumTxt(st, true)}<span class="ash-caret"></span>`;
+  const ln = root.querySelector('.ash-line'); if(ln && sp.act && sp.act.sumLine){ ln.classList.remove('q'); ln.innerHTML = sp.act.sumLine(Object.assign({}, st, { msg:'' })); }
+}
 function ashBuilt(sp, act, st){ act.built = true; if(act.onBuilt) act.onBuilt(st.tokens); ashBuildRec(act, st.tokens, true); st.tokens = []; st.msg = ''; st.q = false;
   if(act.how === 'formula'){ const r = act.answer(String(act.want), act.want, st) || {};
     if(r.ok || r.shown){ UI.ashJust = { sheet:sp.id, sum:act.id, shown:false, at:Date.now(), note:'', formula:true }; ashReset(st, null); if(typeof liveChime === 'function' && typeof opsSoundOn === 'function' && opsSoundOn()) liveChime('ding'); }
@@ -221,6 +248,15 @@ function ashBind(sp){
   const root = document.querySelector(`[data-ash="${CSS.escape(sp.id)}"]`); if(!root) return; UI.ashLive = sp;
   const st = ashSt(sp.id);
   root.querySelectorAll('[data-ashref]').forEach(c => { c.onclick = () => ashPick(sp, c.getAttribute('data-ashref')); c.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); ashPick(sp, c.getAttribute('data-ashref')); } }; });
+  if(sp.act && sp.act.sumKey && ashBuilding(sp.act)){   // Σ SUM: press on the first cell, drag to the last, let go (or click the first, then the last)
+    const grid = root.querySelector('.ash-grid'), col = ashRef(sp.act.refs[0]).c, at = e => { const el = document.elementFromPoint(e.clientX, e.clientY), c = el && el.closest ? el.closest('.ash-c[data-ref]') : null; return c ? c.getAttribute('data-ref') : null; };
+    if(grid){ grid.onpointerdown = e => { if(!st.sigma) return; const ref = at(e); if(!ref) return; e.preventDefault();
+        if(ashRef(ref).c !== col){ st.msg = (sp.act.sumWrongCol && sp.act.sumWrongCol(ref)) || `Drag down column ${col}: the cells this sum adds.`; st.q = true; render(); return; }
+        if(st.sumA && st.sumOne){ st.sumB = ref; st.sumOne = false; render(); return; }
+        st.drag = true; st.sumA = st.sumB = ref; st.msg = ''; st.q = false; try{ grid.setPointerCapture(e.pointerId); }catch(x){} ashSumPaint(sp, root, st); };
+      grid.onpointermove = e => { if(!st.drag) return; const ref = at(e); if(!ref || ashRef(ref).c !== col || ref === st.sumB) return; st.sumB = ref; ashSumPaint(sp, root, st); };
+      grid.onpointerup = grid.onpointercancel = () => { if(!st.drag) return; st.drag = false; st.sumOne = st.sumA === st.sumB; render(); }; } }
+  root.querySelectorAll('[data-ashsumgo]').forEach(b => b.onclick = () => ashSumEnter(sp));
   root.querySelectorAll('[data-ashop]').forEach(b => b.onclick = () => ashOp(sp, b.getAttribute('data-ashop')));
   root.querySelectorAll('[data-ashgot]').forEach(b => b.onclick = () => { const k = b.getAttribute('data-ashgot'); st.co = null; if(!ashSeen(k)) ashSee(k); render(); });
   root.querySelectorAll('[data-ashco]').forEach(b => b.onclick = e => { e.stopPropagation(); st.co = b.getAttribute('data-ashco'); render(); });
@@ -240,6 +276,7 @@ document.addEventListener('keydown', e => {
   const sp = ashLive(); if(!sp || !sp.act || !ashBuilding(sp.act)) return; const t = e.target;
   if(t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
   if(document.querySelector('#bfLayer')) return;
+  if(e.key === 'Enter' && ashSt(sp.id).sigma){ e.preventDefault(); e.stopImmediatePropagation(); ashSumEnter(sp); return; }   // this Enter is the formula's, not Next sum's
   const map = { '*':'×', 'x':'×', 'X':'×', '/':'÷', '+':'+', '-':'−', '−':'−' }, op = map[e.key];
   if(op){ e.preventDefault(); ashOp(sp, op); return; }
   if(e.key === 'Backspace'){ e.preventDefault(); ashOp(sp, 'undo'); }
@@ -254,11 +291,13 @@ document.addEventListener('keydown', e => { if(e.key !== 'Enter' || !UI.ashJust)
 function ashPlan(){
   const sp = ashLive(); if(!sp || !sp.act) return null; const a = sp.act, st = ashSt(sp.id);
   const seq = []; if(ashBuilding(a)){ const done = st.tokens.length; ashFullTokens(a).slice(done).forEach(t => seq.push(t.ref ? { ref:t.ref } : { op:t.op })); }
-  return { sheet:sp.id, sum:a.id, tgt:a.tgt, no:a.no, build:ashBuilding(a), seq, answer:a.want, co:!!document.querySelector(`[data-ash="${CSS.escape(sp.id)}"] [data-ashgot]`) };
+  const range = a.sumKey && ashBuilding(a) ? [a.refs[0], a.refs[a.refs.length - 1]] : null;
+  return { sheet:sp.id, sum:a.id, tgt:a.tgt, no:a.no, build:ashBuilding(a), formula:a.how === 'formula', seq, range, answer:a.want, co:!!document.querySelector(`[data-ash="${CSS.escape(sp.id)}"] [data-ashgot]`) };
 }
 function ashGo(P, value){
   const root = document.querySelector(`[data-ash="${CSS.escape(P.sheet)}"]`); if(!root) return;
   const got = root.querySelector('[data-ashgot]'); if(got){ got.click(); return; }
+  if(P.range){ const sp = ashLive(), st = sp && ashSt(sp.id); if(sp && st){ st.sigma = true; st.sumA = P.range[0]; st.sumB = P.range[1]; st.sumOne = false; if(sp.act && sp.act.onSumKey) sp.act.onSumKey(); ashSumEnter(sp); } return; }
   P.seq.forEach(x => { const r = document.querySelector(`[data-ash="${CSS.escape(P.sheet)}"]`); const el = x.ref ? r.querySelector(`[data-ashref="${x.ref}"]`) : r.querySelector(`[data-ashop="${x.op}"]`); if(el) el.click(); });
   const r2 = document.querySelector(`[data-ash="${CSS.escape(P.sheet)}"]`), inp = r2 && r2.querySelector('[data-ashin]'); if(!inp) return;
   const sel = r2.querySelector('[data-ashm]'), val = value === undefined ? P.answer : value;

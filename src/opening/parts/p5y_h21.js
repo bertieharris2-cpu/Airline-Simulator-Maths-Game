@@ -28,6 +28,7 @@ const H21_TEXT = {
   'changes.line':{ text:['Read the note beside the sheet, then press **Got it**.'] },
   'review.sumSkill':{ eyebrow:'NEW SKILL · SUM', title:'Add a whole column at once', text:["Press **Σ SUM**, then drag down the **Profit** column, from Monday's profit to Sunday's.", 'The sheet adds every cell you drag over: **=SUM({range})**.'], button:'Got it' },
   'review.sum.wait':{ text:['Press **Σ SUM**, then drag down the Profit column from {first} to {last}. The sheet adds them up.'] },
+  'review.sum.go':{ text:['Now drag down the Profit column, from {first} to {last}.'] },
   'review.sum.drag':{ text:["Let go on {lastDay}'s profit ({cell}), then press Enter."] },
   'review.total.done':{ text:['✓ The sheet added the {days} days: **{total}**. Next: the difference from the plan, in your book.'] },
   'review.total.card':{ eyebrow:'FORMULA', title:'Profit this week = add the {days} days', text:['Click each day into the formula. The sheet adds them up.'] },
@@ -340,3 +341,29 @@ renderStudio = function(){ const r = h21Studio0.apply(this, arguments); try{ h21
 const h21Render1 = render;
 render = function(){ h21LeadOff(); return h21Render1.apply(this, arguments); };
 window.addEventListener('resize', () => { try{ if(document.getElementById('h21Lead') && step().t === 'plan') render(); }catch(e){} });
+
+/* ---------- 8. the Sunday review: the sheet does the adding (p5v builds the sums; p5t draws Σ SUM) ----------
+   Σ SUM unlocks at the review of the Calendar day whose unlocks name the skill sumDrag (21: week 3's accounts). The card beside the
+   sheet shows FORMULA (cyan) for a formula-only sum and the rule in words; the first time Σ SUM appears, a Sheet Callout under it
+   (NEW SKILL · SUM) points left at the Profit column, while the sheet stays ready to use. */
+function h21SumDragDay(){ const c = (typeof CAL !== 'undefined' ? CAL : []).find(x => x && x.unlocks && (x.unlocks.skills || []).includes('sumDrag')); return c ? c.day : 21; }
+function h21SumDragOn(day){ return !!S && yearOne(day) && (day || S.day || 1) >= h21SumDragDay(); }
+function h21RvCard(a, sp){
+  if(a.how !== 'formula') return '';
+  const tot = /:tot$/.test(a.id), V = sp.tv || {}, sumy = tot && (a.sumKey || a.sumText), T = h21Text(tot ? (sumy ? 'review.total.cardSum' : 'review.total.card') : 'review.average.card', V);
+  const sub = sumy ? (a.done && a.sumText ? T.text : []) : T.text;
+  const card = `<section class="bv-panel active ash-rvc h21-rvc" data-rbcard="${a.id.split(':').pop()}"><span class="h21-ftag">${esc(T.eyebrow || 'FORMULA')}</span><p class="ash-rvr">${h21Html(T.title)}</p>${sub.map(t => `<p class="h21-rvs">${h21Html(t)}</p>`).join('')}</section>`;
+  const C = tot && a.sumKey && !a.done && sp.act === a && !ashSeen('sumKey') ? h21Text('review.sumSkill', V) : null;
+  return card + (C ? `<div class="ash-co h21-rvco pl" role="dialog" aria-label="${esc(C.title)}"><i class="ash-ptr" aria-hidden="true"></i><span class="ash-coe">${esc(C.eyebrow)}</span><b class="ash-cot">${esc(C.title)}</b>${C.text.map(t => `<p>${h21Html(t)}</p>`).join('')}<div class="ash-coa"><button class="bv-btn primary" data-h21sum>${esc(C.button || 'Got it')}</button></div></div>` : '');
+}
+function h21RvBind(sp){ screen().querySelectorAll('[data-h21sum]').forEach(b => b.onclick = () => { ashSee('sumKey'); render(); }); }
+
+/* ---------- 9. routes not flown yet: named only once a plan screen has shown them, and as a chance (cyan), not a loss ---------- */
+function h21Unflown(L){
+  if(!yearOne()) return { rest:L, chance:'' };
+  const RX = /^(.+?): ([\d,]+) → ([\d,]+)\. No service flew this week, so/, shown = S.h21Shown || {}, rest = [], items = [];
+  const flown = id => (S.history || []).some(h => h.routes && h.routes[id] && (h.routes[id].seats || 0) > 0);
+  L.forEach(n => { const m = RX.exec(n.text || ''); if(!m || !n.route || flown(n.route)){ rest.push(n); return; } if(shown[n.route]) items.push(`${m[1]} ${m[2]} → ${m[3]}`); });
+  const T = h21Text('review.unflown', { list:items.join(' · ') });
+  return { rest, chance:items.length ? `<div class="h21-chance" role="note"><p><b>${h21Html(T.title)}</b> ${h21Html(T.text.join(' '))}</p></div>` : '' };
+}

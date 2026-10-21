@@ -277,6 +277,7 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `changes.line`: Read the note beside the sheet, then press **Got it**.
 - `review.sumSkill`: NEW SKILL · SUM · Add a whole column at once · Press **Σ SUM**, then drag down the **Profit** column, from Monday's profit to Sunday's. · The sheet adds every cell you drag over: **=SUM({range})**. · [Got it]
 - `review.sum.wait`: Press **Σ SUM**, then drag down the Profit column from {first} to {last}. The sheet adds them up.
+- `review.sum.go`: Now drag down the Profit column, from {first} to {last}.
 - `review.sum.drag`: Let go on {lastDay}'s profit ({cell}), then press Enter.
 - `review.total.done`: ✓ The sheet added the {days} days: **{total}**. Next: the difference from the plan, in your book.
 - `review.total.card`: FORMULA · Profit this week = add the {days} days · Click each day into the formula. The sheet adds them up.

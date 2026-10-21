@@ -94,3 +94,21 @@ body.yr1 .ash-co.h21-cor{width:636px}
 body.yr1 .s3-insp.h21-cobox{display:block;padding:6px 8px;background:none;border-color:transparent}
 body.yr1 .ash-co.h21-coi{position:relative;inset:auto;width:100%;padding:10px 18px}
 body.yr1 .ash-co.h21-coi .ash-ptr{display:none}
+
+/* ---------- 8. the Sunday review: FORMULA, Σ SUM ---------- */
+body.yr1 .ash-ops button.sum{width:auto;padding:0 8px;font-weight:700;letter-spacing:.02em}
+body.yr1 .ash-ops button.sum[aria-pressed="true"]{background:var(--cyan);color:#04111f;border-color:var(--cyan)}
+body.yr1 .ash-drag{z-index:3;pointer-events:none;outline:2px dashed var(--cyan);outline-offset:-2px;background:rgba(54,198,255,.08)}
+body.yr1 .ash-lit.adrag{box-shadow:none;border-color:transparent;outline:0}
+body.yr1 .ash.ash-sumon .ash-grid{touch-action:none;cursor:crosshair}
+body.yr1 .ash-line .ash-key{margin:0 2px}
+body.yr1 .h21-rvc .h21-ftag{align-self:flex-start}
+body.yr1 .h21-rvc .h21-rvs{margin:6px 0 0;font:400 14px/1.4 var(--font-sans);color:var(--text-soft)}
+body.yr1 .ash-co.h21-rvco{position:relative;width:auto;max-width:none;margin:16px 0 0;z-index:5}
+body.yr1 .ash-co.h21-rvco .ash-ptr{top:66px}
+body.yr1 .ash-co.h21-rvco p b{color:#fff}
+
+/* ---------- 9. routes not flown yet, as a chance ---------- */
+body.yr1 .h21-chance{margin:0;padding:10px 12px;border:1px solid rgba(54,198,255,.35);border-left:3px solid var(--cyan);background:rgba(10,40,72,.6)}
+body.yr1 .h21-chance p{margin:0;font:400 13px/1.4 var(--font-sans);color:var(--text)}
+body.yr1 .h21-chance p > b{color:var(--cyan);font-weight:700}
