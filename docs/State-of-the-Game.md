@@ -68,7 +68,7 @@ Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is
 - `foSignHtml` (p4zr's old sign-off box) is not drawn on the year-one sheet desk (`ashOn() && fd2On()`, `p5y`). p5v stripped it anyway, but its "Sum n" line took a number every week the game worked the order out (ƒ signs itself).
 - `wcHtml` (`p5h`, the comparison's "A full flight"): a full flight worked out before (`T.model`) shows the week and the words with no Sum number, in year one.
 - `foPlan` (the test kit's look at the order) reads the order's number without handing one out, in year one. The week test called it on every visit to the desk.
-- A Steady run's record now runs 1, 2, 3, … with none skipped. A sum he opens and leaves without doing still keeps its number.
+- A sum shown to him that he leaves without doing keeps its number (he may have written it down): the Fuel desk suggests an order when the tank is short, and an order he doesn't buy is the one gap left. The Steady run reaches Sum 53 by day 118, with two such orders (weeks 6 and 14).
 
 **Workbook** (`tools/import_world.py`):
 - SheetSums `how` accepts `formula`.
@@ -84,7 +84,7 @@ Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is
   - Σ SUM is a real drag from week 3;
   - it presses Got it on first-time callouts and checks each shows once;
   - the first flight time is in the record as its Build, then a Calculate, under one Sum number;
-  - the record's Sum numbers run 1, 2, 3, … with none skipped (and `chapter2.test.js` checks the same over the whole year).
+  - every Sum number handed out is in the record, apart from a fuel order he was shown and left unbought (`chapter2.test.js` checks the same over the whole year).
 - `record.test.js`: B4's Build is in the record.
 - `briefings.test.js`: the six scenes, the later-chapter page, and the example and Use rows in the game's data.
 

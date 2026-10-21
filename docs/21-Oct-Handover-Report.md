@@ -90,8 +90,9 @@ The code is in `src/opening/parts/p5y_h21.js` and `p1_head_h21.css`, with small 
   - Checking this, I found two places that took a number for a sum he never does, so his book skipped one. Both are fixed in year one:
     - the fuel order in a week the game works it out (ƒ): a hidden part of the old Fuel desk still took a number;
     - "A full flight" on the Which aircraft? comparison, when he worked it out in an earlier week: it showed a new Sum number beside "(worked out before)". Now it shows no number.
-  - On 20 October, a Steady pupil had reached Sum 71 by the end of chapter 1, with 11 numbers skipped. The week test now checks that the record runs 1, 2, 3, … with none skipped.
-  - One gap can still happen: a sum he opens and leaves without doing keeps its number.
+  - By the end of chapter 1 the Steady test pupil now reaches Sum 53, and every number is in the record but two. On 20 October the same pupil reached Sum 71, with 11 numbers skipped.
+  - The two are the one gap I kept on purpose. When the tank is short, the Fuel desk suggests an order and shows its sum with a number. If he leaves without buying, that number stays used, because he may already have written it in his book. The test pupil did this in weeks 6 and 14, when the tank was nearly full.
+  - The week test and the chapter 2 test now check that every number handed out is in the record, apart from such an order.
 
 ### 9. Sunday review: routes not flown yet
 - **A route he hasn't flown is named only once a plan screen has shown it to him.** The opener's NEW row, the Studio callout and Change network all count, and the save keeps which routes were shown.
