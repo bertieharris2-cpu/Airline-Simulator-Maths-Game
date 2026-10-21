@@ -414,6 +414,19 @@ if fl_:
     cf_ = fl_.get('compareFares') or []
     if len(cf_) != 2 or any(f not in fs_ for f in cf_): issue('error', 'BriefingData', 'fare_lever: compareFares must be two of the fares.')
 elif 'Briefings' in wb.sheetnames: issue('check', 'BriefingData', 'no fare_lever example: What a fare does uses the numbers built into its page.')
+# 21 Oct 2026: How long will it take?'s example, by name only: the distance comes from the Routes sheet and the speeds from the Aircraft sheet
+ft_ = briefingData.get('flight_time')
+if ft_:
+    def plane_named_(n):
+        n = str(n or '').strip().lower()
+        return next((a_ for a_ in aircraft if n and (n in (str(a_['name']).lower(), str(a_['id']).lower(), str(a_['wbId']).lower()) or str(a_['name']).lower().endswith(' ' + n))), None)
+    r_ = next((x for x in routes if str(x['city']).lower() == str(ft_.get('route') or '').strip().lower()), None)
+    if not r_: issue('error', 'BriefingData', f"flight_time: the route {ft_.get('route')!r} is not a city on the Routes sheet.")
+    lo_, hi_ = plane_named_(ft_.get('plane')), plane_named_(ft_.get('fasterPlane'))
+    for k_, p_ in (('plane', lo_), ('fasterPlane', hi_)):
+        if not p_: issue('error', 'BriefingData', f"flight_time: the {k_} {ft_.get(k_)!r} is not on the Aircraft sheet.")
+    if r_ and lo_ and hi_ and not (hi_['speedKmh'] > lo_['speedKmh']): issue('error', 'BriefingData', f"flight_time: the fasterPlane ({hi_['name']}, {hi_['speedKmh']} km/h) must be faster than the plane ({lo_['name']}, {lo_['speedKmh']} km/h).")
+elif 'Briefings' in wb.sheetnames: issue('check', 'BriefingData', 'no flight_time example: How long will it take? uses a Saab 340 and the Twin Otter to Amsterdam.')
 for n_ in ('DailyColour', 'Upgrades', 'Briefings'):
     if n_ not in wb.sheetnames: issue('check', n_, f'no {n_} sheet: the game runs without it.')
 # v5.17 (D101): the Roadmap behind Home's Coming up strip. 'shown from' reads 'day 22'; the line is the pupil's words.

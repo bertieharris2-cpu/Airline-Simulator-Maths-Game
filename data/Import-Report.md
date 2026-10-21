@@ -227,6 +227,9 @@ The briefing's fixed teaching example, as loaded from the BriefingData sheet (no
 - `fuel_cash_tank_profit` · `days`: 5
 - `fuel_cash_tank_profit` · `tickets`: 6660
 - `fuel_cash_tank_profit` · `otherCosts`: 3610
+- `flight_time` · `route`: Amsterdam
+- `flight_time` · `plane`: Twin Otter
+- `flight_time` · `fasterPlane`: Saab 340
 
 ## D105 touches (every sum on the Sheet)
 

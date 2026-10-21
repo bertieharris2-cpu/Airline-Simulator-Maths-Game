@@ -26,7 +26,10 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
   // D86 (15 Oct 2026): the pupil works on paper; the game takes the answer. Since 19 Oct, evening (7.1, 7.3): the answer is typed into its cell on the Launch Day sheet; two tries, a sum number
   const plan = () => p.evaluate(() => window.__ash && window.__ash.plan()), line = () => p.$eval('[data-ash^="launch:"] .ash-line', e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
   let P = await plan(); for(let k = 0; k < 4 && P && P.co; k++){ await p.click(`[data-ash="${P.sheet}"] [data-ashgot]`); await p.waitForTimeout(80); P = await plan(); }
-  ok('the Launch Day sheet: the first sum is a cell to type into; no answer box, column template, squared paper or Working pad', !!P && /^launch:/.test(P.sheet) && !P.build && !!(await p.$(`[data-ash="${P.sheet}"] [data-ashin]`)) && !(await p.$('.wk-sum.paper, .wkb, .wk-grid, [data-summode], .pad-btn')), P);
+  // 21 Oct 2026 (Bertie said yes on 20 Oct): the first ticket sum is a Build: he clicks the cells of its formula (B2 × B3), then works it out in his book
+  ok('the Launch Day sheet: the first sum (B4) is a Build: he clicks B2 × B3 first; no answer box, column template, squared paper or Working pad', !!P && /^launch:/.test(P.sheet) && P.build && P.tgt === 'B4' && P.seq.map(x => x.ref || x.op).join(' ') === 'B2 × B3' && !(await p.$(`[data-ash="${P.sheet}"] [data-ashin]`)) && !(await p.$('.wk-sum.paper, .wkb, .wk-grid, [data-summode], .pad-btn')), P);
+  if(P && P.build){ for(const x of P.seq) await p.click(`[data-ash="${P.sheet}"] ${x.ref ? `[data-ashref="${x.ref}"]` : `[data-ashop="${x.op}"]`}`); await p.waitForTimeout(150); P = await plan(); }
+  ok('built: now B4 is a cell to type into', !!P && !P.build && P.tgt === 'B4' && !!(await p.$(`[data-ash="${P.sheet}"] [data-ashin]`)), P);
   const n1 = P && P.no, inp = P ? `[data-ash="${P.sheet}"] [data-ashin]` : '#none';
   ok('the line under the sheet names the sum: "Work it out in your book. Write Sum N beside it, then type the answer in B4"', new RegExp(`Work it out in your book\\. Write Sum ${n1} beside it, then type the answer in ${P && P.tgt}`).test(await line()), await line());
   await p.fill(inp, String(P.answer * 10)); await p.press(inp, 'Enter'); await p.waitForTimeout(120);
@@ -35,8 +38,8 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
   const e1 = JSON.parse(await E('JSON.stringify(S.record.entries.filter(e => e.type === "calc").pop())'));
   ok('the record has the sum with its number and both attempts, a Query then Checked', e1 && e1.n === n1 && e1.attempts.length === 2 && !e1.attempts[0].ok && e1.attempts[1].ok && e1.status === 'checked' && /ten times smaller/.test(e1.attempts[0].note), e1 && { n:e1.n, q:e1.question, tries:e1.attempts.length, status:e1.status, note:e1.attempts[0].note });
   const b1 = JSON.parse(await E(`JSON.stringify(S.record.entries.filter(e => e.type === "build" && e.key === ${JSON.stringify(e1 ? e1.key : '')}).pop() || null)`));
-  // batch 2 (Bertie, 18 Oct): a sum about fares is always worked out in the book, so year one's ticket revenue has no Build step
-  ok('batch 2: a fare sum is worked out in the book, not built: no Build in the record, the one Sum number', !b1 && e1 && e1.n === n1, b1 && { n:b1.n, status:b1.status });
+  // 21 Oct 2026: the first ticket sum is built, then worked out in the book (batch 2's "fare sums are never built" gives way here, Bertie said yes on 20 Oct); the other columns stay Calculate
+  ok('21 Oct: the first ticket sum has its Build in the record (Checked) under the same Sum number as the answer', !!b1 && e1 && b1.status === 'checked' && (b1.n === undefined || b1.n === n1), b1 && { n:b1.n, status:b1.status, level:b1.level });
   // the next sums: answered right, until the profit (F9), which is answered wrong twice: Finance fills it in
   let shownN = null;
   for(let k = 0; k < 40; k++){ const Q = await plan();

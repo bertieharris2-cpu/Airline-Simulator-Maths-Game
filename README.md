@@ -380,6 +380,20 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### The 21 October play-test in the game (21 Oct 2026)
+*Claude Design's handover of 21 Oct 2026 (Bertie approved each item on his own screenshots), in year one only. The DESIGN.md of 21 Oct is installed. The report is `docs/21-Oct-Handover-Report.md`; screenshots at 1366 × 768 and 1920 × 1080 are in `docs/screenshots/o21/`. The code is in `src/opening/parts/p5y_h21.js` and `p1_head_h21.css`.*
+- **Fuel desk tour:** the rest of the screen darkens; step 1 is the tank's size (ringed), and the gauge's dashed line now sits at need ÷ capacity. Steps 2 and 3 sit under Market, and the order sheet stays idle until step 3.
+- **Star rating:** "What it is worth" is gone; "What moves it from now" runs the full width.
+- **Flight times are a small Sheet.** His sums are Amsterdam (a Build) and Barcelona; the sheet fills in Frankfurt and Geneva (ƒ). The answer is hours plus a minutes list, never a decimal.
+- **Week 3 shows what's new first:** the opener's NEW row ("Add a route ›"), then first-time callouts with cyan leader lines (the Sat–Sun switch on the opener; Add / change routes, then Sat–Sun in the Studio). One at a time, each once, kept in the save.
+- **Changes sheet:** the callout sits beside the Difference column and explains +10, −10 and −£10 in words.
+- **Operations Wall graph:** the title follows the tab, the key is at the top right, the axes have titles, the ticks are round, the bars are "Week n / dates", and the week in progress says "so far: Monday".
+- **Sunday review: the sheet does the adding.** Profit this week and Average a day are formula-only sums: no book, no Sum number. From the week 3 review he adds the week with **Σ SUM**, dragging down the Profit column. The difference stays a book sum.
+- **Routes not flown yet** are named only after a plan screen has shown them, as a chance in a cyan panel.
+- **Launch Day's first ticket sum (B4) is a Build**; C4 and D4 stay Calculate.
+- **"How long will it take?"** plays in Bertie's six scenes: why it matters (a Saab 340 and his Twin Otter to Amsterdam), the prediction, the whole hours, the part left over, the ruler as the check, then his routes. A later chapter keeps the old scenes.
+- **Workbook:** SheetSums `how` = formula, a new ScreenText sheet, Σ SUM on Calendar day 21, and the briefing's example on BriefingData.
+
 ### Bertie's briefings review in the game (20 Oct 2026)
 *From the DESIGN.md of 20 Oct 2026 (Bertie's review of every briefing), in year one only. The scene-by-scene re-plan of the briefings waits for Bertie to check the "Operations Briefings — scene by scene" doc. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are in `docs/screenshots/o20/`.*
 - **The words sit inside the picture.** They show on a soft dark plate near what they describe, and the art moves down a little to make room. The bottom bar holds only Pause & discuss, Back and Next. The kit (`briefings/kit/`) places the words; each briefing can move them (`K.caption(html, { x, y, w })`, `K.words`). In Cash, tank, profit they sit under the price board.

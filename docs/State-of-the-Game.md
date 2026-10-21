@@ -10,6 +10,76 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zh. The 21 October play-test (Claude Design's handover of 21 Oct 2026)
+
+Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is `docs/21-Oct-Handover-Report.md`; screenshots are in `docs/screenshots/o21/`. The new part `parts/p5y_h21.js` comes after `p5x_nosnacks.js`; its CSS is `parts/p1_head_h21.css`, after `p1_head_sheet.css`. Everything new is a reassignment, so the build still reports 120 overridden functions.
+
+**Screen text:** `h21Text(id, vars)` reads `WB.screenText` (the new ScreenText sheet: id, eyebrow, title, text lines, button). `H21_TEXT` holds the same words for a workbook without it. `h21Html` turns `**…**` into bold and `[A]`/`[B]` into the A / B tags.
+
+**1. Fuel desk tour** (`p5q_fuel2.js`, `p5y`):
+- `h21Spot(els)` draws a fixed SVG over the page with even-odd holes for the lit panel and its step box (`pointer-events:none`). `render` and `resize` redraw it, and `h21SpotOff` removes it.
+- `fd2Callout(i)` reads `fuel.tour.1–3` with the tank's capacity, weeks and need. Steps 2–3 put the box after `.fd2-r .fd2-mk` (`h21-under`, and `h21-left` at step 3); step 1 rings `.fd2-tank`.
+- `fd2Tank` places the dashed line at need ÷ capacity of the inner height.
+- `ashFoSpec` (`p5v`) returns the idle order sheet while `S.fd2Tour` is before step 3.
+
+**2. Star rating** (`p5w_d104.js`): the worth panel and its sum are gone; the drivers section is `h21-wide`.
+
+**3. Flight times** (`p5y`): `ftPage` is wrapped.
+- `h21FtRows()` reads SheetSums' Flight times rows and re-picks the items on the slowest type, each with a `how` (build, book or formula).
+- `h21FtSpec(P)` builds the small sheet: B Distance, then Speed and Flight time per type. Cells without an item are ƒ (`h21-ftf`).
+- Each sum has `unit:'hm'` and an hours box plus a `data-ashm` minutes select (`cellIn`, `readIn`, `parse`).
+- `h21FtAnswer` keeps the record, two tries and Finance, and `S.ftp.n` counts for the decay.
+- `renderFtp` draws the page (`ftp-page h21-ftp`), and `ftpPlan` returns `next.sheet` so the test kit answers through the sheet's own recipe.
+
+**4–5. What's new first** (`p5y`):
+- `op2Rows` gets the NEW row (`data-s2go="network"`); `s2Opener` gets `h21-grow`.
+- `h21PlanCallouts()` runs after `renderStudio`:
+  - in opener mode, the Sat–Sun callout (`h21CoOpener`, leader `h21LeadOpener`);
+  - in plan mode, the routes callout (`h21CoRoutes`), then the Studio's Sat–Sun callout inside the empty `.s3-insp` (`h21CoStudioDays`);
+  - network mode marks the routes callout seen.
+- Leader lines are `#h21Lead` (fixed SVG, `pointer-events:none`), measured after the page settles (`h21After`).
+- Save: `S.h21Seen` (callout id → day) and `S.h21Shown` (route id → the day a plan screen showed it).
+
+**6. Changes** (`p5u_sheet_pages.js`): `ashChgCallout(ch, v, sum, rows)` builds the callout beside column D (`co.out`, `co.ring`, `co.line`; one sign per line from `ASH_CHG_SIGN`).
+
+**7. Wall graph** (`p5y`):
+- `finChart` is wrapped; `h21Graph(kind, o)` draws round ticks (`niceStep`) with an HTML text layer.
+- `h21Periods(kind)` is a copy of p5h's block-scoped `s3Periods`, adding `last`; the days tab takes `h21Fin0`'s chart.
+- `wallReviewHtml` and `wallPeriodReviewHtml` drop the host subtitle.
+
+**8. Review** (`p5t_sheet.js`, `p5v_sheet_more.js`):
+- **The Sheet engine:**
+  - `how:'formula'` is a build that, once built, answers itself (`ashBuilt` → `act.answer`), with no Sum number; its record is `paperRecOpen0` with level Formula.
+  - Σ SUM: `sumKey` adds the key. In sigma mode (`st.sigma`), pointer handlers on `.ash-grid` drag `sumA`→`sumB`, painted live by `ashSumPaint`.
+  - `ashSumEnter` checks the range against the sum's refs (`sumWrongCol` otherwise) and builds `=SUM(B2:B8)`. Enter is taken first (`stopImmediatePropagation`).
+  - `ashPlan` returns `formula` and `range`; `ashGo` drives both.
+- **The review sheet:**
+  - `ashReviewSpec`: `sumDrag` from `h21SumDragDay()` (the Calendar row whose unlocks list `sumDrag`, else 21); the total and mean are formula; the done lines come from the workbook.
+  - `ashReviewRender`: `h21RvCard` (FORMULA card and the NEW SKILL · SUM callout, `ashSeen('sumKey')`) and the footer.
+
+**9. Unflown routes** (`p5v`, `p5y`): `h21Unflown(L)` keeps never-flown routes out of the neglect lines, and names them in the `h21-chance` panel only once `S.h21Shown` has them.
+
+**10. Launch Day and the briefing:**
+- `ashSumAt(id, cell)` (`p5u`) reads SheetSums by cell, so B4 is a Build and C4/D4 book.
+- `bfTimeData` (`p5f`) adds `ex`, the teaching example, from `WB.briefingData.flight_time` (names; km and speeds from the Routes and Aircraft data), and `use`, his new routes from `ftPage()`.
+- `briefing-time.html` runs `scenes()` when `K.y1`, else `before21()`, the page as it was.
+
+**Workbook** (`tools/import_world.py`):
+- SheetSums `how` accepts `formula`.
+- ScreenText becomes `screenText`.
+- BriefingData `flight_time` is checked: the route and planes must exist, and the faster plane must be faster.
+- Calendar day 21 unlocks `sumDrag`.
+
+**Tests:**
+- `week.test.js`:
+  - Launch Day B4 is a Build;
+  - the tour darkens;
+  - the review card says FORMULA, and the total and mean are built, with no box and no number;
+  - Σ SUM is a real drag from week 3;
+  - it presses Got it on first-time callouts and checks each shows once.
+- `record.test.js`: B4's Build is in the record.
+- `briefings.test.js`: the six scenes, the later-chapter page, and the example and Use rows in the game's data.
+
 ## 0zg. Bertie's briefings review in the game (DESIGN.md of 20 Oct 2026)
 
 Year one only. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are in `docs/screenshots/o20/`.
