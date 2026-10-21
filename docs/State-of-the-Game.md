@@ -28,7 +28,7 @@ Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is
 - `h21FtRows()` reads SheetSums' Flight times rows and re-picks the items on the slowest type, each with a `how` (build, book or formula).
 - `h21FtSpec(P)` builds the small sheet: B Distance, then Speed and Flight time per type. Cells without an item are ƒ (`h21-ftf`).
 - Each sum has `unit:'hm'` and an hours box plus a `data-ashm` minutes select (`cellIn`, `readIn`, `parse`).
-- `h21FtAnswer` keeps the record, two tries and Finance, and `S.ftp.n` counts for the decay.
+- `h21FtAnswer` keeps the record, two tries and Finance, and `S.ftp.n` counts for the decay. The answer from his book is a Calculate entry under the Build's Sum number; the click step is the Sheet's own Build entry (`ashBuildRec`), as on the review and the Changes sheet.
 - `renderFtp` draws the page (`ftp-page h21-ftp`), and `ftpPlan` returns `next.sheet` so the test kit answers through the sheet's own recipe.
 
 **4–5. What's new first** (`p5y`):
@@ -76,7 +76,8 @@ Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is
   - the tour darkens;
   - the review card says FORMULA, and the total and mean are built, with no box and no number;
   - Σ SUM is a real drag from week 3;
-  - it presses Got it on first-time callouts and checks each shows once.
+  - it presses Got it on first-time callouts and checks each shows once;
+  - the first flight time is in the record as its Build, then a Calculate, under one Sum number.
 - `record.test.js`: B4's Build is in the record.
 - `briefings.test.js`: the six scenes, the later-chapter page, and the example and Use rows in the game's data.
 

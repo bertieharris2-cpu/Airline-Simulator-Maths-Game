@@ -6,7 +6,7 @@ Bertie played weeks 2 to 4 on 21 October and marked nine things. Claude Design r
 - the DESIGN.md of 21 October, now installed;
 - the sheet kit.
 
-Two items agreed earlier are built in the same round: Launch Day's first ticket sum becomes a Build, and "How long will it take?" plays in Bertie's new order.
+Two items agreed earlier are built in the same round: Launch Day's first ticket sum becomes a Build, and "How long will it take?" plays in Bertie's new order. Bertie's other two answers of 20 October need no change: 24 September stays without a curveball, and Captain's challenge 2 ("Win the catering contract") stays as it is.
 
 Everything is in **year one only**, as CLAUDE.md asks:
 - the CSS sits under `body.yr1`;

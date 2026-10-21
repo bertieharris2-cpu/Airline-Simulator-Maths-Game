@@ -3,6 +3,7 @@
 Every screen the handover changed, as a pupil sees it in the game, in year one. Report: `docs/21-Oct-Handover-Report.md`.
 
 - `1366x768/` and `1920x1080/`: the same screens at both sizes.
+- `highlights-1366x768.jpg`: twelve of these screens on one page.
 - The saves are Bertie's own airline (TEST2) from the play-test, so the figures match the handover's pictures. The Launch Day screen uses the teacher's day-1 Jump to… save.
 - File names follow the handover's pictures (`01-…` to `09-…`); `10-…` is section 10 (Launch Day and the briefing).
 

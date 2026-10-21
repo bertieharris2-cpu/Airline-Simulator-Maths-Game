@@ -216,8 +216,9 @@ function h21FtAnswer(P, a, p, r, h, formula, raw, val, st){
   const done = shown => { a.done = true; a.shown = !!shown; a.q = false; a.msg = ''; F.n = h21FtDone() + 1; if(typeof soTouch === 'function') soTouch('flightTime', { route:rid, count:true }); const sk = skills().flightTime; if(sk && !sk.routes.includes(rid)) sk.routes.push(rid);
     (S.handSumLog = S.handSumLog || []).push({ day:S.day, date:dateShort(S.day), tools:[`Flight time: ${shortPlane(p)} to ${r.city} (${formula ? 'Formula' : a.how === 'build' ? 'Build, then the sum' : 'Calculate'})`] }); save(); };
   if(formula){ done(false); return { ok:true }; }   // the sheet works it out: the build is the record (p5t)
-  let e = null; try{ e = recOpen(key, { type:a.how === 'build' ? 'build' : 'calc', relKey:'flightTime', doc:`Flight time: ${shortPlane(p)} to ${r.city}`, ask:`How long does the ${shortPlane(p)} take to fly ${num(routeKm(r))} km at ${num(p.speed)} km/h?`,
-    question:`${num(routeKm(r))} km ÷ ${num(p.speed)} km/h`, unit:'h min', correct:q, correctText:h21HM(h), ops:[routeKm(r), p.speed], op:'÷', level:a.how === 'build' ? 'Build' : 'Calculate' }); }catch(x){}
+  // the answer from his book is a Calculate entry under the same Sum number; a Build's click step has its own entry (the Sheet's ashBuildRec), as on the review and the Changes sheet
+  let e = null; try{ e = recOpen(key, { type:'calc', relKey:'flightTime', doc:`Flight time: ${shortPlane(p)} to ${r.city}`, ask:`How long does the ${shortPlane(p)} take to fly ${num(routeKm(r))} km at ${num(p.speed)} km/h?`,
+    question:`${num(routeKm(r))} km ÷ ${num(p.speed)} km/h`, unit:'h min', correct:q, correctText:h21HM(h), ops:[routeKm(r), p.speed], op:'÷', level:'Calculate' }); }catch(x){}
   const ok = val !== null && Math.abs(val - q) < 1e-6; try{ recAttempt(e, { ok, given:raw, value:val, method:'distance ÷ speed' }); }catch(x){}
   if(ok){ done(false); return { ok:true }; }
   if((st.tries || 0) + 1 >= 2 && twoTriesOn()){ try{ paperRecShown(key); }catch(x){} done(true); return { shown:true }; }
