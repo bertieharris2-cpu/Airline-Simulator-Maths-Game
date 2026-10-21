@@ -42,7 +42,7 @@ The code is in `src/opening/parts/p5y_h21.js` and `p1_head_h21.css`, with small 
 - **The rest works as the other sheets do:**
   - two tries, then Finance fills the cell;
   - Give me a hint (the whole hours, then the part left over);
-  - the record;
+  - the record: the Build, then his answer as a Calculate, under one Sum number (as Launch Day's B4);
   - the flight-time decay counts each one.
 - **The footer** says "Work out the flight times on the sheet, then go on to the timetable." Next sum appears while one is left; then On to the timetable.
 
