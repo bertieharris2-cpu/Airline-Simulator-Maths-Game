@@ -368,3 +368,10 @@ function h21Unflown(L){
   const T = h21Text('review.unflown', { list:items.join(' · ') });
   return { rest, chance:items.length ? `<div class="h21-chance" role="note"><p><b>${h21Html(T.title)}</b> ${h21Html(T.text.join(' '))}</p></div>` : '' };
 }
+
+/* ---------- 11. Sum numbers stay consecutive: a number goes only to a sum he works out ----------
+   The year-one Fuel desk shows the order as a small sheet and strips the old sign-off box (p5v), but the box was still drawn first,
+   and its "Sum n" line (sumHeadHtml) took a number even for an order the game works out (ƒ signs itself), so his book skipped one.
+   On that desk the box is not drawn at all. (The comparison's full flight worked out before has no number either: p5h, wcHtml.) */
+const h21FoSign0 = foSignHtml;
+foSignHtml = function(){ return ashOn() && fd2On() ? '' : h21FoSign0.apply(this, arguments); };

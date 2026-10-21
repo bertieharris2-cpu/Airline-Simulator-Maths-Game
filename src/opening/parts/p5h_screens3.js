@@ -463,7 +463,9 @@ function wcHtml(){
   const q = F.r ? `How much ticket money does one full ${esc(F.r.city)} flight bring in?` : 'How much ticket money does one full flight bring in?';
   const known = typeof skills === 'function' && skills().seatsFare && (skills().seatsFare.planes || []).includes(pid);
   if(known && !T.done){ T.done = true; T.model = true; T.at = Date.now(); }
-  const work = `<section class="wc-z wc-work ${T.done ? 'ok' : ''}"><p class="wc-eb">WORK IT OUT</p>${sumHeadHtml('wc:' + pid, `A full flight: ${shortPlane(p)}`)}<p class="wc-q">${q}</p>
+  // 21 Oct 2026: a full flight worked out before isn't his sum this week, so in year one it takes no Sum number (one here left a gap in his book)
+  const what = `A full flight: ${shortPlane(p)}`, head = T.model && yearOne() ? `<p class="sum-h">Week ${weekNo(recNow())} · ${esc(what)}</p>` : sumHeadHtml('wc:' + pid, what);
+  const work = `<section class="wc-z wc-work ${T.done ? 'ok' : ''}"><p class="wc-eb">WORK IT OUT</p>${head}<p class="wc-q">${q}</p>
     <p class="wc-sum"><span class="mono">${p.seats} seats × ${money(F.fare)} =</span> ${T.done ? `<b class="wc-ans">${money(F.full)}</b>${T.model ? ' <small>(worked out before)</small>' : T.shown ? FIN_STAMP : cardStampHtml('ok')}` : `<span class="sc-in ${T.q ? 'qy' : ''}"><i class="pre">£</i><input data-wcin="${pid}" inputmode="numeric" autocomplete="off" value="${esc(T.v)}" aria-label="Ticket money from one full flight"></span>`}</p>
     <p class="wc-why-l">This helps judge whether the plane can earn back its cost.</p>
     ${T.done ? '' : `<div class="wc-row"><button class="dk-link" data-wchint="${pid}">Give me a hint</button><span class="grow"></span><button class="btn primary" data-wcchk="${pid}">Check ✓</button></div>`}

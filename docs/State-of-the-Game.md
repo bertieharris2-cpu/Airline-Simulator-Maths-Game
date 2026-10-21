@@ -12,7 +12,7 @@
 
 ## 0zh. The 21 October play-test (Claude Design's handover of 21 Oct 2026)
 
-Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is `docs/21-Oct-Handover-Report.md`; screenshots are in `docs/screenshots/o21/`. The new part `parts/p5y_h21.js` comes after `p5x_nosnacks.js`; its CSS is `parts/p1_head_h21.css`, after `p1_head_sheet.css`. Everything new is a reassignment, so the build still reports 120 overridden functions.
+Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is `docs/21-Oct-Handover-Report.md`; screenshots are in `docs/screenshots/o21/`. The new part `parts/p5y_h21.js` comes after `p5x_nosnacks.js`; its CSS is `parts/p1_head_h21.css`, after `p1_head_sheet.css`. Everything new is a reassignment, or an edit in place in the block-scoped `p5f` (`bfTimeData`) and `p5h` (`wcHtml`), so the build still reports 120 overridden functions.
 
 **Screen text:** `h21Text(id, vars)` reads `WB.screenText` (the new ScreenText sheet: id, eyebrow, title, text lines, button). `H21_TEXT` holds the same words for a workbook without it. `h21Html` turns `**…**` into bold and `[A]`/`[B]` into the A / B tags.
 
@@ -64,6 +64,11 @@ Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is
 - `bfTimeData` (`p5f`) adds `ex`, the teaching example, from `WB.briefingData.flight_time` (names; km and speeds from the Routes and Aircraft data), and `use`, his new routes from `ftPage()`.
 - `briefing-time.html` runs `scenes()` when `K.y1`, else `before21()`, the page as it was.
 
+**11. Sum numbers with no gaps:** `sumNo(key)` hands out the next number the first time a sum is drawn, so a sum drawn but never done left a gap in his book and the printed record.
+- `foSignHtml` (p4zr's old sign-off box) is not drawn on the year-one sheet desk (`ashOn() && fd2On()`, `p5y`). p5v stripped it anyway, but its "Sum n" line took a number every week the game worked the order out (ƒ signs itself).
+- `wcHtml` (`p5h`, the comparison's "A full flight"): a full flight worked out before (`T.model`) shows the week and the words with no Sum number, in year one.
+- A Steady run's record now runs 1, 2, 3, … with none skipped. A sum he opens and leaves without doing still keeps its number.
+
 **Workbook** (`tools/import_world.py`):
 - SheetSums `how` accepts `formula`.
 - ScreenText becomes `screenText`.
@@ -77,7 +82,8 @@ Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is
   - the review card says FORMULA, and the total and mean are built, with no box and no number;
   - Σ SUM is a real drag from week 3;
   - it presses Got it on first-time callouts and checks each shows once;
-  - the first flight time is in the record as its Build, then a Calculate, under one Sum number.
+  - the first flight time is in the record as its Build, then a Calculate, under one Sum number;
+  - the record's Sum numbers run 1, 2, 3, … with none skipped.
 - `record.test.js`: B4's Build is in the record.
 - `briefings.test.js`: the six scenes, the later-chapter page, and the example and Use rows in the game's data.
 

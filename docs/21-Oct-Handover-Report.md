@@ -87,6 +87,11 @@ The code is in `src/opening/parts/p5y_h21.js` and `p1_head_h21.css`, with small 
 - **The difference from the plan stays a book sum**, with its Sum number.
 - **The footer:** "Build each formula by clicking the cells. The sheet adds up; work out the difference from the plan in your book."
 - **Sum numbers stay consecutive.** Each week has two fewer numbered sums now, so the later numbers come sooner, and the printed record follows the same numbers.
+  - Checking this, I found two places that took a number for a sum he never does, so his book skipped one. Both are fixed in year one:
+    - the fuel order in a week the game works it out (ƒ): a hidden part of the old Fuel desk still took a number;
+    - "A full flight" on the Which aircraft? comparison, when he worked it out in an earlier week: it showed a new Sum number beside "(worked out before)". Now it shows no number.
+  - On 20 October, a Steady pupil had reached Sum 71 by the end of chapter 1, with 11 numbers skipped. The week test now checks that the record runs 1, 2, 3, … with none skipped.
+  - One gap can still happen: a sum he opens and leaves without doing keeps its number.
 
 ### 9. Sunday review: routes not flown yet
 - **A route he hasn't flown is named only once a plan screen has shown it to him.** The opener's NEW row, the Studio callout and Change network all count, and the save keeps which routes were shown.
