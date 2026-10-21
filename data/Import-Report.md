@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 20 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 21 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **0 to fix, 26 to check, 8 notes.**
 
@@ -168,7 +168,7 @@ Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `flightDaysFromDay`: earned: week-2 review (day 14); fallback day 21
 - **DailyColour:** hen_party (Tue, every 3), school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), birthday_cake (Sat, every 4), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
 - **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91) and fleet groups: short-, medium- and long-haul fleets, each with its own planning view, fuel_farm → The fuel farm on the Fuel desk (D89).
-- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), flight_time (flight-time-tutorial.html, not built yet), cash_to_fly (briefing-cash-to-fly.html).
+- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), flight_time (briefing-time.html), cash_to_fly (briefing-cash-to-fly.html).
 
 ## Screens brief 3 (D101–D102) touches
 
@@ -233,7 +233,8 @@ The briefing's fixed teaching example, as loaded from the BriefingData sheet (no
 The handover of 19 Oct (evening), section 7.10: the Settings row, the SheetSums sheet and the hints, as loaded. Cash, tank, profit's example is under D104's list.
 
 - `fuelDeskOpensDay`: 1
-- **Launch Day** `B4 · C4 · D4` Ticket revenue: = B2 × B3 (and C, D) (Passengers × Fare) · pupil · book · `launch.tickets`
+- **Launch Day** `B4` Ticket revenue: = B2 × B3 (Passengers × Fare) · pupil · build · `launch.tickets`
+- **Launch Day** `C4 · D4` Ticket revenue: = C2 × C3 (and D) (Passengers × Fare) · pupil · book · `launch.tickets`
 - **Launch Day** `E4` Ticket revenue: = E2 × E3 (Passengers × Fare) · pupil · book · `launch.otherTickets`
 - **Launch Day** `F5` Total revenue: = the plan's ticket revenue (Ticket revenue (the plan)) · ƒ · airline
 - **Launch Day** `F6` Other costs: given (What's in this?) · ƒ · airline
@@ -246,11 +247,50 @@ The handover of 19 Oct (evening), section 7.10: the Settings row, the SheetSums 
 - **Changes (week 2 on)** `D7` Difference (a plan change: profit a day): = C7 − B7 (With your change − Now) · pupil · build once · `changes.difference`
 - **Event sums** `B4` Stay with you: = B2 × B3 (Your passengers × Stay with you, in every 10) · pupil · book · `event.stay`
 - **Event sums** `B4` Business travellers today: = B2 × B3 (Business travellers on a weekday × Fly on a Saturday, in every 10) · pupil · book · `event.business`
-- **Sunday review** `B9` Profit this week: = B2 + B3 + … + B8 (Mon + Tue + … + Sun) · pupil · build · `week.total`
+- **Sunday review** `B9` Profit this week: = B2 + B3 + … + B8 (weeks 1–2) · =SUM(B2:B8) with Σ SUM (from week 3) (Mon + Tue + … + Sun) · pupil · formula · `week.total`
 - **Sunday review** `B11` Difference from the plan: = B10 − B9 (the larger first) (Projected on Monday − Profit this week) · pupil · build · `week.difference`
-- **Sunday review** `B13` Average a day: = B9 ÷ B12 (Profit this week ÷ Days flown) · pupil · build · `week.average`
+- **Sunday review** `B13` Average a day: = B9 ÷ B12 (Profit this week ÷ Days flown) · pupil · formula · `week.average`
 - **Fuel desk** `B4` Cost of this order: = B2 × B3 (Litres to buy × Price a litre) · pupil · book · `fuel.order`
+- **Flight times (week 3)** `D2` Amsterdam: = B2 ÷ C2 (Distance ÷ Speed) · pupil · build · `flight.time`
+- **Flight times (week 3)** `D3` Frankfurt: = B3 ÷ C3 (Distance ÷ Speed) · ƒ · airline
+- **Flight times (week 3)** `D4` Geneva: = B4 ÷ C4 (Distance ÷ Speed) · ƒ · airline
+- **Flight times (week 3)** `D5` Barcelona: = B5 ÷ C5 (Distance ÷ Speed) · pupil · book · `flight.time`
 - **WorkingMethods hints:** 11 of 31 relationships have a hint template.
+
+## 21 Oct touches (the play-test of 21 Oct)
+
+Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM unlocks and the screen text, as loaded.
+
+- **Sunday review** `B9` Profit this week: formula-only
+- **Sunday review** `B13` Average a day: formula-only
+- **Calendar skills:** day 21: sumDrag
+- `fuel.tour.1`: Your tank · holds {capacity}, {weeks}. The dashed line shows the {need} this week needs. · [Next ▶]
+- `fuel.tour.2`: Market: · today's price for a litre, and what it might cost next week. The news underneath says why. · [Next ▶]
+- `fuel.tour.3`: Place a purchase order: · choose how many litres to buy. Then build the cost on the sheet and work it out in your book. · [Got it]
+- `opener.newRoutes`: NEW · {Count} new routes open: {routes}. · [Add a route ›]
+- `opener.newRoute`: NEW · A new route opens: {routes}. · [Add a route ›]
+- `opener.weekends`: NEW · WEEKENDS · Plan Saturday and Sunday on their own · Different numbers of people want to fly at the weekend. Switch to **Sat–Sun** to see the weekend's flights, then edit the plan to fit. · [Got it]
+- `studio.routes`: NEW · ROUTES · {Count} new routes open this week · {routes}. Add one here, then give it flights on the timetable. · [Got it]
+- `studio.route`: NEW · ROUTES · A new route opens this week · {routes}. Add it here, then give it flights on the timetable. · [Got it]
+- `studio.weekends`: NEW · WEEKENDS · Plan Saturday and Sunday on their own · Different numbers of people want to fly at the weekend. Switch to **Sat–Sun** to see them, and give those days their own flights. · [Got it]
+- `changes.difference`: NEW · YOUR CHANGE · What the Difference column means · **Difference = [A] With your change − [B] Now** · {signs} · First, work out **{cell}**: the difference in {row}. · [Got it]
+- `changes.line`: Read the note beside the sheet, then press **Got it**.
+- `review.sumSkill`: NEW SKILL · SUM · Add a whole column at once · Press **Σ SUM**, then drag down the **Profit** column, from Monday's profit to Sunday's. · The sheet adds every cell you drag over: **=SUM({range})**. · [Got it]
+- `review.sum.wait`: Press **Σ SUM**, then drag down the Profit column from {first} to {last}. The sheet adds them up.
+- `review.sum.drag`: Let go on {lastDay}'s profit ({cell}), then press Enter.
+- `review.total.done`: ✓ The sheet added the {days} days: **{total}**. Next: the difference from the plan, in your book.
+- `review.total.card`: FORMULA · Profit this week = add the {days} days · Click each day into the formula. The sheet adds them up.
+- `review.total.cardSum`: FORMULA · Profit this week = add the {days} days · =SUM({range}) added {first} to {last}.
+- `review.average.card`: FORMULA · Average a day = profit this week ÷ days flown · Click the two cells. The sheet works it out.
+- `review.average.done`: ✓ The sheet worked out the average: **{mean}** a day.
+- `review.footer`: Build each formula by clicking the cells. The sheet adds up; work out the difference from the plan in your book.
+- `review.unflown`: You could fly these new routes. · Red Kite flies them for now, so fewer people are left wanting to fly with you each day: {list}
+- `flightTimes.line`: Work it out in your book. Write **Sum {n}** beside it, then type the time in **{cell}**. · [Give me a hint]
+- `flightTimes.build`: Click the cells to build the formula. Then work it out in your book and type the time in **{cell}**.
+- `flightTimes.formula`: Click the cells to build the formula. The sheet works out the time in **{cell}**.
+- `flightTimes.f`: ƒ worked out for you
+- `flightTimes.footer`: Work out the flight times on the sheet, then go on to the timetable.
+- `flightTimes.card`: Flight time = distance ÷ speed · {plane} to {route}
 
 ## Identity and photos (CR5)
 

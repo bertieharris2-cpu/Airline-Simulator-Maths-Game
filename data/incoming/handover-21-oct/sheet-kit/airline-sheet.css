@@ -1,0 +1,75 @@
+/* BertieV4 · Sheet (Airline style). One look for every sheet in the game.
+   Tokens are scoped to .sh so the sheet works on any page. Figures use the game's sans with tabular figures (no monospace). */
+.sh{--text:#eaf2ff;--soft:#9fbde3;--muted:#6f86a8;--cyan:#36c6ff;--gold:#f2c14e;--green:#3ce394;--amber:#ffb547;--mag:#ff4fd8;
+ --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Arial,sans-serif;--mono:var(--sans)}
+.sh{position:relative;font:15px/1.3 var(--sans);color:var(--text);font-variant-numeric:tabular-nums}
+.sh *{box-sizing:border-box}
+.sh .ttl{position:absolute;left:24px;top:14px;font-size:21px;font-weight:600}
+.sh .ctx{position:absolute;right:24px;top:20px;font-size:13px;color:var(--soft)}
+.sh .fb{position:absolute;left:24px;height:34px;display:flex;font-size:15px}
+.sh .fb .nb{width:62px;display:grid;place-items:center;font-weight:700;color:#cfe4ff}
+.sh .fb .fx{width:36px;display:grid;place-items:center;font-style:italic;color:var(--soft)}
+.sh .fb .fm{flex:1;display:flex;align-items:center;gap:14px;padding:0 12px;font-family:var(--mono);font-size:15.5px;color:#fff;white-space:nowrap;overflow:hidden}
+.sh .fb .fm small{font-family:var(--sans);font-size:13.5px;color:var(--soft)}
+.sh .fb .cy{color:var(--cyan);font-weight:700}
+.sh .lt,.sh .rn{position:absolute;display:grid;place-items:center;font-size:11px;font-weight:700}
+.sh .c{position:absolute;display:flex;align-items:center;padding:0 10px;white-space:nowrap}
+.sh .c.v{justify-content:flex-end;font-size:15.5px;font-weight:600}
+.sh .c.l{font-size:14.5px;color:#d6e2f3;gap:7px}
+.sh .c.l small{font-size:11.5px;color:var(--muted)}
+.sh .c.l .lk{font-size:11.5px;color:#7fd0ff;text-decoration:underline}
+.sh .c.l .new{font-size:10px;font-weight:800;letter-spacing:.08em;color:#021226;background:var(--cyan);padding:1px 5px}
+.sh .c.h{flex-direction:column;align-items:flex-end;justify-content:center;line-height:1.15;gap:1px}
+.sh .c.h span{font-size:11.5px;color:var(--soft)}
+.sh .c.h b{font-size:14px;color:#fff}
+.sh .c.h i{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--green)}
+.sh .c.sub{font-size:12.5px;font-weight:700;color:#d6e2f3}
+.sh .c.sub.v{justify-content:flex-end;white-space:normal;text-align:right;line-height:1.1}
+.sh .c.note{font-size:11.5px;color:var(--soft);white-space:normal;line-height:1.2;justify-content:flex-end;text-align:right}
+.sh .c.tot{font-weight:700;color:#fff}
+.sh .gold{color:var(--gold)} .sh .pos{color:var(--green)} .sh .neg{color:var(--soft)}
+.sh .au{position:absolute;left:5px;top:3px;font-family:Georgia,serif;font-style:italic;font-size:12px;color:#7fa7d6;font-weight:400}
+.sh .dim{opacity:.62}
+.sh .ref{box-shadow:inset 0 0 0 2px var(--cyan)!important}
+.sh .ref::before{content:attr(data-tag);position:absolute;left:0;top:0;min-width:16px;height:16px;padding:0 3px;background:var(--cyan);color:#021226;font:800 10px/16px var(--sans);text-align:center}
+.sh .ref[data-tag=""]::before{display:none}
+.sh .tgt{box-shadow:inset 0 0 0 2px var(--mag)!important;background:#020b18!important;justify-content:flex-start!important}
+.sh .tgt .caret{display:inline-block;width:2px;height:18px;background:#fff;margin-left:3px}
+.sh .lit{position:absolute;border:2px solid var(--cyan);background:linear-gradient(155deg,rgba(18,62,100,.8),rgba(9,39,67,.65));box-shadow:0 0 20px rgba(54,198,255,.18)}
+.sh .line{position:absolute;left:54px;font-size:13.5px;color:#cfe0f5}
+.sh .line b{color:#fff}
+.sh .tabs{position:absolute;display:flex;gap:3px}
+.sh .tab{font-size:12.5px;font-weight:600;padding:0 14px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.sh .bar4{position:absolute;left:8px;right:8px;bottom:4px;height:4px;background:#14294a}
+.sh .bar4 i{position:absolute;left:0;top:0;bottom:0}
+.sh .chip{font-size:9.5px;font-weight:800;letter-spacing:.05em;padding:0 4px;margin-right:auto;line-height:14px;border:1px solid}
+.sh .ico{width:16px;height:16px;flex:none}
+
+/* style 2 · Airline */
+.sh.air{background:linear-gradient(155deg,#0d3159 0%,#081f3d 48%,#05152b 100%);border:1px solid rgba(65,122,171,.55)}
+.sh .fb{border:1px solid rgba(54,198,255,.5);background:#020b18;box-shadow:inset 3px 0 0 var(--cyan)}
+.sh .fb .nb,.sh .fb .fx{border-right:1px solid rgba(65,122,171,.45)}
+.sh .lt,.sh .rn{color:#4d6687}
+.sh .c{border-bottom:1px solid rgba(65,122,171,.25)}
+.sh .c.h{background:linear-gradient(180deg,#123e64,#0a2747);border-bottom:2px solid rgba(54,198,255,.55)}
+.sh .c.h.lab{background:linear-gradient(180deg,#123e64,#0a2747)}
+.sh .c.sub{background:rgba(10,33,64,.8)}
+.sh .c.fin{border-bottom:3px double #9fbde3}
+.sh .c.totr{border-top:1.5px solid #5b88b8}
+.sh .colsep{position:absolute;width:1px;background:rgba(65,122,171,.25)}
+.sh .tab{height:30px;background:#0a2140;color:#9fbde3;border:1px solid rgba(127,200,255,.25)}
+.sh .tab.on{background:#0d2b52;color:#fff;border-color:var(--cyan);box-shadow:inset 0 3px 0 var(--cyan)}
+.sh .tab.off{color:#4d6687}
+
+/* additions: crumb, hover, building state, amber query, sum tag */
+.sh .crumb{position:absolute;left:24px;top:10px;font-size:13.5px;color:var(--soft)}
+.sh .hov{box-shadow:inset 0 0 0 2px rgba(54,198,255,.85)!important}
+.sh .tgt.q{color:var(--mag);font-size:19px;font-weight:700;justify-content:flex-end!important}
+.sh .fb .caret{display:inline-block;width:2px;height:18px;background:#fff;margin-left:-8px}
+.sh .ops{display:flex;gap:3px;margin-left:auto;padding-right:4px;align-items:center}
+.sh .ops span{width:28px;height:26px;display:grid;place-items:center;font:700 15px var(--sans);color:#eaf2ff;background:#0d2346;border:1px solid #2b5c9e}
+.sh .ops span.u{width:auto;padding:0 8px;font-size:12.5px;font-weight:600}
+.sh .cur{position:absolute;width:20px;height:26px;pointer-events:none}
+.sh .ref .chip{margin-left:16px}
+.sh .line b.gold{color:var(--gold)} .sh .line b.pos{color:var(--green)}
+.sh .line .hint{color:#7fd0ff;text-decoration:underline;margin-left:14px}

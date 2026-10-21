@@ -414,25 +414,20 @@ render = function(){ try{ if(S && Array.isArray(S.history) && S.history.length &
 if(typeof ev2Plate === 'function'){ const d104Plate0 = ev2Plate;
   ev2Plate = function(){ const h = d104Plate0.apply(this, arguments), d = d104RepDay(); return d && yearOne() ? h.replace(/ · public from [A-Z][a-z]+/, ` · public from ${dateShort(d)} (week ${weekNo(d)})`) : h; }; }
 
-/* ---------- the card: your star rating is public (week 3) ---------- */
+/* ---------- the card: your star rating is public (week 3) ----------
+   21 Oct 2026 (Bertie): three panels, the rating, what moved it and what moves it from now (full width); no "What it is worth". */
 function d104StarsCardHtml(){
-  const day = S.day || 1, first = day <= (d104RepDay() || 15) + 6, upTo = S.repReveal ? S.repReveal.day : day, pct = Math.round(T2().per * 100);
+  const day = S.day || 1, first = day <= (d104RepDay() || 15) + 6, upTo = S.repReveal ? S.repReveal.day : day;
   const L = (S.repLog || []).filter(x => !x.live && x.day < upTo), cls = n => n > 0 ? 'up' : 'down';
   const moves = L.length ? `<table class="d104-rv-t"><thead><tr><th>When</th><th>What happened</th><th class="num">Stars</th></tr></thead><tbody>${L.map(x => `<tr><td>${esc(dateShort(x.day))}</td><td>${esc(x.what)}</td><td class="num ${cls(x.n)}">${esc(starText(x.n))}</td></tr>`).join('')}</tbody>
       <tfoot><tr><th colspan="2">Start at 3, ${L.map(x => starText(x.n).replace(/ stars?$/, '')).join(' ')}</th><th class="num">${esc(ratingText(S.rep))}</th></tr></tfoot></table>`
     : `<p class="d104-rv-l">Nothing moved your stars ${first ? 'in your first two weeks' : 'so far'}, so you start at 3.</p>`;
-  const h = Math.round(S.rep * 2) - 6, sum = h > 0 ? `${esc(ratingText(S.rep))}: ${h} half-star${h > 1 ? 's' : ''} above 3, so ${h} × ${pct}% = <b>${h * pct}% more</b> people want to fly on every route.`
-    : h < 0 ? `${esc(ratingText(S.rep))}: ${-h} half-star${h < -1 ? 's' : ''} below 3, so ${-h} × ${pct}% = <b>${-h * pct}% fewer</b> people want to fly on every route.` : `3 stars: no half-stars above or below 3, so <b>no change</b> yet.`;
-  const own = d104Owned().map(id => routeById(id)).filter(Boolean), r = own[0] || routeById('dub'); let eg = '';
-  if(r){ const fare = S.prices[r.id] || r.basePrice, keep = S.rep; let base; try{ S.rep = 3; base = paxWant(r, fare); } finally { S.rep = keep; } const now = paxWant(r, fare);
-    eg = h ? `<p class="d104-rv-l">${esc(r.city)} at ${money(fare)}: ${num(base)} want to fly a day at 3 stars; ${num(now)} at ${esc(ratingText(S.rep))}.</p>` : `<p class="d104-rv-l">${esc(r.city)} at ${money(fare)}: ${num(now)} want to fly a day. Half a star more would make it ${num(Math.round(base * (1 + T2().per)))}.</p>`; }
   const drivers = [['up', '+½', 'at each month\'s review, if a week ran on time with no choice that cost stars'], ['up', '+½', 'once, for free snacks two weeks running'],
     ['down', '−½', `once for a route that turns away ${d104TAWords().replace('wanted', 'want')}, two weeks running${d104TA().from > (S.day || 1) ? ` (counted from ${dateShort(d104TA().from)})` : ''}`], ['down', '−½', 'for each day a plane is grounded with no fuel']];
   return `<div class="d104-rvg">
     <section class="bv-panel active d104-rv-score"><span class="bv-eyebrow d104-eb">Result</span><h2>Your star rating</h2><div class="rv-big"><span class="stars">${deskStars(S.rep)}</span><b>${esc(ratingText(S.rep))}</b><p>Passengers can see it now, and it changes how many want to fly with you.</p></div></section>
     <section class="bv-panel support d104-rv-moves"><h2>What moved it ${first ? 'in your first two weeks' : 'so far'}</h2>${moves}</section>
-    <section class="bv-panel support d104-rv-worth"><span class="bv-eyebrow d104-eb model">Model</span><h2>What it is worth</h2><div class="d104-rv-rule"><span>Each half-star above 3</span><b class="up">+${pct}%</b><span>Each half-star below 3</span><b class="down">−${pct}%</b></div><p class="d104-rv-sum">${sum}</p>${eg}</section>
-    <section class="bv-panel support d104-rv-drv"><h2>What moves it from now</h2><ul>${drivers.map(([c, n, t]) => `<li><b class="${c}">${n}</b><span>${esc(t)}</span></li>`).join('')}</ul><p class="d104-rv-l">Your choices on the event cards move it too.</p></section></div>`;
+    <section class="bv-panel support d104-rv-drv h21-wide"><h2>What moves it from now</h2><ul>${drivers.map(([c, n, t]) => `<li><b class="${c}">${n}</b><span>${esc(t)}</span></li>`).join('')}</ul><p class="d104-rv-l">Your choices on the event cards move it too.</p></section></div>`;
 }
 const d104RStars0 = R.stars;
 R.stars = st => {

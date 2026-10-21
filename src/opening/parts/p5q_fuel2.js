@@ -10,23 +10,31 @@
    - Gone from the page: the outlook, forecast and confidence tiles and the two news panels. The scenario table and the
      fuel-by-route sheet are not one of the three panels: they open from "Buy now or wait? ›" in the Market panel.
    - First visit: a three-step tour; one panel at a time takes the active gradient and the cyan rail, with a callout
-     under it ("1 of 3", Next ▶). Nothing is dimmed and nothing turns amber.
+     under it ("1 of 3", Next ▶). Nothing turns amber.
+   - 21 Oct 2026 (Bertie's play-test): the tour darkens everything else (p5y, h21Spot); step 1 is the tank (its gauge ringed,
+     its size in words), steps 2 and 3 have their box in the empty space under Market (pointer up, then left at the order),
+     and the order's sheet stays idle until step 3 (p5v). The words are the workbook's (ScreenText, fuel.tour.1–3). The
+     tank's dashed line sits at this week's need as a share of the tank's inner height, from the bottom.
    ===================================================================== */
-const FD2_TOUR = [['fd2-pos', 'Your position:', 'what is in the tank, what this week needs and what is still to buy. Start here.'],
-  ['fd2-mk', 'Market:', "today's price, where it is heading next week, and why."],
-  ['fd-ord', 'Place a purchase order:', 'choose how many blocks to buy, work out what they cost, then confirm.']];
+const FD2_TOUR = [['fd2-pos', 'Your tank', 'holds the fuel you buy. The dashed line shows what this week needs.'],
+  ['fd2-mk', 'Market:', "today's price for a litre, and what it might cost next week. The news underneath says why."],
+  ['fd-ord', 'Place a purchase order:', 'choose how many litres to buy. Then build the cost on the sheet and work it out in your book.']];
 const fd2On = () => !!S && yearOne() && weekMode();
 function fd2TourStep(){ const T = S.fd2Tour; return T && T.step && !T.done ? T.step : 0; }
-function fd2Callout(i){ const [, b, t] = FD2_TOUR[i - 1];
-  return `<div class="fd2-tour" role="note"><p><b>${b}</b> ${esc(t)}</p><span>${i} of ${FD2_TOUR.length}</span><button class="bv-btn fd2-next" id="fd2Next">${i < FD2_TOUR.length ? 'Next' : 'Got it'} &#9654;</button></div>`; }
+function fd2Callout(i){ const [, b0, t0] = FD2_TOUR[i - 1], last = i >= FD2_TOUR.length;
+  const W = typeof fsStorageWords === 'function' ? fsStorageWords() : null, T = typeof h21Text === 'function' ? h21Text('fuel.tour.' + i, { capacity:`${num(tankCapacity())} L`, weeks:(W && W.weeks) || 'about two weeks of flying', need:`${num(Math.round(fdNeed(S.day || 1).week))} L` }) : { text:[] };
+  const b = T.title || b0, t = T.text.length ? T.text.join(' ') : esc(t0), btn = T.button ? esc(T.button) : (last ? 'Got it' : 'Next &#9654;');
+  // steps 2 and 3: the box sits under Market (outside the panel), pointing up at it, then left at the order
+  return `<div class="fd2-tour ${i > 1 ? 'h21-under' : ''} ${last ? 'h21-left' : ''}" role="note">${i > 1 ? '<i class="h21-ptr" aria-hidden="true"></i>' : ''}<p><b>${esc(b)}</b> ${T.text.length ? h21Html(t) : t}</p><span>${i} of ${FD2_TOUR.length}</span><button class="bv-btn fd2-next" id="fd2Next">${btn}</button></div>`; }
 /* the tank: square, the storage it holds, this week's need as a dashed line; the level rises after an order */
 function fd2Tank(inTank, cap, need){
-  const W = 124, H = 160, top = 10, bot = 38, h = H - top - bot, lv = v => top + h * (1 - Math.max(0, Math.min(1, v / cap)));
-  const was = UI.fd2Was && UI.fd2Was.day === S.day ? UI.fd2Was.v : inTank, y1 = lv(inTank), y0 = lv(was), ny = lv(need), lab = need > 0 && need <= cap;
-  return `<svg class="fd2-tank" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tank: ${num(inTank)} L of ${num(cap)} L${lab ? `; this week needs ${num(need)} L` : ''}">
+  // the level is a share of the tank's inner height, from the bottom (4,200 of 8,000 is just over half way up)
+  const W = 124, H = 160, top = 8, bot = 2, h = H - top - bot, lv = v => top + h * (1 - Math.max(0, Math.min(1, v / cap)));
+  const was = UI.fd2Was && UI.fd2Was.day === S.day ? UI.fd2Was.v : inTank, y1 = lv(inTank), y0 = lv(was), ny = lv(need), lab = need > 0 && need <= cap, ly = ny - 6 < 20 ? ny + 15 : ny - 6;
+  return `<svg class="fd2-tank ${fd2TourStep() === 1 ? 'h21-ring' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tank: ${num(inTank)} L of ${num(cap)} L${lab ? `; this week needs ${num(need)} L` : ''}">
     <rect x="1" y="1" width="${W - 2}" height="${H - 2}" class="tk-b"/><rect x="1" y="1" width="${W - 2}" height="7" class="tk-lid"/>
     <rect x="6" y="${y1}" width="${W - 12}" height="${top + h - y1}" class="tk-f" style="--y0:${y0}px;--h0:${top + h - y0}px"/>
-    ${lab ? `<line x1="6" x2="${W - 6}" y1="${ny}" y2="${ny}" class="tk-need"/><text x="${W / 2}" y="${ny - 6}" text-anchor="middle" class="tk-nl">this week ${num(need)} L</text>` : ''}
+    ${lab ? `<line x1="6" x2="${W - 6}" y1="${ny}" y2="${ny}" class="tk-need"/><text x="${W / 2}" y="${ly}" text-anchor="middle" class="tk-nl">this week ${num(need)} L</text>` : ''}
     <text x="${W / 2}" y="${H - 21}" text-anchor="middle" class="tk-v">${num(inTank)} L</text><text x="${W / 2}" y="${H - 8}" text-anchor="middle" class="tk-c">of ${num(cap)}</text></svg>`; }
 /* the chart: this month's price, today's dot, this week flat to Sunday, next week's range as a band */
 function fd2Chart(day){
@@ -73,8 +81,10 @@ fuelDeskHtml = function(asView){
   const step = fd2TourStep(), html = `<div class="fd fd2">${dialogs}${scen}<div class="fd2-l">${fd2Position(day, pick('.fs-farm-l'))}${ord ? ord.outerHTML : ''}</div><div class="fd2-r">${fd2Market(day)}</div></div>`;
   if(!step) return html;
   // the tour: the panel being explained takes the active look and the callout
-  const [cls] = FD2_TOUR[step - 1], T2 = document.createElement('template'); T2.innerHTML = html; const p = T2.content.querySelector('.' + cls);
-  if(p){ p.classList.add('fd2-on'); p.insertAdjacentHTML('beforeend', fd2Callout(step)); }
+  const [cls] = FD2_TOUR[step - 1], T2 = document.createElement('template'); T2.innerHTML = html; const p = T2.content.querySelector('.' + cls), mk = T2.content.querySelector('.fd2-r .fd2-mk');
+  if(p){ p.classList.add('fd2-on'); if(step > 1 && mk) mk.insertAdjacentHTML('afterend', fd2Callout(step)); else p.insertAdjacentHTML('beforeend', fd2Callout(step)); }
+  // steps 2 and 3: Your position keeps step 1's room at its foot, so the order panel doesn't move between the steps
+  const pos = T2.content.querySelector('.fd2-pos'); if(step > 1 && pos) pos.insertAdjacentHTML('beforeend', fd2Callout(1).replace('class="fd2-tour', 'aria-hidden="true" class="fd2-tour h21-ghost').replace(' id="fd2Next"', ' tabindex="-1"'));
   return T2.innerHTML;
 };
 const fd2Render0 = renderFuelDesk;

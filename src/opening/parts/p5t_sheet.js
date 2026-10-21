@@ -64,7 +64,7 @@ function ashFormula(sp, sum, tokens){
   return { f:'= ' + f, w };
 }
 function ashFullTokens(sum){ const out = []; sum.refs.forEach((r, i) => { if(i) out.push({ op:sum.ops[i - 1] }); out.push({ ref:r }); }); return out; }
-function ashBuilding(sum){ return !!sum && sum.how === 'build' && !sum.built; }
+function ashBuilding(sum){ return !!sum && (sum.how === 'build' || sum.how === 'formula') && !sum.built; }   // formula (21 Oct 2026): built, then the sheet works it out
 function ashLineBook(sum){ return `Work it out in your book. Write <b>Sum ${sum.no}</b> beside it, then type the answer in <b>${sum.tgt}</b> and press <button class="ash-key" data-ashenter>Enter</button>.`; }
 function ashHtml(sp){
   const st = ashSt(sp.id), act = sp.act || null;
@@ -73,7 +73,7 @@ function ashHtml(sp){
   const focus = act && !co, building = focus && ashBuilding(act), typing = focus && !building;
   const tokens = !act ? [] : building ? st.tokens : ashFullTokens(act), used = tokens.filter(t => t.ref).map(t => t.ref);
   const tagged = act && act.refs.length <= 2, tagOf = ref => { const i = used.indexOf(ref); return i < 0 ? null : tagged ? ASH_LET[i] : ''; };
-  const L = focus ? ashLitBox(act) : null, RH = sp.tight ? ASH_RH_TIGHT : sp.small ? ASH_RH_SMALL : ASH_RH;
+  const L = focus ? ashLitBox(act) : null, RH = sp.rh || (sp.tight ? ASH_RH_TIGHT : sp.small ? ASH_RH_SMALL : ASH_RH);
   const cols = [{ c:'A', w:sp.lw || 265, lab:true }].concat(sp.cols), gc = {}; cols.forEach((k, i) => { gc[k.c] = i + 2; });
   const gr = {}; sp.rows.forEach((r, i) => { gr[r.r] = i + 2; });
   const tmplC = '30px ' + cols.map(k => k.w + 'px').join(' '), tmplR = '18px ' + sp.rows.map(r => (RH[r.t || 'data'] || 31) + 'px').join(' ');
@@ -111,8 +111,8 @@ function ashHtml(sp){
         const tg = tagOf(ref);
         if(tg !== null){ cls += ' aref'; attr += ` data-tag="${tg}"`; }
         else if(ref === act.tgt){ cls += ' atgt' + (building ? ' aq' : '') + (st.q && typing ? ' aquery' : '');
-          inner = building ? '?' : `${act.unit === '£' ? '<span class="ash-u">£</span>' : ''}<input class="ash-in" data-ashin="${esc(sp.id)}" inputmode="decimal" autocomplete="off" spellcheck="false" value="${esc(st.entry)}" aria-label="${esc(act.aria || act.words)}, Sum ${act.no}">`;
-          attr += ` title="Sum ${act.no}"`; }
+          inner = building ? '?' : act.cellIn ? act.cellIn(sp, st) : `${act.unit === '£' ? '<span class="ash-u">£</span>' : ''}<input class="ash-in" data-ashin="${esc(sp.id)}" inputmode="decimal" autocomplete="off" spellcheck="false" value="${esc(st.entry)}" aria-label="${esc(act.aria || act.words)}, Sum ${act.no}">`;
+          if(act.no) attr += ` title="Sum ${act.no}"`; }
         if(building && ref !== act.tgt && (V.t !== undefined && V.t !== '' && V.t !== null) && t !== 'sub'){ cls += ' apick'; attr += ` data-ashref="${ref}" role="button" tabindex="0" aria-label="${esc(ashRowLabel(sp, ref))}: ${esc(String(V.t))}"`; }
         if(!ashInLit(L, ref)) cls += ' adim';
       }
@@ -138,9 +138,9 @@ function ashHtml(sp){
   // the line under the grid
   let line = '', lcls = '';
   if(just){ line = `<span class="pos">✓</span> ${just.doneLine || ''}`; }
-  else if(focus && building){ line = st.msg ? esc(st.msg) : `Click the cells to build the formula. Then work it out in your book and type the answer in <b>${act.tgt}</b>.`; if(st.q) lcls = 'q'; }
-  else if(focus){ line = st.msg ? `${esc(st.msg)}` : ashLineBook(act); if(st.q) lcls = 'q';
-    line += `<button class="ash-hl" data-ashhint>${st.hint ? 'Another hint' : 'Give me a hint'}</button><button class="ash-hl quiet" data-ashhow>${st.how ? 'Hide the example' : 'Show me how'}</button>`; }
+  else if(focus && building){ line = st.msg ? esc(st.msg) : act.lineBuild || `Click the cells to build the formula. Then work it out in your book and type the answer in <b>${act.tgt}</b>.`; if(st.q) lcls = 'q'; }
+  else if(focus){ line = st.msg ? `${esc(st.msg)}` : act.lineType || ashLineBook(act); if(st.q) lcls = 'q';
+    line += `${act.hints ? `<button class="ash-hl" data-ashhint>${st.hint ? 'Another hint' : 'Give me a hint'}</button>` : ''}${act.how2 ? `<button class="ash-hl quiet" data-ashhow>${st.how ? 'Hide the example' : 'Show me how'}</button>` : ''}`; }
   else if(co) line = 'Read the note on the sheet, then press Got it.';
   else line = sp.doneLine || '';
   const hints = focus && typing && st.hint && act.hints ? act.hints().slice(0, st.hint) : [];
@@ -180,18 +180,23 @@ function ashOp(sp, op){
 const ASH_OPWHY = { '×':'Each one is the same amount: which operation repeats it for every one?', '+':'This puts amounts together: which operation joins them?',
   '−':'This is what is left after taking one amount away: which operation takes away?', '÷':'This shares an amount out equally: which operation shares?' };
 function ashBuilt(sp, act, st){ act.built = true; if(act.onBuilt) act.onBuilt(st.tokens); ashBuildRec(act, st.tokens, true); st.tokens = []; st.msg = ''; st.q = false;
+  if(act.how === 'formula'){ const r = act.answer(String(act.want), act.want, st) || {};
+    if(r.ok || r.shown){ UI.ashJust = { sheet:sp.id, sum:act.id, shown:false, at:Date.now(), note:'', formula:true }; ashReset(st, null); if(typeof liveChime === 'function' && typeof opsSoundOn === 'function' && opsSoundOn()) liveChime('ding'); }
+    return; }
   setTimeout(() => { try{ const i = document.querySelector(`[data-ashin="${CSS.escape(sp.id)}"]`); if(i) i.focus({ preventScroll:true }); }catch(e){} }, 40); }
 /* the build goes into the record under the sum's number: what was clicked, and the question if a cell or operation didn't fit */
 function ashBuildRec(act, tokens, ok, msg){
-  try{ if(!act.recKey) return; const e = recOpen(act.recKey, Object.assign({}, act.recO || {}, { type:'build', level:'Build', method:'click the cells and the operation' }));
+  try{ if(!act.recKey) return; const formula = act.how === 'formula' && typeof paperRecOpen0 === 'function';
+    const e = (formula ? paperRecOpen0 : recOpen)(act.recKey, Object.assign({}, act.recO || {}, { type:'build', level:formula ? 'Formula' : 'Build', method:formula ? 'the formula built on the sheet; the sheet worked it out' : 'click the cells and the operation' }));
     recAttempt(e, { ok, chips:tokens.map(t => t.op ? { op:t.op } : { label:act.wordsOf ? act.wordsOf(t.ref) : t.ref, text:t.ref, k:t.ref }), msg, note:msg, method:'click the cells and the operation' }); }catch(e){}
 }
 /* Enter: the answer typed, checked by the sum (the record, two tries, Finance) */
 function ashEnter(sp){
   const act = sp.act, st = ashSt(sp.id); if(!act || ashBuilding(act)) return;
-  const inp = document.querySelector(`[data-ashin="${CSS.escape(sp.id)}"]`), raw = String(inp ? inp.value : st.entry || '').trim(); st.entry = raw;
-  if(!raw){ st.msg = 'Type the answer from your book, then press Enter.'; st.q = false; render(); return; }
-  const v = parseCell(act.unit === '£' ? '£' : 'n', raw);
+  const inp = document.querySelector(`[data-ashin="${CSS.escape(sp.id)}"]`); if(inp) st.entry = String(inp.value).trim();
+  const raw = act.readIn ? act.readIn(st) : String(st.entry || '').trim();
+  if(!raw){ st.msg = act.emptyMsg || 'Type the answer from your book, then press Enter.'; st.q = false; render(); return; }
+  const v = act.parse ? act.parse(raw, st) : parseCell(act.unit === '£' ? '£' : 'n', raw);
   if(v === null){ st.msg = 'That is not a figure: type the number from your book.'; st.q = true; render(); return; }
   const r = act.answer(raw, v, st) || {};
   if(r.ok || r.shown){ UI.ashJust = { sheet:sp.id, sum:act.id, shown:!!r.shown, at:Date.now(), note:r.ok && r.note ? r.note : '' }; ashReset(st, null); if(r.ok && typeof liveChime === 'function' && typeof opsSoundOn === 'function' && opsSoundOn()) liveChime('ding'); }
@@ -219,8 +224,9 @@ function ashBind(sp){
   root.querySelectorAll('[data-ashhow]').forEach(b => b.onclick = () => { st.how = !st.how; render(); });
   root.querySelectorAll('[data-ashenter]').forEach(b => b.onclick = () => ashEnter(sp));
   root.querySelectorAll('[data-ashtab]').forEach(b => b.onclick = () => { if(b.getAttribute('aria-disabled') === 'true') return; UI.ashTab = b.getAttribute('data-ashtab'); render(); });
+  root.querySelectorAll('[data-ashm]').forEach(m => { m.onchange = m.oninput = () => { st.entryM = m.value; }; m.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); st.entryM = m.value; ashEnter(sp); } }; });
   const inp = root.querySelector('[data-ashin]');
-  if(inp){ inp.oninput = () => { st.entry = inp.value; if(st.q && st.msg){ st.q = false; const c = inp.closest('.ash-c'); if(c) c.classList.remove('aquery'); } };
+  if(inp){ inp.oninput = () => { if(inp.hasAttribute('data-ashwhole')) inp.value = inp.value.replace(/[^\d]/g, ''); st.entry = inp.value; if(st.q && st.msg){ st.q = false; const c = inp.closest('.ash-c'); if(c) c.classList.remove('aquery'); } };
     inp.onkeydown = e => { if(e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); ashEnter(sp); } };
     setTimeout(() => { try{ if(document.activeElement !== inp && !document.querySelector('#bfLayer, .overlay:not([hidden])')) inp.focus({ preventScroll:true }); const n = inp.value.length; inp.setSelectionRange(n, n); }catch(e){} }, 40); }
   if(sp.just) UI.ashFresh = sp.id + '|' + sp.just.id;
@@ -251,7 +257,10 @@ function ashGo(P, value){
   const got = root.querySelector('[data-ashgot]'); if(got){ got.click(); return; }
   P.seq.forEach(x => { const r = document.querySelector(`[data-ash="${CSS.escape(P.sheet)}"]`); const el = x.ref ? r.querySelector(`[data-ashref="${x.ref}"]`) : r.querySelector(`[data-ashop="${x.op}"]`); if(el) el.click(); });
   const r2 = document.querySelector(`[data-ash="${CSS.escape(P.sheet)}"]`), inp = r2 && r2.querySelector('[data-ashin]'); if(!inp) return;
-  inp.value = String(value === undefined ? P.answer : value); inp.dispatchEvent(new Event('input')); inp.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true }));
+  const sel = r2.querySelector('[data-ashm]'), val = value === undefined ? P.answer : value;
+  if(sel && typeof val === 'number'){ const h = Math.floor(val + 1e-9); inp.value = String(h); sel.value = String(Math.round((val - h) * 60)); sel.dispatchEvent(new Event('change')); }
+  else inp.value = String(val);
+  inp.dispatchEvent(new Event('input')); inp.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true }));
 }
 window.__ash = { plan:ashPlan, go:ashGo, live:() => ashLive(), seen:k => ashSeen(k) };
 if(window.__tkSums) window.__tkSums.unshift({ what:'a sum on the sheet', test:() => !!ashPlan(), plan:() => { const P = ashPlan(); if(!P) return null;

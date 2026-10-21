@@ -88,6 +88,12 @@ function ashFoSpec(){
     hints:() => [{ t:`${num(L)} × ${priceL(P0)}: make the price whole (× 100), multiply, then ÷ 100.` }, { t:`${num(L)} litres is ${num(G.n)} lot${G.n === 1 ? '' : 's'} of ${num(G.blk)} L, and ${num(G.blk)} L costs ${money(G.per)}.` }, { t:`Check: about ${money(ashRound(total))}.`, est:true }],
     how2:() => ashHowFor('×', L + 1000, Math.round((P0 + 0.1) * 100) / 100, 'ppl', 'Cost of this order = Litres to buy × Price a litre'),
     co:{ at:['B', 2, 'B', 4], eyebrow:'NEW SUM', title:'The cost of an order', text:['Every litre costs the same price.'], rule:'Cost = <i>A</i> Litres to buy × <i>B</i> Price a litre' } };
+  // the desk's tour (21 Oct 2026): the order sheet stays idle until its step (no lit block, no ? cell, an empty formula bar, no line), and its
+  // own callout waits until the tour is done (one callout at a time)
+  const tour = typeof fd2TourStep === 'function' ? fd2TourStep() : 0;
+  if(tour && tour < 3 && !sum.done) return { id:'fuel:' + wk, small:true, tight:true, coAside:true, lw:190, cols:[{ c:'B', w:128, top:'This order', main:(days[0] || S.day || 1) === (days[days.length - 1] || days[0] || S.day || 1) ? short(days[0] || S.day || 1) : `${short(days[0])} to ${short(days[days.length - 1])}` }],
+    rows:[{ r:1, t:'hdr' }, { r:2, label:'Litres to buy', ic:'drum' }, { r:3, label:'Price a litre', ic:'tag' }, { r:4, label:'Cost of this order', ic:'receipt', t:'tot', gold:true }], v, sums:[sum], act:null, just:null, doneF:null, doneLine:'', idle:true, need };
+  if(tour) sum.co = null;
   const J = UI.ashJust && UI.ashJust.sheet === 'fuel:' + wk && UI.ashJust.sum === sum.id ? sum : null, act = sum.done || J ? null : sum;
   if(J) J.doneLine = F.shown ? `Finance has filled this one in: ${money(total)}. Copy it into your book beside Sum ${sum.no}.` : `This order costs <b class="gold">${money(total)}</b> · Sum ${sum.no} in your record`;
   const from = days[0] || S.day || 1, to = days[days.length - 1] || from;
@@ -115,8 +121,6 @@ bindFuelDesk = function(asView){
   const buy = $('fdBuy'), F = foWeek(), G = foFigures(); if(buy && F.level !== 'model' && G.n > 0 && !(F.signed && F.n === G.n)) buy.disabled = true;
   if(UI.ashJust && UI.ashJust.sheet === sp.id){ const b = $('fdBuy'); if(b && !b.disabled) setTimeout(() => { try{ b.focus(); }catch(e){} }, 40); }
 };
-/* the tour's last step names the small sheet; the order's words follow the new sum */
-FD2_TOUR[2][2] = 'choose how many litres to buy, work out the cost on the small sheet, then confirm.';
 /* every order placed goes on the Fuel tab (the latest first) */
 const ashBuyFuel0 = buyFuel;
 buyFuel = function(litres, price){ const before = S.fuel, r = ashBuyFuel0.apply(this, arguments);

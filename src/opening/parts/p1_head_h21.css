@@ -1,0 +1,67 @@
+
+/* =====================================================================
+   THE PLAY-TEST OF 21 OCTOBER (p5y_h21.js): year one only, under body.yr1.
+   ===================================================================== */
+.h21-tg{display:inline-block;min-width:15px;padding:0 3px;margin:0 2px;font:700 11.5px/16px var(--font-sans);font-style:normal;text-align:center;color:#04111f;background:var(--cyan);vertical-align:1px}
+
+/* ---------- 1. the tour darkens the rest of the screen ---------- */
+#h21Spot{position:fixed;left:0;top:0;z-index:250;pointer-events:none}
+#h21Spot path{fill:rgba(1,6,14,.44);pointer-events:none}   /* it darkens; it never stops a click (the tour never did) */
+body.yr1 .fd2-tour.h21-ghost{visibility:hidden}
+body.yr1 .fd2-tank.h21-ring{outline:2px solid var(--cyan);outline-offset:3px;box-shadow:0 0 0 3px rgba(54,198,255,.0),0 0 16px 3px rgba(54,198,255,.45)}
+body.yr1 .fd2-r > .fd2-tour.h21-under{position:relative;margin-top:0;padding:12px 14px;border:1.5px solid var(--cyan);background:#0c2a4c;box-shadow:0 12px 30px rgba(0,0,0,.35),0 0 18px rgba(54,198,255,.18)}
+body.yr1 .fd2-tour.h21-under{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:16px;row-gap:8px;align-items:start}
+body.yr1 .fd2-tour.h21-under p{grid-column:1;grid-row:1/3;align-self:center;font-size:16.5px}
+body.yr1 .fd2-tour.h21-under > span{grid-column:2;grid-row:1;justify-self:end}
+body.yr1 .fd2-tour.h21-under .fd2-next{grid-column:2;grid-row:2}
+body.yr1 .fd2-tour .h21-ptr{position:absolute;width:14px;height:14px;background:#0c2a4c;border:1.5px solid var(--cyan);border-right:0;border-bottom:0}
+body.yr1 .fd2-tour.h21-under .h21-ptr{left:50%;top:-8.5px;transform:translateX(-50%) rotate(45deg)}
+body.yr1 .fd2-tour.h21-under.h21-left .h21-ptr{left:-8.5px;top:50%;transform:translateY(-50%) rotate(-45deg)}
+
+/* ---------- 2. the star rating: What moves it from now runs the full width ---------- */
+body.yr1 .d104-rvg .d104-rv-drv.h21-wide{grid-column:1/-1}
+body.yr1 .d104-rvg .d104-rv-drv.h21-wide li{grid-template-columns:34px minmax(0,1fr)}
+
+/* ---------- 7. the profit graph ---------- */
+body.yr1 .h21g{gap:2px}
+body.yr1 .h21g-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;min-height:16px}
+body.yr1 .h21g-top .h21g-t{margin:0}
+body.yr1 .h21g-key{margin-left:auto;justify-content:flex-end;gap:16px;font-size:12.5px;color:#9FBDE3}
+body.yr1 .h21g.big .h21g-key{font-size:17px;gap:22px}
+body.yr1 .h21g.big .h21g-key .k{width:16px;height:11px}
+body.yr1 .h21g-key .k.pj{background:none;border-top:2px dotted rgba(234,242,255,.7);height:0;vertical-align:3px}
+body.yr1 .h21g-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+body.yr1 .h21g-axl,body.yr1 .h21g-axr{font:600 12px/1.2 var(--font-sans);color:#d6e4f7;white-space:nowrap}
+body.yr1 .h21g.big .h21g-axl,body.yr1 .h21g.big .h21g-axr{font-size:16.5px}
+body.yr1 .h21g.big .s3g-tabs button{font-size:14px}
+body.yr1 .h21g-plot{position:relative;flex:1;min-height:120px}
+body.yr1 .h21g-plot .s3g{position:absolute;inset:0;width:100%;height:100%;min-height:0}
+body.yr1 .h21g-tx{position:absolute;inset:0;pointer-events:none}
+body.yr1 .h21g-tk{stroke:rgba(130,195,255,.45);stroke-width:1}
+body.yr1 .h21g-yl{position:absolute;transform:translateY(-50%);font:400 11px/1 var(--font-sans);color:#9FBDE3;white-space:nowrap}
+body.yr1 .h21g.big .h21g-yl{font-size:16px}
+body.yr1 .h21g-bl{position:absolute;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:1px;white-space:nowrap;line-height:1.2}
+body.yr1 .h21g-bl b{font:700 12px/1.25 var(--font-sans);color:#d6e4f7}
+body.yr1 .h21g-bl small{font:400 11px/1.25 var(--font-sans);color:#9FBDE3}
+body.yr1 .h21g.big .h21g-bl b{font-size:18px}
+body.yr1 .h21g.big .h21g-bl small{font-size:16px}
+body.yr1 .h21g-so{position:absolute;transform:translate(-50%,-100%);font:700 12px/1.2 var(--font-sans);color:var(--cyan);white-space:nowrap}
+body.yr1 .h21g.big .h21g-so{font-size:18px}
+
+/* ---------- 3. flight times on a small sheet ---------- */
+body.yr1 .h21-ftp .dp-body{display:block;min-height:0}
+body.yr1 .h21-ft.ft3-ins{zoom:1.23;display:flex;flex-direction:column;gap:14px;width:min(1000px,100%);margin:0 auto;padding:0;border:0}   /* drawn like the other sheet pages (.dp.ash-page) */
+body.yr1 .h21-ft > .ash.ash-small{min-width:0;width:100%;padding:16px 24px 14px}
+body.yr1 .h21-ft .ash-c .h21-ftf,body.yr1 .h21-ft .ash-c .h21-ftno{color:#8fa6c4;font-weight:600}
+body.yr1 .h21-ft .ash-c.av:has(.h21-ftf){color:#8fa6c4}
+body.yr1 .h21-hm{display:flex;align-items:center;gap:6px;width:100%;height:100%;font:600 15px/1 var(--font-sans);color:var(--text)}
+body.yr1 .h21-hm .h21-hh{flex:none;width:34px;height:24px;padding:0 4px;border:1px solid rgba(130,195,255,.45);background:#04111f;text-align:right}
+body.yr1 .h21-hm i{font-style:normal;color:var(--text-soft);font-weight:600}
+body.yr1 .h21-hm select{height:24px;min-width:52px;padding:0 4px;border:1px solid rgba(130,195,255,.45);background:#0b2549;color:var(--text);font:600 14px var(--font-sans)}
+body.yr1 .h21-ftn{margin:4px 0 0 30px;font:400 13px/1.4 var(--font-sans);color:#8fa6c4}
+body.yr1 .h21-ftn .ash-au{position:static;margin-right:4px;font:italic 400 13px/1 Georgia,serif;color:#8fa6c4}
+body.yr1 .h21-ftc{display:flex;align-items:center;gap:16px;padding:14px 18px;box-shadow:var(--shadow-panel),var(--focus-rail)}
+body.yr1 .h21-ftc .bv-sumtag{font-size:13px;padding:3px 10px}
+body.yr1 .h21-ftc b{font:700 18px/1.3 var(--font-sans);color:var(--text)}
+body.yr1 .h21-ftw{margin-left:auto;font:400 15px/1.3 var(--font-sans);color:var(--text-soft)}
+body.yr1 .h21-ftag{display:inline-flex;align-items:center;padding:3px 10px;background:var(--cyan);color:#04111f;font:700 12px/16px var(--font-sans);letter-spacing:.08em}

@@ -382,7 +382,7 @@ def bd_value(v):
 # D105 (19 Oct 2026, evening, handover 7.10): every year-one sheet's sums: the cells, the formula and its words, whose it is
 # (the pupil's, or ƒ: the airline's) and how it is done (book: the formula on the bar, worked out in the book; build: built by
 # clicking the cells; build once: built the first time). The game reads whose and how by sumId; the rest is the record.
-SS_HOW = {'book', 'build', 'build once', 'airline'}
+SS_HOW = {'book', 'build', 'build once', 'airline', 'formula'}   # formula (21 Oct 2026): he builds the formula; the sheet shows the answer (no book, no Sum number)
 sheetSums = []
 for r in opt_sheet('SheetSums'):
     if not r.get('sheet') or not r.get('cell'): continue
@@ -393,6 +393,15 @@ for r in opt_sheet('SheetSums'):
     if row['whose'] == 'pupil' and not row['sum']: issue('error', 'SheetSums', f'{row["sheet"]} {row["cell"]}: a pupil\'s sum needs a sumId.')
     sheetSums.append(row)
 if 'SheetSums' not in wb.sheetnames: issue('check', 'SheetSums', 'no SheetSums sheet: the game uses its own list of which sums are the pupil\'s (p5u).')
+# 21 Oct 2026: the screen text the game reads by id (the new tours, first-time callouts and lines under the sheets); {name} is filled by
+# the game, **…** is bold, [A] / [B] are the tags and | starts a new line. A row missing here falls back to the game's own copy (p5y).
+screenText = {}
+for r in opt_sheet('ScreenText'):
+    i = str(r.get('id') or '').strip()
+    if not i or ' ' in i: continue
+    txt = str(r.get('text') or '')
+    screenText[i] = {'screen': r.get('screen'), 'eyebrow': r.get('eyebrow') or '', 'title': r.get('title') or '', 'text': [x.strip() for x in txt.split('|')] if txt.strip() else [], 'button': r.get('button') or ''}
+if 'ScreenText' not in wb.sheetnames: issue('check', 'ScreenText', 'no ScreenText sheet: the game uses its own copy of the tour and callout words (p5y).')
 briefingData = {}
 for r in opt_sheet('BriefingData'):
     if r.get('briefingId') and r.get('key'): briefingData.setdefault(r['briefingId'], {})[r['key']] = bd_value(r.get('value'))
@@ -472,7 +481,7 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
          'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips, 'teacherMilestones': teacherMilestones,
          'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview, 'campaign': campaign,
-         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings, 'briefingData': briefingData, 'roadmap': roadmap, 'sheetSums': sheetSums}
+         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings, 'briefingData': briefingData, 'roadmap': roadmap, 'sheetSums': sheetSums, 'screenText': screenText}
 
 
 # ---------- checks ----------
@@ -845,6 +854,13 @@ if st105 is None: issue('check', 'Settings', 'fuelDeskOpensDay is not on the she
 t105 += [f'- **{x["sheet"]}** `{x["cell"]}` {x["row"]}: {x["formula"]} ({x["words"]}) · {x["whose"]} · {x["how"]}' + (f' · `{x["sum"]}`' if x['sum'] else '') for x in sheetSums] or ['- **SheetSums:** none.']
 t105.append(f'- **WorkingMethods hints:** {sum(1 for m in workingMethods if m.get("hint"))} of {len(workingMethods)} relationships have a hint template.')
 out += ['', '## D105 touches (every sum on the Sheet)', '', "The handover of 19 Oct (evening), section 7.10: the Settings row, the SheetSums sheet and the hints, as loaded. Cash, tank, profit's example is under D104's list.", ''] + t105
+
+# 21 Oct 2026: Bertie's play-test round: the formula sums, Σ SUM's day and the ScreenText sheet
+t21 = [f'- **{x["sheet"]}** `{x["cell"]}` {x["row"]}: formula-only' for x in sheetSums if x['how'] == 'formula'] or ['- **SheetSums:** no formula-only sums.']
+sk21 = [f'day {c["day"]}: ' + ', '.join(c['unlocks']['skills']) for c in calendar if (c.get('unlocks') or {}).get('skills')]
+t21.append('- **Calendar skills:** ' + ('; '.join(sk21) if sk21 else 'none (Σ SUM falls back to the week 3 review).'))
+t21 += [f'- `{k}`: ' + ' · '.join(([v['eyebrow']] if v['eyebrow'] else []) + ([v['title']] if v['title'] else []) + v['text'] + ([f'[{v["button"]}]'] if v['button'] else [])) for k, v in screenText.items()] or ['- **ScreenText:** none.']
+out += ['', '## 21 Oct touches (the play-test of 21 Oct)', '', "Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM unlocks and the screen text, as loaded.", ''] + t21
 
 # identity and photos (CR5): the artwork and the showroom photo of every aircraft row, live or not
 PHOTOS = ROOT / 'src' / 'opening' / 'assets' / 'photos'
