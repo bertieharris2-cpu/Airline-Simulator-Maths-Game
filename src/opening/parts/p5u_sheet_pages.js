@@ -236,6 +236,19 @@ function ashChgWhat(ch){
   return { route:moved || ids[0], what:moved ? 'new times' : 'timetable change' };
 }
 const ashSigned = (v, m) => `${v < 0 ? '−' : v > 0 ? '+' : ''}${m ? money(Math.abs(Math.round(v))) : num(Math.abs(Math.round(v)))}`;
+/* the first-time callout (21 Oct 2026, Bertie): to the right of the Difference column, which it rings (D1 down to the row above the sum),
+   so the rows under it stay in view. It reads each sign the change shows in words, from the figures on screen, then says what to do
+   first. The words are the workbook's (ScreenText changes.difference and changes.line). */
+const ASH_CHG_SIGN = { 'Passengers a day':[n => `${n} more passengers a day`, n => `${n} fewer passengers a day`], 'Empty seats':[n => `${n} more empty seats`, n => `${n} fewer empty seats`],
+  'Fare':[n => `the fare is ${n} higher`, n => `the fare is ${n} lower`], 'Flights a day':[n => `${n} more ${n === '1' ? 'flight' : 'flights'} a day`, n => `${n} fewer ${n === '1' ? 'flight' : 'flights'} a day`],
+  'Revenue a day':[n => `${n} more revenue a day`, n => `${n} less revenue a day`], 'Costs a day':[n => `${n} more in costs a day`, n => `${n} less in costs a day`] };
+function ashChgCallout(ch, v, sum, rows){
+  const tg = ashRef(sum.tgt).r, signs = rows.filter(r => r.r > 1 && r.r < tg && ASH_CHG_SIGN[r.label]).map(r => { const t = String((v['D' + r.r] || {}).t || ''), m = /^([+−])(.*)$/.exec(t); if(!m) return '';
+    return `**${t}** means ${ASH_CHG_SIGN[r.label][m[1] === '+' ? 0 : 1](m[2])}.`; }).filter(Boolean).join('\n');   // a line each
+  const T = h21Text('changes.difference', { signs, cell:sum.tgt, row:sum.rowW }), L = h21Text('changes.line');
+  return { out:true, outTop:0, ring:['D', 1, 'D', tg - 1], ptr:'top:58px', eyebrow:T.eyebrow || 'NEW · YOUR CHANGE', title:T.title || 'What the Difference column means',
+    text:T.text.map(x => h21Html(x).replace(/\n/g, '<br>')).map((x, i) => i === 0 ? `<span class="ash-cor">${x}</span>` : x), line:L.text.map(h21Html).join(' ') };
+}
 function ashChangeSpec(ch, i, n){
   const La = planLines(ch.from), Lb = planLines(ch.to), C = ashChgS()[ch.key] || {}, done = !!C.done, v = {}, nm = `${S.airline.name || 'Airline'} HQ · Work out my plan`;
   const how = ashSum('changes.difference').how, build = how === 'build' || (how === 'build once' && !ashSeen('built:difference'));
@@ -277,8 +290,7 @@ function ashChangeSpec(ch, i, n){
       return { note:ashWrong('−', sum.vals, val, d, '£') }; },
     onBuilt:() => { ashSee('built:difference'); },
     hints:() => ashHintsFor('revenue − costs', '−', sum.vals[0], sum.vals[1], d, true), how2:() => ashHowFor('−', Math.abs(sum.vals[0]), Math.abs(sum.vals[1]), '£', 'Difference = With your change − Now'),
-    co:{ at:['B', sum.ptrRow + 1, 'C', rows.length], side:'pu', ptr:'left:300px', eyebrow:'NEW · YOUR CHANGE', title:'Is the change worth it?',
-      text:[`You changed ${esc(words)}. The sheet puts Now next to With your change. The Difference column shows what the change is worth.`], rule:'Difference = <i>A</i> With your change − <i>B</i> Now' } };
+    co:ashChgCallout(ch, v, sum, rows) };
   const J = UI.ashJust && UI.ashJust.sheet === 'changes:' + ch.key ? S1 : null, act = !done && !J ? S1 : null;
   const meaning = gain > 0 ? `<b class="pos">${ashSigned(gain, true)} a day</b>, ${ashSigned(gain * 7, true)} a week: the change is worth keeping.` : gain < 0 ? `The change loses ${money(Math.abs(Math.round(gain)))} a day (${ashSigned(gain * 7, true)} a week): it isn't worth keeping. Back returns to the plan to undo it or try something else.` : 'The change makes no difference a day.';
   if(J) J.val = ashSigned(d, true);

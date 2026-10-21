@@ -65,3 +65,32 @@ body.yr1 .h21-ftc .bv-sumtag{font-size:13px;padding:3px 10px}
 body.yr1 .h21-ftc b{font:700 18px/1.3 var(--font-sans);color:var(--text)}
 body.yr1 .h21-ftw{margin-left:auto;font:400 15px/1.3 var(--font-sans);color:var(--text-soft)}
 body.yr1 .h21-ftag{display:inline-flex;align-items:center;padding:3px 10px;background:var(--cyan);color:#04111f;font:700 12px/16px var(--font-sans);letter-spacing:.08em}
+
+/* ---------- 6. the Changes sheet: the callout beside the Difference column, which it rings ---------- */
+body.yr1 .ash-co.out{position:absolute;width:286px;margin:0;z-index:6}
+body.yr1 .ash-co.out p{font-size:14px;line-height:1.42}
+body.yr1 .ash-co.out .ash-cor{display:block;margin-bottom:2px}
+body.yr1 .ash-co.out .h21-tg{min-width:16px;height:16px;padding:0 3px;font:800 10px/16px var(--font-sans);color:#021226;vertical-align:1px}
+body.yr1 .ash-ring{z-index:4;pointer-events:none;box-shadow:inset 0 0 0 2px var(--cyan),0 0 14px rgba(54,198,255,.45)}
+
+/* ---------- 4–5. what's new comes first; first-time control callouts ---------- */
+body.yr1 .op2 .op2-week.h21-grow{max-height:440px}
+body.yr1 .op2 .op2-r.h21-new .op2-i{color:var(--cyan)}
+body.yr1 .h21-nt{display:inline-block;margin-right:4px;padding:1px 6px;background:var(--cyan);color:#04111f;font:700 13px/18px var(--font-sans);letter-spacing:.06em;vertical-align:2px}
+body.yr1 .h21-ring{outline:2px solid var(--cyan);outline-offset:2px;box-shadow:0 0 14px rgba(54,198,255,.55)}
+body.yr1 .h21-cohost{position:relative;overflow:visible}
+#h21Lead{position:fixed;left:0;top:0;z-index:240;pointer-events:none}
+#h21Lead polyline{fill:none;stroke:var(--cyan);stroke-width:2}
+#h21Lead circle{fill:var(--cyan)}
+body.yr1 .ash-co.h21-co{position:absolute;z-index:30;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:22px;align-items:center;width:auto;max-width:none;margin:0;padding:14px 18px}
+body.yr1 .ash-co.h21-co .ash-coe{font-size:13.5px}
+body.yr1 .ash-co.h21-co .ash-cot{margin:4px 0 4px;font-size:21px}
+body.yr1 .ash-co.h21-co p{margin:0;font-size:17.5px;line-height:1.4}
+body.yr1 .ash-co.h21-co p b{color:#fff}
+body.yr1 .ash-co.h21-co .ash-coa{margin:0}
+body.yr1 .ash-co.h21-co .ash-coa .bv-btn{min-height:44px;padding:0 20px;font:600 19px/1 var(--font-sans)}
+body.yr1 .ash-co.h21-coo{right:40px;bottom:12px;width:min(850px,calc(100% - 340px))}
+body.yr1 .ash-co.h21-cor{width:636px}
+body.yr1 .s3-insp.h21-cobox{display:block;padding:6px 8px;background:none;border-color:transparent}
+body.yr1 .ash-co.h21-coi{position:relative;inset:auto;width:100%;padding:10px 18px}
+body.yr1 .ash-co.h21-coi .ash-ptr{display:none}

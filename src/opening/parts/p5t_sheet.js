@@ -120,12 +120,16 @@ function ashHtml(sp){
       g += `<div class="${cls}" data-ref="${ref}" style="grid-column:${x};grid-row:${y}"${attr}>${inner}</div>`;
     });
   });
-  let coBlock = '';
+  let coBlock = '', coOut = '';
+  // a callout may ring the cells it is about (2px cyan) while it is open (21 Oct 2026: the Changes sheet's Difference column)
+  if(co && co.ring){ const [c1, r1, c2, r2] = co.ring; g += `<div class="ash-ring" style="grid-column:${gc[c1]}/${gc[c2] + 1};grid-row:${gr[r1]}/${gr[r2] + 1}"></div>`; }
   if(co){ const at = co.at, side = sp.small ? 'pd' : co.side || 'pu', inner = `<i class="ash-ptr" style="${sp.small ? 'left:330px' : co.ptr || ''}"></i>
       <span class="ash-coe">${esc(co.eyebrow || 'NEW SUM')}</span><b class="ash-cot">${esc(co.title)}</b>${(co.text || []).map(p => `<p>${p}</p>`).join('')}
       ${co.rule ? `<p class="ash-cor">${co.rule}</p>` : ''}<div class="ash-coa"><button class="bv-btn primary" data-ashgot="${esc(act.kind)}">Got it</button></div>`;
     // on a small sheet there is no empty part of the grid: the callout sits just above it, pointing down at the row
     if(sp.small) coBlock = `<div class="ash-co ${sp.coAside ? 'pr aside' : side} static ${sp.tight ? 'tight' : ''}" role="dialog" aria-label="${esc(co.title)}">${inner}</div>`;   // aside: beside the sheet, over the panel's spare room (the Fuel desk's order fits at 1366)
+    // out: to the right of the grid, beside the cells it rings, so the rows under them stay in view (21 Oct 2026)
+    else if(co.out) coOut = `<div class="ash-co pl out" role="dialog" aria-label="${esc(co.title)}" style="left:${30 + cols.reduce((t, k) => t + k.w, 0) + 18}px;top:${co.outTop || 0}px">${inner}</div>`;
     else g += `<div class="ash-co ${side}" role="dialog" aria-label="${esc(co.title)}" style="grid-column:${gc[at[0]]}/${gc[at[2]] + 1};grid-row:${gr[at[1]]}/${gr[at[3]] + 1}">${inner}</div>`; }
   // the formula bar
   let nb = '', fm = '', words = '', ops = '';
@@ -141,13 +145,13 @@ function ashHtml(sp){
   else if(focus && building){ line = st.msg ? esc(st.msg) : act.lineBuild || `Click the cells to build the formula. Then work it out in your book and type the answer in <b>${act.tgt}</b>.`; if(st.q) lcls = 'q'; }
   else if(focus){ line = st.msg ? `${esc(st.msg)}` : act.lineType || ashLineBook(act); if(st.q) lcls = 'q';
     line += `${act.hints ? `<button class="ash-hl" data-ashhint>${st.hint ? 'Another hint' : 'Give me a hint'}</button>` : ''}${act.how2 ? `<button class="ash-hl quiet" data-ashhow>${st.how ? 'Hide the example' : 'Show me how'}</button>` : ''}`; }
-  else if(co) line = 'Read the note on the sheet, then press Got it.';
+  else if(co) line = co.line || 'Read the note on the sheet, then press Got it.';
   else line = sp.doneLine || '';
   const hints = focus && typing && st.hint && act.hints ? act.hints().slice(0, st.hint) : [];
   const how = focus && typing && st.how && act.how2 ? act.how2() : '';
   const top = sp.small ? '' : `<header class="ash-top"><div class="ash-tt">${sp.crumb ? `<span class="ash-crumb">${esc(sp.crumb)}</span>` : ''}<h1 class="ash-title">${esc(sp.title || '')}</h1></div>${sp.tabs ? `<nav class="ash-tabs" aria-label="Sheets">${sp.tabs.map(t => `<button class="ash-tab ${t.on ? 'on' : ''} ${t.off ? 'off' : ''}" data-ashtab="${esc(t.id)}" ${t.off || t.on ? 'aria-disabled="true"' : ''} title="${esc(t.off ? `${t.label}: not on the sheet yet` : t.label)}">${ashIco(t.ic)}${esc(t.label)}</button>`).join('')}</nav>` : ''}</header>`;
   return `<section class="ash ${sp.small ? 'ash-small' : ''} ${sp.tight ? 'ash-tight' : ''} ${focus ? 'ash-work' : 'ash-done'}" data-ash="${esc(sp.id)}" aria-label="${esc(sp.title || 'Sheet')}">${top}${coBlock}${fb}
-    <div class="ash-gridw"><div class="ash-grid" role="grid" style="grid-template-columns:${tmplC};grid-template-rows:${tmplR}">${g}</div></div>
+    <div class="ash-gridw"><div class="ash-grid" role="grid" style="grid-template-columns:${tmplC};grid-template-rows:${tmplR}">${g}</div>${coOut}</div>
     <p class="ash-line ${lcls}" role="status">${line}</p>${hints.length ? `<div class="ash-hints">${hints.map(h => `<span class="${h.est ? 'est' : ''}">${esc(h.t)}</span>`).join('')}</div>` : ''}${how ? `<div class="ash-how">${how}</div>` : ''}</section>`;
 }
 function ashNextWord(sp, sum, tokens){ const n = tokens.filter(t => t.ref).length, ref = sum.refs[n] || sum.refs[sum.refs.length - 1]; return String(sum.wordsOf ? sum.wordsOf(ref) : ashRowLabel(sp, ref)).toLowerCase(); }

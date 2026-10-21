@@ -245,3 +245,98 @@ ftpPlan = function(){
   const [pid, rid] = a.k.split('|'), h = ftHours(planeById(pid), routeById(rid)), q = h21Q(h);
   return { pairs:P.fresh, asked:P.items.map(x => x.k), level:a.lvl, how:a.how, next:{ key:a.k, h:Math.floor(q + 1e-9), m:Math.round((q - Math.floor(q + 1e-9)) * 60), answer:q, sheet:true } };
 };
+
+/* ---------- 4–5. what's new comes first (DESIGN.md: Week plan opener; the attention system: First-time control callout) ----------
+   The opener's "This week" list starts with the routes that open this week (NEW, "Add a route ›" to Change network). A control
+   that is new gets a 2px cyan ring and one callout in the Sheet Callout look, in empty space, joined to it by a cyan leader line
+   routed through gaps: on the opener the Sat–Sun switch; in the Studio, first Add / change routes, then the switch. One at a
+   time; each shows once (S.h21Seen, in the save). The routes a plan screen has shown are noted (S.h21Shown) for the review (9). */
+function h21Seen(id){ return !!(S && S.h21Seen && S.h21Seen[id]); }
+function h21See(id){ (S.h21Seen = S.h21Seen || {})[id] = S.day || 1; try{ save(); }catch(e){} }
+function h21NewRoutes(){ if(!S || S.phase === 'setup' || !yearOne()) return []; const d = S.day || 1, mon = d - ((d - 1) % 7);
+  return openRoutes(d).filter(r => (r.openDay || 1) > 1 && (r.openDay || 1) >= mon && (r.openDay || 1) <= mon + 6); }
+function h21Shown(ids){ const M = S.h21Shown || (S.h21Shown = {}); let ch = false; ids.forEach(id => { if(!M[id]){ M[id] = S.day || 1; ch = true; } }); if(ch) try{ save(); }catch(e){} }
+const h21OpRows0 = op2Rows;
+op2Rows = function(pl, L){
+  const h = h21OpRows0.apply(this, arguments), R = h21NewRoutes(); if(!R.length) return h;
+  h21Shown(R.map(r => r.id));
+  const T = h21Text(R.length > 1 ? 'opener.newRoutes' : 'opener.newRoute', { Count:capFirst(h21Words(R.length)), routes:h21List(R.map(r => r.city)) });
+  const row = `<li class="op2-r h21-new"><span class="op2-i h21-ni">${ICO2.plane || ''}</span><span class="op2-t"><span class="h21-nt">${esc(T.eyebrow || 'NEW')}</span> ${h21Html(T.text.join(' '))}</span><span class="op2-l"><button class="op2-a" data-s2go="network">${esc(T.button.replace(/\s*›\s*$/, '') || 'Add a route')} ›</button></span></li>`;
+  return row + h.replace(/<li class="op2-r good">[\s\S]*?<\/li>/, '');
+};
+const h21Opener0 = s2Opener;
+s2Opener = function(){ const h = h21Opener0.apply(this, arguments); return yearOne() && h21NewRoutes().length ? h.replace('class="bv-panel s2-ochg op2-week"', 'class="bv-panel s2-ochg op2-week h21-grow"') : h; };
+/* a callout in the Sheet Callout look, one row: the words, then Got it */
+function h21CoHtml(id, T, cls){
+  return `<div class="ash-co h21-co ${cls || ''}" role="dialog" aria-label="${esc(T.title)}" data-h21co="${id}"><i class="ash-ptr" aria-hidden="true"></i><div class="h21-cob"><span class="ash-coe">${esc(T.eyebrow)}</span><b class="ash-cot">${esc(T.title)}</b>${T.text.map(t => `<p>${h21Html(t)}</p>`).join('')}</div><div class="ash-coa"><button class="bv-btn primary" data-h21got="${id}">${esc(T.button || 'Got it')}</button></div></div>`;
+}
+/* the leader line: a fixed layer over the page (client pixels), redrawn after each render and on resize */
+function h21LeadOff(){ const s = document.getElementById('h21Lead'); if(s) s.remove(); }
+function h21Lead(pts){
+  h21LeadOff(); if(!pts || pts.length < 2 || document.querySelector('#bfLayer')) return;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'), W = window.innerWidth, H = window.innerHeight; svg.id = 'h21Lead'; svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.innerHTML = `<polyline points="${pts.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ')}"/><circle cx="${pts[0][0].toFixed(1)}" cy="${pts[0][1].toFixed(1)}" r="4"/>`;
+  document.body.appendChild(svg);
+}
+function h21CoBind(root){ root.querySelectorAll('[data-h21got]').forEach(b => b.onclick = e => { e.stopPropagation(); h21See(b.getAttribute('data-h21got')); render(); }); }
+/* the opener: the Sat–Sun switch (the first week the days can differ); the line runs down from the switch, along the gap under the
+   hour labels and down through a gap between flights, never through a flight block */
+function h21CoOpener(root, sw){
+  const pnl = root.querySelector('.s2-otl'); if(!pnl) return;
+  sw.classList.add('h21-ring'); pnl.classList.add('h21-cohost');
+  pnl.insertAdjacentHTML('beforeend', h21CoHtml('opener.weekends', h21Text('opener.weekends'), 'h21-coo pu')); h21CoBind(root);
+  h21After(() => h21LeadOpener(pnl, sw));
+}
+function h21LeadOpener(pnl, sw){
+  const co = pnl.querySelector('.h21-co'); if(!co) return; const s = sw.getBoundingClientRect(), c = co.getBoundingClientRect(), lanes = [...pnl.querySelectorAll('.ad-lane')].map(e => e.getBoundingClientRect()), blocks = [...pnl.querySelectorAll('.ad-blk')].map(e => e.getBoundingClientRect());
+  const x0 = s.left + s.width / 2; let pts;
+  if(lanes.length){ const top = Math.min(...lanes.map(l => l.top)), yG = top - 5, L0 = Math.max(...lanes.map(l => l.left)), R0 = Math.min(...lanes.map(l => l.right));
+    const free = x => x > L0 + 4 && x < R0 - 4 && !blocks.some(b => x > b.left - 6 && x < b.right + 6);
+    let xT = null; for(let d = 0; d < 900 && xT === null; d += 2) for(const x of [x0 - d, x0 + d]) if(xT === null && x > c.left + 26 && x < c.right - 26 && free(x)) xT = x;
+    if(xT === null) xT = Math.max(c.left + 26, Math.min(c.right - 26, x0));
+    pts = [[x0, s.bottom + 1], [x0, yG], [xT, yG], [xT, c.top]]; co.querySelector('.ash-ptr').style.left = ((xT - c.left) * co.offsetWidth / Math.max(1, c.width) - 7) + 'px'; }
+  else pts = [[x0, s.bottom + 1], [x0, c.top]];
+  h21Lead(pts);
+}
+/* the Studio: Add / change routes (the week routes open), its callout under it, pointing up, right-aligned to it */
+function h21CoRoutes(root, add, R){
+  const pnl = root.querySelector('.s2-routes'); if(!pnl) return;
+  const T = h21Text(R.length > 1 ? 'studio.routes' : 'studio.route', { Count:capFirst(h21Words(R.length)), routes:h21List(R.map(r => r.city)) });
+  add.classList.add('h21-ring'); pnl.classList.add('h21-cohost'); h21Shown(R.map(r => r.id));
+  pnl.insertAdjacentHTML('beforeend', h21CoHtml('studio.routes', T, 'h21-cor pu')); h21CoBind(root);
+  h21After(() => h21PlaceRoutes(pnl, add));
+}
+function h21PlaceRoutes(pnl, add){
+  const co = pnl.querySelector('.h21-co'); if(!co) return; const P = pnl.getBoundingClientRect(), B = add.getBoundingClientRect(), k = P.width / Math.max(1, pnl.offsetWidth) || 1;
+  co.style.right = Math.max(0, (P.right - B.right - 11) / k) + 'px'; co.style.top = ((B.bottom - P.top + 14) / k) + 'px';
+  const C = co.getBoundingClientRect(); co.querySelector('.ash-ptr').style.left = ((B.left + B.width / 2 - C.left) / k - 7) + 'px';
+}
+/* the Studio: the Sat–Sun switch, its callout in the empty "Select a flight" box; the line runs left from the switch along the header
+   row, then down the clear gap between the labels and the chart */
+function h21CoStudioDays(root, sw){
+  const box = root.querySelector('.s2-tt .s3-insp.empty'); if(!box) return;
+  sw.classList.add('h21-ring'); box.classList.add('h21-cobox'); box.innerHTML = h21CoHtml('studio.weekends', h21Text('studio.weekends'), 'h21-coi'); h21CoBind(root);
+  h21After(() => h21LeadStudio(root, sw, box));
+}
+function h21LeadStudio(root, sw, box){
+  const s = sw.getBoundingClientRect(), c = box.querySelector('.h21-co').getBoundingClientRect(), lane = root.querySelector('.s2-tt .ad-lane, .s2-tt .st-sb'), y = s.top + s.height / 2;
+  const xG = lane ? lane.getBoundingClientRect().left - 4 : c.left + 24;
+  h21Lead([[s.left - 1, y], [xG, y], [xG, c.top]]);
+}
+/* the lines and places are measured once the page has finished drawing (later parts add to the header after the Studio draws) */
+function h21After(fn){ const tok = UI.h21Tok = (UI.h21Tok || 0) + 1; setTimeout(() => { if(UI.h21Tok === tok) try{ fn(); }catch(e){ console.error(e); } }, 0); }
+function h21PlanCallouts(){
+  h21LeadOff(); if(!S || !yearOne() || S.phase === 'setup' || !UI.s2 || step().t !== 'plan') return;
+  const root = screen(), mode = UI.s2.mode, R = h21NewRoutes();
+  if(mode === 'network'){ if(R.length && !h21Seen('studio.routes')) h21See('studio.routes'); h21Shown(openRoutes(S.day || 1).map(r => r.id)); return; }
+  if(mode === 'opener'){ const sw = root.querySelector('.s2-otl .s2-dt'); if(sw && !h21Seen('opener.weekends')) h21CoOpener(root, sw); return; }
+  if(mode !== 'plan') return;
+  const add = root.querySelector('#s2AddNet'); if(R.length && add && !h21Seen('studio.routes')){ h21CoRoutes(root, add, R); return; }
+  const sw = root.querySelector('.s2-tt .s2-dt'); if(sw && !h21Seen('studio.weekends')) h21CoStudioDays(root, sw);
+}
+const h21Studio0 = renderStudio;
+renderStudio = function(){ const r = h21Studio0.apply(this, arguments); try{ h21PlanCallouts(); }catch(e){ console.error(e); } return r; };
+const h21Render1 = render;
+render = function(){ h21LeadOff(); return h21Render1.apply(this, arguments); };
+window.addEventListener('resize', () => { try{ if(document.getElementById('h21Lead') && step().t === 'plan') render(); }catch(e){} });
