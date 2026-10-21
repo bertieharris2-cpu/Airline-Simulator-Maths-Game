@@ -15,7 +15,7 @@ Everything is in **year one only**, as CLAUDE.md asks:
 
 Screenshots of every changed screen are in `docs/screenshots/o21/`, at 1366 × 768 and 1920 × 1080. They use Bertie's own airline (TEST2), so the figures match the handover's pictures.
 
-The code is in `src/opening/parts/p5y_h21.js` and `p1_head_h21.css`, with small hooks in the Sheet (`p5t`), the Fuel desk (`p5q`), the review and order sheets (`p5v`), the sheet pages (`p5u`), the star rating (`p5w`) and the briefings (`p5f`). The game still has 120 overridden functions; everything new is a reassignment.
+The code is in `src/opening/parts/p5y_h21.js` and `p1_head_h21.css`, with small hooks in the Sheet (`p5t`), the Fuel desk (`p5q`), the review and order sheets (`p5v`), the sheet pages (`p5u`), the star rating (`p5w`) the briefings (`p5f`) and the aircraft comparison (`p5h`). The game still has 120 overridden functions; everything new is a reassignment or a small edit in place.
 
 ## What changed
 
@@ -129,10 +129,52 @@ The importer (`tools/import_world.py`) reads all of this. Its report has 0 to fi
 1. **Scene 1 of the briefing: the Saab doesn't take off again in the picture.** The game turns a plane round at Amsterdam in 45 minutes, so the Saab would leave at 1 h 45, after the Twin Otter has landed at 1 h 30. The scene shows the Saab land after 1 hour and turn round to face home while the Twin Otter is still in the air, and the words still say a faster plane fits more flights into a day. If Bertie wants it to take off anyway, that is a small change.
 2. **The formula triangle.** The doc's "Decision for you" on section 10 (keep the triangle as a reference card he can open later) isn't answered yet. The year-one briefing has no triangle, and no reference card is built.
 3. **First-time callouts cover what is under them until Got it**, as in the pictures. The Studio's routes callout sits over the route rows' Edit fare links. A pupil has to press Got it first. The week test now presses it, the way a pupil would.
+4. **One Sum-number gap is kept on purpose** (section 8). When the tank is short, the Fuel desk suggests an order and shows its sum with a number. If he leaves without buying, the number stays used, because he may already have written it in his book. The other way is to give a number only when he answers, but then a number he wrote down could later go to a different sum. Say if you'd rather have that.
 
 ## Tests
 
-(filled in below once the full run is done)
+All on the final build. Chapters 3 and 4 start from their own saves (days 364 and 730), as CLAUDE.md asks, to show nothing changed there.
+
+| Test | Result |
+| --- | --- |
+| `briefings.test.js` | 150 passed, none failed (138 on 20 October): "How long will it take?" scene by scene, Back and the prediction, the page a later chapter gets, and the example and his routes in the game's data |
+| `week.test.js` to chapter 1's review, track A | 257 passed, none failed; £733,014 on day 118 |
+| `week.test.js` to chapter 1's review, track B | 249 passed, none failed; £732,277 |
+| `week.test.js` to day 15 | 109 passed, none failed |
+| `chapter2.test.js` Value, from the new chapter 1 save | 112 passed, none failed; £14,806,209 at the review |
+| `chapter2.test.js` Premium, from the same save | 106 passed, none failed; £14,759,798 |
+| `chapter3.test.js` | 66 passed, none failed; £31,529,103 on day 730 |
+| `chapter4.test.js` | 58 passed, 1 failed; £58,865,752 on day 1,095. The failure is the D89 fuel-farm check, which failed on 20 October and in v6.1 too |
+| `d104.test.js` | 58 passed, none failed |
+| `decide`, `record`, `migrate`, `screens3`, `playnotes`, `fleetshop`, `milestones`, `engine` | 34, 19, 31, 24, 14, 36, 27 and 10 passed, none failed |
+
+The two chapter 1 runs are from a second run, after I corrected the week test's Sum-number check (the game file was the same).
+
+What the tests check for this round:
+- **Launch Day:** B4 is a Build (he clicks B2 × B3, then types the answer), and C4 and D4 are typed. The record has B4's Build and its answer under Sum 1.
+- **Fuel desk:** the tour darkens the rest of the screen, and the order sheet waits for step 3.
+- **Flight times:** the first is a Build. The record has the Build, then his answer as a Calculate, under one Sum number.
+- **The review:** the FORMULA card; the total and the mean are built, with no answer box and no Sum number; from week 3, Σ SUM is a real drag down B2:B8.
+- **First-time callouts:** the test presses Got it, as a pupil would, and each callout shows once.
+- **Sum numbers:** every number handed out is in the record, apart from a fuel order he was shown and left unbought, over chapter 1 (the week test) and the whole of year one (the chapter 2 test).
+- **The briefing:** the six scenes in Bertie's order, Back, the prediction, and the old scenes in a later chapter. I also played it in the game with reduced motion.
+
+Two fixes came out of checking the record (both in year one, and in the sections above):
+- The first flight time was in the record twice, as two Builds. Now it is the Build and then his answer (Calculate), under one Sum number, as on Launch Day.
+- Numbers that skipped (section 8): an order the game works out, and a full flight worked out before, no longer take a Sum number.
+
+## Balance
+
+Nothing in this round changes the money: the screens are new, but the figures and the test pupils' choices are the same. Every chapter ends exactly where it did on 20 October:
+
+| Run | 20 Oct | Now |
+| --- | --- | --- |
+| Chapter 1, track A (day 118) | £733,014 | £733,014 |
+| Chapter 1, track B | £732,277 | £732,277 |
+| Chapter 2, Value (day 364) | £14,806,209 | £14,806,209 |
+| Chapter 2, Premium | £14,759,798 | £14,759,798 |
+| Chapter 3 (day 730) | £31,529,103 | £31,529,103 |
+| Chapter 4 (day 1,095) | £58,865,752 | £58,865,752 |
 
 ## What to check in the next play-test (section 12)
 - Tour: is the darkening enough, and can he still read the darkened panels if he needs them?

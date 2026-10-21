@@ -393,6 +393,8 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Launch Day's first ticket sum (B4) is a Build**; C4 and D4 stay Calculate.
 - **"How long will it take?"** plays in Bertie's six scenes: why it matters (a Saab 340 and his Twin Otter to Amsterdam), the prediction, the whole hours, the part left over, the ruler as the check, then his routes. A later chapter keeps the old scenes.
 - **Workbook:** SheetSums `how` = formula, a new ScreenText sheet, Σ SUM on Calendar day 21, and the briefing's example on BriefingData.
+- **Sum numbers:** a number goes only to a sum he works out. An order the game works out (ƒ), and a full flight he worked out in an earlier week, no longer take one. The one gap kept on purpose is a suggested fuel order he leaves unbought: he may have written its number down. The first flight time is in the record as its Build, then his answer, under one number.
+- **Balance:** nothing in this round changes the money; every chapter's test run ends exactly where it did on 20 October. The tests and figures are in the report.
 
 ### Bertie's briefings review in the game (20 Oct 2026)
 *From the DESIGN.md of 20 Oct 2026 (Bertie's review of every briefing), in year one only. The scene-by-scene re-plan of the briefings waits for Bertie to check the "Operations Briefings — scene by scene" doc. The report is `docs/20-Oct-Briefings-Report.md`; screenshots are in `docs/screenshots/o20/`.*
