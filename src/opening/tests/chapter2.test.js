@@ -250,6 +250,8 @@ if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=2
     checks.push('stopped at ' + t + ' day ' + day); await shot('c2-stop'); break; }
   s = await S(); checks.push('end at ' + await T() + ' day ' + s.day + ' cash ' + Math.round(s.cash));
   if(process.env.SAVE){ fs.writeFileSync(process.env.SAVE, await p.evaluate(() => window.__sim.saveCode())); checks.push('info save code written to ' + process.env.SAVE); }
+  { const ns = [...new Set(((s.record && s.record.entries) || []).filter(e => e.n).map(e => e.n))].sort((a, b) => a - b), gaps = (s.sumNo && s.sumNo.keys ? Object.entries(s.sumNo.keys) : []).filter(([k, n]) => !ns.includes(n)).map(([k, n]) => n + ' ' + k);   // 21 Oct 2026
+    ok('21 Oct: over year one the Sum numbers in the record run 1, 2, 3, … with none skipped (a number goes only to a sum he works out)', ns.length > 0 && ns.every((n, i) => n === i + 1) && !gaps.length, { last:ns[ns.length - 1], skipped:gaps.slice(0, 6) }); }
   { const MS = JSON.parse(await E('JSON.stringify(msReport())')); checks.push('info milestones ' + JSON.stringify(Object.fromEntries(Object.entries(MS.got).map(([k, g]) => [k, g.times]))));   // teacher milestones (15 Oct)
     if(s.day >= 364) ok("milestones, chapter 2: the Captain's challenges won and the fuel invoice's mistake found are both there for the teacher", MS.got['2:captain'] && MS.got['2:captain'].times === 2 && !!MS.got['2:spotMistake'], Object.keys(MS.got)); }
   const HH = (s.history || []).filter(h => h.from >= 127), wk19 = HH.filter(h => h.from >= 127 && h.to <= 133);

@@ -375,3 +375,7 @@ function h21Unflown(L){
    On that desk the box is not drawn at all. (The comparison's full flight worked out before has no number either: p5h, wcHtml.) */
 const h21FoSign0 = foSignHtml;
 foSignHtml = function(){ return ashOn() && fd2On() ? '' : h21FoSign0.apply(this, arguments); };
+// the test kit's look at the order (foPlan) only reads the number the order already has: it handed one out on every visit to the desk
+const h21FoPlan0 = foPlan;
+foPlan = function(){ if(!yearOne() || !paperOn() || !UI.fd) return h21FoPlan0.apply(this, arguments); const F = foWeek(), G = foFigures();
+  return { level:F.level, signed:!!(F.signed && F.n === G.n), n:G.n, per:G.per, answer:G.total.toFixed(2), seq:['n', '×', 'per'], sumNo:sumNoS().keys[sumNoKey('fo:' + weekNo(S.day || 1))] }; };

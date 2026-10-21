@@ -67,6 +67,7 @@ Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is
 **11. Sum numbers with no gaps:** `sumNo(key)` hands out the next number the first time a sum is drawn, so a sum drawn but never done left a gap in his book and the printed record.
 - `foSignHtml` (p4zr's old sign-off box) is not drawn on the year-one sheet desk (`ashOn() && fd2On()`, `p5y`). p5v stripped it anyway, but its "Sum n" line took a number every week the game worked the order out (ƒ signs itself).
 - `wcHtml` (`p5h`, the comparison's "A full flight"): a full flight worked out before (`T.model`) shows the week and the words with no Sum number, in year one.
+- `foPlan` (the test kit's look at the order) reads the order's number without handing one out, in year one. The week test called it on every visit to the desk.
 - A Steady run's record now runs 1, 2, 3, … with none skipped. A sum he opens and leaves without doing still keeps its number.
 
 **Workbook** (`tools/import_world.py`):
@@ -83,7 +84,7 @@ Year one only: behaviour behind `yearOne()`, CSS under `body.yr1`. The report is
   - Σ SUM is a real drag from week 3;
   - it presses Got it on first-time callouts and checks each shows once;
   - the first flight time is in the record as its Build, then a Calculate, under one Sum number;
-  - the record's Sum numbers run 1, 2, 3, … with none skipped.
+  - the record's Sum numbers run 1, 2, 3, … with none skipped (and `chapter2.test.js` checks the same over the whole year).
 - `record.test.js`: B4's Build is in the record.
 - `briefings.test.js`: the six scenes, the later-chapter page, and the example and Use rows in the game's data.
 
