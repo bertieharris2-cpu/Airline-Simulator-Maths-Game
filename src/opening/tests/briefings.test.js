@@ -54,7 +54,8 @@ async function playFare(f, slow){ const R = {}, txt = s => f.locator(s).first().
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const back0 = await f.locator('#bk').isDisabled(); for(let i = 0; i < 3; i++){ await f.locator('#sell').click(); await sleep(300); } await sleep(1100);
   R.b1 = back0 && !(await dis()) && /3 tickets × £100 = £300/.test(await txt('#mf')) && /revenue/i.test(await txt('#mt'));
-  await nx(); await f.locator('#fr').evaluate(e => { for(const v of [6, 2, 4]){ e.value = v; e.dispatchEvent(new Event('input')); } }); await sleep(600);
+  await nx(); { const fr = f.locator('#fr'), bx = await fr.boundingBox(), n = await fr.evaluate(() => document.querySelectorAll('.tk').length - 1), sc = bx.width / await fr.evaluate(e => e.offsetWidth);   // 22 Oct 2026: pressed, then the arrow keys, as a pupil would
+    for(const v of [6, 2]){ await fr.click({ position:{ x:bx.width / sc * v / n, y:bx.height / sc / 2 } }); await sleep(200); } await fr.press('ArrowRight'); await fr.press('ArrowRight'); } await sleep(600);
   R.b2x = [await txt('#dv'), await f.locator('#pat').getAttribute('class')]; R.b2 = R.b2x[0] === '40' && !/hide/.test(R.b2x[1]);
   await nx(); await f.locator('#board').click(); await sleep(3400);
   R.b3x = [await txt('#f0'), await txt('#f1'), await txt('#left'), await f.locator('.pp.dim').count()]; R.b3 = R.b3x[0] === '19/19 ✓' && R.b3x[1] === '19/19 ✓' && /42/.test(R.b3x[2]) && R.b3x[3] === 42;

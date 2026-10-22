@@ -112,3 +112,6 @@ body.yr1 .ash-co.h21-rvco p b{color:#fff}
 body.yr1 .h21-chance{margin:0;padding:10px 12px;border:1px solid rgba(54,198,255,.35);border-left:3px solid var(--cyan);background:rgba(10,40,72,.6)}
 body.yr1 .h21-chance p{margin:0;font:400 13px/1.4 var(--font-sans);color:var(--text)}
 body.yr1 .h21-chance p > b{color:var(--cyan);font-weight:700}
+
+/* 22 Oct 2026: the page's own markup (the old top bar) stays hidden until the game has drawn its first screen (p5y) */
+html:not(.drawn) #control{visibility:hidden}

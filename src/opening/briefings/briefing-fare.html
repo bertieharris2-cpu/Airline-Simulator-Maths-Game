@@ -96,13 +96,12 @@ html,body{margin:0;height:100%;background:#020812;overflow:hidden}
 .work .ln.w{white-space:normal;text-wrap:balance}
 
 /* fare slider */
-.fr{position:absolute;-webkit-appearance:none;appearance:none;height:30px;padding:8px 0;box-sizing:content-box;margin:-8px 0 0;background:transparent;cursor:pointer;touch-action:none}
-.fr::-webkit-slider-runnable-track{height:6px;background:linear-gradient(90deg,#36c6ff var(--p),#24426c var(--p))}
-.fr::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:30px;margin-top:-12px;background:#36c6ff;border:2px solid #bfeeff}
-.fr::-moz-range-track{height:6px;background:#24426c}
-.fr::-moz-range-progress{height:6px;background:#36c6ff}
-.fr::-moz-range-thumb{width:20px;height:28px;border-radius:0;background:#36c6ff;border:2px solid #bfeeff}
-.fr:focus-visible{outline:2px solid var(--cyan);outline-offset:6px}
+.fr{position:absolute;height:46px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;outline:none}
+.fr .frt,.fr .frf{position:absolute;left:0;top:20px;height:6px;background:#24426c}
+.fr .frt{right:0}.fr .frf{background:#36c6ff;width:0}
+.fr .frh{position:absolute;top:8px;width:22px;height:30px;margin-left:-11px;box-sizing:border-box;background:#36c6ff;border:2px solid #bfeeff;cursor:grab;transition:left .15s}
+.fr.drag .frh{cursor:grabbing;transition:none}
+.fr:focus-visible .frh{outline:2px solid var(--cyan);outline-offset:4px}
 .tk{position:absolute;font-size:13px;color:var(--soft);transform:translateX(-50%);padding:4px 6px;cursor:pointer}
 .tk.on{color:var(--text);font-weight:700}
 .brd .rw{display:grid;grid-template-columns:70px 64px 1fr;align-items:center;height:27px;font-size:16px;padding:0 14px 0 16px;border-top:1px solid rgba(65,122,171,.22)}
@@ -285,7 +284,7 @@ function b2(){
   <div class="ey c">Decision</div>
   <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:6px"><span style="font-size:22px;font-weight:600">Fare to ${K.esc(D.route)}</span><span class="big" id="fv">${money(START)}</span></div>
  </div>
- <input type="range" class="fr" id="fr" min="0" max="${FARES.length - 1}" step="1" value="${i0}" aria-label="Fare to ${K.esc(D.route)}" style="left:84px;top:132px;width:500px">
+ <div class="fr" id="fr" role="slider" tabindex="0" aria-label="Fare to ${K.esc(D.route)}" aria-valuemin="${FARES[0]}" aria-valuemax="${FARES[FARES.length - 1]}" style="left:84px;top:124px;width:500px"><i class="frt"></i><i class="frf" id="frf"></i><b class="frh" id="frh"></b></div>
  ${FARES.map((f, i) => `<span class="tk" id="tk${i}" style="left:${95 + i * (478 / (FARES.length - 1))}px;top:170px">£${f}</span>`).join('')}
  <div style="position:absolute;left:690px;top:26px;display:flex;align-items:baseline;gap:14px"><span class="big" id="dv">${WANT[START]}</span><span style="font-size:20px;color:var(--soft)" id="dl">people want to fly at ${money(START)}</span></div>`;
   for(let i = 0; i < MAXC; i++){ const p = crowdPos(i, 690, 150); h += P(p[0], p[1], 's' + (i < WANT[START] ? '' : ' gone'), 'c' + i); }
@@ -293,12 +292,19 @@ function b2(){
   pic.innerHTML = h;
   setCap('You choose the fare. Drag it and watch how many people want to fly.');
   setNext('Next &#9654;');
-  const fr = $('fr'); fr.oninput = () => setFare(+fr.value); setFare(i0);
-  FARES.forEach((x, j) => { const tk = $('tk' + j); tk.onclick = () => { fr.value = j; setFare(j); fr.focus(); }; });   // a fare can also be pressed (20 Oct: Bertie found the slider hard to move)
+  // the slider is drawn and driven here, not a browser range input: press or drag anywhere along it with a mouse, a finger or a pen, or use the arrow keys
+  // (22 Oct 2026: Bertie found the range input didn't move; a native one is fiddly inside the scaled frame)
+  const fr = $('fr'), n = FARES.length - 1, at = ev => { const r = fr.getBoundingClientRect(); return Math.round(Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * n); };
+  fr.onpointerdown = ev => { ev.preventDefault(); fr.classList.add('drag'); try{ fr.setPointerCapture(ev.pointerId); }catch(e){} setFare(at(ev)); fr.focus(); };
+  fr.onpointermove = ev => { if(fr.classList.contains('drag')) setFare(at(ev)); };
+  fr.onpointerup = fr.onpointercancel = () => fr.classList.remove('drag');
+  fr.onkeydown = ev => { const k = { ArrowRight:1, ArrowUp:1, ArrowLeft:-1, ArrowDown:-1 }[ev.key]; if(k){ ev.preventDefault(); setFare(Math.min(n, Math.max(0, bs.fi + k))); } };
+  setFare(i0);
+  FARES.forEach((x, j) => { const tk = $('tk' + j); tk.onclick = () => { setFare(j); fr.focus(); }; });   // a fare can also be pressed (20 Oct)
 }
 function setFare(i){
   const f = FARES[i], d = WANT[f]; bs.fi = i; bs.tried.add(f);
-  $('fr').style.setProperty('--p', (i / (FARES.length - 1) * 100) + '%');
+  const pc = (i / (FARES.length - 1) * 100) + '%'; $('frh').style.left = pc; $('frf').style.width = pc; $('fr').setAttribute('aria-valuenow', f); $('fr').setAttribute('aria-valuetext', money(f));
   $('fv').textContent = money(f); $('dv').textContent = num(d); $('dl').textContent = 'people want to fly at ' + money(f);
   FARES.forEach((x, j) => $('tk' + j).classList.toggle('on', j === i));
   for(let k = 0; k < MAXC; k++) $('c' + k).classList.toggle('gone', k >= d);

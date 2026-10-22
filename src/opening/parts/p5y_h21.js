@@ -379,3 +379,13 @@ foSignHtml = function(){ return ashOn() && fd2On() ? '' : h21FoSign0.apply(this,
 const h21FoPlan0 = foPlan;
 foPlan = function(){ if(!yearOne() || !paperOn() || !UI.fd) return h21FoPlan0.apply(this, arguments); const F = foWeek(), G = foFigures();
   return { level:F.level, signed:!!(F.signed && F.n === G.n), n:G.n, per:G.per, answer:G.total.toFixed(2), seq:['n', '×', 'per'], sumNo:sumNoS().keys[sumNoKey('fo:' + weekNo(S.day || 1))] }; };
+
+/* ---------- 22 Oct 2026 (Bertie's play notes): the start ----------
+   The first screen was the old welcome (AIRLINESIM, "Opening prototype · Launch day to Day 3"), drawn off the canvas, so going full
+   screen flickered between it and the game. A new game now starts at Name your airline, as New game in the menu already did; the
+   starting cash is newStateBase's. And the page's own markup (the old top bar) stays hidden until the game has drawn its first screen. */
+const h22New0 = newState;
+newState = function(){ const s = h22New0.apply(this, arguments); if(s && s.steps && s.steps[s.si] && s.steps[s.si].t === 'welcome') s.si++; return s; };
+const h22Render0 = render;
+render = function(){ try{ return h22Render0.apply(this, arguments); } finally { if(!document.documentElement.classList.contains('drawn')) requestAnimationFrame(() => document.documentElement.classList.add('drawn')); } };
+setTimeout(() => document.documentElement.classList.add('drawn'), 2500);   // never left hidden
