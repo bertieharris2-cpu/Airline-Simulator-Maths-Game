@@ -194,7 +194,8 @@ async function tkMove(R){
     case 'ready': if(tkTap('#startOps')) return 'cleared for take-off'; break;
     case 'takeoff': tkTap('#toGo'); await W(() => tkNx(), 20000); break;
     case 'fly': case 'sim': case 'weekRun': case 'month': { const d0 = S.day, s0 = S.si; await W(() => step().t !== t || S.day !== d0 || S.si !== s0); return 'flew'; }
-    case 'fuelDesk': if(!UI.tkFuelled || UI.tkFuelled !== S.day){ const b = [...document.querySelectorAll('[data-fdb]:not([disabled])')]; if(b.length){ b[Math.min(1, b.length - 1)].click(); UI.tkFuelled = S.day; return 'chose fuel blocks'; } }
+    case 'fuelDesk': if(tkTap('#fd2Next')) return 'the desk\'s tour';   // 22 Oct 2026: the first visit's tour (21 Oct) holds the order sheet back until it is done
+      if(!UI.tkFuelled || UI.tkFuelled !== S.day){ const b = [...document.querySelectorAll('[data-fdb]:not([disabled])')]; if(b.length){ b[Math.min(1, b.length - 1)].click(); UI.tkFuelled = S.day; return 'chose fuel blocks'; } }
       if(tkTap('#fdBuy:not([disabled])')) return 'bought fuel'; break;
     case 'event': { if(tkTap('[data-seep]')) return 'saw a choice\'s profit';   // Red Kite (year one): each profit is seen before Choose shows
       const k = S.day + '|' + S.si + '|' + ((S.rnd && S.rnd.event && S.rnd.event.id) || ''), o = tkQ('[data-o="1"]') || tkQ('[data-o="0"]'); if(o && UI.tkEv !== k){ UI.tkEv = k; o.click(); return 'chose an option'; } } break;
