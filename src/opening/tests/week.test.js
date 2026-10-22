@@ -181,7 +181,7 @@ const COAST = process.env.COAST === '1', CAP = process.env.CAP ? +process.env.CA
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
     if(await T() === 'reveal'){ await p.click('#skipReveal', { timeout:4000 }).catch(() => {}); /* (the reveal may end by itself first on a busy machine) */ await p.waitForTimeout(150); await p.click('#nx'); } if(await T() === 'cert') await p.click('#nx'); };
   // setup
-  await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await identity();
+  if(await p.$('#start')) await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await identity();
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
   await jumpSave(1);
   ok('launch day: the intro explains the job and the starting position (no market gate)', await T() === 'brief1' && /Your first week in charge/.test(await p.textContent('#screen')) && (await p.$$('.br1-c')).length === 4, await T());

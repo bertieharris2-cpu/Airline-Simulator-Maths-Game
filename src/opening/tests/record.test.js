@@ -17,7 +17,7 @@ const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME ||
   await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; });
 
   // ---------- 1. Launch Day: a long multiplication in the column template, cell by cell ----------
-  await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx');
+  if(await p.$('#start')) await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx');
   for(let k = 0; k < 12; k++){ const t = await T(); if(t === 'code' || t === 'logo' || t === 'cert'){ await p.click('#nx'); continue; } if(t === 'paint'){ await p.click('#roll'); continue; } if(t === 'reveal'){ await p.click('#skipReveal', { timeout:4000 }).catch(() => {}); await p.waitForTimeout(150); await p.click('#nx'); continue; } if(t === 'boot'){ await p.click('#enterHq'); continue; } if(t === 'chapter'){ await p.click('#chGo'); continue; } if(t === 'brief1'){ await p.click('#nx'); continue; } break; }
   ok('launch day: the plan', await T() === 'plan', await T());
   if(await p.$('#s2Back')){ await p.click('[data-pe="0|add|par|0|0"]'); await p.click('[data-pe="0|add|dub|0|0"]'); await p.click('#s2Back'); await p.waitForTimeout(100); }

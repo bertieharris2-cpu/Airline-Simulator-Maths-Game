@@ -41,7 +41,7 @@ const TAG = `${HOME}-${MK}-${W}`;
     if(await T() === 'paint'){ await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); }
     if(await T() === 'reveal'){ await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); } if(await T() === 'cert') await p.click('#nx'); };
   // ---- setup ----
-  if(await p.$('#start')) await p.click('#start');   // 22 Oct 2026: a new game starts at Name your airline
+  if(await p.$('#start')) if(await p.$('#start')) await p.click('#start');   // 22 Oct 2026: a new game starts at Name your airline
   await p.fill('#nm', 'Dragon Air'); await p.click('#nx');
   ok('no airline-type choice at the start', await T() !== 'strategy', await T());
   await identity();

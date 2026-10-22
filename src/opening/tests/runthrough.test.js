@@ -33,7 +33,7 @@ const UPTO = +(process.env.UPTO || 9);
     '- **Chosen:** the pupil picks one answer from three on screen.',
     '- **Model:** the game shows the figure and nothing is asked.');
   // ---- setup ----
-  await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await p.click('#nx'); await p.click('#nx'); await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); await p.click('#nx');
+  if(await p.$('#start')) await p.click('#start'); await p.fill('#nm', 'Dragon Air'); await p.click('#nx'); await p.click('#nx'); await p.click('#nx'); await p.click('[data-ptab="name"]'); await p.fill('#regIn', 'DRAG'); await p.click('#roll'); await p.click('#skipReveal'); await p.waitForTimeout(150); await p.click('#nx'); await p.click('#nx');
   if(await T() === 'boot') await p.click('#enterHq'); if(await T() === 'chapter') await p.click('#chGo');
   head('Launch Day, Sunday 12 May 2030 (fuel free: the launch deal)');
   q('Model', 'Cash after the aircraft', '£5,000 − £2,500 (shown on the start-up aircraft card)', '£2,500');
