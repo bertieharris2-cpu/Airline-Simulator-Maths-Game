@@ -8,8 +8,10 @@
    - The week's accounts (weeks 1-4): week 1 opens with Finance's example on made-up numbers (once); week 2 adds the week by
      clicking, then is shown Σ SUM; from week 3 Σ SUM only. The difference from the plan and the rotating review question
      come when the Calendar's gatedCalc names them (PauseSchedule). Done is two small green callouts, then Plan week n ▶.
-   - Launch Day: Finance works out the first and third fares while he watches; his fare on paper (Sum 1); Paris and the
-     profit are Finance's; then One flight, two ways (Sum 2). Fuel on Launch Day is a cost (600 L at £1.20).
+   - Launch Day (hand-off 3, 30 Oct evening): the job first; Finance demonstrates building the first formula; he builds the
+     second; the third on paper (Sum 1); then Paris and the plan fill in. Fuel on Launch Day is a cost (600 L at £1.20).
+   - Hand-off 3: the key row × ÷ + − Enter beside the formula bar on every sheet; each formula cell its own colour (cyan,
+     then ref-2 violet), as Excel colours each reference.
    ===================================================================== */
 const c1Key = (label, attr) => `<kbd class="c1-key" ${attr || ''}>${esc(label || 'Enter')} ↵</kbd>`;
 const c1SumBox = n => `<span class="c1-sumbox"><i>SUM</i><b>${esc(String(n))}</b></span>`;
@@ -62,7 +64,7 @@ ashPick = function(sp, ref){ const act = sp && sp.act, st = sp && ashSt(sp.id);
   return c1Pick0.apply(this, arguments); };
 /* the formula bar's Enter key: lit while a formula is complete or a Σ SUM range is held */
 function c1BarEnter(sp, root){
-  const act = sp.act, st = ashSt(sp.id), fb = root && root.querySelector('.ash-fb'); if(!act || !fb || fb.querySelector('.c1-fbenter')) return;
+  const act = sp.act, st = ashSt(sp.id), fb = root && root.querySelector('.ash-fb'); if(!act || !fb || fb.querySelector('.c1-fbenter') || root.querySelector('.c1-keys')) return;   // the key row's Enter (hand-off 3)
   const held = act.sumKey && st.sigma && st.sumA && !st.drag, on = st.ready || held;
   if(!(act.needEnter || act.sumKey)) return;
   fb.insertAdjacentHTML('beforeend', `<button class="c1-fbenter ${on ? 'on' : ''}" ${held ? 'data-ashsumgo' : 'data-c1enter'} ${on ? '' : 'disabled'} aria-label="Enter">Enter ↵</button>`);
@@ -271,104 +273,160 @@ if(window.__tkSums){ window.__tkSums.unshift({ what:'the example', test:() => !!
   window.__tkSums.unshift({ what:'the formula: Enter', test:() => { const sp = ashLive(); return !!(sp && sp.act && ashSt(sp.id).ready); }, plan:() => ({ at:'.c1-fbenter', value:'Enter', go:() => c1Enter(ashLive()) }) }); }
 
 /* =====================================================================
-   4. LAUNCH DAY: watch, do, watch, compare (SheetSums Launch Day rows: B4 watch, C4 book, D4 watch, E4 and the plan's
-   column ƒ, B13 book; Settings launchDayFares, launchDayComparison, fuelLaunchDay)
+   4. LAUNCH DAY (hand-off 3, 30 Oct 2026, evening; replaces hand-off 2's watch, do, watch, compare). Left to right, no
+   columns move: (1) the job first, nothing lit until Watch ▶; (2) Finance demonstrates building the first formula, a pointer
+   clicking B2, the × key, B3 and Enter; (3) HOW A FORMULA WORKS; (4) he builds the second (formula, not counted); (5) the
+   third on paper (Sum 1, the class method in the hint); (6) only then Finance fills in Paris and the plan, and E4 and F9
+   light green once. "One flight, two ways" and the watch panel are gone. WHY 27? comes first when a column's passengers
+   are fewer than the people who want to fly at that fare. SheetSums Launch Day: B4 demo, C4 formula, D4 book.
    ===================================================================== */
-if(typeof ASH_SUMS !== 'undefined'){ ASH_SUMS['launch.otherTickets'] = { whose:'ƒ', how:'airline' }; ASH_SUMS['launch.profit'] = { whose:'ƒ', how:'airline' }; }   // Paris and the profit are Finance's (hand-off 2, section 4)
+if(typeof ASH_SUMS !== 'undefined'){ ASH_SUMS['launch.otherTickets'] = { whose:'ƒ', how:'airline' }; ASH_SUMS['launch.profit'] = { whose:'ƒ', how:'airline' }; }   // Paris and the profit are Finance's
 const c1LdRow = cell => (((typeof WB !== 'undefined' && WB && WB.sheetSums) || []).find(x => x.sheet === 'Launch Day' && String(x.cell) === cell) || {});
-function c1Compare(){ const m = [...String(WBS().launchDayComparison || '14 at £130 against 19 at £90').matchAll(/(\d+)\s*at\s*£(\d+)/g)].map(x => ({ p:+x[1], f:+x[2] })); return m.length >= 2 ? m.slice(0, 2) : [{ p:14, f:130 }, { p:19, f:90 }]; }
-/* Finance's method in the class's words (DESIGN.md: "£80 is 8 × 10. First work out 38 × 8." … never "take the 0 off") */
-function c1WatchMath(p, fare){
-  let k = 0, m = fare; while(m % 10 === 0 && m > 0){ m /= 10; k++; } const ten = Math.pow(10, k), part = p * m, res = p * fare;
-  if(m >= 10 || !k) return { lines:[`**£${fare}**: ${num(p)} × ${fare} = **${num(res)}**. Ticket revenue **${money(res)}**.`], m, ten, part, res, carries:[] };
-  if(m === 1) return { lines:[`**£${fare} is 1 × ${num(ten)}.** First work out ${num(p)} × 1 = ${num(p)}.`, `Then multiply by ${num(ten)}: ${num(p)} × ${num(ten)} = **${num(res)}**.`], m, ten, part, res, carries:[] };
-  const ds = String(p).split('').map(Number).reverse(), bits = [], carries = []; let c = 0;
-  ds.forEach((d, i) => { const v = d * m + c, last = i === ds.length - 1;
-    if(i === 0) bits.push(last ? `${d} × ${m} = ${v}.` : v >= 10 ? `${d} × ${m} = ${v}: write ${v % 10}, carry ${Math.floor(v / 10)}.` : `${d} × ${m} = ${v}: write ${v}.`);
-    else bits.push(`${d} × ${m} = ${d * m}${c ? `, add the ${c}: ${v}` : ''}${last ? '.' : v >= 10 ? `: write ${v % 10}, carry ${Math.floor(v / 10)}.` : '.'}`);
-    c = last ? 0 : Math.floor(v / 10); if(c) carries.push({ col:i + 1, v:c }); });
-  return { lines:[`**£${fare} is ${m} × ${num(ten)}.** First work out ${num(p)} × ${m}.`, bits.join(' '), `**${num(p)} × ${m} = ${num(part)}.**`, `Then multiply by ${num(ten)}: ${num(part)} × ${num(ten)} = **${num(res)}**. Ticket revenue **${money(res)}**.`], m, ten, part, res, carries };
-}
-/* Bertie's long multiplication grid: place-value headings, the answer between thick rules, a thin carry strip, then × 10 */
-function c1WatchGrid(p, X){
-  if(X.m >= 10 || X.ten === 1) return '';
-  const n = Math.max(4, String(X.res).length), H = ['HTh', 'TTh', 'Th', 'H', 'T', 'O'].slice(-n), cellsOf = v => { const s = String(v); return Array.from({ length:n }, (_, i) => s[s.length - n + i] || ''); };
-  const row = (vals, cls, lead) => `<div class="c1-lm-r ${cls || ''}"><span class="c1-lm-l">${lead || ''}</span>${vals.map(v => `<span>${esc(v)}</span>`).join('')}</div>`;
-  const carry = Array.from({ length:n }, (_, i) => { const col = n - 1 - i, c = X.carries.find(z => z.col === col); return c ? String(c.v) : ''; });
-  const mRow = Array.from({ length:n }, (_, i) => i === n - 1 ? String(X.m) : '');
-  return `<div class="c1-lm" aria-label="Long multiplication">${row(H, 'hd')}${row(cellsOf(p), 'r1')}${row(mRow, 'r2', '×')}${row(X.m === 1 ? cellsOf(p) : cellsOf(X.part), 'ans r3')}${X.m === 1 ? '' : row(carry, 'carry r3')}<div class="c1-lm-gap"></div>${row(cellsOf(X.res), 'ten r4', '×' + num(X.ten))}</div>`;
-}
-function c1WatchHtml(p, fare){
-  const X = c1WatchMath(p, fare), W = c1T('launch.watch');
-  return `<section class="c1-watch ${settings.reduceMotion ? 'still' : ''}" data-c1watch role="region" aria-label="${esc(W.eyebrow || 'Finance works it out')}"><span class="c1-watch-e">${esc(W.eyebrow || 'FINANCE WORKS IT OUT · WATCH')}</span>
-    <div class="c1-watch-b">${c1WatchGrid(p, X)}<div class="c1-watch-l">${X.lines.map((l, i) => `<p style="--i:${i}">${c1Html(l)}</p>`).join('')}</div></div></section>`;
+const c1Ld = () => c1Ex().ld || (c1Ex().ld = {});   // seen in the save: job, demo, how, why, glow
+/* the class method (Bertie): "£90 is 9 × 10. First work out 19 × 9, then multiply by 10." */
+function c1Method(p, fare){ let m = fare, k = 0; while(m % 10 === 0 && m > 0){ m /= 10; k++; } if(!k) return null; const mult = Math.pow(10, k);
+  return c1T('launch.paper.hint', { fare, d:m, mult:num(mult), p:num(p) }).text[0] || `£${fare} is ${m} × ${num(mult)}. First work out ${num(p)} × ${m}, then multiply by ${num(mult)}.`; }
+/* a formula sum that goes in no record and takes no Sum number (the demonstration; the one he builds) */
+function c1Quiet(s){ Object.defineProperty(s, 'no', { value:null, configurable:true, writable:true }); s.recKey = null; const a0 = s.answer;
+  s.answer = function(){ const o = recOpen, t = recAttempt; recOpen = () => null; recAttempt = () => {}; try{ return a0.apply(this, arguments); } finally { recOpen = o; recAttempt = t; } }; }
+function c1MarkDone(s){ const T = (S.rnd.tables && S.rnd.tables[s.t.id]) || s.t, k = cellId(s.col, s.row); T.done[k] = true; T.chosen[k] = true; s.done = true; }
+/* his flights on a route: how many, and their departure times */
+function c1FlightsOf(route){ const pl = normPlan(currentPlan()), out = []; pl.fleet.forEach((x, j) => { let d = []; try{ d = actualDeps(pl, j); }catch(e){} x.sched.forEach((id, k) => { if(id === route) out.push(d[k]); }); });
+  return out.filter(t => t !== undefined && t !== null).sort((a, b) => a - b); }
+const c1Or = L => L.length <= 1 ? (L[0] || '') : L.slice(0, -1).join(', ') + ' or ' + L[L.length - 1];
+/* WHY 27?: a column whose passengers are fewer than the people who want to fly at that fare, with seats to spare */
+function c1WhyFor(sp, s){
+  const k = s && sp.cols.find(c => c.c === ashRef(s.tgt).c); if(!k || !k.src) return null; const { t, col, route } = k.src, V = (t.cols.find(c => c.id === col) || {}).values || {};
+  const pax = V['pax_' + route] || 0, fare = V['fare_' + route] || 0, want = Math.round(paxWant(routeById(route), fare)), seats = (() => { try{ return ashSeatsOn(planLines(currentPlan()), route); }catch(e){ return 0; } })();
+  if(!(pax < want && pax < seats)) return null;
+  return { c:k.c, pax, want, fare, route, rest:want - pax, times:c1Or(c1FlightsOf(route).map(m => `**${fmtTime(m)}**`)) };
 }
 const c1Launch0 = ashLaunchSpec;
 ashLaunchSpec = function(){
-  const sp = c1Launch0.apply(this, arguments); if(!ch1() || !S || S.phase !== 'setup') return sp;
-  const v = sp.v, P = sp.cols[sp.cols.length - 1].c, X = c1Ex(), L0 = (() => { try{ return planLines(currentPlan()); }catch(e){ return null; } })();
+  // the demonstrated and built sums take no Sum number: the base sheet reads a just-finished sum's number, so hold it back
+  const keep = sumNo, block = UI.c1NoKeys || new Set(); if(ch1() && block.size) sumNo = k => block.has(k) ? null : keep(k);
+  let sp; try{ sp = c1Launch0.apply(this, arguments); } finally { sumNo = keep; }
+  if(!ch1() || !S || S.phase !== 'setup') return sp;
+  const v = sp.v, P = sp.cols[sp.cols.length - 1].c, X = c1Ld();
   // the fuel line: the fuel burned that day at the launch price, in Total costs (fuelLaunchDay)
   const litres = (() => { try{ return plannedLitres(currentPlan()); }catch(e){ return 0; } })(), price = fuelOn(1);
   const r7 = sp.rows.find(r => r.r === 7); if(r7 && litres) r7.note = c1T('launch.fuel', { litres:`${num(litres)} L`, price:priceL(price) }).text[0] || `${num(litres)} L at ${priceL(price)}`;
   ['5', '7', '8', '9'].forEach(r => { if(v[P + r] && v[P + r].t) v[P + r].f = true; });
-  // the three fares: watch, his (paper), watch, by the workbook's cells; the other routes are Finance's
-  sp.sums.forEach(s => { delete s.co; });   // the signal says what to do; the watch panel shows the method (no NEW SUM note)
-  const tk = sp.sums.filter(s => s.kind === 'tickets');
-  sp.cols.forEach(k => { if(k.src && k.src.route !== S.market && v[k.c + 4] && v[k.c + 4].t) v[k.c + 4].f = true; });
-  tk.forEach(s => { const how = c1LdRow(s.tgt).how; s.c1how = how === 'watch' ? 'watch' : 'book'; if(s.c1how === 'watch'){ s.how = 'book'; if(v[s.tgt] && v[s.tgt].t) v[s.tgt].f = true; } });
-  const all = sp.sums.filter(s => s.kind !== 'tickets' || true), fares = tk.every(s => s.done);
-  // One flight, two ways (hand-off 2, section 4): new rows under the plan, once the fares are worked out
-  if(fares && tk.length){ const C = c1Compare(), st = S.rnd.c1cmp || (S.rnd.c1cmp = {}), H = c1T('launch.compare.head'), want = C[0].p * C[0].f, key = 'c1:compare:' + (S.day || 1);
-    sp.rows.push({ r:10, label:H.title || 'One flight, two ways', ic:'scale', t:'sub' }, { r:11, label:'Passengers on one flight', ic:'person' }, { r:12, label:'Fare', ic:'tag' }, { r:13, label:'Ticket revenue', ic:'coins', gold:true });
-    v.B10 = { t:`${C[0].p} at ${money(C[0].f)}` }; v.C10 = { t:`${C[1].p} at ${money(C[1].f)}` }; v.B11 = { t:num(C[0].p) }; v.C11 = { t:num(C[1].p) }; v.B12 = { t:money(C[0].f) }; v.C12 = { t:money(C[1].f) };
-    v.C13 = { t:money(C[1].p * C[1].f), f:true }; if(st.ok) v.B13 = { t:money(want), fin:!!st.shown };
-    const rec1 = (good, raw) => { try{ const e = recOpen(key, { type:'calc', relKey:'tickets', doc:'Launch Day: One flight, two ways', ask:'Which earns more?', question:`${C[0].p} passengers × ${money(C[0].f)}`, unit:'£', correct:want, correctText:money(want) }); recAttempt(e, { ok:good, text:String(raw) }); if(good) e.status = 'checked'; }catch(x){} };
-    sp.sums.push({ id:'c1cmp', kind:'compare', tgt:'B13', refs:['B11', 'B12'], ops:['×'], words:'Passengers × Fare', lit:['B', 11, 'C', 13], how:'book', commute:true, unit:'£', done:!!st.ok, built:true, want, recKey:key, get no(){ return sumNo(key); },
-      name:'the ticket revenue for one flight', answerText:money(want), doneLine:`One flight, two ways: <b class="gold">${money(want)}</b> against ${money(C[1].p * C[1].f)}`,
-      answer:(raw, val) => { const good = Math.abs(val - want) < 0.5; rec1(good, raw); if(good){ st.ok = true; return { ok:true }; } st.tries = (st.tries || 0) + 1; if(st.tries >= 2 && twoTriesOn()){ st.ok = true; st.shown = true; try{ paperRecShown(key); }catch(x){} return { shown:true }; } return { note:ashWrong('×', [C[0].p, C[0].f], val, want, '£') }; },
-      hints:() => ashHintsFor('passengers × fare', '×', C[0].p, C[0].f, want, true), how2:() => ashHowFor('×', C[0].p, C[0].f, '£', 'Ticket revenue = Passengers × Fare') }); }
-  // which sum now: the first not done; a watch sum is Finance's turn (the cell is worked out in the panel, not typed)
-  const J = sp.just, act = J ? null : sp.sums.find(s => !s.done && !(s.kind === 'profit')) || null;
-  sp.sums.forEach(s => { if(s.kind === 'tickets' && s.c1how === 'watch') Object.defineProperty(s, 'no', { value:null, configurable:true, writable:true }); });   // Finance's turn takes no Sum number
-  sp.act = act; sp.c1watch = act && act.c1how === 'watch' ? act : null;
-  if(sp.c1watch){ const a = sp.c1watch, rt = (sp.cols.find(k => k.c === ashRef(a.tgt).c) || {}).src || {}, V = (rt.t && (rt.t.cols.find(c => c.id === rt.col) || {}).values) || {};
-    a.pax = V['pax_' + rt.route] || 0; a.fare = V['fare_' + rt.route] || 0; a.route = rt.route; a.hints = null; a.how2 = null; a.lineType = ' ';
-    a.cellIn = () => `<span class="c1-watchval gold">${esc(money(a.pax * a.fare))}</span>`; a.answer = () => ({}); }
-  if(act && act.kind === 'profit') sp.act = null;
-  if(!sp.act && !J){ const last = sp.sums.find(s => s.kind === 'compare') || sp.sums[sp.sums.length - 1]; if(last) sp.doneF = { tgt:last.tgt, refs:last.refs, ops:last.ops, words:last.words, val:last.answerText || money(last.want) }; }
+  sp.title = c1T('launch.title').title || sp.title;
+  sp.sums.forEach(s => { delete s.co; });
+  // the column heads name his flights: "your 2 flights" over "Dublin at £110"
+  sp.cols.forEach(k => { if(!k.src) return; const r = routeById(k.src.route), n = c1FlightsOf(k.src.route).length, T = c1T('launch.colhead', { n }).text;
+    k.top = n === 1 ? (T[1] || 'your flight') : (T[0] || `your ${n} flights`); k.main = `${r.city} ${k.main}`; });
+  // roles by the workbook's cells: demonstrated, built, on paper
+  const tk = sp.sums.filter(s => s.kind === 'tickets'), role = s => c1LdRow(s.tgt).how;
+  const demo = tk.find(s => role(s) === 'demo') || tk[0], build = tk.find(s => role(s) === 'formula') || tk[1], paper = tk.find(s => role(s) === 'book' && s !== demo && s !== build) || tk[2];
+  UI.c1NoKeys = new Set([demo, build].filter(Boolean).map(s => s.recKey));
+  [demo, build].forEach(s => { if(s) c1Quiet(s); });
+  if(demo && !demo.done && X.demo) c1MarkDone(demo);   // shown once: a sheet made again (the plan changed) has Finance's column filled
+  if(demo && !demo.done){ demo.how = 'formula'; demo.needEnter = true; demo.c1demo = true; demo.hints = null; demo.how2 = null;
+    const D = c1T('launch.demo', { p:demo.refs[0], f:demo.refs[1] }).text, step = (UI.c1Demo && UI.c1Demo.step) || 0; demo.lineBuild = c1Html(D[step < 2 ? 0 : 1] || ''); }
+  if(build && !build.done){ build.how = 'formula'; build.needEnter = true; build.c1build = true; build.how2 = null;
+    build.lineBuild = `${esc(c1T('launch.build.line').text[0] || 'Your turn: build it, then press Enter.')}<button class="ash-hl" data-c1bhint>Give me a hint</button>`; }
+  if(paper){ const V = paper.opVals || [], pax = V[0], fare = V[1], h0 = paper.hints;
+    paper.hints = () => { const m = c1Method(pax, fare); return (m ? [{ t:m }] : []).concat(h0 ? h0().filter(h => !/take the 0|put the 0/i.test(h.t || '')) : []); }; }
+  const fin = [demo, build, paper].filter(Boolean).every(s => s.done), J = sp.just;
+  // the stage
+  let stage = !X.job ? 'job' : demo && !demo.done ? 'demo' : !X.how ? 'how' : !fin ? 'sum' : 'done';
+  if(stage === 'done' && J && J !== paper && !(J.kind === 'tickets' && J === paper)) stage = 'sum';   // a sum just finished keeps its ✓ line until Next
+  let act = stage === 'demo' ? demo : stage === 'sum' && !J ? [build, paper].find(s => s && !s.done) || null : null;
+  const why = !X.why && (stage === 'demo' || (stage === 'sum' && act)) ? c1WhyFor(sp, stage === 'demo' ? demo : act) : null;
+  if(why && !UI.c1Demo){ stage = 'why'; act = null; }
+  sp.c1 = { stage, demo, build, paper, why, X };
+  if(stage === 'job' || stage === 'how' || stage === 'why') sp.doneLine = '';
+  sp.act = act; if(stage !== 'sum') sp.just = null;
+  if(sp.just && sp.just.no === null) sp.just.doneLine = String(sp.just.doneLine || '').replace(/ · Sum null in your record/, '');
+  // Paris and the plan's column stay empty until he has finished; then Finance fills them in
+  if(stage !== 'done'){ sp.cols.forEach(k => { if(k.src && k.src.route !== S.market) v[k.c + 4] = {}; }); [5, 8, 9].forEach(r => { v[P + r] = {}; }); sp.doneF = null; }
+  else { sp.cols.forEach(k => { if(k.src && k.src.route !== S.market && v[k.c + 4] && v[k.c + 4].t) v[k.c + 4].f = true; }); sp.doneF = null;
+    const L = (() => { try{ return planLines(currentPlan()); }catch(e){ return null; } })(), others = sp.cols.filter(k => k.src && k.src.route !== S.market).map(k => routeById(k.src.route).city);
+    const profit = v[P + 9] && v[P + 9].t ? v[P + 9].t : (L ? money(L.profit) : '');
+    sp.doneLine = c1Html(c1T('launch.done', { others:c1Or([...new Set(others)]) || 'the other routes', profit }).text[0] || `✓ Every Launch Day sum is done. Profit **${profit}** a day.`); }
+  if(stage === 'how' && demo) sp.doneF = { tgt:demo.tgt, refs:demo.refs, ops:demo.ops, words:demo.words, val:money(demo.want) };
   return sp;
 };
-function c1LaunchWatched(){
-  const sp = ashLive(); if(!sp || !sp.c1watch) return; const a = sp.c1watch, T = (S.rnd.tables && S.rnd.tables[a.t.id]) || a.t, k = cellId(a.col, a.row);
-  T.done[k] = true; T.chosen[k] = true; (S.rnd.c1watched = S.rnd.c1watched || {})[a.tgt] = true; UI.ashJust = null; save(); render();
+/* the demonstration: a pointer glides to each cell and key and clicks it (about 0.8 s a step); under reduced motion each step
+   appears in turn. The page is not his to click until Finance has pressed Enter. */
+const C1_PTR = '<svg viewBox="0 0 20 26" width="22" height="28" aria-hidden="true"><path d="M2 2v19l5-4.5 3.6 7.5 3.3-1.6-3.5-7.3H17z" fill="#fff" stroke="#021226" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+function c1PtrTo(el, then){
+  let p = document.getElementById('c1Ptr'); if(!p){ p = document.createElement('div'); p.id = 'c1Ptr'; p.className = 'c1-ptr'; p.innerHTML = C1_PTR; document.body.appendChild(p); }
+  const R = el.getBoundingClientRect(); p.classList.toggle('still', !!settings.reduceMotion);
+  p.style.left = Math.round(R.left + R.width * .55) + 'px'; p.style.top = Math.round(R.top + R.height * .55) + 'px';
+  setTimeout(() => { p.classList.add('click'); setTimeout(() => { p.classList.remove('click'); then(); }, 180); }, settings.reduceMotion ? 450 : 650);
 }
+function c1PtrGone(){ const p = document.getElementById('c1Ptr'); if(p) p.remove(); }
+function c1DemoRun(){
+  if(UI.c1Demo) return; UI.c1Demo = { step:0 };
+  const tick = () => {
+    const D = UI.c1Demo, sp = ashLive(); if(!D) return;
+    if(!sp || !/^launch:/.test(sp.id) || !sp.c1 || sp.c1.stage !== 'demo' || !sp.act){ UI.c1Demo = null; c1PtrGone(); return; }
+    const a = sp.act, root = document.querySelector(`[data-ash="${CSS.escape(sp.id)}"]`), st = ashSt(sp.id);
+    const steps = [{ el:() => root.querySelector(`[data-ref="${a.refs[0]}"]`), go:() => ashPick(sp, a.refs[0]) }, { el:() => root.querySelector(`.c1-keys [data-ashop="${a.ops[0]}"]`), go:() => { c1KeyFlash(a.ops[0]); ashOp(sp, a.ops[0]); } },
+      { el:() => root.querySelector(`[data-ref="${a.refs[1]}"]`), go:() => ashPick(sp, a.refs[1]) }, { el:() => root.querySelector('.c1-keys [data-c1kenter]'), go:() => { c1KeyFlash('enter'); c1DemoEnd(sp); } }];
+    const S1 = steps[D.step], el = S1 && S1.el(); if(!S1){ UI.c1Demo = null; c1PtrGone(); return; }
+    if(!el){ setTimeout(tick, 200); return; }
+    c1PtrTo(el, () => { if(UI.c1Demo !== D) return; S1.go(); D.step++; if(D.step < steps.length) setTimeout(tick, settings.reduceMotion ? 350 : 250); else { UI.c1Demo = null; setTimeout(c1PtrGone, 500); } });
+  };
+  setTimeout(tick, 500);
+}
+function c1DemoEnd(sp){ const X = c1Ld(); X.demo = S.day || 1; const st = ashSt(sp.id); if(sp.act && !st.ready){ ashFullTokens(sp.act).forEach(t => st.tokens.push(t)); } st.ready = true; c1Enter(sp); UI.ashJust = null; save(); render(); }
+function c1DemoSkip(){ const sp = ashLive(); UI.c1Demo = null; c1PtrGone(); if(sp && sp.c1 && sp.c1.stage === 'demo'){ const st = ashSt(sp.id); st.tokens = []; c1DemoEnd(sp); } }
+document.addEventListener('keydown', e => { if(UI.c1Demo && !document.querySelector('#bfLayer')){ e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+/* a key lights when it is pressed (about 0.3 s), by him or by the demonstration */
+function c1KeyFlash(op){ UI.c1Press = { op, at:Date.now() }; setTimeout(() => { if(UI.c1Press && Date.now() - UI.c1Press.at >= 280){ UI.c1Press = null; document.querySelectorAll('.c1-keys .press').forEach(b => b.classList.remove('press')); } }, 300); }
+/* a Sheet Callout under a cell, pointer up at it: the job, HOW A FORMULA WORKS, WHY 27? */
+function c1ScoHtml(T, btnId, text){ return `<div class="ash-co c1-sco" data-c1sco role="dialog" aria-label="${esc(T.title || T.eyebrow || '')}"><i class="c1-sco-ptr" aria-hidden="true"></i>
+  ${T.eyebrow ? `<span class="ash-coe">${esc(T.eyebrow)}</span>` : ''}${T.title ? `<b class="ash-cot">${esc(T.title)}</b>` : ''}${(text || T.text || []).map(p => `<p>${c1Html(p)}</p>`).join('')}
+  ${T.button ? `<div class="ash-coa"><button class="bv-btn primary" id="${btnId}">${esc(T.button).replace('▶', '&#9654;')}</button></div>` : ''}</div>`; }
 const c1LaunchPage0 = ashLaunchPage;
 ashLaunchPage = function(st){
   if(!ch1() || (UI.ashTab && UI.ashTab !== 'launch')) return c1LaunchPage0.apply(this, arguments);
-  UI.ashTab = null; const sp = ashLaunchSpec(), all = !sp.act && !sp.just; if(all) ashKeep('launch', sp);
-  const nextT = (S.steps[S.si + 1] || {}).t, toDesk = nextT === 'fuelDesk', go = toDesk ? 'Fuel desk' : 'Take off', W = sp.c1watch;
-  const routeOf = s => { const k = sp.cols.find(c => c.c === ashRef(s.tgt).c); return k && k.src ? routeById(k.src.route) : routeById(S.market); };
-  let hint, btn;
-  if(W){ const r = routeOf(W), T = c1T('launch.watch.footer', { route:r.city, fare:W.fare }); hint = T.text[0] || `Launch Day · watch Finance work out ${r.city} at £${W.fare}.`; btn = `<button class="bv-btn primary big" id="c1Watched">${esc(T.button || 'Your turn ▶').replace('▶', '&#9654;')}</button>`; }
-  else if(all){ hint = toDesk ? 'Launch Day sheet done. Next, this week\'s fuel on the Fuel desk. Back changes the plan.' : 'Launch Day sheet done: Finance has totted up your plan, fuel included. Back changes the plan.'; btn = `<button class="bv-btn big ${toDesk ? 'primary' : 'go'}" id="nx">${go} &#9654;</button>`; }
-  else { const a = sp.act || sp.just; hint = a && a.kind === 'compare' ? (c1T('launch.compare.footer').text[0] || 'Launch Day · the last question.') : a ? `Launch Day · your turn: ${routeOf(a).city} at ${money((a.opVals || [])[1] || 0)}.` : '';
-    btn = `<button class="bv-btn primary big" id="ashNext" ${sp.just ? '' : 'disabled'}>Next &#9654;</button>`; }
-  screen().innerHTML = shell(`<div class="dp ash-page c1-ld">${ashHtml(sp)}</div>`, deskBar(hint, backBtn() + btn));
-  ashBind(sp); on('ashNext', ashNextSum); on('nx', () => { UI.ashJust = null; finishSums(); }); on('c1Watched', c1LaunchWatched);
+  UI.ashTab = null; const sp = ashLaunchSpec(), C = sp.c1 || {}, stage = C.stage, X = C.X || c1Ld(), all = stage === 'done'; if(all) ashKeep('launch', sp);
+  const nextT = (S.steps[S.si + 1] || {}).t, toDesk = nextT === 'fuelDesk';
+  const T = id => c1T(id), foot = { job:'launch.job.footer', demo:'launch.demo.footer', how:'launch.how.footer', done:'launch.done.footer' };
+  let hint = '', btn = `<button class="bv-btn primary big" id="ashNext" ${sp.just ? '' : 'disabled'}>Next &#9654;</button>`;
+  if(stage === 'sum' || stage === 'why'){ const a = sp.act || sp.just; hint = (a && a === C.paper) || (stage === 'why' && C.why && C.paper && ashRef(C.paper.tgt).c === C.why.c) ? (T('launch.paper.footer').text[0] || '') : (T('launch.build.footer').text[0] || ''); }
+  else if(foot[stage]) hint = T(foot[stage]).text[0] || '';
+  if(stage === 'demo' || stage === 'how') btn = `<button class="bv-btn primary big" disabled>${esc(T('launch.how').button || 'Your turn ▶').replace('▶', '&#9654;')}</button>`;
+  if(all){ const D = T('launch.done.footer'); btn = `<button class="bv-btn big ${toDesk ? 'primary' : 'go'}" id="nx">${toDesk ? 'Fuel desk' : esc(D.button || 'Ready to fly ▶').replace(' ▶', '')} &#9654;</button>`; }
+  screen().innerHTML = shell(`<div class="dp ash-page c1-ld c1-ld-${esc(stage || '')}">${ashHtml(sp)}</div>`, deskBar(hint, backBtn() + btn));
+  ashBind(sp); on('ashNext', ashNextSum); on('nx', () => { UI.ashJust = null; finishSums(); });
   screen().querySelectorAll('[data-ashcosts]').forEach(b => b.onclick = () => ashCostsPop(b));
-  // the panel and the signals, over empty cells
-  const root = screen(), gw = root.querySelector('.ash-gridw'), cell = ref => root.querySelector(`.ash-grid .ash-c[data-ref="${ref}"]`);
-  if(!gw) return;
-  if(W){ gw.insertAdjacentHTML('beforeend', c1WatchHtml(W.pax, W.fare)); const el = gw.querySelector('[data-c1watch]'), c0 = cell('B' + ashRef(W.tgt).r); c1Place(el, c0, 'below', { dx:6 }); }
-  const a = sp.act && !W ? sp.act : null;
-  if(a){ const cmp = a.kind === 'compare', r = cmp ? null : routeOf(a), T = cmp ? c1T('launch.compare', { p:c1Compare()[0].p, fare:c1Compare()[0].f, n:a.no, cell:a.tgt }) : c1T('launch.paper', { route:r.city, fare:(a.opVals || [])[1] || '' });
-    const lines = cmp ? T.text.map(t => c1Html(t, a.no)) : c1PaperLines(a.no, a.tgt);
-    gw.insertAdjacentHTML('beforeend', c1SignalHtml({ kind:'paper', title:T.title, lines, ptr:cmp ? 'left' : 'up' }));
-    const el = gw.querySelector('[data-c1sig]');
-    if(cmp){ el.classList.add('wide'); const cC = cell('C13'), H = gw.getBoundingClientRect(), R = cC ? cC.getBoundingClientRect() : null; if(R) c1Place(el, cell('B11'), 'side', { x:R.right - H.left + 18 }); }
-    else c1Place(el, cell(a.tgt), 'below', { dx:0 }); }
+  const root = screen(), gw = root.querySelector('.ash-gridw'), cell = ref => root.querySelector(`.ash-grid .ash-c[data-ref="${ref}"]`); if(!gw) return;
+  const place = (el, ref) => c1Place(el, cell(ref), 'below', { dx:0 });
+  if(stage === 'job' && C.demo){ gw.insertAdjacentHTML('beforeend', c1ScoHtml(T('launch.job'), 'c1Watch')); place(gw.querySelector('[data-c1sco]'), C.demo.tgt);
+    on('c1Watch', () => { X.job = S.day || 1; save(); render(); }); }
+  if(stage === 'demo'){ root.querySelector('.ash').classList.add('c1-demo'); c1DemoRun(); }
+  if(stage === 'how' && C.demo){ const d = C.demo, H = T('launch.how'), vals = { a:d.refs[0], b:d.refs[1], money:money(d.want) };
+    gw.insertAdjacentHTML('beforeend', c1ScoHtml(H, 'c1HowGo', c1T('launch.how', vals).text)); place(gw.querySelector('[data-c1sco]'), d.tgt);
+    gw.querySelectorAll('[data-c1sco] p b').forEach(b => { if(/^=\s/.test(b.textContent)) b.innerHTML = esc(b.textContent).replace(d.refs[0], `<span class="c1-r1">${d.refs[0]}</span>`).replace(d.refs[1], `<span class="c1-r2">${d.refs[1]}</span>`); });
+    [[d.refs[0], 'A'], [d.refs[1], 'B']].forEach(([r, tg]) => { const c = cell(r); if(c){ c.classList.add('aref'); c.setAttribute('data-tag', tg); } });
+    const c4 = cell(d.tgt); if(c4) c4.classList.add('c1-glow');
+    on('c1HowGo', () => { X.how = S.day || 1; UI.ashJust = null; save(); render(); }); }
+  if(stage === 'why' && C.why){ const w = C.why, W = c1T('why27', { pax:w.pax, want:w.want, route:routeById(w.route).city, fare:w.fare, times:w.times, rest:w.rest });
+    gw.insertAdjacentHTML('beforeend', c1ScoHtml(W, 'c1WhyGot')); const wel = gw.querySelector('[data-c1sco]'); wel.classList.add('pr'); c1Place(wel, cell(w.c + 4), 'below', { dx:-230 });
+    const c2 = cell(w.c + 2); if(c2) c2.classList.add('c1-ring');
+    const ln = root.querySelector('.ash-line'); if(ln) ln.textContent = c1T('why27.line').text[0] || 'Read the note, then press Got it.';
+    on('c1WhyGot', () => { X.why = S.day || 1; save(); render(); }); }
+  const a = stage === 'sum' ? sp.act : null;
+  if(a && a === C.build){ const r = routeById(S.market), B = c1T('launch.build', { route:r.city, fare:(a.opVals || [])[1] || '' });
+    gw.insertAdjacentHTML('beforeend', c1SignalHtml({ kind:'build', title:B.title, lines:B.text.slice(0, 2).map(t => c1Html(t)), ptr:'up' })); place(gw.querySelector('[data-c1sig]'), a.tgt);
+    root.querySelectorAll('[data-c1bhint]').forEach(b => b.onclick = () => { const s = ashSt(sp.id); s.msg = `Click ${a.refs[0]} (the passengers), press ×, then click ${a.refs[1]} (the fare). Then press Enter.`; s.q = false; render(); }); }
+  if(a && a === C.paper){ const r = routeById(S.market), Pp = c1T('launch.paper', { route:r.city, fare:(a.opVals || [])[1] || '' });
+    gw.insertAdjacentHTML('beforeend', c1SignalHtml({ kind:'paper', title:Pp.title, lines:c1PaperLines(a.no, a.tgt), ptr:'up' })); place(gw.querySelector('[data-c1sig]'), a.tgt); }
+  if(all && !X.glow){ sp.cols.forEach(k => { if(k.src && k.src.route !== S.market){ const c = cell(k.c + 4); if(c) c.classList.add('c1-glow'); } });
+    const f9 = cell(sp.cols[sp.cols.length - 1].c + 9); if(f9) f9.classList.add('c1-glow'); X.glow = S.day || 1; save(); }
 };
-if(window.__tkSums) window.__tkSums.unshift({ what:'Finance works it out', test:() => !!document.getElementById('c1Watched'), plan:() => ({ at:'#c1Watched', value:'Your turn', go:() => document.getElementById('c1Watched').click() }) });
+if(window.__tkSums){
+  window.__tkSums.unshift({ what:'the Launch Day job: Watch', test:() => !!document.getElementById('c1Watch'), plan:() => ({ at:'#c1Watch', value:'Watch', go:() => document.getElementById('c1Watch').click() }) });
+  window.__tkSums.unshift({ what:"Finance's demonstration", test:() => { const sp = ashLive(); return !!(sp && sp.c1 && sp.c1.stage === 'demo'); }, plan:() => ({ at:'.c1-keys', value:'skip the demonstration', go:c1DemoSkip }) });
+  window.__tkSums.unshift({ what:'How a formula works: Your turn', test:() => !!document.getElementById('c1HowGo'), plan:() => ({ at:'#c1HowGo', value:'Your turn', go:() => document.getElementById('c1HowGo').click() }) });
+  window.__tkSums.unshift({ what:'Why 27?: Got it', test:() => !!document.getElementById('c1WhyGot'), plan:() => ({ at:'#c1WhyGot', value:'Got it', go:() => document.getElementById('c1WhyGot').click() }) }); }
+window.__c1ld = { skip:c1DemoSkip, state:() => { const sp = ashLive(); return sp && sp.c1 ? { stage:sp.c1.stage, why:sp.c1.why } : null; } };
 
 /* ---------- every other sheet question gets its signal too (the Monday sheet, the Changes sheet): beside its answer cell
    when there is room to the right of the sheet, otherwise under it ---------- */
@@ -383,6 +441,39 @@ ashBind = function(sp){
     gw.insertAdjacentHTML('beforeend', c1SignalHtml(build ? { kind:'build', title, lines:[`Click the cells it uses, then press ${c1Key('Enter')}.`, 'The sheet works it out.'] } : { kind:'paper', title, lines:c1PaperLines(a.no, a.tgt) }));
     const el = gw.querySelector('[data-c1sig]'), grid = gw.querySelector('.ash-grid'), G = grid.getBoundingClientRect(), W = gw.getBoundingClientRect(), room = window.innerWidth - G.right;
     if(room > 330) c1Place(el, cell, 'side', { x:G.right - W.left + 16 }); else { el.classList.add('ptr-up'); el.classList.replace('ptr-left', 'ptr-up'); c1Place(el, cell, 'below', { dx:0 }); }
+  }catch(e){}
+  return r;
+};
+
+/* =====================================================================
+   5. THE KEY ROW AND THE REFERENCE COLOURS (hand-off 3, section 1; DESIGN.md of 30 Oct evening). On every chapter-one sheet
+   the formula bar is shortened and a row of keys sits to its right: × ÷ + − (40 × 34) and Enter ↵ (78 wide). The operators
+   are live while a formula is being built, Enter when it is complete (or a Σ SUM range is held, or an answer is typed);
+   otherwise the keys are dimmed. A pressed key lights for about 0.3 s. Undo (and Σ SUM) stay at the end of the bar. The
+   first cell in a formula is cyan, the second ref-2 violet (outline, tag and its name in the bar); a third or later keeps
+   cyan outlines without tags.
+   ===================================================================== */
+const c1Html0 = ashHtml;
+ashHtml = function(sp){
+  const html = c1Html0.apply(this, arguments); if(!ch1()) return html;
+  const i = html.indexOf('<div class="ash-fb"'), j = i < 0 ? -1 : html.indexOf('</div>', i); if(i < 0 || j < 0) return html;
+  let fb = html.slice(i, j + 6);
+  fb = fb.replace(/<button data-ashop="(×|÷|\+|−)" aria-label="[^"]*">[^<]*<\/button>/g, '');   // the operators move to the key row
+  fb = fb.replace(/<span class="ash-f">([\s\S]*?)<\/span><small/, (m, f) => { const n = (f.match(/<b>/g) || []).length; let k = 0;
+    return '<span class="ash-f">' + (n === 2 && !/SUM\(/.test(f) ? f.replace(/<b>/g, b => ++k === 2 ? '<b class="r2">' : b) : f) + '</span><small'; });
+  const act = sp.act, st = ashSt(sp.id), building = /data-ashref=/.test(html), typing = /data-ashin=/.test(html);
+  const held = !!(act && act.sumKey && st.sigma && st.sumA && !st.drag), opsOn = building && !st.ready && !st.sigma, enterOn = (building && st.ready) || held || typing;
+  const pr = UI.c1Press && Date.now() - UI.c1Press.at < 300 ? UI.c1Press.op : null;
+  const keys = `<div class="c1-keys ${opsOn || enterOn ? '' : 'dim'}" role="group" aria-label="Formula keys">${['×', '÷', '+', '−'].map(o => `<button class="c1-k ${pr === o ? 'press' : ''}" data-ashop="${o}" ${opsOn ? '' : 'disabled'} aria-label="${o}">${o}</button>`).join('')}<button class="c1-k c1-ke ${pr === 'enter' ? 'press' : ''}" data-c1kenter ${enterOn ? '' : 'disabled'} aria-label="Enter">Enter ↵</button></div>`;
+  return html.slice(0, i) + `<div class="c1-fbrow">${fb}${keys}</div>` + html.slice(j + 6);
+};
+const c1KBind0 = ashBind;
+ashBind = function(sp){
+  const r = c1KBind0.apply(this, arguments);
+  try{ if(!ch1() || !sp) return r; const root = document.querySelector(`[data-ash="${CSS.escape(sp.id)}"]`), keys = root && root.querySelector('.c1-keys'); if(!keys) return r;
+    keys.querySelectorAll('[data-ashop]').forEach(b => { const go = b.onclick; b.onclick = e => { c1KeyFlash(b.getAttribute('data-ashop')); if(go) go.call(b, e); }; });
+    const en = keys.querySelector('[data-c1kenter]'); if(en) en.onclick = () => { const st = ashSt(sp.id); c1KeyFlash('enter');
+      if(sp.act && sp.act.sumKey && st.sigma && st.sumA) ashSumEnter(sp); else if(st.ready) c1Enter(sp); else ashEnter(sp); };
   }catch(e){}
   return r;
 };

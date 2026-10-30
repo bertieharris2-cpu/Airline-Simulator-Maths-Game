@@ -1,12 +1,12 @@
 # Chapter one: a run-through
 
-*For Bertie, 30 Oct 2026. What a pupil meets from Launch Day to the chapter-one review in the current build (workbook v6.2 and the 30 Oct hand-offs): the pauses, the maths at each one, and the questions he could be asked. Figures marked "e.g." come from a test run (the toolkit's TEST Air); his own will differ.*
+*For Bertie, 30 Oct 2026; Launch Day and week 1 brought up to date with hand-off 3 the same evening. What a pupil meets from Launch Day to the chapter-one review in the current build (workbook v6.2 and the 30 Oct hand-offs, then v6.3 and hand-off 3): the pauses, the maths at each one, and the questions he could be asked. Figures marked "e.g." come from a test run (the toolkit's TEST Air); his own will differ.*
 
 ## The shape of the chapter
 
 - **Dates.** Launch Day is **Mon 2 Sep 2030 (day 1)**. The **chapter-one review is Sat 28 Dec 2030 (day 118)**, and the test build stops there with one card.
 - **How time runs.**
-  - Week 1: the airline flies day by day (Launch Day, then Tuesday's plan).
+  - Week 1: Launch Day, then a quick check of the plan, and Tuesday to Sunday fly on their own (hand-off 3).
   - Weeks 2 to 4: a week at a time, with a **Sunday review** and a **Monday plan**.
   - From week 5 (day 29): a week at a time, with the review opening the Monday.
   - From December: a month at a time.
@@ -21,36 +21,46 @@
 ### Launch Day: Mon 2 Sep (day 1)
 
 **What happens.**
-- He names the airline, paints the Twin Otter and takes the launch deal.
-- He chooses where to fly (Dublin, Paris) and plans the day on the **full-width timetable**: dark blue flight blocks, the people who want to fly drawn by the hour, and a tray of routes to drag onto the plane.
-- Then **Work out my plan ▶** opens the **Launch Day sheet**.
+- A TEST airline skips the naming and painting; a pupil's own airline names it, paints the Twin Otter and takes the launch deal.
+- The Studio opens on the **full-width timetable** with Dublin and Paris in the Add a flight tray (no Choose where to fly page). He drags flights onto the plane and sets the fares.
+- Then **Work out my plan ▶** opens the **Launch Day sheet**, "Ticket revenue for each flight, at each fare". The column heads say whose flights they count: "your 2 flights" over "Dublin at £80".
 
 **Briefings.**
-- *What a fare does*: the first time he sets a fare.
+- *What a fare does*: the first time he sets a fare. Beat 4 is one panel: the planes fill and empty as he moves the slider from £70 to £140.
 - *How an airline makes money*: in the plan, but **not built yet**.
 
 **Concepts.**
-- Ticket revenue = passengers × fare.
+- Ticket revenue = passengers × fare, and a formula that does it: = B2 × B3.
 - A fuller plane does not always earn more.
 - Profit = revenue − costs.
 - Fuel is a cost: 600 L at £1.20 = £720, in Total costs.
 
-**The sheet's order (watch, do, watch, compare).**
-1. Finance works **Dublin at £80** while he watches: 38 × £80, laid out as "£80 is 8 × 10…".
-2. **Sum 1, his:** Dublin at £90 (e.g. 38 × £90 = **£3,420**), on paper.
-3. Finance works **Dublin at £100** while he watches.
-4. Paris at £100 fills itself (ƒ). Total revenue, costs (fuel included) and profit fill themselves (ƒ).
-5. **Sum 2, his:** "One flight, two ways": **14 × £130 = £1,820** against 19 × £90 = £1,710 (ƒ). Which earns more?
+**The sheet's order (hand-off 3): left to right, the job first.** With his fare at £80 the three Dublin columns are £70, £80 and £90.
+1. **The job first:** "Work out the ticket revenue for each flight, at each fare", and **Watch ▶**.
+2. **Finance builds B4:** a pointer clicks B2, presses ×, clicks B3 and presses Enter (e.g. 38 × £70 = £2,660).
+3. **HOW A FORMULA WORKS**: "= B2 × B3 means passengers × fare". B2 is cyan and B3 violet. Then **Your turn ▶**.
+4. **He builds C4** with the keys or the keyboard and presses Enter himself (e.g. £3,040). It is a formula: not counted.
+5. **Sum 1, his, on paper:** D4, Dublin at £90 (e.g. 38 × £90 = **£3,420**). The hint is the class method: "£90 is 9 × 10. First work out 38 × 9, then multiply by 10."
+6. Finance fills in Paris and the plan (ƒ). E4 and F9 light green once, and the profit shows (e.g. £2,120 a day).
 
-**Counted: 2.**
+**WHY 27?** If a column carries fewer passengers than the people who want to fly at that fare, with seats to spare, a note explains it once. For example, at £110: "27 of the 30 can catch your flights … The other 3 want a time you don't fly."
 
-### Tuesday 3 Sep (day 2)
+**Counted: 1.**
 
-He plans day two; "Day two runs to plan."
+**After the flights** (no Home, no Close the day):
+1. **Launch Day: how it went**: the results, route by route, and a Next panel. Then **Check my plan for the week ▶**.
+2. **The plan check**, "Your plan for the rest of week 1":
+   - his flights with Launch Day's seats;
+   - ✓ every flight fits in the day, ✓ every flight made money, ✓ the seats filled;
+   - ● the people who couldn't get a seat, "a chance for later".
 
-**Work it out:** the **Paris tickets** (e.g. 36 × £100 = £3,600) and **the day's profit** (revenue − costs, e.g. £7,020 − £4,330 = £2,690).
+   A flight that lost money is an amber ! with **Fly it anyway**. **Change my plan** opens the Studio, and its sums work as before.
 
-These are week one's other two one-off calculations (the workbook allows up to four in week one). They are not in PauseSchedule; see the report, section 7c.
+### Tuesday 3 to Saturday 7 Sep (days 2 to 6)
+
+**Week 1 is flying**: a tile for each day, Tuesday to Sunday, filling in with each day's profit, then Live Operations and So far this week, with **Normal / Fast** and **Skip to Sunday ⏭**.
+
+**Nothing to work out.** The Tuesday "Week 1 plan" sheet (the Paris tickets and the day's profit) is gone (hand-off 3). If he changed the plan at the check, the Changes tab and the sheet ask for what changed, as on any Monday.
 
 ### Weeks 1 to 2: P1, Sun 8 Sep (the week-1 accounts) and Mon 9 Sep
 
@@ -152,15 +162,15 @@ Then the card: **"End of chapter one. This test build stops here."**
 
 | Idea | Where he meets it |
 | --- | --- |
-| Multiplication (passengers × fare) | Launch Day Sums 1–2; day 2's Paris tickets; a new route's tickets; the audit; the what-if sheet (free) |
-| Comparing products (fuller ≠ better) | Launch Day Sum 2 |
-| Subtraction, including negative answers | Day 2's profit; Changes; the difference from plan; range |
+| Multiplication (passengers × fare) | Launch Day: Finance's formula, his formula (C4), Sum 1 on paper (D4, by the class method); a new route's tickets; the audit; the what-if sheet (free) |
+| Comparing products (fuller ≠ better) | The three Dublin fares side by side on the Launch Day sheet; the fare briefing's slider; the what-if sheet (One flight, two ways was removed in hand-off 3) |
+| Subtraction, including negative answers | Changes; the difference from plan; range |
 | Adding a column (total) | Every week's accounts: click (week 1), Σ SUM shown (week 2), drag (week 3 on) |
 | Mean (average a day) | Every week's accounts (a formula) |
 | Division and rounding up | Time to afford |
 | Rates (litres per seat) | P3, fuel for two planes (not built yet) |
 | Reading a maximum or minimum | Best day, worst day |
-| Time: durations and fitting a day | The timetable: "3 h 45 there and back", turnarounds, the day 06:00 to 22:00 |
+| Time: durations and fitting a day | The timetable: "3 h 45 there and back", turnarounds, the day 06:00 to 22:00; the plan check's "every flight fits in the day" |
 | Distance against range | The Madrid range check |
 | Forecast against actual | The difference from plan; Projected on Monday |
 

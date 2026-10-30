@@ -10,6 +10,30 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zn. Hand-off 3: Launch Day, after Launch Day, the Studio in chapter one (30 Oct 2026, evening)
+Claude Design's hand-off 3 with workbook v6.3 (`tools/merge_v63.py`, idempotent; then `import_world.py`, 0 to fix), chapter one only.
+- **`p6b_signal.js` §4 (Launch Day):**
+  - `ashLaunchSpec` gives each column a role from SheetSums `how`: B4 `demo`, C4 `formula`, D4 `book`.
+  - The stages are job, demo, how, why, sum and done (`S.c1.ld`).
+  - `c1Quiet` keeps the demonstrated and built sums out of the record and without a Sum number.
+  - `c1DemoRun` moves the pointer (`.c1-ptr`); `c1Method` writes the paper hint; `c1WhyFor` decides WHY 27?.
+- **`p6b_signal.js` §5 (keys):** the operator keys and Enter (`.c1-keys`) sit beside the formula bar, and the second reference is `.r2` violet (`--ref-2`).
+- **`briefing-fare.html` beat 4:** `b4draw` draws one panel, with the planes filling as the slider moves.
+- **`p6f_afterlaunch.js` (new):**
+  - `R.results` on Launch Day draws "Launch Day: how it went" and stores each flight's seats and profit in `S.c1.ldf`.
+  - `R.c1check` is the plan check. Change my plan inserts plan, workings and c1check; the week's projection is redone with `c1ProjectRest`.
+  - In week 1, `R.weekRun` draws "Week 1 is flying". `c1Tick` drives the day's clock, and `runDayQuick` runs when the day ends. `sumsChecked` is set for each day, so the Tuesday sheet never opens.
+  - `dsTips` drops `all_full_capacity` while `shopPlanes(day)` is empty.
+  - `window.__pnLabel` names the pages in the play-notes log.
+- **`p6e_notes1915.js`:** `n15Wk1` is all of chapter one. **`p6c_desks.js`:** the shelf lists master-plan numbers 1–12 and the test-only briefing.
+- **Checks:**
+  - `chapter1.test.js` 27/27: a `render` hook records week 1's pages; it checks one counted question on Launch Day and none from Tuesday to Saturday.
+  - `numbers.test.js` 37/37: it reads the day tiles and So far this week to the pound.
+  - `playnotes.test.js` 20/20.
+- **Not built (by the hand-off's word):** section 6's move of everything after week 1 (waiting for Fable's workbook) and section 9's P1 question.
+- **Week 1 only:** weeks 2 and later keep the board after Monday's results.
+- **Report:** `docs/Handoff-3-Report.md`.
+
 ## 0zm. Play notes 30 Oct 19:15 (30 Oct 2026)
 `p6e_notes1915.js` (chapter one, `ch1()`): wraps `R.chapter` (title, dates, Begin only), `s2State` (a new plan step with no schedule opens in mode `plan`, not `network`), `ashLaunchSpec` (title), and `render` (body classes `n15-wk1`, `n15-ch1`, `n15-noshop`, used by `p1_head_ch1.css` to hide `#s2Tr`, `.fx-sum[data-sum=profit]`, `.ds-act[data-dsact]`, `.c1-full [data-svccard]`). `p6c_desks.js`: `c1TrayIds` lists every flyable route in the setup phase; `c1Swap`/`c1Over` swap two flights on drop; tray tokens wrap their text in `.c1-tokt`. `briefing-fare.html` beat 4: `#fr4` slider over the arrow, readout `#b4l` (fare and seats filled). Report: `docs/Report-for-Claude-Chat-Play-Notes-30-Oct.md`.
 

@@ -51,7 +51,8 @@ function pnName(){
   if(t === 'workings') return pnQ('.so-page') ? 'Sign-offs' : pnQ('#wkTutNext, #wkTutGo') ? 'Sums tutorial' : 'Sums';
   if(t === 'weekReview') return S.period && S.period.type === 'month' ? 'Month review' : 'Sunday review';
   if(t === 'shop2') return pnQ('.wc') ? 'Worth check' : pnQ('.acx') ? 'Compare aircraft' : 'Air show';
-  return PN_STEP[t] || (t.charAt(0).toUpperCase() + t.slice(1));
+  const own = typeof window.__pnLabel === 'function' ? window.__pnLabel(t) : null;   // a later part names its own pages (p6f: the plan check, Week 1 is flying)
+  return own || PN_STEP[t] || (t.charAt(0).toUpperCase() + t.slice(1));
 }
 function pnWhen(){ if(!S || !S.day) return S && S.phase === 'setup' ? 'Launch Day' : ''; return `Week ${weekNo(S.day)} · ${dateShort(S.day)}`; }
 

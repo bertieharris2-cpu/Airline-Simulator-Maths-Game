@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 238 | 13 draft, 225 live, 10 placeholder |
+| Settings | 244 | 13 draft, 231 live, 10 placeholder |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -127,7 +127,7 @@ The Settings rows these read, as loaded.
 - `workingOnPaper`: True
 - `twoTriesRule`: True
 - `sumNumbering`: running number per pupil, never reset
-- `launchDaySums`: fare 1 game-worked (watched); fare 2 pupil; fare 3 game-worked; then one comparison question; profit with fuel included in costs
+- `launchDaySums`: 1 the game demonstrates building a formula, Excel-style (click B2, ×, click B3, Enter; then the callout) · 2 the pupil builds the second fare's formula himself (Enter to finish) · 3 Dublin at £90 worked on paper (the one counted question) · profit by formula
 - `fuelHandSum`: the weekly order: blocks × price per 1,000 L
 - `signOffCapPerWeek`: 3
 - `financeFromDate`: 2032-09-06
@@ -252,14 +252,12 @@ The briefing's fixed teaching example, as loaded from the BriefingData sheet (no
 The handover of 19 Oct (evening), section 7.10: the Settings row, the SheetSums sheet and the hints, as loaded. Cash, tank, profit's example is under D104's list.
 
 - `fuelDeskOpensDay`: 8
-- **Launch Day** `B4` Ticket revenue: = B2 × B3 (Passengers × Fare) · ƒ · watch · `launch.watch`
-- **Launch Day** `C4` Ticket revenue: = C2 × C3 (Passengers × Fare) · pupil · book · `launch.tickets`
-- **Launch Day** `D4` Ticket revenue: = D2 × D3 (Passengers × Fare) · ƒ · watch · `launch.watch`
+- **Launch Day** `B4` Ticket revenue: = B2 × B3 (Passengers × Fare) · ƒ · demo · `launch.demo`
+- **Launch Day** `C4` Ticket revenue: = C2 × C3 (Passengers × Fare) · pupil · formula · `launch.build`
+- **Launch Day** `D4` Ticket revenue: = D2 × D3 (Passengers × Fare) · pupil · book · `launch.tickets`
 - **Launch Day** `E4` Ticket revenue: = E2 × E3 (Passengers × Fare) · ƒ · airline
 - **Launch Day** `F7` Fuel burned: = litres × price (600 L at £1.20) · ƒ · airline
 - **Launch Day** `F9` Profit: = F5 − F8 (Total revenue − Total costs) · ƒ · airline
-- **Launch Day** `B13` Ticket revenue (One flight, two ways): = B11 × B12 (Passengers on one flight × Fare) · pupil · book · `launch.compare`
-- **Launch Day** `C13` Ticket revenue (One flight, two ways): = C11 × C12 (Passengers on one flight × Fare) · ƒ · airline
 - **Changes (week 2 on)** `B2…C7` Passengers a day, Empty seats, Fare, Ticket revenue a day, Over a week: given and ƒ (Now · With your change) · ƒ · airline
 - **Changes (week 2 on)** `D5` Difference (a fare change: ticket revenue a day): = C5 − B5 (With your change − Now) · pupil · build once · `changes.difference`
 - **Changes (week 2 on)** `D7` Difference (a plan change: profit a day): = C7 − B7 (With your change − Now) · pupil · build once · `changes.difference`
@@ -272,6 +270,7 @@ The handover of 19 Oct (evening), section 7.10: the Settings row, the SheetSums 
 
 Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM unlocks and the screen text, as loaded.
 
+- **Launch Day** `C4` Ticket revenue: formula-only
 - **Sunday review** `B9` Profit this week: formula-only
 - **Sunday review** `B13` Average a day: formula-only
 - **Calendar skills:** none (Σ SUM falls back to the week 3 review).
@@ -346,6 +345,37 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `tt.key`: Flights snap to the quarter hour · the day runs {open} to {close}
 - `shelf`: Briefings · Teacher test mode: watch any briefing. Nothing here goes in the pupil's record or changes the game. · [◀ Back to the game]
 - `build.end`: TEST BUILD · End of chapter one · End of chapter one. This test build stops here.
+- `launch.title`: Ticket revenue for each flight, at each fare
+- `launch.colhead`: your {n} flights · your flight
+- `launch.job`: LAUNCH DAY · YOUR JOB · Work out the ticket revenue for each flight, at each fare · Ticket revenue is the money from selling the tickets: **passengers × fare**. Finance will show you how to build it on the sheet first. · [Watch ▶]
+- `launch.job.footer`: Launch Day · read the job first.
+- `launch.demo`: Watch: Finance clicks the passengers, **{p}**, then presses **×**. · Watch: then the fare, **{f}**, and Finance presses **Enter**.
+- `launch.demo.footer`: Launch Day · watch Finance build the first formula.
+- `launch.how`: HOW A FORMULA WORKS · Finance built a formula · **= {a} × {b}** means **passengers × fare**. Each cell gets its own colour, so you can see which cell is which. · Pressing **Enter** tells the sheet to work it out. The sheet did the multiplying: **{money}**. · [Your turn ▶]
+- `launch.how.footer`: Launch Day · Finance built the first formula.
+- `launch.build`: {route} at £{fare}: the ticket revenue · Click the passengers, press **×**, click the fare. Then press [Enter]. · The sheet works it out. · Nothing to write in your book.
+- `launch.build.line`: Your turn: build it, then press Enter.
+- `launch.build.footer`: Launch Day · your turn: build it.
+- `launch.paper.footer`: Launch Day · the last one, on paper.
+- `launch.paper.hint`: £{fare} is {d} × {mult}. First work out {p} × {d}, then multiply by {mult}.
+- `launch.done`: ✓ Every Launch Day sum is done. Finance filled in {others} and your plan: profit **{profit}** a day.
+- `launch.done.footer`: Launch Day · done. Next, get ready to fly. · [Ready to fly ▶]
+- `why27`: WHY {pax}? · {pax} of the {want} can catch your flights · {want} people a day want to fly to {route} at £{fare}. {pax} of them want to go when your {times} leaves. The other {rest} want a time you don't fly. · [Got it]
+- `why27.line`: Read the note, then press Got it.
+- `ld.results`: NEXT · Launch Day: how it went · {date} · every flight landed · Your plan flies again **every day, Tuesday to Sunday**. First, a quick check of the plan. On Sunday you'll do the week's accounts. · [Check my plan for the week ▶]
+- `ld.results.footer`: Launch Day is done.
+- `plancheck`: Your plan for the rest of week 1 · {from} to {to} · the same flights every day · [Fly Tuesday to Sunday ▶]
+- `plancheck.flights`: Your flights, every day · {plane} · seats filled on Launch Day
+- `plancheck.checks`: Before it flies · Every flight fits in the day, {open} to {close}. · Every flight made money on Launch Day. · Seats filled: **{sold} of {seats}**. · **{n} people a day** wanted seats you didn't have ({list}). A chance for later, when you have more seats.
+- `plancheck.look`: **{route} {time}** lost money on Launch Day: {sold} of {seats} seats at £{fare}. Change it before the week flies? · [Fly it anyway ▶]
+- `plancheck.under`: Nothing to work out: Finance keeps the sheet up to date each day. **Change my plan** opens the timetable; **Fly Tuesday to Sunday** runs the week. · [Change my plan]
+- `plancheck.footer`: Check your plan, then fly the rest of the week.
+- `weekflies`: Week 1 is flying · Your plan, every day, Tuesday to Sunday. Sunday: the week's accounts. · [Skip to Sunday ⏭]
+- `weekflies.sofar`: So far this week · Profit, {days} · Seats filled · People who wanted seats you didn't have
+- `weekflies.footer`: The week runs on its own. Nothing to work out until Sunday.
+- `weekflies.tile`: ✓ flown · profit · flying now · {time} · {n} of {total} flights out · waiting · Normal · Fast · Live Operations
+- `plancheck.changed`: {plane} · seats your plan should fill · Every flight should make money on your plan. · **{route} {time}** is set to lose money: about {sold} of {seats} seats at £{fare}. Change it before the week flies? · Seats your plan should fill: **{sold} of {seats}**.
+- `plancheck.nofit`: A flight on **{plane}** runs past {close}. Change your plan so every flight fits in the day.
 
 ## Identity and photos (CR5)
 

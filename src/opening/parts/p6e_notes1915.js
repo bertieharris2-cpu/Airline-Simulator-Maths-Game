@@ -6,7 +6,7 @@
    - The chapter page: "chapter one come up and the date", nothing else ("they're just not going to read it").
    - No "Choose where to fly" page: the Studio opens on the timetable, every route the plane can fly in the Add a flight
      tray ("it might mislead the pupils into thinking they can only choose one"). + Add a route still opens the page.
-   - The Studio in week one: no View trade-offs ("we're still introducing them into the game", and its gold count draws
+   - The Studio in week one (hand-off 3, the same evening: all of chapter one): no View trade-offs ("we're still introducing them into the game", and its gold count draws
      the eye) and no "ƒ work it out" by the projected profit ("I'm assuming it does the same as Work out my plan").
      Compare aircraft waits until the shop opens (day 15). In chapter one the flight's Service costs button goes ("I
      pressed it and that is an overwhelming page").
@@ -15,7 +15,7 @@
    p6c_desks.js; the moving slider on the fare briefing's challenge beat is in briefings/briefing-fare.html.
    ================================================================== */
 {
-const n15Wk1 = () => ch1() && (S.day || 1) <= 7;
+const n15Wk1 = () => ch1();   // hand-off 3 (30 Oct, evening), section 5: hidden for all of chapter one, not only week one
 /* the chapter page */
 const n15Chapter0 = R.chapter;
 R.chapter = st => {

@@ -380,6 +380,33 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Hand-off 3: Launch Day left to right, then straight into the week (30 Oct 2026, evening)
+*Claude Design's hand-off 3 with workbook v6.3, chapter one only. The report is `docs/Handoff-3-Report.md` (and the Claude Doc https://claude.ai/artifact/P3kA2t1GnPYXRJkVvcrQgU); screenshots at 1366 × 768 are in `docs/screenshots/handoff3/`.*
+- **Launch Day:**
+  1. the job first, then Watch ▶;
+  2. Finance builds B4 with a pointer (B2, ×, B3, Enter);
+  3. HOW A FORMULA WORKS;
+  4. he builds C4 (a formula, not counted);
+  5. D4 on paper (**Sum 1**, the class-method hint);
+  6. Finance fills in Paris and the plan, and E4 and F9 glow green once.
+
+  One flight, two ways and the watch panel are gone, so Launch Day asks **one** counted question.
+- **On every sheet:** the keys × ÷ + − and Enter ↵ beside the formula bar, and the second cell in a formula in violet. The column heads read "your 2 flights" over "Dublin at £110", and **WHY 27?** explains, once, why a column carries fewer passengers than want to fly.
+- **What a fare does, beat 4:** one panel; the planes fill and empty with the slider; £70 and £140 at its ends.
+- **After Launch Day** there is no Home and no Close the day:
+  1. **Launch Day: how it went**;
+  2. **the plan check** ("Before it flies"; an amber line and Fly it anyway when a flight lost money; Change my plan opens the Studio);
+  3. **Week 1 is flying** (day tiles, Normal / Fast, Live Operations, So far this week, Skip to Sunday).
+
+  The Tuesday "Week 1 plan" sheet and its sums are gone (`p6f_afterlaunch.js`).
+- **The Studio in chapter one:** View trade-offs and ƒ work it out are hidden all chapter, and the capacity tip waits for the plane shop (day 15).
+- **The Briefings shelf** follows the master plan:
+  - IN PLAY: 1, 2, 3, 5, 7, 8, 9, 12;
+  - PARKED: 4, 6, 10, 11;
+  - TEST ONLY: Eight in ten stay.
+- **Waiting for Fable:** everything after week 1 moves along a week (section 6). The game reads every start day from the workbook and keeps v6.2's timings until then.
+- **Checks:** `chapter1.test.js` (27), `numbers.test.js` (37), `playnotes.test.js` (20).
+
 ### Bertie's play notes, 30 Oct 19:15 (chapter one, Launch Day to Tuesday)
 *The report for Claude Chat, with Bertie's words as he said them, is `docs/Report-for-Claude-Chat-Play-Notes-30-Oct.md` (and the Claude Doc https://claude.ai/artifact/3K8uaznvzan3qfBjYpafXM). Changed now, chapter one only (`p6e_notes1915.js`, `p6c_desks.js`, `briefings/briefing-fare.html`):*
 - the chapter page shows Chapter 1, the dates and Begin;

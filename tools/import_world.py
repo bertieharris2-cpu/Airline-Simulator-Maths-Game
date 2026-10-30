@@ -396,7 +396,7 @@ def bd_value(v):
 # D105 (19 Oct 2026, evening, handover 7.10): every year-one sheet's sums: the cells, the formula and its words, whose it is
 # (the pupil's, or ƒ: the airline's) and how it is done (book: the formula on the bar, worked out in the book; build: built by
 # clicking the cells; build once: built the first time). The game reads whose and how by sumId; the rest is the record.
-SS_HOW = {'book', 'build', 'build once', 'airline', 'formula', 'watch'}   # watch (30 Oct 2026): Finance works it out while he watches   # formula (21 Oct 2026): he builds the formula; the sheet shows the answer (no book, no Sum number)
+SS_HOW = {'book', 'build', 'build once', 'airline', 'formula', 'watch', 'demo'}   # demo (30 Oct 2026, evening): Finance demonstrates building the formula   # watch (30 Oct 2026): Finance works it out while he watches   # formula (21 Oct 2026): he builds the formula; the sheet shows the answer (no book, no Sum number)
 sheetSums = []
 ss_skipped = Counter()
 for r in opt_sheet('SheetSums'):

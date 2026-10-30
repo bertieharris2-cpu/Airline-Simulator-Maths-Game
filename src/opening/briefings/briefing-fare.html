@@ -336,39 +336,45 @@ function board(){
     setCap(`${num(bs.want)} want to fly, but you only have <b>${num(CAP)} seats</b>. The other <b>${num(bs.left)}</b> can't buy a ticket, so they pay nothing.`); }, fly * 45 + 800);
 }
 
-// ---- Beat 4 · The challenge
+// ---- Beat 4 · The challenge (hand-off 3, 30 Oct 2026 evening): ONE panel the width of both, the slider's fare and his two planes;
+// as the slider moves the seats fill and empty, the counts change, and the words under the planes change ("42 left behind",
+// "2 seats fly empty"). No ticket money: beat 5's question stays his.
+function b4draw(f){
+  const fill = per(f), lb = Math.max(0, Math.min(WANT[f] || 0, 100) - CAP), empty = CAP - fill * NPL, full = fill >= SEATS1;
+  let h = `<div class="pn act" style="left:56px;top:16px;width:1254px;height:398px;padding:16px 20px"><div class="ey">The slider's fare</div><div class="big gold" style="margin-top:6px;font-size:40px">${money(f)}</div>
+   <div class="lbl" style="position:relative;left:0;top:0;margin-top:10px;width:250px;white-space:normal;font-size:15px;line-height:1.4;color:var(--soft)">Move the slider: the seats fill and empty as the fare changes.</div></div>`;
+  h += plan('b4a', 360, 92, fill, .62) + plan('b4b', 690, 92, fill, .62);
+  const lab = full ? `<span class="green">${SEATS1}/${SEATS1} ✓</span>` : `${fill} of ${SEATS1}`;
+  h += `<div class="lbl" style="left:362px;top:210px;font-size:15px">${lab}</div><div class="lbl" style="left:692px;top:210px;font-size:15px">${lab}</div>`;
+  if(lb > 0){ for(let i = 0; i < Math.min(lb, 42); i++){ const r = Math.floor(i / 21), cc = i % 21; h += P(362 + cc * 13, 252 + r * 26, 'xs dim'); } h += `<div class="lbl" style="left:654px;top:264px;font-size:15px">${num(lb)} left behind</div>`; }
+  else if(empty > 0) h += `<div class="lbl" style="left:362px;top:256px;font-size:15px">${num(empty)} ${empty === 1 ? 'seat flies' : 'seats fly'} empty</div>`;
+  const cap = full ? (lb > 0 ? `Planes full · but only <b class="gold">${money(f)}</b> a ticket` : `Planes full · <b class="gold">${money(f)}</b> a ticket`)
+    : f >= HIGH ? `<b class="gold">${money(f)}</b> a ticket · but seats fly empty` : `<b class="gold">${money(f)}</b> a ticket · ${num(empty)} ${empty === 1 ? 'seat flies' : 'seats fly'} empty`;
+  return h + `<div class="lbl" style="left:80px;top:352px;font-size:19px;color:var(--text)">${cap}</div>`;
+}
 function b4(){
-  let h = plain();
-  const panel = (x, ey, fare, fill, line1, crowd) => { let c = `<div class="pn" style="left:${x}px;top:16px;width:594px;height:398px;padding:16px 20px"><div class="ey">${ey}</div><div class="big gold" style="margin-top:6px">${money(fare)}</div></div>`;
-    c += plan('m' + x + 'a', x + 22, 118, fill, .55) + plan('m' + x + 'b', x + 308, 118, fill, .55);
-    const lab = fill >= SEATS1 ? `<span class="green">${SEATS1}/${SEATS1} ✓</span>` : `${fill} of ${SEATS1}`;
-    c += `<div class="lbl" style="left:${x + 24}px;top:224px;font-size:15px">${lab}</div><div class="lbl" style="left:${x + 310}px;top:224px;font-size:15px">${lab}</div>`;
-    c += `<div class="lbl" style="left:${x + 24}px;top:352px;font-size:19px;color:var(--text)">${line1}</div>`;
-    if(crowd){ const lb = Math.max(0, Math.min(WANT[fare], 100) - CAP); for(let i = 0; i < Math.min(lb, 42); i++){ const r = Math.floor(i / 21), cc = i % 21; c += P(x + 24 + cc * 13, 262 + r * 26, 'xs dim'); } c += `<div class="lbl" style="left:${x + 316}px;top:276px;font-size:15px">${num(lb)} left behind</div>`; }
-    else c += `<div class="lbl" style="left:${x + 24}px;top:276px;font-size:15px">${num(CAP - fill * NPL)} seats fly empty</div>`;
-    return c; };
-  h += panel(56, 'Low fare', LOW, per(LOW), `Planes full · but only <span class="gold">${money(LOW)}</span> a ticket`, true);
-  h += panel(716, 'High fare', HIGH, per(HIGH), `<span class="gold">${money(HIGH)}</span> a ticket · but seats fly empty`, false);
+  const F4 = FARES.filter(f => f >= LOW && f <= HIGH), n4 = Math.max(1, F4.length - 1), i0 = Math.round(n4 / 2);
+  let h = plain() + `<div id="b4p">${b4draw(F4[i0])}</div>`;
   h += `<svg width="1366" height="160" style="position:absolute;left:0;top:432px" aria-hidden="true"><line x1="250" y1="70" x2="1116" y2="70" stroke="#2c5a8c" stroke-width="4"/><path d="M262,58 L238,70 L262,82" fill="none" stroke="#2c5a8c" stroke-width="4"/><path d="M1104,58 L1128,70 L1104,82" fill="none" stroke="#2c5a8c" stroke-width="4"/></svg>
- <div class="fr" id="fr4" role="slider" tabindex="0" aria-label="Try a fare between the low and the high fare" style="left:262px;top:479px;width:842px"><i class="frh" id="frh4" style="left:50%"></i></div>
+ <div class="fr" id="fr4" role="slider" tabindex="0" aria-label="Try a fare between the low and the high fare" style="left:262px;top:479px;width:842px"><i class="frh" id="frh4" style="left:${i0 / n4 * 100}%"></i></div>
+ <div class="lbl" style="left:262px;top:520px;font-size:13px;color:var(--soft);transform:translateX(-50%)">${money(F4[0])}</div><div class="lbl" style="left:1104px;top:520px;font-size:13px;color:var(--soft);transform:translateX(-50%)">${money(F4[F4.length - 1])}</div>
  <div class="lbl" style="left:56px;top:488px;font-size:19px;color:var(--text);font-weight:600">Fill the seats</div>
  <div class="lbl" style="left:1140px;top:476px;font-size:19px;color:var(--text);font-weight:600;white-space:normal;width:190px;line-height:1.25">More money for each ticket</div>
- <div class="lbl cyan" id="b4l" style="left:683px;top:540px;font-size:19px;font-weight:600;transform:translateX(-50%);white-space:nowrap">Best fare: somewhere between</div>`;
+ <div class="lbl cyan" id="b4l" style="left:683px;top:544px;font-size:19px;font-weight:600;transform:translateX(-50%);white-space:nowrap">Best fare: somewhere between</div>`;
   pic.innerHTML = h;
   setCap('Your challenge: <b>fill the seats</b> and <b>make the most money</b>.');
-  /* the arrow is a slider (Bertie, 30 Oct 19:15: "the slider where you fill the seats to more money for each ticket does not go
-     up and down"): drag it, or press the arrow keys, through the fares from the low one to the high one; it shows the fare and
-     the seats filled, never the ticket money, so beat 5's question stays his to answer */
-  const F4 = FARES.filter(f => f >= LOW && f <= HIGH), fr = $('fr4'), n4 = Math.max(1, F4.length - 1);
+  setNext('Next &#9654;');
+  /* the arrow is a slider (30 Oct): drag it, click along it or use the arrow keys, through the fares from the low one to the high one */
+  const fr = $('fr4');
   const show = i => { const f = F4[i], seats = Math.min(CAP, per(f) * NPL); $('frh4').style.left = (i / n4 * 100) + '%'; fr.dataset.i = i; fr.setAttribute('aria-valuenow', f); fr.setAttribute('aria-valuetext', money(f));
+    $('b4p').innerHTML = b4draw(f);
     $('b4l').innerHTML = `<span class="gold">${money(f)}</span> a ticket · ${seats >= CAP ? `<span class="green">${num(seats)} of ${num(CAP)} seats filled ✓</span>` : `${num(seats)} of ${num(CAP)} seats filled · ${num(CAP - seats)} empty`}`; };
   const at = ev => { const r = fr.getBoundingClientRect(); return Math.round(Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * n4); };
   fr.onpointerdown = ev => { ev.preventDefault(); fr.classList.add('drag'); try{ fr.setPointerCapture(ev.pointerId); }catch(e){} show(at(ev)); fr.focus(); };
   fr.onpointermove = ev => { if(fr.classList.contains('drag')) show(at(ev)); };
   fr.onpointerup = fr.onpointercancel = () => fr.classList.remove('drag');
   fr.onkeydown = ev => { const k = { ArrowRight:1, ArrowUp:1, ArrowLeft:-1, ArrowDown:-1 }[ev.key]; if(k){ ev.preventDefault(); show(Math.min(n4, Math.max(0, (+fr.dataset.i || 0) + k))); } };
-  fr.dataset.i = Math.round(n4 / 2);
-  setNext('Next &#9654;');
+  fr.dataset.i = i0;
 }
 
 // ---- Beat 5 · Which earns more? (Show: the question is the caption; no guess, Next is always allowed)

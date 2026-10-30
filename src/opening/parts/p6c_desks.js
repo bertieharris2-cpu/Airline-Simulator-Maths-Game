@@ -352,7 +352,8 @@ const C1_BF_KIND = { how_airline_makes_money:'ORIENTATION', fare_lever:'TOOL', f
 const C1_BOOK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5c3-1.2 6-1.2 9 .8v13c-3-2-6-2-9-.8z"/><path d="M21 5.5c-3-1.2-6-1.2-9 .8v13c3-2 6-2 9-.8z"/></svg>';
 const c1ShelfOn = () => !!(typeof settings !== 'undefined' && settings.testMode);
 function c1ShelfRows(){
-  return ((typeof WB !== 'undefined' && WB.briefingShelf) || []).filter(b => ['live', 'test', 'parked'].includes(b.state))
+  // hand-off 3, section 7: the master plan's briefings 1-12 (IN PLAY or PARKED) and the TEST ONLY one; nothing without a number (Snacks on board)
+  return ((typeof WB !== 'undefined' && WB.briefingShelf) || []).filter(b => ['live', 'test', 'parked'].includes(b.state) && (b.state === 'test' || (b.cowork >= 1 && b.cowork <= 12)))
     .sort((a, b) => (a.cowork || 99) - (b.cowork || 99));
 }
 function c1Plays(b){ if(b.state === 'test') return 'Not triggered in play';

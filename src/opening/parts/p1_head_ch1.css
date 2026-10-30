@@ -268,3 +268,98 @@ body.n15-ch1 .c1-full [data-svccard]{display:none!important}
 .c1-float{height:44px;background:linear-gradient(180deg,#1f4776,#173a62)}
 /* a flight dragged over another on the same plane: they swap */
 .c1-blk.c1-swap{box-shadow:inset 0 0 0 2px var(--cyan),0 0 0 2px rgba(54,198,255,.35)}
+
+/* ---------- hand-off 3 (30 Oct 2026, evening) ---------- */
+:root{--ref-2:#b48cff}
+/* the key row beside the formula bar: × ÷ + − (40 × 34) and Enter ↵ (78 × 34, a 3px bottom edge); the bar is shortened */
+.c1-fbrow{display:flex;align-items:stretch;gap:10px;margin:0 0 10px}
+.c1-fbrow .ash-fb{flex:1 1 auto;min-width:0;margin:0}
+.c1-keys{display:flex;gap:6px;flex:none}
+.c1-k{width:40px;height:34px;display:grid;place-items:center;background:#0d2346;border:1px solid #2b5c9e;border-radius:0;color:#eaf2ff;font:700 18px/1 var(--font-sans);cursor:pointer;padding:0;transition:background .15s,border-color .15s,box-shadow .15s}
+.c1-k.c1-ke{width:78px;font-size:13px;border-bottom:3px solid #5b88b8}
+.c1-k:hover:not(:disabled){border-color:var(--cyan)}
+.c1-k.press{background:#14457a;border-color:var(--cyan);box-shadow:var(--glow-cyan)}
+.c1-k:disabled{cursor:default}
+.c1-keys.dim .c1-k,.c1-k:disabled{opacity:.38}
+.c1-keys .c1-k.press{opacity:1}
+/* each formula cell its own colour: the first cyan, the second ref-2 violet */
+.ash-f b.r2{color:var(--ref-2)}
+body.n15-ch1 .ash-c.aref[data-tag="B"]{box-shadow:inset 0 0 0 2px var(--ref-2)}
+body.n15-ch1 .ash-c.aref[data-tag="B"]::before{background:var(--ref-2)}
+/* a Sheet Callout under a cell, pointer up at it (the job, HOW A FORMULA WORKS, WHY 27?) */
+.ash-co.c1-sco{position:absolute;z-index:8;width:520px;margin:0;padding:14px 18px 14px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.ash-co.c1-sco p{font-size:15px;line-height:1.45;margin:6px 0 0}
+.ash-co.c1-sco p b{color:#fff}
+.ash-co.c1-sco .ash-cot{font-size:19px}
+.ash-co.c1-sco .ash-coa{display:flex;justify-content:flex-end;margin-top:10px}
+.c1-sco-ptr{position:absolute;left:62px;top:-9px;width:16px;height:16px;background:#0c2a4c;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);transform:rotate(45deg)}
+/* the demonstration's pointer: it glides to each cell and key and presses it; nothing on the sheet is his to click meanwhile */
+.c1-ptr{position:fixed;z-index:9500;pointer-events:none;transition:left .6s cubic-bezier(.3,.7,.3,1),top .6s cubic-bezier(.3,.7,.3,1);filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.c1-ptr.still{transition:none}
+.c1-ptr.click svg{transform:scale(.86);transform-origin:2px 2px}
+.ash.c1-demo .ash-grid,.ash.c1-demo .c1-keys,.ash.c1-demo .ash-ops{pointer-events:none}
+/* green once: the cell Finance just filled; a cyan ring on the cell a note is about */
+.ash-c.c1-glow{box-shadow:inset 0 0 0 2px var(--green),0 0 14px rgba(61,220,151,.35)}
+body:not(.rm) .ash-c.c1-glow{animation:c1Glow 1.6s ease-out 1}
+@keyframes c1Glow{0%{background:rgba(61,220,151,.28)}100%{background:transparent}}
+.ash-c.c1-ring{box-shadow:inset 0 0 0 2px var(--cyan)}
+.c1-r1{color:var(--cyan)}.c1-r2{color:var(--ref-2)}
+.ash-co.c1-sco.pr .c1-sco-ptr{left:292px}
+/* ---------- after Launch Day (hand-off 3, section 4): the results page, the plan check, Week 1 is flying ---------- */
+.dp.c1a{gap:14px}
+.dp.c1a .dp-head{padding:0;min-height:0}
+.dp.c1a .dp-tt h1{font:600 32px/38px var(--font-sans);letter-spacing:-.01em;margin:0;text-transform:none;color:var(--text)}
+.dp.c1a .dp-tt p{font:400 15px/22px var(--font-sans);color:var(--text-soft);margin:2px 0 0}
+.dp.c1a .dp-body{display:flex;flex-direction:column;gap:14px;min-height:0;flex:1}
+.c1a .gold{color:var(--gold)}.c1a .amber{color:var(--amber)}.c1a .green{color:var(--green)}.c1a .cyan{color:var(--cyan)}
+.c1a-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1.17fr) minmax(0,.66fr);gap:16px;align-items:start}
+.c1a-res .p-rp .hq-t th,.c1a-res .p-rp .hq-t td{padding-left:6px;padding-right:6px}
+.c1a-mid{display:flex;flex-direction:column;gap:14px;min-width:0}
+.c1a-res .p-td .td2{padding-bottom:14px}
+.c1a-next{background:linear-gradient(155deg,var(--panel-2),var(--panel-1) 60%);border:1px solid var(--line);padding:14px 16px;box-shadow:var(--shadow-panel)}
+.c1a-eye{display:block;font:600 11px/14px var(--font-sans);letter-spacing:.12em;color:var(--cyan);margin-bottom:6px}
+.c1a-next p{margin:0;font:400 15px/22px var(--font-sans);color:var(--text)}
+.c1a-next p b{color:#fff;font-weight:650}
+/* the plan check */
+.c1k-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.c1k-p{min-height:300px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.c1k-h h3{margin:0;font:600 17px/22px var(--font-sans);color:var(--text);text-transform:none;letter-spacing:0}
+.c1k-h p{margin:2px 0 4px;font:400 12.5px/17px var(--font-sans);color:var(--text-soft)}
+.c1k-f{display:grid;grid-template-columns:62px minmax(0,1fr) auto;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line-soft);font:400 15px/22px var(--font-sans);color:var(--text)}
+.c1k-f:last-child{border-bottom:0}
+.c1k-f .c1k-r{display:flex;align-items:center;gap:8px;min-width:0}
+.c1k-s{font-weight:700}
+.c1k-l{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;padding:9px 0;border-bottom:1px solid var(--line-soft);font:400 15px/20px var(--font-sans);color:var(--text)}
+.c1k-l:last-child{border-bottom:0}
+.c1k-l > i{font-style:normal;font-weight:700;text-align:center}
+.c1k-l.ok > i{color:var(--green)}.c1k-l.look > i{color:var(--amber)}.c1k-l.chance > i{color:var(--cyan)}
+.c1k-l b{color:#fff;font-weight:650}
+.c1k-under{margin:0;padding:12px 16px;background:linear-gradient(155deg,var(--panel-2),var(--panel-1) 60%);border:1px solid var(--line);font:400 15px/22px var(--font-sans);color:var(--text)}
+.c1k-under b{color:#fff;font-weight:650}
+/* Week 1 is flying */
+.c1w-sp{display:flex;gap:12px}
+.c1w-sp .bv-btn{min-width:122px;border-bottom-width:3px;border-bottom-color:transparent}
+.c1w-sp .bv-btn.on{border-color:var(--cyan);border-bottom-color:var(--cyan);background:linear-gradient(180deg,#123e64,#0b2a4c)}
+.c1w-tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:22px}
+.c1w-t{min-height:118px;padding:12px 12px 10px;display:flex;flex-direction:column;gap:2px;background:linear-gradient(155deg,var(--panel-2),var(--panel-1) 70%);border:1px solid var(--line);font:400 12.5px/17px var(--font-sans)}
+.c1w-t b{font:600 15px/20px var(--font-sans);color:var(--text)}
+.c1w-t small{font:400 12.5px/17px var(--font-sans);color:var(--text-soft)}
+.c1w-t.flown{border-color:rgba(60,227,148,.75)}
+.c1w-t .c1w-p{font:700 22px/28px var(--font-sans);margin-top:8px}
+.c1w-t.now{border:2px solid var(--cyan);box-shadow:var(--glow-cyan);background:linear-gradient(155deg,var(--panel-active),var(--panel-1) 70%)}
+.c1w-t.now small.cyan{color:var(--cyan)}
+.c1w-t.wait{opacity:.42}
+.c1w-bar{display:block;height:6px;margin:16px 0 8px;background:rgba(130,195,255,.12)}
+.c1w-bar > i{display:block;height:100%;background:var(--cyan)}
+.c1w-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:18px;align-items:start}
+.c1w-live .pb{padding:4px 10px 8px}
+.c1w-lo td,.c1w-lo th{white-space:nowrap}
+.c1w-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle;background:var(--text-muted)}
+.c1w-dot.ok{background:var(--green)}.c1w-dot.air{background:var(--cyan)}
+.c1w-st{font-size:12.5px}.c1w-st.ok{color:var(--green)}.c1w-st.air{color:var(--cyan)}.c1w-st.wait{color:var(--text-soft)}
+.c1w-so{padding:14px 16px 10px}
+.c1w-sf{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-soft);font:400 15px/20px var(--font-sans);color:var(--text)}
+.c1w-sf:last-child{border-bottom:0}
+.c1w-sf b{font-weight:700}
+/* the results page's Route Performance: route, wanted, seats, flew, couldn't carry (hand-off 3 picture 04-1) */
+.c1a-res .p-rp .hq-t th:nth-child(n+6),.c1a-res .p-rp .hq-t td:nth-child(n+6){display:none}
