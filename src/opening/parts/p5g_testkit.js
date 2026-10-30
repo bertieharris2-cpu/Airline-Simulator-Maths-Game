@@ -307,10 +307,10 @@ document.addEventListener('DOMContentLoaded', () => setTimeout(() => {
   try{ const box = document.getElementById('tTest'), sec = box && box.closest('.tsec'); if(!sec) return;
     sec.innerHTML = `<h3>Testing (D102)</h3>
       <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tTest" style="width:24px;height:24px"> Test mode: an amber TEST MODE bar with Answer, Run, Auto-plan, Jump to… and Event now</label></div>
-      <p class="small muted">Switching it on makes a TEST copy of this airline, saved apart. The pupil's game, record, milestones and sum numbers are not touched, and come back when test mode goes off.</p>
+      <p class="small muted">A TEST copy of the airline, saved apart: the pupil's game is not touched.</p>
       <div class="row"><label class="row" style="gap:8px"><input type="checkbox" id="tAutoAns" style="width:24px;height:24px"> Auto-answer sums (decisions stay yours)</label></div>
       <div class="row"><span>Jump to</span><select id="tJump"><option value="">A test airline at…</option>${Object.entries(TK_JUMPS).sort((a, b) => a[1].day - b[1].day).map(([k, j]) => `<option value="${k}">${esc(j.label)}</option>`).join('')}</select><button class="btn small" id="tTkDel">Delete all test airlines</button></div>
-      <p class="small muted">In test mode: Ctrl+Shift+T shows the bar's tools, Ctrl+Shift+A answers the sum on screen, Ctrl+Shift+R runs to the point chosen on the bar. Press W (or the Operations Wall button) to see the wall on this screen.</p>`;
+      <p class="small muted" id="tTkKeys">In test mode: Ctrl+Shift+T shows the bar's tools, Ctrl+Shift+A answers the sum on screen, Ctrl+Shift+R runs to the point chosen on the bar. Press W (or the Operations Wall button) to see the wall on this screen.</p>`;
     const tb = document.getElementById('tTest'); tb.onchange = () => { teacherClose(); if(tb.checked) tkEnter(); else tkLeave(); };
     document.getElementById('tAutoAns').onchange = e => { settings.autoAnswer = e.target.checked; saveSettings(); testTick(); };
     document.getElementById('tJump').onchange = e => { const v = e.target.value; if(v){ teacherClose(); tkJump(v); } };

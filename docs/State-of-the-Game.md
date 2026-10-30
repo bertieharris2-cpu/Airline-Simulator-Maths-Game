@@ -10,6 +10,9 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zl. Play notes in one zip; the teacher panel tidied (30 Oct 2026)
+`p5i_playnotes.js`: Stop & save builds one stored zip in the page (`pnZip`, with CRC-32), holding the recording's parts and the log (v3: `audioParts` with each part's start time). Chunks go to IndexedDB `asim-playnotes` (stores `chunk`, `meta`) as they arrive, and the log every 10 s (`pnKeep`). `pnRecover` rebuilds the zip after a crash, offered in the Play notes section (`#tPnLast`) and by a toast at start-up. The watch (`pnTick`, once a second) flags MIC STOPPED after 5 s with no chunk and restarts the microphone as a new part (`pnMicStart`); an analyser flags "Can't hear you" after 90 s below about -40 dB. The recording of 30 Oct 18:20 was a whole file of 8 seconds (eight one-second chunks, no cut-off end), with no speech in it. `p6d_teacher.js` sorts the teacher panel each time it opens: five sections stay, the rest go under `<details id="tMore">`, nothing removed.
+
 ## 0zk. Two game files (30 Oct 2026)
 Work is on chapter one only (Bertie, 30 Oct). `airline-opening-prototype.html` is the chapter-one game: `build.py` leaves out `p4zs_ch4.js` and `p4zh_longhaul.js` (CH1_SKIP; `p4zo`'s overnight-rotation override is guarded for the missing part) and embeds only the chapter-one jumps. `airline-opening-full.html` is the whole game frozen on 30 Oct (`build.py --full`; it carries `<script id="data-build">`, so `c1BuildEnds()` is 0 and the later chapters play on, and it keeps the Steady path's jumps). The chapter-one file's `loadCode` turns away a save past day 118 with a message naming the full file. Checks: `chapter1.test.js` 23/23, `numbers.test.js` 36/36 (its day-365 record check opens the full file). The chapter 2–4 tests default to the full file and are parked with it.
 

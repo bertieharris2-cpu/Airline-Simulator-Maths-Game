@@ -14,7 +14,7 @@ def load(path):
     import base64, zipfile, io
     raw = open(path, 'rb').read()
     if raw[:2] == b'PK':
-        z = zipfile.ZipFile(io.BytesIO(raw)); raw = z.read([n for n in z.namelist() if 'playnotes' in n or n.endswith(('.json', '.gz'))][0])
+        z = zipfile.ZipFile(io.BytesIO(raw)); raw = z.read([n for n in z.namelist() if n.endswith(('.json', '.json.gz'))][0])   # the zip from 30 Oct also holds the recording
     L = json.loads(gzip.decompress(raw) if raw[:2] == b'\x1f\x8b' else raw)
     for e in L.get('log', []):
         if e.get('codez'): e['code'] = gzip.decompress(base64.b64decode(e.pop('codez'))).decode('utf-8')

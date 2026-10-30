@@ -295,6 +295,9 @@ body.rm .wc-mr.fresh,body.rm .wc-coins.go i,body.rm .wc-mr b.flash{animation:non
 @keyframes pnBlink{50%{opacity:.25}}
 .pn-tag .pn-s{color:#9be7b8;flex:1 0 100%;word-break:break-all;font-size:11px}
 body.rm .pn-tag .pn-r i{animation:none}
+.pn-tag .pn-x,.pn-tag .pn-q{flex:1 0 100%;color:var(--amber);font-weight:700;font-size:11.5px}   /* the microphone watch (30 Oct 2026) */
+.pn-tag.rec.lost{border-color:var(--amber)}
+#tPnLast .pn-warn{color:var(--amber)}
 @media print{.pn-tag{display:none}}
 /* while the screen's name shows, a briefing's frame sits to the right of it, so the tag never covers the caption */
 body.pn-shown .bf-layer{box-sizing:border-box;padding:0 12px 0 calc(max(150px,13vw - 14px) + 12px)}
