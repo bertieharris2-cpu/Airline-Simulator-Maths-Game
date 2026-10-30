@@ -67,7 +67,8 @@ function handDay(V, D){
   flights.forEach(f => { const R = V.routes[f.route], P = V.aircraft[f.planeId], leg = Math.round(R.km / P.speedKmh * 60);
     f.revenue = f.sold * f.fare; f.flying = Math.round(P.hourlyCost * 2 * leg / 60); f.landing = V.home.landingFee + (R.landingFeeAway || 0); f.runCost = f.flying + f.landing;
     f.litres = Math.round(P.fuelPer100Km * 2 * R.km / 100 / 10) * 10; f.charge = f.sold * V.home.passengerCharge;
-    if(D.free) f.fuelCost = 0; else { let need = f.litres, v = 0; while(need > 1e-9 && lots.length){ const x = lots[0], u = Math.min(x.L, need); v += u * x.p; x.L = r2(x.L - u); need -= u; if(x.L <= 1e-9) lots.shift(); }
+    if(D.free) f.fuelCost = 0; else if(D.asBurned) f.fuelCost = r2(f.litres * D.priceToday);   // v6.2: before the Fuel desk opens, fuel is bought as it is burned, at the day's price
+    else { let need = f.litres, v = 0; while(need > 1e-9 && lots.length){ const x = lots[0], u = Math.min(x.L, need); v += u * x.p; x.L = r2(x.L - u); need -= u; if(x.L <= 1e-9) lots.shift(); }
       if(need > 1e-9){ const L = Math.ceil(need - 1e-9), ppl = r2(D.priceToday + (V.settings.emergencyFuelPremium || 0)); v += L * ppl; emergency = r2(emergency + L * ppl); } f.fuelCost = r2(v); }
     fuelUsed = r2(fuelUsed + f.fuelCost); });
   const over = D.fleet.reduce((t, id) => t + (V.aircraft[id].dayCost || 0), 0), revenue = flights.reduce((t, f) => t + f.revenue, 0), run = flights.reduce((t, f) => t + f.runCost, 0), charge = flights.reduce((t, f) => t + f.charge, 0);
@@ -149,6 +150,8 @@ const HOOKS = `(() => { const N = window.__num = { boards:{}, days:{}, moves:[],
     await shot(p, `${save}-review`);
     const end = await J(p, `({ day:S.day, step:step().t, cash:S.cash, fuelWeeks:S.fuelWeeks, wk:S.wk && { from:S.wk.from, projected:S.wk.projected, rows:S.wk.rows.map(r => ({ d:r.d, pax:r.pax, seats:r.seats, trips:r.trips, rev:r.rev, cost:r.cost, profit:r.profit })) },
       hist:(S.history || []).filter(h => h.type === 'day' || h.type === 'setup').map(h => ({ from:h.from, revenue:h.revenue, costs:h.costs, profit:h.profit, cash:h.cash, pax:h.pax, seats:h.seats, trips:h.trips, routes:h.routes })), ledger:S.ledger, N:window.__num })`);
+    // week 1 (30 Oct): the accounts open on Finance's example; My turn shows his own week, which is what is checked
+    if(await p.$('.c1-cursor, #c1Cursor, #c1MyTurn')){ await p.waitForSelector('#c1MyTurn', { timeout:30000 }).catch(() => {}); if(await p.$('#c1MyTurn')){ await p.click('#c1MyTurn'); await p.waitForTimeout(400); } }
     const dom = await p.evaluate(() => { const sh = document.querySelector('[data-ash]'); return { cells:sh ? Object.fromEntries([...sh.querySelectorAll('[data-ref]')].map(c => [c.getAttribute('data-ref'), c.textContent.trim()])) : null, cash:document.getElementById('cCash').textContent, screen:document.getElementById('screen').innerText.replace(/\s+/g, ' ') }; });
     await p.close();
     return { save, label, start, msgs, results, end, dom };
@@ -178,7 +181,8 @@ const HOOKS = `(() => { const N = window.__num = { boards:{}, days:{}, moves:[],
         // cash: the day's results move the cash by the profit plus the fuel burned (paid when bought); the other moves since the last results explain the rest
         const res = N.moves.find(m => m.day === d && m.what === 'the day\'s results'), i0 = N.moves.indexOf(res), prevRes = N.moves.slice(0, i0).map((m, i) => [m, i]).filter(([m]) => m.what === 'the day\'s results').pop(), since = N.moves.slice(prevRes ? prevRes[1] + 1 : 0, i0 + 1);
         const explained = r2(since.reduce((t, m) => t + m.amount, 0)), change = r2(L.cashAfter - prevCash);
-        if(!res || !near(res.amount, L.profit + L.fuelUsed) || !near(explained, change)) bad.cash.push({ d, change, explained, results:res && res.amount, profit:L.profit, fuelUsed:L.fuelUsed, moves:since.map(m => [m.what, m.amount]) });
+        const paidBefore = !(d < +(V.settings.fuelDeskOpensDay || V.settings.fuelDeskFromDay || 8) && !(N.lotsAt[d] || []).length);   // v6.2: before the Fuel desk opens, fuel is paid the day it is burned
+        if(!res || !near(res.amount, L.profit + L.fuelUsed) || !near(explained - (paidBefore ? 0 : L.fuelUsed), change))   // bought as burned: the day's fuel is paid out the same day bad.cash.push({ d, change, explained, results:res && res.amount, profit:L.profit, fuelUsed:L.fuelUsed, moves:since.map(m => [m.what, m.amount]) });
         dayLog[d] = { profit:h.profit, change, moves:since.filter(m => m.what !== 'the day\'s results').map(m => `${m.what} ${money(m.amount)}`) };
         prevCash = L.cashAfter; }
     });
@@ -201,7 +205,7 @@ const HOOKS = `(() => { const N = window.__num = { boards:{}, days:{}, moves:[],
     const rd = start.rounds[d] || {}, quiet = !rd.competitor && !Object.keys(rd.demandMod || {}).length && !rd.eventId && !L.eventCost && !(L.weekMods && Object.keys(L.weekMods).length) && L.rep === 3 && !(L.extras && L.extras.crew) && !(L.extras && L.extras.obRev);
     if(!quiet){ info(`${label}: day ${d} is not worked by hand (a rival, an event, a modifier, a changed reputation or a second crew that day)`, { rd, eventCost:L.eventCost, rep:L.rep, weekMods:L.weekMods }); return; }
     const fl = L.flights.filter(f => !f.grounded && !f.cancelled && !f.noFuel); if(fl.length !== L.flights.length){ info(`${label}: day ${d} is not worked by hand (a flight did not fly)`); return; }
-    const H = handDay(V, { flights:fl.map(f => ({ route:f.route, dep:f.dep, planeId:f.planeId, fare:f.price, key:f.key })), fleet:L.fleet, lots:N.lotsAt[d] || [], free:!!start.free[d], priceToday:V.calendarFuel[d], rep:L.rep });
+    const H = handDay(V, { flights:fl.map(f => ({ route:f.route, dep:f.dep, planeId:f.planeId, fare:f.price, key:f.key })), fleet:L.fleet, lots:N.lotsAt[d] || [], free:!!start.free[d], asBurned:d < +(V.settings.fuelDeskOpensDay || V.settings.fuelDeskFromDay || 8) && !(N.lotsAt[d] || []).length, priceToday:V.calendarFuel[d], rep:L.rep });
     const diff = []; H.flights.forEach(f => { const g = fl.find(x => x.key === f.key); const want = { sold:f.sold, revenue:f.revenue, runCost:f.runCost, fuelL:f.litres, fuelCost:f.fuelCost, termCost:f.charge }, got = { sold:g.sold, revenue:g.revenue, runCost:g.runCost, fuelL:g.fuelL, fuelCost:g.fuelCost, termCost:g.termCost };
       Object.keys(want).forEach(k => { if(!near(want[k], got[k])) diff.push(`${f.key} ${V.routes[f.route].city} ${String(Math.floor(f.dep / 60)).padStart(2, '0')}:${String(f.dep % 60).padStart(2, '0')} ${k}: by hand ${want[k]}, game ${got[k]}`); }); });
     if(!near(H.revenue, h.revenue) || !near(H.costs, h.costs) || !near(H.profit, h.profit)) diff.push(`day: by hand revenue ${H.revenue} costs ${H.costs} profit ${H.profit}; game ${h.revenue} ${h.costs} ${h.profit}`);

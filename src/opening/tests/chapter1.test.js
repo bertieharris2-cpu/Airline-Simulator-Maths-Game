@@ -1,0 +1,71 @@
+// Run: NODE_PATH=<playwright node_modules> node chapter1.test.js   (env: GAME, OUT)
+// Chapter one end to end (Fable's hand-off 1, section 7; Bertie's hand-off 2, section 0: "a quick check that runs chapter one
+// end to end after each change"). A new TEST airline (testStart) is played from Launch Day to the chapter-one review with the
+// teacher's toolkit (Run, its answers and auto-plan; a second Twin Otter joins at the start of week 3), and the rules checked:
+//   - no event cards and no news in chapter one (parked); no snacks;
+//   - the second-plane shop opens on day 15, not before;
+//   - at most two counted questions at every pause, and none between pauses (week one's four one-off calculations aside);
+//   - Launch Day's fuel is charged at the workbook's price and is in Total costs;
+//   - the build stops at the chapter-one review with the one card; every chapter-one Jump to… save loads.
+// It prints the questions asked at each pause (the record's Calculate entries), for the run-through.
+const { chromium } = require('playwright');
+const path = require('path'), fs = require('fs'), os = require('os');
+const ROOT = path.resolve(__dirname, '../../..'), FILE = 'file://' + path.resolve(ROOT, process.env.GAME || 'airline-opening-prototype.html');
+const OUT = (process.env.OUT || os.tmpdir() + '/airline-chapter1') + '/'; fs.mkdirSync(OUT, { recursive:true });
+let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok  ', m); } else { fail++; console.log('  FAIL', m); } };
+(async () => {
+  const b = await chromium.launch(), p = await b.newPage({ viewport:{ width:1366, height:768 } }), errs = [];
+  p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept());
+  await p.goto(FILE); await p.waitForTimeout(800);
+  await p.evaluate(() => { const s = window.__sim.settings(); s.flightSecs = 0.2; s.autoWall = false; s.opsSound = false; });
+  await p.evaluate(() => window.__tk.enter()); await p.waitForTimeout(200); await p.evaluate(() => window.__c1.testStart()); await p.waitForTimeout(300);
+  const E = s => p.evaluate(x => window.__sim.evalIn(x), s), J = async s => JSON.parse(await E(s));
+  const at = () => J('JSON.stringify({ day:S.day, t:step().t })');
+  console.log('TEST start');
+  const t0 = await J("JSON.stringify({ name:S.airline.name, test:!!S.test, fleet:S.fleet.map(f => f.planeId), steps:S.steps.map(x => x.t).slice(0, 4), cash:S.cash })");
+  ok(t0.test && t0.fleet.join() === 'dhc6' && !['name', 'code', 'logo', 'paint'].some(x => t0.steps.includes(x)), `a TEST airline (${t0.name}) at Launch Day with the launch-deal Twin Otter; no naming, livery or plane design (${t0.steps.join(' → ')})`);
+  ok(await E('shopPlanes(14).length') === 0 && await E('shopPlanes(15).length') > 0, 'the second-plane shop opens on day 15 (nothing to buy on day 14)');
+  ok(await E("JSON.stringify((WORLD.routeNews || []).filter(n => n.start && dayOfDate(n.start) <= ch1End()).map(n => n.id))") === '[]', 'no route news is dated in chapter one');
+  const OPEN = ['#enterHq', '#chGo', '#nx:not([disabled])', '#startDay'], types = {}, pauseDays = new Set([1]), snacks = [];
+  let fuel1 = null;
+  const step = async stop => { const d0 = await at();
+    if(['boot', 'chapter', 'brief1'].includes(d0.t)){ for(const sel of OPEN){ if(await p.$(sel)){ await p.click(sel); await p.waitForTimeout(400); return; } } }
+    await p.evaluate(s => window.__tk.run(s), stop); await p.waitForTimeout(60);
+    const d1 = await at(); if(d1.day === d0.day && d1.t === d0.t){ for(const sel of OPEN){ if(await p.$(sel)){ await p.click(sel).catch(() => {}); await p.waitForTimeout(300); break; } } } };
+  const look = async () => { const d = await at(); (types[d.t] = types[d.t] || []).push(d.day);
+    const ph = await E("(roundData(S.round) || {}).weekPhase || ''"); if(['plan', 'review', 'weekReview', 'workings', 'chapterReview'].includes(d.t) || ph === 'plan' || ph === 'review') pauseDays.add(d.day);
+    if(await E("(typeof snacksOn === 'function' && snacksOn()) || !!document.getElementById('stOb')")) snacks.push(d.day);
+    if(d.day === 1 && ['workings', 'ready', 'plan'].includes(d.t)){ const f = await J("(() => { const pl = currentPlan(), L = planLines(pl), litres = plannedLitres(pl), price = fuelOn(1); return JSON.stringify({ litres:Math.round(litres), price, fuel:Math.round(litres * price), cost:Math.round(L.v.cost || 0) }); })()"); if(f.litres > 0) fuel1 = f; }
+    return d; };
+  // Launch Day's plan: open it, plan it (the toolkit's auto-plan) and read the fuel at the launch price in Total costs
+  for(let g = 0; g < 12; g++){ const d = await at(); if(d.t === 'plan') break; await step('plan'); }
+  await p.evaluate(() => window.__tk.autoPlan()); await p.waitForTimeout(300);
+  fuel1 = await J("(() => { const pl = currentPlan(), L = planLines(pl), litres = plannedLitres(pl), price = fuelOn(1); return JSON.stringify({ litres:Math.round(litres), price, fuel:Math.round(litres * price), vfuel:Math.round(L.v.fuel || 0), cost:Math.round(L.v.cost || 0), paid:fuelPaid() }); })()");
+  for(let g = 0; g < 500; g++){ const d = await look(); if(d.t === 'chapterReview' || d.t === 'protoEnd' || d.day >= 118) break;
+    if(d.day === 15 && d.t === 'plan' && !(await E('S.c1plane || 0'))){ await E("(S.c1plane = 1, acquirePlane(planeById('dhc6'), 'buy'), render(), 1)"); await p.evaluate(() => window.__tk.autoPlan()); }
+    await step(d.day < 15 && !(await E('S.c1plane || 0')) ? 'plan' : d.day < 35 ? 'review' : 'plan'); }
+  for(let g = 0; g < 40; g++){ const d = await look(); if(d.t === 'protoEnd') break; await step('review'); }
+  console.log('Launch Day fuel'); const h1 = await J('JSON.stringify(S.history.find(h => h.from === 1) || null)');
+  ok(fuel1 && fuel1.litres > 0 && fuel1.price === +(await E("+((String(WBS().fuelLaunchDay || '').match(/£(\\d+(?:\\.\\d+)?)/) || [])[1] || 0)")) && fuel1.cost >= fuel1.fuel, `fuel is charged on Launch Day at the workbook's price (${fuel1 ? `${fuel1.litres} L at £${fuel1.price} = £${fuel1.fuel}` : 'not found'})`);
+  ok(h1 && h1.fuelPaid > 0 && fuel1 && h1.costs === fuel1.cost, `the Launch Day results' Total costs are the plan's, fuel included (£${h1 && h1.costs})`);
+  console.log('Parked: events, news, snacks'); ok(!types.event, `no event card in chapter one${types.event ? ' (days ' + types.event.join(', ') + ')' : ''}`);
+  ok(!snacks.length, `no snacks control or cabin sales${snacks.length ? ' (days ' + [...new Set(snacks)].join(', ') + ')' : ''}`);
+  console.log('Questions at each pause'); const Q = await J(`JSON.stringify((rec().entries || []).filter(e => e.type === 'calc').map(e => ({ key:e.key, day:e.day, pause:c1PauseOf(e.day), q:e.question || e.doc || '' })))`);
+  const by = {}; Q.forEach(e => (by[e.pause] = by[e.pause] || []).push(e));
+  Object.keys(by).sort((a, z) => a - z).forEach(k => { const keys = [...new Set(by[k].map(e => e.key))]; console.log(`    ${k === '1' ? 'Launch Day' : 'pause ' + k} (${by[k][0] && by[k][0].day ? 'day ' + [...new Set(by[k].map(e => e.day))].join('/') : ''}): ${keys.length} · ${keys.join(' | ')}`); });
+  const over = Object.entries(by).filter(([k, l]) => new Set(l.map(e => e.key)).size > 2); ok(!over.length, `never more than two counted questions a pause${over.length ? ' (over: ' + over.map(([k]) => k).join(', ') + ')' : ''}`);
+  const wk1 = new Set(Q.filter(e => e.day <= 7 && e.pause < 8).map(e => e.key)).size; ok(wk1 <= 4, `week one's one-off calculations: ${wk1} (up to four)`);
+  // every pause is a Sunday review or a Monday plan (from week 5 the review opens the Monday; the months start on a Monday)
+  const wd = await J(`JSON.stringify(Object.fromEntries(${JSON.stringify([...new Set(Q.map(e => e.day))])}.map(d => [d, calDate(d).getUTCDay()])))`);
+  const mid = Q.filter(e => e.day > 7 && ![0, 1].includes(wd[e.day])); ok(!mid.length, `no questions between pauses${mid.length ? ' (' + mid.map(e => e.key + ' day ' + e.day).join(', ') + ')' : ''}`);
+  console.log('The end of the build'); const end = await J("JSON.stringify({ t:step().t, text:(screen().textContent || '').replace(/\\s+/g, ' '), next:!!document.getElementById('peNext'), fin:!!S.finished, day:S.day })");
+  ok(end.t === 'protoEnd' && /End of chapter one/.test(end.text) && !end.next, `the chapter-one review ends with the one card, no way on (${end.t}, day ${end.day})`);
+  await p.screenshot({ path:OUT + 'end.png' });
+  console.log('Briefings seen', await E("JSON.stringify(Object.keys((S.brief || {}).seen || {}))"));
+  console.log('Chapter-one jumps'); const dir = path.join(__dirname, 'fixtures', 'jumps-ch1'), idx = fs.existsSync(path.join(dir, 'index.json')) ? JSON.parse(fs.readFileSync(path.join(dir, 'index.json'), 'utf8')) : [];
+  ok(idx.length >= 7, `${idx.length} chapter-one TEST saves (Launch Day, P1–P5, the review)`);
+  for(const j of idx){ const r = await p.evaluate(c => { try{ const s = window.__sim.loadCode(c); return { day:s.day, test:!!s.test }; }catch(e){ return { err:e.message }; } }, fs.readFileSync(path.join(dir, j.file), 'utf8').trim());
+    ok(!r.err && r.day === j.day, `${j.label} loads on day ${r.day}${r.err ? ' — ' + r.err : ''}`); }
+  ok(!errs.length, `no page errors${errs.length ? ': ' + errs.slice(0, 3).join(' | ') : ''}`);
+  console.log(`\n${pass} ok, ${fail} failed`); await b.close(); process.exit(fail ? 1 : 0);
+})();

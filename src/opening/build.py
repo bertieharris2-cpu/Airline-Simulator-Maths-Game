@@ -60,6 +60,22 @@ for f in sorted(glob.glob(os.path.join(HERE, 'tests', 'fixtures', 'jumps', 'day-
     if not code.startswith('ASIM5.'): continue
     raw = base64.b64decode(code[6:]).decode('utf-8')
     jumps['d%d' % d] = {'label': JUMP_LABELS.get(d, 'Day %d' % d), 'day': d, 'gz': base64.b64encode(gzip.compress(raw.encode('utf-8'), 9)).decode('ascii')}
+# chapter one (30 Oct 2026): TEST saves at each pause, made by tools/make_ch1_jumps.js; while the build ends after chapter one
+# (Settings buildEndsAfterChapter = 1) they replace the Steady path's jumps, which would land past the end of the build
+C1J = os.path.join(HERE, 'tests', 'fixtures', 'jumps-ch1')
+if os.path.exists(os.path.join(C1J, 'index.json')):
+    try:
+        wbj = json.loads(re.search(r'id="data-workbook">(.*?)</script>', p2, re.S).group(1))
+        ends = int(float(str((wbj.get('settings') or {}).get('buildEndsAfterChapter') or 0) or 0))
+    except Exception:
+        ends = 0
+    if ends == 1:
+        jumps = {}
+    for k, row in enumerate(json.load(open(os.path.join(C1J, 'index.json'), encoding='utf-8'))):
+        code = open(os.path.join(C1J, row['file']), encoding='utf-8').read().strip()
+        if not code.startswith('ASIM5.'): continue
+        raw = base64.b64decode(code[6:]).decode('utf-8')
+        jumps['c1p%d' % k] = {'label': row['label'], 'day': row['day'] + k / 100.0, 'gz': base64.b64encode(gzip.compress(raw.encode('utf-8'), 9)).decode('ascii')}
 p2 = p2 + '<script type="application/json" id="data-jumps">%s</script>' % json.dumps(jumps, separators=(',', ':'))
 print(len(jumps), 'test airlines for Jump to… (%d KB)' % (sum(len(j['gz']) for j in jumps.values()) // 1024))
 p2 = p2.replace('<!--PHOTOS-->', '<script type="application/json" id="data-photos">%s</script>' % json.dumps(photos, separators=(',', ':')))

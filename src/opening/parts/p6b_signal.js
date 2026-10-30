@@ -242,7 +242,7 @@ function c1ReviewRender(st){
   if(!exOn && a && /:mean$/.test(a.id) && wk === 2 && W.c1sum === 'done') a.lineBuild = c1T('review.sum.done', sp.tv).text.map(t => c1Html(t)).join(' ');
   if(!exOn && sp.offer) sp.doneLine = c1T('review.total.clickDone', sp.tv).text.map(t => c1Html(t)).join(' ');
   const body = `<div class="bv rv2 rbw ash-rv c1-rv ${a || sp.offer || exOn ? 'c1-busy' : ''} ${exOn ? 'c1-ex' : ''}">${what}<div class="rv2-col rv2-mid">${exOn ? `<div class="c1-exf"><span class="c1-exl">${esc(c1T('review.example.label').eyebrow || 'EXAMPLE · MADE-UP NUMBERS')}</span><span class="c1-exw" aria-hidden="true">EXAMPLE</span>` : ''}${ashHtml(sp)}${exOn ? '</div>' : ''}</div><div class="rv2-col rv2-ins c1-ins">${ins}</div></div>`;
-  const dl = d => dateLong(d).split(' '), sub = exOn ? c1T('review.example.sub').text[0] : `Your ${wk === 1 ? 'first ' : ''}week of flying, ${dl(W.from).slice(0, 2).join(' ')} to ${dl(W.from + 6).slice(0, 3).join(' ')}`;
+  const dl = d => dateLong(d).split(' '), sub = exOn ? c1T('review.example.sub').text[0] : `Your ${wk === 1 ? 'first ' : ''}week of flying, ${dl(W.from).slice(0, 2).join(' ')} to ${dl(W.from + 6).slice(0, 3).join(' ')} · Passengers ${num(h.pax)} of ${num(h.seats)} seats · cash ${money(Math.round(S.cash))}`;
   const btn = allOk ? `<button class="bv-btn go big" id="nx">Plan week ${wk + 1} &#9654;</button>` : '';
   screen().innerHTML = shell(deskPage({ title:`How did week ${wk} go?`, sub, cls:'rbw-page rv-page rv2-page ash-rvp c1-rvp', body }), deskBar(`Sunday accounts · week ${wk}${exOn ? ' · watch first' : ''}`, btn));
   ashBind(sp); c1ReviewBind(sp, W, exOn);

@@ -97,3 +97,50 @@ function c1DifferenceDue(day){ if(!ch1(day)) return null; const wk = weekNo(day 
   if(wk < 4) return false; const S2 = S.c1 || (S.c1 = {}), last = S2.diffWeek || 0;
   return last === 0 || wk - last >= 3; }
 function c1DifferenceAsked(day){ const S2 = S.c1 || (S.c1 = {}); S2.diffWeek = weekNo(day || S.day); }
+/* from week 5 the Sunday review is the game's own (p5v): its difference from the plan comes about every third pause, when there
+   is room, and the choice is kept on the week so it does not change between redraws */
+const c1Items0 = weekReviewItems;
+weekReviewItems = function(W, h){ const it = c1Items0.apply(this, arguments); if(!c1Count() || !W || !W.from || weekNo(W.from) <= 4 || !Array.isArray(it)) return it;
+  const k = W.c1diff !== undefined ? W.c1diff : (W.c1diff = !!(c1DifferenceDue(W.from + 6) && c1Room()));
+  if(!k) return it.filter(x => x.id !== 'diff');
+  if(!W.c1marked){ W.c1marked = true; c1DifferenceAsked(W.from + 6); } return it; };
+/* the Changes sheet's difference is counted only while the pause has room; otherwise he builds it as a formula (not counted) */
+if(typeof ashChangeSpec === 'function'){ const c1Chg0 = ashChangeSpec;
+  ashChangeSpec = function(){ const sp = c1Chg0.apply(this, arguments);
+    try{ const a = sp && sp.act; if(c1Count() && a && a.how !== 'formula' && !(rec().entries || []).some(e => e.key === a.recKey) && !c1Room()){ a.how = 'formula';
+      // built as a formula, the sheet works it out: its answer is not a Calculate in the record (the build is recorded as a Formula)
+      const ans0 = a.answer; a.answer = function(){ const o = recOpen, t = recAttempt; recOpen = () => null; recAttempt = () => {}; try{ return ans0.apply(this, arguments); } finally { recOpen = o; recAttempt = t; } }; } }catch(e){}
+    return sp; }; }
+
+/* ---------- 4. teacher test mode: testStart and the chapter-one pauses (hand-off 1, section 1; hand-off 2, section 0) ----------
+   testStart: a new TEST airline at Launch Day with a default name and the launch-deal Twin Otter in its default livery; no
+   naming, livery or plane design. It lives in the toolkit's TEST slots (the pupil's game is put aside by test mode), is
+   labelled TEST and writes nothing to the pupil's record. The chapter-one pauses (Launch Day, P1 to P5, the chapter-one
+   review) are TEST saves made by tools/make_ch1_jumps.js with the toolkit and embedded by the build in Jump to…. */
+const C1_ID_STEPS = ['welcome', 'name', 'code', 'logo', 'paint', 'reveal', 'cert'];
+function c1TestStart(){
+  if(!settings.testMode && window.__tk) window.__tk.enter();   // a TEST copy first, so the pupil's game is saved apart and untouched
+  const s = newState(); S = s;
+  s.airline.name = String(WBS().testAirlineName || 'TEST Air'); s.airline.code = s.airline.flightCode = String(WBS().testAirlineCode || 'TE').toUpperCase().slice(0, 2);
+  buyPlane(planeById('dhc6'));   // the launch-deal Twin Otter, default livery and registration
+  s.steps = s.steps.filter(x => !C1_ID_STEPS.includes(x.t)); s.si = 0;
+  s.test = { id:'t' + Date.now().toString(36) + Math.floor(Math.random() * 1e4), label:'TEST start · Launch Day', made:Date.now(), from:'' };
+  UI.view = null; save(); render(); toast('A new TEST airline at Launch Day. Nothing here counts.');
+  return true;
+}
+/* the button beside Jump to… on the test bar's tools and in the teacher panel's Testing box */
+function c1TestButtons(){
+  const add = (anchor, cls) => { if(!anchor || anchor.parentNode.querySelector('[data-c1start]')) return;
+    anchor.insertAdjacentHTML('afterend', `<button class="${cls}" data-c1start title="A new TEST airline at Launch Day: no naming, livery or plane design">New TEST airline at Launch Day</button>`); };
+  add(document.getElementById('tkJump'), 'tk-b'); add(document.getElementById('tJump'), 'btn small');
+}
+document.addEventListener('click', e => { const b = e.target && e.target.closest && e.target.closest('[data-c1start]'); if(!b) return; e.preventDefault(); try{ if(typeof teacherClose === 'function') teacherClose(); }catch(err){} c1TestStart(); }, true);
+new MutationObserver(() => { try{ c1TestButtons(); }catch(e){} }).observe(document.documentElement, { childList:true, subtree:true });
+window.__c1 = { testStart:c1TestStart, pauseOf:c1PauseOf, asked:(p, all) => c1Asked(p, all), budget:c1Budget, ch1End };
+
+/* ---------- 5. rule changes (hand-off 1, section 5) ----------
+   Four services are found by trial and error: no tip tells him another flight would fit (the idle-plane tip is not shown in
+   chapter one). Launch Day fuel, the shop from day 15, the fuel order without a sum and the what-if sheet are in the parts
+   that draw them (p6b, p6c) and in the workbook. */
+const c1Tips0 = planTipsFor;
+planTipsFor = function(){ const t = c1Tips0.apply(this, arguments); return ch1() && Array.isArray(t) ? t.filter(x => x && x.id !== 'idle_plane') : t; };

@@ -1,0 +1,37 @@
+[
+ {
+  "file": "ch1-0.txt",
+  "label": "Chapter one · Launch Day (TEST start)",
+  "day": 1
+ },
+ {
+  "file": "ch1-1.txt",
+  "label": "Chapter one · P1 · Sun 8 Sep: week 1 accounts",
+  "day": 7
+ },
+ {
+  "file": "ch1-2.txt",
+  "label": "Chapter one · P2 · Sun 15 Sep: week 2 accounts",
+  "day": 14
+ },
+ {
+  "file": "ch1-3.txt",
+  "label": "Chapter one · P3 · Sun 22 Sep: week 3 accounts",
+  "day": 21
+ },
+ {
+  "file": "ch1-4.txt",
+  "label": "Chapter one · P4 · Sun 29 Sep: week 4 accounts",
+  "day": 28
+ },
+ {
+  "file": "ch1-5.txt",
+  "label": "Chapter one · P5 · Mon 7 Oct: week 5 accounts",
+  "day": 36
+ },
+ {
+  "file": "ch1-6.txt",
+  "label": "Chapter one · the chapter-one review · Sat 28 Dec",
+  "day": 118
+ }
+]

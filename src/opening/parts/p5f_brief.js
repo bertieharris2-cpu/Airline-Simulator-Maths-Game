@@ -164,7 +164,7 @@ function bfAfterRender(){
     const data = bfFuelData(); if(data) bfOpen('fuel_cash_tank_profit', data, () => render());
   }
   // 13 · Can you afford to run it? (Fable, 18 Oct; year one): week 2's Fuel desk, straight after Cash, tank, profit and before the first order
-  if(fuelHere && bfC2FDue() && bfS().seen.fuel_cash_tank_profit && !(S.fo && S.fo.last && S.fo.last.day >= from) && !bfCur && !document.getElementById('bfLayer')) bfCashToFly('fuel');
+  if(fuelHere && bfC2FDue('fuel') && bfS().seen.fuel_cash_tank_profit && !(S.fo && S.fo.last && S.fo.last.day >= from) && !bfCur && !document.getElementById('bfLayer')) bfCashToFly('fuel');
   if(st.t === 'hq' && !UI.view) bfHomeShelf(root);
   bfMore(st, root);
 }
@@ -193,7 +193,7 @@ function bfMore(st, root){
   // 3 · More demand than seats: the week-1 review, when people were turned away
   if(st.t === 'weekReview' && weekNo(S.day || 1) === 1 && !seen.full_route && bfHas('full_route')){ const data = bfCapacityData(); if(data){ bfOpen('full_route', data, () => render()); return; } }
   // 13 · Can you afford to run it?: the week-2 shop, if the pupil gets there before the Fuel desk (before the comparison, before Buy)
-  if(st.t === 'shop2' && bfC2FDue()){ if(bfCashToFly('shop')) return; }
+  if(st.t === 'shop2' && bfC2FDue('shop')){ if(bfCashToFly('shop')) return; }
   // 6 · Two planes, one route: the first comparison in the shop
   if(st.t === 'shop2' && typeof acCompareOn === 'function' && acCompareOn() && !seen.aircraft_efficiency && bfHas('aircraft_efficiency')){ const data = bfEffData(); if(data){ bfOpen('aircraft_efficiency', data, () => render()); return; } }
   // 7 · How long will it take?: the first Flight times page
@@ -341,7 +341,11 @@ function bfFuelData(){
 /* 13 · Can you afford to run it? (Fable's brief, 18 Oct 2026; D103): the engine's projection of the pupil's plan for this week, day by
    day (litres, takings, the other costs), the cash and reserve, the price of a block, the planes and the shop's cheapest plane
    (flying a week like one of the pupil's). It plays once, in year one, in week 2; the line drawn becomes the pupil's reserve. */
-const bfC2FDue = () => bfOn() && bfHas('cash_to_fly') && !bfS().seen.cash_to_fly && typeof yearOne === 'function' && yearOne() && weekNo(S.day || 1) === 2 && S.phase === 'round';
+/* the week the shop opens (Settings secondPlaneShopFromDay, v6.2: day 15, week 3): from then it plays in the shop, before his first
+   plane purchase; before v6.2 it was week 2, at the Fuel desk or the shop, whichever came first */
+const bfC2FWeek = () => { const d = +WBS().secondPlaneShopFromDay || 0; return d ? weekNo(d) : 2; };
+const bfC2FDue = where => bfOn() && bfHas('cash_to_fly') && !bfS().seen.cash_to_fly && typeof yearOne === 'function' && yearOne() && S.phase === 'round'
+  && (bfC2FWeek() === 2 ? weekNo(S.day || 1) === 2 : weekNo(S.day || 1) >= bfC2FWeek() && where === 'shop');
 function bfCashToFlyData(){
   if(!S || !S.fleet || !S.fleet.length) return null;
   const blk = fuelBlock(), ppl = fuelPrice(), wk = weekNo(S.day || 1), mon = (wk - 1) * 7 + 1, pl = currentPlan(), WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], WL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
