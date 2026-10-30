@@ -1,0 +1,78 @@
+Play notes 30 Oct 2026 19:15 (10 min 14 s), transcribed with the medium.en model and placed on the screens from the log.
+
+00:00  START
+00:00  Chapter · Week 1 · Mon 2 Sep
+00:05  “I don't actually think we need this page. I don't think the pupils are going to read it. I think we could have chapter one come up and the date, but we don't need the starting out and what's arriving in this chapter, especially not in this form, because they're just not going to read it. Choose where to fly. I actually don't think we need this because”
+00:06  ★ MARK
+00:28  Launch Day intro · Week 1 · Mon 2 Sep
+00:30  Choose where to fly · Week 1 · Mon 2 Sep
+00:32  Studio · Week 1 · Mon 2 Sep
+00:37  “it might mislead the pupils and thinking they can only choose one. And then it later on when you add more networks, it just takes you away from the other page. And I'm not sure it's necessary. Now this is looking much better. But where you add a flight, those buttons, they should be a different color to the flights on the schedule because it”
+00:56  ★ MARK
+01:03  ★ MARK
+01:14  “not makes it less obvious how to add them. I think also the duration of the flight should be underneath where it says Dublin, maybe just to make the button a little bit shorter width ways. We've got view trade offs. I don't think is necessary at this point. We're still introducing them into the game. And the notification of the yellow two draws your eye there. And actually, it's not that relevant to them.”
+01:45  “Compare aircraft is also not really needed here. And work it out draws your attention. But it I'm assuming does the same as work out my plan. So I'm not sure that's necessary. I'm only a bit concerned as to when we add more planes as to where the add flight buttons go.”
+02:18  “We'll cross that bridge then the slider on this still doesn't work. I've mentioned it before. So the slider where you fill the seats to more money for each ticket that does not go up and down. I think I like the call out but the workings start really quickly before you've kind of come to I'd also like before it comes up.”
+02:23  Briefing: What a fare does · Week 1 · Mon 2 Sep
+03:15  Sums · Week 1 · Mon 2 Sep
+03:18  ★ MARK
+03:36  “For the title for this to be calculate the ticket revenues for each flight at each fair or something shorter. And then I'd like it to show the mouse clicking on B2 and it turning the border being a different color like in Excel.”
+03:55  “And then the mouse clicking the multiplication symbol, which we need to put a button of that somewhere. And then the mouse clicking B3, which also has a different color border.”
+04:08  “And then clicking enter. And then the call out can come up then just to show how you build the formula.”
+04:21  “And then maybe the next one is actually build the formula just to give them practice at that rather than working out on paper and encourage them to press enter to sort that out.”
+04:41  “And then the third one double it 90 pounds that can be the working out one and then he is.”
+04:50  “The next one, I think this should have come up before the E column is filled in it that felt a bit strange.”
+05:00  ★ MARK
+05:06  “Also, also this part the briefing hasn't come up. Oh, yeah, it has.”
+05:13  ★ MARK
+05:18  “But this feels going back to this page.”
+05:28  Studio · Week 1 · Mon 2 Sep
+05:36  ★ MARK
+05:38  “I I would like to be able to drag say Dublin over the top of Paris and swap places without me having to delete the flight and put it back there.”
+05:55  Studio: flight selected · Week 1 · Mon 2 Sep
+05:56  Studio · Week 1 · Mon 2 Sep
+06:03  Studio: flight selected · Week 1 · Mon 2 Sep
+06:04  “I'm also not sure on this page if we need that service costs button because I pressed it and that is an overwhelming page.”
+06:10  Studio · Week 1 · Mon 2 Sep
+06:11  Studio: flight selected · Week 1 · Mon 2 Sep
+06:25  Studio · Week 1 · Mon 2 Sep
+06:28  Studio: flight selected · Week 1 · Mon 2 Sep
+06:36  Sums · Week 1 · Mon 2 Sep
+06:39  “So I also think it might be worth showing.”
+06:59  ★ MARK
+07:00  “I don't know that 27 at 110 pounds.”
+07:05  “But where's that number actually come from?”
+07:10  “Because on the previous page, that wasn't the number.”
+07:19  “And then back to this, I feel like.”
+07:24  “One flight, two ways these numbers.”
+07:28  “Should be relevant to the numbers I've already selected.”
+07:32  “I don't know this calculation felt a little bit random.”
+07:37  “Now, it's difficult for me to know because I've obviously done this game quite a few times.”
+07:47  “So I know the optimum, but I think this needs to be more in tune with what the pupil is actually selecting.”
+08:04  “So if there's clearly a mistake or maybe in week one, we don't.”
+08:11  “But somehow this needs to only appear when to help the pupil.”
+08:17  “Improve or just show them, I think it.”
+08:23  “I know it's in the briefing, but this is more to show them how quickly that money builds up, even though it looks like.”
+08:35  “A hundred thirty, that's way too expensive because we're not filling the seats.”
+08:39  “Actually, that 40 pound difference is massive over time.”
+08:46  “Quite a short period. So I think that's the most of.”
+08:50  Ready to fly · Week 1 · Mon 2 Sep
+08:53  Take-off · Week 1 · Mon 2 Sep
+08:55  Operations Wall · Week 1 · Mon 2 Sep
+08:56  “My concerns that end of it just didn't feel like it flowed.”
+09:06  Take-off · Week 1 · Mon 2 Sep
+09:07  Operations Wall · Week 1 · Mon 2 Sep
+09:11  Operations Wall · Week 1 · Mon 2 Sep
+09:14  ★ MARK
+09:17  “Now, going back to the HQ, I don't feel like it makes sense to come back to here after day one.”
+09:18  Results · Week 1 · Mon 2 Sep
+09:19  ★ MARK
+09:24  “And I think maybe this is what I've been confused with, actually.”
+09:27  “So launch day. We close today.”
+09:30  Sums · Week 1 · Tue 3 Sep
+09:31  “And then we go into week one plan launch day should then.”
+09:35  ★ MARK
+09:39  “Go into the whole week and then in week two, we bring in the fuel, so maybe just bump everything along by a week.”
+09:51  “So their plan is repeated unless there are mistakes.”
+09:58  “So this is up for discussion, but what I don't want is to have to rework out stuff here when it's not necessary.”
+10:14  STOP

@@ -130,9 +130,22 @@ if(window.__tkSums) window.__tkSums.unshift({ what:'the what-if sheet', test:() 
 const C1_SNAP = 15;   // the quarter hour
 const c1TtOn = () => { const U = UI.s2; if(!ch1() || !U || U.mode !== 'plan' || U.menu || U.route || U.focus || UI.view) return false; try{ return step().t === 'plan'; }catch(e){ return false; } };
 const c1Snap = fn => { const keep = PLW_SNAP; PLW_SNAP = C1_SNAP; try{ return fn(); } finally { PLW_SNAP = keep; } };
+/* drag one flight over another on the same plane and they swap places (Bertie, 30 Oct 19:15: "drag say Dublin over the top
+   of Paris and swap places without me having to delete the flight and put it back"): each takes the other's start time,
+   then the turnarounds are worked out again */
+function c1Swap(j, k, k2){
+  const next = normPlan(JSON.parse(JSON.stringify(currentPlan()))), x = next.fleet[j]; if(!x || x.sched[k] === undefined || x.sched[k2] === undefined || k === k2) return false;
+  if(!x.deps || x.deps.length !== x.sched.length) x.deps = actualDeps(next, j);
+  const a = x.sched[k]; x.sched[k] = x.sched[k2]; x.sched[k2] = a; x.deps = actualDeps(next, j);
+  if(!withPlan(next, () => fitsFor(x))){ toast("Swapped, they wouldn't both fit in the day."); return false; }
+  UI.tlSel = { i:0, j, k:k2 }; setPlan(0, next); return true;
+}
+const c1Over = (e, b, j) => document.elementsFromPoint(e.clientX, e.clientY).find(el => el !== b && el.matches && el.matches('.c1-blk[data-c1b]') && +el.getAttribute('data-c1b').split('|')[0] === j);
 const c1Flown = pl => { const f = new Set(normPlan(pl).fleet.flatMap(x => x.sched)); return plannerOrder().filter(id => f.has(id)).concat([...f].filter(id => !plannerOrder().includes(id) && routeById(id))); };
 const c1TrayIds = pl => { const st = UI.s2 && UI.s2.startPlan ? c1Flown(UI.s2.startPlan) : [], f = c1Flown(pl).concat(st.filter(id => !c1Flown(pl).includes(id)));   // a route he flew at the start of this plan step keeps its token
-  return f.length ? f : plannerOrder().filter(id => normPlan(pl).fleet.some(x => planeCanFly(planeById(x.planeId), routeById(id)))); };
+  const all = plannerOrder().filter(id => normPlan(pl).fleet.some(x => planeCanFly(planeById(x.planeId), routeById(id))));
+  if(S.phase === 'setup' && ch1()) return all.concat(f.filter(id => !all.includes(id)));   // Launch Day: every route he can fly, with no route page first (19:15)
+  return f.length ? f : all; };
 const c1We = () => !!(UI.s2 && UI.s2.dt === 'weekend' && S2V.fd);
 const c1Hm = m => fmtTime(((m % 1440) + 1440) % 1440);
 /* a plane's flights in the day type on show: full-schedule index, times, turnaround, seats filled */
@@ -208,7 +221,7 @@ function c1TtHtml(pl, L){
       <div class="ad-lane c1-lane" data-lane="${j}" data-s0="${s0}" data-span="${span}" style="--c1-hrs:${span / 60}">${blocks || '<span class="c1-none">No flights yet: drag a route from Add a flight onto this plane.</span>'}</div><span class="c1-msg" aria-live="polite"></span></div>`; };
   const tray = c1TrayIds(pl);
   const T0 = c1T('tt.tray'), tokens = tray.map(id => { const r = routeById(id), x = pl.fleet.find(y => planeCanFly(planeById(y.planeId), r)) || pl.fleet[0], trip = x ? TIME.roundTrip(planeById(x.planeId), r) : 0;
-    return `<button class="c1-tok" data-c1add="${id}" title="Drag onto a plane to add a ${esc(r.city)} flight"><i class="c1-plus" aria-hidden="true">+</i>${flagSvg(r.flag, 16)}<b>${esc(r.city)}</b><span>${fmtDur(trip)} there and back</span></button>`; }).join('');
+    return `<button class="c1-tok" data-c1add="${id}" title="Drag onto a plane to add a ${esc(r.city)} flight"><i class="c1-plus" aria-hidden="true">+</i>${flagSvg(r.flag, 16)}<span class="c1-tokt"><b>${esc(r.city)}</b><span>${fmtDur(trip)} there and back</span></span></button>`; }).join('');
   const K = c1T('tt.key', { open:c1Hm(s0), close:c1Hm(e0) });
   const key = `<div class="c1-ttkey"><span><i class="k full"></i>seats ${Math.round(good * 100)}% full or more</span><span><i class="k room"></i>room to spare</span><span><i class="k turn"></i>turnaround: no flight can start here</span><span class="c1-kn">${esc(K.text[0] || `Flights snap to the quarter hour · the day runs ${c1Hm(s0)} to ${c1Hm(e0)}`)}</span></div>`;
   const first = !(S.c1 && S.c1.ttSeen) && pl.fleet.some(x => x.sched.length) ? c1T('tt.first') : null;
@@ -274,13 +287,16 @@ function c1BindTt(){
       try{ b.setPointerCapture(e.pointerId); }catch(err){} };
     b.onpointermove = e => { const g = c1Drag; if(!g || g.b !== b) return; const dx = e.clientX - g.x0; if(!g.moved && Math.abs(dx) < 4) return;
       if(!g.moved){ g.moved = true; const gh = b.cloneNode(true); gh.className = 'c1-blk c1-ghost'; gh.removeAttribute('data-c1b'); gh.setAttribute('aria-hidden', 'true'); lane.appendChild(gh); b.classList.add('drag'); UI.tlSel = null; }
+      const ov = c1Over(e, b, j); lane.querySelectorAll('.c1-swap').forEach(x => { if(x !== ov) x.classList.remove('c1-swap'); }); const ov0 = g.over; g.over = ov ? +ov.getAttribute('data-c1b').split('|')[1] : null; if(ov0 !== g.over) g.t = null;
+      if(ov){ ov.classList.add('c1-swap'); b.classList.remove('bad'); c1DragShow(g, row, +ov.dataset.dep, g.trip, { ok:true, why:`Swap with ${routeById(ov.dataset.route).city}: let go to swap them over` }); }
       const t = clamp(Math.round((g.dep0 + dx / g.w * span) / C1_SNAP) * C1_SNAP, s0, s0 + span - C1_SNAP);
       b.style.transform = `translate(${(t - g.dep0) / span * lane.offsetWidth}px,-3px)`; if(g.t === t) return; g.t = t;
       g.fit = c1Fit(j, k, g.route, t); b.classList.toggle('bad', !g.fit.ok); b.querySelector('.c1-bt').textContent = `${c1Hm(t)}–${c1Hm(t + g.trip)}`;
       if(g.fit.ok && typeof dsFillAt === 'function'){ try{ const v = dsFillAt(j, k, t); if(v){ b.querySelector('.c1-bh em').textContent = `${v.sold}/${v.seats}`; b.querySelector('.c1-bar i').style.width = Math.round(100 * Math.min(1, v.sold / Math.max(1, v.seats))) + '%'; b.classList.toggle('full', v.sold / Math.max(1, v.seats) >= fillGood()); b.classList.toggle('room', v.sold / Math.max(1, v.seats) < fillGood()); } }catch(err){} }
-      c1DragShow(g, row, t, g.trip, g.fit); };
+      if(g.over === null) c1DragShow(g, row, t, g.trip, g.fit); };
     b.onpointerup = b.onpointercancel = e => { const g = c1Drag; if(!g || g.b !== b) return; try{ b.releasePointerCapture(e.pointerId); }catch(err){}
       setTimeout(() => { c1Drag = null; }, 0);
+      if(g.moved && g.over !== null && g.over !== undefined){ c1DragClear(); if(!c1Swap(j, k, g.over)) render(); return; }
       if(g.moved && g.t !== null && g.t !== g.dep0 && g.fit && g.fit.ok){ UI.tlSel = { i:0, j, k }; c1Snap(() => moveService(0, j, k, g.t)); } else if(g.moved){ c1DragClear(); render(); } };
   });
   root.querySelectorAll('[data-c1add]').forEach(tk => { const id = tk.getAttribute('data-c1add');

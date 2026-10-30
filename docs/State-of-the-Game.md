@@ -10,6 +10,9 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zm. Play notes 30 Oct 19:15 (30 Oct 2026)
+`p6e_notes1915.js` (chapter one, `ch1()`): wraps `R.chapter` (title, dates, Begin only), `s2State` (a new plan step with no schedule opens in mode `plan`, not `network`), `ashLaunchSpec` (title), and `render` (body classes `n15-wk1`, `n15-ch1`, `n15-noshop`, used by `p1_head_ch1.css` to hide `#s2Tr`, `.fx-sum[data-sum=profit]`, `.ds-act[data-dsact]`, `.c1-full [data-svccard]`). `p6c_desks.js`: `c1TrayIds` lists every flyable route in the setup phase; `c1Swap`/`c1Over` swap two flights on drop; tray tokens wrap their text in `.c1-tokt`. `briefing-fare.html` beat 4: `#fr4` slider over the arrow, readout `#b4l` (fare and seats filled). Report: `docs/Report-for-Claude-Chat-Play-Notes-30-Oct.md`.
+
 ## 0zl. Play notes in one zip; the teacher panel tidied (30 Oct 2026)
 `p5i_playnotes.js`: Stop & save builds one stored zip in the page (`pnZip`, with CRC-32), holding the recording's parts and the log (v3: `audioParts` with each part's start time). Chunks go to IndexedDB `asim-playnotes` (stores `chunk`, `meta`) as they arrive, and the log every 10 s (`pnKeep`). `pnRecover` rebuilds the zip after a crash, offered in the Play notes section (`#tPnLast`) and by a toast at start-up. The watch (`pnTick`, once a second) flags MIC STOPPED after 5 s with no chunk and restarts the microphone as a new part (`pnMicStart`); an analyser flags "Can't hear you" after 90 s below about -40 dB. The recording of 30 Oct 18:20 was a whole file of 8 seconds (eight one-second chunks, no cut-off end), with no speech in it. `p6d_teacher.js` sorts the teacher panel each time it opens: five sections stay, the rest go under `<details id="tMore">`, nothing removed.
 

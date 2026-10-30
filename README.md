@@ -380,6 +380,18 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Bertie's play notes, 30 Oct 19:15 (chapter one, Launch Day to Tuesday)
+*The report for Claude Chat, with Bertie's words as he said them, is `docs/Report-for-Claude-Chat-Play-Notes-30-Oct.md` (and the Claude Doc https://claude.ai/artifact/3K8uaznvzan3qfBjYpafXM). Changed now, chapter one only (`p6e_notes1915.js`, `p6c_desks.js`, `briefings/briefing-fare.html`):*
+- the chapter page shows Chapter 1, the dates and Begin;
+- no Choose where to fly on Launch Day: the Studio opens on the timetable with Dublin and Paris in the tray;
+- the Add a flight tray is outlined (not the flights' dark blue), with the time under the name;
+- drag a flight onto another on the same plane to swap them;
+- week one hides View trade-offs and ƒ work it out, Compare aircraft waits for the shop (day 15), and Service costs is hidden in chapter one;
+- What a fare does beat 4: the Fill the seats ↔ More money arrow is a working slider;
+- the Launch Day sheet's title is "Ticket revenue for each flight, at each fare".
+
+For discussion with Claude Chat, not built: the Launch Day sheet's order (demonstrate building, build, then paper), One flight, two ways, the 27 at £110, and running the rest of week one after Launch Day.
+
 ### Play notes in one zip, kept as you go; the teacher panel tidied (30 Oct 2026)
 *Bertie, 30 Oct: Chrome got stuck downloading two files and crashed; the recording that came through (playnotes-2026-10-30-1820.webm) is a complete file but holds only 8 seconds of room noise, so the microphone stopped feeding the recorder 8 seconds in while the corner clock carried on.*
 - **One zip.** Stop & save downloads `playnotes-….zip`: the recording (in parts if the microphone was restarted) and the log. Chrome no longer asks to download several files. `tools/playnotes.py` and `tools/playnotes_transcribe.py` read the zip.

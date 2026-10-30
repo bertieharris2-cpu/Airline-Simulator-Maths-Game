@@ -349,12 +349,25 @@ function b4(){
     return c; };
   h += panel(56, 'Low fare', LOW, per(LOW), `Planes full · but only <span class="gold">${money(LOW)}</span> a ticket`, true);
   h += panel(716, 'High fare', HIGH, per(HIGH), `<span class="gold">${money(HIGH)}</span> a ticket · but seats fly empty`, false);
-  h += `<svg width="1366" height="160" style="position:absolute;left:0;top:432px" aria-hidden="true"><line x1="250" y1="70" x2="1116" y2="70" stroke="#2c5a8c" stroke-width="4"/><path d="M262,58 L238,70 L262,82" fill="none" stroke="#2c5a8c" stroke-width="4"/><path d="M1104,58 L1128,70 L1104,82" fill="none" stroke="#2c5a8c" stroke-width="4"/><rect x="673" y="52" width="20" height="36" fill="#36c6ff"/></svg>
+  h += `<svg width="1366" height="160" style="position:absolute;left:0;top:432px" aria-hidden="true"><line x1="250" y1="70" x2="1116" y2="70" stroke="#2c5a8c" stroke-width="4"/><path d="M262,58 L238,70 L262,82" fill="none" stroke="#2c5a8c" stroke-width="4"/><path d="M1104,58 L1128,70 L1104,82" fill="none" stroke="#2c5a8c" stroke-width="4"/></svg>
+ <div class="fr" id="fr4" role="slider" tabindex="0" aria-label="Try a fare between the low and the high fare" style="left:262px;top:479px;width:842px"><i class="frh" id="frh4" style="left:50%"></i></div>
  <div class="lbl" style="left:56px;top:488px;font-size:19px;color:var(--text);font-weight:600">Fill the seats</div>
  <div class="lbl" style="left:1140px;top:476px;font-size:19px;color:var(--text);font-weight:600;white-space:normal;width:190px;line-height:1.25">More money for each ticket</div>
- <div class="lbl cyan" style="left:683px;top:540px;font-size:19px;font-weight:600;transform:translateX(-50%)">Best fare: somewhere between</div>`;
+ <div class="lbl cyan" id="b4l" style="left:683px;top:540px;font-size:19px;font-weight:600;transform:translateX(-50%);white-space:nowrap">Best fare: somewhere between</div>`;
   pic.innerHTML = h;
   setCap('Your challenge: <b>fill the seats</b> and <b>make the most money</b>.');
+  /* the arrow is a slider (Bertie, 30 Oct 19:15: "the slider where you fill the seats to more money for each ticket does not go
+     up and down"): drag it, or press the arrow keys, through the fares from the low one to the high one; it shows the fare and
+     the seats filled, never the ticket money, so beat 5's question stays his to answer */
+  const F4 = FARES.filter(f => f >= LOW && f <= HIGH), fr = $('fr4'), n4 = Math.max(1, F4.length - 1);
+  const show = i => { const f = F4[i], seats = Math.min(CAP, per(f) * NPL); $('frh4').style.left = (i / n4 * 100) + '%'; fr.dataset.i = i; fr.setAttribute('aria-valuenow', f); fr.setAttribute('aria-valuetext', money(f));
+    $('b4l').innerHTML = `<span class="gold">${money(f)}</span> a ticket · ${seats >= CAP ? `<span class="green">${num(seats)} of ${num(CAP)} seats filled ✓</span>` : `${num(seats)} of ${num(CAP)} seats filled · ${num(CAP - seats)} empty`}`; };
+  const at = ev => { const r = fr.getBoundingClientRect(); return Math.round(Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * n4); };
+  fr.onpointerdown = ev => { ev.preventDefault(); fr.classList.add('drag'); try{ fr.setPointerCapture(ev.pointerId); }catch(e){} show(at(ev)); fr.focus(); };
+  fr.onpointermove = ev => { if(fr.classList.contains('drag')) show(at(ev)); };
+  fr.onpointerup = fr.onpointercancel = () => fr.classList.remove('drag');
+  fr.onkeydown = ev => { const k = { ArrowRight:1, ArrowUp:1, ArrowLeft:-1, ArrowDown:-1 }[ev.key]; if(k){ ev.preventDefault(); show(Math.min(n4, Math.max(0, (+fr.dataset.i || 0) + k))); } };
+  fr.dataset.i = Math.round(n4 / 2);
   setNext('Next &#9654;');
 }
 
