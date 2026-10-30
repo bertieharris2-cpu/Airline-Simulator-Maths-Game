@@ -28,11 +28,12 @@ R.protoEnd = st => {
 if(typeof chapterEndCanContinue === 'function'){ const c1Cont0 = chapterEndCanContinue; chapterEndCanContinue = function(){ const ch = (WORLD.chapter || {}).chapter || 1, n = c1BuildEnds(); return n && ch >= n ? false : c1Cont0.apply(this, arguments); }; }
 
 /* ---------- 1. the parked mechanism (hand-off 1, section 2) ----------
-   The importer skips parked and retired rows (events, news, catering, daily colours, the day-override upgrade). The
-   briefings the game also knows by its own list (BF_EXTRA) are taken off it here when the workbook parks them, so no
-   trigger can play them; the teacher's Briefings shelf (p6c) still plays them from its own copy. */
-const C1_BF_ALL = typeof BF_EXTRA !== 'undefined' ? Object.assign({}, BF_EXTRA) : {};
-((typeof WB !== 'undefined' && WB && WB.briefingShelf) || []).forEach(b => { if(b.state !== 'live' && typeof BF_EXTRA !== 'undefined') delete BF_EXTRA[b.id]; });
+   The importer skips parked and retired rows (events, news, catering, daily colours, the day-override upgrade). Briefings:
+   the game also knows some by its own list, so the briefing part asks here before it plays one (window.__bfBlocked): in
+   chapter one a briefing the workbook marks parked, retired or test only never plays. The teacher's Briefings shelf (p6c)
+   still plays any built one. */
+function c1BfState(id){ const r = ((typeof WB !== 'undefined' && WB && WB.briefingShelf) || []).find(b => b.id === id); return r ? r.state : null; }
+window.__bfBlocked = id => { const st = c1BfState(id); return !!st && ['parked', 'retired', 'test'].includes(st) && ch1(); };
 /* flight-time sums and the Flight times page are parked (flightTimeSums); so is the Madrid screen's flight-time panel (the range check stays) */
 const c1FtParked = () => ch1() && c1Off(WBS().flightTimeSums);
 const c1FtNew0 = ftNew;

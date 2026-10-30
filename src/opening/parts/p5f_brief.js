@@ -19,8 +19,10 @@ const BF_EXTRA = { fare_lever:{ title:'What a fare does', html:'briefing-fare.ht
   flight_time:{ title:'How long will it take?', html:'briefing-time.html' }, event_weekend:{ title:'One big Saturday', html:'briefing-event.html' },
   seasons:{ title:'A year of demand', html:'briefing-seasons.html' }, lease_money:{ title:'Renting a plane', html:'briefing-lease.html' }, profit_vs_cash:{ title:'Profit is not cash', html:'briefing-cash.html' },
   cash_to_fly:{ title:'Can you afford to run it?', html:'briefing-cash-to-fly.html' } };
+let bfAny = false;   // the teacher's Briefings shelf plays any built briefing, parked ones too (window.__bf.shelf)
 const bfRows = () => WB.briefings || [], upgRows = () => WB.upgrades || [];
-const bfRow = id => { const w = bfRows().find(b => b.id === id), x = BF_EXTRA[id]; if(!w && !x) return undefined; const r = Object.assign({ id }, x || {}, w || {}); if(x && !BF_FILES[r.html]) r.html = x.html; return r; }, upgRow = id => upgRows().find(u => u.id === id);
+const bfRow = id => { if(!bfAny && typeof window.__bfBlocked === 'function' && window.__bfBlocked(id)) return undefined;   // a parked briefing never plays (hand-off 1, 30 Oct; p6a_ch1)
+  const w = bfRows().find(b => b.id === id), x = BF_EXTRA[id]; if(!w && !x) return undefined; const r = Object.assign({ id }, x || {}, w || {}); if(x && !BF_FILES[r.html]) r.html = x.html; return r; }, upgRow = id => upgRows().find(u => u.id === id);
 const bfHas = id => { const b = bfRow(id); return !!(b && BF_FILES[b.html]); };
 const bfOn = () => WBS().operationsBriefings !== false && settings.briefings !== false;   // the regression tests switch them off (settings.briefings = false)
 const upgOn = () => WBS().plannerUpgrades !== false;
@@ -399,6 +401,11 @@ window.__bf = {
   skip:() => { if(!bfCur) return false; const c = bfCur; bfCur = null; bfShut(); bfS().seen[c.id] = S.day || 1; if(c.onDone) c.onDone({ skipped:true }); return true; },
   list:() => bfRows().filter(b => bfHas(b.id)).map(b => ({ id:b.id, title:b.title })),
   play:id => bfOpen(id, bfDataFor(id) || (bfS().data || {})[id] || {}, () => render()),
-  data:id => bfDataFor(id)
+  data:id => bfDataFor(id),
+  // the teacher's Briefings shelf (hand-off 2, section 8): any built briefing, parked or not, and nothing changes in the game
+  built:id => { bfAny = true; try{ return bfHas(id); } finally { bfAny = false; } },
+  shelf:id => { const keep = JSON.stringify(S.brief || null); bfAny = true;
+    try{ return bfOpenKeep(id, (id === 'fuel_cash_tank_profit' ? bfFuelData() : (bfS().data || {})[id]) || bfDataFor(id) || {}, () => { S.brief = JSON.parse(keep) || undefined; if(!S.brief) delete S.brief; try{ save(); }catch(e){} render(); }); }
+    finally { bfAny = false; } }
 };
 }
