@@ -12,7 +12,10 @@ function ch1End(){ const c = (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []).f
 function ch1(day){ const d = day === undefined ? ((typeof S !== 'undefined' && S && S.day) || 1) : day; return d <= ch1End(); }
 const c1Off = v => v === false || /^(false|off|parked|no|retired)/i.test(String(v === undefined || v === null ? '' : v).trim());
 const c1Parked = v => /^(parked|retired)/i.test(String(v || '').trim());
-function c1BuildEnds(){ const n = +WBS().buildEndsAfterChapter || 0; return n > 0 && !settings.fullBuild ? n : 0; }
+/* two game files (30 Oct 2026): airline-opening-prototype.html is chapter one only; airline-opening-full.html (built with
+   build.py --full, then left alone) is the whole game as it was, and carries <script id="data-build"> so the end card is lifted */
+const C1_FULL = !!document.getElementById('data-build');
+function c1BuildEnds(){ const n = +WBS().buildEndsAfterChapter || 0; return n > 0 && !settings.fullBuild && !C1_FULL ? n : 0; }
 function c1T(id, vars){ return h21Text(id, vars); }
 
 /* ---------- 0. the build ends at the chapter-one review: one card, nothing after it ---------- */
@@ -25,6 +28,9 @@ R.protoEnd = st => {
   const p = root.querySelector('.proto-end p.muted'); if(p) p.innerHTML = `<span class="c1-end-tag">${esc(T.eyebrow || 'TEST BUILD')}</span> ${esc((T.text || [])[0] || 'End of chapter one. This test build stops here.')}`;
   const again = $('again'); if(again) again.classList.add('primary');
 };
+/* a save from after the chapter-one review opens only in the full file */
+const c1LoadCode0 = loadCode;
+loadCode = function(code){ const s = c1LoadCode0(code); if(c1BuildEnds() === 1 && s && (s.day || 1) > ch1End()) throw new Error(`This save is from ${typeof dateLong === 'function' ? dateLong(s.day) : 'day ' + s.day}, after chapter one. This file is chapter one only: open airline-opening-full.html to play it.`); return s; };
 if(typeof chapterEndCanContinue === 'function'){ const c1Cont0 = chapterEndCanContinue; chapterEndCanContinue = function(){ const ch = (WORLD.chapter || {}).chapter || 1, n = c1BuildEnds(); return n && ch >= n ? false : c1Cont0.apply(this, arguments); }; }
 
 /* ---------- 1. the parked mechanism (hand-off 1, section 2) ----------

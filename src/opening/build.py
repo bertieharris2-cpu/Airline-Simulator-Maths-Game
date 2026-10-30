@@ -4,12 +4,17 @@
                                      chapter 2 (p4zg, p4zh, p4zj), the Working pad (p4zk) and, last, the Night Ops
                                      look (p4zz + p1_head_nightops.css). One file (Bertie, 13 Oct 2026).
 
-    python3 src/opening/build.py
+    airline-opening-full.html        the whole game, frozen on 30 Oct 2026 while work is on chapter one only (Bertie):
+                                     every part, the Steady path's Jump to… saves, and no chapter-one end card.
+                                     Built only with --full.
+
+    python3 src/opening/build.py          chapter one: airline-opening-prototype.html, without CH1_SKIP's parts
+    python3 src/opening/build.py --full   also rebuilds the frozen full file (only when Bertie says so)
 
 Checks every JSON data block and the JavaScript syntax (node --check), and lists in
 overrides.txt every function defined in more than one part (a later part wins).
 """
-import re, json, subprocess, os, tempfile
+import re, json, subprocess, os, tempfile, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 r = lambda *p: open(os.path.join(HERE, *p), encoding='utf-8').read()
@@ -69,6 +74,7 @@ if os.path.exists(os.path.join(C1J, 'index.json')):
         ends = int(float(str((wbj.get('settings') or {}).get('buildEndsAfterChapter') or 0) or 0))
     except Exception:
         ends = 0
+    steady = jumps
     if ends == 1:
         jumps = {}
     for k, row in enumerate(json.load(open(os.path.join(C1J, 'index.json'), encoding='utf-8'))):
@@ -76,15 +82,15 @@ if os.path.exists(os.path.join(C1J, 'index.json')):
         if not code.startswith('ASIM5.'): continue
         raw = base64.b64decode(code[6:]).decode('utf-8')
         jumps['c1p%d' % k] = {'label': row['label'], 'day': row['day'] + k / 100.0, 'gz': base64.b64encode(gzip.compress(raw.encode('utf-8'), 9)).decode('ascii')}
-p2 = p2 + '<script type="application/json" id="data-jumps">%s</script>' % json.dumps(jumps, separators=(',', ':'))
-print(len(jumps), 'test airlines for Jump to… (%d KB)' % (sum(len(j['gz']) for j in jumps.values()) // 1024))
+jumpsTag = lambda J: '<script type="application/json" id="data-jumps">%s</script>' % json.dumps(J, separators=(',', ':'))
+print(len(jumps), 'chapter-one test airlines for Jump to… (%d KB)' % (sum(len(j['gz']) for j in jumps.values()) // 1024))
 p2 = p2.replace('<!--PHOTOS-->', '<script type="application/json" id="data-photos">%s</script>' % json.dumps(photos, separators=(',', ':')))
 print(len(art), 'aircraft drawings;', len(photos), 'photos embedded' + ('; over 150 KB: ' + ', '.join(big) if big else ''))
 head = r('parts', 'p1_head.html')
 JS = ['p4a_core.js', '../engine/world-engine.js', 'p4a2_workbook.js', 'p4b_control.js', 'p4d_opening.js', 'p4e_toolkit.js', 'p4f_campaign.js', 'p4g_opening2.js', 'p4h_world.js', 'p4i_liveops.js', 'p4j_intro.js', 'p4k_chapter.js', 'p4l_handsums.js', 'p4m_fleet.js', 'p4n_weeks.js', 'p4o_review.js', 'p4p_identity.js', 'p4q_paint.js', 'p4r_showroom.js', 'p4s_practice.js', 'p4t_workout.js', 'p4u_migrate.js', 'p4v_week.js', 'p4w_planner.js', 'p4x_shell.js', 'p4y_desks.js', 'p4z_model.js', 'p4zb_decisions.js', 'p4zc_signoffs.js', 'p4zd_studio.js', 'p4zi_record.js', 'p4c_display.js']
-def build(name, js_list, css='', ovr='overrides.txt'):
+def build(name, js_list, css='', ovr='overrides.txt', data=''):
     a, _, b = head.rpartition('</style>'); h = a + css + '</style>' + b if css else head
-    out = h + p2 + p3 + ''.join(r('parts', f) for f in js_list)
+    out = h + p2 + data + p3 + ''.join(r('parts', f) for f in js_list)
     seen = {}
     for f in js_list:
         for n in re.findall(r'^function\s+(\w+)\s*\(', r('parts', f), re.M): seen.setdefault(n, []).append(f)
@@ -101,4 +107,11 @@ def build(name, js_list, css='', ovr='overrides.txt'):
 
 # one game: the shared parts, then the revised Studio, Days, chapter 2 and the Working pad, then the display part
 GAME = JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js', 'p4zk_pad.js', 'p4zl_fleetshop.js', 'p4zm_buyonly.js', 'p4zn_ch2events.js', 'p4zo_ch3money.js', 'p4zp_runthrough.js', 'p4zq_milestones.js', 'p4zr_paper.js', 'p4zt_decide.js', 'p4zs_ch4.js', 'p4zu_fuelstore.js', 'p4zv_flightplan.js', 'p4zw_intelwall.js', 'p4zx_fit.js', 'p4zy_paint2.js', 'p4zz_nightops.js', 'p5a_review.js', 'p5b_desk.js', 'p5c_fuel.js', 'p5d_sound.js', 'p5e_colour.js', 'p5f_brief.js', 'p5g_testkit.js', 'p5h_screens3.js', 'p5i_playnotes.js', 'p5j_sheet.js', 'p5k_design1.js', 'p5l_year1.js', 'p5m_events.js', 'p5n_wio2.js', 'p5o_review2.js', 'p5p_opener2.js', 'p5q_fuel2.js', 'p5r_d103.js', 'p5s_sweep.js', 'p5t_sheet.js', 'p5u_sheet_pages.js', 'p5v_sheet_more.js', 'p5w_d104.js', 'p5x_nosnacks.js', 'p5y_h21.js', 'p6a_ch1.js', 'p6b_signal.js', 'p6c_desks.js'] + JS[-1:]
-build('airline-opening-prototype.html', GAME, r('parts', 'p1_head_studio2.css') + r('parts', 'p1_head_nightops.css') + r('parts', 'p1_head_screens.css') + r('parts', 'p1_head_screens3.css') + r('parts', 'p1_head_design1.css') + r('parts', 'p1_head_design2.css') + r('parts', 'p1_head_sheet.css') + r('parts', 'p1_head_h21.css') + r('parts', 'p1_head_ch1.css'))
+CSS = r('parts', 'p1_head_studio2.css') + r('parts', 'p1_head_nightops.css') + r('parts', 'p1_head_screens.css') + r('parts', 'p1_head_screens3.css') + r('parts', 'p1_head_design1.css') + r('parts', 'p1_head_design2.css') + r('parts', 'p1_head_sheet.css') + r('parts', 'p1_head_h21.css') + r('parts', 'p1_head_ch1.css')
+# chapter one only (Bertie, 30 Oct 2026): the chapter-four part and the long-haul engine are left out; the chapter 2 and 3
+# parts stay, because chapter one's screens call their helpers (charges, cashFloor, ratingText…), but nothing past the
+# chapter-one review (day 118) is reached: the build ends there
+CH1_SKIP = ['p4zs_ch4.js', 'p4zh_longhaul.js']
+build('airline-opening-prototype.html', [f for f in GAME if f not in CH1_SKIP], CSS, data=jumpsTag(jumps))
+if '--full' in sys.argv:
+    build('airline-opening-full.html', GAME, CSS, ovr='overrides-full.txt', data=jumpsTag(steady if os.path.exists(os.path.join(C1J, 'index.json')) else jumps) + '<script type="application/json" id="data-build">{"full":true}</script>')

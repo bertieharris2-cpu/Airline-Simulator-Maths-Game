@@ -10,6 +10,9 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zk. Two game files (30 Oct 2026)
+Work is on chapter one only (Bertie, 30 Oct). `airline-opening-prototype.html` is the chapter-one game: `build.py` leaves out `p4zs_ch4.js` and `p4zh_longhaul.js` (CH1_SKIP; `p4zo`'s overnight-rotation override is guarded for the missing part) and embeds only the chapter-one jumps. `airline-opening-full.html` is the whole game frozen on 30 Oct (`build.py --full`; it carries `<script id="data-build">`, so `c1BuildEnds()` is 0 and the later chapters play on, and it keeps the Steady path's jumps). The chapter-one file's `loadCode` turns away a save past day 118 with a message naming the full file. Checks: `chapter1.test.js` 23/23, `numbers.test.js` 36/36 (its day-365 record check opens the full file). The chapter 2–4 tests default to the full file and are parked with it.
+
 ## 0zj. Chapter one, the 30 October hand-offs (30 Oct 2026)
 
 The build is chapter one (`buildEndsAfterChapter = 1`): Launch Day to the chapter-one review, then one card. The new chapter-one code is in `p6a_ch1.js`, `p6b_signal.js`, `p6c_desks.js` and `p1_head_ch1.css`, gated on `ch1()`; later chapters run only with `settings.fullBuild` (their tests set it).

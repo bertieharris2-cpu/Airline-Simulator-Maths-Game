@@ -12,7 +12,8 @@
 // The weeks are played through the teacher's toolkit (Run) from the Launch Day and week 2 jump saves.
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os'), { spawnSync } = require('child_process');
-const ROOT = path.resolve(__dirname, '../../..'), FILE = 'file://' + path.resolve(ROOT, process.env.GAME || 'airline-opening-prototype.html');
+const ROOT = path.resolve(__dirname, '../../..'), FILE = 'file://' + path.resolve(ROOT, process.env.GAME || 'airline-opening-prototype.html'),
+  FULL = 'file://' + path.resolve(ROOT, process.env.GAME_FULL || 'airline-opening-full.html');   // the year's record (day 365) is past chapter one: the frozen full file
 const OUT = (process.env.OUT || os.tmpdir() + '/airline-numbers') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const SHOTS = process.env.SHOTS !== '0', checks = [], errs = [];
 const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));
@@ -96,7 +97,7 @@ const HOOKS = `(() => { const N = window.__num = { boards:{}, days:{}, moves:[],
 
 (async () => {
   const b = await chromium.launch();
-  const page = async () => { const p = await b.newPage({ viewport:{ width:1366, height:768 } }); p.on('pageerror', e => errs.push(e.message)); await p.goto(FILE); await p.waitForTimeout(800);
+  const page = async (file = FILE) => { const p = await b.newPage({ viewport:{ width:1366, height:768 } }); p.on('pageerror', e => errs.push(e.message)); await p.goto(file); await p.waitForTimeout(800);
     await p.evaluate(() => { const st = window.__sim.settings(); st.briefings = false; st.flightSecs = 0.25; st.autoWall = false; st.opsSound = false; }); return p; };
   const E = (p, s) => p.evaluate(x => window.__sim.evalIn(x), s), J = async (p, s) => JSON.parse(await E(p, `JSON.stringify(${s})`));
   const load = async (p, name) => { await p.evaluate(c => { const s = window.__sim.loadCode(c); window.__sim.setS(s); window.__sim.landSave(); window.__sim.render(); }, fs.readFileSync(path.join(__dirname, `fixtures/jumps/${name}.txt`), 'utf8').trim()); await p.waitForTimeout(600); };
@@ -221,7 +222,7 @@ const HOOKS = `(() => { const N = window.__num = { boards:{}, days:{}, moves:[],
      The save was recorded by builds up to 2 Oct, whose record kept on-board and bag money outside the revenue line, so there the gap between
      profit and revenue − costs is that money (never negative, and at least the on-board money the routes record); the strict identity is checked
      on the weeks played above. ---------- */
-  { const p = await page(); await load(p, 'day-365');
+  { const p = await page(FULL); await load(p, 'day-365');
     const H = await J(p, `(S.history || []).filter(h => h.revenue !== undefined && h.from <= 364).map(h => ({ type:h.type, from:h.from, to:h.to, revenue:h.revenue, costs:h.costs, profit:h.profit, pax:h.pax, seats:h.seats, routes:h.routes }))`), L = await J(p, 'S.ledger || {}'); await p.close();
     const bad = [], tally = {}; let older = 0, outside = 0;
     H.forEach(h => { tally[h.type] = (tally[h.type] || 0) + 1; const R = Object.values(h.routes || {}), ob = R.reduce((t, x) => t + (x.onboard || 0), 0), gap = r2(h.profit - (h.revenue - h.costs));

@@ -66,6 +66,17 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   ok(idx.length >= 7, `${idx.length} chapter-one TEST saves (Launch Day, P1–P5, the review)`);
   for(const j of idx){ const r = await p.evaluate(c => { try{ const s = window.__sim.loadCode(c); return { day:s.day, test:!!s.test }; }catch(e){ return { err:e.message }; } }, fs.readFileSync(path.join(dir, j.file), 'utf8').trim());
     ok(!r.err && r.day === j.day, `${j.label} loads on day ${r.day}${r.err ? ' — ' + r.err : ''}`); }
+  console.log('Two files: chapter one, and the frozen full game'); const late = fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', 'day-127.txt'), 'utf8').trim();
+  const lr = await p.evaluate(c => { try{ return { day:window.__sim.loadCode(c).day }; }catch(e){ return { err:e.message }; } }, late);
+  ok(lr.err && /after chapter one/.test(lr.err) && /airline-opening-full\.html/.test(lr.err), `a save from January 2031 is turned away here, pointing to the full file (${lr.err || 'loaded on day ' + lr.day})`);
+  ok(await E("typeof isLongHaul") === 'undefined' && await E("C1_FULL") === false, 'this file is chapter one only: the long-haul and chapter-four parts are left out');
+  const fullPath = path.resolve(ROOT, 'airline-opening-full.html');
+  if(fs.existsSync(fullPath)){ const q = await b.newPage(), ferrs = []; q.on('pageerror', e => ferrs.push(e.message));
+    await q.goto('file://' + fullPath); await q.waitForFunction(() => window.__sim, null, { timeout:30000 });
+    const fr = await q.evaluate(c => { try{ return { day:window.__sim.loadCode(c).day, full:window.__sim.evalIn('C1_FULL'), lh:window.__sim.evalIn('typeof isLongHaul') }; }catch(e){ return { err:e.message }; } }, late);
+    ok(!fr.err && fr.day === 127 && fr.full === true && fr.lh === 'function' && !ferrs.length, `the full file opens it on day ${fr.day}, every part in, no end card${fr.err ? ' — ' + fr.err : ''}${ferrs.length ? ' (errors: ' + ferrs[0] + ')' : ''}`);
+    await q.close(); }
+  else ok(false, 'airline-opening-full.html is missing (python3 src/opening/build.py --full)');
   ok(!errs.length, `no page errors${errs.length ? ': ' + errs.slice(0, 3).join(' | ') : ''}`);
   console.log(`\n${pass} ok, ${fail} failed`); await b.close(); process.exit(fail ? 1 : 0);
 })();

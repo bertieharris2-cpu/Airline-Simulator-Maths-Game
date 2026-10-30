@@ -290,8 +290,8 @@ PLANES.forEach(p => { if(['a340', 'b777', 'a350'].includes(p.id) && !p.icon) p.i
 /* an overnight rotation on a planning page is shown on its way out: the service's passengers, fares and costs (its block says
    "earns every second day"). Before, a plan day that fell on the way home showed the service with nobody on it and £0 of
    tickets, and its cost breakdown could not be worked out. The simulated days still alternate, out and home. */
-const rotOutOD0 = rotOut;
-rotOut = function(f, day){ if(SIM_DAY === null || SIM_DAY === undefined) return true; return rotOutOD0(f, day); };
+if(typeof rotOut === 'function'){ const rotOutOD0 = rotOut;   // the long-haul part is left out of the chapter-one file
+rotOut = function(f, day){ if(SIM_DAY === null || SIM_DAY === undefined) return true; return rotOutOD0(f, day); }; }
 
 /* ---------- 8. the chapter review: the average month (Build), the next investment, the A380 ---------- */
 const chapterReviewItemsOD0 = chapterReviewItems;
