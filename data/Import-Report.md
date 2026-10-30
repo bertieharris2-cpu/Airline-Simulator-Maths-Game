@@ -1,46 +1,41 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 21 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 30 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 26 to check, 8 notes.**
+**0 to fix, 21 to check, 7 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 213 | 213 live, 10 placeholder |
+| Settings | 238 | 13 draft, 225 live, 10 placeholder |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
-| RouteCatalogue | 0 | 21 moved to Routes |
+| RouteCatalogue | 0 | 21 moved |
 | Aircraft | 15 | 15 live, 1 note row, 1 removed |
 | Finance | 16 | 16 live, 2 note row |
 | Airports | 1 | 1 later, 1 live, 3 removed |
 | Calendar | 49 | 49 live |
 | Market | 416 | 416 live |
-| Events | 45 rows → 39 events | 3 later, 45 live, 1 note row, 3 placeholder, 3 removed |
-| EventOptions | 63 | 63 live, 1 note row, 2 removed |
+| Events | 18 rows → 18 events | 3 later, 18 live, 1 note row, 28 parked, 3 placeholder, 2 removed |
+| EventOptions | 27 | 27 live, 1 note row, 38 parked |
 | Challenges | 6 | 6 live, 2 placeholder |
 | Mechanics | 17 | 3 later, 17 live |
 | Chapters | 4 | 2 later, 4 live, 1 note row |
 | HandSumRules | 12 | 12 live, 1 note row |
-| Catering | 4 | 4 live, 1 note row |
+| Catering | 0 | 5 parked |
 | PlanTips | 16 | 16 live, 3 note row |
 | Milestones | 18 | 18 live, 1 note row |
-| DailyColour | 10 | 10 live, 1 note row |
-| Upgrades | 5 | 5 live, 1 note row |
-| Briefings | 11 | 11 live, 1 note row, 2 removed |
+| DailyColour | 8 | 8 live, 1 note row, 2 parked |
+| Upgrades | 4 | 4 live, 1 note row, 1 parked |
+| Briefings | 8 | 8 live, 2 not, 1 note row, 5 parked, 1 retired, 2 superseded, 1 test |
 | Roadmap | 13 | 13 live, 1 note row |
-| RouteNews | 101 | 101 live, 2 note row |
+| RouteNews | 82 | 82 live, 2 note row, 19 parked |
 | Livery | 35 | 35 live, 1 note row |
 | Hunts | 5 | 5 live, 1 note row, 2 placeholder |
 
 ## To check
 
-- **EventOptions:** "fault" option 1 has a cash price £800 on day 53, but costs are a share of a day's profit from day 29.
-- **EventOptions:** "sponsor_club" option 1 has a cash price £500 on day 30, but costs are a share of a day's profit from day 29.
-- **EventOptions:** "tanker_offer" option 1 has a cash price £12000 on day 43, but costs are a share of a day's profit from day 29.
-- **EventOptions:** "fault_b" option 1 has a costShare on day 18, before day 29.
-- **EventOptions:** "crew_b" option 1 has a cash price £400 on day 45, but costs are a share of a day's profit from day 29.
 - **Finance:** a220: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
 - **Finance:** a320: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
 - **Finance:** b737: price ÷ lease a day = 1000, not the 2,000 days of Settings leaseRule (F4 revised with D78).
@@ -69,19 +64,40 @@
 - **Aircraft:** saab340 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 30 → 25, hourlyCost 240 → 200, dayCost 900 → 1200, listPrice 9000 → 22000. The workbook wins.
 - **Aircraft:** atr72 differs from Pass 1 (Pass 1 → workbook): fuelPer100Km 45 → 40, hourlyCost 400 → 350, dayCost 1400 → 1800, listPrice 15000 → 36000. The workbook wins.
 - **Aircraft:** e190 differs from Pass 1 (Pass 1 → workbook): speedKmh 800 → 900, dayCost 2500 → 3500, listPrice 30000 → 70000. The workbook wins.
-- **Events:** D104: 5 curveball events are loaded (dub_strike, school_trip, slot_squeeze, sponsor_club, tanker_offer); not loaded: snack_supplier; their effects are in parts/p5w_d104.js.
 - **Events:** D104: track B rows (Events, EventOptions, RouteNews) are loaded with their track; the game plays the airline's track in chapter 1's autumn (Settings autumnTrack, the teacher's switch).
 - **Events:** events are not in date order (harmless; the game sorts them).
-- **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events undercut_dub, storm, crew; challenges 2, 5. Those choices then differ only in cash.
+- **Events:** reputation is switched off in the prototype, so star effects do nothing yet: events none; challenges 2, 5. Those choices then differ only in cash.
 
 ## Chapter 1 touches
 
 Rows dated on or before 28 Dec 2030 (chapter 1's review) that the game would read but are not `live`, and values the chapter-1 flow needs that the workbook lacks. The game reports these; it never invents a value.
 
-- **Events:** snack_supplier on 24 Sep 2030 is `removed`: not loaded.
+- **Events:** undercut_dub on 05 Sep 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** storm on 06 Sep 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** crew on 12 Sep 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** fuel_shock on 14 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** fault on 24 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** football_final on 02 Nov 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** price_war on 11 Nov 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** oil_find on 02 Dec 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** first_snow on 16 Dec 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** christmas on 24 Dec 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** school_trip on 10 Sep 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** dub_strike on 18 Sep 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** snack_supplier on 24 Sep 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** sponsor_club on 01 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** slot_squeeze on 07 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** tanker_offer on 14 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** storm_b on 25 Sep 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** dub_concert on 05 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** price_war_b on 21 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** fault_b on 19 Sep 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** crew_b on 16 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
+- **Events:** ams_fair on 10 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
 - **Routes:** ist opens on day 57 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
 - **Settings:** `timeSkip` is `placeholder`: not loaded (the game builds teacher skips of 0 / 1 / 4 / 8 weeks from the brief and reports it here).
 - **Settings:** `reputationFromDate` is `placeholder`: not loaded (a date gate only in chapter 1).
+- **Catering:** no live rows: the game has no snack options.
 
 ## Chapter 3 touches
 
@@ -101,7 +117,7 @@ The Settings rows chapter 3 reads (D78–D81), as loaded.
 - `challengeRewardRule`: a share of a day's profit, or stars
 - `secondCrewCost`: 250
 - `leaseRule`: A220/A320/737 ÷ 1,000 a day (prices not doubled); from the 757 up ÷ 2,000
-- **EventOptions:** 63 option rows for 23 events (a380_offer, ash_cloud, ash_cloud2, blogger, crew, crew_b, dub_strike, fault, fault_b, fees_rise, fog, mystery_shopper, overdraft_offer, price_war, price_war_b, school_trip, slot_squeeze, sponsor_club, storm, storm2, storm_b, tanker_offer, undercut_dub).
+- **EventOptions:** 27 option rows for 9 events (a380_offer, ash_cloud, ash_cloud2, blogger, fees_rise, fog, mystery_shopper, overdraft_offer, storm2).
 - **Two-leg routes:** syd (10,900 km + 6,300 km, 4 days).
 
 ## Working on paper (D86) and chapter 4 (D82–D85) touches
@@ -111,7 +127,7 @@ The Settings rows these read, as loaded.
 - `workingOnPaper`: True
 - `twoTriesRule`: True
 - `sumNumbering`: running number per pupil, never reset
-- `launchDaySums`: tickets at 3 fares; profit; snacks as Build
+- `launchDaySums`: fare 1 game-worked (watched); fare 2 pupil; fare 3 game-worked; then one comparison question; profit with fuel included in costs
 - `fuelHandSum`: the weekly order: blocks × price per 1,000 L
 - `signOffCapPerWeek`: 3
 - `financeFromDate`: 2032-09-06
@@ -166,9 +182,9 @@ Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `plannerUpgrades`: earned at a review; fallback a week later
 - `operationsBriefings`: full screen; 30–60 s; advance by doing, never by Next; a Pause & discuss state at each stop
 - `flightDaysFromDay`: earned: week-2 review (day 14); fallback day 21
-- **DailyColour:** hen_party (Tue, every 3), school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), birthday_cake (Sat, every 4), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
-- **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), day_override → One-day override on any flight, seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91) and fleet groups: short-, medium- and long-haul fleets, each with its own planning view, fuel_farm → The fuel farm on the Fuel desk (D89).
-- **Briefings:** fare_lever (briefing-fare.html), rival_split (briefing-rival.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), event_weekend (briefing-event.html), seasons (briefing-seasons.html), lease_money (briefing-lease.html), profit_vs_cash (briefing-cash.html), flight_time (briefing-time.html), cash_to_fly (briefing-cash-to-fly.html).
+- **DailyColour:** school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
+- **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91) and fleet groups: short-, medium- and long-haul fleets, each with its own planning view, fuel_farm → The fuel farm on the Fuel desk (D89).
+- **Briefings:** fare_lever (briefing-fare.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), seasons (briefing-seasons.html), cash_to_fly (briefing-cash-to-fly.html), how_airline_makes_money (None, not built yet), time_of_day (None, not built yet).
 
 ## Screens brief 3 (D101–D102) touches
 
@@ -235,29 +251,21 @@ The briefing's fixed teaching example, as loaded from the BriefingData sheet (no
 
 The handover of 19 Oct (evening), section 7.10: the Settings row, the SheetSums sheet and the hints, as loaded. Cash, tank, profit's example is under D104's list.
 
-- `fuelDeskOpensDay`: 1
-- **Launch Day** `B4` Ticket revenue: = B2 × B3 (Passengers × Fare) · pupil · build · `launch.tickets`
-- **Launch Day** `C4 · D4` Ticket revenue: = C2 × C3 (and D) (Passengers × Fare) · pupil · book · `launch.tickets`
-- **Launch Day** `E4` Ticket revenue: = E2 × E3 (Passengers × Fare) · pupil · book · `launch.otherTickets`
-- **Launch Day** `F5` Total revenue: = the plan's ticket revenue (Ticket revenue (the plan)) · ƒ · airline
-- **Launch Day** `F6` Other costs: given (What's in this?) · ƒ · airline
-- **Launch Day** `F7` Fuel burned: £0 (free on Launch Day) · ƒ · airline
-- **Launch Day** `F8` Total costs: = F6 + F7 (Other costs + Fuel burned) · ƒ · airline
-- **Launch Day** `F9` Profit: = F5 − F8 (Total revenue − Total costs) · pupil · book · `launch.profit`
-- **Launch Day** `B13 · C13` Cabin sales: = B11 × B12 (Passengers buying snacks × Snack price) · pupil · build · `launch.cabin`
+- `fuelDeskOpensDay`: 8
+- **Launch Day** `B4` Ticket revenue: = B2 × B3 (Passengers × Fare) · ƒ · watch · `launch.watch`
+- **Launch Day** `C4` Ticket revenue: = C2 × C3 (Passengers × Fare) · pupil · book · `launch.tickets`
+- **Launch Day** `D4` Ticket revenue: = D2 × D3 (Passengers × Fare) · ƒ · watch · `launch.watch`
+- **Launch Day** `E4` Ticket revenue: = E2 × E3 (Passengers × Fare) · ƒ · airline
+- **Launch Day** `F7` Fuel burned: = litres × price (600 L at £1.20) · ƒ · airline
+- **Launch Day** `F9` Profit: = F5 − F8 (Total revenue − Total costs) · ƒ · airline
+- **Launch Day** `B13` Ticket revenue (One flight, two ways): = B11 × B12 (Passengers on one flight × Fare) · pupil · book · `launch.compare`
+- **Launch Day** `C13` Ticket revenue (One flight, two ways): = C11 × C12 (Passengers on one flight × Fare) · ƒ · airline
 - **Changes (week 2 on)** `B2…C7` Passengers a day, Empty seats, Fare, Ticket revenue a day, Over a week: given and ƒ (Now · With your change) · ƒ · airline
 - **Changes (week 2 on)** `D5` Difference (a fare change: ticket revenue a day): = C5 − B5 (With your change − Now) · pupil · build once · `changes.difference`
 - **Changes (week 2 on)** `D7` Difference (a plan change: profit a day): = C7 − B7 (With your change − Now) · pupil · build once · `changes.difference`
-- **Event sums** `B4` Stay with you: = B2 × B3 (Your passengers × Stay with you, in every 10) · pupil · book · `event.stay`
-- **Event sums** `B4` Business travellers today: = B2 × B3 (Business travellers on a weekday × Fly on a Saturday, in every 10) · pupil · book · `event.business`
-- **Sunday review** `B9` Profit this week: = B2 + B3 + … + B8 (weeks 1–2) · =SUM(B2:B8) with Σ SUM (from week 3) (Mon + Tue + … + Sun) · pupil · formula · `week.total`
+- **Sunday review** `B9` Profit this week: = B2 + B3 + … + B8 (week 1; week 2 first) · =SUM(B2:B8) with Σ SUM (shown in week 2, from week 3 only) (Mon + Tue + … + Sun) · pupil · formula · `week.total`
 - **Sunday review** `B11` Difference from the plan: = B10 − B9 (the larger first) (Projected on Monday − Profit this week) · pupil · build · `week.difference`
 - **Sunday review** `B13` Average a day: = B9 ÷ B12 (Profit this week ÷ Days flown) · pupil · formula · `week.average`
-- **Fuel desk** `B4` Cost of this order: = B2 × B3 (Litres to buy × Price a litre) · pupil · book · `fuel.order`
-- **Flight times (week 3)** `D2` Amsterdam: = B2 ÷ C2 (Distance ÷ Speed) · pupil · build · `flight.time`
-- **Flight times (week 3)** `D3` Frankfurt: = B3 ÷ C3 (Distance ÷ Speed) · ƒ · airline
-- **Flight times (week 3)** `D4` Geneva: = B4 ÷ C4 (Distance ÷ Speed) · ƒ · airline
-- **Flight times (week 3)** `D5` Barcelona: = B5 ÷ C5 (Distance ÷ Speed) · pupil · book · `flight.time`
 - **WorkingMethods hints:** 11 of 31 relationships have a hint template.
 
 ## 21 Oct touches (the play-test of 21 Oct)
@@ -266,10 +274,10 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 
 - **Sunday review** `B9` Profit this week: formula-only
 - **Sunday review** `B13` Average a day: formula-only
-- **Calendar skills:** day 21: sumDrag
+- **Calendar skills:** none (Σ SUM falls back to the week 3 review).
 - `fuel.tour.1`: Your tank · holds {capacity}, {weeks}. The dashed line shows the {need} this week needs. · [Next ▶]
 - `fuel.tour.2`: Market: · today's price for a litre, and what it might cost next week. The news underneath says why. · [Next ▶]
-- `fuel.tour.3`: Place a purchase order: · choose how many litres to buy. Then build the cost on the sheet and work it out in your book. · [Got it]
+- `fuel.tour.3`: Place a purchase order: · choose how many blocks to buy, then check the cash you'll have left. · [Got it]
 - `opener.newRoutes`: NEW · {Count} new routes open: {routes}. · [Add a route ›]
 - `opener.newRoute`: NEW · A new route opens: {routes}. · [Add a route ›]
 - `opener.weekends`: NEW · WEEKENDS · Plan Saturday and Sunday on their own · Different numbers of people want to fly at the weekend. Switch to **Sat–Sun** to see the weekend's flights, then edit the plan to fit. · [Got it]
@@ -278,7 +286,7 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `studio.weekends`: NEW · WEEKENDS · Plan Saturday and Sunday on their own · Different numbers of people want to fly at the weekend. Switch to **Sat–Sun** to see them, and give those days their own flights. · [Got it]
 - `changes.difference`: NEW · YOUR CHANGE · What the Difference column means · **Difference = [A] With your change − [B] Now** · {signs} · First, work out **{cell}**: the difference in {row}. · [Got it]
 - `changes.line`: Read the note beside the sheet, then press **Got it**.
-- `review.sumSkill`: NEW SKILL · SUM · Add a whole column at once · Press **Σ SUM**, then drag down the **Profit** column, from Monday's profit to Sunday's. · The sheet adds every cell you drag over: **=SUM({range})**. · [Got it]
+- `review.sumSkill`: NEW SKILL · SUM · There's a quicker way · You added the {days} days by clicking each one. Spreadsheets have a shortcut for a whole column. · Press **Σ SUM**, drag down the **Profit** column from {first} to {last}, then press [Enter]. · [Try it]
 - `review.sum.wait`: Press **Σ SUM**, then drag down the Profit column from {first} to {last}. The sheet adds them up.
 - `review.sum.go`: Now drag down the Profit column, from {first} to {last}.
 - `review.sum.drag`: Let go on {lastDay}'s profit ({cell}), then press Enter.
@@ -295,6 +303,49 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `flightTimes.f`: ƒ worked out for you
 - `flightTimes.footer`: Work out the flight times on the sheet, then go on to the timetable.
 - `flightTimes.card`: Flight time = distance ÷ speed · {plane} to {route}
+- `signal.build`: BUILD IT ON THE SHEET · Nothing to write in your book.
+- `signal.paper`: WORK IT OUT ON PAPER · Work it out in your book. Write [SUM {n}] beside it. · Then type your answer in **{cell}** and press [Enter].
+- `signal.done`: ✓ Done: {what}
+- `line.paper`: Type your answer in {cell}, then press Enter. · [Give me a hint]
+- `line.build`: Click each day, Monday to Sunday, then press Enter. · [Give me a hint]
+- `review.example.sub`: First, watch how it works with made-up numbers.
+- `review.example.label`: EXAMPLE · MADE-UP NUMBERS
+- `review.example.watch`: EXAMPLE · WATCH · Watch: adding up Monday to Wednesday · Finance clicks each day's profit. The cell names go into the formula. Then Finance presses [Enter] and the sheet adds them up.
+- `review.example.done`: EXAMPLE · WATCH · That's how it works · Click each day's profit, press [Enter], and the sheet does the adding. · **Now you: the whole week, Monday to Sunday, with your real numbers.** · [My turn ▶]
+- `review.example.line`: Watch: Finance clicks Monday, Tuesday, then Wednesday.
+- `review.example.lineDone`: ✓ Monday to Wednesday: {total}. The sheet added them up.
+- `review.total.signal`: Profit this week · Click each day's profit, Monday to Sunday. Then press [Enter]. · The sheet adds them up.
+- `review.total.count`: {n} of {days} days. Keep going down to {last}.
+- `review.total.clickDone`: ✓ You added the week: {total}. Now try the quicker way.
+- `review.sum.signal`: Profit this week, the quick way · Let go on {lastDay}'s profit. Then press [Enter] to finish the formula. · The sheet adds the whole column.
+- `review.sum.signal3`: Profit this week · Press **Σ SUM**, drag down the Profit column from {first} to {last}, then press [Enter]. · The sheet adds the whole column.
+- `review.sum.done`: ✓ Same answer, **{total}**, in one drag. From next week, use Σ SUM. Now the average a day.
+- `review.average.signal`: Average a day · Click **Profit this week**, press **÷**, click **Days flown**. Then press [Enter]. · The sheet works it out.
+- `review.done.total`: ✓ Done: **{total}** profit for the week
+- `review.done.average`: ✓ Done: about **{mean}** a day
+- `review.done.line`: ✓ Week {n}'s accounts are done.
+- `launch.watch`: FINANCE WORKS IT OUT · WATCH · [Your turn ▶]
+- `launch.watch.footer`: Launch Day · watch Finance work out the first fare, {route} at £{fare}. · [Your turn ▶]
+- `launch.paper`: {route} at £{fare}: the ticket revenue
+- `launch.compare.head`: NEW ROWS · One flight, two ways
+- `launch.compare`: One flight, two ways: which earns more? · Work out the ticket revenue for {p} passengers at £{fare} in your book. Write [SUM {n}] beside it. · Then type your answer in **{cell}** and press [Enter].
+- `launch.compare.footer`: Launch Day · the last question. Finance has totted up your plan, fuel included.
+- `launch.fuel`: {litres} at {price}
+- `whatif.title`: What if you change a fare? · Plan week {n}
+- `whatif.first`: NEW · WHAT IF · Try a fare before you set it · Press **−** or **+** on a fare. Who wants to fly, seats filled, ticket revenue and profit all work themselves out (ƒ). Nothing to write in your book. When you like what you see, press **Set my fares**. · [Got it]
+- `whatif.changed`: WHAT CHANGED, AGAINST THE FARES YOU HAVE NOW · [↶ Back to my fares]
+- `whatif.footer`: Plan week {n} · try fares before you set them. · [Set my fares ▶]
+- `fuel.order`: YOUR ORDER
+- `fuel.order.above`: ✓ Above your {reserve} reserve
+- `fuel.order.below`: ! Below your {reserve} reserve
+- `fuel.position.tag`: WITH THIS ORDER
+- `tt.first`: NEW · MORE ROOM TO PLAN · Drag flights where you want them · Grab a flight by its dots and drag it along the day. Drag a route from **Add a flight** onto a plane to add one. The people above show who each flight can catch. **☰ Show menu** brings the menu back. · [Got it]
+- `tt.tray`: Add a flight · drag one onto a plane
+- `tt.fits`: ✓ Fits · leaves {dep}, back {back}
+- `tt.cannot`: ! Leaving at {dep}, it would be back at {back}, after the day ends at {close}.
+- `tt.key`: Flights snap to the quarter hour · the day runs {open} to {close}
+- `shelf`: Briefings · Teacher test mode: watch any briefing. Nothing here goes in the pupil's record or changes the game. · [◀ Back to the game]
+- `build.end`: TEST BUILD · End of chapter one · End of chapter one. This test build stops here.
 
 ## Identity and photos (CR5)
 

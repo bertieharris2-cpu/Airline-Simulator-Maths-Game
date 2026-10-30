@@ -70,9 +70,14 @@ def sheet(wb, name):
     return out
 
 counts = {}
+# v6.2 (30 Oct 2026): a status is read by its first word, so "live (chapter-one build)" is live and "parked (Bertie 30 Oct: …)"
+# or "retired (…)" is skipped (Fable's hand-off 1, section 2: the parked mechanism; nothing is deleted). Settings rows marked
+# "draft v6.2" are the hand-off's rules and load (Fable released v6.2 for Claude Code on 30 Oct).
+def status_word(s): return re.split(r'[\s(;,]', str(s or '').strip().lower(), maxsplit=1)[0]
 def live(name, rows):
-    st = Counter((r.get('status') or 'note row') for r in rows)
-    keep = [r for r in rows if r.get('status') in LOAD]          # a row with no status is a note under the table
+    st = Counter((status_word(r.get('status')) or 'note row') for r in rows)
+    ok_ = LOAD | ({'draft'} if name == 'Settings' else set())
+    keep = [r for r in rows if status_word(r.get('status')) in ok_]          # a row with no status is a note under the table
     counts[name] = (len(keep), dict(st))
     return keep
 
@@ -123,6 +128,7 @@ def unlocks(s):         # 'routes:dub,par; planes:dhc6(launch deal); mechanics:f
         if ':' not in part: continue
         k, v = part.split(':', 1)
         items = [x.strip() for x in re.sub(r'\(.*?\)', '', v).split(',')]   # brackets first: "dhc6 (second, £10,000)"
+        if k.strip() == 'planes': items = [x.split()[0] if x.split() else x for x in items]   # v6.2: "dhc6 (second, £10,000) shop opens"
         if k.strip() == 'planes': items = [AIRCRAFT_IDS.get(x, x) for x in items]
         out[k.strip()] = [x for x in items if x]
     return out
@@ -373,6 +379,14 @@ for u in upgrades:
 briefings = [{'id': r['briefingId'], 'trigger': r.get('trigger'), 'title': r.get('title'), 'show': r.get('beat1'), 'predict': r.get('beat2'), 'reveal': r.get('beat3'),
               'use': r.get('beat4'), 'leadsInto': r.get('leadsInto'), 'seconds': r.get('seconds'), 'html': r.get('html')}
              for r in live('Briefings', opt_sheet('Briefings')) if r.get('briefingId')]
+# Hand-off 2 (30 Oct 2026), section 8: the teacher's Briefings shelf lists every briefing with its status chip: IN PLAY (live),
+# TEST ONLY (tenths_stay: watchable here, never triggered), PARKED; retired and not-in-this-build rows are not listed.
+def shelf_state(s):
+    w, s = status_word(s), str(s or '').lower()
+    return 'test' if 'test menu' in s or w == 'test' else 'live' if w == 'live' else 'parked' if w == 'parked' else 'retired' if w in ('retired', 'removed') else 'later'
+briefingShelf = [{'id': r['briefingId'], 'title': r.get('title'), 'trigger': r.get('trigger'), 'html': str(r.get('html') or '').split(' ')[0] or None,
+                  'state': shelf_state(r.get('status')), 'status': r.get('status'), 'cowork': r.get('coworkNumber')}
+                 for r in opt_sheet('Briefings') if r.get('briefingId') and r.get('status')]
 # D104 (19 Oct 2026): a briefing's fixed teaching example (What a fare does), one value per row; lists are separated by |
 def bd_value(v):
     s = str(v).strip() if v is not None else ''
@@ -382,10 +396,12 @@ def bd_value(v):
 # D105 (19 Oct 2026, evening, handover 7.10): every year-one sheet's sums: the cells, the formula and its words, whose it is
 # (the pupil's, or ƒ: the airline's) and how it is done (book: the formula on the bar, worked out in the book; build: built by
 # clicking the cells; build once: built the first time). The game reads whose and how by sumId; the rest is the record.
-SS_HOW = {'book', 'build', 'build once', 'airline', 'formula'}   # formula (21 Oct 2026): he builds the formula; the sheet shows the answer (no book, no Sum number)
+SS_HOW = {'book', 'build', 'build once', 'airline', 'formula', 'watch'}   # watch (30 Oct 2026): Finance works it out while he watches   # formula (21 Oct 2026): he builds the formula; the sheet shows the answer (no book, no Sum number)
 sheetSums = []
+ss_skipped = Counter()
 for r in opt_sheet('SheetSums'):
     if not r.get('sheet') or not r.get('cell'): continue
+    if r.get('status') and status_word(r['status']) not in LOAD: ss_skipped[status_word(r['status'])] += 1; continue   # 30 Oct: parked and retired sums
     row = {'sheet': r['sheet'], 'cell': r['cell'], 'row': r.get('row'), 'formula': r.get('formula'), 'words': r.get('words'),
            'whose': 'ƒ' if str(r.get('whose') or '').strip() in ('ƒ', 'f', 'airline') else 'pupil', 'how': r.get('how'), 'sumNo': r.get('sumNo'),
            'sum': r.get('sumId'), 'notes': r.get('notes')}
@@ -429,6 +445,15 @@ if ft_:
 elif 'Briefings' in wb.sheetnames: issue('check', 'BriefingData', 'no flight_time example: How long will it take? uses a Saab 340 and the Twin Otter to Amsterdam.')
 for n_ in ('DailyColour', 'Upgrades', 'Briefings'):
     if n_ not in wb.sheetnames: issue('check', n_, f'no {n_} sheet: the game runs without it.')
+# v6.2 (30 Oct 2026, Fable's hand-off 1 section 4): the question schedule, two counted questions at every pause. The game reads
+# the pause's days; the questions are named in words (the game's own list of which question each one is, p6a_ch1).
+pauseSchedule = []
+for r in opt_sheet('PauseSchedule'):
+    p_ = str(r.get('pause') or '').strip()
+    if not p_ or p_.startswith('v6.') or not r.get('days'): continue
+    pauseSchedule.append({'pause': p_, 'days': [int(x) for x in re.findall(r'\d+', str(r['days']))], 'dates': r.get('dates'),
+                          'q1': r.get('question1'), 'q2': r.get('question2'), 'formula': r.get('formulaStep'), 'notes': r.get('notes')})
+if 'PauseSchedule' not in wb.sheetnames: issue('check', 'PauseSchedule', 'no PauseSchedule sheet: the game uses its own question schedule.')
 # v5.17 (D101): the Roadmap behind Home's Coming up strip. 'shown from' reads 'day 22'; the line is the pupil's words.
 roadmap = []
 for r in live('Roadmap', opt_sheet('Roadmap')):
@@ -494,7 +519,8 @@ world = {'source': BOOK.name, 'engine': engine, 'imported': dt.date.today().isof
          'chapters': chapters, 'handSumRules': handSumRules, 'catering': catering, 'hunts': hunts,
          'livery': livery, 'aircraftPreview': aircraft_preview, 'workingMethods': workingMethods, 'routeNews': routeNews, 'planTips': planTips, 'teacherMilestones': teacherMilestones,
          'eventOptions': eventOptions, 'chapterPreview': chapterPreview, 'eventPreview': eventPreview, 'campaign': campaign,
-         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings, 'briefingData': briefingData, 'roadmap': roadmap, 'sheetSums': sheetSums, 'screenText': screenText}
+         'dailyColour': dailyColour, 'upgrades': upgrades, 'briefings': briefings, 'briefingData': briefingData, 'roadmap': roadmap, 'sheetSums': sheetSums, 'screenText': screenText,
+         'briefingShelf': briefingShelf, 'pauseSchedule': pauseSchedule}
 
 
 # ---------- checks ----------
@@ -671,10 +697,10 @@ src = DATA.read_text()
 m = re.search(r'<script type="application/json" id="%s">(.*?)</script>' % BLOCK_ID, src, re.S)
 if m:
     old = json.loads(m.group(1))
-    removed = {AIRCRAFT_IDS.get(x.get('id'), x.get('id')) for x in all_aircraft + all_routes + all_events if x.get('status') == 'removed'}
+    removed = {AIRCRAFT_IDS.get(x.get('id'), x.get('id')) for x in all_aircraft + all_routes + all_events if status_word(x.get('status')) in ('removed', 'parked', 'retired')}   # parked (30 Oct): kept on the sheet, not loaded
     for part, idk in (('routes', 'id'), ('aircraft', 'id'), ('archetypes', 'id'), ('events', 'id')):
         gone = {x[idk] for x in old.get(part, [])} - {x[idk] for x in world[part]}
-        if gone & removed: issue('note', part.title(), f'now marked removed and no longer loaded: {", ".join(sorted(gone & removed))}. The id is kept on the sheet.')
+        if gone & removed: issue('note', part.title(), f'now marked removed, parked or retired and no longer loaded: {", ".join(sorted(gone & removed))}. The id is kept on the sheet.')
         if gone - removed: issue('error', part.title(), f'ids in the last import are missing now: {", ".join(sorted(gone - removed))}. Ids never change.')
 
 
