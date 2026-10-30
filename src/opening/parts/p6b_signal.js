@@ -369,3 +369,20 @@ ashLaunchPage = function(st){
     else c1Place(el, cell(a.tgt), 'below', { dx:0 }); }
 };
 if(window.__tkSums) window.__tkSums.unshift({ what:'Finance works it out', test:() => !!document.getElementById('c1Watched'), plan:() => ({ at:'#c1Watched', value:'Your turn', go:() => document.getElementById('c1Watched').click() }) });
+
+/* ---------- every other sheet question gets its signal too (the Monday sheet, the Changes sheet): beside its answer cell
+   when there is room to the right of the sheet, otherwise under it ---------- */
+const c1Bind0 = ashBind;
+ashBind = function(sp){
+  const r = c1Bind0.apply(this, arguments);
+  try{ if(!ch1() || !sp || !sp.act) return r; const root = document.querySelector(`[data-ash="${CSS.escape(sp.id)}"]`); if(!root) return r;
+    c1BarEnter(sp, root);
+    if(document.querySelector('[data-c1sig], [data-c1watch]') || root.querySelector('.ash-co') || /^week:/.test(sp.id) || /^launch:/.test(sp.id)) return r;
+    const a = sp.act, gw = root.querySelector('.ash-gridw'), cell = gw && gw.querySelector(`.ash-c[data-ref="${a.tgt}"]`); if(!gw || !cell) return r;
+    const build = a.how === 'formula' || (a.how === 'build' && !a.no), title = a.title || (a.name ? a.name.charAt(0).toUpperCase() + a.name.slice(1) : a.words || '');
+    gw.insertAdjacentHTML('beforeend', c1SignalHtml(build ? { kind:'build', title, lines:[`Click the cells it uses, then press ${c1Key('Enter')}.`, 'The sheet works it out.'] } : { kind:'paper', title, lines:c1PaperLines(a.no, a.tgt) }));
+    const el = gw.querySelector('[data-c1sig]'), grid = gw.querySelector('.ash-grid'), G = grid.getBoundingClientRect(), W = gw.getBoundingClientRect(), room = window.innerWidth - G.right;
+    if(room > 330) c1Place(el, cell, 'side', { x:G.right - W.left + 16 }); else { el.classList.add('ptr-up'); el.classList.replace('ptr-left', 'ptr-up'); c1Place(el, cell, 'below', { dx:0 }); }
+  }catch(e){}
+  return r;
+};

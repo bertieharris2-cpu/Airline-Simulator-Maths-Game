@@ -78,3 +78,33 @@
 .c1-end-tag{display:inline-block;font:800 11.5px/1 var(--font-sans);letter-spacing:.1em;color:#021226;background:var(--cyan);padding:5px 8px;margin-right:8px;vertical-align:1px}
 /* the review's Σ SUM callout (week 2) sits in the signal's place */
 .c1-ins .c1-co .ash-ptr{left:-8px;top:22px}
+/* the Fuel desk's order (hand-off 2, section 6) */
+.c1-hide{display:none!important}
+.c1-ord{border:1px solid var(--bv-line);background:linear-gradient(160deg,#092643,#051629);padding:12px 16px 12px;margin-top:6px}
+.c1-ord-e{display:block;font:800 11.5px/1 var(--font-sans);letter-spacing:.12em;color:var(--text-soft,#9fbde3)}
+.c1-ord-n{display:block;font-size:18px;margin:6px 0 8px}
+.c1-ord-r{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid rgba(65,122,171,.3);font-size:15px}
+.c1-ord-r .ash-au{font-style:italic;color:var(--text-soft,#9fbde3);margin-left:4px}
+.c1-ord-bar{position:relative;height:16px;margin:14px 0 18px;background:rgba(255,255,255,.06)}
+.c1-ord-bar .aft{position:absolute;left:0;top:0;bottom:0;background:#2f7fc0}
+.c1-ord-bar .ord{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,var(--gold) 0 4px,rgba(242,193,78,.35) 4px 8px)}
+.c1-ord-bar .res{position:absolute;top:-3px;bottom:-3px;width:2px;background:#fff}
+.c1-ord-bar .res-l{position:absolute;top:19px;transform:translateX(-50%);font-size:11.5px;color:var(--text-soft,#9fbde3)}
+.c1-ord-l{margin:4px 0 0;font-weight:700;font-size:14.5px}
+.c1-ord-l.green{color:var(--green)}.c1-ord-l.amber{color:var(--amber)}
+.c1-with{display:inline-block;margin-left:10px;font:800 11px/1 var(--font-sans)!important;letter-spacing:.1em;color:#021226!important;background:var(--cyan);padding:4px 7px;vertical-align:3px}
+.c1-withp .tk-f{fill:#2f7fc0;opacity:.85}
+/* the what-if fare sheet (hand-off 2, section 5) */
+.c1-wi .ash-c{position:relative}
+.c1-wib{position:absolute;left:10px;top:50%;transform:translateY(-50%);display:flex;gap:6px}
+.c1-wis{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font:700 15px/1 var(--font-sans);color:var(--text,#eaf3ff);background:#0b2240;border:1px solid #6f95c4;cursor:pointer;padding:0}
+.c1-wis:hover{border-color:var(--cyan)}
+.ash-c.c1-wich{outline:2px solid var(--green);outline-offset:-2px;box-shadow:var(--glow-green)}
+.c1-wi .pos{color:var(--green)}
+.c1-wi .c1-less{color:var(--text-soft,#9fbde3)}
+.c1-wico{position:relative!important;inset:auto!important;margin:22px 0 0 230px;width:560px;max-width:none}
+.c1-wico .ash-ptr{left:60px!important;top:-8px!important}
+.c1-wic{margin:26px 0 0 54px;max-width:880px;border:1px solid var(--bv-line);background:linear-gradient(160deg,#092643,#051629);padding:14px 16px 16px}
+.c1-wie{display:block;font:800 11.5px/1 var(--font-sans);letter-spacing:.12em;color:var(--text-soft,#9fbde3);margin-bottom:8px}
+.c1-wil{display:grid;grid-template-columns:250px 1fr;gap:12px;padding:3px 0;font-size:14.5px}
+.c1-wic .bv-btn{margin-top:12px}
