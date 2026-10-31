@@ -205,7 +205,9 @@ for r in live('Routes', all_routes):
                    # v5.3 (D79): a two-leg route lists its legs and how many days a rotation takes (1 same-day, 2 overnight, 4 two-leg)
                    'legs': legs(r.get('legs')), 'rotationDays': r.get('rotationDays'),
                    # v6.0 (D104): Paris and Dublin are known from the start; a new route shows a range until it has flown a week
-                   'demandKnown': r.get('demandKnown')})
+                   'demandKnown': r.get('demandKnown'),
+                   # 31 Oct 2026 (17:37 hand-off, section 3): the route's colour on the Before / after graph
+                   'colour': r.get('colour')})
 
 catalogue = [{'id': r['id'], 'city': r['city'], 'country': r['country'], 'airport': r['code'], 'km': r['distanceKm'],
               'archetype': r['archetype'], 'haul': r['haul'], 'baseFare': r['baseFare'], 'legHours': r['legHours'],

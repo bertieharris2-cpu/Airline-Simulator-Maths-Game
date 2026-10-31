@@ -38,7 +38,7 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   // hand-off 3, section 4: Run goes straight through week 1, so a hook on render() notes each page drawn there
   await E(`(window.__wk1 = { pages:{}, seen:{} }, (() => { const r0 = render; render = function(){ const out = r0.apply(this, arguments);
     try{ const t = step().t, W = window.__wk1; if(S.day <= 7){ (W.pages[S.day] = W.pages[S.day] || {})[t] = 1;
-      if(['results', 'c1check', 'weekRun'].includes(t) && !W.seen[t]){ const tx = (screen().textContent || '').replace(/\\s+/g, ' '); if(t !== 'weekRun' || /is flying/.test(tx)) W.seen[t] = { day:S.day, text:tx, nx:(document.getElementById('nx') || document.getElementById('c2Keep') || {}).textContent || '' }; }
+      if(['results', 'c1check', 'weekRun'].includes(t) && !W.seen[t]){ const tx = (screen().textContent || '').replace(/\\s+/g, ' '); if(t !== 'weekRun' || /is flying/.test(tx)) W.seen[t] = { day:S.day, text:tx, nx:(document.getElementById('nx') || document.getElementById('c2Keep') || document.getElementById('c3FraGo') || {}).textContent || '' }; }
       if(document.getElementById('c2Keep')) (W.dayp = W.dayp || {})[S.day] = { h:((screen().querySelector('h1') || {}).textContent || '').trim(), keep:document.getElementById('c2Keep').textContent.trim() }; } }catch(e){}
     return out; }; })(), 1)`);
   let fuel1 = null;
@@ -64,7 +64,8 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   ok(h1 && h1.fuelPaid > 0 && fuel1 && h1.costs === fuel1.cost, `the Launch Day results' Total costs are the plan's, fuel included (£${h1 && h1.costs})`);
   console.log('After Launch Day (hand-off 3, section 4)'); const A1 = await J('JSON.stringify(window.__wk1)'), R1 = A1.seen.results || {}, C1 = A1.seen.c1check || {}, W1 = A1.seen.weekRun || {};
   const DR = String(await E("String(WBS().dailyChangeDays || '')")).match(/(\d+)\s*-\s*(\d+)/), DAYS = DR ? Array.from({ length:+DR[2] - +DR[1] + 1 }, (_, k) => +DR[1] + k) : [], DP = A1.dayp || {};
-  ok(/Launch Day: how it went/.test(R1.text || '') && /Keep for tomorrow|Fly anyway/.test(R1.nx || '') && /Change my plan/.test(R1.text || ''), `Launch Day ends on its Day page: "Launch Day: how it went", Keep for tomorrow / Change my plan (hand-off 2a; ${(R1.nx || 'not seen').trim()})`);
+  // the 17:37 hand-off (section 1): on the evening Frankfurt is earned, the Day page leads with it and has one button, Plan tomorrow with Frankfurt
+  ok(/Launch Day: how it went/.test(R1.text || '') && ((/Keep for tomorrow|Fly anyway/.test(R1.nx || '') && /Change my plan/.test(R1.text || '')) || (/Plan tomorrow with/.test(R1.nx || '') && /opens tomorrow/.test(R1.text || ''))), `Launch Day ends on its Day page: "Launch Day: how it went", Keep for tomorrow / Change my plan, or on a Frankfurt evening Plan tomorrow with Frankfurt (hand-offs 2a and 17:37; ${(R1.nx || 'not seen').trim()})`);
   // Bertie 31 Oct: a day of dailyChangeDays stops on its Day page only when there is at least Settings dailyPauseGain a day to find
   const AU = await J('JSON.stringify({ auto:(S.c1.c2 || {}).auto || {}, gain:(S.c1.c2 || {}).gain || {}, th:+WBS().dailyPauseGain || 0 })');
   ok(DAYS.length === 5 && DAYS.every(d => (DP[d] && /how it went/.test(DP[d].h) && AU.gain[d] >= AU.th) || (!DP[d] && AU.auto[d] !== undefined && AU.auto[d] < AU.th)),

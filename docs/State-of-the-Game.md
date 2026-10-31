@@ -10,6 +10,30 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zu. The eight screens after the 17:37 play notes (31 Oct 2026, evening)
+
+Claude Design's hand-off is built for chapter one. All of it is in the new part `p6i_1737.js` (block-scoped; it wraps the functions below) and `p1_head_c3.css`. The report is `docs/Handoff-1737-Report.md`.
+- **Hooks it uses:**
+  - `window.__c2h` (p6h: `dayPage`, `fraCard`, `startChange`, `demo`, called through `H2` so they can be wrapped);
+  - `window.__c2i` (p6h internals);
+  - `window.__c1qx` (p6g: `choose`, `paper`);
+  - `__tkPre` and `__tkSums` (the toolkit presses every new button).
+- **What it wraps:**
+  - `renderStudio`, `s2Timetable`, `render`, and a click hook on the week opener's `#s2Edit` (from week 2): two plans;
+  - `R.workings`, `ashTabs`: Before / after;
+  - `ashChanges`, `ashChangeSpec`, `ashChangesPage`: the new route first, the Difference callout, "Now" → "Today's plan";
+  - `ashLaunchSpec`, `ashLaunchPage`: example column G;
+  - `c1ExampleRun`, `c1ExampleSpec`, `ashReviewRender`: Sunday;
+  - `R.c1q`, `daySteps`, `stepsFor`: the what-if step comes before Monday 9 Sep's plan;
+  - `R.plan`: Back to the Day page.
+- **Seen state:** `S.c1.c3.seen` (tp1, tp2, ba, diff, wk1add, wk1sum). Launch Day's stages are `c1Ld().c3pjob`, `c3pdemo` and `c3pmine`; the what-if stages are in the step (`st.c3`).
+- **Elsewhere:**
+  - p6b `c1Pace` (Settings `demoFirstClickDelay`, `demoStepGap`) paces every chapter-one demo;
+  - p6b honours `why27Callout`;
+  - p5f keeps `fare_lever` on the shelf;
+  - p6h's `c2Stage` has the stage `avgdemo`.
+- **Not built:** two plans with two planes (`twoPlansMaxPlanes` 1).
+
 ## 0zt. One hand-over after the 17:37 play notes (31 Oct 2026)
 
 No change to the game. Bertie's 17:37 play notes (Launch Day to the plan check on Mon 9 Sep) and the two earlier hand-overs are combined into one hand-over (`docs/Handoff-Combined-17-37.md`, Claude Doc). Where they disagree, the play notes win. The play log confirms that only week 1 flew (days 1–5, 7, 8). Open for Claude Design: two plans side by side on the Day page and in the Studio, a guided Before / after, callouts on the week 1 Sunday, and the week 2 what-if screen.

@@ -24,6 +24,8 @@ const bfRows = () => WB.briefings || [], upgRows = () => WB.upgrades || [];
 const bfRow = id => { if(!bfAny && typeof window.__bfBlocked === 'function' && window.__bfBlocked(id)) return undefined;   // a parked briefing never plays (hand-off 1, 30 Oct; p6a_ch1)
   const w = bfRows().find(b => b.id === id), x = BF_EXTRA[id]; if(!w && !x) return undefined; const r = Object.assign({ id }, x || {}, w || {}); if(x && !BF_FILES[r.html]) r.html = x.html; return r; }, upgRow = id => upgRows().find(u => u.id === id);
 const bfHas = id => { const b = bfRow(id); return !!(b && BF_FILES[b.html]); };
+/* chapter one (Bertie 31 Oct, 17:37, L2): a briefing whose Briefings trigger says "shelf only" never opens by itself; it waits on the Briefings shelf */
+const bfShelfOnly = id => typeof ch1 === 'function' && ch1() && /shelf only/i.test(String((bfRow(id) || {}).trigger || ''));
 const bfOn = () => WBS().operationsBriefings !== false && settings.briefings !== false;   // the regression tests switch them off (settings.briefings = false)
 const upgOn = () => WBS().plannerUpgrades !== false;
 const bfS = () => S.brief || (S.brief = { seen:{} });
@@ -174,7 +176,7 @@ function bfMore(st, root){
   const seen = bfS().seen;
   // Bertie, 18 Oct: "check whether the briefings come before the first instance of working that out"
   // 1 · What a fare does: Launch Day, as the Studio opens (before a fare can be changed, and the change's worth asked)
-  if(st.t === 'plan' && S.phase === 'setup' && !seen.fare_lever && bfHas('fare_lever') && root.querySelector('.ad-blk')){
+  if(st.t === 'plan' && S.phase === 'setup' && !seen.fare_lever && bfHas('fare_lever') && !bfShelfOnly('fare_lever') && root.querySelector('.ad-blk')){
     let W = null; try{ W = workTables(currentPlan()); }catch(e){}
     const data = bfFareData(W && W.tables.find(x => x.stage === 'fare')); if(data){ data.next = 'studio'; bfOpen('fare_lever', data, d => bfToFares(d, data)); return; }
   }
@@ -184,7 +186,7 @@ function bfMore(st, root){
     if(c && c.values && c.values.blocks > 0){ const data = bfLaunchFuelData(c); if(data){ bfOpen('fuel_cash_tank_profit', data, () => render()); return; } }
   }
   // 1 · (a save that reached the sums without it) as the fare sums open (before the first is answered)
-  if(st.t === 'workings' && S.phase === 'setup' && !seen.fare_lever && bfHas('fare_lever')){
+  if(st.t === 'workings' && S.phase === 'setup' && !seen.fare_lever && bfHas('fare_lever') && !bfShelfOnly('fare_lever')){
     let W = null; try{ W = workTables(currentPlan()); }catch(e){}
     const t = W && W.tables.find(x => x.stage === 'fare'); if(t && !Object.keys(t.done || {}).length && !UI.justDone){ const data = bfFareData(t); if(data){ data.next = 'sums'; bfOpen('fare_lever', data, () => render()); } return; }
   }

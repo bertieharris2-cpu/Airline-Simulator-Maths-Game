@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 267 | 10 draft, 257 live, 10 placeholder, 1 withdrawn |
+| Settings | 284 | 10 draft, 274 live, 11 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -218,7 +218,7 @@ Taken from v5.17 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 Bertie's rules of 18 Oct 2026, added to the installed workbook: the Settings rows the game reads, as loaded.
 
 - `pupilReserve`: set by the pupil; default £0
-- `bustRule`: 3 grounded days in a week; the airline closes and starts again from Launch Day
+- `bustRule`: 3 grounded days in a week; the airline closes and starts again from the beginning of the chapter (Launch Day in this chapter-one build)
 - `standingAim`: Make as much money as you can. | In January you'll choose what kind of airline you are. | Keep cash for emergencies: you decide how much. | Run out of cash and the airline closes. | You start again from Launch Day. No loans.
 
 ## D104 touches (What a fare does, rebuilt)
@@ -473,6 +473,73 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `wk1.sum.watch`: EXAMPLE · WATCH · Watch: a quicker way to add up Monday to Wednesday · Finance presses **Σ SUM**, drags down the Profit column from Monday to Wednesday, then presses [Enter]. One drag, no + signs.
 - `wk1.sum.signal`: Your turn: the whole week with Σ SUM · Press **Σ SUM**, drag down your Profit column from Monday to Sunday, then press [Enter].
 - `wk1.sum.same`: ✓ Σ SUM: **{total}**. The same answer, in one drag.
+- `changes.head.week1`: Today's plan
+- `changes.head.later`: Last week
+- `changes.head.change`: With your change
+- `frankfurt.card`: NEW ROUTE · Frankfurt opens tomorrow · Today your plane made {pct}% of the most it could have made. That's a strong plan, so a new route has opened early: Frankfurt. · [See Frankfurt ›]
+- `finance.example.profit`: FINANCE'S EXAMPLE · Made-up numbers · 15 passengers × £60 = £900 of tickets. Costs: flying £300, fuel £120, landing £150, passenger charges £75. That's £645. Profit: £900 − £645 = £255. · [Now your turn]
+- `fra.eve.more`: Every flight covered its costs, and the seats were {fill}% full.
+- `fra.eve.board`: DEPARTURES · TOMORROW · ON TIME · {city} · NEW
+- `fra.eve.chips`: {time} there and back · Further away: people pay more
+- `fra.eve.rule`: **Tomorrow, {date}.** Build a new plan with {city} beside today's plan, then choose which one flies.
+- `fra.eve.small`: It opens early after a day that made at least {pct}% of the most your plane could make, with every flight covering its costs and the seats at least {fill}% full.
+- `fra.eve.footer`: {city} opens tomorrow. Plan tomorrow's flights. · [Plan tomorrow with {city} ▶]
+- `tp.title`: Plan tomorrow: {date} · {airline} HQ · today's plan stays for comparison · build a new one under it
+- `tp.title.week`: Plan week {n} · {airline} HQ · last week's plan stays for comparison · build a new one under it
+- `tp.lane.old`: TODAY'S PLAN · Flew today · LAST WEEK'S PLAN · Flew last week
+- `tp.lane.new`: NEW PLAN · For tomorrow · For this week · drag flights in
+- `tp.drop`: Drag a flight here
+- `tp.choice`: Profit a day · flew today · Profit a day · last week · Profit a day · projected · build it first · [Choose ▶]
+- `tp.compare`: COMPARE · Today's plan · Last week's plan · New plan · Projected for tomorrow · Projected for this week
+- `tp.footer`: Choose the plan that flies tomorrow. · Choose the plan that flies this week.
+- `tp.tray`: drag one onto the new plan
+- `tp.co1`: NEW · TWO PLANS · Build a new plan for tomorrow · Today's plan stays above to compare. Drag flights onto the new plan. · [Got it]
+- `tp.co2`: TWO PLANS · Choose the plan that flies tomorrow · Today's: {old} a day. New: {new}. Press Choose beside the one you want. · [Got it]
+- `ba.title`: Before / after: today's plan and your new plan · Before / after: last week's plan and your new plan
+- `ba.axis`: Profit a day · {n} flights
+- `ba.co1`: BEFORE / AFTER · Today's plan · {n} flights: {list}. It made {money} profit today. · [Next ▸]
+- `ba.co2`: BEFORE / AFTER · Your new plan · {n} flights: {list}. It should make {money} profit a day. · [Next ▸]
+- `ba.co3`: BEFORE / AFTER · {city}'s {nf} · {pax} passengers × {fare} = {tk} a day. After its costs, {city} makes {profit} a day{than}. · [Next ▸]
+- `ba.co3.than`: : more than {old} made today
+- `ba.co4`: BEFORE / AFTER · The difference a day · Your new plan should make {money} {more} a day{fewer}. Next, the sheet shows where it comes from. · [Work it out ▶]
+- `ba.co4.fewer`: , with one flight fewer · with {n} flights fewer
+- `ba.table`: What changes, a day · Flights · Passengers · Ticket revenue · Costs · Profit · Today's plan · Last week · New plan · Difference
+- `ba.footer`: Tomorrow's plan · see what changes before the sums. · This week's plan · see what changes before the sums.
+- `chg3.crumb`: Work out my plan · first, the new route · then, {city}
+- `chg3.route`: FIRST, {CITY} · {city} takes the place of {was} · Your {n} {city} {flights} replace the {m} {was} {wflights}. Finance has filled them in (ƒ). {city} brings in {rev} {revmore} a day, and makes {profit} {profmore} profit. · [Next: {next} ▸]
+- `chg3.route.free`: FIRST, {CITY} · {city} uses time your plane had free · Your {n} {city} {flights} fly when your plane was on the ground. Finance has filled them in (ƒ). {city} brings in {rev} a day, and makes {profit} profit. · [Next: {next} ▸]
+- `chg3.route.line`: ✓ Finance filled in {city}. Nothing to work out on this part.
+- `chg3.route.rows`: Passengers a day · Fare · Ticket revenue a day · Costs a day · Profit a day
+- `chg3.diff`: NEW · YOUR CHANGE · What the Difference column means · **Difference = With your change − {head}.** · {signs} · A minus means less. Watch Finance work out the first one. · [Watch ▶]
+- `chg3.head.diff`: change − today's · change − last week · Difference
+- `chg3.last`: then, the whole plan
+- `ld3.col`: Finance · made-up · Example
+- `ld3.job`: LAUNCH DAY · THE PROFIT · Now the profit for your plan · Profit = Total revenue − Total costs. Finance shows you first, on made-up numbers in the example column. Then you work out yours. · [Watch ▶]
+- `ld3.mine`: Your turn: your plan's profit · Click **Total revenue**, press **−**, click **Total costs**. Then press [Enter]. The sheet works it out.
+- `ld3.footer`: Launch Day · Finance shows the profit on the example first. · Launch Day · now your plan's profit.
+- `wk1.co.add`: WEEK 1 ACCOUNTS · One way to find the week's total profit: add each day · Finance shows you first, on made-up numbers. Then you add up your own week. · [Watch ▶]
+- `wk1.co.sum`: A SIMPLER WAY · Here's a simpler way to do it in a spreadsheet: Σ SUM · Finance shows you on the same made-up numbers. Then it's your turn on your week. · [Watch ▶]
+- `wk1.avg.watch`: WATCH · Watch: Finance works out the average a day · Finance clicks **Profit this week**, presses **÷**, clicks **Days flown**, then presses [Enter]. Then it's your turn on the Σ SUM sheet.
+- `wk1.avg.mine`: Your turn: the average a day · Click **Profit this week**, press **÷**, click **Days flown**, then press [Enter].
+- `wi2.title`: What if you change a fare? · Plan week {n} · {date}
+- `wi2.cols`: your fare · what if · what if − yours · Difference
+- `wi2.rows`: Seats filled a day · Fare · Ticket revenue a day · A week (× 7) · A month (× {w} weeks)
+- `wi2.co1`: NEW · WHAT IF · What if {city} were £{step} more? · People still fill all {seats} seats at {fare}. What would £{step} more on each ticket bring in? Finance shows you first, with your fare. · [Watch ▶]
+- `wi2.watch`: Watch: Finance clicks **Seats filled**, presses **×**, clicks **Fare**, then presses [Enter].
+- `wi2.q1`: WHAT IF · 2 OF 4 · What if: ticket revenue a day · {seats} seats × {fare}.
+- `wi2.q2`: WHAT IF · 3 OF 4 · A week: the difference · {more} more a day, times 7.
+- `wi2.co4`: A LITTLE ADDS UP · £{step} more a ticket = {month} more a month · A day: {d}. A week: {w}. A month: {m}. Try other fares with − and +. Every figure works itself out. · [Try other fares]
+- `wi2.footer`: Plan week {n} · Finance first, then you. · Plan week {n} · try other fares, or set them. · [Set my fares ▶]
+- `home.now.week`: Week {n}: your plan flies again
+- `ba.table.note`: Finance filled this in from your two plans (ƒ). Nothing to work out here.
+- `ba.bracket`: {money} · a day
+- `chg3.diff.line`: Read the note under the Difference column, then press **Watch**.
+- `chg3.diff.sign`: **{v}** means the fare is {n} {dir}. · **{v}** means {lab} went {dir} by {n}. · higher · lower · up · down
+- `ld3.line`: Press **Watch** when you're ready.
+- `tp.co1.week`: NEW · TWO PLANS · Build a new plan for this week · Last week's plan stays above to compare. Drag flights onto the new plan. · [Got it]
+- `tp.co2.week`: TWO PLANS · Choose the plan that flies this week · Last week's: {old} a day. New: {new}. Press Choose beside the one you want. · [Got it]
+- `ba.co1.week`: BEFORE / AFTER · Last week's plan · {n} flights a day: {list}. Flown again this week, it would make {money} profit a day. · [Next ▸]
+- `ba.co3.than.week`: : more than {old} would make
 
 ## Identity and photos (CR5)
 

@@ -202,14 +202,15 @@ function c1ExampleRun(){
   const go = () => { const sp = ashLive(); if(!sp || !sp.example || !sp.act) { X.exRun = false; return null; } return sp; };
   const steps = []; const sp0 = go(); if(!sp0) return; sp0.act.refs.forEach((ref, i) => { if(i) steps.push({ op:'+' }); steps.push({ ref }); }); steps.push({ enter:true });
   if(settings.reduceMotion){ const st = ashSt(sp0.id); st.tokens = ashFullTokens(sp0.act); st.entered = true; ashBuilt(sp0, sp0.act, st); X.exRun = false; render(); return; }
+  const P = c1Pace(), cur0 = document.getElementById('c1Cursor'); if(cur0 && ch1()){ const F = c1PtrFrom(); cur0.style.transition = 'none'; cur0.style.left = F.x + 'px'; cur0.style.top = F.y + 'px'; void cur0.offsetWidth; cur0.style.transition = ''; }   // it glides in from the Watch button
   let i = 0; const tick = () => { const sp = go(); if(!sp){ return; } const s = steps[i++]; if(!s){ X.exRun = false; return; }
     const root = document.querySelector(`[data-ash="${CSS.escape(sp.id)}"]`), cur = document.getElementById('c1Cursor');
     if(s.ref){ const c = root && root.querySelector(`[data-ref="${s.ref}"]`); if(c && cur){ const R = c.getBoundingClientRect(); cur.style.left = (R.right - 26) + 'px'; cur.style.top = (R.top + R.height / 2 - 4) + 'px'; }
-      setTimeout(() => { const sp2 = go(); if(sp2) ashPick(sp2, s.ref); setTimeout(tick, 650); }, 380); return; }
+      setTimeout(() => { const sp2 = go(); if(sp2) ashPick(sp2, s.ref); setTimeout(tick, P.gap); }, ch1() ? P.move : 380); return; }
     if(s.op){ const sp2 = go(); if(sp2) ashOp(sp2, s.op); setTimeout(tick, 250); return; }
     if(s.enter){ const k = document.querySelector('.c1-fbenter'); if(k && cur){ const R = k.getBoundingClientRect(); cur.style.left = (R.left + R.width / 2) + 'px'; cur.style.top = (R.top + R.height / 2) + 'px'; }
-      setTimeout(() => { const sp2 = go(); if(sp2){ X.exRun = false; c1Enter(sp2); } }, 900); } };
-  setTimeout(tick, 700);
+      setTimeout(() => { const sp2 = go(); if(sp2){ X.exRun = false; c1Enter(sp2); } }, ch1() ? P.move + 180 : 900); } };
+  setTimeout(tick, ch1() ? P.pause : 700);
 }
 /* is Finance's example on screen? (week 1; p6h shows a second one, Σ SUM, after he has added his week day by day) */
 function c1ExNow(X, W){ return !X.exDone; }
@@ -302,6 +303,7 @@ function c1FlightsOf(route){ const pl = normPlan(currentPlan()), out = []; pl.fl
 const c1Or = L => L.length <= 1 ? (L[0] || '') : L.slice(0, -1).join(', ') + ' or ' + L[L.length - 1];
 /* WHY 27?: a column whose passengers are fewer than the people who want to fly at that fare, with seats to spare */
 function c1WhyFor(sp, s){
+  if(c1Off(WBS().why27Callout)) return null;   // Bertie 31 Oct (17:37, L3): "I don't want to overload them"
   const k = s && sp.cols.find(c => c.c === ashRef(s.tgt).c); if(!k || !k.src) return null; const { t, col, route } = k.src, V = (t.cols.find(c => c.id === col) || {}).values || {};
   const pax = V['pax_' + route] || 0, fare = V['fare_' + route] || 0, want = Math.round(paxWant(routeById(route), fare)), seats = (() => { try{ return ashSeatsOn(planLines(currentPlan()), route); }catch(e){ return 0; } })();
   if(!(pax < want && pax < seats)) return null;
@@ -358,11 +360,22 @@ ashLaunchSpec = function(){
 /* the demonstration: a pointer glides to each cell and key and clicks it (about 0.8 s a step); under reduced motion each step
    appears in turn. The page is not his to click until Finance has pressed Enter. */
 const C1_PTR = '<svg viewBox="0 0 20 26" width="22" height="28" aria-hidden="true"><path d="M2 2v19l5-4.5 3.6 7.5 3.3-1.6-3.5-7.3H17z" fill="#fff" stroke="#021226" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+/* the pace of Finance's demonstrations (Bertie 31 Oct, 17:37: "a little bit too fast, especially the first click"; the 17:37 hand-off,
+   section 0): a demonstration starts only from Watch ▶; then nothing moves for Settings demoFirstClickDelay (about 1.5 s), the
+   pointer glides from the Watch button to the first cell before it clicks, and each later step is about demoStepGap (1.2 s)
+   apart. Under reduced motion each step simply appears. */
+function c1Secs(v, d){ const m = /([\d.]+)\s*(ms|s)?/.exec(String(v === undefined || v === null ? '' : v)); if(!m) return d; const x = +m[1]; return m[2] === 'ms' || x > 30 ? x : Math.round(x * 1000); }
+function c1Pace(){ const on = typeof ch1 === 'function' && ch1(), pause = on ? c1Secs(WBS().demoFirstClickDelay, 1500) : 500, step = on ? c1Secs(WBS().demoStepGap, 1200) : 900;
+  return { pause, step, move:Math.max(450, step - 430), gap:250 }; }
+/* where the pointer starts: the button that started the demonstration (Watch ▶), else the middle of the screen */
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('button'); if(b && /Watch/.test(b.textContent || '')){ const R = b.getBoundingClientRect(); UI.c1PtrFrom = { x:R.left + R.width / 2, y:R.top + R.height / 2, at:Date.now() }; } }, true);
+function c1PtrFrom(){ const F = UI.c1PtrFrom; return F && Date.now() - F.at < 15000 ? F : { x:window.innerWidth / 2, y:window.innerHeight * .7 }; }
 function c1PtrTo(el, then){
-  let p = document.getElementById('c1Ptr'); if(!p){ p = document.createElement('div'); p.id = 'c1Ptr'; p.className = 'c1-ptr'; p.innerHTML = C1_PTR; document.body.appendChild(p); }
-  const R = el.getBoundingClientRect(); p.classList.toggle('still', !!settings.reduceMotion);
+  let p = document.getElementById('c1Ptr'), fresh = false; if(!p){ p = document.createElement('div'); p.id = 'c1Ptr'; p.className = 'c1-ptr'; p.innerHTML = C1_PTR; document.body.appendChild(p); fresh = true; }
+  const R = el.getBoundingClientRect(), rm = !!settings.reduceMotion, P = c1Pace(); p.classList.toggle('still', rm);
+  if(fresh && !rm){ const F = c1PtrFrom(); p.classList.add('still'); p.style.left = Math.round(F.x) + 'px'; p.style.top = Math.round(F.y) + 'px'; void p.offsetWidth; p.classList.remove('still'); }   // it glides in from the Watch button
   p.style.left = Math.round(R.left + R.width * .55) + 'px'; p.style.top = Math.round(R.top + R.height * .55) + 'px';
-  setTimeout(() => { p.classList.add('click'); setTimeout(() => { p.classList.remove('click'); then(); }, 180); }, settings.reduceMotion ? 450 : 650);
+  setTimeout(() => { p.classList.add('click'); setTimeout(() => { p.classList.remove('click'); then(); }, 180); }, rm ? 450 : P.move);
 }
 function c1PtrGone(){ const p = document.getElementById('c1Ptr'); if(p) p.remove(); }
 function c1DemoRun(){
@@ -375,9 +388,9 @@ function c1DemoRun(){
       { el:() => root.querySelector(`[data-ref="${a.refs[1]}"]`), go:() => ashPick(sp, a.refs[1]) }, { el:() => root.querySelector('.c1-keys [data-c1kenter]'), go:() => { c1KeyFlash('enter'); c1DemoEnd(sp); } }];
     const S1 = steps[D.step], el = S1 && S1.el(); if(!S1){ UI.c1Demo = null; c1PtrGone(); return; }
     if(!el){ setTimeout(tick, 200); return; }
-    c1PtrTo(el, () => { if(UI.c1Demo !== D) return; S1.go(); D.step++; if(D.step < steps.length) setTimeout(tick, settings.reduceMotion ? 350 : 250); else { UI.c1Demo = null; setTimeout(c1PtrGone, 500); } });
+    c1PtrTo(el, () => { if(UI.c1Demo !== D) return; S1.go(); D.step++; if(D.step < steps.length) setTimeout(tick, settings.reduceMotion ? 350 : c1Pace().gap); else { UI.c1Demo = null; setTimeout(c1PtrGone, 500); } });
   };
-  setTimeout(tick, 500);
+  setTimeout(tick, settings.reduceMotion ? 300 : c1Pace().pause);
 }
 function c1DemoEnd(sp){ const X = c1Ld(); X.demo = S.day || 1; const st = ashSt(sp.id); if(sp.act && !st.ready){ ashFullTokens(sp.act).forEach(t => st.tokens.push(t)); } st.ready = true; c1Enter(sp); UI.ashJust = null; save(); render(); }
 function c1DemoSkip(){ const sp = ashLive(); UI.c1Demo = null; c1PtrGone(); if(sp && sp.c1 && sp.c1.stage === 'demo'){ const st = ashSt(sp.id); st.tokens = []; c1DemoEnd(sp); } }

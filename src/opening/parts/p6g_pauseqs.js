@@ -315,5 +315,6 @@ if(window.__tkSums){ window.__tkSums.unshift({ what:'pick a change', test:() => 
   window.__tkSums.unshift({ what:'the next question', test:() => !!document.getElementById('c1qNext'), plan:() => ({ at:'#c1qNext', value:'Next question', go:() => document.getElementById('c1qNext').click() }) }); }
 const c1qLabel0 = window.__pnLabel;
 window.__pnLabel = t => t === 'c1q' ? 'Finance\'s questions' : (c1qLabel0 ? c1qLabel0(t) : null);
+window.__c1qx = { choose:c1qChoose, paper, C1Q, TQ, wiPick };   // the 17:37 hand-off's what-if sheet asks the same questions (p6i)
 window.__c1q = { due:c1qDue, last:c1qLast, log:() => (c1Ex().qLog || []), wait:() => (c1Ex().qWait || []) };
 }

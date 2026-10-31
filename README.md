@@ -380,6 +380,32 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Chapter one after the 17:37 play notes: the eight screens (31 Oct 2026, evening)
+
+Claude Design's hand-off (`data/incoming/handoff-1737-31-oct/`, DESIGN.md installed from it) is built, chapter one only, in `src/opening/parts/p6i_1737.js` and `p1_head_c3.css`. The report is `docs/Handoff-1737-Report.md`; the screenshots are in `docs/screenshots/handoff-1737/`.
+- **The Frankfurt evening:** the Day page leads with the news and his % of the best plan. It has one button, Plan tomorrow with Frankfurt ▶.
+- **Two plans, then Choose** (one plane): every Change my plan in week 1, and Edit plan on the week's opener from week 2.
+  - Today's (or last week's) plan sits on top for reference, with a blank new plan under it.
+  - Each plan has Choose ▶ beside it, and a compare bar sits underneath.
+  - Choosing the old plan flies it with no sums.
+- **Before / after** opens by itself after Choose: a stacked-bar graph by route (Routes `colour`) with four callouts one at a time, then the ƒ table.
+- **The Changes sheet:**
+  - the new route comes first, all ƒ;
+  - the Difference callout comes before Finance's demo, under the table;
+  - "Now" is "Today's plan".
+- **Launch Day:** Finance shows the profit on the example column G (Settings `launchExampleColumn`), then he builds his own.
+- **Week 1 Sunday:** Watch ▶ first, with a callout for each method. Finance shows the average a day on the left sheet; he works it on Σ SUM.
+- **Week 2:** on Monday 9 Sep the what-if sheet comes first.
+  - It shows his fare and +£3 side by side, from a day to a week to a month.
+  - Finance goes first, then his two counted questions. There is no text panel.
+- **Code only:**
+  - What a fare does stays on the Briefings shelf;
+  - no WHY 27?;
+  - every demo waits for Watch ▶, then about 1.5 s, then about 1.2 s a step;
+  - Home's NOW strip in weeks 2–5 reads "Week 2: your plan flies again".
+- **Workbook:** v6.6 plus `tools/merge_1737.py` (ScreenText for all eight screens, the Settings above, `twoPlansMaxPlanes`, `routeColourDefault`, `why27Callout`).
+- **Not built yet:** two plans with two planes (waiting for Claude Design's drawing).
+
 ### One hand-over after the 17:37 play notes (31 Oct 2026)
 
 Bertie's play notes of 31 Oct, 17:37, combined with the chapter-one plan to week 8 and the what-if hand-over. Where they disagree, the play notes win. The Claude Doc "Hand-over: chapter one after the 17:37 play notes" holds it in full; the repo keeps an index in `docs/Handoff-Combined-17-37.md`, and the transcript and key screens in `docs/screenshots/playnotes-1737/`. No game code changed. Most items wait for Claude Design (two plans side by side, a guided Before / after, the Sunday callouts, the what-if screen). A few are code only: no fare briefing on Launch Day, no WHY 27?, a pause before every Finance demo, the Difference callout first and inside the panel, Watch ▶ on Sunday.

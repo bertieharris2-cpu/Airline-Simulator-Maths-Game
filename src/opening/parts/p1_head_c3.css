@@ -1,0 +1,95 @@
+/* ===== chapter one after the 17:37 play notes (Claude Design's hand-off, 31 Oct 2026, evening): p6i_1737.js ===== */
+/* a callout's step at the right of its eyebrow ("1 of 4") */
+.c3-co .ash-coe{display:flex;justify-content:space-between;gap:12px}
+.c3-step{font-weight:700;color:var(--text-soft);letter-spacing:.08em}
+.c3-co,.ash-co.c1-sco.c3-co{z-index:30;width:430px;box-sizing:border-box}
+.c3-hide{display:none!important}
+/* a wide callout: its button beside the words (Launch Day's profit, as on the picture) */
+.ash-co.c1-sco.c3-co.wide{width:540px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:18px}
+.c3-co.wide > *{grid-column:1}
+.c3-co.wide .ash-coa{grid-column:2;grid-row:3 / span 4;align-self:end;margin:0}
+/* a sheet holding still: nothing lit, the keys dimmed, until Watch ▶ */
+.ash.c3-hold .c1-keys{opacity:.45;pointer-events:none}
+.ash.c3-hold .ash-lit,.ash.c3-hold .ash-c.aref,.ash.c3-hold .ash-c.atgt{outline:none!important;box-shadow:none!important}
+.ash.c3-hold .ash-c.adim{opacity:1}
+.ash.c3-hold .ash-c.aref::before{display:none}
+.ash.c3-hold .ash-c.atgt.aq{color:transparent;text-shadow:none;background:transparent}
+.ash.c3-hold .ash-ops{visibility:hidden}
+.ash.c3-hold .ash-lit{display:none}
+/* 1 · the Frankfurt evening */
+.c3-fra{position:relative;margin-top:var(--s4);padding:var(--s4) var(--s4) var(--s4) 22px;border:1px solid rgba(54,198,255,.45);background:linear-gradient(155deg,#123e64 0%,#092743 58%,#06192d 100%);box-shadow:inset 4px 0 0 var(--cyan),0 0 26px rgba(54,198,255,.14)}
+.c3-fra .c3-eye{font:600 11px/14px var(--font-sans);letter-spacing:.12em;color:var(--cyan)}
+.c3-fra h2{margin:4px 0 12px;font:600 22px/28px var(--font-sans);color:var(--text);display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0}
+.c3-fra-row{display:grid;grid-template-columns:470px minmax(0,1fr);gap:var(--s5);align-items:start}
+.c3-board{background:#020b18;border:1px solid #1e3d66;padding:10px 12px;font:600 14px/1 var(--font-sans);min-height:150px;box-sizing:border-box}
+.c3-bh{color:var(--text-soft);letter-spacing:.14em;font-size:11px;margin-bottom:10px}
+.c3-fl{display:grid;grid-template-columns:70px minmax(0,1fr) 92px;gap:10px;padding:7px 0;border-top:1px solid rgba(65,122,171,.25);color:var(--text);letter-spacing:.06em}
+.c3-fl .ok{color:var(--green);text-align:right}
+.c3-fl.new span{color:var(--cyan)}
+.c3-why p{margin:0 0 10px;font:400 17px/25px var(--font-sans);color:var(--text)}
+.c3-pct{font-size:22px;color:var(--green)}
+.c3-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.c3-chips span{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);background:#071d36;font:600 13px/18px var(--font-sans);color:var(--text-soft);border-radius:var(--radius-chip)}
+.c3-rule{margin:14px 0 4px;font:400 15px/22px var(--font-sans);color:var(--text)}
+.c3-small{margin:0;font:400 13px/18px var(--font-sans);color:var(--text-muted)}
+/* L1 · the drop outline always on a plane's lane */
+.c1-tt.c3-drop .c1-row:not(.c2-oldrow) .ad-lane.c1-lane{outline:1.5px dashed rgba(54,198,255,.55);outline-offset:-2px}
+/* 2 · two plans, then Choose */
+.c3-tp .c1-tt{--c1-rw:212px}
+.c3-tp .c1-ruler,.c3-tp .c1-row{grid-template-columns:var(--c1-lw) minmax(0,1fr) 212px}
+.c3-lc .c3-k{display:block;font:700 12px/16px var(--font-sans);letter-spacing:.12em;color:var(--text-soft)}
+.c3-lc.new .c3-k{color:var(--cyan)}
+.c3-lc small{display:block}
+.c3-oldrow .c2-olane{opacity:.6;pointer-events:none}
+.c3-oldrow{padding-bottom:10px;border-bottom:1px dashed rgba(159,189,227,.3);margin-bottom:6px}
+.c3-newrow .ad-lane.c1-lane{outline:2px dashed var(--cyan)!important;outline-offset:-2px;background-color:rgba(54,198,255,.05)!important}
+.c3-drophere{color:#7fd0ff!important;font:600 15px/1 var(--font-sans)!important;left:50%!important;transform:translate(-50%,-50%)!important}
+.c3-ch{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:8px;align-items:center;padding:7px 10px;background:#071b35;border:1px solid var(--line);min-height:56px;box-sizing:border-box}
+.c3-ch small{grid-column:1/3;font:400 12px/15px var(--font-sans);color:var(--text-soft)}
+.c3-ch b{font:600 19px/24px var(--font-sans);font-variant-numeric:tabular-nums}
+.c3-ch b.none{color:var(--text-muted)}
+.c3-ch em{display:none}
+.c3-ch .bv-btn{grid-column:2;grid-row:2;padding:6px 12px;font-size:14px}
+.c3-ch.new.on{border-color:var(--cyan);box-shadow:var(--glow-cyan)}
+.c3-cmp{display:flex;align-items:center;gap:22px;margin-top:var(--s3);padding:10px var(--s4);border:1px solid var(--line);background:linear-gradient(160deg,#092643,#051629);font:400 15px/20px var(--font-sans);color:var(--text)}
+.c3-cmp .c3-k{font:600 11px/14px var(--font-sans);letter-spacing:.12em;color:var(--text-soft)}
+.c3-cmp small{margin-left:auto;color:var(--text-soft)}
+.c3-tpco{width:340px}
+/* 3 · Before / after */
+.c3-ba .ash-tt{max-width:540px}
+.c3-ba .c3-gtitle{margin-top:6px}
+.c3-bab{display:grid;grid-template-columns:600px minmax(0,1fr);gap:var(--s4);align-items:start;padding:6px 0 4px}
+.c3-gw{position:relative;min-height:400px}
+.c3-gtitle{margin:0 0 2px 10px;font:600 13px/18px var(--font-sans);color:var(--text-soft)}
+.c3-svg{display:block;max-width:100%;height:auto}
+.c3-gl{stroke:rgba(65,122,171,.28);stroke-width:1}
+.c3-gl.z{stroke:rgba(159,189,227,.55)}
+.c3-gt{fill:var(--text-soft);font:400 11px var(--font-sans)}
+.c3-seg.lit{stroke:var(--cyan);stroke-width:3}
+.c3-sl{fill:#fff;font:700 13px var(--font-sans)}
+.c3-sv{fill:#eaf2ff;font:400 13px var(--font-sans)}
+.c3-tot{fill:var(--gold);font:600 20px var(--font-sans)}
+.c3-old{stroke:var(--gold);stroke-width:1.5;stroke-dasharray:6 5}
+.c3-brk{fill:none;stroke:var(--green);stroke-width:2.5}
+.c3-brk.neg{stroke:var(--amber)}
+.c3-bn{fill:var(--text);font:700 14px var(--font-sans)}
+.c3-bs{fill:var(--text-soft);font:400 12px var(--font-sans)}
+.c3-baco{width:300px}
+.c3-batab{width:100%;border-collapse:collapse;font:400 14px/20px var(--font-sans);color:var(--text);background:#071b35;border:1px solid var(--line)}
+.c3-batab caption{text-align:left;font:600 13px/18px var(--font-sans);color:var(--text-soft);padding:0 0 6px}
+.c3-batab th,.c3-batab td{padding:6px 10px;border-bottom:1px solid rgba(65,122,171,.25);text-align:right;font-variant-numeric:tabular-nums}
+.c3-batab th:first-child{text-align:left;font-weight:600}
+.c3-batab thead th{color:var(--text-soft);font-weight:600}
+.c3-batab .green{color:var(--green)} .c3-batab .amber{color:var(--amber)}
+.c3-side{padding-top:24px;display:flex;flex-direction:column;gap:var(--s4)}
+.c3-co.pl .c1-sco-ptr{left:-9px;top:32px;border-top:0;border-bottom:1.5px solid var(--cyan)}
+.c3-bl{fill:var(--green);font:700 18px var(--font-sans)} .c3-bl.neg{fill:var(--amber)}
+.c3-tabw{padding:12px 16px;border:1px solid var(--line);background:#071b35}
+.c3-tabw .c3-batab{border:0;background:none}
+.c3-tnote{margin:8px 0 0;font:400 13px/18px var(--font-sans);color:var(--text-soft)}
+/* 4 · the Changes sheet: the Difference column ringed while its callout is open */
+.c3-ring{position:absolute;pointer-events:none;box-sizing:border-box;border:2px solid var(--cyan);box-shadow:var(--glow-cyan);z-index:5}
+/* 5 · Launch Day: Finance's example column */
+.ash-grid .ash-c.c3-ex{background-image:repeating-linear-gradient(135deg,rgba(159,189,227,.07) 0 6px,transparent 6px 12px);border-left:2px dashed var(--text-soft);border-right:2px dashed var(--text-soft)}
+.ash-grid .ash-c.c3-ex.ah{border-top:2px dashed var(--text-soft)}
+.ash-grid .ash-c.c3-exdone span{color:var(--green)}

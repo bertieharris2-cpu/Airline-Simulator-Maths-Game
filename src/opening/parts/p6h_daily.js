@@ -27,6 +27,8 @@ const c2Btn = s => esc(String(s || '').replace(/\s*▶\s*$/, '')).trim();
 const c2Sign = v => `${v < 0 ? '−' : '+'}${money(Math.abs(Math.round(v)))}`;
 const c2FlProfit = f => Math.round((f.revenue || 0) - (f.runCost || 0) - (f.fuelCost || 0) - (f.termCost || 0));
 /* the default speed of a flying day: the one Settings weekSpeed marks "(default)" (D111: Fast) */
+/* the screens a later part may replace (p6i_1737.js, the 17:37 hand-off): the Day page, the Frankfurt card, the change, Finance's demonstration */
+const H2 = window.__c2h = { dayPage:o => c2DayPage(o), fraCard:go => c2FraCard(go), startChange:() => c2StartChange(), demo:sp => c2Demo(sp) };
 const c2Speed = () => { const s = String(WBS().weekSpeed || ''), m = /(Fast|Normal)[^·]*\(default\)/i.exec(s); return m ? m[1].toLowerCase() : 'normal'; };
 
 /* ---------- reading the day: one sentence, loss first, then empty seats, then idle plane, then full planes ---------- */
@@ -116,7 +118,7 @@ function c2Drawer(d, h){
 const c2Res0 = R.results;
 R.results = st => {
   c2Res0(st); if(!(c2Daily() && S.phase === 'setup')) return;
-  c2DayPage({ d:1, keep:() => { if(c2X().fraCard && !c2X().fraCardShown){ c2FraCard(() => { c2X().pending = 1; UI.view = null; closeDay(); }); return; } UI.view = null; closeDay(); }, change:() => { c2X().pending = 1; UI.view = null; closeDay(); } });
+  H2.dayPage({ d:1, keep:() => { if(c2X().fraCard && !c2X().fraCardShown){ H2.fraCard(() => { c2X().pending = 1; UI.view = null; closeDay(); }); return; } UI.view = null; closeDay(); }, change:() => { c2X().pending = 1; UI.view = null; closeDay(); } });
 };
 /* ---------- week 1: each day lands on its Day page; Keep flies the next; Change my plan opens the timetable first ---------- */
 const c2WR0 = R.weekRun;
@@ -126,13 +128,13 @@ R.weekRun = st => {
   if(!(c2Daily() && W && W.from === 1)) return c2WR0(st);
   W.c1go = true;   // the plan check is gone in week 1: the Day page decided
   const X = c2X();
-  if(X.fraCard && !X.fraCardShown && W.dayDone !== S.day){ c2FraCard(); return; }
-  if(X.pending && W.dayDone !== S.day){ X.pending = 0; c2StartChange(); return; }
+  if(X.fraCard && !X.fraCardShown && W.dayDone !== S.day){ H2.fraCard(); return; }
+  if(X.pending && W.dayDone !== S.day){ X.pending = 0; H2.startChange(); return; }
   if(W.dayDone === S.day){
-    if(X.fraCard && !X.fraCardShown){ c2FraCard(); return; }
-    if(c2DayOn(S.day) && !X.kept[S.day] && c2AutoKeep(S.day)){ if(X.fraCard && !X.fraCardShown){ c2FraCard(); return; } weekRunAdvance(); return; }   // less than dailyPauseGain to find: fly on
+    if(X.fraCard && !X.fraCardShown){ H2.fraCard(); return; }
+    if(c2DayOn(S.day) && !X.kept[S.day] && c2AutoKeep(S.day)){ if(X.fraCard && !X.fraCardShown){ H2.fraCard(); return; } weekRunAdvance(); return; }   // less than dailyPauseGain to find: fly on
     if(c2DayOn(S.day) && !X.kept[S.day]){ if(UI.wkTimer){ clearTimeout(UI.wkTimer); UI.wkTimer = null; }
-      c2DayPage({ d:S.day, keep:() => { if(c2X().fraCard && !c2X().fraCardShown){ render(); return; } weekRunAdvance(); }, change:() => c2StartChange() }); return; }
+      H2.dayPage({ d:S.day, keep:() => { if(c2X().fraCard && !c2X().fraCardShown){ render(); return; } weekRunAdvance(); }, change:() => H2.startChange() }); return; }
     if(c2DayOn(S.day) && X.kept[S.day]){ weekRunAdvance(); return; }
   }
   return c2WR0(st);
@@ -203,8 +205,8 @@ function c2Demo(sp){
     if(!el){ setTimeout(tick, 200); return; }
     c1PtrTo(el, () => { const sp3 = ashLive(); if(!sp3 || sp3.id !== sp.id){ UI.c2Demo = null; c1PtrGone(); return; } i++;
       if(s.ref) ashPick(sp3, s.ref); else if(s.op){ c1KeyFlash(s.op); ashOp(sp3, s.op); } else { c1KeyFlash('enter'); UI.c2Demo = null; setTimeout(c1PtrGone, 400); c1Enter(sp3); return; }
-      setTimeout(tick, settings.reduceMotion ? 350 : 250); }); };
-  setTimeout(tick, 500);
+      setTimeout(tick, settings.reduceMotion ? 350 : c1Pace().gap); }); };
+  setTimeout(tick, settings.reduceMotion ? 300 : c1Pace().pause);
 }
 const c2ChgPage0 = ashChangesPage;
 ashChangesPage = function(st, CH){
@@ -213,7 +215,7 @@ ashChangesPage = function(st, CH){
   if(sp.act && sp.act.c2demo){ const root = screen().querySelector('.ash'); if(root) root.classList.add('c1-demo');
     const sig = screen().querySelector('[data-c1sig]'); if(sig){ const tmp = document.createElement('div'); tmp.innerHTML = c1SignalHtml({ kind:'build', tag:'EXAMPLE · WATCH', title:'Finance works out the fare difference', lines:[C2H(C2('chg.watch').text[0] || '')], nothing:false, ptr:sig.classList.contains('ptr-up') ? 'up' : 'left' });
       const nw = tmp.firstElementChild; nw.style.cssText = sig.style.cssText; sig.replaceWith(nw); }
-    c2Demo(sp); }
+    H2.demo(sp); }
   // week 1: the last change goes straight on to fly tomorrow
   const go = document.getElementById('ashChgGo'), last = !CH.slice(CH.indexOf(sp.ch || CH[0]) + 1).some(c => !ashChgDone(c));
   if(go && S.day <= 7 && c2Daily() && /^Next(?! change)/.test(go.textContent.trim()) && last) go.innerHTML = `${c2Btn(C2('chg.fly').text[0] || 'Fly tomorrow')} &#9654;`;
@@ -290,7 +292,7 @@ function c2FraCard(go){
   const body = `<div class="c2-card"><div class="c2-board">${board}</div><div class="c2-cb"><span class="c2-eye">${esc(C2('fra.eyebrow').text[0] || 'NEW ROUTE · TOMORROW')}</span><h2>${flagSvg(r.flag, 22)} ${esc(C2('fra.title', { city:r.city }).text[0] || `${r.city} opens tomorrow`)}</h2><p>${esc(line)}</p>
     <div class="c2-ca"><button class="bv-btn primary big" id="c2FraGo">${c2Btn(C2('fra.go').text[0] || 'Plan tomorrow')} &#9654;</button></div></div></div>`;
   screen().innerHTML = shell(deskPage({ cls:'c1a c2-fra', title:'', sub:'', body }), deskBar(esc(C2('fra.footer', { date:dw }).text[0] || `A new route opens tomorrow: ${dw}.`), ''));
-  on('c2FraGo', () => { X.fraCardShown = true; if(go){ X.chgEve = S.day; save(); go(); return; } const done = S.wk && S.wk.dayDone === S.day; if(done) X.kept[S.day] = true; X.chgEve = done ? S.day : S.day - 1; save(); c2StartChange(); });
+  on('c2FraGo', () => { X.fraCardShown = true; if(go){ X.chgEve = S.day; save(); go(); return; } const done = S.wk && S.wk.dayDone === S.day; if(done) X.kept[S.day] = true; X.chgEve = done ? S.day : S.day - 1; save(); H2.startChange(); });
 }
 
 
@@ -343,7 +345,7 @@ ashLaunchPage = function(st){
     const hint = screen().querySelector('.actbar .ab-hint, .actbar p'); if(hint) hint.textContent = C2('ld.profit.footer').text[0] || 'Launch Day · watch Finance work out the profit.';
     const root = screen().querySelector('.ash'); if(root) root.classList.add('c1-demo');
     const sig = screen().querySelector('[data-c1sig]'); if(sig) sig.remove();
-    c2Demo(sp); } }catch(e){ console.error(e); }
+    H2.demo(sp); } }catch(e){ console.error(e); }
   return r;
 };
 if(window.__tkSums) window.__tkSums.unshift({ what:"Finance's profit on Launch Day", test:() => { const sp = ashLive(); return !!(sp && sp.act && sp.act.id === 'ld:profit'); }, plan:() => ({ at:'.c1-keys', value:'skip the demonstration', go:() => { const sp = ashLive(); UI.c2Demo = null; c1PtrGone(); if(sp && sp.act){ const s = ashSt(sp.id); s.tokens = ashFullTokens(sp.act); s.ready = true; c1Enter(sp); } } }) });
@@ -365,15 +367,17 @@ const c2Wk1 = W => !!(W && typeof ch1 === 'function' && ch1() && weekNo(W.from) 
 function c2Stage(W){ if(!c2Wk1(W)) return null; const X = c1Ex(), tot = rbState(W, 'tot');
   if(!X.exDone) return 'ex1';
   if(!W.c1sum) return tot.ok ? 'ex2' : 'add';
-  return W.c1sum === 'try' && !tot.ok ? 'sum' : 'mean'; }
+  if(W.c1sum === 'try' && !tot.ok) return 'sum';
+  return !X.avgDemo && typeof window.__c3avg === 'function' && window.__c3avg(W) ? 'avgdemo' : 'mean'; }
 window.__c2stage = () => { try{ return c2Stage(S.wk); }catch(e){ return null; } };   // for the tests
 const c2Narrow = sp => { sp.lw = 172; if(sp.cols && sp.cols[0]) sp.cols[0].w = 140; sp.rh = { hdr:34, data:24, tot:25, fin:26, sub:24, gap:6 }; return sp; };   // two 380-wide sheets in one panel
 /* Finance's example shows twice: adding each day (ex1), then Σ SUM (ex2) */
 const c2ExNow0 = c1ExNow;
-c1ExNow = function(X, W){ const g = c2Stage(W || S.wk); if(g) return g === 'ex1' || g === 'ex2'; return c2ExNow0.apply(this, arguments); };
+c1ExNow = function(X, W){ const g = c2Stage(W || S.wk); if(g) return g === 'ex1' || g === 'ex2' || g === 'avgdemo'; return c2ExNow0.apply(this, arguments); };
 /* the words of each stage, from ScreenText (wk1.*); the review's own rows are used where a stage keeps them */
 const C2_WK1 = { ex1:{ 'review.example.watch':'wk1.add.watch', 'review.example.done':'wk1.add.done', 'review.example.line':'wk1.add.line', 'review.example.lineDone':'wk1.add.lineDone' },
-  add:{ 'review.total.signal':'wk1.add.signal' }, ex2:{ 'review.example.watch':'wk1.sum.watch' }, sum:{ 'review.sum.signal':'wk1.sum.signal' }, mean:{ 'review.sum.done':'wk1.sum.same' } };
+  add:{ 'review.total.signal':'wk1.add.signal' }, ex2:{ 'review.example.watch':'wk1.sum.watch' }, sum:{ 'review.sum.signal':'wk1.sum.signal' }, mean:{ 'review.sum.done':'wk1.sum.same', 'review.average.signal':'wk1.avg.mine' },
+  avgdemo:{ 'review.example.watch':'wk1.avg.watch' } };
 const c2T0 = c1T;
 c1T = function(id, vars){ try{ const g = S && S.wk && c2Stage(S.wk), to = g && C2_WK1[g] && C2_WK1[g][id]; if(to){ const t = h21Text(to, vars); if(t.title || t.text.length || t.eyebrow) return t; } }catch(e){}
   return c2T0.apply(this, arguments); };
@@ -426,12 +430,13 @@ c1ExampleRun = function(){
   const enter = () => { const sp = live(); if(!sp){ UI.c2ExRun = false; return; } const st = ashSt(sp.id); st.drag = false; ashSumEnter(sp); UI.c2ExRun = false; };
   // reduced motion, or the teacher's Run: straight to the end
   if(settings.reduceMotion || (window.__tkRunning && window.__tkRunning())){ const sp = live(); ashOp(sp, 'sum'); const st = ashSt(sp.id); st.sumA = a; st.sumB = z; enter(); return; }
-  const steps = [() => { to(document.querySelector('.ash-ops [data-ashop="sum"]')); setTimeout(() => { const sp = live(); if(sp) ashOp(sp, 'sum'); next(); }, 600); },
-    () => { const r = root(); to(r && r.querySelector(`[data-ref="${a}"]`)); setTimeout(() => { const sp = live(); if(!sp){ UI.c2ExRun = false; return; } const st = ashSt(sp.id); st.sumA = a; st.sumB = a; st.drag = true; ashSumPaint(sp, root(), st); next(); }, 600); },
-    () => { const r = root(); to(r && r.querySelector(`[data-ref="${z}"]`)); setTimeout(() => { const sp = live(); if(!sp){ UI.c2ExRun = false; return; } const st = ashSt(sp.id); st.sumB = z; ashSumPaint(sp, root(), st); next(); }, 900); },
-    () => { const sp = live(); if(!sp){ UI.c2ExRun = false; return; } const st = ashSt(sp.id); st.drag = false; render(); setTimeout(() => { to(document.querySelector('.c1-fbenter')); setTimeout(enter, 700); }, 300); }];
-  let i = 0; const next = () => { const f = steps[i++]; if(f) setTimeout(f, 250); };
-  setTimeout(next, 600);
+  const P = c1Pace(), cur0 = document.getElementById('c1Cursor'); if(cur0){ const F = c1PtrFrom(); cur0.style.transition = 'none'; cur0.style.left = F.x + 'px'; cur0.style.top = F.y + 'px'; void cur0.offsetWidth; cur0.style.transition = ''; }   // it glides in from the Watch button
+  const steps = [() => { to(document.querySelector('.ash-ops [data-ashop="sum"]')); setTimeout(() => { const sp = live(); if(sp) ashOp(sp, 'sum'); next(); }, P.move); },
+    () => { const r = root(); to(r && r.querySelector(`[data-ref="${a}"]`)); setTimeout(() => { const sp = live(); if(!sp){ UI.c2ExRun = false; return; } const st = ashSt(sp.id); st.sumA = a; st.sumB = a; st.drag = true; ashSumPaint(sp, root(), st); next(); }, P.move); },
+    () => { const r = root(); to(r && r.querySelector(`[data-ref="${z}"]`)); setTimeout(() => { const sp = live(); if(!sp){ UI.c2ExRun = false; return; } const st = ashSt(sp.id); st.sumB = z; ashSumPaint(sp, root(), st); next(); }, P.step); },
+    () => { const sp = live(); if(!sp){ UI.c2ExRun = false; return; } const st = ashSt(sp.id); st.drag = false; render(); setTimeout(() => { to(document.querySelector('.c1-fbenter')); setTimeout(enter, P.move); }, 300); }];
+  let i = 0; const next = () => { const f = steps[i++]; if(f) setTimeout(f, P.gap); };
+  setTimeout(next, P.pause);
 };
 /* My turn: after ex1 his week on the left; after ex2 his week again on the right, this time with Σ SUM (the total starts afresh) */
 const c2RvBind0 = c1ReviewBind;
@@ -445,18 +450,22 @@ ashReviewRender = function(st){ const r = c2RvR0.apply(this, arguments); try{ if
 function c2Pair(){
   const W = S.wk, g = c2Stage(W), body = screen().querySelector('.c1-rv'), mid = body && body.querySelector('.rv2-mid'); if(!mid || !g) return;
   body.classList.add('c2-paired');
-  const right = !['ex1', 'add'].includes(g), yours = esc(C2('wk1.yours').text[0] || 'YOUR WEEK'), method = C2('wk1.method').text;
+  const right = !['ex1', 'add', 'avgdemo'].includes(g), yours = esc(C2('wk1.yours').text[0] || 'YOUR WEEK'), method = C2('wk1.method').text, avgL = g === 'mean' && !!c1Ex().avgDemo;
   let other = '', rTot = 0;
-  if(!right){ const N = C2('wk1.next'); other = `<div class="c2-side c2-next"><div class="c2-nextb"><b>${esc(N.title || 'Next: a quicker way')}</b><span>${esc(N.text[0] || '')}</span></div></div>`; }
+  if(!right && g !== 'avgdemo'){ const N = C2('wk1.next'); other = `<div class="c2-side c2-next"><div class="c2-nextb"><b>${esc(N.title || 'Next: a quicker way')}</b><span>${esc(N.text[0] || '')}</span></div></div>`; }
   else { const h = weekSummary(W), items = weekReviewItems(W, h); items.forEach(it => { it.title = RV2_TITLE[it.id] || it.title; });
     const sp = c2RvSpec0(W, items, h); c2Narrow(sp); const tr = sp.rows.find(x => x.t === 'tot'); rTot = tr ? tr.r : 9;
     const total = Math.round(rbValue(items.find(x => x.id === 'tot')));
-    sp.rows = sp.rows.filter(x => x.t === 'hdr' || x.r <= rTot); Object.keys(sp.v).forEach(k => { if(+k.slice(1) > rTot) delete sp.v[k]; }); sp.v['B' + rTot] = { t:money(total) };
-    Object.assign(sp, { sums:[], act:null, offer:false, just:null, doneF:null, id:'week:pairL', doneLine:C2H(C2(g === 'mean' ? 'wk1.add.same' : 'wk1.add.total', { total:money(total) }).text[0] || '') });
-    other = `<div class="c2-side c2-nobar c2-left ${g === 'mean' ? '' : 'c2-dim'}"><span class="c2-lab">${yours}</span><div class="c2-mine">${ashHtml(sp)}</div></div>`; }
+    const mean = items.find(x => x.id === 'mean'), mr = sp.rows.find(x => x.label === 'Average a day'), dr = sp.rows.find(x => x.label === 'Days flown'), keep = avgL && mean && mr ? mr.r : rTot;
+    sp.rows = sp.rows.filter(x => x.t === 'hdr' || x.r <= keep); Object.keys(sp.v).forEach(k => { if(+k.slice(1) > keep) delete sp.v[k]; }); sp.v['B' + rTot] = { t:money(total) };
+    if(keep !== rTot){ if(dr) sp.v['B' + dr.r] = { t:num(mean.div) }; sp.v['B' + mr.r] = { t:money(rbValue(mean)) }; }   // Finance's average, shown on this sheet (17:37 hand-off, S4)
+    const isR = g === 'avgdemo';   // the average demo: his Σ SUM week waits on the right, dimmed
+    Object.assign(sp, { sums:[], act:null, offer:false, just:null, doneF:null, id:isR ? 'week:pairR' : 'week:pairL', doneLine:C2H(C2(isR ? 'wk1.sum.same' : g === 'mean' ? 'wk1.add.same' : 'wk1.add.total', { total:money(total) }).text[0] || '') });
+    other = `<div class="c2-side c2-nobar ${isR ? 'c2-right' : 'c2-left'} ${g === 'mean' ? '' : 'c2-dim'}"><span class="c2-lab">${yours}</span><div class="c2-mine">${ashHtml(sp)}</div></div>`; }
   const pair = document.createElement('div'); pair.className = 'c2-pair';
   const mine = document.createElement('div'); mine.className = 'c2-side c2-live'; let into = mine;
   if(!['ex1', 'ex2'].includes(g)){ mine.insertAdjacentHTML('beforeend', `<span class="c2-lab">${yours}</span>`); into = document.createElement('div'); into.className = 'c2-mine'; mine.appendChild(into); }   // his week in its own frame; the example keeps its dashed one
+  if(g === 'avgdemo'){ const f = mid.querySelector('.c1-exf'); if(f){ f.querySelectorAll('.c1-exl, .c1-exw').forEach(x => x.remove()); f.classList.remove('c1-exf'); } }   // the average is shown on his own week, not on made-up numbers
   while(mid.firstChild) into.appendChild(mid.firstChild);
   if(right){ pair.insertAdjacentHTML('beforeend', other); pair.appendChild(mine); } else { pair.appendChild(mine); pair.insertAdjacentHTML('beforeend', other); }
   mid.appendChild(pair);
@@ -623,5 +632,6 @@ if(window.__tkSums){
 }
 const c2Pn0 = window.__pnLabel;
 window.__pnLabel = t => (t === 'results' && S && S.phase === 'setup' && c2Daily()) ? 'Launch Day: Day page' : (t === 'weekRun' && S && S.wk && S.wk.from === 1 && c2Daily() && S.wk.dayDone === S.day) ? 'Day page' : c2Pn0 ? c2Pn0(t) : null;
+window.__c2i = { C2, C2H, c2X, c2Btn, c2Sign, c2Daily, c2DayOn, c2Read, c2Tomorrow, c2Drawer, c2Fra, c2NearOptimum, c2Earn, c2OldPlan, c2PlanSame, c2Stage, c2Wk1, c2RvSpec0, c2Narrow, c2BaReady, c2BaSpec, c2Room, c2Leave, c2FlProfit, c2PlanProfit, c2AutoKeep, dayPage:c2DayPage, fraCard:c2FraCard, startChange:c2StartChange, demo:c2Demo, pair:c2Pair, workings0:c2Work0, chgSpec0:c2ChgSpec0 };
 window.__c2 = { x:c2X, read:() => { const h = lastDay() || {}; return c2Read(S.day, (S.rnd.flights || []).filter(f => !f.grounded), h); }, room:c2Room, near:(d) => c2NearOptimum(d || S.day, lastDay() || {}, (S.rnd.flights || []).filter(f => !f.grounded)) };
 }

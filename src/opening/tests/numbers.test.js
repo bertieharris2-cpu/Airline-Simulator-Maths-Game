@@ -156,7 +156,9 @@ const HOOKS = `(() => { const N = window.__num = { boards:{}, days:{}, moves:[],
     const end = await J(p, `({ day:S.day, step:step().t, cash:S.cash, fuelWeeks:S.fuelWeeks, wk:S.wk && { from:S.wk.from, projected:S.wk.projected, rows:S.wk.rows.map(r => ({ d:r.d, pax:r.pax, seats:r.seats, trips:r.trips, rev:r.rev, cost:r.cost, profit:r.profit })) },
       hist:(S.history || []).filter(h => h.type === 'day' || h.type === 'setup').map(h => ({ from:h.from, revenue:h.revenue, costs:h.costs, profit:h.profit, cash:h.cash, pax:h.pax, seats:h.seats, trips:h.trips, routes:h.routes })), ledger:S.ledger, N:window.__num })`);
     // week 1 (30 Oct): the accounts open on Finance's example; My turn shows his own week, which is what is checked
-    if(await p.$('.c1-cursor, #c1Cursor, #c1MyTurn')){ await p.waitForSelector('#c1MyTurn', { timeout:30000 }).catch(() => {}); if(await p.$('#c1MyTurn')){ await p.click('#c1MyTurn'); await p.waitForTimeout(400); } }
+    // 17:37 hand-off (S1): nothing starts on arrival; Watch ▶ on the callout starts Finance's example
+    if(await p.$('#c3WkWatch')){ await p.click('#c3WkWatch'); await p.waitForTimeout(300); }
+    if(await p.$('.c1-cursor, #c1Cursor, #c1MyTurn')){ await p.waitForSelector('#c1MyTurn', { timeout:45000 }).catch(() => {}); if(await p.$('#c1MyTurn')){ await p.click('#c1MyTurn'); await p.waitForTimeout(400); } }
     // hand-off 2a: his week sits beside Finance's example, in the live side of the pair
     const dom = await p.evaluate(() => { const sh = document.querySelector('.c2-live [data-ash]') || document.querySelector('[data-ash]'); return { cells:sh ? Object.fromEntries([...sh.querySelectorAll('[data-ref]')].map(c => [c.getAttribute('data-ref'), c.textContent.trim()])) : null, cash:document.getElementById('cCash').textContent, screen:document.getElementById('screen').innerText.replace(/\s+/g, ' ') }; });
     await p.close();
