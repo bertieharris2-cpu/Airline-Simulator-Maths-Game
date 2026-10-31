@@ -10,6 +10,14 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zq. After playing 2a (31 Oct 2026)
+- **`p6h_daily.js` (Bertie 31 Oct block):**
+  - `c2Gain`: tomorrow's best known plan (the sweep, or his flights at better fares) minus his. `c2AutoKeep`: flies on when the gain is under Settings `dailyPauseGain`, recorded in `S.c1.c2.auto`.
+  - `c2OldRows` adds the old plan's lane to `s2Timetable`. The old plan is `ashPlanWas()`, then `UI.s2.startPlan`.
+  - The `c2ba` tab (`ashTabs` / `ashTabSpec` / `ashTabPage`): the Before / after sheet.
+  - The Changes page's go-on button passes every worked-out change.
+- **Data:** `tools/merge_v65.py` adds `dailyPauseGain` and ScreenText `plan2.*` to the game's workbook (for Fable).
+
 ## 0zp. Hand-off 2a and workbook v6.5 (31 Oct 2026)
 Claude Design's hand-off 2a and Fable's v6.5, chapter one only. Full report: `docs/Handoff-2a-Report.md`.
 - **Data:** `tools/merge_v65.py` (idempotent; then `import_world.py`, 0 to fix).

@@ -99,3 +99,11 @@ body.n15-ch1 .ash-c.aref.c2-ref::before{background:var(--refc)!important}
 /* the fuel news line moves under What happened, so the panel and the signal have the page's height */
 .c2-paired .rv2-what > .cu-nw{margin:auto 0 0;font-size:13.5px;line-height:1.35}
 .c2-pair .ash-tight .ash-line{margin-top:4px}
+/* Bertie 31 Oct: the old plan above the new one in the timetable (read only) */
+.c2-oldrow .c1-lc b{color:var(--text-soft)}
+.c2-olane{position:relative;height:52px;border:1px dashed rgba(159,189,227,.45);background:repeating-linear-gradient(135deg,rgba(159,189,227,.06) 0 6px,transparent 6px 12px)}
+.c2-oblk{position:absolute;top:5px;height:40px;box-sizing:border-box;padding:3px 8px;overflow:hidden;background:rgba(29,74,124,.35);border:1px dashed #6f95c4;display:flex;flex-direction:column;justify-content:center;opacity:.9}
+.c2-oblk span{display:flex;align-items:center;gap:5px;font:600 13px/16px var(--font-sans);color:var(--text-soft);white-space:nowrap}
+.c2-oblk span em{font-style:normal;font-weight:500;font-size:12px}
+.c2-oblk small{font:400 11.5px/14px var(--font-sans);color:var(--text-soft);white-space:nowrap}
+.c2-oldb.on{border-color:var(--cyan);color:var(--cyan)}

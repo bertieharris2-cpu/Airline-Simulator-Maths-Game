@@ -198,5 +198,29 @@ for k, eb, ti, tx, bt in FULL:
     st.cell(have[k], sh.index('notes') + 1).value = 'Hand-off 2a (31 Oct 2026): Finance shows Σ SUM on the example; he uses it on his week'
 done.append('ScreenText ~ the week 1 example (Σ SUM)')
 
+# ---------- Bertie, 31 Oct 2026 (after playing 2a; no hand-off): the Day page stops only for a clear gain; old plan beside new ----------
+g = rows_by_id(gs)
+row = ['dailyPauseGain', 200, "Bertie 31 Oct: in week 1 (dailyChangeDays) the Day page stops only when the best plan for tomorrow makes at least this much more a day than his own (£); otherwise the day flies on. Launch Day's Day page always stops. For Fable to confirm.", 'live']
+if 'dailyPauseGain' not in g: append(gs, row); done.append('Settings + dailyPauseGain')
+MINE = [
+  ('plan2.old', 'Before: {when}', 'Timetable: the old plan above the new one, while he changes it'),
+  ('plan2.when', "yesterday's plan|last week's plan", 'Timetable: how the old plan is named (week 1 | weeks 2 on)'),
+  ('plan2.btn', 'Show the old plan|Hide the old plan|Start again from the old plan', 'Timetable: the old plan buttons'),
+  ('plan2.tab', 'Before / after', 'Changes sheet: the tab comparing the whole old plan with the new one'),
+  ('plan2.title', 'Before and after: the whole plan, a day', 'Before / after sheet: its title'),
+  ('plan2.cols', 'Before|old plan|After|new plan|after − before|Difference', 'Before / after sheet: column heads (top|main, three times)'),
+  ('plan2.rows', '{city} passengers|{city} ticket revenue|Flights a day|Ticket revenue a day|Fuel burned a day|Total costs a day|Profit a day', 'Before / after sheet: row labels'),
+  ('plan2.line', 'Finance worked out both plans. Profit a day: **{diff}** than before.', 'Before / after sheet: the line under it'),
+  ('plan2.footer', 'Your old plan and your new plan, side by side. Back returns to your sheet.', 'Before / after sheet: the footer'),
+  ('plan2.wait', 'After the sums: work out the change first.', 'Before / after tab: before the change is worked out'),
+]
+have = rows_by_id(st)
+for k, v, where in MINE:
+    vals = [None] * len(sh)
+    vals[sh.index('id')], vals[sh.index('screen')], vals[sh.index('text')] = k, where, v
+    vals[sh.index('notes')] = 'Bertie 31 Oct 2026 (after playing 2a)'
+    if k in have: put(st.cell(have[k], sh.index('text') + 1), v)
+    else: append(st, vals); done.append(f'ScreenText + {k}')
+
 game.save(BOOK)
 print('\n'.join(done) or 'nothing to do')

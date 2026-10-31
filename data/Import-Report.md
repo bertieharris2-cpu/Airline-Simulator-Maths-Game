@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 263 | 10 draft, 253 live, 10 placeholder, 1 withdrawn |
+| Settings | 264 | 10 draft, 254 live, 10 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -447,6 +447,16 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `cmp.rows`: Passengers a day · Ticket revenue a day · Fuel burned a day · Total costs a day · Profit a day
 - `cmp.line`: Finance filled in this week from your plan. Profit a day: **{diff}** than last week.
 - `cmp.footer`: Week {n} plan · Finance compared it with last week.
+- `plan2.old`: Before: {when}
+- `plan2.when`: yesterday's plan · last week's plan
+- `plan2.btn`: Show the old plan · Hide the old plan · Start again from the old plan
+- `plan2.tab`: Before / after
+- `plan2.title`: Before and after: the whole plan, a day
+- `plan2.cols`: Before · old plan · After · new plan · after − before · Difference
+- `plan2.rows`: {city} passengers · {city} ticket revenue · Flights a day · Ticket revenue a day · Fuel burned a day · Total costs a day · Profit a day
+- `plan2.line`: Finance worked out both plans. Profit a day: **{diff}** than before.
+- `plan2.footer`: Your old plan and your new plan, side by side. Back returns to your sheet.
+- `plan2.wait`: After the sums: work out the change first.
 
 ## Identity and photos (CR5)
 

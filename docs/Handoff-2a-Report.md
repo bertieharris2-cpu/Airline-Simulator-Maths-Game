@@ -100,3 +100,24 @@ The rule is that screens come from the hand-off and logic from the workbook. The
 - The open items in section 10.
 - Take-off before the HQ departure boards (parked by Bertie).
 - The full game file.
+
+## After Bertie played it (31 Oct 2026, no hand-off)
+
+- **Frankfurt pays already, in Fable's v6.5 figures; nothing was changed.** Checked on a weekday in week 1 by trying every plan of up to four flights at every fare:
+  - the best Dublin and Paris plan makes about **£2,855** a day;
+  - Frankfurt–Paris–Frankfurt at £150 and £110 (06:00, 11:40, 15:00) makes about **£3,429**, so about £570 more;
+  - Frankfurt, Dublin and Paris at £160–170 for Frankfurt makes about £3,200.
+
+  At Frankfurt's base fare (£140) the best is Frankfurt–Frankfurt–Paris at about £3,049. Bertie hadn't seen that two Frankfurts and a Paris fit in a day; the old plan above the new one now makes that easier to see.
+- **The Day page stops only for a clear gain** (Settings `dailyPauseGain`, £200 — new, for Fable to confirm).
+  - On Tuesday to Saturday, the game works out the best plan it knows for tomorrow: the planner's best plan, or his own flights at better fares.
+  - If that beats his plan by less than £200 a day, the day flies on without stopping.
+  - Launch Day's Day page always stops, and a Frankfurt card still shows when it is earned.
+- **The old plan stays in view while he changes it.** The timetable shows yesterday's plan (last week's from week 2) as a dashed, read-only lane above the plane's lane, with its fares and seats filled.
+  - Hide the old plan / Show the old plan.
+  - Start again from the old plan puts it back.
+- **Before / after:** a new tab on the Changes sheet, the week 2–4 comparison and itself.
+  - Once every change is worked out, it shows the whole old plan and the whole new plan as one sheet: each route's passengers and ticket revenue, flights, ticket revenue, fuel, total costs and profit a day. All of it is Finance's (ƒ), with the difference.
+  - Before the sums are done, the tab is greyed out.
+- **Fixed:** with two changes on the sheet, where Finance filled the second, Fly tomorrow went back to the first change and never left. Going on now passes every change already worked out.
+- **Words:** in ScreenText `plan2.*` (new rows, for Fable).

@@ -380,6 +380,14 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### After playing 2a: stop only for a clear gain, the old plan beside the new, Before / after (31 Oct 2026)
+
+These are Bertie's notes, with no hand-off; details are in `docs/Handoff-2a-Report.md`, last section.
+- In week 1 the Day page stops only when the best plan for tomorrow beats his by at least Settings `dailyPauseGain` (£200); otherwise the day flies on.
+- The timetable keeps the old plan in a dashed lane above the new one: hide it, or start again from it.
+- The Changes sheet has a Before / after tab: the whole old plan against the whole new plan, once worked out.
+- Frankfurt's figures are unchanged: Frankfurt–Paris–Frankfurt already makes about £570 a day more than the best Dublin and Paris plan.
+
 ### Hand-off 2a and workbook v6.5: the Day page, the daily change, Frankfurt (31 Oct 2026)
 
 Claude Design's hand-off 2a (screens) and Fable's workbook v6.5, chapter one only (`p6h_daily.js`, `p1_head_c2.css`). The full report is `docs/Handoff-2a-Report.md`. It lists every place where v6.5 and the hand-off disagree and what the game does. Screenshots are in `docs/screenshots/handoff2a/`.

@@ -130,6 +130,7 @@ R.weekRun = st => {
   if(X.pending && W.dayDone !== S.day){ X.pending = 0; c2StartChange(); return; }
   if(W.dayDone === S.day){
     if(X.fraCard && !X.fraCardShown){ c2FraCard(); return; }
+    if(c2DayOn(S.day) && !X.kept[S.day] && c2AutoKeep(S.day)){ if(X.fraCard && !X.fraCardShown){ c2FraCard(); return; } weekRunAdvance(); return; }   // less than dailyPauseGain to find: fly on
     if(c2DayOn(S.day) && !X.kept[S.day]){ if(UI.wkTimer){ clearTimeout(UI.wkTimer); UI.wkTimer = null; }
       c2DayPage({ d:S.day, keep:() => { if(c2X().fraCard && !c2X().fraCardShown){ render(); return; } weekRunAdvance(); }, change:() => c2StartChange() }); return; }
     if(c2DayOn(S.day) && X.kept[S.day]){ weekRunAdvance(); return; }
@@ -186,6 +187,7 @@ ashChangeSpec = function(ch, i, n){
   const J = UI.ashJust && UI.ashJust.sheet === sp.id ? sums.find(s => s.id === UI.ashJust.sum) : null, act = J ? null : sums.find(s => !s.done) || null;
   if(J){ J.val = ashSigned(J === s5 ? d : J.want, true); J.doneLine = J === s5 ? `The difference a day: <b class="${d > 0 ? 'pos' : ''}">${ashSigned(d, true)}</b>. The sheet worked it out.` : J.c2demo ? `The fare is ${ashSigned(ch.f1 - ch.f0, true)}: With your change − Now.` : (C.shown ? `Finance has filled this one in: ${ashSigned(J.want, true)}. Copy it into your book beside Sum ${J.no}.` : `Over a week: <b>${ashSigned(J.want, true)}</b> · Sum ${J.no} in your record`); }
   sp.sums = sums; sp.act = act; sp.just = J; sp.lw = Math.max(sp.lw || 0, 300);
+  if(sp.tabs) sp.tabs = ashTabs('changes');   // again: Finance may have just finished this change (Before / after opens once all are done)
   // Changes sheet done once the week's difference is in: the base page's "done" reads C.done
   if(!act && !J) C.done = true;
   sp.doneF = !act && !J && C.done ? { tgt:'D' + rw, refs:C.counted ? ['D' + r5, '7'] : S1.refs, ops:C.counted ? ['×'] : S1.ops, words:C.counted ? (C2('chg.weekf').text[0] || 'Difference a day × 7') : S1.words, val:ashSigned(C.counted ? d * 7 : d, true) } : null;
@@ -215,6 +217,8 @@ ashChangesPage = function(st, CH){
   // week 1: the last change goes straight on to fly tomorrow
   const go = document.getElementById('ashChgGo'), last = !CH.slice(CH.indexOf(sp.ch || CH[0]) + 1).some(c => !ashChgDone(c));
   if(go && S.day <= 7 && c2Daily() && /^Next(?! change)/.test(go.textContent.trim()) && last) go.innerHTML = `${c2Btn(C2('chg.fly').text[0] || 'Fly tomorrow')} &#9654;`;
+  // going on passes every change already worked out (two changes, the second filled by Finance: the button could only pass the first, round and round)
+  if(go){ const h0 = go.onclick; go.onclick = e => { const S0 = ashChgS(); CH.forEach(c => { const x = S0[c.key]; if(x && x.done){ x.seen = true; x.passed = true; } }); return h0 ? h0.call(go, e) : undefined; }; }
 };
 
 /* ---------- after the Changes sheet: week 1 flies tomorrow; weeks 2-4 see the comparison (no sums) ---------- */
@@ -456,6 +460,98 @@ checkMilestones = function(){
 const c2Show0 = buildShow;
 buildShow = function(kind, days){ if(ch1() && kind === 'day' && Array.isArray(days)) days = days.map(D => D && D.d === 0 ? Object.assign({}, D, { d:1 }) : D);
   return c2Show0.apply(this, [kind, days].concat([].slice.call(arguments, 2))); };
+
+/* =====================================================================
+   Bertie, 31 Oct 2026, after playing 2a (no hand-off; words in ScreenText plan2.*, the threshold in Settings dailyPauseGain):
+   1. week 1: the Day page stops only when there is a clear gain (the best plan for tomorrow beats his by dailyPauseGain);
+   2. the timetable keeps the old plan in view, above the new one, while he changes it (and can start again from it);
+   3. the Changes sheet has a Before / after tab: the whole old plan and the whole new plan, side by side, once worked out.
+   ===================================================================== */
+const c2PauseGain = () => { const v = parseFloat(String(WBS().dailyPauseGain === undefined ? '' : WBS().dailyPauseGain).replace(/[^\d.]/g, '')); return isFinite(v) ? v : 0; };
+/* how much more a day the best plan we know makes tomorrow than his: the sweep's plan, or his own flights at better fares */
+function c2Gain(d){
+  const X = c2X(); X.gain = X.gain || {}; if(X.gain[d] !== undefined) return X.gain[d];
+  const t = d + 1, on = fn => dryRun(() => withDay(t, () => withBeat(beatAt(t), () => { S.day = t; return fn(); })));
+  const cur = normPlan(currentPlan()), pc = on(() => planLines(cur).v.profit); let best = pc;
+  try{ const B = bestPlanSweep(t); if(B && B.plan) best = Math.max(best, on(() => planLines(normPlan(B.plan)).v.profit)); }catch(e){}
+  try{ const pl = JSON.parse(JSON.stringify(cur)), ids = [...new Set(pl.fleet.flatMap(x => x.sched || []))]; let pv = pc;
+    for(let pass = 0; pass < 2; pass++) ids.forEach(id => { (routeById(id).fares || []).forEach(f => { if(f === pl.prices[id]) return; const u = JSON.parse(JSON.stringify(pl)); u.prices[id] = f;
+      const v = on(() => planLines(u).v.profit); if(v > pv){ pv = v; pl.prices[id] = f; } }); });
+    best = Math.max(best, pv); }catch(e){}
+  return (X.gain[d] = Math.max(0, Math.round(best - pc)));
+}
+/* the day flies on without stopping when there is less than the threshold to find (Launch Day always stops) */
+function c2AutoKeep(d){
+  const g = c2PauseGain(); if(!g || d <= 1) return false;
+  const gain = c2Gain(d); if(gain >= g) return false;
+  const X = c2X(), h = lastDay() || {}, fl = (S.rnd.flights || []).filter(f => !f.grounded);
+  X.kept[d] = true; (X.auto = X.auto || {})[d] = gain; c2Earn(d, h, fl); save(); return true;
+}
+window.__c2gain = d => c2Gain(d || S.day);
+
+/* 2 · the old plan above the new one in the timetable */
+const c2OldPlan = () => { let w = null; try{ w = typeof ashPlanWas === 'function' ? ashPlanWas() : null; }catch(e){} return w || (UI.s2 && UI.s2.startPlan) || (S.rnd && S.rnd.planWas) || null; };   // the plan the Changes sheet compares with
+const c2PlanSame = (a, b) => { try{ return JSON.stringify(normPlan(a).fleet.map(x => [x.sched, x.deps])) + JSON.stringify(normPlan(a).prices) === JSON.stringify(normPlan(b).fleet.map(x => [x.sched, x.deps])) + JSON.stringify(normPlan(b).prices); }catch(e){ return true; } };
+function c2OldRows(html){
+  const A = c2OldPlan(); if(!A || S.phase === 'setup') return html;
+  const B0 = C2('plan2.btn').text, B = B0.length >= 3 ? B0 : ['Show the old plan', 'Hide the old plan', 'Start again from the old plan'], show = UI.c2Old !== false, same = c2PlanSame(A, currentPlan());
+  const btns = `<button class="btn c2-oldb ${show ? 'on' : ''}" id="c2OldT" aria-pressed="${show}">${esc(show ? B[1] : B[0])}</button>${same ? '' : `<button class="btn" id="c2OldBack" title="Put the old plan back and start again">&#8634; ${esc(B[2] || 'Start again from the old plan')}</button>`}`;
+  html = html.replace('<span class="c1-ttact">', btns + '<span class="c1-ttact">');
+  if(!show) return html;
+  const s0 = dayStart(), e0 = dayEnd(), span = e0 - s0, X = m => (100 * (m - s0) / span).toFixed(3), pl = normPlan(A);
+  let L0 = null; try{ L0 = dryRun(() => planLines(pl)); }catch(e){}
+  const W0 = C2('plan2.when').text, W = W0.length >= 2 ? W0 : ["yesterday's plan", "last week's plan"], when = (S.day || 1) <= 7 ? W[0] : (W[1] || W[0]);
+  const lab = C2('plan2.old', { when }).text[0] || `Before: ${when}`;
+  pl.fleet.forEach((x, j) => {
+    const T = c1LaneTrips(pl, j, L0), p = planeById(x.planeId);
+    const blocks = T.map(t => { const r = routeById(t.route); return `<div class="c2-oblk" style="left:${X(t.dep)}%;width:${(X(t.arr) - X(t.dep)).toFixed(3)}%"><span>${flagSvg(r.flag, 14)}<b>${esc(r.city)}</b><em class="mono">${money(pl.prices[t.route] || r.basePrice)} · ${t.sold}/${t.seats}</em></span><small class="mono">${c1Hm(t.dep)}–${c1Hm(t.arr)}</small></div>`; }).join('');
+    const row = `<div class="c1-row c2-oldrow" aria-label="${esc(lab)}"><div class="c1-lc"><b>${esc(lab)}</b><small>${esc(shortPlane(p))} · ${plural(T.length, 'flight')}</small></div><div class="c2-olane">${blocks}</div><span></span></div>`;
+    const at = html.indexOf(`<div class="c1-row" data-c1row="${j}">`); if(at >= 0) html = html.slice(0, at) + row + html.slice(at); });
+  return html;
+}
+const c2Tt0 = s2Timetable;
+s2Timetable = function(pl, L){ const h = c2Tt0.apply(this, arguments); try{ if(ch1() && typeof h === 'string' && h.indexOf('data-c1tt') >= 0) return c2OldRows(h); }catch(e){ console.error(e); } return h; };
+document.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest('#c2OldT, #c2OldBack'); if(!t || !S) return;
+  if(t.id === 'c2OldT'){ UI.c2Old = UI.c2Old === false; render(); return; }
+  const A = c2OldPlan(); if(!A) return; try{ applyPlan(JSON.parse(JSON.stringify(A))); }catch(x){ console.error(x); } render();
+});
+
+/* 3 · Before / after: the whole old plan and the whole new plan on one sheet (Finance's, all ƒ), once the change is worked out */
+function c2BaReady(){ try{ const CH = ashChanges(); return CH.length > 0 && CH.every(c => (ashChgS()[c.key] || {}).done); }catch(e){ return false; } }
+function c2BaSpec(){
+  const A = c2OldPlan(); if(!A) return null; const a = normPlan(A), b = normPlan(currentPlan());
+  let La, Lb; try{ La = dryRun(() => planLines(a)); Lb = dryRun(() => planLines(b)); }catch(e){ return null; }
+  const RW = C2('plan2.rows').text, CL = C2('plan2.cols').text, ids = [...new Set(a.fleet.concat(b.fleet).flatMap(x => x.sched || []))].filter(id => routeById(id));
+  const dc = (x0, x1, good, isMoney) => { const x = Math.round(x1 - x0); return { t:x ? (x > 0 ? '+' : '−') + (isMoney ? money(Math.abs(x)) : num(Math.abs(x))) : '—', f:true, cls:x === 0 || good === null ? '' : (x > 0) === good ? 'pos' : 'amb' }; };
+  const rows = [{ r:1, t:'hdr' }], v = {}; let r = 2;
+  const put = (label, ic, x0, x1, good, isMoney, o) => { rows.push(Object.assign({ r, label, ic }, o || {})); const f = isMoney ? money : num;
+    v['B' + r] = { t:f(Math.round(x0)), f:true }; v['C' + r] = { t:f(Math.round(x1)), f:true }; v['D' + r] = dc(x0, x1, good, isMoney); r++; };
+  ids.forEach(id => { const c = routeById(id).city;
+    put((RW[0] || '{city} passengers').replace('{city}', c), 'person', La.v['pax_' + id] || 0, Lb.v['pax_' + id] || 0, null, false);
+    put((RW[1] || '{city} ticket revenue').replace('{city}', c), 'coins', La.v['tk_' + id] || 0, Lb.v['tk_' + id] || 0, true, true, { gold:true }); });
+  put(RW[2] || 'Flights a day', 'plane', (La.services || []).length, (Lb.services || []).length, null, false);
+  put(RW[3] || 'Ticket revenue a day', 'coins', La.v.rev, Lb.v.rev, true, true, { t:'tot', gold:true });
+  put(RW[4] || 'Fuel burned a day', 'drum', La.v.fuel, Lb.v.fuel, null, true, { note:`${num(Math.round(La.v.fuelL || 0))} L → ${num(Math.round(Lb.v.fuelL || 0))} L` });
+  put(RW[5] || 'Total costs a day', 'receipt', La.v.cost, Lb.v.cost, false, true, { t:'tot', gold:true });
+  put(RW[6] || 'Profit a day', 'chart', La.v.profit, Lb.v.profit, true, true, { t:'fin', gold:true });
+  const diff = Math.round(Lb.v.profit - La.v.profit), dTxt = `${money(Math.abs(diff))} ${diff >= 0 ? 'more' : 'less'}`;
+  const line = `<span class="pos">✓</span> ${C2H(C2('plan2.line', { diff:dTxt }).text[0] || `Finance worked out both plans. Profit a day: **${dTxt}** than before.`)}`;
+  return { id:'tab:c2ba', crumb:`${S.airline.name || 'Airline'} HQ · Sheets`, title:C2('plan2.title').text[0] || 'Before and after: the whole plan, a day', tabs:ashTabs('c2ba'), lw:300,
+    cols:[{ c:'B', w:180, top:CL[0] || 'Before', main:CL[1] || 'old plan' }, { c:'C', w:180, top:CL[2] || 'After', main:CL[3] || 'new plan', plan:true }, { c:'D', w:180, top:CL[4] || 'after − before', main:CL[5] || 'Difference' }],
+    rows, v, sums:[], act:null, just:null, doneLine:line, doneF:null, c2ba:true };
+}
+const c2Tabs0 = ashTabs;
+ashTabs = function(on){ const out = c2Tabs0.apply(this, arguments);
+  try{ if(ch1() && S.phase !== 'setup' && c2OldPlan() && ['changes', 'cmp', 'c2ba'].includes(on)){ const ok = c2BaReady();
+    out.push({ id:'c2ba', label:C2('plan2.tab').text[0] || 'Before / after', ic:'scale', on:on === 'c2ba', off:on !== 'c2ba' && !ok, title:ok ? '' : (C2('plan2.wait').text[0] || '') }); } }catch(e){}
+  return out; };
+const c2TabSpec0 = ashTabSpec;
+ashTabSpec = function(tab){ if(tab === 'c2ba') return ch1() && c2BaReady() ? c2BaSpec() : null; return c2TabSpec0.apply(this, arguments); };
+const c2TabPage0 = ashTabPage;
+ashTabPage = function(T, back){ const r = c2TabPage0.apply(this, arguments);
+  try{ if(T && T.c2ba){ const hint = screen().querySelector('.actbar .dk-hint, .actbar p, .actbar .hint'); const tx = C2('plan2.footer').text[0]; if(hint && tx) hint.textContent = tx; } }catch(e){}
+  return r; };
 
 /* ---------- the toolkit and the play notes ---------- */
 // the teacher's Run: the Day page keeps the plan, the Frankfurt card plans tomorrow, the comparison goes on, My turn after Finance

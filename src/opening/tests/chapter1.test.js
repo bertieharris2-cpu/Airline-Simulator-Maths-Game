@@ -65,7 +65,10 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   console.log('After Launch Day (hand-off 3, section 4)'); const A1 = await J('JSON.stringify(window.__wk1)'), R1 = A1.seen.results || {}, C1 = A1.seen.c1check || {}, W1 = A1.seen.weekRun || {};
   const DR = String(await E("String(WBS().dailyChangeDays || '')")).match(/(\d+)\s*-\s*(\d+)/), DAYS = DR ? Array.from({ length:+DR[2] - +DR[1] + 1 }, (_, k) => +DR[1] + k) : [], DP = A1.dayp || {};
   ok(/Launch Day: how it went/.test(R1.text || '') && /Keep for tomorrow|Fly anyway/.test(R1.nx || '') && /Change my plan/.test(R1.text || ''), `Launch Day ends on its Day page: "Launch Day: how it went", Keep for tomorrow / Change my plan (hand-off 2a; ${(R1.nx || 'not seen').trim()})`);
-  ok(DAYS.length === 5 && DAYS.every(d => DP[d] && /how it went/.test(DP[d].h)), `a Day page ends each day of Settings dailyChangeDays (${DAYS.map(d => `day ${d}: ${DP[d] ? DP[d].h.slice(0, 28) : 'none'}`).join(' · ')})`);
+  // Bertie 31 Oct: a day of dailyChangeDays stops on its Day page only when there is at least Settings dailyPauseGain a day to find
+  const AU = await J('JSON.stringify({ auto:(S.c1.c2 || {}).auto || {}, gain:(S.c1.c2 || {}).gain || {}, th:+WBS().dailyPauseGain || 0 })');
+  ok(DAYS.length === 5 && DAYS.every(d => (DP[d] && /how it went/.test(DP[d].h) && AU.gain[d] >= AU.th) || (!DP[d] && AU.auto[d] !== undefined && AU.auto[d] < AU.th)),
+    `each day of dailyChangeDays stops on its Day page only with at least £${AU.th} a day to find (${DAYS.map(d => `day ${d}: ${DP[d] ? 'Day page' : 'flew on'}, £${AU.gain[d]}`).join(' · ')})`);
   ok(!C1.day || C1.day > 7, `no plan check in week 1: the Day page decides (hand-off 2a)${C1.day ? ' (seen on day ' + C1.day + ')' : ''}`);
   const mid1 = [2, 3, 4, 5, 6].filter(d => (A1.pages[d] || {}).hq);
   ok(!mid1.length, `no Home in week 1 after Launch Day${mid1.length ? ' (days ' + mid1.join(', ') + ')' : ''}`);
