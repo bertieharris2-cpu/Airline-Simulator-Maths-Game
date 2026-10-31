@@ -70,7 +70,7 @@ The screenshots, taken at 1366 × 768 in TEST mode, are in `docs/screenshots/han
 
 ## Tests
 
-- `chapter1.test.js` and `numbers.test.js`, results below.
+- `chapter1.test.js`: 39 ok, 0 failed. `numbers.test.js`: every check ok, no errors. Both run on the final build.
 - `numbers.test.js` now presses Sunday's **Watch ▶** before it waits for My turn (S1: nothing starts on arrival).
 - Play-tests of each section, with the screenshots in `docs/screenshots/handoff-1737/`:
   - Launch Day → Frankfurt evening → two plans → Choose → Before / after → Changes;
