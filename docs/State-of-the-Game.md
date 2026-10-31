@@ -10,6 +10,10 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zt. One hand-over after the 17:37 play notes (31 Oct 2026)
+
+No change to the game. Bertie's 17:37 play notes (Launch Day to the plan check on Mon 9 Sep) and the two earlier hand-overs are combined into one hand-over (`docs/Handoff-Combined-17-37.md`, Claude Doc). Where they disagree, the play notes win. The play log confirms that only week 1 flew (days 1–5, 7, 8). Open for Claude Design: two plans side by side on the Day page and in the Studio, a guided Before / after, callouts on the week 1 Sunday, and the week 2 what-if screen.
+
 ## 0zs. Week 1 Sunday: add each day, then Σ SUM (31 Oct 2026, late evening)
 
 Hand-off 2a section 5 as changed that evening: one panel, two sheets (1 · Add each day, 2 · Use Σ SUM). Finance adds Monday to Wednesday with + (left), he adds his week; Finance shows Σ SUM on the right example, he drags his week; same answer; Average a day. Five stages in `p6h_daily.js` (`c2Stage`: ex1, add, ex2, sum, mean), using the ladder's "show" week for week 1; hook `c1ExNow` in `p6b_signal.js`. Words in ScreenText `wk1.*`. DESIGN.md installed from the evening hand-off.

@@ -380,6 +380,10 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### One hand-over after the 17:37 play notes (31 Oct 2026)
+
+Bertie's play notes of 31 Oct, 17:37, combined with the chapter-one plan to week 8 and the what-if hand-over. Where they disagree, the play notes win. The Claude Doc "Hand-over: chapter one after the 17:37 play notes" holds it in full; the repo keeps an index in `docs/Handoff-Combined-17-37.md`, and the transcript and key screens in `docs/screenshots/playnotes-1737/`. No game code changed. Most items wait for Claude Design (two plans side by side, a guided Before / after, the Sunday callouts, the what-if screen). A few are code only: no fare briefing on Launch Day, no WHY 27?, a pause before every Finance demo, the Difference callout first and inside the panel, Watch ▶ on Sunday.
+
 ### Week 1 Sunday: add each day, then Σ SUM, side by side (31 Oct 2026, late evening)
 
 Claude Design's hand-off 2a, section 5 as changed that evening (`data/incoming/handoff-2a-31-oct-evening/`; DESIGN.md installed from it). One panel, two sheets: on the left Finance adds Monday to Wednesday by clicking each day with +, then he adds his whole week the same way; on the right Finance shows Σ SUM on the example, then he drags his week. The two totals match, then Average a day. Nothing counted. Details: `docs/Handoff-2a-Report.md`, last section; words in ScreenText `wk1.*` (`tools/merge_wk1_sunday.py`).

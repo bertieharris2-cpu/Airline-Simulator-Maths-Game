@@ -1,0 +1,76 @@
+00:00  START
+00:00  Chapter · Week 1 · Mon 2 Sep
+00:14  “Ouch. So when you first drag them, it doesn't have to turn around the box. So then it's a bit misleading as to where you can drag them. So that should always be there.”
+00:19  Launch Day intro · Week 1 · Mon 2 Sep
+00:21  Studio · Week 1 · Mon 2 Sep
+00:28  Studio: flight selected · Week 1 · Mon 2 Sep
+00:29  Studio · Week 1 · Mon 2 Sep
+00:32  ★ MARK
+00:50  Studio: flight selected · Week 1 · Mon 2 Sep
+00:55  Briefing: What a fare does · Week 1 · Mon 2 Sep
+00:58  “I think we should remove the briefing for the fare at the moment. Keep it in briefings, but remove it for now.”
+01:08  “I don't think we really need Y27. It's just a lot more text for them to be reading, and I don't want to overload them.”
+01:08  Sums · Week 1 · Mon 2 Sep
+01:40  ★ MARK
+01:46  “The speed of the demonstration happens a little bit too fast, especially the first click. So can there just be a pause before that starts?”
+01:54  ★ MARK
+02:10  “And actually, we need them to do an example with fake numbers maybe in this bit, and then give the pupil an opportunity to do the clicking as well with the real numbers.”
+02:26  “I think that was a bit confusing. It said keep for tomorrow. Then it said Frankfurt opens tomorrow.”
+02:27  Ready to fly · Week 1 · Mon 2 Sep
+02:29  Take-off · Week 1 · Mon 2 Sep
+02:30  Operations Wall · Week 1 · Mon 2 Sep
+02:42  Take-off · Week 1 · Mon 2 Sep
+02:43  Operations Wall · Week 1 · Mon 2 Sep
+02:46  Operations Wall · Week 1 · Mon 2 Sep
+02:55  Launch Day: Day page · Week 1 · Mon 2 Sep
+03:02  Studio · Week 1 · Tue 3 Sep
+03:13  “So I think we just need an explanation as to why. So maybe even just you have achieved X percent optimum.”
+03:36  “Or word that properly. So you are 96 percent optimal. However, that makes sense. Therefore, you've got the you've unlocked the opportunity to go to Frankfurt early.”
+03:51  “So I think here as well, we should say just remove the flights. So keep the yesterdays plan there, but then have a blank one for them to try because I do have quite lazy pupils and they might just think I'll keep it.”
+03:54  Studio: flight selected · Week 1 · Tue 3 Sep
+03:58  Studio · Week 1 · Tue 3 Sep
+04:01  ★ MARK
+04:16  Studio: flight selected · Week 1 · Tue 3 Sep
+04:20  Studio · Week 1 · Tue 3 Sep
+04:21  Studio: flight selected · Week 1 · Tue 3 Sep
+04:21  Studio · Week 1 · Tue 3 Sep
+04:28  Studio: flight selected · Week 1 · Tue 3 Sep
+04:37  Sums · Week 1 · Tue 3 Sep
+04:44  ★ MARK
+04:44  “The demo happened a little bit quickly as soon as I came onto this page. Also, the what's the difference came up after the sum was done.”
+04:55  “I think that needs to come up before the demonstration. It is also tiny bit cut off on the right hand side. I think at this point, it might be worth showing the Frankfurt first because they might look at that and think, oh, why am I doing that?”
+05:21  ★ MARK
+05:42  “Because the money's gone downloads, but obviously that's not taking into account Frankfurt. So this just.”
+06:07  “OK, so that's it's just a bit confusing as to what this shows. I think we haven't really looked at what Frankfurt is bringing in specifically.”
+06:24  “So now we it says now four flights a day, but I think now is misleading. Maybe that's last week should be and then with your change, three flights a day.”
+06:48  “I think it's just a little bit confusing. That's all. And for the before and after they should be taken to that automatically and they should be guided through this with some call outs just so we can show them really what's happening.”
+07:09  “But I think the order of that part can be improved. I think we should compare with last week. So an end of week review like with the graph.”
+07:13  Week 1 is flying · Week 1 · Tue 3 Sep
+07:15  Week 1 is flying · Week 1 · Wed 4 Sep
+07:16  Week 1 is flying · Week 1 · Thu 5 Sep
+07:18  Week 1 is flying · Week 1 · Fri 6 Sep
+07:19  Day page · Week 1 · Fri 6 Sep
+07:42  “And then they can say whether they want to keep it for tomorrow or bring up two plans and then have the button on the right saying to which plan they want to choose.”
+07:49  ★ MARK
+07:52  Week 1 is flying · Week 1 · Sun 8 Sep
+07:52  Sunday review · Week 1 · Sun 8 Sep
+07:56  ★ MARK
+07:58  “I like this, but the demonstration happened a tiny bit too quickly when we first came onto this page. So I wasn't really watching.”
+08:11  “We need to make sure that before there was a focal point, a call out saying this is how you calculate the total profit or this is one way you calculate total profit.”
+08:24  “Now it's your turn. Again, introduce this with a here is another simpler way of doing it in spreadsheets and then take them through.”
+09:03  ★ MARK
+09:03  “Also, before we didn't make calculate the profit each day, we should do that with the previous method as well. Well, maybe on the previous method they show us and then the people can have a go on the sum one.”
+09:29  “OK, so I could have sworn I've flown two weeks already. Can you check that? Also, I think this should be guided through first as a bit more like with call outs coming up one at a time.”
+09:30  Home · Week 2 · Mon 9 Sep
+10:05  Plan opener · Week 2 · Mon 9 Sep
+10:15  Finance's questions · Week 2 · Mon 9 Sep
+10:20  ★ MARK
+10:47  “The aim of this part is to really show them how a little bit of money over a long period of time actually builds up. So maybe they need to show a demo and then have a go themselves.”
+11:05  “And again, I think this could be done on the same sheet as before.”
+11:22  “I think this is definitely a section for Claude Design to design first. For me, I'm less likely to read this what if a week question two of two box.”
+11:39  “I like call outs coming out one at a time and then so more in a month could then become and then compare what it would have been before and then just charging two pounds a day gives you this much more.”
+11:58  “So have the two options still next to each other to compare.”
+12:01  “Otherwise, I think I'm pretty happy so far with it. I haven't tested the different, you know, doing a good plan, bad plan, medium plan.”
+12:06  Plan check · Week 2 · Mon 9 Sep
+12:27  “I've just done a really good plan, but that is really good.”
+12:36  STOP
