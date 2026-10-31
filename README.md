@@ -380,6 +380,28 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Hand-off 1c: everything after week 1 moves a week (31 Oct 2026)
+
+Fable's hand-off 1c and workbook v6.4, confirmed by Bertie, chapter one only. The full report, with what Fable needs to look at in v6.4, is `docs/Handoff-1c-Report.md`; screenshots in `docs/screenshots/handoff1c/`.
+
+- **The shift (D110), read from the workbook:**
+  - Week 2 is a plain week: the plan check on Monday, "Week 2 is flying", the Sunday accounts.
+  - The Fuel desk and the what-if sheet open on day 15.
+  - On day 22: the shop, Amsterdam, Frankfurt, Geneva and Barcelona, View trade-offs, ƒ work it out and the capacity tip.
+  - Madrid opens on day 29; weekly play starts on day 36.
+  - Home's Roadmap strip follows the new days.
+- **Weeks 2 to 4** use the "Week N is flying" page, Monday to Sunday, with the plan check on Monday (speeds in Settings weekSpeed).
+- **Finance's questions ("Before week N flies")**: on Monday, after his own plan's sums, Finance asks the pause's scheduled questions, one small sheet each, on paper and counted. The questions are:
+  - the what-if sheet's first sum and the modelling question (P2);
+  - time to afford and a rotating question (P3);
+  - fuel for two planes and Madrid's possible revenue (P4);
+  - the difference from the plan and a rotating question (P5);
+  - then the difference about every third pause, otherwise a rotating question, plus the modelling question.
+
+  Never more than two at a pause. His plan's sums take the slots first, and Finance's questions wait.
+- **Launch Day:** when his fare is the bottom of the table, his fare is demonstrated, the fare above built, the next above on paper.
+- **Run it:** `python3 tools/merge_v64.py data/incoming/handoff-1c-31-oct/Airline-World-Workbook-v6.4.xlsx && python3 tools/import_world.py && python3 src/opening/build.py`; checks: `chapter1.test.js` and `numbers.test.js`.
+
 ### Hand-off 3: Launch Day left to right, then straight into the week (30 Oct 2026, evening)
 *Claude Design's hand-off 3 with workbook v6.3, chapter one only. The report is `docs/Handoff-3-Report.md` (and the Claude Doc https://claude.ai/artifact/P3kA2t1GnPYXRJkVvcrQgU); screenshots at 1366 × 768 are in `docs/screenshots/handoff3/`.*
 - **Launch Day:**

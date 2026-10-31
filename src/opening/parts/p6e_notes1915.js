@@ -15,7 +15,8 @@
    p6c_desks.js; the moving slider on the fare briefing's challenge beat is in briefings/briefing-fare.html.
    ================================================================== */
 {
-const n15Wk1 = () => ch1();   // hand-off 3 (30 Oct, evening), section 5: hidden for all of chapter one, not only week one
+/* hand-off 3 hid them for all of chapter one; hand-off 1c (Bertie, 31 Oct): until the day Settings studioExtrasFrom names ("(day 22)") */
+const n15Wk1 = () => { if(!ch1()) return false; const m = /return at the start of week \d+ \(day (\d+)\)/.exec(String(WBS().studioExtrasFrom || '')); return m ? (S.day || 1) < +m[1] : true; };
 /* the chapter page */
 const n15Chapter0 = R.chapter;
 R.chapter = st => {

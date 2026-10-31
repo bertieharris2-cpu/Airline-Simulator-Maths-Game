@@ -140,13 +140,13 @@ function ashReviewSpec(W, items){
   const wk = weekNo(W.from), store = W, days = Array.from({ length:7 }, (_, k) => W.from + k).filter(d => W.rows.some(r => r.d === d)), T = items.find(x => x.id === 'tot'), D = items.find(x => x.id === 'diff'), M = items.find(x => x.id === 'mean');
   const rows = [{ r:1, t:'hdr' }], v = {}, rowOf = {}; let r = 2;
   days.forEach(d => { rows.push({ r, label:rbShort(d), ic:'cal' }); v['B' + r] = { t:money(Math.round((W.rows.find(x => x.d === d) || {}).profit || 0)), cls:((W.rows.find(x => x.d === d) || {}).profit || 0) < 0 ? 'soft' : '' }; rowOf['d' + d] = r; r++; });
-  const rTot = r++, rProj = r++, rDiff = r++, rDays = M ? r++ : 0, rMean = M ? r++ : 0;
-  rows.push({ r:rTot, label:'Profit this week', ic:'coins', t:'tot', gold:true }, { r:rProj, label:'Projected on Monday', ic:'note' }, { r:rDiff, label:'Difference from the plan', ic:'scale', gold:true });
+  const rTot = r++, rProj = D ? r++ : 0, rDiff = D ? r++ : 0, rDays = M ? r++ : 0, rMean = M ? r++ : 0;   // no difference row when the week doesn't ask it (chapter one moves it to Monday, hand-off 1c)
+  rows.push({ r:rTot, label:'Profit this week', ic:'coins', t:'tot', gold:true }); if(D) rows.push({ r:rProj, label:'Projected on Monday', ic:'note' }, { r:rDiff, label:'Difference from the plan', ic:'scale', gold:true });
   if(M) rows.push({ r:rDays, label:'Days flown', ic:'cal' }, { r:rMean, label:'Average a day', ic:'chart', t:'fin', gold:true });
   const total = rbValue(T), proj = Math.round(W.projected || 0), ok = id => rbState(store, id).ok;
-  v['B' + rProj] = { t:money(proj) }; if(M) v['B' + rDays] = { t:num(M.div) };
+  if(D) v['B' + rProj] = { t:money(proj) }; if(M) v['B' + rDays] = { t:num(M.div) };
   if(ok('tot')) v['B' + rTot] = { t:money(total), cls:total < 0 ? 'soft' : '', fin:!!rbState(store, 'tot').ashown };
-  if(ok('diff')) v['B' + rDiff] = total > proj ? { t:'+' + money(rbValue(D)), cls:'pos', fin:!!rbState(store, 'diff').ashown } : { t:rbValue(D) ? rbResultWords(D).replace(/ than .*$/, '') : 'On plan', fin:!!rbState(store, 'diff').ashown };   // "£813 less": the row's label says from what; the line under the sheet has the whole sentence
+  if(D && ok('diff')) v['B' + rDiff] = total > proj ? { t:'+' + money(rbValue(D)), cls:'pos', fin:!!rbState(store, 'diff').ashown } : { t:rbValue(D) ? rbResultWords(D).replace(/ than .*$/, '') : 'On plan', fin:!!rbState(store, 'diff').ashown };   // "£813 less": the row's label says from what; the line under the sheet has the whole sentence
   if(M && ok('mean')) v['B' + rMean] = { t:money(rbValue(M)), fin:!!rbState(store, 'mean').ashown };
   const larger = proj >= total ? 'B' + rProj : 'B' + rTot, smaller = larger === 'B' + rProj ? 'B' + rTot : 'B' + rProj;
   // 21 Oct 2026 (Bertie): the sheet does the adding. A formula-only sum (SheetSums how = formula: Profit this week, Average a day) is
@@ -176,9 +176,9 @@ function ashReviewSpec(W, items){
       sumWrongCol:() => `Those are the days' names. Drag down the Profit column (B), from ${wd(d0)}'s profit to ${wd(dL)}'s.`,
       rule:`Profit this week = add the ${['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'][days.length] || days.length} days`, name:'the profit this week', doneLine:tHow === 'formula' ? tx('review.total.done', TV).text.map(h21Html).join(' ').replace(/^✓\s*/, '') : `Profit this week: <b class="gold">${money(total)}</b>`,
       why:ref => ashRef(ref).r > rTot ? 'That is below the days. This week\'s profit adds up the days: which cells hold them?' : null }),
-    mk(D, { title:'Difference from the plan', tgt:'B' + rDiff, refs:[larger, smaller], ops:['−'], words:larger === 'B' + rProj ? 'Projected − Profit this week' : 'Profit this week − Projected', commute:false, how:howOf('week.difference') === 'formula' ? 'build' : howOf('week.difference'),
+    D ? mk(D, { title:'Difference from the plan', tgt:'B' + rDiff, refs:[larger, smaller], ops:['−'], words:larger === 'B' + rProj ? 'Projected − Profit this week' : 'Profit this week − Projected', commute:false, how:howOf('week.difference') === 'formula' ? 'build' : howOf('week.difference'),
       rule:'Difference = the larger − the smaller', name:'the difference from the plan', orderWhy:'a difference starts from the larger amount, so it doesn\'t go below zero.', doneLine:`Difference from the plan: <b class="gold">${esc(rbResultWords(D))}</b>`,
-      why:ref => { const p = ashRef(ref).r; return p !== rProj && p !== rTot ? 'The difference compares what was planned with what happened: which two cells are those?' : null; } })];
+      why:ref => { const p = ashRef(ref).r; return p !== rProj && p !== rTot ? 'The difference compares what was planned with what happened: which two cells are those?' : null; } }) : null].filter(Boolean);
   if(M) sums.push(mk(M, { title:'Average a day', tgt:'B' + rMean, refs:['B' + rTot, 'B' + rDays], ops:['÷'], words:'Profit ÷ Days flown', commute:false, how:howOf('week.average'),
     lineBuild:howOf('week.average') === 'formula' ? tx('review.average.card', TV).text.map(h21Html).join(' ') : undefined,
     rule:`Average a day = Profit this week ÷ ${M.div}`, name:'the average a day', orderWhy:'an average shares the total out, so the total comes first.', doneLine:howOf('week.average') === 'formula' ? tx('review.average.done', TV).text.map(h21Html).join(' ').replace(/^✓\s*/, '') : `Average a day: <b class="gold">${money(rbValue(M))}</b>`,
@@ -194,9 +194,10 @@ function ashReviewRender(st){
   const W = S.wk || { from:S.day - 6, rows:[], projected:0 }, h = weekSummary(W), items = weekReviewItems(W, h), wk = weekNo(W.from);
   items.forEach(it => { it.title = RV2_TITLE[it.id] || it.title; });
   const sp = ashReviewSpec(W, items), allOk = items.every(it => rbState(W, it.id).ok);
-  if(allOk && !W.logged){ W.logged = true; rbSkill('weekTotal'); rbSkill('projectedVsActual'); if(items.some(x => x.id === 'mean')) rbSkill('meanDay');
+  const hasD = items.some(x => x.id === 'diff');
+  if(allOk && !W.logged){ W.logged = true; rbSkill('weekTotal'); if(hasD) rbSkill('projectedVsActual'); if(items.some(x => x.id === 'mean')) rbSkill('meanDay');
     const lv = id => ashSum(id).how === 'formula' ? 'Formula' : 'Build, then the sum';
-    rbLog([`Week total (${lv('week.total')})`, 'Projected − actual (Build, then the sum)'].concat(items.some(x => x.id === 'mean') ? [`Average a day (${lv('week.average')})`] : [])); const mean = items.find(x => x.id === 'mean'); if(mean){ (S.means = S.means || {})[wk] = rbValue(mean); } }
+    rbLog([`Week total (${lv('week.total')})`].concat(hasD ? ['Projected − actual (Build, then the sum)'] : []).concat(items.some(x => x.id === 'mean') ? [`Average a day (${lv('week.average')})`] : [])); const mean = items.find(x => x.id === 'mean'); if(mean){ (S.means = S.means || {})[wk] = rbValue(mean); } }
   if(allOk && !sp.just) ashKeep('week', sp, wk);
   if(!W.missed && WBS().missedProfitLine !== false){ W.missed = missedProfitLine(h.profit, 7, W.from); }
   if(!W.neglect) W.neglect = neglectUpdate(W.from, W.from + 6);

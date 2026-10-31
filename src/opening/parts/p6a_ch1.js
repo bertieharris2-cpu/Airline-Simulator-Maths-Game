@@ -57,7 +57,7 @@ if(typeof INTRO !== 'undefined' && INTRO.jets){
     return { q:`Madrid is ${num(X.km)} km away. Which of these aircraft can fly it?`, opts, ok:0, done:`The ${shortPlane(ok)}: its range, ${num(ok.range)} km, covers ${num(X.km)} km.` }; } });
 }
 
-/* ---------- 2. the second plane from day 15 (secondPlaneShopFromDay; Calendar day 15 opens the shop) ---------- */
+/* ---------- 2. the second plane from secondPlaneShopFromDay (day 22 since D110; the Calendar opens the shop that day) ---------- */
 const c1ShopFrom = () => +WBS().secondPlaneShopFromDay || 0;
 const c1Shop0 = shopPlanes;
 shopPlanes = function(day){ const d = day === undefined ? S.day : day, L = c1Shop0.apply(this, arguments); return ch1(d) && c1ShopFrom() && d < c1ShopFrom() ? [] : L; };
@@ -73,8 +73,10 @@ shopPlanes = function(day){ const d = day === undefined ? S.day : day, L = c1Sho
 const c1Count = () => ch1() && typeof weekMode === 'function' && weekMode();
 const c1Budget = () => Math.max(0, +(WBS().pausesPerBoundary || 2));
 const c1Midweek = () => !c1Off(WBS().midweekQuestions);
-/* the pause a day belongs to: Launch Day; a Sunday review in weeks 1-4 belongs to the Monday after it; any other day is its own */
-function c1PauseOf(day){ const d = day || 1; return d === 1 ? 1 : (d % 7 === 0 && d <= 28) ? d + 1 : d; }
+/* the pause a day belongs to: Launch Day; a Sunday review in the day-by-day weeks belongs to the Monday after it; any other day
+   is its own. The day-by-day weeks end where Chapters 1 runCadence starts the week skips (D110: day 36; was 29). */
+function c1WeeklyFrom(){ const m = /week-skips from day (\d+)/.exec(((typeof CHAPTERS !== 'undefined' && CHAPTERS[0]) || {}).runCadence || ''); return m ? +m[1] : 29; }
+function c1PauseOf(day){ const d = day || 1; return d === 1 ? 1 : (d % 7 === 0 && d < c1WeeklyFrom()) ? d + 1 : d; }
 /* is today a pause (a plan day or a review day)? */
 function c1PauseDay(){ if(!S) return false; if(S.phase === 'setup') return true; const w = roundData(S.round) || {};
   return w.period !== 'day' || w.weekPhase === 'plan' || w.weekPhase === 'review'; }
@@ -97,16 +99,23 @@ decideHandSums = function(L, pl){ const out = c1Decide0.apply(this, arguments); 
   if(!c1Midweek() && !c1PauseDay()) ['rivalStay', 'weekendDemand', 'emptySeats', 'stay', 'business', 'flightTime'].forEach(k => delete out[k]);
   ['rivalStay', 'weekendDemand'].forEach(k => { if(!c1Midweek()) delete out[k]; });   // the event and weekend tenths are mid-week sums by nature
   return out; };
-/* the difference from the plan: not in week 1; first at the end of week 4; then about every third pause, when there is room
-   (Settings differenceCadence; ReviewQuestions planned_actual) */
+/* the difference from the plan: not in week 1; first at the end of the week ReviewQuestions planned_actual names ("first: end of
+   week 5" since D110; was week 4); then about every third pause, when there is room (Settings differenceCadence) */
+function c1DiffFirstWeek(){ const q = ((typeof WORLD !== 'undefined' && WORLD.reviewQuestions) || (typeof WB !== 'undefined' && WB.reviewQuestions) || []).find(x => (x.questionId || x.id) === 'planned_actual') || {};
+  const m = /first: end of week (\d+)/.exec(String(q.from || '')); return m ? +m[1] : 4; }
 function c1DifferenceDue(day){ if(!ch1(day)) return null; const wk = weekNo(day || S.day);
-  if(wk < 4) return false; const S2 = S.c1 || (S.c1 = {}), last = S2.diffWeek || 0;
+  if(wk < c1DiffFirstWeek()) return false; const S2 = S.c1 || (S.c1 = {}), last = S2.diffWeek || 0;
   return last === 0 || wk - last >= 3; }
 function c1DifferenceAsked(day){ const S2 = S.c1 || (S.c1 = {}); S2.diffWeek = weekNo(day || S.day); }
+/* hand-off 1c, section 3 (Settings countingPriority): the slots at a pause go first to his own plan change's sums, so the
+   scheduled questions (the difference, the rotating question) move from the Sunday accounts to Monday's Finance's
+   questions (step c1q, p6g), after the plan is settled. "off" keeps them on Sunday. */
+function c1qMoves(){ return ch1() && typeof weekMode === 'function' && weekMode() && !c1Off(WBS().countingPriority); }
 /* from week 5 the Sunday review is the game's own (p5v): its difference from the plan comes about every third pause, when there
    is room, and the choice is kept on the week so it does not change between redraws */
 const c1Items0 = weekReviewItems;
 weekReviewItems = function(W, h){ const it = c1Items0.apply(this, arguments); if(!c1Count() || !W || !W.from || weekNo(W.from) <= 4 || !Array.isArray(it)) return it;
+  if(W.c1diff === undefined && c1qMoves()) W.c1diff = false;   // the difference is Monday's question now (p6g)
   const k = W.c1diff !== undefined ? W.c1diff : (W.c1diff = !!(c1DifferenceDue(W.from + 6) && c1Room()));
   if(!k) return it.filter(x => x.id !== 'diff');
   if(!W.c1marked){ W.c1marked = true; c1DifferenceAsked(W.from + 6); } return it; };

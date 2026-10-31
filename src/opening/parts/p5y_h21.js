@@ -47,7 +47,8 @@ const H21_TEXT = {
 function h21Text(id, vars){
   const w = (typeof WB !== 'undefined' && WB && WB.screenText && WB.screenText[id]) || H21_TEXT[id] || {}, V = vars || {};
   const fill = s => String(s || '').replace(/\{(\w+)\}/g, (m, k) => V[k] !== undefined && V[k] !== null ? String(V[k]) : m);
-  return { eyebrow:fill(w.eyebrow), title:fill(w.title), text:(w.text || []).map(fill).filter(Boolean), button:String(w.button || '') };
+  // the button's {n} is filled too in chapter one ("Fly week {n} ▶", hand-off 1c); the later chapters keep theirs as they were
+  return { eyebrow:fill(w.eyebrow), title:fill(w.title), text:(w.text || []).map(fill).filter(Boolean), button:typeof ch1 === 'function' && ch1() ? fill(w.button) : String(w.button || '') };
 }
 /* the text as HTML: escaped, then **bold** and the [A] / [B] tags */
 function h21Html(s){ return esc(String(s || '')).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\[([AB])\]/g, '<i class="h21-tg">$1</i>'); }

@@ -13,7 +13,7 @@ const dcRows = () => WB.dailyColour || [];
 const dcOn = () => WBS().dailyColour !== false && settings.dailyColour !== false && dcRows().length > 0;
 const dcS = () => S.dcLog || (S.dcLog = {});
 function dcFor0(d){
-  if(!dcOn() || !d) return null; const w = weekNo(d); if(w < 2) return null;
+  if(!dcOn() || !d) return null; const w = weekNo(d); if(w < (+WBS().dailyColourFromWeek || 2)) return null;
   const wd = WDAY[calDate(d).getUTCDay()].slice(0, 3);
   return dcRows().find(c => c.weekday === wd && c.everyWeeks > 0 && w % c.everyWeeks === 0) || null;
 }

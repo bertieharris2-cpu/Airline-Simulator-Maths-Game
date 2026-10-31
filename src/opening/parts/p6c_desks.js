@@ -58,7 +58,7 @@ bindFuelDesk = function(asView){
    each worked out by the model (ƒ) as he steps the fare through the route's fare options; then Both routes. Fares he has
    changed are outlined green; a profit that rose shows green; What changed compares with the fares he has now. Set my
    fares puts them in the plan. Nothing is asked and nothing goes in his book. */
-const c1WiOn = () => ch1() && !!S && S.phase !== 'setup' && (S.day || 1) >= 8 && typeof weekMode === 'function' && weekMode();
+const c1WiOn = () => ch1() && !!S && S.phase !== 'setup' && (S.day || 1) >= (+WBS().whatIfSheetFromDay || 8) && typeof weekMode === 'function' && weekMode();
 const c1WiS = () => UI.c1wi && UI.c1wi.day === S.day ? UI.c1wi : (UI.c1wi = { day:S.day, fares:{} });
 function c1WiRows(fares){
   const pl0 = normPlan(currentPlan()), pl = JSON.parse(JSON.stringify(pl0)); pl.prices = Object.assign({}, pl0.prices, fares || {});

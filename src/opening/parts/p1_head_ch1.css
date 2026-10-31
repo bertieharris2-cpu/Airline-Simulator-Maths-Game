@@ -363,3 +363,14 @@ body:not(.rm) .ash-c.c1-glow{animation:c1Glow 1.6s ease-out 1}
 .c1w-sf b{font-weight:700}
 /* the results page's Route Performance: route, wanted, seats, flew, couldn't carry (hand-off 3 picture 04-1) */
 .c1a-res .p-rp .hq-t th:nth-child(n+6),.c1a-res .p-rp .hq-t td:nth-child(n+6){display:none}
+/* weeks 2 to 4: seven day tiles, Monday to Sunday (hand-off 1c) */
+.c1w-tiles.n7{grid-template-columns:repeat(7,minmax(0,1fr));gap:16px}
+/* hand-off 1c (31 Oct 2026): Finance's questions at a pause (step c1q). The context panel on the left uses the type scale:
+   eyebrow, section title, body; the two suggested changes are plain buttons, one under the other. */
+.c1q-ctx h2{font-size:17px;line-height:22px;font-weight:550;margin:6px 0 10px}
+.c1q-ctx p{font-size:15px;line-height:22px;margin:0 0 8px}
+.c1q-ctx .bv-eyebrow{font-size:11px;line-height:14px;font-weight:600;letter-spacing:.12em;color:var(--gold,#e8c36a)}
+.c1q-pick{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.c1q-pick .bv-btn{justify-content:flex-start;text-align:left}
+.c1q-ctx .c1q-wait,.c1q-ctx .c1q-wi{font-size:12.5px;line-height:17px;color:var(--text-soft,#9fbde3)}
+.c1q.c1-busy .rv2-what::after{display:none}   /* Finance's questions: the question stays lit while he works it out */

@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 30 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 31 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **0 to fix, 21 to check, 7 notes.**
 
@@ -8,14 +8,14 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 244 | 13 draft, 231 live, 10 placeholder |
+| Settings | 252 | 11 draft, 241 live, 10 placeholder |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
 | Aircraft | 15 | 15 live, 1 note row, 1 removed |
 | Finance | 16 | 16 live, 2 note row |
 | Airports | 1 | 1 later, 1 live, 3 removed |
-| Calendar | 49 | 49 live |
+| Calendar | 56 | 56 live |
 | Market | 416 | 416 live |
 | Events | 18 rows → 18 events | 3 later, 18 live, 1 note row, 28 parked, 3 placeholder, 2 removed |
 | EventOptions | 27 | 27 live, 1 note row, 38 parked |
@@ -94,7 +94,7 @@ Rows dated on or before 28 Dec 2030 (chapter 1's review) that the game would rea
 - **Events:** fault_b on 19 Sep 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
 - **Events:** crew_b on 16 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
 - **Events:** ams_fair on 10 Oct 2030 is `parked (Bertie 30 Oct: all one-off events parked)`: not loaded.
-- **Routes:** ist opens on day 57 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
+- **Routes:** ist opens on day 64 but its archetype `long_haul_mixed` is not live: no weekend or season multipliers on this route, and the game says so on its route card.
 - **Settings:** `timeSkip` is `placeholder`: not loaded (the game builds teacher skips of 0 / 1 / 4 / 8 weeks from the brief and reports it here).
 - **Settings:** `reputationFromDate` is `placeholder`: not loaded (a date gate only in chapter 1).
 - **Catering:** no live rows: the game has no snack options.
@@ -181,7 +181,7 @@ Taken from v5.15 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `allFullCapacityTip`: True
 - `plannerUpgrades`: earned at a review; fallback a week later
 - `operationsBriefings`: full screen; 30–60 s; advance by doing, never by Next; a Pause & discuss state at each stop
-- `flightDaysFromDay`: earned: week-2 review (day 14); fallback day 21
+- `flightDaysFromDay`: earned: week-3 review (day 21); fallback day 28
 - **DailyColour:** school_group (Thu, every 4), tailwind (Wed, every 2), headwind (Fri, every 5), no_shows (Mon, every 3), late_bus (Tue, every 5), corporate_block (Wed, every 6), quiet_day (Thu, every 7), sunny_weekend (Sun, every 3).
 - **Upgrades:** weekend_schedules → flightDays (All week / Mon–Fri / Sat–Sun), seasonal_plans → Seasonal plan sets (a named plan with start and end dates), assign_planes → Assignment-level planning (D91) and fleet groups: short-, medium- and long-haul fleets, each with its own planning view, fuel_farm → The fuel farm on the Fuel desk (D89).
 - **Briefings:** fare_lever (briefing-fare.html), weekend_demand (briefing-weekend.html), fuel_cash_tank_profit (briefing-fuel.html), aircraft_efficiency (briefing-efficiency.html), seasons (briefing-seasons.html), cash_to_fly (briefing-cash-to-fly.html), how_airline_makes_money (None, not built yet), time_of_day (None, not built yet).
@@ -209,7 +209,7 @@ Taken from v5.17 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `waitCostLine`: idle days × day cost
 - `aircraftCardMeasure`: extra profit for the airline (incremental), one measure on the whole screen
 - `demandStripMode`: follows the selected flight's route; otherwise route tabs (each route · All)
-- **Roadmap:** Week 3 (day 8), Week 4 (day 15), Week 5 (day 22), Week 6 (day 29), Week 7 (day 36), Week 9 (day 50), Week 9 (day 50), December (day 78), January 2031 (day 85), January 2031 (day 106), June 2031 (day 240), September 2031 (day 330), September 2032 (day 700).
+- **Roadmap:** Week 3 (day 15), Week 4 (day 22), Week 5 (day 29), Week 6 (day 36), Week 7 (day 43), Week 8 (day 50), Week 10 (day 64), Week 11 (day 71), Week 12 (day 78), December (day 85), End of this build (day 118), September 2031 (day 330), D101/D110: Home shows NOW, NEXT and LATER from these rows. Planner upgrades are never listed. Recomputed 31 Oct from the shifted calendar (the earlier rows were a week early: backlog item 22). (day 700).
 - **Fuel, weeks 1–8:** £1.20 · £1.47 · £1.68 · £1.62 · £1.74 · £1.97 · £2.94 · £2.43.
 
 ## D103 touches (Briefing 13)
@@ -251,7 +251,7 @@ The briefing's fixed teaching example, as loaded from the BriefingData sheet (no
 
 The handover of 19 Oct (evening), section 7.10: the Settings row, the SheetSums sheet and the hints, as loaded. Cash, tank, profit's example is under D104's list.
 
-- `fuelDeskOpensDay`: 8
+- `fuelDeskOpensDay`: 15
 - **Launch Day** `B4` Ticket revenue: = B2 × B3 (Passengers × Fare) · ƒ · demo · `launch.demo`
 - **Launch Day** `C4` Ticket revenue: = C2 × C3 (Passengers × Fare) · pupil · formula · `launch.build`
 - **Launch Day** `D4` Ticket revenue: = D2 × D3 (Passengers × Fare) · pupil · book · `launch.tickets`
@@ -376,6 +376,21 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `weekflies.tile`: ✓ flown · profit · flying now · {time} · {n} of {total} flights out · waiting · Normal · Fast · Live Operations
 - `plancheck.changed`: {plane} · seats your plan should fill · Every flight should make money on your plan. · **{route} {time}** is set to lose money: about {sold} of {seats} seats at £{fare}. Change it before the week flies? · Seats your plan should fill: **{sold} of {seats}**.
 - `plancheck.nofit`: A flight on **{plane}** runs past {close}. Change your plan so every flight fits in the day.
+- `plancheck.week`: Your plan for week {n} · {from} to {to} · the same flights every day · [Fly week {n} ▶]
+- `plancheck.lastweek`: {plane} · seats filled last week, a day on average · Every flight made money last week. · **{route} {time}** lost money last week: about {sold} of {seats} seats a day at £{fare}. Change it before the week flies? · Seats filled last week: **{sold} of {seats}** a day. · **{n} people a day** wanted seats you didn't have last week ({list}). A chance for later, when you have more seats.
+- `plancheck.week.under`: Nothing to work out: Finance keeps the sheet up to date each day. **Change my plan** opens the timetable; **Fly week {n}** runs the week. · [Change my plan]
+- `plancheck.week.footer`: Check your plan, then fly the week.
+- `weekflies.week`: Week {n} is flying · Your plan, every day, Monday to Sunday. Sunday: the week's accounts. · [Skip to Sunday ⏭]
+- `pauseq.page`: Before week {n} flies · Question {i} of {k} from Finance. Work it out in your book. · Your own plan's sums came first at this pause, so Finance's other {w} waits for the next one. · [Next question ▶]
+- `pauseq.footer`: Before week {n} flies · Finance's questions · [Carry on ▶]
+- `pauseq.whatIfFirst`: NEW · WHAT IF · What if {city} were {fare}? · The **What if** sheet opens today, in the Studio: change a fare and every figure on its row works itself out (ƒ). · Its first sum by hand: {city} at **{fare}** instead of {now}. Ticket revenue a day = seats filled × fare.
+- `pauseq.modelChange`: MODELLING · {city}: {now} or {fare}? · On your own flights, **{fare}** would earn more on {city} than your {now}. · How much more for one flight? Finance works out a day and a week from your answer.
+- `pauseq.modelChange.pick`: MODELLING · Try a change · Your plan is already good: no other fare earns {gate} a day more. · Finance suggests two changes. Pick one and work out what it would do for one flight.
+- `pauseq.timeToAfford`: THE PLANE SHOP · How long until you can afford the {plane}? · The {plane} costs **{price}**. You have {cash}, and your planes made about **{rate} a day** last week. · Days to afford = still to find ÷ profit a day, rounded up to a whole day.
+- `pauseq.reviewRotation`: LAST WEEK · {q} · About {period}: {from} to {to}.
+- `pauseq.fuelTwoPlanes`: FUEL · Which plane uses less fuel for each seat? · A trip to {city} and back in each of your planes: the {a} and the {b}. · Litres a seat = fuel a trip ÷ seats. Give it to one decimal place.
+- `pauseq.ticketRevenueLong`: NEW ROUTE · What could {city} take in a day? · {city} opens today: {km} km away, further than any route you fly. · If everyone who wants to fly went at {fare}: who wants to fly × fare.
+- `pauseq.projectedVsActual`: LAST WEEK · How far was {period} from the plan? · On Monday the plan said **{proj}**. The week made **{total}**. · Difference = the larger − the smaller.
 
 ## Identity and photos (CR5)
 

@@ -87,6 +87,9 @@ document.addEventListener('mousedown', e => { if(!ch1()) return; const b = e.tar
 /* =====================================================================
    2-3. THE WEEK'S ACCOUNTS (weeks 1 to 4, the Sunday review)
    ===================================================================== */
+/* the ladder's weeks, read from Settings spreadsheetLadder: the week he is shown Σ SUM, and the first week of dragging only */
+function c1LadderWeeks(){ const s = String(WBS().spreadsheetLadder || ''), sh = /week (\d+): click and add/.exec(s), dr = /from week (\d+): drag/.exec(s);
+  return { show:sh ? +sh[1] : 2, drag:dr ? +dr[1] : 3 }; }
 const c1RvOn = W => !!W && ch1(W.from) && weekNo(W.from) <= 4 && typeof ashOn === 'function' && ashOn();
 const c1Gated = d => String(((WB.calendar || []).find(c => c.day === d) || {}).gatedCalc || '').split(',').map(s => s.trim()).filter(Boolean);
 const c1Ex = () => S.c1 || (S.c1 = {});
@@ -101,7 +104,8 @@ const C1_RQ = id => ((WORLD.reviewQuestions || WB.reviewQuestions || []).find(q 
 
 function c1ReviewSpec(W, items, h){
   const wk = weekNo(W.from), store = W, days = Array.from({ length:7 }, (_, k) => W.from + k).filter(d => W.rows.some(r => r.d === d));
-  const g = c1Gated(W.from + 6), T = items.find(x => x.id === 'tot'), M = items.find(x => x.id === 'mean');
+  // hand-off 1c: the difference and the rotating question are Monday's now (Finance's questions, p6g), after his plan's own sums
+  const g = c1Gated(W.from + 6).filter(k => !(c1qMoves() && ['projectedVsActual', 'reviewRotation'].includes(k))), T = items.find(x => x.id === 'tot'), M = items.find(x => x.id === 'mean');
   const D = (g.includes('projectedVsActual') && c1Room()) || rbState(store, 'diff').ok ? items.find(x => x.id === 'diff') : null;
   const rotId = g.includes('reviewRotation') ? c1RotFor(W) : null;
   const rows = [{ r:1, t:'hdr' }], v = {}, rowOf = {}; let r = 2;
@@ -117,8 +121,8 @@ function c1ReviewSpec(W, items, h){
   if(M && ok('mean')) v['B' + rMean] = { t:money(rbValue(M)) };
   const d0 = days[0], dL = days[days.length - 1], wd = d => C1_WD(d), nDays = h21Words(days.length), tRefs = days.map(d => 'B' + rowOf['d' + d]), tRange = `${tRefs[0]}:${tRefs[tRefs.length - 1]}`;
   const TV = { days:nDays, range:tRange, first:wd(d0), last:wd(dL), lastDay:wd(dL), cell:tRefs[tRefs.length - 1], total:money(total), mean:M ? money(rbValue(M)) : '', n:wk };
-  // the spreadsheet ladder (Settings spreadsheetLadder): week 1 click; week 2 click, then shown Σ SUM; from week 3 Σ SUM only
-  const ladder = wk >= 3 ? 'sum' : wk === 2 ? (W.c1sum === 'try' ? 'try' : W.c1sum === 'done' ? 'done2' : 'click') : 'click';
+  // the spreadsheet ladder (Settings spreadsheetLadder; D110): click in weeks 1 and 2; week 3 click, then shown Σ SUM; from week 4 Σ SUM only
+  const LD = c1LadderWeeks(), ladder = wk >= LD.drag ? 'sum' : wk === LD.show ? (W.c1sum === 'try' ? 'try' : W.c1sum === 'done' ? 'done2' : 'click') : 'click';
   const sumKey = ladder === 'sum' || ladder === 'try';
   const mk = (it, o) => { const st = rbState(store, it.id), key = 'rb:' + it.id, formula = o.how === 'formula';
     return Object.assign({ id:'rv:' + wk + ':' + it.id, kind:'review:' + it.id, built:!!st.built, unit:'£', done:!!st.ok, want:rbValue(it), recKey:key, get no(){ return formula ? null : sumNo(key); }, get sumText(){ return st.sumText; },
@@ -175,7 +179,7 @@ function c1ReviewSpec(W, items, h){
   }
   sums.forEach((s, i) => { s.locked = i > 0 && !sums[i - 1].done; });
   // the week-2 offer: after the click-total, the Σ SUM callout holds the next sum back until Try it
-  const offer = ladder === 'click' && wk === 2 && sums[0].done && !W.c1sum;
+  const offer = ladder === 'click' && wk === c1LadderWeeks().show && sums[0].done && !W.c1sum;
   const act = offer ? null : sums.find(s => !s.done) || null;
   return { id:'week:' + wk, crumb:'', title:'The week, day by day', tabs:null, small:true, tight:true, lw:220, cols:[{ c:'B', w:170, top:fmtRange(W.from, W.from + 6), main:'Profit' }], rows, v, sums, act, just:null, tv:TV, offer, ladder,
     doneF:!act ? (() => { const l = sums.filter(s => s.done).pop(); return l ? { tgt:l.tgt, refs:l.refs, ops:l.ops, words:l.words, val:l.answerText } : null; })() : null,
@@ -241,7 +245,7 @@ function c1ReviewRender(st){
     const Mi = W.missed, miss = Mi ? `<div class="wk-missed c1-missed ${Mi.missed > 0 ? 'warn' : 'ok'}"><span class="kl">What the best plan would have earned</span><div class="wm-row"><span>Your plan <b class="mono">${money(Mi.yours)}</b></span><span>Best plan with your planes <b class="mono">${money(Mi.best)}</b></span><span>Missed <b class="mono">${money(Mi.missed)}</b></span></div></div>` : '';
     ins = done + miss; }
   // the line under the sheet in the steps between: "✓ You added the week …" (week 2), "✓ Same answer, in one drag …"
-  if(!exOn && a && /:mean$/.test(a.id) && wk === 2 && W.c1sum === 'done') a.lineBuild = c1T('review.sum.done', sp.tv).text.map(t => c1Html(t)).join(' ');
+  if(!exOn && a && /:mean$/.test(a.id) && wk === c1LadderWeeks().show && W.c1sum === 'done') a.lineBuild = c1T('review.sum.done', sp.tv).text.map(t => c1Html(t)).join(' ');
   if(!exOn && sp.offer) sp.doneLine = c1T('review.total.clickDone', sp.tv).text.map(t => c1Html(t)).join(' ');
   const body = `<div class="bv rv2 rbw ash-rv c1-rv ${a || sp.offer || exOn ? 'c1-busy' : ''} ${exOn ? 'c1-ex' : ''}">${what}<div class="rv2-col rv2-mid">${exOn ? `<div class="c1-exf"><span class="c1-exl">${esc(c1T('review.example.label').eyebrow || 'EXAMPLE · MADE-UP NUMBERS')}</span><span class="c1-exw" aria-hidden="true">EXAMPLE</span>` : ''}${ashHtml(sp)}${exOn ? '</div>' : ''}</div><div class="rv2-col rv2-ins c1-ins">${ins}</div></div>`;
   const dl = d => dateLong(d).split(' '), sub = exOn ? c1T('review.example.sub').text[0] : `Your ${wk === 1 ? 'first ' : ''}week of flying, ${dl(W.from).slice(0, 2).join(' ')} to ${dl(W.from + 6).slice(0, 3).join(' ')} · Passengers ${num(h.pax)} of ${num(h.seats)} seats · cash ${money(Math.round(S.cash))}`;

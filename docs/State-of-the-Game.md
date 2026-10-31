@@ -10,6 +10,47 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zo. Hand-off 1c: everything after week 1 moves a week; Finance's questions (31 Oct 2026)
+Fable's hand-off 1c with workbook v6.4 (D110, `afterWeekOneShift = 7`), confirmed by Bertie. Chapter one only.
+- **Data:** `tools/merge_v64.py` (idempotent; run with the v6.4 file, then `import_world.py`, 0 to fix).
+  - Settings: v6.4's rows, plus `fuelDeskOpensDay` 15.
+  - Calendar: days 15–35 are the game's days 8–28 moved on seven days; days 8–14 are v6.4's quiet week 2.
+  - Chapters 1 runCadence: "week-skips from day 36".
+  - Routes, Aircraft, ReviewQuestions, Upgrades and Briefings triggers moved; PauseSchedule and Roadmap replaced.
+  - ScreenText: `plancheck.week*`, `weekflies.week` and `pauseq.*`. v6.4's stray rows are left out (see the report).
+- **Read from the workbook, not hard-coded:**
+  - `c1WeeklyFrom()` (runCadence) and `c1PauseOf`;
+  - `c1LadderWeeks()` (spreadsheetLadder), `c1DiffFirstWeek()` (ReviewQuestions), `c1WiOn` (whatIfSheetFromDay);
+  - `dailyColourFromWeek`; `n15Wk1` (studioExtrasFrom, day 22); the shop (secondPlaneShopFromDay).
+- **`p6f_afterlaunch.js`:**
+  - Weeks 2–4 (Settings weekFlyingPages): Monday keeps the opener; the plan check replaces Ready; "Week N is flying" runs Monday to Sunday (`c1mon`).
+  - A Monday whose plan is the one that flew last week skips the Monday sheet, and marks Launch Day's filled-in cells as seen.
+  - Speeds come from weekSpeed.
+  - The first weekly beat (day 36) drops `review`, because Sunday's accounts have already done it.
+- **`p6g_pauseqs.js` (new): Finance's questions (step `c1q`, "Before week N flies").**
+  - It comes after `workings` on every chapter-one Monday from day 8.
+  - Room is `pausesPerBoundary` minus the pause's counted questions so far, so his plan's sums come first (countingPriority).
+  - The questions come from the Calendar's gatedCalc for Sunday and Monday. From P6: the difference about every third pause, otherwise a rotating question, then the modelling question.
+  - A pause with scheduled questions that can't be asked fills its slot with a rotating or modelling question.
+  - Questions with no room wait in `S.c1.qWait`.
+  - Each question is a small Sheet with a paper signal, recorded as a Calculate under `pq:<id>:<day>`. They are:
+    - timeToAfford (planes on sale within 14 days);
+    - whatIfFirst;
+    - modelChange (section 6: tipGainGate, one step; else two suggested changes);
+    - fuelTwoPlanes (litres a seat);
+    - ticketRevenueLong (who wants to fly × fare);
+    - projectedVsActual;
+    - reviewRotation (a tied best or worst day asks the range).
+  - The Sunday accounts no longer carry the difference or the rotating question (`c1qMoves()` in `c1ReviewSpec` and `weekReviewItems`). `ashReviewSpec` works without the difference row.
+  - The log is `window.__c1q.log()`.
+- **`p5y_h21.js`:** in chapter one a ScreenText button's `{n}` is filled ("Fly week 2 ▶").
+- **Launch Day columns (section 5):** `launchFares()` already gives his fare, the one above and the next above at the bottom of the table, and the roles go by column. Checked at £70.
+- **Checks:**
+  - `chapter1.test.js` 38/38. It adds a keep-his-plan run to day 37 (week 2 quiet; days 15, 22, 29 and 36; two counted at every pause from P2; Roadmap NEXT) and the countingPriority check on the main run.
+  - `numbers.test.js` 38/38: day tiles by `data-d`.
+  - The Jump to… saves are remade, with the second plane on day 22.
+- **Report:** `docs/Handoff-1c-Report.md`.
+
 ## 0zn. Hand-off 3: Launch Day, after Launch Day, the Studio in chapter one (30 Oct 2026, evening)
 Claude Design's hand-off 3 with workbook v6.3 (`tools/merge_v63.py`, idempotent; then `import_world.py`, 0 to fix), chapter one only.
 - **`p6b_signal.js` §4 (Launch Day):**
