@@ -175,6 +175,7 @@ const tkNx = () => { const b = tkQ('#nx'); return b && !b.disabled && !b.hidden 
 async function tkWaitFor(cond, ms){ const t0 = Date.now(); while(Date.now() - t0 < ms){ if(cond()) return true; await tkWait(120); } return false; }
 /* one move on the current screen; returns what it did, or null when the screen needs a person */
 async function tkMove(R){
+  if(typeof window.__tkPre === 'function'){ const r = window.__tkPre(R); if(r) return r; }   // a later part's own screens (hand-off 2a: the Day page)
   const st = step(), t = st && st.t;
   if(window.__bf && window.__bf.open()){ window.__bf.skip(); return 'skipped a briefing'; }
   if(S.overlay){ const ty = S.overlay.type; if(['menu', 'shop', 'fleet', 'alerts', 'planeTable', 'newPlane'].includes(ty)){ closeOverlay(); return 'closed ' + ty; } }
@@ -318,5 +319,6 @@ document.addEventListener('DOMContentLoaded', () => setTimeout(() => {
   }catch(e){}
   tkSync();
 }, 0));
+window.__tkRunning = () => !!tkRunning;
 window.__tk = { answer:tkAnswer, answerAll:tkAnswerAll, find:() => { const a = tkFind(); return a ? { what:a.what, value:a.value, at:a.at } : null; }, autoPlan:tkAutoPlan, run:tkRun, stop:tkStop, jump:tkJump, jumps:() => Object.keys(TK_JUMPS), enter:tkEnter, leave:tkLeave, eventNow:tkEventNow, events:tkEventList, index:tkIndex, deleteAll:tkDeleteAll };
 }

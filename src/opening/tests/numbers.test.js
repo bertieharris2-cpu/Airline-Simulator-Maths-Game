@@ -146,14 +146,19 @@ const HOOKS = `(() => { const N = window.__num = { boards:{}, days:{}, moves:[],
     const start = await J(p, `({ day:S.day, step:step().t, cash:S.cash, rep:S.rep, fleet:S.fleet.map(f => f.planeId), rounds:Object.fromEntries(Array.from({ length:14 }, (_, n) => n).map(n => { const w = roundData(n); return [dayFor(n), { competitor:w.competitor || null, demandMod:w.demandMod || {}, eventId:w.eventId || null }]; })), free:Object.fromEntries(Array.from({ length:15 }, (_, k) => S.day + k).map(d => [d, !!(calRow(d) && (calRow(d).headlines || []).some(h => /fuel is free/i.test(h)))])) })`);
     const msgs = []; let results = null;
     for(let g = 0; g < 12; g++){ msgs.push(await p.evaluate(() => window.__tk.run('review'))); const t = await E(p, 'step().t');
-      if(t === 'results' && !results){ results = await p.evaluate(() => ({ text:document.getElementById('screen').innerText.replace(/\s+/g, ' '), cash:document.getElementById('cCash').textContent })); await shot(p, `${save}-results`); }
+      if(t === 'results' && !results){
+        // hand-off 2a: Launch Day ends on its Day page; the revenue and costs are one click away, in More detail
+        if(await p.$('#c2More')){ await p.click('#c2More'); await p.waitForTimeout(300); }
+        results = await p.evaluate(() => ({ text:(document.getElementById('screen').innerText + ' ' + ((document.getElementById('c2Dr') || {}).innerText || '')).replace(/\s+/g, ' '), cash:document.getElementById('cCash').textContent })); await shot(p, `${save}-results`);
+        await p.evaluate(() => { const x = document.querySelector('#c2Dr [data-c2close]'); if(x) x.click(); }); await p.waitForTimeout(200); }
       if(t === 'weekReview' || /needs you|Run stopped/.test(msgs[msgs.length - 1])) break; }
     await shot(p, `${save}-review`);
     const end = await J(p, `({ day:S.day, step:step().t, cash:S.cash, fuelWeeks:S.fuelWeeks, wk:S.wk && { from:S.wk.from, projected:S.wk.projected, rows:S.wk.rows.map(r => ({ d:r.d, pax:r.pax, seats:r.seats, trips:r.trips, rev:r.rev, cost:r.cost, profit:r.profit })) },
       hist:(S.history || []).filter(h => h.type === 'day' || h.type === 'setup').map(h => ({ from:h.from, revenue:h.revenue, costs:h.costs, profit:h.profit, cash:h.cash, pax:h.pax, seats:h.seats, trips:h.trips, routes:h.routes })), ledger:S.ledger, N:window.__num })`);
     // week 1 (30 Oct): the accounts open on Finance's example; My turn shows his own week, which is what is checked
     if(await p.$('.c1-cursor, #c1Cursor, #c1MyTurn')){ await p.waitForSelector('#c1MyTurn', { timeout:30000 }).catch(() => {}); if(await p.$('#c1MyTurn')){ await p.click('#c1MyTurn'); await p.waitForTimeout(400); } }
-    const dom = await p.evaluate(() => { const sh = document.querySelector('[data-ash]'); return { cells:sh ? Object.fromEntries([...sh.querySelectorAll('[data-ref]')].map(c => [c.getAttribute('data-ref'), c.textContent.trim()])) : null, cash:document.getElementById('cCash').textContent, screen:document.getElementById('screen').innerText.replace(/\s+/g, ' ') }; });
+    // hand-off 2a: his week sits beside Finance's example, in the live side of the pair
+    const dom = await p.evaluate(() => { const sh = document.querySelector('.c2-live [data-ash]') || document.querySelector('[data-ash]'); return { cells:sh ? Object.fromEntries([...sh.querySelectorAll('[data-ref]')].map(c => [c.getAttribute('data-ref'), c.textContent.trim()])) : null, cash:document.getElementById('cCash').textContent, screen:document.getElementById('screen').innerText.replace(/\s+/g, ' ') }; });
     await p.close();
     return { save, label, start, msgs, results, end, dom };
   }

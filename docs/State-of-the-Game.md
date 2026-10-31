@@ -10,6 +10,28 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zp. Hand-off 2a and workbook v6.5 (31 Oct 2026)
+Claude Design's hand-off 2a and Fable's v6.5, chapter one only. Full report: `docs/Handoff-2a-Report.md`.
+- **Data:** `tools/merge_v65.py` (idempotent; then `import_world.py`, 0 to fix).
+  - Settings: `dailyChange*`, `thirdRoute*`, `fullPlaneNudge`, `keptPlanMondaySum`, `weekOneCountedTotal`, and Fast as the default `weekSpeed`.
+  - Frankfurt's route row; ScreenText `day.*`, `read.*`, `chg.*`, `fra.*`, `cmp.*`, `wk1.*`, `ld.profit.*`, `sum.next`, `ready.todo`, `tt.cannot`.
+- **`p6h_daily.js`:**
+  - **Day page:** `c2DayPage`, `c2Read`, `c2Tomorrow`, the drawer.
+  - **Daily change:** `c2StartChange`, `ashChangeSpec` / `ashChangesPage` overrides, `c2Room` for the counting.
+  - **Frankfurt:** `c2NearOptimum`, `c2Earn`, `routeOpen`, `__c2tray`, `c2FraCard`.
+  - **Launch Day:** `ashLaunchSpec` / `ashLaunchPage` (the profit demonstration).
+  - **Every sheet:** `c2NextSum` and `c2Colours`.
+  - **Week 1 Sunday:** `c1ExampleRun`, `c2Pair`.
+  - **Weeks 2–4:** `c2Compare`.
+  - **Ready:** the `R.ready` wording.
+  - **Fixes:** `s2Opener`, `intelSituations` / `wiFuel` / `s2Changes` for fuel, `checkMilestones`, `buildShow`.
+- **State:** `S.c1.c2 = {kept, cnt, seen, fra, fraCard, chgDemo, …}`. The demonstration's running flag lives in `UI`, so a reload starts it again.
+- **Open, with Fable or Bertie:** see the report's table.
+  - Frankfurt has no week 1 fallback.
+  - A kept plan has no Monday sum (v6.5).
+  - The ladder and `weekOneAfterLaunch` text still describe the old week 1.
+  - The design's £1.20 → £1.47 against the Calendar's £1.40.
+
 ## 0zo. Hand-off 1c: everything after week 1 moves a week; Finance's questions (31 Oct 2026)
 Fable's hand-off 1c with workbook v6.4 (D110, `afterWeekOneShift = 7`), confirmed by Bertie. Chapter one only.
 - **Data:** `tools/merge_v64.py` (idempotent; run with the v6.4 file, then `import_world.py`, 0 to fix).

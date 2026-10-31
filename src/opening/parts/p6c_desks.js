@@ -145,7 +145,8 @@ const c1Flown = pl => { const f = new Set(normPlan(pl).fleet.flatMap(x => x.sche
 const c1TrayIds = pl => { const st = UI.s2 && UI.s2.startPlan ? c1Flown(UI.s2.startPlan) : [], f = c1Flown(pl).concat(st.filter(id => !c1Flown(pl).includes(id)));   // a route he flew at the start of this plan step keeps its token
   const all = plannerOrder().filter(id => normPlan(pl).fleet.some(x => planeCanFly(planeById(x.planeId), routeById(id))));
   if(S.phase === 'setup' && ch1()) return all.concat(f.filter(id => !all.includes(id)));   // Launch Day: every route he can fly, with no route page first (19:15)
-  return f.length ? f : all; };
+  const out = f.length ? f : all, ex = window.__c2tray ? window.__c2tray().filter(id => !out.includes(id) && all.includes(id)) : [];   // a route earned early (Frankfurt, hand-off 2a) joins the tray
+  return out.concat(ex); };
 const c1We = () => !!(UI.s2 && UI.s2.dt === 'weekend' && S2V.fd);
 const c1Hm = m => fmtTime(((m % 1440) + 1440) % 1440);
 /* a plane's flights in the day type on show: full-schedule index, times, turnaround, seats filled */

@@ -2,13 +2,13 @@
 
 *Written by `tools/import_world.py` on 31 Oct 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 21 to check, 7 notes.**
+**0 to fix, 22 to check, 7 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 252 | 11 draft, 241 live, 10 placeholder |
+| Settings | 263 | 10 draft, 253 live, 10 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -48,6 +48,7 @@
 - **RouteNews:** hajj_2033: route `none` is not on the Routes sheet.
 - **Routes:** ist is loaded, but its archetype "long_haul_mixed" is not live. The game uses the route's own demand table and applies no business/leisure or season multipliers to it.
 - **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Boeing 787 Dreamliner 20 min, Airbus A350 20 min, Boeing 747 20 min, Airbus A380 20 min, Embraer E175 20 min, Boeing 757 20 min, Airbus A340 20 min, Boeing 777 20 min.
+- **Routes:** fra (650 km): legs not on a quarter hour: DHC-6 Twin Otter 130 min, Saab 340 87 min, ATR 72 87 min, Embraer E190 43 min, Airbus A220 43 min, Airbus A320 43 min, Boeing 737 43 min, Boeing 787 Dreamliner 43 min, Airbus A350 43 min, Boeing 747 43 min, Airbus A380 43 min, Embraer E175 43 min, Boeing 757 43 min, Airbus A340 43 min, Boeing 777 43 min.
 - **Routes:** yyz (5700 km): legs not on a quarter hour: Saab 340 760 min, ATR 72 760 min, Embraer E190 380 min, Airbus A220 380 min, Airbus A320 380 min, Boeing 737 380 min, Boeing 787 Dreamliner 380 min, Airbus A350 380 min, Boeing 747 380 min, Airbus A380 380 min, Embraer E175 380 min, Boeing 757 380 min, Airbus A340 380 min, Boeing 777 380 min.
 - **Routes:** los (5000 km): legs not on a quarter hour: DHC-6 Twin Otter 1000 min, Saab 340 667 min, ATR 72 667 min, Embraer E190 333 min, Airbus A220 333 min, Airbus A320 333 min, Boeing 737 333 min, Boeing 787 Dreamliner 333 min, Airbus A350 333 min, Boeing 747 333 min, Airbus A380 333 min, Embraer E175 333 min, Boeing 757 333 min, Airbus A340 333 min, Boeing 777 333 min.
 - **Routes:** del (6700 km): legs not on a quarter hour: DHC-6 Twin Otter 1340 min, Saab 340 893 min, ATR 72 893 min, Embraer E190 447 min, Airbus A220 447 min, Airbus A320 447 min, Boeing 737 447 min, Boeing 787 Dreamliner 447 min, Airbus A350 447 min, Boeing 747 447 min, Airbus A380 447 min, Embraer E175 447 min, Boeing 757 447 min, Airbus A340 447 min, Boeing 777 447 min.
@@ -308,16 +309,16 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `line.paper`: Type your answer in {cell}, then press Enter. · [Give me a hint]
 - `line.build`: Click each day, Monday to Sunday, then press Enter. · [Give me a hint]
 - `review.example.sub`: First, watch how it works with made-up numbers.
-- `review.example.label`: EXAMPLE · MADE-UP NUMBERS
-- `review.example.watch`: EXAMPLE · WATCH · Watch: adding up Monday to Wednesday · Finance clicks each day's profit. The cell names go into the formula. Then Finance presses [Enter] and the sheet adds them up.
-- `review.example.done`: EXAMPLE · WATCH · That's how it works · Click each day's profit, press [Enter], and the sheet does the adding. · **Now you: the whole week, Monday to Sunday, with your real numbers.** · [My turn ▶]
-- `review.example.line`: Watch: Finance clicks Monday, Tuesday, then Wednesday.
+- `review.example.label`: FINANCE'S EXAMPLE · MADE-UP NUMBERS
+- `review.example.watch`: EXAMPLE · WATCH · Watch: calculate the total profit from Monday to Wednesday · Finance presses **Σ SUM**, drags down the Profit column from Monday to Wednesday, then presses [Enter]. The sheet adds them up.
+- `review.example.done`: EXAMPLE · WATCH · That's how Σ SUM works · Press **Σ SUM**, drag down a column, then press [Enter]: the sheet adds every cell you dragged over. · **Your turn: the profit for the whole week, Monday to Sunday.** · [My turn ▶]
+- `review.example.line`: Watch: Finance presses Σ SUM and drags from Monday to Wednesday.
 - `review.example.lineDone`: ✓ Monday to Wednesday: {total}. The sheet added them up.
 - `review.total.signal`: Profit this week · Click each day's profit, Monday to Sunday. Then press [Enter]. · The sheet adds them up.
 - `review.total.count`: {n} of {days} days. Keep going down to {last}.
 - `review.total.clickDone`: ✓ You added the week: {total}. Now try the quicker way.
 - `review.sum.signal`: Profit this week, the quick way · Let go on {lastDay}'s profit. Then press [Enter] to finish the formula. · The sheet adds the whole column.
-- `review.sum.signal3`: Profit this week · Press **Σ SUM**, drag down the Profit column from {first} to {last}, then press [Enter]. · The sheet adds the whole column.
+- `review.sum.signal3`: Your turn: calculate the profit for the whole week, {first} to {last} · Press **Σ SUM**, drag down your Profit column from {first} to {last}, then press [Enter]. · The sheet adds the whole column.
 - `review.sum.done`: ✓ Same answer, **{total}**, in one drag. From next week, use Σ SUM. Now the average a day.
 - `review.average.signal`: Average a day · Click **Profit this week**, press **÷**, click **Days flown**. Then press [Enter]. · The sheet works it out.
 - `review.done.total`: ✓ Done: **{total}** profit for the week
@@ -341,7 +342,7 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `tt.first`: NEW · MORE ROOM TO PLAN · Drag flights where you want them · Grab a flight by its dots and drag it along the day. Drag a route from **Add a flight** onto a plane to add one. The people above show who each flight can catch. **☰ Show menu** brings the menu back. · [Got it]
 - `tt.tray`: Add a flight · drag one onto a plane
 - `tt.fits`: ✓ Fits · leaves {dep}, back {back}
-- `tt.cannot`: ! Leaving at {dep}, it would be back at {back}, after the day ends at {close}.
+- `tt.cannot`: ! Doesn't fit today: it would be back at {back}, after the day ends at {close}
 - `tt.key`: Flights snap to the quarter hour · the day runs {open} to {close}
 - `shelf`: Briefings · Teacher test mode: watch any briefing. Nothing here goes in the pupil's record or changes the game. · [◀ Back to the game]
 - `build.end`: TEST BUILD · End of chapter one · End of chapter one. This test build stops here.
@@ -391,6 +392,61 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `pauseq.fuelTwoPlanes`: FUEL · Which plane uses less fuel for each seat? · A trip to {city} and back in each of your planes: the {a} and the {b}. · Litres a seat = fuel a trip ÷ seats. Give it to one decimal place.
 - `pauseq.ticketRevenueLong`: NEW ROUTE · What could {city} take in a day? · {city} opens today: {km} km away, further than any route you fly. · If everyone who wants to fly went at {fare}: who wants to fly × fare.
 - `pauseq.projectedVsActual`: LAST WEEK · How far was {period} from the plan? · On Monday the plan said **{proj}**. The week made **{total}**. · Difference = the larger − the smaller.
+- `day.title.launch`: Launch Day: how it went
+- `day.title`: {date}: how it went
+- `day.sub`: Day {n} of week 1 · every flight landed
+- `day.profit`: Profit today
+- `day.yesterday`: Yesterday **{money}** · {change}
+- `day.first`: Your first day of flying.
+- `day.routes`: Route by route
+- `day.cols`: Route · Wanted · Seats · Flew · Couldn't carry
+- `day.more`: More detail ›
+- `day.tomorrow`: Tomorrow, {date}
+- `day.same`: Same flights, same fares as today.
+- `day.changed`: Your changed plan.
+- `day.footer`: Keep the plan for tomorrow, or change it.
+- `day.footer.sun`: Keep the plan for Sunday, or change it. After Sunday, the week's accounts.
+- `day.keep`: Keep for tomorrow ▶
+- `day.change`: Change my plan
+- `day.anyway`: Fly anyway ▶
+- `day.drawer`: Launch Day results · Costs today · Feedback · ✕ Close
+- `read.loss`: Today lost **{money}**. Change something before tomorrow.
+- `read.empty`: At **{fare}**, **{n} seats** flew empty on {route}. You took **{money} less** than at {lower}.
+- `read.idle`: Your plane is on the ground from **{time}**. There's room for another flight.
+- `read.full`: Full on every flight, and **{n} people** couldn't get a seat. Try **£10 more** on {route} tomorrow?
+- `read.good`: Full planes at good fares. People turned away are a chance for later, when you have more seats.
+- `read.weekend`: {day}s are quieter.
+- `chg.fly`: Fly tomorrow ▶
+- `chg.watch`: Watch: Finance works out the fare difference: **With your change**, press **−**, **Now**, then Enter.
+- `chg.build`: Click **With your change**, press **−**, click **Now**. Then press Enter. The sheet works it out.
+- `chg.week`: Ticket revenue over a week: the difference · The difference a day, times 7. Work it out in your book. Write SUM {n} beside it. Then type your answer in {cell} and press Enter.
+- `chg.weekrow`: Ticket revenue over a week (× 7)
+- `chg.weekf`: Difference a day × 7
+- `fra.eyebrow`: NEW ROUTE · TOMORROW
+- `fra.title`: {city} opens tomorrow
+- `fra.line`: Further away, so a flight takes longer. People pay more to get there.
+- `fra.go`: Plan tomorrow ▶
+- `fra.footer`: A new route opens tomorrow: {date}.
+- `fra.board`: {city} · NEW · FROM TOMORROW
+- `fra.fits`: ✓ Fits · leaves {dep}, back {back}
+- `fra.nofit`: ! Doesn't fit today: it would be back at {back}, after the day ends at {end}
+- `fra.round`: {time} there and back
+- `ld.profit.watch`: Watch: Finance clicks **Total revenue**, presses **−**, clicks **Total costs**, then presses **Enter**.
+- `ld.profit.footer`: Launch Day · watch Finance work out the profit.
+- `sum.next`: Next sum ▸
+- `wk1.example`: FINANCE'S EXAMPLE · MADE-UP NUMBERS
+- `wk1.yours`: YOUR WEEK
+- `wk1.watch`: Watch: calculate the total profit from Monday to Wednesday
+- `wk1.turn`: Your turn: calculate the profit for the whole week, Monday to Sunday · Press Σ SUM, drag down your Profit column from Monday to Sunday, then press Enter. Nothing to write in your book.
+- `wk1.letgo`: Let go on Sunday ({cell}), then press Enter.
+- `ready.todo`: Check the plan. Press **{button}** when it is right.
+- `read.plain`: Every flight landed: **{pax} of {seats}** seats filled.
+- `cmp.title`: Week {n} plan: what changed from last week
+- `cmp.tab`: Week {n}
+- `cmp.cols`: Week {last}, a weekday · Last week · Week {n} plan · This week · this week − last week · Difference
+- `cmp.rows`: Passengers a day · Ticket revenue a day · Fuel burned a day · Total costs a day · Profit a day
+- `cmp.line`: Finance filled in this week from your plan. Profit a day: **{diff}** than last week.
+- `cmp.footer`: Week {n} plan · Finance compared it with last week.
 
 ## Identity and photos (CR5)
 

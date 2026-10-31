@@ -380,6 +380,28 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Hand-off 2a and workbook v6.5: the Day page, the daily change, Frankfurt (31 Oct 2026)
+
+Claude Design's hand-off 2a (screens) and Fable's workbook v6.5, chapter one only (`p6h_daily.js`, `p1_head_c2.css`). The full report is `docs/Handoff-2a-Report.md`. It lists every place where v6.5 and the hand-off disagree and what the game does. Screenshots are in `docs/screenshots/handoff2a/`.
+
+- **Week 1:** each day (Launch Day, then Tuesday to Saturday) ends on a Day page:
+  - profit against yesterday, the routes, one sentence reading the day, and tomorrow's timeline;
+  - Keep for tomorrow / Change my plan.
+  - A change goes through the Changes sheet: Finance demonstrates the fare difference once, he builds D5, and works the week (× 7) on paper, counted against Settings `dailyChange*`.
+- **Frankfurt:** earned on a near-optimum day in week 1 (Settings `thirdRoute*`). A departures-board card that evening; it joins the timetable the next day.
+- **Every sheet:** Launch Day's profit demonstration; Next sum ▸ beside the answer; seven reference colours.
+- **Week 1 Sunday:** Finance's Σ SUM example and his week side by side under one formula bar.
+- **Weeks 2–4:** after a change, a no-sum comparison with last week.
+- **Ready:** names its button.
+- **Fixes:**
+  - the week 2 opener's Average fare and Projected profit;
+  - Home's fuel alerts (no tank alert while the Fuel desk is locked; week 1 ended at £1.40);
+  - "New destination" only on a first flight;
+  - the Launch Day clock (Mon 2 Sep);
+  - Next sum on the weeks 2–4 Changes sheet;
+  - a reload during Finance's Σ SUM demonstration.
+- **Run it:** `python3 tools/merge_v65.py data/incoming/handoff-2a-31-oct/Airline-World-Workbook-v6.5.xlsx && python3 tools/import_world.py && python3 src/opening/build.py`. Checks: `chapter1.test.js` and `numbers.test.js`.
+
 ### Hand-off 1c: everything after week 1 moves a week (31 Oct 2026)
 
 Fable's hand-off 1c and workbook v6.4, confirmed by Bertie, chapter one only. The full report, with what Fable needs to look at in v6.4, is `docs/Handoff-1c-Report.md`; screenshots in `docs/screenshots/handoff1c/`.

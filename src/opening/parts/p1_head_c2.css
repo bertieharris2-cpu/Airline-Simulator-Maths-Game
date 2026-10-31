@@ -1,0 +1,101 @@
+
+/* ===== hand-off 2a (31 Oct 2026): the Day page, the drawer, the Frankfurt card, the comparison sheet, seven reference colours ===== */
+:root{--ref-3:#ff8f70;--ref-4:#a9e05a;--ref-5:#ff9ccf;--ref-6:#3fd9c2;--ref-7:#e8c99a}
+.c2-day .dp-body{gap:16px}
+.c2-top{display:grid;grid-template-columns:330px minmax(0,1fr);gap:16px;align-items:stretch}
+.c2-prof{padding:18px 18px;min-height:170px;display:flex;flex-direction:column;gap:4px}
+.c2-k{font:500 13.5px/18px var(--font-sans);color:var(--text-soft)}
+.c2-big{font:700 34px/42px var(--font-sans);letter-spacing:-.01em}
+.c2-prof p{margin:6px 0 0;font:400 14.5px/20px var(--font-sans);color:var(--text)}
+.c2-prof p b{color:#fff;font-weight:650}
+.c2-rt{padding:14px 16px 10px}
+.c2-rth{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.c2-rth h3{margin:0;font:600 17px/22px var(--font-sans);color:var(--text);text-transform:none;letter-spacing:0}
+.c2-more{background:none;border:0;padding:0;font:600 14.5px/20px var(--font-sans);color:#7fd0ff;text-decoration:underline;cursor:pointer}
+.c2-more:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.c2-t{width:100%;border-collapse:collapse;font:400 15px/20px var(--font-sans);color:var(--text)}
+.c2-t th{font:600 12px/16px var(--font-sans);color:var(--text-soft);text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
+.c2-t td{padding:7px 6px;border-bottom:1px solid var(--line-soft)}
+.c2-t .num{text-align:right;font-variant-numeric:tabular-nums}
+.c2-t td.amber{color:var(--amber)}
+.c2-read{display:flex;align-items:center;gap:14px;min-height:70px;padding:12px 18px;background:linear-gradient(155deg,var(--panel-2),var(--panel-1) 60%);border:1px solid var(--line);border-left:4px solid var(--cyan);box-shadow:var(--shadow-panel)}
+.c2-read i{flex:none;width:26px;height:26px;display:grid;place-items:center;border:1.5px solid var(--cyan);color:var(--cyan);font:700 14px/1 var(--font-sans);font-style:normal}
+.c2-read p{margin:0;font:400 17px/24px var(--font-sans);color:var(--text)}
+.c2-read p b{color:#fff;font-weight:700}
+.c2-read.loss{background:#2a1d08;border-left-color:var(--amber)}
+.c2-read.loss i{border-color:var(--amber);color:var(--amber)}
+.c2-tom{padding:14px 16px 16px;position:relative}
+.c2-tom h3{margin:0;font:600 17px/22px var(--font-sans);color:var(--text);text-transform:none;letter-spacing:0}
+.c2-sub{margin:2px 0 10px;font:400 13.5px/18px var(--font-sans);color:var(--text-soft)}
+.c2-ticks{position:relative;height:20px;margin:0 0 4px}
+.c2-ticks span{position:absolute;transform:translateX(-50%);font:400 12.5px/16px var(--font-sans);color:var(--text-soft);font-variant-numeric:tabular-nums}
+.c2-ticks span:first-child{transform:none}.c2-ticks span:last-child{transform:translateX(-100%)}
+.c2-lane{position:relative;height:50px;border:1px solid var(--line);background:rgba(4,13,30,.45)}
+.c2-blk{position:absolute;top:5px;height:38px;padding:3px 8px;overflow:hidden;background:linear-gradient(180deg,#1d4a7c,#143862);border:1px solid #3f7cc0;display:flex;flex-direction:column;justify-content:center}
+.c2-blk b{display:flex;align-items:center;gap:5px;font:600 13.5px/16px var(--font-sans);color:#fff;white-space:nowrap}
+.c2-blk small{font:400 11.5px/14px var(--font-sans);color:var(--text-soft);white-space:nowrap}
+.c2-lanenote{margin:8px 0 0;font:400 13px/17px var(--font-sans);color:var(--text-soft)}
+/* More detail: a drawer from the right, the rest of the page shaded */
+.c2-dr{position:fixed;inset:0;z-index:60}
+.c2-shade{position:absolute;inset:0;background:rgba(2,8,20,.55)}
+.c2-drawer{position:absolute;top:0;right:0;bottom:0;width:533px;max-width:100vw;overflow:auto;background:#081a33;border-left:2px solid var(--cyan);padding:18px 18px 24px;display:flex;flex-direction:column;gap:12px;box-shadow:-12px 0 30px rgba(0,0,0,.4)}
+.c2-drh{display:flex;align-items:center;justify-content:space-between}
+.c2-drh .c2-k{letter-spacing:.12em;color:var(--cyan);font-weight:600;font-size:12px}
+.c2-drawer h3{margin:4px 0 0;font:600 17px/22px var(--font-sans);color:var(--text);text-transform:none;letter-spacing:0}
+.c2-cost{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line-soft);font:400 15px/20px var(--font-sans);color:var(--text)}
+@media (prefers-reduced-motion:no-preference){.c2-drawer{animation:c2in .22s ease-out}@keyframes c2in{from{transform:translateX(40px);opacity:.4}to{transform:none;opacity:1}}}
+/* Frankfurt: the departures-board card (the Storm card's layout) */
+.c2-fra .dp-head{display:none}
+.c2-card{max-width:900px;margin:10px auto 0;border:1px solid var(--line);background:linear-gradient(155deg,var(--panel-2),var(--panel-1) 60%);box-shadow:var(--shadow-panel)}
+.c2-board{background:#050505;padding:16px 20px;display:flex;flex-direction:column;gap:6px;font:600 17px/22px var(--font-mono,monospace);color:#f6b73c;letter-spacing:.08em}
+.c2-fl{display:grid;grid-template-columns:90px minmax(0,1fr) 110px;gap:12px;padding:3px 6px}
+.c2-fl .ok{color:var(--green);text-align:right}
+.c2-fl.new{color:var(--cyan);background:rgba(54,198,255,.1)}
+.c2-cb{padding:18px 24px 22px}
+.c2-eye{display:block;font:600 11.5px/14px var(--font-sans);letter-spacing:.12em;color:var(--cyan);margin-bottom:6px}
+.c2-cb h2{margin:0 0 8px;display:flex;align-items:center;gap:10px;font:650 30px/36px var(--font-sans);color:var(--text);text-transform:none;letter-spacing:0}
+.c2-cb p{margin:0 0 16px;font:400 16px/23px var(--font-sans);color:var(--text)}
+.c2-ca{display:flex;justify-content:flex-end}
+/* the done line's own Next sum (beside the answer; the footer only leaves the page) */
+.c2-nsum{margin-left:10px;height:26px;padding:0 10px;border:1px solid var(--green);background:transparent;color:var(--green);font:600 13px/24px var(--font-sans);cursor:pointer;vertical-align:middle}
+.c2-nsum:hover,.c2-nsum:focus-visible{background:rgba(60,227,148,.12);outline:none}
+/* seven reference colours (Excel): outline, tag and name in the formula bar */
+body.n15-ch1 .ash-c.aref.c2-ref{box-shadow:inset 0 0 0 2px var(--refc)!important}
+body.n15-ch1 .ash-c.aref.c2-ref::before{background:var(--refc)!important}
+.ash-f b.c2-rb{color:var(--refc)}
+/* week 1 Sunday: one sheet panel, one formula bar across its top, Finance's example (left) and YOUR WEEK (right) under it */
+.bv.rv2.rbw.c2-paired{grid-template-columns:321px minmax(0,1fr);grid-template-rows:max-content minmax(0,1fr);row-gap:8px}
+.c2-paired .rv2-what{grid-row:1 / span 2}
+.c2-paired .rv2-mid{grid-column:2;grid-row:1;min-height:0}
+.c2-paired .rv2-ins{grid-column:2;grid-row:2;min-height:0;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.c2-pair{position:relative;display:flex;gap:10px;align-items:stretch;padding:52px 8px 8px;border:1px solid var(--line);background:linear-gradient(155deg,var(--panel-2),var(--panel-1) 60%);box-shadow:var(--shadow-panel)}
+.c2-pair .c2-side{flex:0 0 386px;width:386px;min-width:0;display:flex;flex-direction:column;opacity:1}
+.c2-pair .ash,.c2-pair .ash-small,.c2-pair .c1-exf{position:static}
+.c2-pair .c2-live .c1-fbrow{position:absolute;top:8px;left:8px;right:8px;z-index:3;margin:0}
+.c2-pair .c2-nobar .c1-fbrow{display:none}
+.c2-pair .c1-exf{flex:1;padding:22px 4px 6px}
+.c2-pair .c1-exf .ash{padding-left:6px;padding-right:6px}
+.c2-pair .c1-exl{top:44px;left:20px;transform:none}
+.c2-pair .c1-exw{display:none}
+.c2-pair .c2-mine{flex:1;border:1px solid var(--line);background:rgba(4,13,30,.35);padding-top:22px}
+.c2-pair .c2-mine .ash{background:transparent}
+.c2-pair .c2-dim .ash{opacity:.45}
+.c2-yours{position:absolute;top:44px;left:410px;z-index:2;font:800 11.5px/1 var(--font-sans);letter-spacing:.1em;color:#021226;background:var(--cyan);padding:5px 9px}
+/* the signal runs the full width under the panel: header strip, then the tag, the title and the words in one block */
+.c2-paired .rv2-ins > .c1-sig{position:static!important;width:100%;max-width:none}
+.c2-paired .rv2-ins > .c1-sig .c1-sig-ptr{display:none}
+.c2-paired .rv2-ins > .c1-sig .c1-sig-h{padding:5px 12px;font-size:11.5px}
+.c2-paired .rv2-ins > .c1-sig .c1-sig-b{display:flex;align-items:center;gap:16px;padding:6px 14px 7px;font-size:14px;line-height:1.36}
+.c2-paired .rv2-ins > .c1-sig .c1-sig-tag{flex:none;margin:0}
+.c2-sigtx{flex:1 1 auto;min-width:0}
+.c2-sigtx > .c1-sig-t{margin:0 0 1px;font-size:16px;line-height:1.3}
+.c2-sigtx > p{display:inline;margin:0}
+.c2-sigtx > p::after{content:" "}
+.c2-sigtx > p.c1-sig-n{font-size:13px;color:var(--text-soft)}
+.c2-paired .rv2-ins > .c1-sig .c1-sig-b > .c1-sig-a{flex:none;margin:0}
+.c2-paired .rv2-ins > .c1-done,.c2-paired .rv2-ins > .c1-co{position:static!important}
+.c2-paired .rv2-ins > .c1-done .c1-done-ptr{display:none}
+.c2-paired .c1-missed{position:static!important;width:100%}
+/* the fuel news line moves under What happened, so the panel and the signal have the page's height */
+.c2-paired .rv2-what > .cu-nw{margin:auto 0 0;font-size:13.5px;line-height:1.35}
+.c2-pair .ash-tight .ash-line{margin-top:4px}

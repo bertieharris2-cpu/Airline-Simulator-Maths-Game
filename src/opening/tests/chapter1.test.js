@@ -5,7 +5,8 @@
 //   - no event cards and no news in chapter one (parked); no snacks;
 //   - the second-plane shop opens on Settings secondPlaneShopFromDay (day 22 since hand-off 1c), not before;
 //   - at most two counted questions at every pause, and none between pauses; one on Launch Day (hand-off 3: the paper sum);
-//   - after Launch Day: the results page, the plan check, Week 1 is flying; no Home, no Tuesday sheet (hand-off 3, section 4);
+//   - hand-off 2a (31 Oct): Launch Day and Tuesday to Saturday end on the Day page (Keep for tomorrow / Change my plan); no plan
+//     check and no Home in week 1; counted questions in week 1 only from a daily change, within Settings dailyChangeCountedWeek;
 //   - Launch Day's fuel is charged at the workbook's price and is in Total costs;
 //   - the build stops at the chapter-one review with the one card; every chapter-one Jump to… save loads;
 //   - hand-off 1c (31 Oct): a second TEST airline that keeps its plan, Launch Day to day 37: week 2 with nothing new on the
@@ -37,7 +38,8 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   // hand-off 3, section 4: Run goes straight through week 1, so a hook on render() notes each page drawn there
   await E(`(window.__wk1 = { pages:{}, seen:{} }, (() => { const r0 = render; render = function(){ const out = r0.apply(this, arguments);
     try{ const t = step().t, W = window.__wk1; if(S.day <= 7){ (W.pages[S.day] = W.pages[S.day] || {})[t] = 1;
-      if(['results', 'c1check', 'weekRun'].includes(t) && !W.seen[t]){ const tx = (screen().textContent || '').replace(/\\s+/g, ' '); if(t !== 'weekRun' || /is flying/.test(tx)) W.seen[t] = { day:S.day, text:tx, nx:(document.getElementById('nx') || {}).textContent || '' }; } } }catch(e){}
+      if(['results', 'c1check', 'weekRun'].includes(t) && !W.seen[t]){ const tx = (screen().textContent || '').replace(/\\s+/g, ' '); if(t !== 'weekRun' || /is flying/.test(tx)) W.seen[t] = { day:S.day, text:tx, nx:(document.getElementById('nx') || document.getElementById('c2Keep') || {}).textContent || '' }; }
+      if(document.getElementById('c2Keep')) (W.dayp = W.dayp || {})[S.day] = { h:((screen().querySelector('h1') || {}).textContent || '').trim(), keep:document.getElementById('c2Keep').textContent.trim() }; } }catch(e){}
     return out; }; })(), 1)`);
   let fuel1 = null;
   const step = async stop => { const d0 = await at();
@@ -61,11 +63,12 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   ok(fuel1 && fuel1.litres > 0 && fuel1.price === +(await E("+((String(WBS().fuelLaunchDay || '').match(/£(\\d+(?:\\.\\d+)?)/) || [])[1] || 0)")) && fuel1.cost >= fuel1.fuel, `fuel is charged on Launch Day at the workbook's price (${fuel1 ? `${fuel1.litres} L at £${fuel1.price} = £${fuel1.fuel}` : 'not found'})`);
   ok(h1 && h1.fuelPaid > 0 && fuel1 && h1.costs === fuel1.cost, `the Launch Day results' Total costs are the plan's, fuel included (£${h1 && h1.costs})`);
   console.log('After Launch Day (hand-off 3, section 4)'); const A1 = await J('JSON.stringify(window.__wk1)'), R1 = A1.seen.results || {}, C1 = A1.seen.c1check || {}, W1 = A1.seen.weekRun || {};
-  ok(/Launch Day: how it went/.test(R1.text || '') && /Check my plan for the week/.test(R1.nx || '') && !/Close the day/.test(R1.text || ''), `Launch Day's results page: "Launch Day: how it went", Check my plan for the week, no Close the day (${(R1.nx || 'not seen').trim()})`);
-  ok(C1.day === 2 && /Your plan for the rest of week 1/.test(C1.text || '') && /Before it flies/.test(C1.text || ''), `the plan check before the week flies (day ${C1.day}): your flights, Before it flies`);
-  ok(W1.day >= 2 && W1.day <= 7 && /Week 1 is flying/.test(W1.text || '') && /Skip to Sunday/.test(W1.text || ''), `Week 1 is flying, Tuesday to Sunday, with Skip to Sunday (day ${W1.day})`);
-  const mid1 = [2, 3, 4, 5, 6].filter(d => ['hq', 'workings', 'plan'].some(t => (A1.pages[d] || {})[t]));
-  ok(!mid1.length, `no Home, no Tuesday "Week 1 plan" sheet and no planning in week 1 after Launch Day${mid1.length ? ' (days ' + mid1.join(', ') + ')' : ''}`);
+  const DR = String(await E("String(WBS().dailyChangeDays || '')")).match(/(\d+)\s*-\s*(\d+)/), DAYS = DR ? Array.from({ length:+DR[2] - +DR[1] + 1 }, (_, k) => +DR[1] + k) : [], DP = A1.dayp || {};
+  ok(/Launch Day: how it went/.test(R1.text || '') && /Keep for tomorrow|Fly anyway/.test(R1.nx || '') && /Change my plan/.test(R1.text || ''), `Launch Day ends on its Day page: "Launch Day: how it went", Keep for tomorrow / Change my plan (hand-off 2a; ${(R1.nx || 'not seen').trim()})`);
+  ok(DAYS.length === 5 && DAYS.every(d => DP[d] && /how it went/.test(DP[d].h)), `a Day page ends each day of Settings dailyChangeDays (${DAYS.map(d => `day ${d}: ${DP[d] ? DP[d].h.slice(0, 28) : 'none'}`).join(' · ')})`);
+  ok(!C1.day || C1.day > 7, `no plan check in week 1: the Day page decides (hand-off 2a)${C1.day ? ' (seen on day ' + C1.day + ')' : ''}`);
+  const mid1 = [2, 3, 4, 5, 6].filter(d => (A1.pages[d] || {}).hq);
+  ok(!mid1.length, `no Home in week 1 after Launch Day${mid1.length ? ' (days ' + mid1.join(', ') + ')' : ''}`);
   console.log('Parked: events, news, snacks'); ok(!types.event, `no event card in chapter one${types.event ? ' (days ' + types.event.join(', ') + ')' : ''}`);
   ok(!snacks.length, `no snacks control or cabin sales${snacks.length ? ' (days ' + [...new Set(snacks)].join(', ') + ')' : ''}`);
   console.log('Questions at each pause'); const Q = await J(`JSON.stringify((rec().entries || []).filter(e => e.type === 'calc').map(e => ({ key:e.key, day:e.day, pause:c1PauseOf(e.day), q:e.question || e.doc || '' })))`);
@@ -75,7 +78,8 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   const QL = await J('JSON.stringify(window.__c1q.log())'), mineFirst = QL.filter(x => x.mine + x.asked.length > 2 || x.asked.length > x.room);
   ok(QL.length > 5 && !mineFirst.length, `his own plan's sums take the slots first: Finance's questions only fill what is left (${QL.map(x => `day ${x.day}: ${x.mine} his + ${x.asked.length}`).join(', ')})`);
   const ld1 = new Set(Q.filter(e => e.day === 1).map(e => e.key)).size, wk1 = new Set(Q.filter(e => e.day > 1 && e.day < 7).map(e => e.key)).size;
-  ok(ld1 === 1 && !wk1, `one counted question on Launch Day (the paper sum; ${ld1}) and none from Tuesday to Saturday (${wk1})`);
+  const WK1MAX = +(await E('+WBS().dailyChangeCountedWeek || 0'));
+  ok(ld1 === 1 && wk1 <= WK1MAX, `one counted question on Launch Day (the paper sum; ${ld1}), and from Tuesday to Saturday only the daily change's, at most ${WK1MAX} (${wk1})`);
   // every pause is a Sunday review or a Monday plan (from week 5 the review opens the Monday; the months start on a Monday)
   const wd = await J(`JSON.stringify(Object.fromEntries(${JSON.stringify([...new Set(Q.map(e => e.day))])}.map(d => [d, calDate(d).getUTCDay()])))`);
   const mid = Q.filter(e => e.day > 7 && ![0, 1].includes(wd[e.day])); ok(!mid.length, `no questions between pauses${mid.length ? ' (' + mid.map(e => e.key + ' day ' + e.day).join(', ') + ')' : ''}`);
