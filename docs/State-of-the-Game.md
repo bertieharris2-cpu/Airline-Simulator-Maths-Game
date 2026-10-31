@@ -10,6 +10,10 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zr. The what-if fare sheet in week 2 (31 Oct 2026, evening)
+
+Bertie's change after the chapter-one plan to week 8 (`docs/Handoff-WhatIf-Week2.md`; data by `tools/merge_whatif_week2.py`). The what-if fare sheet opens on day 8 (Settings `whatIfSheetFromDay`), after a whole week of settling the plan, and the Fuel desk stays on day 15. On the sheet fares move £1 at a time (`whatIfFareStep`) between the route's lowest and highest fare option, with a day, a week (× 7) and a month (`whatIfMonthDays` 28) under the routes; Set my fares puts the exact fare (£93) in the plan, and the two fare snaps (`syncRoutesToHome`, `typeSnap`) leave it alone in chapter one (`c1FareFree`). P1 asks the sheet's two sums (seats filled × fare at his fare + `whatIfQuestionStep`; more a day × 7, `whatIfWeek` in `p6g_pauseqs.js`); P2 the modelling question and the first rotating question. Market headlines for weeks 2, 3 and 8 put right. Calendar days 8 and 15, Roadmap, PauseSchedule and ScreenText `whatif.*` / `pauseq.whatIf*` carry the words.
+
 ## 0zq. After playing 2a (31 Oct 2026)
 - **`p6h_daily.js` (Bertie 31 Oct block):**
   - `c2Gain`: tomorrow's best known plan (the sweep, or his flights at better fares) minus his. `c2AutoKeep`: flies on when the gain is under Settings `dailyPauseGain`, recorded in `S.c1.c2.auto`.

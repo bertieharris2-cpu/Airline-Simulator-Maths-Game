@@ -380,6 +380,14 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### The what-if fare sheet in week 2 (31 Oct 2026, evening)
+
+Bertie's change after the chapter-one plan to week 8, with no hand-off; the report is `docs/Handoff-WhatIf-Week2.md`, and the data is in the workbook (`tools/merge_whatif_week2.py`).
+- The what-if fare sheet opens on Monday of week 2 (Settings `whatIfSheetFromDay` 8), after a whole week of settling the plan; the Fuel desk stays in week 3.
+- Fares on the sheet move £1 at a time (`whatIfFareStep`), between the route's lowest and highest fare option; the sheet shows a day, a week (× 7) and a month (`whatIfMonthDays` 28), and What changed says "£114 more a day · £798 more a week · £3,192 more a month". Set my fares puts the exact fare (£93) in the plan.
+- P1 asks the sheet's two sums: seats filled × fare at his fare + £3 (`whatIfQuestionStep`), then more a day × 7. P2 asks the modelling question and the first rotating review question.
+- Market headlines for weeks 2, 3 and 8 put right after the week shift.
+
 ### After playing 2a: stop only for a clear gain, the old plan beside the new, Before / after (31 Oct 2026)
 
 These are Bertie's notes, with no hand-off; details are in `docs/Handoff-2a-Report.md`, last section.

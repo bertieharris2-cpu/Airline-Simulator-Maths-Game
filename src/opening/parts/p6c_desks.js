@@ -69,8 +69,16 @@ function c1WiRows(fares){
       return { id, r:routeById(id), fare:fareOf(id), want:paxWant(routeById(id), fareOf(id)), pax, seats, rev, cost, profit:rev - cost }; });
     const tot = { rev:rows.reduce((t, x) => t + x.rev, 0), cost:rows.reduce((t, x) => t + x.cost, 0) }; tot.profit = tot.rev - tot.cost; return { rows, tot }; });
 }
-function c1WiStep(id, dir){ const r = routeById(id), opts = (r.fares && r.fares.length ? r.fares : [r.basePrice]).slice().sort((a, b) => a - b), W = c1WiS(), cur = W.fares[id] !== undefined ? W.fares[id] : fareOf(id);
-  let i = opts.indexOf(cur); if(i < 0) i = opts.findIndex(f => f >= cur); i = clamp(i + dir, 0, opts.length - 1); const v = opts[i];
+/* Bertie 31 Oct (evening): on the sheet a fare moves by Settings whatIfFareStep (£1) between the route's lowest and highest fare
+   option, so he sees what a few pounds do (£90 -> £93); without the setting it steps through the fare options as before */
+const c1WiStepBy = () => ch1() ? Math.max(0, +WBS().whatIfFareStep || 0) : 0;
+const c1WiMonthWeeks = () => { const d = +WBS().whatIfMonthDays || 0; return ch1() && d > 0 ? Math.round(d / 7) : 0; };
+/* a fare set from the what-if sheet (£93) is not one of the route's fare options; the game's two fare snaps (syncRoutesToHome, typeSnap)
+   leave it alone in chapter one while it lies between the route's lowest and highest option */
+function c1FareFree(r, f){ if(!c1WiStepBy() || !r || !(r.fares && r.fares.length) || typeof f !== 'number') return false; const lo = Math.min(...r.fares), hi = Math.max(...r.fares); return f >= lo && f <= hi; }
+function c1WiStep(id, dir){ const r = routeById(id), opts = (r.fares && r.fares.length ? r.fares : [r.basePrice]).slice().sort((a, b) => a - b), W = c1WiS(), cur = W.fares[id] !== undefined ? W.fares[id] : fareOf(id), by = c1WiStepBy();
+  let v; if(by > 0){ v = clamp(cur + dir * by, opts[0], opts[opts.length - 1]); }
+  else { let i = opts.indexOf(cur); if(i < 0) i = opts.findIndex(f => f >= cur); i = clamp(i + dir, 0, opts.length - 1); v = opts[i]; }
   if(v === fareOf(id)) delete W.fares[id]; else W.fares[id] = v; render(); }
 function c1WhatIfRender(){
   const W = c1WiS(), now = c1WiRows({}), wi = c1WiRows(W.fares), changed = Object.keys(W.fares).length > 0, X = S.c1 || (S.c1 = {}), first = !X.wiSeen;
@@ -80,17 +88,23 @@ function c1WhatIfRender(){
   wi.rows.forEach((x, i) => { const r = i + 2, n0 = now.rows.find(z => z.id === x.id) || x; rows.push({ r, label:x.r.city, fl:x.r.flag });
     v['B' + r] = { t:money(x.fare), wi:x.id }; v['C' + r] = { t:num(x.want), f:true }; v['D' + r] = { t:num(x.pax), f:true, bar:x.seats ? x.pax / x.seats : 0 };
     v['E' + r] = { t:money(x.rev), f:true }; v['F' + r] = { t:money(x.cost) }; v['G' + r] = { t:money(x.profit), f:true, cls:changed && x.profit > n0.profit ? 'pos' : x.profit < 0 ? 'soft' : '' }; });
-  const rT = wi.rows.length + 2; rows.push({ r:rT, label:'Both routes', ic:'coins', t:'tot', gold:true });
-  if(wi.rows.length !== 2) rows[rows.length - 1].label = 'All routes';
+  const mw = c1WiMonthWeeks(), RL = c1T('whatif.rows', { w:mw }).text, rT = wi.rows.length + 2;
+  rows.push({ r:rT, label:(wi.rows.length === 2 ? RL[0] : RL[1]) || (wi.rows.length === 2 ? 'Both routes' : 'All routes'), ic:'coins', t:'tot', gold:true });
   v['E' + rT] = { t:money(wi.tot.rev), f:true }; v['F' + rT] = { t:money(wi.tot.cost), f:true }; v['G' + rT] = { t:money(wi.tot.profit), f:true, cls:changed && wi.tot.profit > now.tot.profit ? 'pos' : '' };
   if(wi.tot.profit > 0) v['G' + rT].cls = (v['G' + rT].cls || '') + ' gold';
-  const sp = { id:'whatif:' + (S.day || 1), crumb:`${(S.airline && S.airline.name) || 'Airline'} HQ · ${T.text[0] || 'Plan week ' + weekNo(S.day || 1)}`, title:T.title || 'What if you change a fare?', tabs:ashTabs('whatif'), lw:170, cols, rows, v, sums:[], act:null, just:null,
-    doneLine:'Change any fare with − and +. Every number on its row works itself out (ƒ).' };
+  // Bertie 31 Oct (evening): the same totals for a week (× 7) and a month (× whatIfMonthDays), worked by the sheet (ƒ)
+  const PER = mw > 0 ? [{ r:rT + 1, k:7, label:RL[2] || 'A week (× 7)' }, { r:rT + 2, k:7 * mw, label:RL[3] || `A month (× ${mw} weeks)` }] : [];
+  PER.forEach(p => { rows.push({ r:p.r, label:p.label, ic:'cal', t:'tot' });
+    v['E' + p.r] = { t:money(wi.tot.rev * p.k), f:true }; v['F' + p.r] = { t:money(wi.tot.cost * p.k), f:true }; v['G' + p.r] = { t:money(wi.tot.profit * p.k), f:true, cls:(changed && wi.tot.profit > now.tot.profit ? 'pos' : '') + (wi.tot.profit > 0 ? ' gold' : '') }; });
+  const sp = { id:'whatif:' + (S.day || 1), crumb:`${(S.airline && S.airline.name) || 'Airline'} HQ · ${T.text[0] || 'Plan week ' + weekNo(S.day || 1)}`, title:T.title || 'What if you change a fare?', tabs:ashTabs('whatif'), lw:mw > 0 ? 232 : 170, cols, rows, v, sums:[], act:null, just:null,
+    doneLine:`Change any fare with − and +${c1WiStepBy() > 0 ? `, ${money(c1WiStepBy())} at a time` : ''}. Every number on its row works itself out (ƒ).` };
   const diff = d => d > 0 ? `<span class="pos">(${money(d)} more)</span>` : d < 0 ? `<span class="c1-less">(${money(-d)} less)</span>` : '';
+  const signed = d => d > 0 ? `<span class="pos">${money(d)} more</span>` : d < 0 ? `<span class="c1-less">${money(-d)} less</span>` : 'the same';
+  const more = d => mw > 0 ? `<span class="c1-wim">${c1T('whatif.more', { d:signed(d), w:signed(d * 7), m:signed(d * 7 * mw) }).text[0] || `${signed(d)} a day · ${signed(d * 7)} a week · ${signed(d * 7 * mw)} a month`}</span>` : '';
   const C = c1T('whatif.changed'), lines = wi.rows.filter(x => W.fares[x.id] !== undefined).map(x => { const n0 = now.rows.find(z => z.id === x.id) || x;
-    return `<div class="c1-wil"><span>${esc(x.r.city)} ${money(n0.fare)} → <b>${money(x.fare)}</b></span><span>${x.pax === n0.pax ? (x.pax >= x.seats ? 'still full' : `${num(x.pax)} fly`) : `${num(n0.pax)} → ${num(x.pax)} fly`} · profit a day ${money(n0.profit)} → <b>${money(x.profit)}</b> ${diff(x.profit - n0.profit)}</span></div>`; }).join('');
+    return `<div class="c1-wil"><span>${esc(x.r.city)} ${money(n0.fare)} → <b>${money(x.fare)}</b></span><span>${x.pax === n0.pax ? (x.pax >= x.seats ? 'still full' : `${num(x.pax)} fly`) : `${num(n0.pax)} → ${num(x.pax)} fly`} · profit a day ${money(n0.profit)} → <b>${money(x.profit)}</b> ${diff(x.profit - n0.profit)}${more(x.profit - n0.profit)}</span></div>`; }).join('');
   const panel = changed ? `<section class="c1-wic" aria-label="What changed"><span class="c1-wie">${esc(C.eyebrow || 'WHAT CHANGED, AGAINST THE FARES YOU HAVE NOW')}</span>${lines}
-      <div class="c1-wil tot"><span><b>${wi.rows.length === 2 ? 'Both routes' : 'All routes'}</b></span><span>profit a day ${money(now.tot.profit)} → <b class="gold">${money(wi.tot.profit)}</b> ${diff(wi.tot.profit - now.tot.profit)}</span></div>
+      <div class="c1-wil tot"><span><b>${wi.rows.length === 2 ? 'Both routes' : 'All routes'}</b></span><span>profit a day ${money(now.tot.profit)} → <b class="gold">${money(wi.tot.profit)}</b> ${diff(wi.tot.profit - now.tot.profit)}${more(wi.tot.profit - now.tot.profit)}</span></div>
       <button class="bv-btn" id="c1WiBack">${esc(C.button || '↶ Back to my fares')}</button></section>` : '';
   const F = c1T('whatif.first'), co = first ? `<div class="ash-co c1-wico pu" role="dialog" aria-label="${esc(F.title)}"><i class="ash-ptr" aria-hidden="true"></i><span class="ash-coe">${esc(F.eyebrow || 'NEW · WHAT IF')}</span><b class="ash-cot">${esc(F.title)}</b>${F.text.map(t => `<p>${c1Html(t)}</p>`).join('')}<div class="ash-coa"><button class="bv-btn primary" id="c1WiGot">${esc(F.button || 'Got it')}</button></div></div>` : '';
   const Ft = c1T('whatif.footer', { n:weekNo(S.day || 1) });
@@ -120,6 +134,15 @@ op2Rows = function(pl, L){ const h = c1OpRows0.apply(this, arguments); if(!c1WiO
   return h + `<li class="op2-r c1-wir"><span class="op2-i">${ICO2.tag || ''}</span><span class="op2-t">What if you change a fare? Try fares before you set them.</span><span class="op2-l"><button class="op2-a" data-c1wigo>What if ›</button></span></li>`; };
 document.addEventListener('click', e => { const b = e.target && e.target.closest && e.target.closest('[data-c1wigo]'); if(!b || !c1WiOn()) return; e.preventDefault(); UI.view = 'whatif'; render(); }, true);
 if(window.__tkSums) window.__tkSums.unshift({ what:'the what-if sheet', test:() => !!document.getElementById('c1WiGot'), plan:() => ({ at:'#c1WiGot', value:'Got it', go:() => document.getElementById('c1WiGot').click() }) });
+/* a fare set from the what-if sheet that is not one of the route's fare options (£93): the Studio's fare list shows it too, so the
+   list never looks as if another fare were chosen */
+const c1WiRender0 = render;
+render = function(){ const out = c1WiRender0.apply(this, arguments);
+  try{ if(ch1() && S && S.phase !== 'setup') document.querySelectorAll('select[data-s2fr]').forEach(sel => { const id = sel.getAttribute('data-s2fr'), r = routeById(id), f = fareOf(id); if(!r || !f || sel.dataset.c1wif) return;
+      if(Array.from(sel.options).some(o => +o.value === f)) return; sel.dataset.c1wif = '1';
+      const o = document.createElement('option'); o.value = String(f); o.textContent = `${money(f)} · ${num(paxWant(r, f))} want (What if)`; o.selected = true;
+      const after = Array.from(sel.options).find(x => +x.value > f); if(after) sel.insertBefore(o, after); else sel.appendChild(o); }); }catch(e){ console.error(e); }
+  return out; };
 
 /* ---------- 7. the timetable, full width (hand-off 2, section 7; DESIGN.md DemandStrip and the 30 Oct decision) ----------
    While he plans flights the menu and the Studio's other panels hide and the timetable fills the page: Who wants to fly lined

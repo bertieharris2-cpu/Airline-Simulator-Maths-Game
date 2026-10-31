@@ -80,7 +80,7 @@ WORLD.routes.forEach(r => { if(!r.wb) return; r._fares0 = (r.fares || []).slice(
   Object.defineProperty(r, 'fares', { get, set(v){ r._fares0 = (v || []).slice(); }, configurable:true, enumerable:true });
   Object.defineProperty(r, 'prices', { get, set(){}, configurable:true, enumerable:true }); });
 /* a fare that is no longer on the menu moves to the nearest one */
-function typeSnap(){ const fix = P => { if(!P) return; Object.keys(P).forEach(id => { const r = routeById(id); if(r && r.wb && !r.fares.includes(P[id])) P[id] = nearestFare(r, P[id]); }); };
+function typeSnap(){ const fix = P => { if(!P) return; Object.keys(P).forEach(id => { const r = routeById(id); if(r && r.wb && !r.fares.includes(P[id]) && !(typeof c1FareFree === 'function' && c1FareFree(r, P[id]))) P[id] = nearestFare(r, P[id]); }); };   // chapter one: a what-if fare between the options stays
   fix(S.prices); if(S.rnd && S.rnd.test) fix(S.rnd.test.prices); if(S.rop) fix(S.rop.prices); }
 function setAirlineType(t, confirm){
   const was = airlineType(); S.atype = Object.assign({}, S.atype || {}, { pick:t, day:(S.atype && S.atype.day) || S.day });

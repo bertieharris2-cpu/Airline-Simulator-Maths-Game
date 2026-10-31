@@ -10,7 +10,7 @@
 //   - Launch Day's fuel is charged at the workbook's price and is in Total costs;
 //   - the build stops at the chapter-one review with the one card; every chapter-one Jump to… save loads;
 //   - hand-off 1c (31 Oct): a second TEST airline that keeps its plan, Launch Day to day 37: week 2 with nothing new on the
-//     flying page; the Fuel desk and the what-if sheet on day 15; the shop, the four routes and View trade-offs on day 22;
+//     flying page; the what-if sheet and its two questions on day 8; the Fuel desk on day 15; the shop, the four routes and View trade-offs on day 22;
 //     Madrid on day 29; weekly play from day 36 with no second review of Sunday; two counted questions at every pause from P2
 //     (Finance's questions, after his plan's own sums); the Roadmap's NEXT matching the new days. In the main run, which
 //     changes its plan most Mondays, his plan's own sums take the slots first and the pause never asks more than two.
@@ -107,20 +107,24 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
       const d1 = await qat(); if(d1.day === d0.day && d1.t === d0.t){ for(const sel of OPEN){ if(await q.$(sel)){ await q.click(sel).catch(() => {}); await q.waitForTimeout(300); break; } } } };
     const G = {};
     for(let g = 0; g < 200; g++){ const d = await qat(); if(d.day >= 37) break;
-      if(d.t === 'plan' && [14, 15, 21, 22, 28, 29].includes(d.day) && !G[d.day]) G[d.day] = await QJ(`JSON.stringify({ wi:c1WiOn(), fuel:(+WBS().fuelDeskFromDay || 0) <= S.day, shop:shopPlanes(S.day).length, opening:routesOpening(S.day).map(r => r.id), mad:routeOpen(routeById('mad'), S.day), extras:!document.body.classList.contains('n15-wk1') })`);
+      if(d.t === 'plan' && [8, 14, 15, 21, 22, 28, 29].includes(d.day) && !G[d.day]) G[d.day] = await QJ(`JSON.stringify({ wi:c1WiOn(), fuel:(+WBS().fuelDeskFromDay || 0) <= S.day, shop:shopPlanes(S.day).length, opening:routesOpening(S.day).map(r => r.id), mad:routeOpen(routeById('mad'), S.day), extras:!document.body.classList.contains('n15-wk1') })`);
       await qstep('plan'); }
     const PG = await QJ('JSON.stringify(window.__pg)'), ST = await QJ('JSON.stringify(window.__strip)'), has = (d, t) => (PG[d] || []).some(x => x.t === t), title = (d, t) => ((PG[d] || []).find(x => x.t === t) || {}).h || '';
-    const QK = await QJ(`JSON.stringify((rec().entries || []).filter(e => e.type === 'calc').map(e => ({ key:e.key, day:e.day, pause:c1PauseOf(e.day) })))`), per = P => new Set(QK.filter(e => e.pause === P).map(e => e.key)).size;
+    const QK = await QJ(`JSON.stringify((rec().entries || []).filter(e => e.type === 'calc').map(e => ({ key:e.key, day:e.day, pause:c1PauseOf(e.day), q:e.question || e.doc || '' })))`), per = P => new Set(QK.filter(e => e.pause === P).map(e => e.key)).size;
     console.log('    pages: ' + [8, 15, 22, 29, 36].map(d => `day ${d}: ` + (PG[d] || []).map(x => x.t).join(' ')).join(' / '));
     console.log('    counted: ' + [1, 8, 15, 22, 29, 36].map(P => `${P === 1 ? 'Launch Day' : 'P' + ({ 8:1, 15:2, 22:3, 29:4, 36:5 })[P]} ${per(P)}`).join(', ') + ' · ' + [...new Set(QK.map(e => e.key))].join(' | '));
-    ok(!has(8, 'workings') && !has(8, 'c1q') && has(8, 'c1check') && /Week 2 is flying/.test(title(8, 'weekRun')) && per(8) === 0, `week 2 is quiet: the plan check on Monday, then "Week 2 is flying", no sums (${(PG[8] || []).map(x => x.t).join(' → ')})`);
+    // Bertie 31 Oct (evening): the what-if sheet and its two counted questions move to week 2; the Fuel desk stays in week 3
+    const K8 = [...new Set(QK.filter(e => e.day === 8).map(e => e.key))], Q8 = QK.filter(e => e.day === 8).map(e => e.q);
+    ok(!has(8, 'workings') && has(8, 'c1q') && has(8, 'c1check') && /Week 2 is flying/.test(title(8, 'weekRun')) && per(8) === 2 && K8.includes('pq:whatIfFirst:8') && K8.includes('pq:whatIfWeek:8'),
+      `week 2: the two what-if questions on Monday, the plan check, then "Week 2 is flying" (${(PG[8] || []).map(x => x.t).join(' → ')}; ${K8.join(', ')})`);
+    ok(Q8.some(s => /× £(93|103)$/.test(s)) && Q8.some(s => /× 7$/.test(s)), `the what-if questions try his fare + £${await E('+WBS().whatIfQuestionStep')} (seats filled × fare), then more a day × 7 (${Q8.join(' | ')})`);
     ok([3, 4].every(n => /is flying/.test(title(n * 7 - 6, 'weekRun')) && new RegExp(`Week ${n} is flying`).test(title(n * 7 - 6, 'weekRun'))) && !has(29, 'c1check'), 'weeks 3 and 4 fly on the same page; week 5 keeps the board (Settings weekFlyingPages, weeks 1 to 4)');
     ok(!has(8, 'fuelDesk') && has(15, 'fuelDesk'), `the Fuel desk first opens on day 15 (${[8, 15].map(d => `day ${d}: ${has(d, 'fuelDesk') ? 'yes' : 'no'}`).join(', ')})`);
-    ok(G[15] && G[15].wi && G[15].fuel && !G[15].shop, `day 15: the what-if sheet and the Fuel desk, no shop yet (${JSON.stringify(G[15])})`);
+    ok(G[8] && G[8].wi && !G[8].fuel && G[15] && G[15].wi && G[15].fuel && !G[15].shop, `day 8: the what-if sheet and no Fuel desk; day 15: the Fuel desk, no shop yet (${JSON.stringify(G[8])} · ${JSON.stringify(G[15])})`);
     ok(G[22] && G[22].shop > 0 && ['ams', 'fra', 'gva', 'bcn'].every(id => G[22].opening.includes(id)) && G[22].extras && G[15] && !G[15].extras, `day 22: the shop (${G[22] && G[22].shop} planes), the four routes (${G[22] && G[22].opening.join(', ')}), View trade-offs and ƒ work it out (hidden on day 15)`);
     ok(G[29] && G[29].mad && G[22] && !G[22].mad && has(29, 'intro'), 'day 29: Madrid opens, with its New today page');
     ok(!has(36, 'review') && has(36, 'plan') && has(36, 'sim'), `day 36: weekly play starts, without a second review of Sunday (${(PG[36] || []).map(x => x.t).join(' → ')})`);
-    ok([15, 22, 29, 36].every(P => per(P) === 2) && per(1) === 1, `a pupil who keeps his plan is asked two counted questions at every pause from P2 (${[15, 22, 29, 36].map(P => per(P)).join(', ')})`);
+    ok([8, 15, 22, 29, 36].every(P => per(P) === 2) && per(1) === 1, `a pupil who keeps his plan is asked two counted questions at every pause from P1 (${[8, 15, 22, 29, 36].map(P => per(P)).join(', ')})`);
     const NX = d => ((ST[d] || '').split('NEXT')[1] || '').split('LATER')[0];
     ok(/Fuel desk/.test(NX(8)) && /Amsterdam/.test(NX(15)) && /Madrid/.test(NX(22)) && /Marrakech/.test(NX(29)), `the Roadmap's NEXT on Home: day 8 "${NX(8).trim()}" · day 15 "${NX(15).trim().slice(0, 40)}" · day 22 "${NX(22).trim().slice(0, 40)}" · day 29 "${NX(29).trim().slice(0, 40)}"`);
     ok(!qerrs.length, `no page errors in the keep-his-plan run${qerrs.length ? ': ' + qerrs.slice(0, 2).join(' | ') : ''}`);

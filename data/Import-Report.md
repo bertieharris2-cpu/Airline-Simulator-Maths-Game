@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 264 | 10 draft, 254 live, 10 placeholder, 1 withdrawn |
+| Settings | 267 | 10 draft, 257 live, 10 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -29,7 +29,7 @@
 | DailyColour | 8 | 8 live, 1 note row, 2 parked |
 | Upgrades | 4 | 4 live, 1 note row, 1 parked |
 | Briefings | 8 | 8 live, 2 not, 1 note row, 5 parked, 1 retired, 2 superseded, 1 test |
-| Roadmap | 13 | 13 live, 1 note row |
+| Roadmap | 14 | 14 live, 1 note row |
 | RouteNews | 82 | 82 live, 2 note row, 19 parked |
 | Livery | 35 | 35 live, 1 note row |
 | Hunts | 5 | 5 live, 1 note row, 2 placeholder |
@@ -210,7 +210,7 @@ Taken from v5.17 on top of v5.8 (`tools/take_parts.py`): the Settings rows and s
 - `waitCostLine`: idle days × day cost
 - `aircraftCardMeasure`: extra profit for the airline (incremental), one measure on the whole screen
 - `demandStripMode`: follows the selected flight's route; otherwise route tabs (each route · All)
-- **Roadmap:** Week 3 (day 15), Week 4 (day 22), Week 5 (day 29), Week 6 (day 36), Week 7 (day 43), Week 8 (day 50), Week 10 (day 64), Week 11 (day 71), Week 12 (day 78), December (day 85), End of this build (day 118), September 2031 (day 330), D101/D110: Home shows NOW, NEXT and LATER from these rows. Planner upgrades are never listed. Recomputed 31 Oct from the shifted calendar (the earlier rows were a week early: backlog item 22). (day 700).
+- **Roadmap:** Week 2 (day 8), Week 3 (day 15), Week 4 (day 22), Week 5 (day 29), Week 6 (day 36), Week 7 (day 43), Week 8 (day 50), Week 10 (day 64), Week 11 (day 71), Week 12 (day 78), December (day 85), End of this build (day 118), September 2031 (day 330), D101/D110: Home shows NOW, NEXT and LATER from these rows. Planner upgrades are never listed. Recomputed 31 Oct from the shifted calendar (the earlier rows were a week early: backlog item 22). (day 700).
 - **Fuel, weeks 1–8:** £1.20 · £1.47 · £1.68 · £1.62 · £1.74 · £1.97 · £2.94 · £2.43.
 
 ## D103 touches (Briefing 13)
@@ -332,7 +332,7 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `launch.compare.footer`: Launch Day · the last question. Finance has totted up your plan, fuel included.
 - `launch.fuel`: {litres} at {price}
 - `whatif.title`: What if you change a fare? · Plan week {n}
-- `whatif.first`: NEW · WHAT IF · Try a fare before you set it · Press **−** or **+** on a fare. Who wants to fly, seats filled, ticket revenue and profit all work themselves out (ƒ). Nothing to write in your book. When you like what you see, press **Set my fares**. · [Got it]
+- `whatif.first`: NEW · WHAT IF · Try a fare before you set it · Press **−** or **+** on a fare: £1 at a time. Who wants to fly, seats filled, ticket revenue and profit all work themselves out (ƒ), for a day, a week and a month. Nothing to write in your book. When you like what you see, press **Set my fares**. · [Got it]
 - `whatif.changed`: WHAT CHANGED, AGAINST THE FARES YOU HAVE NOW · [↶ Back to my fares]
 - `whatif.footer`: Plan week {n} · try fares before you set them. · [Set my fares ▶]
 - `fuel.order`: YOUR ORDER
@@ -384,7 +384,7 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `weekflies.week`: Week {n} is flying · Your plan, every day, Monday to Sunday. Sunday: the week's accounts. · [Skip to Sunday ⏭]
 - `pauseq.page`: Before week {n} flies · Question {i} of {k} from Finance. Work it out in your book. · Your own plan's sums came first at this pause, so Finance's other {w} waits for the next one. · [Next question ▶]
 - `pauseq.footer`: Before week {n} flies · Finance's questions · [Carry on ▶]
-- `pauseq.whatIfFirst`: NEW · WHAT IF · What if {city} were {fare}? · The **What if** sheet opens today, in the Studio: change a fare and every figure on its row works itself out (ƒ). · Its first sum by hand: {city} at **{fare}** instead of {now}. Ticket revenue a day = seats filled × fare.
+- `pauseq.whatIfFirst`: NEW · WHAT IF · What if {city} were {fare}? · The **What if** sheet opens today, in the Studio: change a fare £1 at a time and every figure on its row works itself out (ƒ). · Its first sum by hand: {city} at **{fare}** instead of {now}. Ticket revenue a day = seats filled × fare.
 - `pauseq.modelChange`: MODELLING · {city}: {now} or {fare}? · On your own flights, **{fare}** would earn more on {city} than your {now}. · How much more for one flight? Finance works out a day and a week from your answer.
 - `pauseq.modelChange.pick`: MODELLING · Try a change · Your plan is already good: no other fare earns {gate} a day more. · Finance suggests two changes. Pick one and work out what it would do for one flight.
 - `pauseq.timeToAfford`: THE PLANE SHOP · How long until you can afford the {plane}? · The {plane} costs **{price}**. You have {cash}, and your planes made about **{rate} a day** last week. · Days to afford = still to find ÷ profit a day, rounded up to a whole day.
@@ -457,6 +457,9 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `plan2.line`: Finance worked out both plans. Profit a day: **{diff}** than before.
 - `plan2.footer`: Your old plan and your new plan, side by side. Back returns to your sheet.
 - `plan2.wait`: After the sums: work out the change first.
+- `whatif.rows`: Both routes, a day · All routes, a day · A week (× 7) · A month (× {w} weeks)
+- `whatif.more`: {d} a day · {w} a week · {m} a month
+- `pauseq.whatIfWeek`: WHAT IF · A WEEK · {fare} instead of {now}: what is that worth in a week? · At **{fare}**, {city} takes in **{more} more a day** than at {now}: the sheet worked it out (ƒ). · A week = more a day × 7. Then see what a month comes to on the What if sheet.
 
 ## Identity and photos (CR5)
 

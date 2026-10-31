@@ -23,14 +23,15 @@
    ===================================================================== */
 {
 const c1qOn = () => c1qMoves();
-const C1Q_IDS = ['timeToAfford', 'whatIfFirst', 'modelChange', 'fuelTwoPlanes', 'ticketRevenueLong', 'projectedVsActual', 'reviewRotation'];
-const C1Q_WAITS = ['timeToAfford', 'whatIfFirst', 'modelChange', 'fuelTwoPlanes', 'projectedVsActual', 'reviewRotation'];
+const C1Q_IDS = ['timeToAfford', 'whatIfFirst', 'whatIfWeek', 'modelChange', 'fuelTwoPlanes', 'ticketRevenueLong', 'projectedVsActual', 'reviewRotation'];
+const C1Q_WAITS = ['timeToAfford', 'whatIfFirst', 'whatIfWeek', 'modelChange', 'fuelTwoPlanes', 'projectedVsActual', 'reviewRotation'];
 const fill = (s, V) => String(s || '').replace(/\{(\w+)\}/g, (m, k) => V[k] !== undefined && V[k] !== null ? String(V[k]) : m);
 /* the words: ScreenText's row when there is one, else these */
 const D = {
   'pauseq.page':{ title:'Before week {n} flies', text:['Question {i} of {k} from Finance. Work it out in your book.', 'Your own plan\'s sums came first at this pause, so Finance\'s other {w} waits for the next one.'], button:'Next question ▶' },
   'pauseq.footer':{ text:['Before week {n} flies · Finance\'s questions'], button:'Carry on ▶' },
   'pauseq.whatIfFirst':{ eyebrow:'NEW · WHAT IF', title:'What if {city} were {fare}?', text:['The **What if** sheet opens today, in the Studio: change a fare and every figure on its row works itself out (ƒ).', 'Its first sum by hand: {city} at **{fare}** instead of {now}. Ticket revenue a day = seats filled × fare.'] },
+  'pauseq.whatIfWeek':{ eyebrow:'WHAT IF · A WEEK', title:'{fare} instead of {now}: what is that worth in a week?', text:['At **{fare}**, {city} takes in **{more} more a day** than at {now}: the sheet worked it out (ƒ).', 'A week = more a day × 7. Then see what a month comes to on the What if sheet.'] },
   'pauseq.modelChange':{ eyebrow:'MODELLING', title:'{city}: {now} or {fare}?', text:['On your own flights, **{fare}** would earn more on {city} than your {now}.', 'How much more for one flight? Finance works out a day and a week from your answer.'] },
   'pauseq.modelChange.pick':{ eyebrow:'MODELLING', title:'Try a change', text:['Your plan is already good: no other fare earns {gate} a day more.', 'Finance suggests two changes. Pick one and work out what it would do for one flight.'] },
   'pauseq.timeToAfford':{ eyebrow:'THE PLANE SHOP', title:'How long until you can afford the {plane}?', text:['The {plane} costs **{price}**. You have {cash}, and your planes made about **{rate} a day** last week.', 'Days to afford = still to find ÷ profit a day, rounded up to a whole day.'] },
@@ -61,6 +62,13 @@ function c1qLast(){ const X = c1Ex(), d = S.day || 1;
 const periodWords = L => L.type === 'month' ? monthName(L.from) : `week ${L.wk}`;
 const fareOpts = r => (r.fares && r.fares.length ? r.fares : [r.basePrice]).slice().sort((a, b) => a - b);
 const flightsOn = id => planFlights().filter(x => !x.grounded && x.route === id).length;
+/* the what-if questions' route and fare: his busiest route at his fare + Settings whatIfQuestionStep (£90 -> £93; Bertie 31 Oct evening), or
+   minus it above the top fare option; without the setting, the next fare option up (or down at the top) */
+function wiPick(){ if(!c1WiOn()) return null; const now = c1WiRows({}), pick = now.rows.slice().sort((a, b) => b.pax - a.pax)[0]; if(!pick) return null;
+  const o = fareOpts(pick.r), st = Math.max(0, +WBS().whatIfQuestionStep || 0); let f1 = null;
+  if(st > 0){ f1 = pick.fare + st <= o[o.length - 1] ? pick.fare + st : pick.fare - st; if(f1 < o[0]) f1 = null; }
+  else { const i = o.indexOf(pick.fare); f1 = i >= 0 && i < o.length - 1 ? o[i + 1] : i > 0 ? o[i - 1] : null; }
+  return f1 && f1 !== pick.fare ? { id:pick.id, f0:pick.fare, f1 } : null; }
 const askedHere = re => { const P = c1PauseOf(S.day || 1); return ((typeof rec === 'function' && rec().entries) || []).some(e => e.type === 'calc' && c1PauseOf(e.day) === P && re.test(e.key)); };
 
 /* ---------- the questions: plan() decides (null: can't be asked); make() draws its sheet ---------- */
@@ -104,9 +112,7 @@ const C1Q = {
         done:qs.ok ? `✓ About **${num(f.days)} days**` : '' }; } },
 
   /* P2: the what-if sheet's first sum (passengers × fare) */
-  whatIfFirst:{ plan:() => { if(!c1WiOn()) return null; const now = c1WiRows({}), pick = now.rows.slice().sort((a, b) => b.pax - a.pax)[0]; if(!pick) return null;
-      const o = fareOpts(pick.r), i = o.indexOf(pick.fare), f1 = i >= 0 && i < o.length - 1 ? o[i + 1] : i > 0 ? o[i - 1] : null;
-      return f1 ? { id:pick.id, f0:pick.fare, f1 } : null; },
+  whatIfFirst:{ plan:() => wiPick(),
     make:(Q, qs) => { const r = routeById(Q.d.id), x = c1WiRows({ [Q.d.id]:Q.d.f1 }).rows.find(z => z.id === Q.d.id) || { pax:0, seats:0 }, want = x.pax * Q.d.f1;
       const V = { city:r.city, fare:money(Q.d.f1), now:money(Q.d.f0) };
       const rows = [{ r:1, t:'hdr' }, { r:2, label:'Seats filled a day', ic:'person' }, { r:3, label:'Fare', ic:'tag' }, { r:4, label:'Ticket revenue a day', ic:'coins', gold:true, t:'tot' }];
@@ -116,6 +122,19 @@ const C1Q = {
       if(qs.ok) v.B4 = { t:money(want) };
       return { T:TQ('pauseq.whatIfFirst', V), sp:sheet(Q, { cols:[{ c:'B', w:170, top:'what if', main:`${r.city} ${money(Q.d.f1)}` }], rows, v, sums:[s], act:qs.ok ? null : s, doneF:done1(s, qs), doneLine:qs.ok ? 'The What if sheet does this for every fare you try: What if › in the Studio.' : '' }),
         done:qs.ok ? `✓ **${money(want)}** a day` : '', wi:true }; } },
+
+  /* P1, question 2 (Bertie 31 Oct evening): what the few pounds come to in a week: more ticket money a day × 7; the sheet shows the month */
+  whatIfWeek:{ plan:() => { const P = wiPick(); if(!P) return null; const now = c1WiRows({}).rows.find(z => z.id === P.id), alt = c1WiRows({ [P.id]:P.f1 }).rows.find(z => z.id === P.id);
+      if(!now || !alt) return null; const more = alt.rev - now.rev; return more > 0 ? Object.assign(P, { more }) : null; },
+    make:(Q, qs) => { const r = routeById(Q.d.id), more = Q.d.more, want = more * 7, mw = Math.round((+WBS().whatIfMonthDays || 28) / 7);
+      const V = { city:r.city, fare:money(Q.d.f1), now:money(Q.d.f0), more:money(more) };
+      const rows = [{ r:1, t:'hdr' }, { r:2, label:'More ticket money a day', ic:'coins' }, { r:3, label:'Days in a week', ic:'cal' }, { r:4, label:'More in a week', ic:'coins', gold:true, t:'tot' }];
+      const v = { B2:{ t:money(more), f:true }, B3:{ t:'7' } };
+      const s = paper(Q, qs, { title:`${money(Q.d.f1)} instead of ${money(Q.d.f0)}: what is that worth in a week?`, tgt:'B4', refs:['B2', 'B3'], ops:['×'], words:'More a day × Days', want, rel:'ticketRevenue',
+        doc:`What if, a week: ${r.city} at ${money(Q.d.f1)}`, question:`${money(more)} × 7`, vals:[more, 7], answerText:money(want) });
+      if(qs.ok) v.B4 = { t:money(want) };
+      return { T:TQ('pauseq.whatIfWeek', V), sp:sheet(Q, { cols:[{ c:'B', w:170, top:'what if', main:`${r.city} ${money(Q.d.f1)}` }], rows, v, sums:[s], act:qs.ok ? null : s, doneF:done1(s, qs), doneLine:qs.ok ? `A month is ${mw} weeks: ${money(want * mw)} more. The What if sheet shows it: What if › in the Studio.` : '' }),
+        done:qs.ok ? `✓ **${money(want)}** a week` : '', wi:true }; } },
 
   /* section 6: the modelling question */
   modelChange:{ plan:() => { if(!c1WiOn()) return null; const now = c1WiRows({}), gate = +WBS().tipGainGate || 50, ids = now.rows.map(x => x.id); if(!ids.length) return null;

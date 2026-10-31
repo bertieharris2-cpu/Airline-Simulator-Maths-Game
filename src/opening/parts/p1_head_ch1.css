@@ -374,3 +374,4 @@ body:not(.rm) .ash-c.c1-glow{animation:c1Glow 1.6s ease-out 1}
 .c1q-pick .bv-btn{justify-content:flex-start;text-align:left}
 .c1q-ctx .c1q-wait,.c1q-ctx .c1q-wi{font-size:12.5px;line-height:17px;color:var(--text-soft,#9fbde3)}
 .c1q.c1-busy .rv2-what::after{display:none}   /* Finance's questions: the question stays lit while he works it out */
+.c1-wim{display:block;font-size:13.5px;color:var(--text-soft,#9fbde3);margin-top:2px}

@@ -172,7 +172,7 @@ function syncRoutesToHome(){
   if(!S || !S.home) return;
   WORLD.setupRoutes.map(routeById).forEach(r => {
     if(!r.wb && S.home !== syncRoutesToHome.home){ const b = normalFare(r); r.basePrice = b; r.fares = [b - 10, b, b + 10, b + 20, b + 30]; r.prices = r.fares.slice(); r.setupPrices = r.fares.slice(); }
-    if(S.prices && S.prices[r.id] !== undefined && !r.fares.includes(S.prices[r.id])) S.prices[r.id] = r.basePrice;   // a fare from an older save
+    if(S.prices && S.prices[r.id] !== undefined && !r.fares.includes(S.prices[r.id]) && !(typeof c1FareFree === 'function' && c1FareFree(r, S.prices[r.id]))) S.prices[r.id] = r.basePrice;   // a fare from an older save (chapter one: a what-if fare between the options stays)
   });
   syncRoutesToHome.home = S.home;
 }
