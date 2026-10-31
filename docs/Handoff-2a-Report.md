@@ -121,3 +121,22 @@ The rule is that screens come from the hand-off and logic from the workbook. The
   - Before the sums are done, the tab is greyed out.
 - **Fixed:** with two changes on the sheet, where Finance filled the second, Fly tomorrow went back to the first change and never left. Going on now passes every change already worked out.
 - **Words:** in ScreenText `plan2.*` (new rows, for Fable).
+
+## Week 1 Sunday changed again (31 Oct 2026, evening hand-off)
+
+Claude Design's hand-off 2a was updated that evening, after Bertie's check of the Sunday review: section 5 now has him **add each day first, then Σ SUM**, side by side. Nothing else in the hand-off changed. The updated hand-off is in `data/incoming/handoff-2a-31-oct-evening/` (READ-FIRST, DESIGN.md, the five section 5 pictures and the sheet kit); `DESIGN.md` is installed from it. This replaces item 5 under "The screens" above.
+
+One sheet panel, one formula bar, two spreadsheets: left **1 · Add each day**, right **2 · Use Σ SUM** (the method, numbered, in each sheet's A1 cell). Five stages:
+
+1. **Finance adds Monday to Wednesday** on the left (the example look): the pointer clicks B2, presses +, B3, +, B4, Enter; the cells take cyan, violet and coral. The right side is a dashed box: "Next: a quicker way".
+2. **He adds every day** on the left, which lengthens into YOUR WEEK (Monday to Sunday and Profit this week only). The line counts as he goes: "Monday to Thursday so far. Keep going to Sunday."
+3. **Finance shows Σ SUM** on the right example. His total stays on the left, with a green outline, dimmed to .45, under "✓ The whole week: £… Seven clicks, six + signs."
+4. **He uses Σ SUM** on the right, which lengthens into YOUR WEEK: Σ SUM, drag Monday to Sunday, Enter.
+5. **Same answer, then the average:** the left reads "✓ Adding each day: £…" at full strength, the right "✓ Σ SUM: £…. The same answer, in one drag."; then Average a day on the right; the done callouts; **Plan week 2 ▶**.
+
+- All four totals are built on the sheet and not counted; nothing goes in his book.
+- **How it is built:** the stages reuse the ladder's "show" week (click, then Σ SUM, then the average), which week 1 now is; from week 2 Σ SUM by dragging. Settings `spreadsheetLadder` already said this, so it is unchanged. Code: `p6h_daily.js` section 5 (`c2Stage`), a small hook in `p6b_signal.js` (`c1ExNow`: Finance's example now shows twice) and `p1_head_c2.css`.
+- **Words:** ScreenText `wk1.*`, added by `tools/merge_wk1_sunday.py`.
+- **Under reduced motion** the sheets don't lengthen and the pointer doesn't glide. During the teacher's Run both demonstrations jump to the end, and My turn is pressed for him.
+- **One difference from the pictures:** picture 5 says "press +" for Average a day; the text says ÷, and the game uses ÷.
+- Screenshots: `docs/screenshots/handoff2a/05-week1-sunday-1-…` to `-6-done`, taken from the P1 save (Sun 8 Sep). Figures are TEST Air's: £18,635 for the week.

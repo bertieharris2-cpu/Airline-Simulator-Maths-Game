@@ -211,11 +211,13 @@ function c1ExampleRun(){
       setTimeout(() => { const sp2 = go(); if(sp2){ X.exRun = false; c1Enter(sp2); } }, 900); } };
   setTimeout(tick, 700);
 }
+/* is Finance's example on screen? (week 1; p6h shows a second one, Σ SUM, after he has added his week day by day) */
+function c1ExNow(X, W){ return !X.exDone; }
 function c1ReviewRender(st){
   const W = S.wk || { from:S.day - 6, rows:[], projected:0 }, h = weekSummary(W), items = weekReviewItems(W, h), wk = weekNo(W.from), X = c1Ex();
   items.forEach(it => { it.title = RV2_TITLE[it.id] || it.title; });
   if(UI.ashJust && /^week:/.test(UI.ashJust.sheet || '')) UI.ashJust = null;   // a finished sum moves straight on: the green glow stays on its cell
-  const exOn = wk === 1 && (+WBS().reviewExampleWeeks || 1) >= 1 && !X.exDone && !(settings.briefings === false && X.exSkip);
+  const exOn = wk === 1 && (+WBS().reviewExampleWeeks || 1) >= 1 && c1ExNow(X, W) && !(settings.briefings === false && X.exSkip);
   const sp = exOn ? c1ExampleSpec(W) : c1ReviewSpec(W, items, h);
   const live = !exOn ? sp.sums : [], allOk = !exOn && !sp.act && !sp.offer && live.every(s => s.done);
   if(allOk && !W.logged){ W.logged = true; rbSkill('weekTotal'); if(live.some(s => /:diff$/.test(s.id))) rbSkill('projectedVsActual'); if(items.some(x => x.id === 'mean')) rbSkill('meanDay');

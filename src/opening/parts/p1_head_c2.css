@@ -80,7 +80,17 @@ body.n15-ch1 .ash-c.aref.c2-ref::before{background:var(--refc)!important}
 .c2-pair .c2-mine{flex:1;border:1px solid var(--line);background:rgba(4,13,30,.35);padding-top:22px}
 .c2-pair .c2-mine .ash{background:transparent}
 .c2-pair .c2-dim .ash{opacity:.45}
-.c2-yours{position:absolute;top:44px;left:410px;z-index:2;font:800 11.5px/1 var(--font-sans);letter-spacing:.1em;color:#021226;background:var(--cyan);padding:5px 9px}
+.c2-pair .c2-lab{position:absolute;top:44px;left:20px;z-index:2;font:800 11.5px/1 var(--font-sans);letter-spacing:.1em;color:#021226;background:var(--cyan);padding:5px 9px}
+.c2-pair .c2-R .c2-lab,.c2-pair .c2-R .c1-exl{left:414px}
+.c2-pair .c2-next{border:1px dashed rgba(159,189,227,.38);display:flex;align-items:center;justify-content:center;text-align:center;padding:0 24px}
+.c2-nextb b{display:block;font-size:16px;font-weight:700;color:var(--text-soft,#9fbde3);margin-bottom:4px}
+.c2-nextb span{font-size:14.5px;line-height:1.45;color:#8ea8cb}
+.c2-meth{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;color:#fff;white-space:nowrap}
+.c2-meth i{font-style:normal;flex:none;width:19px;height:19px;display:grid;place-items:center;border:1.5px solid var(--cyan);color:var(--cyan);font-size:12px;font-weight:800}
+.c2-pair .ash-c.c2-okg{box-shadow:inset 0 0 0 2px var(--green),0 0 14px rgba(60,227,148,.22)!important}
+@keyframes c2grow{from{clip-path:inset(0 0 62% 0)}to{clip-path:inset(0 0 0 0)}}
+.c2-grow .ash-grid{animation:c2grow .7s ease-out}
+@media (prefers-reduced-motion:reduce){.c2-grow .ash-grid{animation:none}}
 /* the signal runs the full width under the panel: header strip, then the tag, the title and the words in one block */
 .c2-paired .rv2-ins > .c1-sig{position:static!important;width:100%;max-width:none}
 .c2-paired .rv2-ins > .c1-sig .c1-sig-ptr{display:none}

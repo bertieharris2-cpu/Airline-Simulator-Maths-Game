@@ -380,6 +380,10 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Week 1 Sunday: add each day, then Σ SUM, side by side (31 Oct 2026, late evening)
+
+Claude Design's hand-off 2a, section 5 as changed that evening (`data/incoming/handoff-2a-31-oct-evening/`; DESIGN.md installed from it). One panel, two sheets: on the left Finance adds Monday to Wednesday by clicking each day with +, then he adds his whole week the same way; on the right Finance shows Σ SUM on the example, then he drags his week. The two totals match, then Average a day. Nothing counted. Details: `docs/Handoff-2a-Report.md`, last section; words in ScreenText `wk1.*` (`tools/merge_wk1_sunday.py`).
+
 ### The what-if fare sheet in week 2 (31 Oct 2026, evening)
 
 Bertie's change after the chapter-one plan to week 8, with no hand-off; the report is `docs/Handoff-WhatIf-Week2.md`, and the data is in the workbook (`tools/merge_whatif_week2.py`).

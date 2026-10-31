@@ -349,29 +349,77 @@ ashLaunchPage = function(st){
 if(window.__tkSums) window.__tkSums.unshift({ what:"Finance's profit on Launch Day", test:() => { const sp = ashLive(); return !!(sp && sp.act && sp.act.id === 'ld:profit'); }, plan:() => ({ at:'.c1-keys', value:'skip the demonstration', go:() => { const sp = ashLive(); UI.c2Demo = null; c1PtrGone(); if(sp && sp.act){ const s = ashSt(sp.id); s.tokens = ashFullTokens(sp.act); s.ready = true; c1Enter(sp); } } }) });
 
 
-/* ---------- 5 · week 1 Sunday: Finance shows Σ SUM on a Monday-to-Wednesday example beside his week; he uses Σ SUM on the
-   whole week, then builds the average. From week 2 Σ SUM by dragging, no example (Settings spreadsheetLadder, D111). ---------- */
+/* ---------- 5 · week 1 Sunday (hand-off 2a, section 5, as changed on 31 Oct evening): add each day, then Σ SUM, side by side.
+   One sheet panel, one formula bar, two spreadsheets: left 1 · Add each day, right 2 · Use Σ SUM. Five stages:
+     ex1   Finance adds Monday to Wednesday on the left example, clicking each day with + between them; the right is a dashed
+           "Next: a quicker way" box;
+     add   the left sheet lengthens into his week: he clicks each day with +, then Enter;
+     ex2   his total shows (the left dims to .45); the right appears as Finance's example and Finance shows Σ SUM;
+     sum   the right sheet lengthens into his week: he drags Monday to Sunday with Σ SUM, then Enter;
+     mean  both totals show, the same; Average a day on the right sheet, then Plan week 2 ▶.
+   All four totals are formula-only (built, not counted). The stages reuse the ladder's "show" week (click, then Σ SUM, then the
+   average): week 1 is that week now, and from week 2 Σ SUM by dragging (Settings spreadsheetLadder). ---------- */
 const c2Lad0 = c1LadderWeeks;
-c1LadderWeeks = function(){ const s = String(WBS().spreadsheetLadder || ''); if(ch1() && /week 1:[^;]*Σ SUM/.test(s)) return { show:0, drag:1 }; return c2Lad0.apply(this, arguments); };
+c1LadderWeeks = function(){ const s = String(WBS().spreadsheetLadder || ''); if(ch1() && /week 1:[^;]*Σ SUM/.test(s)) return { show:1, drag:2 }; return c2Lad0.apply(this, arguments); };
 const c2Wk1 = W => !!(W && typeof ch1 === 'function' && ch1() && weekNo(W.from) === 1 && /week 1:[^;]*Σ SUM/.test(String(WBS().spreadsheetLadder || '')));
-const c2Narrow = sp => { sp.lw = 172; if(sp.cols && sp.cols[0]) sp.cols[0].w = 140; sp.rh = { hdr:34, data:24, tot:25, fin:26, sub:24, gap:6 }; return sp; };   // two 380-wide sheets in one panel (hand-off 2a §5)
+function c2Stage(W){ if(!c2Wk1(W)) return null; const X = c1Ex(), tot = rbState(W, 'tot');
+  if(!X.exDone) return 'ex1';
+  if(!W.c1sum) return tot.ok ? 'ex2' : 'add';
+  return W.c1sum === 'try' && !tot.ok ? 'sum' : 'mean'; }
+window.__c2stage = () => { try{ return c2Stage(S.wk); }catch(e){ return null; } };   // for the tests
+const c2Narrow = sp => { sp.lw = 172; if(sp.cols && sp.cols[0]) sp.cols[0].w = 140; sp.rh = { hdr:34, data:24, tot:25, fin:26, sub:24, gap:6 }; return sp; };   // two 380-wide sheets in one panel
+/* Finance's example shows twice: adding each day (ex1), then Σ SUM (ex2) */
+const c2ExNow0 = c1ExNow;
+c1ExNow = function(X, W){ const g = c2Stage(W || S.wk); if(g) return g === 'ex1' || g === 'ex2'; return c2ExNow0.apply(this, arguments); };
+/* the words of each stage, from ScreenText (wk1.*); the review's own rows are used where a stage keeps them */
+const C2_WK1 = { ex1:{ 'review.example.watch':'wk1.add.watch', 'review.example.done':'wk1.add.done', 'review.example.line':'wk1.add.line', 'review.example.lineDone':'wk1.add.lineDone' },
+  add:{ 'review.total.signal':'wk1.add.signal' }, ex2:{ 'review.example.watch':'wk1.sum.watch' }, sum:{ 'review.sum.signal':'wk1.sum.signal' }, mean:{ 'review.sum.done':'wk1.sum.same' } };
+const c2T0 = c1T;
+c1T = function(id, vars){ try{ const g = S && S.wk && c2Stage(S.wk), to = g && C2_WK1[g] && C2_WK1[g][id]; if(to){ const t = h21Text(to, vars); if(t.title || t.text.length || t.eyebrow) return t; } }catch(e){}
+  return c2T0.apply(this, arguments); };
+if(typeof H21_TEXT !== 'undefined') Object.assign(H21_TEXT, {   // for a workbook without the rows (merge_wk1_sunday.py adds them)
+  'wk1.method':{ text:['Add each day', 'Use Σ SUM'] }, 'wk1.next':{ title:'Next: a quicker way', text:['When your whole week is added up, Finance shows you a faster way to do it.'] },
+  'wk1.add.watch':{ eyebrow:'EXAMPLE · WATCH', title:'Watch: add up the profit from Monday to Wednesday', text:["Finance clicks Monday's profit, presses **+**, clicks Tuesday's, presses **+**, clicks Wednesday's, then presses [Enter]."] },
+  'wk1.add.done':{ eyebrow:'EXAMPLE · WATCH', title:"That's how adding each day works", text:["Click each day's profit and press **+** between them, then press [Enter]: the sheet adds them up.", '**Your turn: the profit for the whole week, Monday to Sunday.**'], button:'My turn ▶' },
+  'wk1.add.line':{ text:['Watch: Finance clicks each day, with + between them.'] }, 'wk1.add.lineDone':{ text:['✓ Monday to Wednesday: {total}. The sheet added them up.'] },
+  'wk1.add.signal':{ title:'Your turn: add up the profit for the whole week, Monday to Sunday', text:["Click each day's profit and press **+** between them. Click Sunday's, then press [Enter]."] },
+  'wk1.add.count':{ text:['{first} to {upto} so far. Keep going to {last}.'] },
+  'wk1.add.total':{ text:['✓ The whole week: **{total}**. Seven clicks, six + signs.'] }, 'wk1.add.same':{ text:['✓ Adding each day: **{total}**'] },
+  'wk1.sum.watch':{ eyebrow:'EXAMPLE · WATCH', title:'Watch: a quicker way to add up Monday to Wednesday', text:['Finance presses **Σ SUM**, drags down the Profit column from Monday to Wednesday, then presses [Enter]. One drag, no + signs.'] },
+  'wk1.sum.signal':{ title:'Your turn: the whole week with Σ SUM', text:['Press **Σ SUM**, drag down your Profit column from Monday to Sunday, then press [Enter].'] },
+  'wk1.sum.same':{ text:['✓ Σ SUM: **{total}**. The same answer, in one drag.'] }, 'wk1.yours':{ text:['YOUR WEEK'] } });
 const c2RvSpec0 = c1ReviewSpec;
 c1ReviewSpec = function(W){ const sp = c2RvSpec0.apply(this, arguments);
   // a formula sum with no line of its own (Average a day) said "work it out in your book": the sheet works it out (ScreenText review.average.card)
   if(ch1()) (sp.sums || []).forEach(s => { if(s.how === 'formula' && !s.lineBuild && !s.sumKey) s.lineBuild = C2H(C2('review.average.card').text[0] || 'Click the two cells. The sheet works it out.'); });
-  return c2Wk1(W) ? c2Narrow(sp) : sp; };
+  if(!c2Wk1(W)) return sp; c2Narrow(sp);
+  // adding each day: the line under the sheet counts the days clicked so far ("Monday to Thursday so far. Keep going to Sunday.")
+  const s = sp.sums[0], base = s && s.lineBuild;
+  // adding each day: the left sheet is the days and Profit this week only (Days flown and Average a day come on the right sheet)
+  if(s && c2Stage(W) === 'add'){ const rT = +String(s.tgt).slice(1); sp.rows = sp.rows.filter(x => x.t === 'hdr' || x.r <= rT); Object.keys(sp.v).forEach(k => { if(+k.slice(1) > rT) delete sp.v[k]; }); sp.sums = [s]; sp.act = s.done ? null : s; }
+  if(s && c2Stage(W) === 'add') Object.defineProperty(s, 'lineBuild', { configurable:true, get(){ const st = ashSt(sp.id), refs = (st.tokens || []).filter(t => t.ref).map(t => t.ref);
+    if(!refs.length || refs.length >= s.refs.length) return base; const day = ref => C1_WD(W.from + s.refs.indexOf(ref));
+    return esc(C2('wk1.add.count', { first:day(s.refs[0]), upto:day(refs[refs.length - 1]), last:day(s.refs[s.refs.length - 1]) }).text[0] || base); } });
+  return sp; };
 const c2ExSpec0 = c1ExampleSpec;
 c1ExampleSpec = function(W){ const sp = c2ExSpec0.apply(this, arguments); if(!c2Wk1(W)) return sp; c2Narrow(sp);
   const s = sp.sums[0], d0 = 'Monday', dL = 'Wednesday', tr = sp.rows.find(r => r.t === 'tot'); if(tr) tr.label = String(tr.label).replace(/^Profit\s+/, '');   // "Mon to Wed" (the column already says Profit)
+  if(c2Stage(W) !== 'ex2'){ s.words = sp.rows.filter(r => r.ic === 'cal').map(r => String(r.label).split(' ')[0]).join(' + '); return sp; }   // ex1: Finance clicks each day, "Mon + Tue + Wed"
+  // ex2: the same example, with Σ SUM, on a sheet of its own (its own state)
+  sp.id = 'week:ex2:' + weekNo(W.from); s.id = 'ex2:' + weekNo(W.from) + ':tot';
   if(sp.doneF){ const R = s.refs; sp.doneF.refs = [`SUM(${R[0]}:${R[R.length - 1]})`]; sp.doneF.ops = []; }   // what Finance typed: Σ SUM, not the cells one by one
   Object.assign(s, { sumKey:true, sumOnly:true, words:'', barWords:'', sumWords:`add ${d0} to ${dL}`, sumWhy:() => `Finance drags from ${d0} to ${dL}.`, sumLine:() => esc(C2('review.example.line').text[0] || '') });
   return sp; };
-/* Finance's Σ SUM: the pointer presses Σ SUM, drags B2 to B4 (dashed cyan), presses Enter */
+/* Finance's demonstrations: ex1 clicks Mon, +, Tue, +, Wed, Enter (the original run); ex2 presses Σ SUM, drags B2 to B4, presses Enter */
 const c2ExRun0 = c1ExampleRun;
 c1ExampleRun = function(){
   if(!c2Wk1(S.wk)) return c2ExRun0.apply(this, arguments);
+  const X = c1Ex();
+  if(c2Stage(S.wk) === 'ex1'){ if(!UI.c2Ex1){ UI.c2Ex1 = true; delete X.exRun; }   // a "running" flag kept in an older save
+    const tk = window.__tkRunning && window.__tkRunning(), rm = settings.reduceMotion; if(tk) settings.reduceMotion = true;   // the teacher's Run: straight to the end
+    try{ return c2ExRun0.apply(this, arguments); } finally { settings.reduceMotion = rm; } }
   // "running" lives in UI, not the save: a page reloaded mid-demonstration starts it again
-  const X = c1Ex(); if(UI.c2ExRun || X.exAdded) return; const sp0 = ashLive(); if(!sp0 || !sp0.example || !sp0.act) return; UI.c2ExRun = true; delete X.exRun;
+  if(UI.c2ExRun || X.exAdded) return; const sp0 = ashLive(); if(!sp0 || !sp0.example || !sp0.act) return; UI.c2ExRun = true; delete X.exRun;
   const refs = sp0.act.refs, a = refs[0], z = refs[refs.length - 1], live = () => { const sp = ashLive(); return sp && sp.example && sp.act ? sp : null; };
   const cur = () => document.getElementById('c1Cursor'), to = el => { const c = cur(); if(el && c){ const R = el.getBoundingClientRect(); c.style.left = (R.left + R.width * .6) + 'px'; c.style.top = (R.top + R.height / 2) + 'px'; } };
   const root = () => { const sp = live(); return sp && document.querySelector(`[data-ash="${CSS.escape(sp.id)}"]`); };
@@ -385,26 +433,39 @@ c1ExampleRun = function(){
   let i = 0; const next = () => { const f = steps[i++]; if(f) setTimeout(f, 250); };
   setTimeout(next, 600);
 };
-/* the two sheets side by side: the one being worked is live; the other is drawn beside it (dimmed while Finance works) */
+/* My turn: after ex1 his week on the left; after ex2 his week again on the right, this time with Σ SUM (the total starts afresh) */
+const c2RvBind0 = c1ReviewBind;
+c1ReviewBind = function(sp, W, exOn){ c2RvBind0.apply(this, arguments); const g = c2Stage(W); if(!g) return;
+  if(g === 'ex1') on('c1MyTurn', () => { const X = c1Ex(); X.exDone = S.day || 1; delete X.exAdded; delete X.exRun; UI.c2Grow = 'add'; save(); render(); });
+  if(g === 'ex2') on('c1MyTurn', () => { const X = c1Ex(); X.ex2Done = S.day || 1; delete X.exAdded; W.c1sum = 'try'; const t = rbState(W, 'tot'); t.ok = false; t.built = false; t.sumText = null; W.c1glow = null;
+    try{ ashReset(ashSt('week:' + weekNo(W.from)), null); }catch(e){} UI.c2Grow = 'sum'; save(); render(); }); };
+/* the panel: the sheet being worked is live; the other side is the dashed "Next" box, or his week added day by day */
 const c2RvR0 = ashReviewRender;
 ashReviewRender = function(st){ const r = c2RvR0.apply(this, arguments); try{ if(c2Wk1(S.wk) && c1RvOn(S.wk)) c2Pair(); }catch(e){ console.error(e); } return r; };
 function c2Pair(){
-  const W = S.wk, X = c1Ex(), exOn = !X.exDone, body = screen().querySelector('.c1-rv'), mid = body && body.querySelector('.rv2-mid'); if(!mid) return;
+  const W = S.wk, g = c2Stage(W), body = screen().querySelector('.c1-rv'), mid = body && body.querySelector('.rv2-mid'); if(!mid || !g) return;
   body.classList.add('c2-paired');
-  let other = '';
-  if(exOn){ const h = weekSummary(W), items = weekReviewItems(W, h); items.forEach(it => { it.title = RV2_TITLE[it.id] || it.title; });
-    const sp = c2RvSpec0(W, items, h); c2Narrow(sp); sp.act = null; sp.offer = false; sp.just = null; sp.doneF = null; sp.doneLine = ''; sp.id = 'week:pair';
-    other = `<div class="c2-side c2-dim c2-nobar"><div class="c2-mine">${ashHtml(sp)}</div></div>`; }
-  else { const sp = c1ExampleSpec(W); const T = sp.total; sp.v[sp.sums[0].tgt] = { t:money(T) }; sp.act = null; sp.just = null; sp.doneF = null; sp.id = 'week:expair';
-    sp.doneLine = C2H(C2('review.example.lineDone', { total:money(T) }).text[0] || ''); other = `<div class="c2-side c2-nobar"><div class="c1-exf"><span class="c1-exl">${esc(C2('wk1.example').text[0] || "FINANCE'S EXAMPLE · MADE-UP NUMBERS")}</span>${ashHtml(sp)}</div></div>`; }
+  const right = !['ex1', 'add'].includes(g), yours = esc(C2('wk1.yours').text[0] || 'YOUR WEEK'), method = C2('wk1.method').text;
+  let other = '', rTot = 0;
+  if(!right){ const N = C2('wk1.next'); other = `<div class="c2-side c2-next"><div class="c2-nextb"><b>${esc(N.title || 'Next: a quicker way')}</b><span>${esc(N.text[0] || '')}</span></div></div>`; }
+  else { const h = weekSummary(W), items = weekReviewItems(W, h); items.forEach(it => { it.title = RV2_TITLE[it.id] || it.title; });
+    const sp = c2RvSpec0(W, items, h); c2Narrow(sp); const tr = sp.rows.find(x => x.t === 'tot'); rTot = tr ? tr.r : 9;
+    const total = Math.round(rbValue(items.find(x => x.id === 'tot')));
+    sp.rows = sp.rows.filter(x => x.t === 'hdr' || x.r <= rTot); Object.keys(sp.v).forEach(k => { if(+k.slice(1) > rTot) delete sp.v[k]; }); sp.v['B' + rTot] = { t:money(total) };
+    Object.assign(sp, { sums:[], act:null, offer:false, just:null, doneF:null, id:'week:pairL', doneLine:C2H(C2(g === 'mean' ? 'wk1.add.same' : 'wk1.add.total', { total:money(total) }).text[0] || '') });
+    other = `<div class="c2-side c2-nobar c2-left ${g === 'mean' ? '' : 'c2-dim'}"><span class="c2-lab">${yours}</span><div class="c2-mine">${ashHtml(sp)}</div></div>`; }
   const pair = document.createElement('div'); pair.className = 'c2-pair';
   const mine = document.createElement('div'); mine.className = 'c2-side c2-live'; let into = mine;
-  if(!exOn){ into = document.createElement('div'); into.className = 'c2-mine'; mine.appendChild(into); }   // his week in its own frame; the example keeps its dashed one
+  if(!['ex1', 'ex2'].includes(g)){ mine.insertAdjacentHTML('beforeend', `<span class="c2-lab">${yours}</span>`); into = document.createElement('div'); into.className = 'c2-mine'; mine.appendChild(into); }   // his week in its own frame; the example keeps its dashed one
   while(mid.firstChild) into.appendChild(mid.firstChild);
-  pair.insertAdjacentHTML('beforeend', exOn ? '' : other); pair.appendChild(mine); if(exOn) pair.insertAdjacentHTML('beforeend', other);
-  pair.insertAdjacentHTML('beforeend', `<span class="c2-yours">${esc(C2('wk1.yours').text[0] || 'YOUR WEEK')}</span>`);
+  if(right){ pair.insertAdjacentHTML('beforeend', other); pair.appendChild(mine); } else { pair.appendChild(mine); pair.insertAdjacentHTML('beforeend', other); }
   mid.appendChild(pair);
-  const lab = mid.querySelector('.c2-live .c1-exl'); if(lab) lab.textContent = C2('wk1.example').text[0] || lab.textContent;
+  const sides = [...pair.children].filter(x => x.classList.contains('c2-side')); sides.forEach((x, i) => x.classList.add(i ? 'c2-R' : 'c2-L'));
+  // the method, numbered, in each sheet's top-left header cell
+  sides.forEach((x, i) => { const a1 = x.querySelector('.ash-c.ah.al'); if(a1) a1.innerHTML = `<span class="c2-meth"><i>${i + 1}</i>${esc(method[i] || '')}</span>`; });
+  const lab = mid.querySelector('.c1-exl'); if(lab) lab.textContent = C2('wk1.example').text[0] || lab.textContent;
+  if(rTot){ const c = pair.querySelector(`.c2-left .ash-c[data-ref="B${rTot}"]`); if(c) c.classList.add('c2-okg'); }   // his first total, added day by day
+  if(UI.c2Grow && UI.c2Grow === g && !settings.reduceMotion){ mine.classList.add('c2-grow'); } if(UI.c2Grow === g) UI.c2Grow = null;   // the sheet lengthens into his week
   setTimeout(() => { const nw = screen().querySelector('.dp-body > .cu-nw'), what = screen().querySelector('.c2-paired .rv2-what'); if(nw && what) what.appendChild(nw); }, 0);   // the fuel line goes under What happened
   // the signal and the done callouts run under the sheets; the signal's words sit in one column, its button at the right
   screen().querySelectorAll('.c2-paired .rv2-ins > .c1-sig .c1-sig-b').forEach(b => { if(b.querySelector(':scope > .c2-sigtx')) return;

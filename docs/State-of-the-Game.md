@@ -10,6 +10,10 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zs. Week 1 Sunday: add each day, then Σ SUM (31 Oct 2026, late evening)
+
+Hand-off 2a section 5 as changed that evening: one panel, two sheets (1 · Add each day, 2 · Use Σ SUM). Finance adds Monday to Wednesday with + (left), he adds his week; Finance shows Σ SUM on the right example, he drags his week; same answer; Average a day. Five stages in `p6h_daily.js` (`c2Stage`: ex1, add, ex2, sum, mean), using the ladder's "show" week for week 1; hook `c1ExNow` in `p6b_signal.js`. Words in ScreenText `wk1.*`. DESIGN.md installed from the evening hand-off.
+
 ## 0zr. The what-if fare sheet in week 2 (31 Oct 2026, evening)
 
 Bertie's change after the chapter-one plan to week 8 (`docs/Handoff-WhatIf-Week2.md`; data by `tools/merge_whatif_week2.py`). The what-if fare sheet opens on day 8 (Settings `whatIfSheetFromDay`), after a whole week of settling the plan, and the Fuel desk stays on day 15. On the sheet fares move £1 at a time (`whatIfFareStep`) between the route's lowest and highest fare option, with a day, a week (× 7) and a month (`whatIfMonthDays` 28) under the routes; Set my fares puts the exact fare (£93) in the plan, and the two fare snaps (`syncRoutesToHome`, `typeSnap`) leave it alone in chapter one (`c1FareFree`). P1 asks the sheet's two sums (seats filled × fare at his fare + `whatIfQuestionStep`; more a day × 7, `whatIfWeek` in `p6g_pauseqs.js`); P2 the modelling question and the first rotating question. Market headlines for weeks 2, 3 and 8 put right. Calendar days 8 and 15, Roadmap, PauseSchedule and ScreenText `whatif.*` / `pauseq.whatIf*` carry the words.

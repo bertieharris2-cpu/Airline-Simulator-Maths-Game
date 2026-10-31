@@ -460,6 +460,19 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `whatif.rows`: Both routes, a day · All routes, a day · A week (× 7) · A month (× {w} weeks)
 - `whatif.more`: {d} a day · {w} a week · {m} a month
 - `pauseq.whatIfWeek`: WHAT IF · A WEEK · {fare} instead of {now}: what is that worth in a week? · At **{fare}**, {city} takes in **{more} more a day** than at {now}: the sheet worked it out (ƒ). · A week = more a day × 7. Then see what a month comes to on the What if sheet.
+- `wk1.method`: Add each day · Use Σ SUM
+- `wk1.next`: Next: a quicker way · When your whole week is added up, Finance shows you a faster way to do it.
+- `wk1.add.watch`: EXAMPLE · WATCH · Watch: add up the profit from Monday to Wednesday · Finance clicks Monday's profit, presses **+**, clicks Tuesday's, presses **+**, clicks Wednesday's, then presses [Enter].
+- `wk1.add.done`: EXAMPLE · WATCH · That's how adding each day works · Click each day's profit and press **+** between them, then press [Enter]: the sheet adds them up. · **Your turn: the profit for the whole week, Monday to Sunday.** · [My turn ▶]
+- `wk1.add.line`: Watch: Finance clicks each day, with + between them.
+- `wk1.add.lineDone`: ✓ Monday to Wednesday: {total}. The sheet added them up.
+- `wk1.add.signal`: Your turn: add up the profit for the whole week, Monday to Sunday · Click each day's profit and press **+** between them. Click Sunday's, then press [Enter].
+- `wk1.add.count`: {first} to {upto} so far. Keep going to {last}.
+- `wk1.add.total`: ✓ The whole week: **{total}**. Seven clicks, six + signs.
+- `wk1.add.same`: ✓ Adding each day: **{total}**
+- `wk1.sum.watch`: EXAMPLE · WATCH · Watch: a quicker way to add up Monday to Wednesday · Finance presses **Σ SUM**, drags down the Profit column from Monday to Wednesday, then presses [Enter]. One drag, no + signs.
+- `wk1.sum.signal`: Your turn: the whole week with Σ SUM · Press **Σ SUM**, drag down your Profit column from Monday to Sunday, then press [Enter].
+- `wk1.sum.same`: ✓ Σ SUM: **{total}**. The same answer, in one drag.
 
 ## Identity and photos (CR5)
 
