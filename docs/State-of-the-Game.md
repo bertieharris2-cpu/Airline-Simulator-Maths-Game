@@ -10,6 +10,25 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zw. Round 3: Claude Design's "fewer words" hand-off (1 Nov 2026)
+
+Built for chapter one; report `docs/Round-3-Report.md`; hand-off in `data/incoming/handoff-round3-1-nov/` (DESIGN.md installed); words and the setting `tuesdayCountedSums` via `tools/merge_r3.py` (after `merge_1049.py`), all PLACEHOLDER.
+- **New part `p6j_round3.js`** (block-scoped, last in the build), the rules for every chapter-one screen:
+  - `c1SignalHtml` in ch1: two lines, the method (Build the formula / Work it out on paper) then the task (`o.task`, or `c5Task` from the title). The SUM number comes from the `c1PaperLines` call inside the arguments. Demo signals (`o.tag`) draw nothing, or a bare `.c5-go` holder for their button.
+  - `c1Place` for `.c5-sig` → `c5Under`: under the cell, its pointer at the cell's middle, slid sideways inside the page `.dp`, above the cell only if there's no room before the footer. After every render, `c5PlaceAll` moves each signal into the live sheet's grid under `ashLive().act.tgt`.
+  - `c5Titles`: every `.ash-co` on screen keeps its title; a `<p>` stays only with "="; title-only callouts get `.c5-row` (button on the right).
+  - `c5Greens`: the last done sum of each sheet drawn (`ashHtml` is wrapped to collect them) gets `.c5-ok` while the open sum is in the same row, or none is open.
+  - CSS (`p1_head_c3.css`): `.c5-sig`, `.c5-row`, `.c5-ok`, the lighter walk-through shade and quiet callouts; `.wk-missed` is hidden in ch1 (How good was the plan, parked).
+- **p6i changes:**
+  - Launch Day: G only while `c3pjob && !c3pdemo`; the callout under his F9.
+  - Walk-through: `UI.c4tour` 0 = the whole page with Start ▸, then 1–4.
+  - Two plans: one callout, both Choose `go` once worked, "?" in the compare bar, the locked footer line, "Flew on Launch Day".
+  - `c3NpPage`: the second route on paper (`pq:npTk:<day>`, state `st.tkp`), tasks from `np.task`, a dimmed Before / after tab.
+  - `c3BaNp`: Before / after after the sums, two callouts (`ba.np.*`), footer `#c3BaChoose`.
+  - Section 10 wraps `ashReviewRender` for week 1 Sunday: My turn ▶ moved into the example's line, An easier method ▶ (`seen.easier`) before ex2, Now calculate the average ▶ (`#c3AvgWatch`) in the right sheet's line, Finance's average in words, the cursor shown again after Watch.
+  - `c3WiPage` rewritten: co1 (Got it) → b4 (his build) → q1 (paper) → wk (Finance × 7, `c5WiDemo`, Watch in the line) → q2 (paper) → mo (Finance × 4) → month.
+- **p6b:** Finance's add-each-day demo moves the pointer to the + key and lights it (ch1).
+
 ## 0zv. Round 2: Bertie's 10:49 play notes (1 Nov 2026)
 
 Design-and-flow round 2, chapter one only, all in `p6i_1737.js` section 9 and the end of `p1_head_c3.css` (plus the hatch in `p6c_desks.js`). Report: `docs/Round-2-Playnotes-1049.md`; screenshots and transcript: `docs/screenshots/playnotes-1049/`. Words and settings: `tools/merge_1049.py` (run after `merge_1737.py`), all marked PLACEHOLDER.

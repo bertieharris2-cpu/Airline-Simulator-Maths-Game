@@ -207,6 +207,9 @@ function c1ExampleRun(){
     const root = document.querySelector(`[data-ash="${CSS.escape(sp.id)}"]`), cur = document.getElementById('c1Cursor');
     if(s.ref){ const c = root && root.querySelector(`[data-ref="${s.ref}"]`); if(c && cur){ const R = c.getBoundingClientRect(); cur.style.left = (R.right - 26) + 'px'; cur.style.top = (R.top + R.height / 2 - 4) + 'px'; }
       setTimeout(() => { const sp2 = go(); if(sp2) ashPick(sp2, s.ref); setTimeout(tick, P.gap); }, ch1() ? P.move : 380); return; }
+    if(s.op && ch1()){ const k = (root && root.querySelector(`[data-ashop="${s.op}"]`)) || document.querySelector(`.c1-keys [data-ashop="${s.op}"], .ash-ops [data-ashop="${s.op}"]`);   // round 3: the pointer goes to the key, and the key lights
+      if(k && cur){ const R = k.getBoundingClientRect(); cur.style.left = (R.left + R.width / 2) + 'px'; cur.style.top = (R.top + R.height / 2) + 'px'; }
+      setTimeout(() => { const sp2 = go(); if(sp2){ c1KeyFlash(s.op); ashOp(sp2, s.op); const k2 = document.querySelector(`[data-ash="${CSS.escape(sp2.id)}"] [data-ashop="${s.op}"]`); if(k2){ k2.classList.add('press'); setTimeout(() => k2.classList.remove('press'), 300); } } setTimeout(tick, P.gap); }, P.move); return; }
     if(s.op){ const sp2 = go(); if(sp2) ashOp(sp2, s.op); setTimeout(tick, 250); return; }
     if(s.enter){ const k = document.querySelector('.c1-fbenter'); if(k && cur){ const R = k.getBoundingClientRect(); cur.style.left = (R.left + R.width / 2) + 'px'; cur.style.top = (R.top + R.height / 2) + 'px'; }
       setTimeout(() => { const sp2 = go(); if(sp2){ X.exRun = false; c1Enter(sp2); } }, ch1() ? P.move + 180 : 900); } };

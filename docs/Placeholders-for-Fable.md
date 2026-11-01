@@ -21,3 +21,11 @@ During the design-and-flow phase (from 1 Nov 2026) Claude Code makes up any figu
 | 2 | ScreenText `np.title`, `np.cols`, `np.rows`, `np.diff`, `np.line`, `np.footer` | The new-plan sheet (new screen) | Written by Claude Code |
 | 2 | ScreenText `day.tour.1` to `day.tour.4` | The four steps of the Launch Day Day page walk-through | Written by Claude Code |
 | 2 | ScreenText `takeoff.skip` | The skip button on the take-off | "Skip take-off ▶" |
+| 3 (Claude Design's "fewer words", 1 Nov) | Settings `tuesdayCountedSums` | Counted paper sums on Tuesday's new-plan sheet | 2 (Bertie: both count), over the old one-a-day limit |
+| 3 | ScreenText `ld3.job`, `ld3.mine.task`, `ld3.mine.line`, `ld3.footer` | Launch Day profit: the title-only callout, the task, "Your turn.", the three footer lines | From the pictures |
+| 3 | ScreenText `day.tour.0` to `day.tour.4` | The walk-through: "Review the day" + Start, then four title-only steps | From the pictures |
+| 3 | ScreenText `tp.title`, `tp.lane.old`, `tp.footer`, `tp.co1`, `tp.co1.week` | Two plans: crumb, "Flew on Launch Day", the locked footer line, the one callout | From the pictures; week versions written by Claude Code |
+| 3 | ScreenText `np.title`, `np.cols`, `np.task`, `np.tk2`, `np.line`, `np.footer` | The new-plan sheet: crumb, column heads, the tasks, "Your turn.", the done line | From the pictures |
+| 3 | ScreenText `ba.np.co1`, `ba.np.co2`, `ba.np.footer` | Before / after after the sums: two callouts, Choose a plan ▶ | From the pictures |
+| 3 | ScreenText `wk1.co.add`, `wk1.co.sum`, `wk1.add.*`, `wk1.sum.*`, `wk1.easier`, `wk1.avg.*` | Week 1 Sunday: title-only callouts, the green lines and buttons, the tasks | From the pictures |
+| 3 | ScreenText `wi2.co1`, `wi2.task`, `wi2.line`, `wi2.x7`, `wi2.x7.go`, `wi2.x4`, `wi2.x4.go`, `wi2.co4`, `wi2.footer` | Week 2 what-if: no ticket-revenue demo, Finance's × 7 and × 4 | From the pictures; the "Finance shows you a week / month." lines before Watch written by Claude Code |

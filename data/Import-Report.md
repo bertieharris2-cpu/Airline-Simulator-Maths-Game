@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 286 | 10 draft, 276 live, 11 placeholder, 1 withdrawn |
+| Settings | 287 | 10 draft, 277 live, 11 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -462,17 +462,17 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `pauseq.whatIfWeek`: WHAT IF · A WEEK · {fare} instead of {now}: what is that worth in a week? · At **{fare}**, {city} takes in **{more} more a day** than at {now}: the sheet worked it out (ƒ). · A week = more a day × 7. Then see what a month comes to on the What if sheet.
 - `wk1.method`: Add each day · Use Σ SUM
 - `wk1.next`: Next: a quicker way · When your whole week is added up, Finance shows you a faster way to do it.
-- `wk1.add.watch`: EXAMPLE · WATCH · Watch: add up the profit from Monday to Wednesday · Finance clicks Monday's profit, presses **+**, clicks Tuesday's, presses **+**, clicks Wednesday's, then presses [Enter].
+- `wk1.add.watch`: EXAMPLE · WATCH · Watch: add up the profit from Monday to Wednesday · Watch: Finance clicks each day, with **+** between them.
 - `wk1.add.done`: EXAMPLE · WATCH · That's how adding each day works · Click each day's profit and press **+** between them, then press [Enter]: the sheet adds them up. · **Your turn: the profit for the whole week, Monday to Sunday.** · [My turn ▶]
 - `wk1.add.line`: Watch: Finance clicks each day, with + between them.
-- `wk1.add.lineDone`: ✓ Monday to Wednesday: {total}. The sheet added them up.
-- `wk1.add.signal`: Your turn: add up the profit for the whole week, Monday to Sunday · Click each day's profit and press **+** between them. Click Sunday's, then press [Enter].
+- `wk1.add.lineDone`: ✓ Mon to Wed: **{total}**
+- `wk1.add.signal`: Calculate the total profit for the week
 - `wk1.add.count`: {first} to {upto} so far. Keep going to {last}.
-- `wk1.add.total`: ✓ The whole week: **{total}**. Seven clicks, six + signs.
+- `wk1.add.total`: ✓ Right: **{total}**
 - `wk1.add.same`: ✓ Adding each day: **{total}**
-- `wk1.sum.watch`: EXAMPLE · WATCH · Watch: a quicker way to add up Monday to Wednesday · Finance presses **Σ SUM**, drags down the Profit column from Monday to Wednesday, then presses [Enter]. One drag, no + signs.
-- `wk1.sum.signal`: Your turn: the whole week with Σ SUM · Press **Σ SUM**, drag down your Profit column from Monday to Sunday, then press [Enter].
-- `wk1.sum.same`: ✓ Σ SUM: **{total}**. The same answer, in one drag.
+- `wk1.sum.watch`: EXAMPLE · WATCH · Watch: a quicker way to add up Monday to Wednesday · Watch: **Σ SUM**, then drag Monday to Wednesday.
+- `wk1.sum.signal`: Calculate the total profit for the week with Σ SUM
+- `wk1.sum.same`: ✓ Same answer: **{total}**
 - `changes.head.week1`: Yesterday's plan
 - `changes.head.later`: Last week
 - `changes.head.change`: With your change
@@ -484,16 +484,16 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `fra.eve.rule`: **Tomorrow, {date}.** Build a new plan with {city} beside today's plan, then choose which one flies.
 - `fra.eve.small`: It opens early after a day that made at least {pct}% of the most your plane could make, with every flight covering its costs and the seats at least {fill}% full.
 - `fra.eve.footer`: {city} opens tomorrow. Plan tomorrow's flights. · [Plan tomorrow with {city} ▶]
-- `tp.title`: Plan tomorrow: {date} · {airline} HQ · yesterday's plan stays above · build a new one under it
+- `tp.title`: Plan tomorrow: {date} · {airline} HQ · build a new plan and compare it with yesterday's
 - `tp.title.week`: Plan week {n} · {airline} HQ · last week's plan stays for comparison · build a new one under it
-- `tp.lane.old`: YESTERDAY'S PLAN · Flew yesterday · LAST WEEK'S PLAN · Flew last week
+- `tp.lane.old`: YESTERDAY'S PLAN · Flew yesterday · LAST WEEK'S PLAN · Flew last week · Flew on Launch Day
 - `tp.lane.new`: NEW PLAN · For tomorrow · For this week · drag flights in
 - `tp.drop`: Drag a flight here
 - `tp.choice`: Profit a day · flew yesterday · Profit a day · last week · Profit a day · worked out · work it out first · [Choose ▶]
 - `tp.compare`: COMPARE · Yesterday's plan · Last week's plan · New plan · Projected for tomorrow · Projected for this week
-- `tp.footer`: Build your new plan, then work it out. · Build your new plan, then work it out. · Choose the plan that flies tomorrow. · Choose the plan that flies this week. · [Work out my plan ▶]
+- `tp.footer`: Build a new plan for tomorrow. · Build a new plan for this week. · Choose the plan that flies tomorrow. · Choose the plan that flies this week. · Work out your new plan before you choose. · Work out your new plan before you choose. · [Work out my plan ▶]
 - `tp.tray`: drag one onto the new plan
-- `tp.co1`: NEW · TWO PLANS · Build a new plan for tomorrow · Compare it with yesterday's plan. · [Got it]
+- `tp.co1`: NEW · TWO PLANS · Build a new plan for tomorrow. Compare it with yesterday's plan. · [Got it]
 - `tp.co2`: TWO PLANS · Now work it out · Press **Work out my plan**. · [Got it]
 - `ba.title`: Before / after: yesterday's plan and your new plan · Before / after: last week's plan and your new plan
 - `ba.axis`: Profit a day · {n} flights
@@ -516,42 +516,60 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `ld3.col`: Finance · made-up · Example
 - `ld3.job`: LAUNCH DAY · THE PROFIT · Profit = Total revenue − Total costs · [Watch ▶]
 - `ld3.mine`: Your turn: your plan's profit · Click **Total revenue**, press **−**, click **Total costs**. Then press [Enter]. The sheet works it out.
-- `ld3.footer`: Launch Day · Finance shows the profit on the example first. · Launch Day · now your plan's profit.
-- `wk1.co.add`: WEEK 1 ACCOUNTS · One way to find the week's total profit: add each day · Finance shows you first, on made-up numbers. Then you add up your own week. · [Watch ▶]
-- `wk1.co.sum`: A SIMPLER WAY · Here's a simpler way to do it in a spreadsheet: Σ SUM · Finance shows you on the same made-up numbers. Then it's your turn on your week. · [Watch ▶]
-- `wk1.avg.watch`: WATCH · Watch: Finance works out the average a day · Finance clicks **Profit this week**, presses **÷**, clicks **Days flown**, then presses [Enter]. Then it's your turn on the Σ SUM sheet.
-- `wk1.avg.mine`: Your turn: the average a day · Click **Profit this week**, press **÷**, click **Days flown**, then press [Enter].
+- `ld3.footer`: Launch Day · the profit. · Launch Day · your profit. · Launch Day · watch Finance, on made-up numbers.
+- `wk1.co.add`: WEEK 1 ACCOUNTS · One way to find the week's total profit: add each day · [Watch ▶]
+- `wk1.co.sum`: A SIMPLER WAY · Here's a simpler way to do it in a spreadsheet · [Watch ▶]
+- `wk1.avg.watch`: WATCH · Watch: Finance works out the average a day · Watch: Finance clicks **Profit this week**, presses **÷**, clicks **Days flown**, then presses **Enter**.
+- `wk1.avg.mine`: Now it's your turn: calculate the average a day
 - `wi2.title`: What if you change a fare? · Plan week {n} · {date}
 - `wi2.cols`: your fare · what if · what if − yours · Difference
 - `wi2.rows`: Seats filled a day · Fare · Ticket revenue a day · A week (× 7) · A month (× {w} weeks)
-- `wi2.co1`: NEW · WHAT IF · What if {city} were £{step} more? · People still fill all {seats} seats at {fare}. What would £{step} more on each ticket bring in? Finance shows you first, with your fare. · [Watch ▶]
+- `wi2.co1`: NEW · WHAT IF · What if {city} were £{step} more? · [Got it]
 - `wi2.watch`: Watch: Finance clicks **Seats filled**, presses **×**, clicks **Fare**, then presses [Enter].
 - `wi2.q1`: WHAT IF · 2 OF 4 · What if: ticket revenue a day · {seats} seats × {fare}.
 - `wi2.q2`: WHAT IF · 3 OF 4 · A week: the difference · {more} more a day, times 7.
-- `wi2.co4`: A LITTLE ADDS UP · £{step} more a ticket = {month} more a month · A day: {d}. A week: {w}. A month: {m}. Try other fares with − and +. Every figure works itself out. · [Try other fares]
-- `wi2.footer`: Plan week {n} · Finance first, then you. · Plan week {n} · try other fares, or set them. · [Set my fares ▶]
+- `wi2.co4`: A LITTLE ADDS UP · £{step} more a ticket = {month} more a month · [Got it]
+- `wi2.footer`: Plan week {n} · what a little more on a fare adds up to. · Plan week {n} · what a little more on a fare adds up to. · [Set my fares ▶]
 - `home.now.week`: Week {n}: your plan flies again
 - `ba.table.note`: Finance filled this in from your two plans (ƒ). Nothing to work out here.
 - `ba.bracket`: {money} · a day
 - `chg3.diff.line`: Read the note under the Difference column, then press **Watch**.
 - `chg3.diff.sign`: **{v}** means the fare is {n} {dir}. · **{v}** means {lab} went {dir} by {n}. · higher · lower · up · down
 - `ld3.line`: Press **Watch** when you're ready.
-- `tp.co1.week`: NEW · TWO PLANS · Build a new plan for this week · Compare it with last week's plan. · [Got it]
+- `tp.co1.week`: NEW · TWO PLANS · Build a new plan for this week. Compare it with last week's plan. · [Got it]
 - `tp.co2.week`: TWO PLANS · Now work it out · Press **Work out my plan**. · [Got it]
 - `ba.co1.week`: BEFORE / AFTER · Last week's plan · {n} flights a day: {list}. Flown again this week, it would make {money} profit a day. · [Next ▸]
 - `ba.co3.than.week`: : more than {old} would make
 - `ba.co4.np`: BEFORE / AFTER · The difference a day · Your new plan should make {money} {more} a day{fewer}. · [Choose a plan ▶]
-- `np.title`: Work out your new plan · Plan tomorrow · the same sums as Launch Day
-- `np.cols`: your new plan · New plan · Yesterday's plan · new − yesterday's · Difference
+- `np.title`: Work out your new plan · {day}'s plan · worked out before you choose
+- `np.cols`: your new plan · New plan · Yesterday's plan · new − yesterday · Difference · your flight · your
 - `np.rows`: Passengers · Fare · Ticket revenue · Total revenue · Other costs · Fuel burned · Total costs · Profit
 - `np.diff`: The difference in profit
-- `np.line`: Work out your new plan, like Launch Day. · ✓ Your new plan makes {d} {more} a day than yesterday.
-- `np.footer`: Plan tomorrow · work out your new plan. · Plan tomorrow · see it as a graph. · [Before / after ▶]
-- `day.tour.1`: HOW IT WENT · Profit today · What your plan made today, after its costs. · [Next ▸]
-- `day.tour.2`: HOW IT WENT · Route by route · How many wanted to fly, how many flew, and who couldn't get a seat. · [Next ▸]
-- `day.tour.3`: HOW IT WENT · What next · What today means for tomorrow. · [Next ▸]
-- `day.tour.4`: HOW IT WENT · Your choice · Keep the plan, or build a new one. · [Got it]
+- `np.line`: Your turn. · ✓ Your new plan should make {d} {more} a day than yesterday's.
+- `np.footer`: {day}'s plan · work it out, then compare. · {day}'s plan · work it out, then compare. · [Before / after ▶]
+- `day.tour.1`: REVIEW THE DAY · Your profit today · [Next ▸]
+- `day.tour.2`: REVIEW THE DAY · Who wanted to fly, and who flew · [Next ▸]
+- `day.tour.3`: REVIEW THE DAY · What next · What next: {city} opens tomorrow · [Next ▸]
+- `day.tour.4`: REVIEW THE DAY · Your choice: plan tomorrow · [Got it]
 - `takeoff.skip`: [Skip take-off ▶]
+- `ld3.mine.task`: Calculate the profit
+- `ld3.mine.line`: Your turn.
+- `day.tour.0`: LAUNCH DAY · Review the day · [Start ▸]
+- `np.task`: Calculate the ticket revenue · Calculate the total revenue · Calculate the profit
+- `np.tk2`: The ticket revenue
+- `ba.np.co1`: BEFORE / AFTER · Yesterday's plan: {flights} · [Next ▸]
+- `ba.np.co2`: BEFORE / AFTER · Your new plan: {money} {more} a day · [Got it]
+- `ba.np.footer`: {day}'s plan · what you worked out. · {day}'s plan · [Choose a plan ▶]
+- `wk1.easier`: An easier method ▶
+- `wk1.sum.same2`: ✓ Same answer: **{total}**
+- `wk1.avg.go`: Now calculate the average ▶
+- `wk1.avg.fin`: ✓ Finance: average a day **{mean}**
+- `wi2.task`: Calculate the ticket revenue a day · Calculate the difference over a week
+- `wi2.line`: Your turn.
+- `wi2.x7`: Watch: Finance clicks **Ticket revenue a day**, presses **×**, types **7**, then presses **Enter**.
+- `wi2.x7.go`: Finance shows you a week.
+- `wi2.x4`: Watch: Finance clicks **A week**, presses **×**, types **{w}**, then presses **Enter**.
+- `wi2.x4.go`: Finance shows you a month.
 
 ## Identity and photos (CR5)
 

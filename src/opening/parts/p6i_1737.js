@@ -124,9 +124,10 @@ s2Timetable = function(pl, L){
   const old = tpOld(); if(!old) return h;
   const wk = !tpDay(), O = T3('tp.lane.old').text, N = T3('tp.lane.new').text, C = T3('tp.choice'), plane = planeById(S.fleet[0].planeId);
   const nOld = old.fleet.reduce((t, x) => t + x.sched.length, 0), pNew = tpHas(currentPlan()) && npWorked() ? tpProfit(currentPlan()) : null, pOld = tpProfit(old);
-  const oldLab = `<div class="c1-lc c3-lc"><b class="c3-k">${esc(O[wk ? 2 : 0] || "TODAY'S PLAN")}</b><small>${esc(O[wk ? 3 : 1] || 'Flew today')}</small><small>${esc(shortPlane(plane))} · ${plural(nOld, 'flight')}</small></div>`;
+  const flewLD = !wk && (() => { const X = I.c2X(), W0 = S.wk, eve = W0 && W0.dayDone === S.day; return (X.chgEve || (eve ? S.day : S.day - 1)) === 1; })();
+  const oldLab = `<div class="c1-lc c3-lc"><b class="c3-k">${esc(O[wk ? 2 : 0] || "TODAY'S PLAN")}</b><small>${esc(flewLD && O[4] ? O[4] : O[wk ? 3 : 1] || 'Flew today')}</small><small>${esc(shortPlane(plane))} · ${plural(nOld, 'flight')}</small></div>`;
   const newLab = `<div class="c1-lc c3-lc new"><b class="c3-k">${esc(N[0] || 'NEW PLAN')}</b><small>${esc(N[wk ? 2 : 1] || 'For tomorrow')}</small><small>${esc(shortPlane(plane))} · ${tpHas(currentPlan()) ? plural(normPlan(currentPlan()).fleet[0].sched.length, 'flight') : esc(N[3] || 'drag flights in')}</small></div>`;
-  const box = (k, lab, val, id, can) => `<div class="c3-ch ${k}${can ? ' on' : ''}"><small>${esc(lab)}</small><b class="${val === null ? 'none c4-wait' : val < 0 ? 'amber' : 'gold'}">${val === null ? esc(k === 'new' ? (C.text[3] || 'work it out first') : '—') : (val < 0 ? '−' : '') + money(Math.abs(val))}</b><button class="bv-btn ${k === 'new' && can ? 'go' : ''}" id="${id}" ${can ? '' : 'disabled'}>${bt(C.button || 'Choose')} &#9654;</button></div>`;
+  const box = (k, lab, val, id, can) => `<div class="c3-ch ${k}${can ? ' on' : ''}"><small>${esc(lab)}</small><b class="${val === null ? 'none c4-wait' : val < 0 ? 'amber' : 'gold'}">${val === null ? esc(k === 'new' ? (C.text[3] || 'work it out first') : '—') : (val < 0 ? '−' : '') + money(Math.abs(val))}</b><button class="bv-btn ${can && (k === 'new' || pNew !== null) ? 'go' : ''}" id="${id}" ${can ? '' : 'disabled'}>${bt(C.button || 'Choose')} &#9654;</button></div>`;
   // the old row (p6h draws it as "Before: yesterday's plan") becomes TODAY'S PLAN, with its buttons gone
   h = h.replace(/<button class="btn c2-oldb[^>]*>[\s\S]*?<\/button>/, '').replace(/<button class="btn" id="c2OldBack"[\s\S]*?<\/button>/, '');
   h = h.replace(/(<div class="c1-row c2-oldrow"[^>]*>)<div class="c1-lc">[\s\S]*?<\/div>(<div class="c2-olane">[\s\S]*?<\/div>)<span><\/span><\/div>/, (m, a, lane) => `${a.replace('c2-oldrow', 'c2-oldrow c3-oldrow')}${oldLab}${lane}${box('old', C.text[wk ? 1 : 0] || 'Profit a day · flew today', pOld, 'c3ChooseOld', true)}</div>`);
@@ -148,9 +149,9 @@ function c3TpDecorate(){
   const wk = !tpDay(), K = T3('tp.compare'), pOld = tpProfit(old), has = tpHas(currentPlan()), worked = npWorked(), pNew = has && worked ? tpProfit(currentPlan()) : null, d = pNew === null ? null : pNew - pOld;
   const same = (() => { try{ return planKey(normPlan(currentPlan())) === planKey(old); }catch(e){ return true; } })(), FT = T3('tp.footer');
   const sumEl = [...scr.querySelectorAll('.s2-sum, .st-sum, .ps-bar, [class*="summary"]')].find(x => /PLAN SUMMARY|Seats likely filled/i.test(x.textContent));
-  const cmp = `<div class="c3-cmp" role="status"><span class="c3-k">${esc(K.eyebrow || 'COMPARE')}</span><span>${esc(K.text[wk ? 1 : 0] || "Today's plan")} <b class="gold">${money(pOld)}</b> a day</span><span>${esc(K.text[2] || 'New plan')} <b class="${pNew === null ? '' : 'gold'}">${pNew === null ? '—' : money(pNew)}</b>${pNew === null ? '' : ' a day'}</span>${d === null ? '' : `<b class="${d >= 0 ? 'green' : 'amber'}">${signed(d, true)} a day</b>`}<small>${esc(K.text[wk ? 4 : 3] || 'Projected for tomorrow')}</small></div>`;
+  const cmp = `<div class="c3-cmp" role="status"><span class="c3-k">${esc(K.eyebrow || 'COMPARE')}</span><span>${esc(K.text[wk ? 1 : 0] || "Today's plan")} <b class="gold">${money(pOld)}</b> a day</span><span>${esc(K.text[2] || 'New plan')} <b class="${pNew === null ? '' : 'gold'}">${pNew === null ? '?' : money(pNew)}</b> a day</span>${d === null ? '' : `<b class="${d >= 0 ? 'green' : 'amber'}">${signed(d, true)} a day</b>`}<small>${esc(K.text[wk ? 4 : 3] || 'Projected for tomorrow')}</small></div>`;
   const had = scr.querySelector('.c3-cmp'); if(had) had.outerHTML = cmp; else if(sumEl) sumEl.outerHTML = cmp; else { const tt = scr.querySelector('[data-c1tt]'); if(tt) tt.insertAdjacentHTML('afterend', cmp); }
-  const bar = scr.querySelector('.actbar'); if(bar){ const hint = bar.querySelector('.dk-hint, .ab-hint, p'); if(hint) hint.textContent = FT.text[(worked ? 2 : 0) + (wk ? 1 : 0)] || 'Choose the plan that flies tomorrow.';
+  const bar = scr.querySelector('.actbar'); if(bar){ const hint = bar.querySelector('.dk-hint, .ab-hint, p'); if(hint) hint.textContent = (has && !worked && FT.text[4 + (wk ? 1 : 0)]) || FT.text[(worked ? 2 : 0) + (wk ? 1 : 0)] || 'Choose the plan that flies tomorrow.';
     bar.querySelectorAll('button').forEach(b => { if(b.id === 'c3TpBack') return; if(/Work out my plan|Ready to fly|Next/.test(b.textContent) || b.id === 'nx') b.remove(); });
     const back = bar.querySelector('#s2Back, .bv-btn.back, [id$="Back"]'); if(back && back.id !== 'c3TpBack') back.remove();
     if(!bar.querySelector('#c3TpBack')){ const box = bar.querySelector('.ab-btns, .dk-btns') || bar.lastElementChild; if(box) box.insertAdjacentHTML('afterbegin', `<button class="bv-btn big" id="c3TpBack">&#9664; Back</button>`); }
@@ -158,12 +159,12 @@ function c3TpDecorate(){
     const wb = bar.querySelector('#c3TpWork'); if(wb) wb.remove();
     if(!worked){ const box = bar.querySelector('#c3TpBack') && bar.querySelector('#c3TpBack').parentElement; if(box) box.insertAdjacentHTML('beforeend', `<button class="bv-btn go big" id="c3TpWork" ${has && !same ? '' : 'disabled'}>${bt(FT.button || 'Work out my plan')} &#9654;</button>`); } }
   // callouts one at a time: build a new plan (on first open), then choose (when the new plan first has a flight)
-  const U = UI.c3tp, Y = X3(), coN = !Y.seen.tp1 ? 1 : has && !Y.seen.tp2 ? 2 : 0;
+  const U = UI.c3tp, Y = X3(), coN = !Y.seen.tp1 ? 1 : 0;   // round 3: callout 2 ("Now work it out") is gone
   if(coN && !scr.querySelector('[data-c3co]')){ const sx = wk ? '.week' : '', T = coN === 1 ? T3('tp.co1' + sx) : T3('tp.co2' + sx, { old:money(pOld), new:pNew === null ? '—' : money(pNew) }), tt = scr.querySelector('[data-c1tt]');
-    if(tt){ tt.style.position = 'relative'; tt.insertAdjacentHTML('beforeend', c3Co(T, 'c3TpGot', `${coN} of 2`, 'c3-tpco')); const el = tt.querySelector('[data-c3co]'), at = coN === 1 ? tt.querySelector('.c3-newrow .c1-lane') : tt.querySelector('.c3-ch.new');
-      if(el && at){ const G = tt.getBoundingClientRect(), A = at.getBoundingClientRect(); el.style.position = 'absolute'; el.style.top = Math.round(A.bottom - G.top + 12) + 'px';
-        el.style.left = Math.round(coN === 1 ? Math.max(8, A.left - G.left + 40) : Math.max(8, A.right - G.left - el.offsetWidth)) + 'px';
-        const ptr = el.querySelector('.c1-sco-ptr'); if(ptr) ptr.style.left = coN === 1 ? '40px' : Math.round(el.offsetWidth - A.width / 2 - 7) + 'px'; }
+    if(tt){ tt.style.position = 'relative'; tt.insertAdjacentHTML('beforeend', c3Co(T, 'c3TpGot', '', 'c3-tpco')); const el = tt.querySelector('[data-c3co]'), at = tt.querySelector('.c3-newrow .c1-lane'), tray = [...tt.querySelectorAll('.c1-tray .c1-add, .c1-tray button, .c1-tray [draggable]')].pop();
+      if(el && at){ const G = tt.getBoundingClientRect(), A = at.getBoundingClientRect(), TR = tray ? tray.getBoundingClientRect() : null; el.style.position = 'absolute'; el.style.top = Math.round(A.bottom - G.top + 12) + 'px';
+        const left = Math.min(Math.max(8, (TR ? TR.right : A.left + 300) - G.left + 24), G.width - el.offsetWidth - 8); el.style.left = Math.round(left) + 'px';
+        const ptr = el.querySelector('.c1-sco-ptr'); if(ptr) ptr.style.left = '40px'; }
       on('c3TpGot', () => { Y.seen['tp' + coN] = S.day || 1; save(); render(); }); } }
   on('c3ChooseOld', () => c3ChooseOld());
   on('c3ChooseNew', () => { if(!tpHas(currentPlan()) || !npWorked()) return; c3FlyNew(); });
@@ -201,6 +202,8 @@ window.__tkPre = R => { try{ if(tpOn()){ const tap = sel => { const e = document
       if(tpHas(currentPlan()) && !same && tap('#c3TpWork')) return 'two plans: work out my plan';
       if(tap('#c3ChooseOld')) return "kept today's plan"; }
     if(document.getElementById('c3BaNext')){ document.getElementById('c3BaNext').click(); return 'before / after: next'; }
+    if(document.getElementById('c3BaGot')){ document.getElementById('c3BaGot').click(); return 'before / after: got it'; }
+    if(document.getElementById('c3BaChoose')){ document.getElementById('c3BaChoose').click(); return 'before / after: choose a plan'; }
     if(document.getElementById('c3BaGo')){ document.getElementById('c3BaGo').click(); return 'before / after: work it out'; }
     if(document.getElementById('c3NpGo') && !document.getElementById('c3NpGo').disabled){ document.getElementById('c3NpGo').click(); return 'new plan: before / after'; }
     if(document.getElementById('c3FraGo')){ document.getElementById('c3FraGo').click(); return 'plan tomorrow with the new route'; }
@@ -238,14 +241,40 @@ function c3BaSvg(A, B, step, labels){
     return out + `<text x="${x + bw / 2}" y="${sy(Math.max(P.total, 0)) - 10}" class="c3-tot" text-anchor="middle" opacity="${dim ? .35 : 1}">${P.total < 0 ? '−' : ''}${money(Math.abs(P.total))}</text>`; };
   g += bar(A, xs[0], step === 2 || step === 3, null) + bar(B, xs[1], step === 1, step === 3 ? labels.ring : null);
   g += `<line x1="${xs[0]}" x2="${xs[1] + bw}" y1="${sy(A.total)}" y2="${sy(A.total)}" class="c3-old"/>`;
-  if(step >= 4){ const ya = sy(A.total), yb = sy(B.total), x = xs[1] + bw + 14, BL = T3('ba.bracket', { money:signed(B.total - A.total, true) }).text, my = (ya + yb) / 2;
+  if(step >= 4 || labels.brk){ const ya = sy(A.total), yb = sy(B.total), x = xs[1] + bw + 14, BL = T3('ba.bracket', { money:signed(B.total - A.total, true) }).text, my = (ya + yb) / 2;
     g += `<path d="M${x - 6} ${ya} H${x} V${yb} H${x - 6}" class="c3-brk ${B.total >= A.total ? '' : 'neg'}"/><text x="${x + 8}" y="${my + 2}" class="c3-bl ${B.total >= A.total ? '' : 'neg'}">${esc(BL[0] || signed(B.total - A.total, true))}</text><text x="${x + 8}" y="${my + 18}" class="c3-bs">${esc(BL[1] || 'a day')}</text>`; }
   g += `<text x="${xs[0] + bw / 2}" y="${y1 + 24}" text-anchor="middle" class="c3-bn">${esc(labels.a)}</text><text x="${xs[0] + bw / 2}" y="${y1 + 42}" text-anchor="middle" class="c3-bs">${esc(labels.an)}</text>`;
   g += `<text x="${xs[1] + bw / 2}" y="${y1 + 24}" text-anchor="middle" class="c3-bn">${esc(labels.b)}</text><text x="${xs[1] + bw / 2}" y="${y1 + 42}" text-anchor="middle" class="c3-bs">${esc(labels.bn)}</text>`;
   return `<svg class="c3-svg" viewBox="0 0 ${W} ${Hh}" width="${W}" height="${Hh}" role="img" aria-label="Profit a day: ${esc(labels.a)} ${money(A.total)}, ${esc(labels.b)} ${money(B.total)}">${g}</svg>`;
 }
+/* the plan's day, by name ("Tuesday"): the day the two plans are for */
+const npDayName = () => { const W0 = S.wk, eve = W0 && W0.dayDone === S.day; return dLong(eve ? S.day + 1 : S.day).split(' ')[0]; };
+/* round 3: Before / after after the new-plan sheet: two title-only callouts, then Choose a plan ▶ in the footer */
+function c3BaNp(old, now){
+  const A = c3Groups(old), B = c3Groups(now), U = UI.c3ba, n2 = Math.min(3, Math.max(1, U.co || 1)), d = B.total - A.total, BT = T3('ba.title'), ax = T3('ba.axis');
+  const lab = { a:T3('ba.table').text[5] || "Yesterday's plan", b:'Your new plan', an:plural(A.n, 'flight'), bn:plural(B.n, 'flight'), ring:null, brk:n2 >= 2 };
+  const svg = c3BaSvg(A, B, n2 === 3 ? 0 : n2, lab);
+  const C = n2 === 1 ? T3('ba.np.co1', { n:A.n, flights:plural(A.n, 'flight') }) : n2 === 2 ? T3('ba.np.co2', { money:money(Math.abs(d)), more:d >= 0 ? 'more' : 'less' }) : null;
+  const co = C ? c3Co(Object.assign({}, C, { button:C.button || (n2 === 1 ? 'Next ▸' : 'Got it') }), n2 === 1 ? 'c3BaNext' : 'c3BaGot', `${n2} of 2`, 'c3-baco s' + (n2 === 1 ? 1 : 4)) : '';
+  const tabs = ashTabs('c2ba').filter(t => t.id !== 'whatif'), day = npDayName(), F = T3('ba.np.footer', { day }).text;
+  const top = `<header class="ash-top"><div class="ash-tt"><span class="ash-crumb">${esc(`${S.airline.name || 'Airline'} HQ · ${F[1] || `${day}'s plan`}`)}</span><h1 class="ash-title">${esc(BT.title || "Before / after: yesterday's plan and your new plan")}</h1></div><nav class="ash-tabs" aria-label="Sheets">${tabs.map(t => `<button class="ash-tab ${t.on ? 'on' : ''} ${t.off ? 'off' : ''}" data-ashtab="${esc(t.id)}" ${t.off || t.on ? 'aria-disabled="true"' : ''}>${ashIco(t.ic)}${esc(t.label)}</button>`).join('')}</nav></header>`;
+  const body = `<div class="dp ash-page c3-ba c5-banp"><section class="ash c3-bas" aria-label="Before / after">${top}<div class="c3-bab"><div class="c3-gw"><p class="c3-gtitle">${esc(ax.title || 'Profit a day')}</p>${svg}${n2 === 1 ? co : ''}</div><div class="c3-side">${n2 === 2 ? co : ''}</div></div></section></div>`;
+  screen().innerHTML = shell(body, deskBar(esc(F[0] || `${day}'s plan · what you worked out.`), `<button class="bv-btn big" id="c3BaBack">&#9664; Back</button><button class="bv-btn go big" id="c3BaChoose">${bt(T3('ba.np.footer').button || 'Choose a plan')} &#9654;</button>`));
+  screen().querySelectorAll('[data-ashtab]').forEach(b => b.onclick = () => { if(b.getAttribute('aria-disabled') === 'true') return; UI.ashTab = b.getAttribute('data-ashtab'); render(); });
+  const el = screen().querySelector('.c3-baco'), sv = screen().querySelector('.c3-svg');
+  if(el && sv){ const S0 = sv.getBoundingClientRect(), G = sv.parentElement.getBoundingClientRect(), k = S0.width / 560; el.classList.add('pl');
+    if(n2 === 2){ const side = el.parentElement, top2 = c3BaY(A, B, Math.max(A.total, B.total)) * k + S0.top; el.style.position = 'relative'; el.style.left = '0'; el.style.top = '0'; el.style.width = '100%';
+      side.style.paddingTop = Math.max(0, Math.round(top2 - side.getBoundingClientRect().top)) + 'px'; }
+    else { const mid = c3BaY(A, B, A.total / 2) * k + S0.top; el.style.position = 'absolute'; el.style.left = Math.round(S0.left - G.left + 250 * k + 14) + 'px'; el.style.top = Math.round(mid - G.top - 30) + 'px'; } }
+  on('c3BaNext', () => { U.co = 2; render(); });
+  on('c3BaGot', () => { U.co = 3; render(); });
+  on('c3BaChoose', () => npChoose());
+  on('c3BaBack', () => { UI.ashTab = null; UI.c3ba = null; c3BackToPlans(); });
+  return true;
+}
 function c3BaPage(){
   const old = tpOld(), now = normPlan(currentPlan()); if(!old) return false;
+  if(UI.c3ba && UI.c3ba.np) return c3BaNp(old, now);
   const wk = !tpDay(), A = c3Groups(old), B = c3Groups(now), U = UI.c3ba || (UI.c3ba = { key:tpKey(), co:5 }), step = Math.min(4, Math.max(1, U.co || 1)), all = (U.co || 1) > 4;
   const ids = new Set(A.groups.map(g => g.id)), fresh = B.groups.find(g => !ids.has(g.id)), big = fresh || B.groups.slice().sort((x, y) => Math.abs(y.profit - ((A.groups.find(a => a.id === y.id) || {}).profit || 0)) - Math.abs(x.profit - ((A.groups.find(a => a.id === x.id) || {}).profit || 0)))[0];
   const BT = T3('ba.title'), tl = [BT.title, BT.text[0]], ax = T3('ba.axis'), lab = { a:wk ? "Last week's plan" : (T3('ba.table').text[5] || "Yesterday's plan"), b:'Your new plan', an:plural(A.n, 'flight'), bn:plural(B.n, 'flight'), ring:big && big.id };
@@ -424,11 +453,13 @@ ashLaunchSpec = function(){
   try{ if(!on3() || !S || S.phase !== 'setup' || !sp || !sp.c1 || !['pdemo', 'done'].includes(sp.c1.stage)) return sp;
     const X = c1Ld(), E = exFig(); if(!E) return sp;
     const P = sp.cols.filter(k => k.c !== 'G').slice(-1)[0].c, CL = T3('ld3.col').text;
-    // narrower columns so the example fits at 1366: option columns 118 with short heads, his plan 166, labels 250
-    sp.lw = 250; sp.cols.forEach(k => { if(k.src){ k.w = 118; k.main = String(k.main || '').replace(/ at /, ' '); } else if(k.c === P) k.w = 166; });
-    if(!sp.cols.some(k => k.c === 'G')) sp.cols.push({ c:'G', w:150, top:CL[0] || 'Finance · made-up', main:CL[1] || 'Example', c3ex:true });
-    Object.assign(sp.v, { G5:{ t:money(E.rev) }, G6:{ t:money(E.other) }, G7:{ t:money(E.fuel) }, G8:{ t:money(E.cost) } });
-    if(X.c3pdemo) sp.v.G9 = { t:money(E.profit) };
+    // round 3: the made-up example column only while Finance demonstrates (rule 8); before Watch and on his turn it is gone
+    const demo = !!X.c3pjob && !X.c3pdemo;
+    if(demo){   // narrower columns so the example fits at 1366: option columns 118 with short heads, his plan 166, labels 250
+      sp.lw = 250; sp.cols.forEach(k => { if(k.src){ k.w = 118; k.main = String(k.main || '').replace(/ at /, ' '); } else if(k.c === P) k.w = 166; });
+      if(!sp.cols.some(k => k.c === 'G')) sp.cols.push({ c:'G', w:150, top:CL[0] || 'Finance · made-up', main:CL[1] || 'Example', c3ex:true });
+      Object.assign(sp.v, { G5:{ t:money(E.rev) }, G6:{ t:money(E.other) }, G7:{ t:money(E.fuel) }, G8:{ t:money(E.cost) } }); }
+    else { sp.cols = sp.cols.filter(k => k.c !== 'G'); Object.keys(sp.v).forEach(k => { if(/^G\d/.test(k)) delete sp.v[k]; }); }
     if(sp.c1.stage === 'done' && X.c3pmine) return sp;
     const want = (() => { try{ return planLines(currentPlan()).profit; }catch(e){ return 0; } })();
     if(!X.c3pjob){ sp.c1.stage = 'pjob'; sp.act = null; sp.just = null; sp.v[P + '9'] = {}; sp.doneLine = ''; return sp; }
@@ -448,13 +479,15 @@ ashLaunchPage = function(st){
   try{ const sp = ashLive(); if(!on3() || !sp || !sp.c1) return r; const stage = sp.c1.stage, root = screen(), gw = root.querySelector('.ash-gridw'), cell = ref => root.querySelector(`.ash-grid .ash-c[data-ref="${ref}"]`);
     root.querySelectorAll('.ash-grid .ash-c[data-ref^="G"]').forEach(c => c.classList.add('c3-ex'));
     const F = T3('ld3.footer').text, hint = root.querySelector('.actbar .dk-hint, .actbar .ab-hint, .actbar p');
-    if(stage === 'pjob' && gw){ gw.insertAdjacentHTML('beforeend', c3Co(T3('ld3.job'), 'c3LdWatch', '', 'pu')); c3PlaceUnder(gw.querySelector('[data-c3co]'), cell('G9'), { dy:12 });
+    const PC = (sp.cols.filter(k => k.c !== 'G').slice(-1)[0] || {}).c || 'F';
+    if(stage === 'pjob' && gw){ gw.insertAdjacentHTML('beforeend', c3Co(T3('ld3.job'), 'c3LdWatch', '', 'pu c5-under')); const co = gw.querySelector('[data-c3co]'); if(window.__c5 && co) window.__c5.under(co, cell(PC + '9')); else c3PlaceUnder(co, cell(PC + '9'), { dy:12 });
       const ln = root.querySelector('.ash-line'); if(ln && tx('ld3.line', 0)) ln.innerHTML = c1Html(tx('ld3.line', 0));
       root.querySelector('section.ash[data-ash]') && root.querySelector('section.ash[data-ash]').classList.add('c3-hold'); if(hint && F[0]) hint.textContent = F[0];
       on('c3LdWatch', () => { c1Ld().c3pjob = S.day || 1; save(); render(); }); }
-    if(stage === 'pdemo' && hint && F[0]) hint.textContent = F[0];
+    if(stage === 'pdemo' && hint && (F[2] || F[0])) hint.textContent = F[2] || F[0];
     if(stage === 'pmine' && gw && sp.act){ const T = T3('ld3.mine'); const sig = root.querySelector('[data-c1sig]'); if(sig) sig.remove();
-      gw.insertAdjacentHTML('beforeend', c1SignalHtml({ kind:'build', title:T.title, lines:T.text.map(t => c1Html(t)), ptr:'up' })); c1Place(gw.querySelector('[data-c1sig]'), cell(sp.act.tgt), 'below', { dx:0 }); if(hint && F[1]) hint.textContent = F[1]; }
+      gw.insertAdjacentHTML('beforeend', c1SignalHtml({ kind:'build', title:T.title, task:tx('ld3.mine.task', 0) || 'Calculate the profit', lines:T.text.map(t => c1Html(t)), ptr:'up' })); c1Place(gw.querySelector('[data-c1sig]'), cell(sp.act.tgt), 'below', { dx:0 }); if(hint && F[1]) hint.textContent = F[1];
+      const ln = root.querySelector('.ash-line'); if(ln && tx('ld3.mine.line', 0)){ const hl = ln.querySelector('a, button'); ln.innerHTML = c1Html(tx('ld3.mine.line', 0)) + ' '; if(hl) ln.appendChild(hl); } }
     if(stage === 'done' && c1Ld().c3pdemo){ const g9 = cell('G9'); if(g9) g9.classList.add('c3-exdone'); }
   }catch(e){ console.error(e); }
   return r;
@@ -497,7 +530,7 @@ ashReviewRender = function(st){
       const fb = root.querySelector('.c2-pair .ash-fb .ash-f'); if(fb) fb.innerHTML = ''; const w = root.querySelector('.c2-pair .ash-fb .ash-w'); if(w) w.innerHTML = '';
       root.querySelectorAll('.c2-pair .ash').forEach(a => a.classList.add('c3-hold'));
       const cur = document.getElementById('c1Cursor'); if(cur) cur.style.display = 'none';
-      if(gw){ gw.insertAdjacentHTML('beforeend', c3Co(T3('wk1.co.' + k), 'c3WkWatch', g === 'ex1' ? '1 of 2' : '2 of 2', 'pu')); const el = gw.querySelector('[data-c3co]'), last = [...side.querySelectorAll('.ash-grid .ash-c[data-ref^="B"]')].pop();
+      if(gw){ gw.insertAdjacentHTML('beforeend', c3Co(T3('wk1.co.' + k), 'c3WkWatch', '', 'pu')); const el = gw.querySelector('[data-c3co]'), last = [...side.querySelectorAll('.ash-grid .ash-c[data-ref^="B"]')].pop();
         if(el && last){ el.style.position = 'absolute'; el.style.left = '8px'; el.style.top = Math.round(last.getBoundingClientRect().bottom - gw.getBoundingClientRect().top + 12) + 'px';
           gw.style.paddingBottom = Math.round(el.offsetHeight + 24) + 'px'; } }   // inside the example's frame: the sheet grows to hold it
       on('c3WkWatch', () => { Y.seen['wk1' + k] = S.day || 1; save(); render(); }); }
@@ -539,51 +572,81 @@ function c3WiPage(st, Q){
   const q1 = st.qs.find(q => q.id === 'whatIfFirst'), q2 = st.qs.find(q => q.id === 'whatIfWeek'), d = q1.d, r = routeById(d.id), step = +WBS().whatIfQuestionStep || 3;
   st.s = st.s || {}; const qs1 = st.s[q1.id + ':' + q1.day] || (st.s[q1.id + ':' + q1.day] = {}), qs2 = q2 ? (st.s[q2.id + ':' + q2.day] || (st.s[q2.id + ':' + q2.day] = {})) : { ok:true, fin:true };
   const now = c1WiRows({}).rows.find(z => z.id === d.id) || { pax:0, seats:0 }, alt = c1WiRows({ [d.id]:d.f1 }).rows.find(z => z.id === d.id) || { pax:0, seats:0 };
-  const seats = alt.pax, t0 = now.pax * d.f0, t1 = alt.pax * d.f1, more = t1 - t0, mw = Math.round((+WBS().whatIfMonthDays || 28) / 7), n = weekNo(S.day || 1);
-  const W3 = st.c3 || (st.c3 = { co:0, demo:false }), stage = !W3.co ? 'co1' : !W3.demo ? 'demo' : !qs1.ok ? 'q1' : !qs2.ok ? 'q2' : 'month';
-  const CL = T3('wi2.cols').text, RW = T3('wi2.rows', { w:mw }).text;
+  const t0 = now.pax * d.f0, t1 = alt.pax * d.f1, more = t1 - t0, mw = Math.round((+WBS().whatIfMonthDays || 28) / 7), n = weekNo(S.day || 1);
+  // round 3: no Finance demo for ticket revenue (he builds his fare's, then the what-if fare on paper); Finance shows the × 7 and the × 4
+  const W3 = st.c3 || (st.c3 = { co:0 }); if(W3.demo && W3.b4 === undefined) W3.b4 = true;
+  const stage = !W3.co ? 'co1' : !W3.b4 ? 'b4' : !qs1.ok ? 'q1' : !W3.wk ? 'wk' : !qs2.ok ? 'q2' : !W3.mo ? 'mo' : 'month';
+  const CL = T3('wi2.cols').text, RW = T3('wi2.rows', { w:mw }).text, TK = T3('wi2.task').text;
   const cols = [{ c:'B', w:190, top:CL[0] || 'your fare', flag:r.flag, main:`${r.city} ${money(d.f0)}`, plan:true }, { c:'C', w:190, top:CL[1] || 'what if', flag:r.flag, main:`${r.city} ${money(d.f1)}` }, { c:'D', w:180, top:CL[2] || 'what if − yours', main:CL[3] || 'Difference' }];
-  const showRow = { 5:['q2', 'month'].includes(stage), 6:stage === 'month' };
+  const at = k => ['co1', 'b4', 'q1', 'wk', 'q2', 'mo', 'month'].indexOf(stage) >= ['co1', 'b4', 'q1', 'wk', 'q2', 'mo', 'month'].indexOf(k);
   const rows = [{ r:1, t:'hdr' }, { r:2, label:RW[0] || 'Seats filled a day', ic:'person' }, { r:3, label:RW[1] || 'Fare', ic:'tag' }, { r:4, label:RW[2] || 'Ticket revenue a day', ic:'coins', gold:true, t:'tot' }]
-    .concat(showRow[5] ? [{ r:5, label:RW[3] || 'A week (× 7)', ic:'cal', gold:true }] : []).concat(showRow[6] ? [{ r:6, label:RW[4] || `A month (× ${mw} weeks)`, ic:'cal', gold:true, t:'fin', nw:false }] : []);
+    .concat(at('wk') ? [{ r:5, label:RW[3] || 'A week (× 7)', ic:'cal', gold:true }] : []).concat(at('mo') ? [{ r:6, label:RW[4] || `A month (× ${mw} weeks)`, ic:'cal', gold:true, t:'fin', nw:false }] : []);
   const v = { B2:{ t:num(now.pax), f:true, bar:now.seats ? now.pax / now.seats : null, full:now.pax >= now.seats && now.seats > 0 }, C2:{ t:num(alt.pax), f:true, bar:alt.seats ? alt.pax / alt.seats : null, full:alt.pax >= alt.seats && alt.seats > 0 }, D2:{ t:alt.pax - now.pax ? signed(alt.pax - now.pax) : '—' },
     B3:{ t:money(d.f0) }, C3:{ t:money(d.f1) }, D3:{ t:signed(d.f1 - d.f0, true) } };
-  if(W3.demo) v.B4 = { t:money(t0) }; if(qs1.ok) v.C4 = { t:money(t1) };
-  if(['q2', 'month'].includes(stage)){ v.D4 = { t:signed(more, true), f:true, cls:more > 0 ? 'pos' : '' }; v.B5 = { t:money(t0 * 7), f:true }; v.C5 = { t:money(t1 * 7), f:true }; }
-  if(stage === 'month'){ v.D5 = { t:signed(more * 7, true), f:!q2, cls:more > 0 ? 'pos' : '', fin:!!qs2.shown }; v.B6 = { t:money(t0 * 7 * mw), f:true }; v.C6 = { t:money(t1 * 7 * mw), f:true }; v.D6 = { t:signed(more * 7 * mw, true), f:true, cls:more > 0 ? 'pos' : '' }; }
-  const sums = [];
-  if(stage === 'demo') sums.push({ id:'wi2:demo:' + q1.day, kind:'wi2:demo', tgt:'B4', refs:['B2', 'B3'], ops:['×'], words:'Seats filled × Fare', how:'formula', needEnter:true, c2demo:true, commute:false, unit:'£', want:t0, done:false, built:false, recKey:null, no:null,
-    wordsOf:ref => /2$/.test(ref) ? 'Seats filled' : 'Fare', lineBuild:T3H(tx('wi2.watch', 0)), answer:() => { W3.demo = true; save(); return { ok:true }; } });
-  if(stage === 'q1') sums.push(Q.paper(q1, qs1, { title:T3('wi2.q1').title || `What if ${r.city} were ${money(d.f1)}?`, tgt:'C4', refs:['C2', 'C3'], ops:['×'], words:'Seats filled × Fare', want:t1, rel:'ticketRevenue',
-    doc:`What if: ${r.city} at ${money(d.f1)}`, question:`${num(alt.pax)} × ${money(d.f1)}`, vals:[alt.pax, d.f1], answerText:money(t1) }));
-  if(stage === 'q2' && q2) sums.push(Q.paper(q2, qs2, { title:T3('wi2.q2').title || 'A week: the difference', tgt:'D5', refs:['D4', '7'], ops:['×'], words:'Difference a day × 7', want:more * 7, rel:'ticketRevenue',
-    doc:`What if, a week: ${r.city} at ${money(d.f1)}`, question:`${money(more)} × 7`, vals:[more, 7], answerText:signed(more * 7, true), hints:[{ t:`A week is 7 days: ${money(more)} × 7.` }] }));
+  if(W3.b4) v.B4 = { t:money(t0) }; if(qs1.ok){ v.C4 = { t:money(t1) }; v.D4 = { t:signed(more, true), f:true, cls:more > 0 ? 'pos' : '' }; }
+  if(W3.wk){ v.B5 = { t:money(t0 * 7) }; v.C5 = { t:money(t1 * 7), f:true }; }
+  if(qs2.ok && at('mo')) v.D5 = { t:signed(more * 7, true), f:!q2, cls:more > 0 ? 'pos' : '', fin:!!qs2.shown };
+  if(W3.mo){ v.B6 = { t:money(t0 * 7 * mw) }; v.C6 = { t:money(t1 * 7 * mw), f:true }; v.D6 = { t:signed(more * 7 * mw, true), f:true, cls:more > 0 ? 'pos' : '' }; }
+  const sums = [], wo = ref => !/^[A-Z]\d+$/.test(ref) ? ref : /4$/.test(ref) ? (RW[2] || 'Ticket revenue a day') : /5$/.test(ref) ? (RW[3] || 'A week').replace(/\s*\(.*\)$/, '') : /2$/.test(ref) ? 'Seats filled' : /3$/.test(ref) ? 'Fare' : ref;
+  const demo = (id, tgt, ref, k, line, ok) => ({ id:`wi2:${id}:${q1.day}`, kind:'wi2:' + id, tgt, refs:[ref, String(k)], ops:['×'], words:`${wo(ref)} × ${k}`, how:'formula', needEnter:true, c2demo:true, c5demo:true, commute:false, unit:'£', want:0, done:false, built:false, recKey:null, no:null,
+    wordsOf:wo, lineBuild:T3H(line), answer:() => { ok(); save(); return { ok:true }; } });
+  if(stage === 'b4') sums.push({ id:'wi2:b4:' + q1.day, kind:'wi2:b4', tgt:'B4', refs:['B2', 'B3'], ops:['×'], words:'Seats filled × Fare', how:'formula', needEnter:true, commute:true, unit:'£', want:t0, done:false, built:false, recKey:null, no:null, task:TK[0] || 'Calculate the ticket revenue a day',
+    wordsOf:wo, lineBuild:T3H(tx('wi2.line', 0, null, 'Your turn.')), answer:() => { W3.b4 = true; save(); return { ok:true }; } });
+  if(stage === 'q1') sums.push(Object.assign(Q.paper(q1, qs1, { title:T3('wi2.q1').title || `What if ${r.city} were ${money(d.f1)}?`, tgt:'C4', refs:['C2', 'C3'], ops:['×'], words:'Seats filled × Fare', want:t1, rel:'ticketRevenue',
+    doc:`What if: ${r.city} at ${money(d.f1)}`, question:`${num(alt.pax)} × ${money(d.f1)}`, vals:[alt.pax, d.f1], answerText:money(t1) }), { task:TK[0] || 'Calculate the ticket revenue a day' }));
+  if(stage === 'wk') sums.push(demo('x7', 'B5', 'B4', 7, tx('wi2.x7', 0, null, 'Watch: Finance clicks **Ticket revenue a day**, presses **×**, types **7**, then presses **Enter**.'), () => { W3.wk = true; }));
+  if(stage === 'q2' && q2) sums.push(Object.assign(Q.paper(q2, qs2, { title:T3('wi2.q2').title || 'A week: the difference', tgt:'D5', refs:['D4', '7'], ops:['×'], words:'Difference a day × 7', want:more * 7, rel:'ticketRevenue',
+    doc:`What if, a week: ${r.city} at ${money(d.f1)}`, question:`${money(more)} × 7`, vals:[more, 7], answerText:signed(more * 7, true), hints:[{ t:`A week is 7 days: ${money(more)} × 7.` }] }), { task:TK[1] || 'Calculate the difference over a week' }));
   if(stage === 'q2' && !q2){ qs2.ok = true; }
-  const act = sums[0] || null;
+  if(stage === 'mo') sums.push(demo('x4', 'B6', 'B5', mw, tx('wi2.x4', 0, { w:mw }, `Watch: Finance clicks **A week**, presses **×**, types **${mw}**, then presses **Enter**.`), () => { W3.mo = true; }));
+  const act = sums[0] || null, goW = (stage === 'wk' || stage === 'mo') && !W3['go' + stage];
   const tabs = ashTabs(null).filter(t => t.id !== 'c2ba' && t.id !== 'whatif'); tabs.forEach(t => { t.on = false; }); tabs.splice(Math.max(0, tabs.findIndex(t => t.id === 'week')) + 1, 0, { id:'wi', label:'What if', ic:'tag', on:true, off:false });
-  const TT = T3('wi2.title', { n, date:dLong(S.day || 1) }), sp = { id:'wi2:' + q1.day, crumb:`${S.airline.name || 'Airline'} HQ · ${TT.text[0] || `Plan week ${n}`}`, title:TT.title || 'What if you change a fare?', tabs, lw:300, cols, rows, v, sums, act, just:null, doneF:null,
-    doneLine:stage === 'month' ? `<span class="pos">✓</span> ${T3H(T3('wi2.co4', { step, month:money(Math.abs(more * 7 * mw)), d:money(more), w:money(more * 7), m:money(more * 7 * mw) }).title || '')}` : '' };
+  const TT = T3('wi2.title', { n, date:dLong(S.day || 1) }), sp = { id:'wi2:' + q1.day, crumb:`${S.airline.name || 'Airline'} HQ · ${TT.text[0] || `Plan week ${n}`}`, title:TT.title || 'What if you change a fare?', tabs, lw:300, cols, rows, v, sums, act, just:null, doneF:null, doneLine:'' };
   const F = T3('wi2.footer', { n }), done = stage === 'month';
   screen().innerHTML = shell(`<div class="dp ash-page c3-wi">${ashHtml(sp)}</div>`, deskBar(F.text[done ? 1 : 0] || '', `<button class="bv-btn ${done ? 'go' : ''} big" id="nx" ${done ? '' : 'disabled'}>${bt(F.button || 'Set my fares')} &#9654;</button>`));
   ashBind(sp);
   const root = screen(), gw = root.querySelector('.ash-gridw'), cell = ref => root.querySelector(`.ash-grid .ash-c[data-ref="${ref}"]`); if(!gw) return;
   root.querySelectorAll('[data-ashtab]').forEach(b => b.onclick = () => { if(b.getAttribute('aria-disabled') === 'true') return; });   // the other sheets are read after Set my fares
-  if(stage === 'co1'){ const a0 = root.querySelector('section.ash[data-ash]'); if(a0) a0.classList.add('c3-hold');
-    gw.insertAdjacentHTML('beforeend', c3Co(T3('wi2.co1', { city:r.city, step, seats:num(seats), fare:money(d.f1) }), 'c3WiWatch', '1 of 4', 'pu')); c3PlaceUnder(gw.querySelector('[data-c3co]'), cell('C4'));
-    on('c3WiWatch', () => { W3.co = 1; save(); render(); }); }
-  if(stage === 'demo'){ const sp2 = ashLive(); if(sp2 && sp2.act) H.demo(sp2); }
-  if((stage === 'q1' || stage === 'q2') && act){ const T = T3(stage === 'q1' ? 'wi2.q1' : 'wi2.q2', { seats:num(alt.pax), fare:money(d.f1), more:money(more) });
-    root.querySelectorAll('[data-c1sig]').forEach(x => x.remove());   // one signal: the question's, with its words
-    gw.insertAdjacentHTML('beforeend', c1SignalHtml({ kind:'paper', title:T.title, lines:T.text.map(t => c1Html(t)).concat(c1PaperLines(act.no, act.tgt)), ptr:'up', tag:`${T.eyebrow || ''}` })); c1Place(gw.querySelector('[data-c1sig]'), cell(act.tgt), 'below', { dx:0 }); }
+  const ln = root.querySelector('.ash-line');
+  if(stage === 'co1'){ const a0 = root.querySelector('section.ash[data-ash]'); if(a0) a0.classList.add('c3-hold'); if(ln) ln.innerHTML = '';
+    gw.insertAdjacentHTML('beforeend', c3Co(T3('wi2.co1', { city:r.city, step, seats:num(alt.pax), fare:money(d.f1) }), 'c3WiGot', '', 'pu')); const co = gw.querySelector('[data-c3co]'); if(window.__c5) window.__c5.under(co, cell('C3')); else c3PlaceUnder(co, cell('C3'));
+    on('c3WiGot', () => { W3.co = 1; save(); render(); }); }
+  root.querySelectorAll('[data-c1sig]').forEach(x => x.remove());
+  if(act && (stage === 'b4' || stage === 'q1' || stage === 'q2')){
+    gw.insertAdjacentHTML('beforeend', act.how === 'book' ? c1SignalHtml({ kind:'paper', title:act.title, task:act.task, lines:c1PaperLines(act.no, act.tgt), ptr:'up' }) : c1SignalHtml({ kind:'build', task:act.task, ptr:'up', lines:[] }));
+    c1Place(gw.querySelector('[data-c1sig]'), cell(act.tgt), 'below', { dx:0 }); }
+  // Finance shows the × 7 (and the × 4): nothing moves until Watch ▶, in the line under the sheet
+  if(act && act.c5demo){ const a0 = root.querySelector('section.ash[data-ash]');
+    if(goW){ if(a0) a0.classList.add('c3-hold'); if(ln){ ln.innerHTML = `${T3H(tx(stage === 'wk' ? 'wi2.x7.go' : 'wi2.x4.go', 0, null, stage === 'wk' ? 'Finance shows you a week.' : 'Finance shows you a month.'))} `; ln.insertAdjacentHTML('beforeend', `<button class="bv-btn primary c5-gbtn" id="c5WiWatch">Watch &#9654;</button>`); }
+      on('c5WiWatch', () => { W3['go' + stage] = true; save(); render(); }); }
+    else { if(a0) a0.classList.add('c1-demo'); c5WiDemo(sp); } }
   if(stage === 'month'){ const d6 = cell('D6'); if(d6) d6.classList.add('c1-glow');
-    const T = T3('wi2.co4', { step, month:money(Math.abs(more * 7 * mw)), d:money(more), w:money(more * 7), m:money(more * 7 * mw) });
-    gw.insertAdjacentHTML('beforeend', c3Co(T, 'c3WiTry', '4 of 4', 'pu')); c3PlaceUnder(gw.querySelector('[data-c3co]'), cell('D6'));
-    on('c3WiTry', () => { UI.view = 'whatif'; render(); }); }
+    if(!W3.got){ const T = T3('wi2.co4', { step, month:money(Math.abs(more * 7 * mw)), d:money(more), w:money(more * 7), m:money(more * 7 * mw) });
+      gw.insertAdjacentHTML('beforeend', c3Co(Object.assign({}, T, { button:'Got it' }), 'c3WiTry', '', 'pu')); const co = gw.querySelector('[data-c3co]'); if(window.__c5) window.__c5.under(co, cell('D6')); else c3PlaceUnder(co, cell('D6')); }
+    on('c3WiTry', () => { W3.got = 1; save(); render(); }); }
   on('nx', () => { if(!done) return; UI.ashJust = null; resetEntry(); UI.justDone = null; next(); });
 }
+/* Finance's × 7 and × 4: the pointer clicks the row, the × key (it lights), types the number into the formula bar, then Enter */
+function c5WiDemo(sp){
+  const a = sp.act; if(!a || UI.c5WiDemo === a.id) return; UI.c5WiDemo = a.id;
+  const steps = [{ ref:a.refs[0] }, { op:a.ops[0] }, { num:a.refs[1] }, { enter:true }]; let i = 0;
+  const live = () => { const s2 = ashLive(); return s2 && s2.act && s2.act.id === a.id ? s2 : null; };
+  const finish = s2 => { const st = ashSt(s2.id); st.tokens = ashFullTokens(s2.act); st.ready = true; UI.c5WiDemo = null; c1Enter(s2); };
+  if(settings.reduceMotion || (window.__tkRunning && window.__tkRunning())){ const s2 = live(); if(s2) finish(s2); return; }
+  const tick = () => { const s2 = live(); if(!s2){ UI.c5WiDemo = null; c1PtrGone(); return; } const s = steps[i], root = document.querySelector(`[data-ash="${CSS.escape(s2.id)}"]`); if(!s || !root){ UI.c5WiDemo = null; c1PtrGone(); return; }
+    const el = s.ref ? root.querySelector(`.ash-c[data-ref="${s.ref}"]`) : s.op ? root.querySelector(`[data-ashop="${s.op}"]`) : s.num ? root.querySelector('.ash-fb .ash-f, .ash-fb') : root.querySelector('.c1-keys [data-c1kenter], .c1-fbenter, [data-ashenter]');
+    if(!el){ setTimeout(tick, 200); return; }
+    c1PtrTo(el, () => { const s3 = live(); if(!s3){ UI.c5WiDemo = null; c1PtrGone(); return; } i++;
+      if(s.ref) ashPick(s3, s.ref); else if(s.op){ c1KeyFlash(s.op); ashOp(s3, s.op); } else if(s.num){ const st = ashSt(s3.id); st.tokens.push({ ref:s.num }); render(); }
+      else { c1KeyFlash('enter'); setTimeout(c1PtrGone, 400); finish(s3); return; }
+      setTimeout(tick, settings.reduceMotion ? 350 : c1Pace().gap); }); };
+  setTimeout(tick, settings.reduceMotion ? 300 : c1Pace().pause);
+}
 if(window.__tkSums){
-  window.__tkSums.unshift({ what:'what if: Watch', test:() => !!document.getElementById('c3WiWatch'), plan:() => ({ at:'#c3WiWatch', value:'Watch', go:() => document.getElementById('c3WiWatch').click() }) });
-  window.__tkSums.unshift({ what:"Finance's what-if", test:() => { const sp = ashLive(); return !!(sp && sp.act && sp.act.kind === 'wi2:demo'); }, plan:() => ({ at:'.c1-keys', value:'skip the demonstration', go:() => { const sp = ashLive(); UI.c2Demo = null; c1PtrGone(); if(sp && sp.act){ const s = ashSt(sp.id); s.tokens = ashFullTokens(sp.act); s.ready = true; c1Enter(sp); } } }) });
+  window.__tkSums.unshift({ what:'what if: Got it', test:() => !!document.getElementById('c3WiGot'), plan:() => ({ at:'#c3WiGot', value:'Got it', go:() => document.getElementById('c3WiGot').click() }) });
+  window.__tkSums.unshift({ what:'what if: Watch', test:() => !!document.getElementById('c5WiWatch'), plan:() => ({ at:'#c5WiWatch', value:'Watch', go:() => document.getElementById('c5WiWatch').click() }) });
+  window.__tkSums.unshift({ what:'what if: the month', test:() => !!document.getElementById('c3WiTry'), plan:() => ({ at:'#c3WiTry', value:'Got it', go:() => document.getElementById('c3WiTry').click() }) });
+  window.__tkSums.unshift({ what:"Finance's × 7 / × 4", test:() => { const sp = ashLive(); return !!(sp && sp.act && sp.act.c5demo); }, plan:() => ({ at:'.ash-fb', value:'skip the demonstration', go:() => { const sp = ashLive(); UI.c5WiDemo = null; c1PtrGone(); if(sp && sp.act){ const s = ashSt(sp.id); s.tokens = ashFullTokens(sp.act); s.ready = true; c1Enter(sp); } } }) });
 }
 
 /* =====================================================================
@@ -635,41 +698,49 @@ function c3NpPage(){
   const fuel = Math.round(F.reduce((t, f) => t + (f.fuelCost || 0), 0)), cost = Math.round(B.L ? B.L.v.cost : 0), rev = G.reduce((t, x) => t + x.tk, 0), prof = rev - cost;
   const eve = I.c2X().chgEve || (S.day - 1), hd = (S.history || []).slice().reverse().find(h => h.from === eve && h.to === eve) || null;
   const yRev = Math.round(hd ? hd.revenue : (A.L ? A.L.v.rev : 0)), yCost = Math.round(hd ? hd.costs : (A.L ? A.L.v.cost : 0)), yFuel = Math.round(c3Flights(old).reduce((t, f) => t + (f.fuelCost || 0), 0)), yProf = yRev - yCost, diff = prof - yProf;
-  const cols = G.map(x => ({ c:x.c, w:132, top:x.g.n === 1 ? '1 flight' : `${x.g.n} flights`, flag:x.r.flag, main:`${x.r.city} ${money(x.fare)}`, plan:true }))
-    .concat([{ c:P, w:150, top:CL[0] || 'your new plan', main:CL[1] || 'New plan' }, { c:Yc, w:150, top:'', main:CL[2] || "Yesterday's plan" }, { c:D, w:132, top:CL[3] || "new − yesterday's", main:CL[4] || 'Difference' }]);
+  const nm = P0 => P0.groups.map(g => `${routeById(g.id).city}${g.n > 1 ? ` ×${g.n}` : ''}`).join(' + ');
+  const cols = G.map(x => ({ c:x.c, w:132, top:x.g.n === 1 ? (CL[5] || 'your flight') : `${CL[6] || 'your'} ${x.g.n} flights`, flag:x.r.flag, main:`${x.r.city} ${money(x.fare)}`, plan:true }))
+    .concat([{ c:P, w:150, top:B.groups.map(g => routeById(g.id).city).join(' + ') || CL[0] || 'your new plan', main:CL[1] || 'New plan' }, { c:Yc, w:150, top:nm(A), main:CL[2] || "Yesterday's plan" }, { c:D, w:132, top:CL[3] || "new − yesterday's", main:CL[4] || 'Difference' }]);
   const rows = [{ r:1, t:'hdr' }, { r:2, label:RW[0] || 'Passengers', ic:'person' }, { r:3, label:RW[1] || 'Fare', ic:'tag' }, { r:4, label:RW[2] || 'Ticket revenue', ic:'coins', gold:true }, { r:5, label:RW[3] || 'Total revenue', ic:'coins', t:'tot', gold:true },
     { r:6, label:RW[4] || 'Other costs', ic:'receipt' }, { r:7, label:RW[5] || 'Fuel burned', ic:'drum' }, { r:8, label:RW[6] || 'Total costs', ic:'receipt', t:'tot', gold:true }, { r:9, label:RW[7] || 'Profit', ic:'chart', t:'fin', gold:true }];
   if(G.length === 1) st.rev = true;   // one route: its ticket revenue is the total
   const v = {};
-  G.forEach(x => { v[x.c + 2] = { t:num(x.pax), bar:x.seats ? x.pax / x.seats : null, full:x.seats > 0 && x.pax >= x.seats }; v[x.c + 3] = { t:money(x.fare) }; if(st.tk[x.c]) v[x.c + 4] = { t:money(x.tk) }; });
+  st.tkp = st.tkp || {}; const tkDone = x => !!st.tk[x.c] || !!(st.tkp[x.c] && st.tkp[x.c].ok);
+  G.forEach(x => { v[x.c + 2] = { t:num(x.pax), bar:x.seats ? x.pax / x.seats : null, full:x.seats > 0 && x.pax >= x.seats }; v[x.c + 3] = { t:money(x.fare) }; if(tkDone(x)) v[x.c + 4] = { t:money(x.tk) }; });
   if(st.rev) v[P + 5] = { t:money(rev), f:G.length === 1 }; v[P + 6] = { t:money(cost - fuel), f:true }; v[P + 7] = { t:money(fuel), f:true }; v[P + 8] = { t:money(cost), f:true };
   if(st.prof) v[P + 9] = { t:money(prof), cls:prof < 0 ? 'soft' : 'gold' };
   v[Yc + 5] = { t:money(yRev), f:true }; v[Yc + 6] = { t:money(yCost - yFuel), f:true }; v[Yc + 7] = { t:money(yFuel), f:true }; v[Yc + 8] = { t:money(yCost), f:true }; v[Yc + 9] = { t:money(yProf), f:true };
   if(st.diff.ok) v[D + 9] = { t:signed(diff, true), cls:diff >= 0 ? 'pos' : 'amb', fin:!!st.diff.shown };
   const W = { 2:RW[0], 3:RW[1], 4:RW[2], 5:RW[3], 8:RW[6], 9:RW[7] }, wordsOf = ref => { const R0 = ashRef(ref); return (R0.c === Yc ? (CL[2] || "Yesterday's plan") + ': ' : '') + (W[R0.r] || ref); };
   const NL = T3('np.line', { d:money(Math.abs(diff)), more:diff >= 0 ? 'more' : 'less' }).text;
-  const build = (id, tgt, refs, ops, words, want, done, ok) => ({ id:'np:' + id, kind:'np:' + id, tgt, refs, ops, words, how:'formula', needEnter:true, commute:ops.every(o => o !== '−'), unit:'£', want, done, built:done, recKey:null, no:null,
+  const TK = T3('np.task').text;   // the tasks under "Build the formula" (round 3, rule 2)
+  const build = (id, tgt, refs, ops, words, want, done, ok, task) => ({ id:'np:' + id, kind:'np:' + id, tgt, refs, ops, words, how:'formula', needEnter:true, commute:ops.every(o => o !== '−'), unit:'£', want, done, built:done, recKey:null, no:null, task,
     wordsOf, lineBuild:T3H(NL[0] || ''), answer:() => { ok(); save(); return { ok:true }; } });
   const sums = [];
-  G.forEach(x => sums.push(build('tk' + x.c, x.c + 4, [x.c + 2, x.c + 3], ['×'], 'Passengers × Fare', x.tk, !!st.tk[x.c], () => { st.tk[x.c] = true; })));
-  if(G.length > 1) sums.push(build('rev', P + 5, G.map(x => x.c + 4), G.slice(1).map(() => '+'), (RW[2] || 'Ticket revenue') + ' + …', rev, !!st.rev, () => { st.rev = true; }));
-  sums.push(build('prof', P + 9, [P + 5, P + 8], ['−'], 'Total revenue − Total costs', prof, !!st.prof, () => { st.prof = true; }));
+  // round 3: the first route's ticket revenue built, the second's on paper (counted; Bertie: "the second ticket revenue … work it out on paper"), any more built
+  G.forEach((x, i) => { if(i === 1 && Q && Q.paper){ const qs = st.tkp[x.c] || (st.tkp[x.c] = {});
+      sums.push(Q.paper({ id:'npTk', day:S.day }, qs, { title:T3('np.tk2').title || 'The ticket revenue', tgt:x.c + 4, refs:[x.c + 2, x.c + 3], ops:['×'], words:'Passengers × Fare', want:x.tk, rel:'ticketRevenue',
+        doc:`${x.r.city} in the new plan`, question:`${num(x.pax)} × ${money(x.fare)}`, vals:[x.pax, x.fare], answerText:money(x.tk) })); return; }
+    sums.push(build('tk' + x.c, x.c + 4, [x.c + 2, x.c + 3], ['×'], 'Passengers × Fare', x.tk, !!st.tk[x.c], () => { st.tk[x.c] = true; }, TK[0] || 'Calculate the ticket revenue')); });
+  if(G.length > 1) sums.push(build('rev', P + 5, G.map(x => x.c + 4), G.slice(1).map(() => '+'), (RW[2] || 'Ticket revenue') + ' + …', rev, !!st.rev, () => { st.rev = true; }, TK[1] || 'Calculate the total revenue'));
+  sums.push(build('prof', P + 9, [P + 5, P + 8], ['−'], 'Total revenue − Total costs', prof, !!st.prof, () => { st.prof = true; }, TK[2] || 'Calculate the profit'));
   if(Q && Q.paper) sums.push(Q.paper({ id:'npDiff', day:S.day }, st.diff, { title:T3('np.diff').title || 'The difference in profit', tgt:D + 9, refs:[P + 9, Yc + 9], ops:['−'], words:"New plan − Yesterday's plan", want:diff, rel:'profit',
     doc:'The new plan against yesterday', question:`${money(prof)} − ${money(yProf)}`, vals:[prof, yProf], answerText:signed(diff, true) }));
   else st.diff.ok = true;
-  const act = sums.find(x => !x.done) || null, done = !act, TT = T3('np.title');
-  const tabs = ashTabs(null).filter(t => !['c2ba', 'whatif', 'changes'].includes(t.id)); tabs.forEach(t => { t.on = false; }); tabs.splice(Math.max(0, tabs.findIndex(t => t.id === 'week')) + 1, 0, { id:'np', label:CL[1] || 'New plan', ic:'scale', on:true, off:false });
+  const act = sums.find(x => !x.done) || null, done = !act, day = npDayName(), TT = T3('np.title', { day });
+  const tabs = ashTabs(null).filter(t => !['c2ba', 'whatif', 'changes'].includes(t.id)); tabs.forEach(t => { t.on = false; }); const wi = Math.max(0, tabs.findIndex(t => t.id === 'week')) + 1;
+  tabs.splice(wi, 0, { id:'np', label:CL[1] || 'New plan', ic:'scale', on:true, off:false }, { id:'c2ba', label:I.C2 ? (I.C2('plan2.tab').text[0] || 'Before / after') : 'Before / after', ic:'chart', on:false, off:!done });
   const sp = { id:'np:' + S.day, crumb:`${S.airline.name || 'Airline'} HQ · ${TT.text[0] || 'Plan tomorrow'}`, title:TT.title || 'Work out your new plan', tabs, lw:230, cols, rows, v, sums, act, just:null, doneF:null,
     doneLine:done ? T3H(String(NL[1] || '').replace(/^\s*✓\s*/, '')) : '' };
-  const FT = T3('np.footer');
-  screen().innerHTML = shell(`<div class="dp ash-page c4-np">${ashHtml(sp)}</div>`, deskBar(esc(FT.text[done ? 1 : 0] || ''), `<button class="bv-btn big" id="c3NpBack">&#9664; Back</button><button class="bv-btn ${done ? 'go' : ''} big" id="c3NpGo" ${done ? '' : 'disabled'}>${bt(FT.button || 'Before / after')} &#9654;</button>`));
+  const FT = T3('np.footer', { day });
+  screen().innerHTML = shell(`<div class="dp ash-page c4-np">${ashHtml(sp)}</div>`, deskBar(esc(FT.text[done ? 1 : 0] || FT.text[0] || ''), `<button class="bv-btn big" id="c3NpBack">&#9664; Back</button><button class="bv-btn ${done ? 'go' : ''} big" id="c3NpGo" ${done ? '' : 'disabled'}>${bt(FT.button || 'Before / after')} &#9654;</button>`));
   ashBind(sp);
   const root = screen(), gw = root.querySelector('.ash-gridw'), cell = ref => root.querySelector(`.ash-grid .ash-c[data-ref="${ref}"]`);
   if(done){ const ln = root.querySelector('.ash-line'); if(ln) ln.innerHTML = `<span class="pos">✓</span> ${sp.doneLine}`; }
   if(gw && act){ root.querySelectorAll('[data-c1sig]').forEach(x => x.remove());
-    gw.insertAdjacentHTML('beforeend', act.how === 'book' ? c1SignalHtml({ kind:'paper', title:act.title, lines:c1PaperLines(act.no, act.tgt), ptr:'up' }) : c1SignalHtml({ kind:'build', ptr:'up', lines:[] }));
+    gw.insertAdjacentHTML('beforeend', act.how === 'book' ? c1SignalHtml({ kind:'paper', title:act.title, lines:c1PaperLines(act.no, act.tgt), ptr:'up' }) : c1SignalHtml({ kind:'build', task:act.task, ptr:'up', lines:[] }));
     c1Place(gw.querySelector('[data-c1sig]'), cell(act.tgt), 'below', { dx:0 }); }
-  root.querySelectorAll('[data-ashtab]').forEach(b => b.onclick = () => {});
+  root.querySelectorAll('[data-ashtab]').forEach(b => b.onclick = () => { if(b.getAttribute('data-ashtab') === 'c2ba' && done){ UI.c3ba = { key:tpKey(), co:1, np:true }; UI.ashTab = 'c2ba'; save(); render(); } });
   on('c3NpBack', () => c3BackToPlans());
   on('c3NpGo', () => { if(!done) return; UI.c3ba = { key:tpKey(), co:1, np:true }; UI.ashTab = 'c2ba'; save(); render(); });
 }
@@ -683,7 +754,7 @@ c1SignalHtml = function(o){
 /* a callout or signal that would run past its panel or the footer moves up inside it */
 function c4Clamp(){
   const scr = screen(); if(!scr) return; const foot = scr.querySelector('.actbar'), fy = foot ? foot.getBoundingClientRect().top : innerHeight;
-  scr.querySelectorAll('[data-c3co], [data-c1sig], .ash-co.c1-sco').forEach(el => { const cs = getComputedStyle(el); if(cs.position !== 'absolute' || el.classList.contains('c4-tourco')) return;
+  scr.querySelectorAll('[data-c3co], [data-c1sig], .ash-co.c1-sco').forEach(el => { const cs = getComputedStyle(el); if(cs.position !== 'absolute' || el.classList.contains('c4-tourco') || el.classList.contains('c5-sig') || el.classList.contains('c5-none')) return;
     const r = el.getBoundingClientRect(), box = el.closest('section.ash, .dp, .c1-tt'), lim = Math.min(fy, box ? box.getBoundingClientRect().bottom : fy) - 8, over = r.bottom - lim;
     if(over > 0 && r.height < lim - 60) el.style.top = Math.round((parseFloat(cs.top) || 0) - over) + 'px'; });
 }
@@ -700,22 +771,67 @@ function c4Wall(){
 if(H.dayPage){ const dp4 = H.dayPage;
   H.dayPage = o => { try{ if(on3() && !IS_DISPLAY && typeof wallView !== 'undefined' && wallView) setWallView(false); }catch(e){} dp4(o); try{ c4Tour(o.d); }catch(e){ console.error(e); } }; }
 function c4Tour(d){
-  const rule = String(WBS().dayPageTour || 'Launch Day'); document.querySelectorAll('.c4-shade, .c4-tourco').forEach(x => x.remove());
+  const rule = String(WBS().dayPageTour || 'Launch Day'); document.querySelectorAll('.c4-shade, .c4-hole, .c4-tourco').forEach(x => x.remove());
   if(!on3() || /off|never|no\b/i.test(rule) || d !== 1 || X3().seen.dayTour || UI.c3back) return;
-  const scr = screen(), i = UI.c4tour || 0, el = [scr.querySelector('.c2-prof'), scr.querySelector('.c2-rt'), scr.querySelector('.c3-fra') || scr.querySelector('.c2-read'), scr.querySelector('.actbar')][i];
-  if(!el){ X3().seen.dayTour = S.day || 1; return; }
-  scr.querySelectorAll('.c4-focus').forEach(x => x.classList.remove('c4-focus')); el.classList.add('c4-focus');
-  document.body.insertAdjacentHTML('beforeend', '<div class="c4-shade" aria-hidden="true"></div><div class="c4-hole" aria-hidden="true"></div>' + c3Co(T3('day.tour.' + (i + 1)), 'c4TourNext', `${i + 1} of 4`, 'c4-tourco pu'));
+  const scr = screen(), k = UI.c4tour || 0;
+  // round 3: first the whole page, undimmed, with one small quiet callout at the top right ("Review the day", Start ▸)
+  if(!k){ document.body.insertAdjacentHTML('beforeend', c3Co(T3('day.tour.0'), 'c4TourNext', '', 'c4-tourco c4-start c5-row'));
+    const co = document.querySelector('.c4-tourco'), ref = scr.querySelector('.c2-rt') || scr.querySelector('.dp, .desk-page') || scr, R = ref.getBoundingClientRect();
+    co.style.position = 'fixed'; co.style.left = Math.round(Math.max(8, R.right - co.offsetWidth)) + 'px'; co.style.top = Math.round(Math.max(8, R.top - co.offsetHeight - 10)) + 'px';
+    on('c4TourNext', () => { document.querySelectorAll('.c4-tourco').forEach(x => x.remove()); UI.c4tour = 1; render(); }); return; }
+  const i = k - 1, fra = scr.querySelector('.c3-fra'), el = [scr.querySelector('.c2-prof'), scr.querySelector('.c2-rt'), fra || scr.querySelector('.c2-read'), scr.querySelector('.actbar')][i];
+  if(!el){ X3().seen.dayTour = S.day || 1; UI.c4tour = 0; return; }
+  let T = T3('day.tour.' + (i + 1));
+  if(i === 2 && fra){ const city = (fra.querySelector('h2, h3, .c3-frat, b') || {}).textContent || ''; const m = /^(.+?) opens/.exec(city.trim()); if(m && T.text[0]) T = Object.assign({}, T, { title:T.text[0].replace('{city}', m[1]) }); }
+  T = Object.assign({}, T, { text:[] });
+  document.body.insertAdjacentHTML('beforeend', '<div class="c4-shade" aria-hidden="true"></div><div class="c4-hole" aria-hidden="true"></div>' + c3Co(T, 'c4TourNext', `${i + 1} of 4`, 'c4-tourco pu c5-row'));
   const co = document.querySelector('.c4-tourco'), R0 = el.getBoundingClientRect(), below = R0.bottom + 14 + co.offsetHeight < innerHeight - 8;
-  co.style.position = 'fixed'; co.style.top = Math.round(below ? R0.bottom + 14 : R0.top - co.offsetHeight - 14) + 'px'; co.style.left = Math.round(Math.min(Math.max(8, R0.left), innerWidth - co.offsetWidth - 8)) + 'px';
+  co.style.position = 'fixed'; co.style.top = Math.round(below ? R0.bottom + 14 : R0.top - co.offsetHeight - 14) + 'px';
+  const lft = i === 3 ? R0.right - co.offsetWidth - 8 : i === 2 ? R0.left + R0.width / 2 : R0.left; co.style.left = Math.round(Math.min(Math.max(8, lft), innerWidth - co.offsetWidth - 8)) + 'px';
+  const ptr = co.querySelector('.c1-sco-ptr'); if(ptr && i === 3) ptr.style.left = Math.round(co.offsetWidth - 60) + 'px';
   if(!below) co.classList.add('c4-up');
   const hole = document.querySelector('.c4-hole'); Object.assign(hole.style, { top: R0.top + 'px', left: R0.left + 'px', width: R0.width + 'px', height: R0.height + 'px' });
-  on('c4TourNext', () => { document.querySelectorAll('.c4-shade, .c4-hole, .c4-tourco').forEach(x => x.remove()); if(i >= 3){ X3().seen.dayTour = S.day || 1; UI.c4tour = 0; save(); } else UI.c4tour = i + 1; render(); });
+  on('c4TourNext', () => { document.querySelectorAll('.c4-shade, .c4-hole, .c4-tourco').forEach(x => x.remove()); if(i >= 3){ X3().seen.dayTour = S.day || 1; UI.c4tour = 0; save(); } else UI.c4tour = k + 1; render(); });
 }
 const c4Render0 = render;
 render = function(){ const r = c4Render0.apply(this, arguments); try{ if(on3()){ c4Wall(); c4Clamp(); requestAnimationFrame(() => { try{ c4Clamp(); }catch(e){} }); } if(!(step() && step().t === 'results') && !(S.wk && S.wk.dayDone === S.day && step().t === 'weekRun')) document.querySelectorAll('.c4-shade, .c4-hole, .c4-tourco').forEach(x => x.remove()); }catch(e){ console.error(e); } return r; };
 const tkPre4 = window.__tkPre;
 window.__tkPre = R => { try{ const b = document.getElementById('c4TourNext'); if(b){ b.click(); return 'Day page tour: next'; } const k = document.getElementById('c4SkipTk') || document.getElementById('c4TkSkip'); if(k && R && R.skipTakeoff){ k.click(); return 'skipped the take-off'; } }catch(e){} return tkPre4 ? tkPre4(R) : null; };
 
+/* =====================================================================
+   10 · ROUND 3, WEEK 1 SUNDAY (hand-off "fewer words", section 6): titles only; the pointer shows in every demo; a right answer
+   turns green, then a green button moves him on: My turn ▶ (after Finance's add each day), An easier method ▶ (after his week),
+   Now calculate the average ▶ (after his Σ SUM); the box at his average cell says "Now it's your turn".
+   ===================================================================== */
+const c5Line = (side, html, btn) => { const ln = side && side.querySelector('.ash-line'); if(!ln) return null; ln.classList.remove('q'); ln.innerHTML = html; if(btn){ ln.appendChild(btn); } ln.classList.add('c5-lnb'); return ln; };
+const c5Btn = (id, label) => { const b = document.createElement('button'); b.className = 'bv-btn go c5-gbtn'; b.id = id; b.innerHTML = `${esc(bt(label))} &#9654;`; return b; };
+const c5RvR0 = ashReviewRender;
+ashReviewRender = function(st){
+  const r = c5RvR0.apply(this, arguments);
+  try{ const W = S.wk, g = on3() && I.c2Stage ? I.c2Stage(W) : null; if(!g) return r;
+    const root = screen(), Y = X3(), L = root.querySelector('.c2-pair .c2-L'), Rt = root.querySelector('.c2-pair .c2-R'), live = root.querySelector('.c2-pair .c2-live'), cur = document.getElementById('c1Cursor');
+    if(cur && !root.querySelector('[data-c3co]')) cur.style.display = '';   // the pointer shows again once Watch ▶ is pressed (it was hidden under the callout)
+    // Finance's example done: "✓ Mon to Wed: £3,700" and My turn ▶ in the line under the example
+    const my = document.getElementById('c1MyTurn'); if(my && live && (g === 'ex1' || g === 'ex2')){ const tot = [...live.querySelectorAll('.ash-c[data-ref^="B"]')].pop();
+      my.className = 'bv-btn go c5-gbtn'; c5Line(live, T3H((t => tx('wk1.add.lineDone', 0, { total:t }, `✓ Mon to Wed: **${t}**`))(tot ? tot.textContent.trim() : '')) + ' ', my); }
+    // his week added up: An easier method ▶ before the Σ SUM example appears
+    if(g === 'ex2' && !Y.seen.easier){ const mine = L; if(mine) mine.classList.remove('c2-dim');
+      const tot = mine && mine.querySelector('.c2-okg, .c5-ok'), N = I.C2 ? I.C2('wk1.next') : { title:'Next: a quicker way', text:[] };
+      if(live){ live.innerHTML = `<div class="c2-nextb"><b>${esc(N.title || 'Next: a quicker way')}</b><span>${esc(N.text[0] || '')}</span></div>`; live.classList.add('c2-next'); }
+      const b = c5Btn('c5Easier', tx('wk1.easier', 0, null, 'An easier method ▶')); c5Line(mine, T3H((t => tx('wk1.add.total', 0, { total:t }, `✓ Right: **${t}**`))(tot ? tot.textContent.trim() : '')) + ' ', b);
+      if(tot) tot.classList.add('c5-ok'); root.querySelectorAll('[data-c3co]').forEach(x => x.remove());
+      on('c5Easier', () => { Y.seen.easier = S.day || 1; save(); render(); }); }
+    // his Σ SUM done: the same answer, then Now calculate the average ▶ (it starts Finance's average on the left)
+    if(g === 'avgdemo' && !UI.c3Avg && Rt){ const tot = Rt.querySelector('.c2-okg') || [...Rt.querySelectorAll('.ash-c[data-ref^="B"]')].pop(); if(tot) tot.classList.add('c5-ok');
+      const b = c5Btn('c3AvgWatch', tx('wk1.avg.go', 0, null, 'Now calculate the average ▶')); c5Line(Rt, T3H((t => tx('wk1.sum.same2', 0, { total:t }, `✓ Same answer: **${t}**`))(tot ? tot.textContent.trim() : '')) + ' ', b);
+      Rt.classList.remove('c2-dim'); root.querySelectorAll('.c2-paired .rv2-ins #c3AvgWatch').forEach(x => x !== b && x.remove()); on('c3AvgWatch', () => { UI.c3Avg = 'go'; render(); }); }
+    // his average: Finance's on the left, in words
+    if(g === 'mean' && L && c1Ex().avgDemo){ const v = [...L.querySelectorAll('.ash-c[data-ref^="B"]')].pop(); if(v){ v.classList.add('c5-ok'); c5Line(L, T3H(tx('wk1.avg.fin', 0, { mean:v.textContent.trim() }, `✓ Finance: average a day **${v.textContent.trim()}**`))); } }
+    // the column the signals used to sit in goes when it is empty
+    const ins = root.querySelector('.c2-paired .rv2-ins'); if(ins && ![...ins.children].some(c => !c.hidden && c.offsetHeight > 0)) ins.style.display = 'none';
+  }catch(e){ console.error(e); }
+  return r;
+};
+if(window.__tkSums) window.__tkSums.unshift({ what:'Sunday: an easier method', test:() => !!document.getElementById('c5Easier'), plan:() => ({ at:'#c5Easier', value:'An easier method', go:() => document.getElementById('c5Easier').click() }) });
 window.__c3 = { tpOn, groups:c3Groups, x:X3, pct:c3FraPct, npMode, npWorked };
 }

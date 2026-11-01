@@ -380,6 +380,12 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Round 3: Claude Design's "fewer words" hand-off (1 Nov 2026)
+
+Built in chapter one: `p6j_round3.js` (the rules for every screen), plus changes in `p6i_1737.js`, `p6b_signal.js` and `p1_head_c3.css`. Words are in the workbook through `tools/merge_r3.py`, marked PLACEHOLDER. Report: `docs/Round-3-Report.md`; screenshots: `docs/screenshots/round-3/`.
+- Every callout is a title. Every sum's box is two lines, the method then the task, placed under its cell. A right answer turns green, and green buttons move him on.
+- Screens: Launch Day's profit (example column only during the demo), the Day page walk-through (whole page first, lighter shade), two plans (one callout, both Choose green), the new-plan sheet (second route on paper), Before / after (two callouts, Choose a plan ▶), week 1 Sunday (My turn ▶, An easier method ▶, Now calculate the average ▶), and Monday 9 Sep's what-if (no ticket-revenue demo; Finance shows the × 7 and × 4).
+
 ### Round 2: Bertie's 10:49 play notes (1 Nov 2026)
 
 Built in chapter one (`p6i_1737.js` section 9, `p1_head_c3.css`, `p6c_desks.js`); words in the workbook through `tools/merge_1049.py`, marked PLACEHOLDER and listed in `docs/Placeholders-for-Fable.md`. The report for Bertie is `docs/Round-2-Playnotes-1049.md`, with screenshots in `docs/screenshots/playnotes-1049/`.
