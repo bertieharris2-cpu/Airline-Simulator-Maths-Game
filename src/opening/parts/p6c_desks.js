@@ -177,7 +177,7 @@ function c1LaneTrips(pl, j, L){
   const x = pl.fleet[j]; if(!x) return []; const p = planeById(x.planeId), idx = s2Idx(x), dps = x.deps && x.deps.length === x.sched.length ? x.deps : null, home = TIME.home(p);
   const D = idx.length ? withPlan(pl, () => TIME.day(p, idx.map(k => x.sched[k]), undefined, dps ? idx.map(k => dps[k]) : null)) : null;
   return D ? D.trips.map((t, q) => { const k = idx[q], s = L ? (L.services || []).find(z => z.uid === x.uid && z.k === k) || {} : {}, last = q === D.trips.length - 1;
-    return { k, route:t.route, dep:t.dep, arr:t.arr, ready:last ? t.arr : t.arr + home, last, sold:s.sold || 0, seats:s.seats || p.seats }; }) : [];
+    return { k, route:t.route, dep:t.dep, arr:t.arr, ready:last ? t.arr : t.arr + home, turnEnd:t.arr + home, last, sold:s.sold || 0, seats:s.seats || p.seats }; }) : [];
 }
 /* will a flight of route id leave plane j at t? (k: the flight being moved, or null for a new one) */
 function c1Fit(j, k, id, t){
@@ -239,7 +239,8 @@ function c1TtHtml(pl, L){
   const ruler = []; for(let h = Math.ceil(s0 / 60); h * 60 <= e0; h += 2) ruler.push(`<span style="left:${X(h * 60)}%">${pad(h)}:00</span>`);
   const lane = (x, j) => { const p = planeById(x.planeId), T = c1LaneTrips(pl, j, L);
     const blocks = T.map(t => { const r = routeById(t.route), pct = Math.round(100 * Math.min(1, t.sold / Math.max(1, t.seats))), ok = t.sold / Math.max(1, t.seats) >= good, on = sel && sel.j === j && sel.k === t.k;
-      return `${t.last ? '' : `<i class="c1-turn" style="left:${X(t.arr)}%;width:${(X(t.ready) - X(t.arr)).toFixed(3)}%" title="Turnaround: ready again at ${c1Hm(t.ready)}"></i>`}<button class="c1-blk ${ok ? 'full' : 'room'} ${on ? 'on' : ''} ${t.arr > e0 ? 'bad' : ''}" data-c1b="${j}|${t.k}" data-route="${t.route}" data-dep="${t.dep}" data-arr="${t.arr}" style="left:${X(t.dep)}%;width:${(X(t.arr) - X(t.dep)).toFixed(3)}%" aria-pressed="${!!on}" aria-label="${esc(r.city)} ${c1Hm(t.dep)} to ${c1Hm(t.arr)}, ${t.sold} of ${t.seats} seats filled. Drag to move it, or press Delete to remove it.">
+      const tEnd = Math.min(e0, t.last ? t.turnEnd : t.ready);   // Bertie 1 Nov: the turnaround shows after the last flight too, so he sees why nothing drops right after it
+      return `${tEnd > t.arr ? `<i class="c1-turn" style="left:${X(t.arr)}%;width:${(X(tEnd) - X(t.arr)).toFixed(3)}%" title="Turnaround: ready again at ${c1Hm(t.last ? t.turnEnd : t.ready)}"></i>` : ''}<button class="c1-blk ${ok ? 'full' : 'room'} ${on ? 'on' : ''} ${t.arr > e0 ? 'bad' : ''}" data-c1b="${j}|${t.k}" data-route="${t.route}" data-dep="${t.dep}" data-arr="${t.arr}" style="left:${X(t.dep)}%;width:${(X(t.arr) - X(t.dep)).toFixed(3)}%" aria-pressed="${!!on}" aria-label="${esc(r.city)} ${c1Hm(t.dep)} to ${c1Hm(t.arr)}, ${t.sold} of ${t.seats} seats filled. Drag to move it, or press Delete to remove it.">
         <span class="c1-grip" aria-hidden="true"></span><span class="c1-bh">${flagSvg(r.flag, 16)}<b>${esc(r.city)}</b><em class="mono">${t.sold}/${t.seats}</em></span><span class="c1-bar"><i style="width:${pct}%"></i></span><span class="c1-bt mono">${c1Hm(t.dep)}–${c1Hm(t.arr)}</span></button>`; }).join('');
     return `<div class="c1-row" data-c1row="${j}"><div class="c1-lc"><b>${ICO2.plane || ''}${esc(shortPlane(p))}</b><small>${esc(regOf(x.uid))} · ${p.seats} seats · ${plural(T.length, 'flight')}</small></div>
       <div class="ad-lane c1-lane" data-lane="${j}" data-s0="${s0}" data-span="${span}" style="--c1-hrs:${span / 60}">${blocks || '<span class="c1-none">No flights yet: drag a route from Add a flight onto this plane.</span>'}</div><span class="c1-msg" aria-live="polite"></span></div>`; };

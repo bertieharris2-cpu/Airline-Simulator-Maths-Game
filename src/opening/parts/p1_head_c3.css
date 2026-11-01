@@ -93,3 +93,21 @@
 .ash-grid .ash-c.c3-ex{background-image:repeating-linear-gradient(135deg,rgba(159,189,227,.07) 0 6px,transparent 6px 12px);border-left:2px dashed var(--text-soft);border-right:2px dashed var(--text-soft)}
 .ash-grid .ash-c.c3-ex.ah{border-top:2px dashed var(--text-soft)}
 .ash-grid .ash-c.c3-exdone span{color:var(--green)}
+
+/* ===== play notes 1 Nov 10:49 (p6i section 9) ===== */
+/* the selected flight: no fare stepper; the seats filled at each fare are the way to change it, bigger */
+body.n15-ch1 .bv-insp .bv-chgl,body.n15-ch1 .bv-insp .bv-fare{display:none}
+body.n15-ch1 .bv-insp .bv-seats{margin-left:0;gap:8px}
+body.n15-ch1 .bv-insp .bv-seats small{font:600 14px var(--font-sans);color:var(--text);margin-right:6px}
+body.n15-ch1 .bv-insp .bv-sf{padding:8px 14px;font-size:15px;gap:8px}
+body.n15-ch1 .bv-insp .bv-sf b{font-size:18px}
+/* two plans: the new plan's figure waits until it is worked out */
+.c3-ch b.c4-wait{font:400 13px/16px var(--font-sans);color:var(--text-soft)}
+/* the wall in chapter one: no Working space, no Return to HQ */
+body.c4 #goWork,body.c4 #wReturn{display:none!important}
+/* the Day page tour: the rest dimmed, one part lit */
+.c4-shade{position:fixed;inset:0;background:transparent;z-index:60}
+.c4-hole{position:fixed;z-index:60;pointer-events:none;box-shadow:0 0 0 2px var(--cyan),0 0 24px rgba(54,198,255,.25),0 0 0 200vmax rgba(2,8,20,.66)}
+.actbar.c4-focus{position:relative}
+.c4-tourco,.ash-co.c1-sco.c3-co.c4-tourco{z-index:62}
+.c4-tourco.c4-up .c1-sco-ptr{top:auto;bottom:-9px;transform:rotate(225deg)}

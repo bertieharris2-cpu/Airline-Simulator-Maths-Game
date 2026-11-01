@@ -10,6 +10,17 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zv. Round 2: Bertie's 10:49 play notes (1 Nov 2026)
+
+Design-and-flow round 2, chapter one only, all in `p6i_1737.js` section 9 and the end of `p1_head_c3.css` (plus the hatch in `p6c_desks.js`). Report: `docs/Round-2-Playnotes-1049.md`; screenshots and transcript: `docs/screenshots/playnotes-1049/`. Words and settings: `tools/merge_1049.py` (run after `merge_1737.py`), all marked PLACEHOLDER.
+- **Studio:** the turnaround hatch is drawn after the last flight too (`turnEnd`, capped at the day's end); in chapter one the flight panel's fare stepper is hidden and the seats-filled chips are bigger.
+- **Signals and callouts:** plain Builds get the one-line `signal.build`; paper sums `signal.paper`; `launch.job` and `ld3.job` cut down. `c4Clamp()` moves any callout or signal up inside its panel and above the footer.
+- **Take-off and wall:** `body.c4` hides the wall's Working space and Return to HQ; Skip take-off (`#c4SkipTk` on the wall, `#c4TkSkip` on screen) deletes `S.rnd.takeoff` and moves on. The Day page closes the wall, so there is one review screen.
+- **Day page tour:** `c4Tour` on Launch Day only (`dayPageTour`), four steps (profit, route by route, what next, the action bar), seen in `X3().seen.dayTour`. The dimming is a fixed `.c4-hole` with a huge box-shadow over the target's rect, plus a transparent `.c4-shade` that blocks clicks.
+- **Two plans locked:** the new plan's profit, Choose and the compare figure stay hidden until `npWorked()`; **Work out my plan ▶** (`#c3TpWork`) runs `c3Work()`.
+- **New-plan sheet:** `npMode()` (week 1 first change, or a new route; `newPlanSheet`) sets `UI.c3np` and opens `c3NpPage()` from `R.workings`: route columns, New plan, Yesterday's plan, Difference; builds for ticket revenue, total revenue and profit; the difference on paper (`pq:npDiff:<day>`, counted). Then Before / after with `np:true`, whose last callout (`ba.co4.np`) has Choose a plan ▶ back to the two plans (`npChoose()` records `worked`). Later week-1 changes keep the Changes sheet.
+- **Words:** "Yesterday's plan" again (two plans, Before / after, Changes sheet).
+
 ## 0zu. The eight screens after the 17:37 play notes (31 Oct 2026, evening)
 
 Claude Design's hand-off is built for chapter one. All of it is in the new part `p6i_1737.js` (block-scoped; it wraps the functions below) and `p1_head_c3.css`. The report is `docs/Handoff-1737-Report.md`.

@@ -123,10 +123,10 @@ s2Timetable = function(pl, L){
   if(!tpOn()) return h;
   const old = tpOld(); if(!old) return h;
   const wk = !tpDay(), O = T3('tp.lane.old').text, N = T3('tp.lane.new').text, C = T3('tp.choice'), plane = planeById(S.fleet[0].planeId);
-  const nOld = old.fleet.reduce((t, x) => t + x.sched.length, 0), pNew = tpHas(currentPlan()) ? tpProfit(currentPlan()) : null, pOld = tpProfit(old);
+  const nOld = old.fleet.reduce((t, x) => t + x.sched.length, 0), pNew = tpHas(currentPlan()) && npWorked() ? tpProfit(currentPlan()) : null, pOld = tpProfit(old);
   const oldLab = `<div class="c1-lc c3-lc"><b class="c3-k">${esc(O[wk ? 2 : 0] || "TODAY'S PLAN")}</b><small>${esc(O[wk ? 3 : 1] || 'Flew today')}</small><small>${esc(shortPlane(plane))} · ${plural(nOld, 'flight')}</small></div>`;
   const newLab = `<div class="c1-lc c3-lc new"><b class="c3-k">${esc(N[0] || 'NEW PLAN')}</b><small>${esc(N[wk ? 2 : 1] || 'For tomorrow')}</small><small>${esc(shortPlane(plane))} · ${tpHas(currentPlan()) ? plural(normPlan(currentPlan()).fleet[0].sched.length, 'flight') : esc(N[3] || 'drag flights in')}</small></div>`;
-  const box = (k, lab, val, id, can) => `<div class="c3-ch ${k}${can ? ' on' : ''}"><small>${esc(lab)}</small><b class="${val === null ? 'none' : val < 0 ? 'amber' : 'gold'}">${val === null ? '—' : (val < 0 ? '−' : '') + money(Math.abs(val))}</b>${val === null ? `<em>${esc(C.text[3] || 'build it first')}</em>` : ''}<button class="bv-btn ${k === 'new' && can ? 'go' : ''}" id="${id}" ${can ? '' : 'disabled'}>${bt(C.button || 'Choose')} &#9654;</button></div>`;
+  const box = (k, lab, val, id, can) => `<div class="c3-ch ${k}${can ? ' on' : ''}"><small>${esc(lab)}</small><b class="${val === null ? 'none c4-wait' : val < 0 ? 'amber' : 'gold'}">${val === null ? esc(k === 'new' ? (C.text[3] || 'work it out first') : '—') : (val < 0 ? '−' : '') + money(Math.abs(val))}</b><button class="bv-btn ${k === 'new' && can ? 'go' : ''}" id="${id}" ${can ? '' : 'disabled'}>${bt(C.button || 'Choose')} &#9654;</button></div>`;
   // the old row (p6h draws it as "Before: yesterday's plan") becomes TODAY'S PLAN, with its buttons gone
   h = h.replace(/<button class="btn c2-oldb[^>]*>[\s\S]*?<\/button>/, '').replace(/<button class="btn" id="c2OldBack"[\s\S]*?<\/button>/, '');
   h = h.replace(/(<div class="c1-row c2-oldrow"[^>]*>)<div class="c1-lc">[\s\S]*?<\/div>(<div class="c2-olane">[\s\S]*?<\/div>)<span><\/span><\/div>/, (m, a, lane) => `${a.replace('c2-oldrow', 'c2-oldrow c3-oldrow')}${oldLab}${lane}${box('old', C.text[wk ? 1 : 0] || 'Profit a day · flew today', pOld, 'c3ChooseOld', true)}</div>`);
@@ -145,24 +145,29 @@ function c3TpDecorate(){
   const W0 = S.wk, eve = W0 && W0.dayDone === S.day, TT = wkTitle(eve), h1 = scr.querySelector('.c1-ttt h1') || scr.querySelector('.st-th h2'); if(h1 && TT.title){ h1.textContent = TT.title; const sub = h1.parentElement && h1.parentElement.querySelector('p'); if(sub && TT.text[0]) sub.textContent = TT.text[0]; }
   if(tpDay()) scr.querySelectorAll('.c1-ttbar .s2-dt, #cmpLW').forEach(x => x.remove());   // week 1: no Mon–Fri / Sat–Sun, no Compare with last week
   const tco = scr.querySelector('#c1TtCo'); if(tco) tco.remove();
-  const wk = !tpDay(), K = T3('tp.compare'), pOld = tpProfit(old), has = tpHas(currentPlan()), pNew = has ? tpProfit(currentPlan()) : null, d = pNew === null ? null : pNew - pOld;
+  const wk = !tpDay(), K = T3('tp.compare'), pOld = tpProfit(old), has = tpHas(currentPlan()), worked = npWorked(), pNew = has && worked ? tpProfit(currentPlan()) : null, d = pNew === null ? null : pNew - pOld;
+  const same = (() => { try{ return planKey(normPlan(currentPlan())) === planKey(old); }catch(e){ return true; } })(), FT = T3('tp.footer');
   const sumEl = [...scr.querySelectorAll('.s2-sum, .st-sum, .ps-bar, [class*="summary"]')].find(x => /PLAN SUMMARY|Seats likely filled/i.test(x.textContent));
   const cmp = `<div class="c3-cmp" role="status"><span class="c3-k">${esc(K.eyebrow || 'COMPARE')}</span><span>${esc(K.text[wk ? 1 : 0] || "Today's plan")} <b class="gold">${money(pOld)}</b> a day</span><span>${esc(K.text[2] || 'New plan')} <b class="${pNew === null ? '' : 'gold'}">${pNew === null ? '—' : money(pNew)}</b>${pNew === null ? '' : ' a day'}</span>${d === null ? '' : `<b class="${d >= 0 ? 'green' : 'amber'}">${signed(d, true)} a day</b>`}<small>${esc(K.text[wk ? 4 : 3] || 'Projected for tomorrow')}</small></div>`;
   const had = scr.querySelector('.c3-cmp'); if(had) had.outerHTML = cmp; else if(sumEl) sumEl.outerHTML = cmp; else { const tt = scr.querySelector('[data-c1tt]'); if(tt) tt.insertAdjacentHTML('afterend', cmp); }
-  const bar = scr.querySelector('.actbar'); if(bar){ const hint = bar.querySelector('.dk-hint, .ab-hint, p'); if(hint) hint.textContent = tx('tp.footer', wk ? 1 : 0, null, 'Choose the plan that flies tomorrow.');
+  const bar = scr.querySelector('.actbar'); if(bar){ const hint = bar.querySelector('.dk-hint, .ab-hint, p'); if(hint) hint.textContent = FT.text[(worked ? 2 : 0) + (wk ? 1 : 0)] || 'Choose the plan that flies tomorrow.';
     bar.querySelectorAll('button').forEach(b => { if(b.id === 'c3TpBack') return; if(/Work out my plan|Ready to fly|Next/.test(b.textContent) || b.id === 'nx') b.remove(); });
     const back = bar.querySelector('#s2Back, .bv-btn.back, [id$="Back"]'); if(back && back.id !== 'c3TpBack') back.remove();
-    if(!bar.querySelector('#c3TpBack')){ const box = bar.querySelector('.ab-btns, .dk-btns') || bar.lastElementChild; if(box) box.insertAdjacentHTML('afterbegin', `<button class="bv-btn big" id="c3TpBack">&#9664; Back</button>`); } }
+    if(!bar.querySelector('#c3TpBack')){ const box = bar.querySelector('.ab-btns, .dk-btns') || bar.lastElementChild; if(box) box.insertAdjacentHTML('afterbegin', `<button class="bv-btn big" id="c3TpBack">&#9664; Back</button>`); }
+    // the footer's green button works the new plan out; Choose ▶ on the new plan waits for it
+    const wb = bar.querySelector('#c3TpWork'); if(wb) wb.remove();
+    if(!worked){ const box = bar.querySelector('#c3TpBack') && bar.querySelector('#c3TpBack').parentElement; if(box) box.insertAdjacentHTML('beforeend', `<button class="bv-btn go big" id="c3TpWork" ${has && !same ? '' : 'disabled'}>${bt(FT.button || 'Work out my plan')} &#9654;</button>`); } }
   // callouts one at a time: build a new plan (on first open), then choose (when the new plan first has a flight)
   const U = UI.c3tp, Y = X3(), coN = !Y.seen.tp1 ? 1 : has && !Y.seen.tp2 ? 2 : 0;
   if(coN && !scr.querySelector('[data-c3co]')){ const sx = wk ? '.week' : '', T = coN === 1 ? T3('tp.co1' + sx) : T3('tp.co2' + sx, { old:money(pOld), new:pNew === null ? '—' : money(pNew) }), tt = scr.querySelector('[data-c1tt]');
-    if(tt){ tt.style.position = 'relative'; tt.insertAdjacentHTML('beforeend', c3Co(T, 'c3TpGot', `${coN} of 2`, 'c3-tpco')); const el = tt.querySelector('[data-c3co]'), at = coN === 1 ? tt.querySelector('.c3-newrow .c1-lane') : tt.querySelector('#c3ChooseNew');
+    if(tt){ tt.style.position = 'relative'; tt.insertAdjacentHTML('beforeend', c3Co(T, 'c3TpGot', `${coN} of 2`, 'c3-tpco')); const el = tt.querySelector('[data-c3co]'), at = coN === 1 ? tt.querySelector('.c3-newrow .c1-lane') : tt.querySelector('.c3-ch.new');
       if(el && at){ const G = tt.getBoundingClientRect(), A = at.getBoundingClientRect(); el.style.position = 'absolute'; el.style.top = Math.round(A.bottom - G.top + 12) + 'px';
         el.style.left = Math.round(coN === 1 ? Math.max(8, A.left - G.left + 40) : Math.max(8, A.right - G.left - el.offsetWidth)) + 'px';
         const ptr = el.querySelector('.c1-sco-ptr'); if(ptr) ptr.style.left = coN === 1 ? '40px' : Math.round(el.offsetWidth - A.width / 2 - 7) + 'px'; }
       on('c3TpGot', () => { Y.seen['tp' + coN] = S.day || 1; save(); render(); }); } }
   on('c3ChooseOld', () => c3ChooseOld());
-  on('c3ChooseNew', () => { if(!tpHas(currentPlan())) return; c3ChooseNew(); });
+  on('c3ChooseNew', () => { if(!tpHas(currentPlan()) || !npWorked()) return; c3FlyNew(); });
+  on('c3TpWork', () => { if(tpHas(currentPlan()) && !same) c3Work(); });
   on('c3TpBack', () => c3TpBack());
 }
 function c3ChooseOld(){
@@ -193,9 +198,11 @@ window.__tkPre = R => { try{ if(tpOn()){ const tap = sel => { const e = document
       if(R && R.autoPlan && !tpHas(currentPlan())){ const B = window.__tk.autoPlan(); if(B) return 'two plans: auto-planned the new plan'; }
       const same = (() => { try{ return planKey(normPlan(currentPlan())) === planKey(tpOld()); }catch(e){ return false; } })();
       if(tpHas(currentPlan()) && !same && tap('#c3ChooseNew')) return 'chose the new plan';
+      if(tpHas(currentPlan()) && !same && tap('#c3TpWork')) return 'two plans: work out my plan';
       if(tap('#c3ChooseOld')) return "kept today's plan"; }
     if(document.getElementById('c3BaNext')){ document.getElementById('c3BaNext').click(); return 'before / after: next'; }
     if(document.getElementById('c3BaGo')){ document.getElementById('c3BaGo').click(); return 'before / after: work it out'; }
+    if(document.getElementById('c3NpGo') && !document.getElementById('c3NpGo').disabled){ document.getElementById('c3NpGo').click(); return 'new plan: before / after'; }
     if(document.getElementById('c3FraGo')){ document.getElementById('c3FraGo').click(); return 'plan tomorrow with the new route'; }
   }catch(e){ console.error(e); } return tkPre0 ? tkPre0(R) : null; };
 
@@ -241,7 +248,7 @@ function c3BaPage(){
   const old = tpOld(), now = normPlan(currentPlan()); if(!old) return false;
   const wk = !tpDay(), A = c3Groups(old), B = c3Groups(now), U = UI.c3ba || (UI.c3ba = { key:tpKey(), co:5 }), step = Math.min(4, Math.max(1, U.co || 1)), all = (U.co || 1) > 4;
   const ids = new Set(A.groups.map(g => g.id)), fresh = B.groups.find(g => !ids.has(g.id)), big = fresh || B.groups.slice().sort((x, y) => Math.abs(y.profit - ((A.groups.find(a => a.id === y.id) || {}).profit || 0)) - Math.abs(x.profit - ((A.groups.find(a => a.id === x.id) || {}).profit || 0)))[0];
-  const BT = T3('ba.title'), tl = [BT.title, BT.text[0]], ax = T3('ba.axis'), lab = { a:wk ? "Last week's plan" : "Today's plan", b:'Your new plan', an:plural(A.n, 'flight'), bn:plural(B.n, 'flight'), ring:big && big.id };
+  const BT = T3('ba.title'), tl = [BT.title, BT.text[0]], ax = T3('ba.axis'), lab = { a:wk ? "Last week's plan" : (T3('ba.table').text[5] || "Yesterday's plan"), b:'Your new plan', an:plural(A.n, 'flight'), bn:plural(B.n, 'flight'), ring:big && big.id };
   const svg = c3BaSvg(A, B, all ? 4 : step, lab), d = B.total - A.total, fewer = A.n - B.n;
   // the small table (with the last callout): what changes, a day
   const TB = T3('ba.table').text, tr = (k, a, b, good, m) => { const x = b - a, cls = !x || good === null ? '' : (x > 0) === good ? 'green' : 'amber'; return `<tr><th>${esc(k)}</th><td>${m ? money(a) : num(a)}</td><td>${m ? money(b) : num(b)}</td><td class="${cls}">${x ? signed(x, m) : '—'}</td></tr>`; };
@@ -256,7 +263,7 @@ function c3BaPage(){
       : step === 3 && big ? (() => { const r = routeById(big.id), o = A.groups.reduce((t, g) => t + g.profit, 0), was = A.groups.filter(g => !B.groups.some(b2 => b2.id === g.id)), than = fresh && was.length && big.profit > was.reduce((t, g) => t + g.profit, 0) ? T3(wk ? 'ba.co3.than.week' : 'ba.co3.than', { old:listOf(was).replace(/ (once|twice|×\d+)/g, '') + (was.length > 1 ? '' : '') }).text[0] || '' : '';
           const T = T3('ba.co3', { city:r.city, nf:big.n === 1 ? 'flight' : `${num(big.n)} flights`, pax:num(big.pax), fare:money(big.fare), tk:money(Math.round(big.rev)), profit:money(big.profit), than:than.replace(/^:\s*/, ': ') });
           if(!fresh) T.title = (T3('ba.co3').title || '').replace(/\{nf\}|'s/g, '') || r.city; return T; })()
-      : T3('ba.co4', { money:money(Math.abs(d)), more:d >= 0 ? 'more' : 'less', fewer:fw });
+      : T3(U.np ? 'ba.co4.np' : 'ba.co4', { money:money(Math.abs(d)), more:d >= 0 ? 'more' : 'less', fewer:fw });
     co = c3Co(Object.assign({}, C, { button:step < 4 ? (C.button || 'Next ▸') : (C.button || 'Work it out ▶') }), step < 4 ? 'c3BaNext' : 'c3BaGo', `${step} of 4`, 'c3-baco s' + step); }
   const tabs = ashTabs('c2ba').filter(t => t.id !== 'whatif');   // the sheets this page leads to (What if is Monday's own)
   const top = `<header class="ash-top"><div class="ash-tt"><span class="ash-crumb">${esc(`${S.airline.name || 'Airline'} HQ · Work out my plan`)}</span><h1 class="ash-title">${esc(tl[wk ? 1 : 0] || "Before / after: today's plan and your new plan")}</h1></div><nav class="ash-tabs" aria-label="Sheets">${tabs.map(t => `<button class="ash-tab ${t.on ? 'on' : ''} ${t.off ? 'off' : ''}" data-ashtab="${esc(t.id)}" ${t.off || t.on ? 'aria-disabled="true"' : ''}>${ashIco(t.ic)}${esc(t.label)}</button>`).join('')}</nav></header>`;
@@ -264,7 +271,7 @@ function c3BaPage(){
   const F = T3('ba.footer').text;
   screen().innerHTML = shell(body, deskBar(F[wk ? 1 : 0] || "Tomorrow's plan · see what changes before the sums.", `<button class="bv-btn big" id="c3BaBack">&#9664; Back</button><button class="bv-btn go big" id="c3BaFly" disabled>${bt(wk ? (typeof goLabel === 'function' ? goLabel('Ready to fly') : 'Ready to fly') : I.C2 ? I.C2('chg.fly').text[0] : 'Fly tomorrow')} &#9654;</button>`));
   screen().querySelectorAll('[data-ashtab]').forEach(b => b.onclick = () => { if(b.getAttribute('aria-disabled') === 'true') return; const id = b.getAttribute('data-ashtab');
-    if(id === 'changes'){ U.co = 5; UI.ashTab = null; X3().seen.ba = S.day || 1; save(); render(); return; }   // the Changes tab is Work it out ▶
+    if(id === 'changes' && !U.np){ U.co = 5; UI.ashTab = null; X3().seen.ba = S.day || 1; save(); render(); return; }   // the Changes tab is Work it out ▶
     UI.ashTab = id; render(); });
   // the callout beside the bar it is about
   const el = screen().querySelector('.c3-baco'), sv = screen().querySelector('.c3-svg');
@@ -273,15 +280,16 @@ function c3BaPage(){
       side.style.paddingTop = Math.max(0, Math.round(mid - side.getBoundingClientRect().top - 40)) + 'px'; }
     else { el.style.position = 'absolute'; el.style.left = Math.round(S0.left - G.left + x * k + 14) + 'px'; el.style.top = Math.round(S0.top - G.top + 40) + 'px'; } }
   on('c3BaNext', () => { U.co = step + 1; render(); });
-  on('c3BaGo', () => { U.co = 5; UI.ashTab = null; X3().seen.ba = S.day || 1; save(); render(); });
+  on('c3BaGo', () => { if(U.np){ npChoose(); return; } U.co = 5; UI.ashTab = null; X3().seen.ba = S.day || 1; save(); render(); });
   on('c3BaBack', () => { UI.ashTab = null; UI.c3ba = null; c3BackToPlans(); });
   return true;
 }
 /* ◀ Back on Before / after or the Changes sheet: the two plans again, both kept */
-function c3BackToPlans(){ const i = S.si; if(step().t === 'workings' && S.steps[i - 1] && S.steps[i - 1].t === 'plan'){ S.si = i - 1; UI.c3tp = { key:tpKey(), want:false, wk:!tpDay() }; if(S.rnd) S.rnd.ashChg = {}; save(); render(); return true; } return false; }
+function c3BackToPlans(){ const i = S.si; UI.c3np = null; if(step().t === 'workings' && S.steps[i - 1] && S.steps[i - 1].t === 'plan'){ S.si = i - 1; UI.c3tp = { key:tpKey(), want:false, wk:!tpDay() }; if(S.rnd) S.rnd.ashChg = {}; save(); render(); return true; } return false; }
 const baOn = () => tpDay() || !!(UI.c3ba && UI.c3ba.wk);
 const c3Work0 = R.workings;
 R.workings = st => {
+  try{ if(on3() && S.phase !== 'setup' && UI.c3np && UI.c3np.day === S.day && !(UI.c3ba && UI.c3ba.np) && ashPlanWas()){ c3NpPage(); return; } }catch(e){ console.error(e); }
   try{ if(on3() && S.phase !== 'setup' && baOn() && ashPlanWas() && (UI.ashTab === 'c2ba' || (UI.c3ba && UI.c3ba.co < 5))){ if(c3BaPage()) return; } }catch(e){ console.error(e); }
   return c3Work0(st);
 };
@@ -290,7 +298,7 @@ const c3Tabs0 = ashTabs;
 ashTabs = function(onT){ let out = c3Tabs0.apply(this, arguments);
   try{ if(on3() && S.phase !== 'setup' && baOn() && ashPlanWas() && step().t === 'workings'){ out = out.filter(t => t.id !== 'c2ba'); const i = out.findIndex(t => t.id === 'week');
       out.splice(i + 1, 0, { id:'c2ba', label:I.C2 ? (I.C2('plan2.tab').text[0] || 'Before / after') : 'Before / after', ic:'chart', on:onT === 'c2ba', off:false });
-      if(!out.some(t => t.id === 'changes')) out.splice(i + 2, 0, { id:'changes', label:'Changes', ic:'scale', on:false, off:false }); } }catch(e){}
+      if(!UI.c3np && !out.some(t => t.id === 'changes')) out.splice(i + 2, 0, { id:'changes', label:'Changes', ic:'scale', on:false, off:false }); } }catch(e){}
   return out; };
 /* Back on the Changes sheet returns to the two plans too */
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.actbar #back, .actbar [data-back], .actbar .back');
@@ -440,7 +448,7 @@ ashLaunchPage = function(st){
   try{ const sp = ashLive(); if(!on3() || !sp || !sp.c1) return r; const stage = sp.c1.stage, root = screen(), gw = root.querySelector('.ash-gridw'), cell = ref => root.querySelector(`.ash-grid .ash-c[data-ref="${ref}"]`);
     root.querySelectorAll('.ash-grid .ash-c[data-ref^="G"]').forEach(c => c.classList.add('c3-ex'));
     const F = T3('ld3.footer').text, hint = root.querySelector('.actbar .dk-hint, .actbar .ab-hint, .actbar p');
-    if(stage === 'pjob' && gw){ gw.insertAdjacentHTML('beforeend', c3Co(T3('ld3.job'), 'c3LdWatch', '', 'pu wide')); c3PlaceUnder(gw.querySelector('[data-c3co]'), cell('G9'), { dy:36 });
+    if(stage === 'pjob' && gw){ gw.insertAdjacentHTML('beforeend', c3Co(T3('ld3.job'), 'c3LdWatch', '', 'pu')); c3PlaceUnder(gw.querySelector('[data-c3co]'), cell('G9'), { dy:12 });
       const ln = root.querySelector('.ash-line'); if(ln && tx('ld3.line', 0)) ln.innerHTML = c1Html(tx('ld3.line', 0));
       root.querySelector('section.ash[data-ash]') && root.querySelector('section.ash[data-ash]').classList.add('c3-hold'); if(hint && F[0]) hint.textContent = F[0];
       on('c3LdWatch', () => { c1Ld().c3pjob = S.day || 1; save(); render(); }); }
@@ -587,5 +595,127 @@ function c3NowStrip(){
   if(/^Running /.test(el.textContent)) el.textContent = el.textContent.replace(/^Running [^·]*·/, t + ' ·');
 }
 
-window.__c3 = { tpOn, groups:c3Groups, x:X3, pct:c3FraPct };
+
+/* =====================================================================
+   9 · BERTIE'S PLAY NOTES, 1 NOV 2026, 10:49 (design-and-flow round 2). Chapter one only.
+     - the new plan is worked out before it can be chosen: Work out my plan ▶ in the footer; Choose ▶ on the new plan and its
+       profit wait until then ("I'm worried that it's already working stuff out before we've actually done it");
+     - the first change of week 1 (or one with a new route) is worked out on the whole-plan sheet, Launch Day's sums again with
+       no demonstrations, yesterday's plan beside it and the difference in profit on paper; then Before / after; then Choose.
+       Later changes keep the Changes sheet (Settings newPlanSheet);
+     - every build signal says only "Build the formula, then press Enter." (ScreenText signal.build); callouts kept inside
+       their panel; the take-off can be skipped; no Working space or Return to HQ on the wall; the wall's Day complete is
+       skipped (the Day page is the one review screen) and Launch Day's Day page has a guided tour (Settings dayPageTour).
+   ===================================================================== */
+function npWorked(){ try{ const w = X3().worked || {}; return step().t === 'plan' && w[tpKey()] === planKey(normPlan(currentPlan())); }catch(e){ return false; } }
+function npMode(){
+  if(!on3() || !tpDay()) return false; const rule = String(WBS().newPlanSheet || ''); if(/off|never|no\b/i.test(rule)) return false;
+  const Y = X3(), first = !Object.keys(Y.npDone || {}).length, old = tpOld(), cur = normPlan(currentPlan());
+  const fresh = !!old && cur.fleet.some(x => x.sched.some(id => !old.fleet.some(y => y.sched.includes(id))));
+  return first || fresh;
+}
+function c3Work(){
+  if(npMode()){ UI.c3np = { day:S.day, pk:planKey(normPlan(currentPlan())) }; UI.c3ba = null; UI.ashTab = null; UI.c3tp = null; save(); next(); return; }
+  c3ChooseNew();
+}
+function c3FlyNew(){
+  const X = I.c2X(), Y = X3(); X.kept[X.chgEve || S.day] = true; (Y.npDone = Y.npDone || {})[S.day] = true;
+  UI.c3tp = null; UI.c3ba = null; UI.c3np = null; if(S.steps[S.si + 1] && S.steps[S.si + 1].t === 'workings') S.steps.splice(S.si + 1, 1);
+  if(S.rnd){ delete S.rnd.planWas; S.rnd.ashChg = {}; } save(); next();
+}
+/* from Before / after (after the sheet): back to the two plans, the new plan now worked out */
+function npChoose(){ const Y = X3(), pk = UI.c3np && UI.c3np.pk; (Y.worked = Y.worked || {})[`${S.day}|${S.si - 1}`] = pk; UI.c3ba = null; UI.ashTab = null; save(); c3BackToPlans(); }
+/* the whole-plan sheet: a column for each route of the new plan, the new plan's totals, yesterday's plan as it flew, the difference */
+function c3NpPage(){
+  const old = tpOld(), pl = normPlan(currentPlan()), B = c3Groups(pl), A = c3Groups(old), Q = window.__c1qx;
+  const Z = X3().np || (X3().np = {}), key = S.day + '|' + UI.c3np.pk, st = Z[key] || (Z[key] = { tk:{}, rev:false, prof:false, diff:{} });
+  const CL = T3('np.cols').text, RW = T3('np.rows').text, Lt = i => ASH_LET[1 + i], F = c3Flights(pl);
+  const G = B.groups.map((g, i) => { const c = Lt(i), r = routeById(g.id), seats = F.filter(f => f.route === g.id).reduce((t, f) => t + (f.seats || 0), 0); return { g, c, r, fare:g.fare, pax:g.pax, tk:g.pax * g.fare, seats }; });
+  const P = Lt(G.length), Yc = Lt(G.length + 1), D = Lt(G.length + 2);
+  const fuel = Math.round(F.reduce((t, f) => t + (f.fuelCost || 0), 0)), cost = Math.round(B.L ? B.L.v.cost : 0), rev = G.reduce((t, x) => t + x.tk, 0), prof = rev - cost;
+  const eve = I.c2X().chgEve || (S.day - 1), hd = (S.history || []).slice().reverse().find(h => h.from === eve && h.to === eve) || null;
+  const yRev = Math.round(hd ? hd.revenue : (A.L ? A.L.v.rev : 0)), yCost = Math.round(hd ? hd.costs : (A.L ? A.L.v.cost : 0)), yFuel = Math.round(c3Flights(old).reduce((t, f) => t + (f.fuelCost || 0), 0)), yProf = yRev - yCost, diff = prof - yProf;
+  const cols = G.map(x => ({ c:x.c, w:132, top:x.g.n === 1 ? '1 flight' : `${x.g.n} flights`, flag:x.r.flag, main:`${x.r.city} ${money(x.fare)}`, plan:true }))
+    .concat([{ c:P, w:150, top:CL[0] || 'your new plan', main:CL[1] || 'New plan' }, { c:Yc, w:150, top:'', main:CL[2] || "Yesterday's plan" }, { c:D, w:132, top:CL[3] || "new − yesterday's", main:CL[4] || 'Difference' }]);
+  const rows = [{ r:1, t:'hdr' }, { r:2, label:RW[0] || 'Passengers', ic:'person' }, { r:3, label:RW[1] || 'Fare', ic:'tag' }, { r:4, label:RW[2] || 'Ticket revenue', ic:'coins', gold:true }, { r:5, label:RW[3] || 'Total revenue', ic:'coins', t:'tot', gold:true },
+    { r:6, label:RW[4] || 'Other costs', ic:'receipt' }, { r:7, label:RW[5] || 'Fuel burned', ic:'drum' }, { r:8, label:RW[6] || 'Total costs', ic:'receipt', t:'tot', gold:true }, { r:9, label:RW[7] || 'Profit', ic:'chart', t:'fin', gold:true }];
+  if(G.length === 1) st.rev = true;   // one route: its ticket revenue is the total
+  const v = {};
+  G.forEach(x => { v[x.c + 2] = { t:num(x.pax), bar:x.seats ? x.pax / x.seats : null, full:x.seats > 0 && x.pax >= x.seats }; v[x.c + 3] = { t:money(x.fare) }; if(st.tk[x.c]) v[x.c + 4] = { t:money(x.tk) }; });
+  if(st.rev) v[P + 5] = { t:money(rev), f:G.length === 1 }; v[P + 6] = { t:money(cost - fuel), f:true }; v[P + 7] = { t:money(fuel), f:true }; v[P + 8] = { t:money(cost), f:true };
+  if(st.prof) v[P + 9] = { t:money(prof), cls:prof < 0 ? 'soft' : 'gold' };
+  v[Yc + 5] = { t:money(yRev), f:true }; v[Yc + 6] = { t:money(yCost - yFuel), f:true }; v[Yc + 7] = { t:money(yFuel), f:true }; v[Yc + 8] = { t:money(yCost), f:true }; v[Yc + 9] = { t:money(yProf), f:true };
+  if(st.diff.ok) v[D + 9] = { t:signed(diff, true), cls:diff >= 0 ? 'pos' : 'amb', fin:!!st.diff.shown };
+  const W = { 2:RW[0], 3:RW[1], 4:RW[2], 5:RW[3], 8:RW[6], 9:RW[7] }, wordsOf = ref => { const R0 = ashRef(ref); return (R0.c === Yc ? (CL[2] || "Yesterday's plan") + ': ' : '') + (W[R0.r] || ref); };
+  const NL = T3('np.line', { d:money(Math.abs(diff)), more:diff >= 0 ? 'more' : 'less' }).text;
+  const build = (id, tgt, refs, ops, words, want, done, ok) => ({ id:'np:' + id, kind:'np:' + id, tgt, refs, ops, words, how:'formula', needEnter:true, commute:ops.every(o => o !== '−'), unit:'£', want, done, built:done, recKey:null, no:null,
+    wordsOf, lineBuild:T3H(NL[0] || ''), answer:() => { ok(); save(); return { ok:true }; } });
+  const sums = [];
+  G.forEach(x => sums.push(build('tk' + x.c, x.c + 4, [x.c + 2, x.c + 3], ['×'], 'Passengers × Fare', x.tk, !!st.tk[x.c], () => { st.tk[x.c] = true; })));
+  if(G.length > 1) sums.push(build('rev', P + 5, G.map(x => x.c + 4), G.slice(1).map(() => '+'), (RW[2] || 'Ticket revenue') + ' + …', rev, !!st.rev, () => { st.rev = true; }));
+  sums.push(build('prof', P + 9, [P + 5, P + 8], ['−'], 'Total revenue − Total costs', prof, !!st.prof, () => { st.prof = true; }));
+  if(Q && Q.paper) sums.push(Q.paper({ id:'npDiff', day:S.day }, st.diff, { title:T3('np.diff').title || 'The difference in profit', tgt:D + 9, refs:[P + 9, Yc + 9], ops:['−'], words:"New plan − Yesterday's plan", want:diff, rel:'profit',
+    doc:'The new plan against yesterday', question:`${money(prof)} − ${money(yProf)}`, vals:[prof, yProf], answerText:signed(diff, true) }));
+  else st.diff.ok = true;
+  const act = sums.find(x => !x.done) || null, done = !act, TT = T3('np.title');
+  const tabs = ashTabs(null).filter(t => !['c2ba', 'whatif', 'changes'].includes(t.id)); tabs.forEach(t => { t.on = false; }); tabs.splice(Math.max(0, tabs.findIndex(t => t.id === 'week')) + 1, 0, { id:'np', label:CL[1] || 'New plan', ic:'scale', on:true, off:false });
+  const sp = { id:'np:' + S.day, crumb:`${S.airline.name || 'Airline'} HQ · ${TT.text[0] || 'Plan tomorrow'}`, title:TT.title || 'Work out your new plan', tabs, lw:230, cols, rows, v, sums, act, just:null, doneF:null,
+    doneLine:done ? T3H(String(NL[1] || '').replace(/^\s*✓\s*/, '')) : '' };
+  const FT = T3('np.footer');
+  screen().innerHTML = shell(`<div class="dp ash-page c4-np">${ashHtml(sp)}</div>`, deskBar(esc(FT.text[done ? 1 : 0] || ''), `<button class="bv-btn big" id="c3NpBack">&#9664; Back</button><button class="bv-btn ${done ? 'go' : ''} big" id="c3NpGo" ${done ? '' : 'disabled'}>${bt(FT.button || 'Before / after')} &#9654;</button>`));
+  ashBind(sp);
+  const root = screen(), gw = root.querySelector('.ash-gridw'), cell = ref => root.querySelector(`.ash-grid .ash-c[data-ref="${ref}"]`);
+  if(done){ const ln = root.querySelector('.ash-line'); if(ln) ln.innerHTML = `<span class="pos">✓</span> ${sp.doneLine}`; }
+  if(gw && act){ root.querySelectorAll('[data-c1sig]').forEach(x => x.remove());
+    gw.insertAdjacentHTML('beforeend', act.how === 'book' ? c1SignalHtml({ kind:'paper', title:act.title, lines:c1PaperLines(act.no, act.tgt), ptr:'up' }) : c1SignalHtml({ kind:'build', ptr:'up', lines:[] }));
+    c1Place(gw.querySelector('[data-c1sig]'), cell(act.tgt), 'below', { dx:0 }); }
+  root.querySelectorAll('[data-ashtab]').forEach(b => b.onclick = () => {});
+  on('c3NpBack', () => c3BackToPlans());
+  on('c3NpGo', () => { if(!done) return; UI.c3ba = { key:tpKey(), co:1, np:true }; UI.ashTab = 'c2ba'; save(); render(); });
+}
+/* the build signal: one line (Bertie: "build the formula and then press enter, and remove the other words") */
+const c4Sig0 = c1SignalHtml;
+c1SignalHtml = function(o){
+  try{ if(on3() && o && o.kind === 'build'){ o = Object.assign({}, o, { nothing:false });
+      if(!o.tag && !/Σ|drag|Let go/i.test((o.lines || []).join(' ') + ' ' + (o.title || ''))) o = Object.assign(o, { title:'', lines:[c1Html(tx('signal.build', 0, null, 'Build the formula, then press [Enter].'))] }); } }catch(e){}
+  return c4Sig0.call(this, o);
+};
+/* a callout or signal that would run past its panel or the footer moves up inside it */
+function c4Clamp(){
+  const scr = screen(); if(!scr) return; const foot = scr.querySelector('.actbar'), fy = foot ? foot.getBoundingClientRect().top : innerHeight;
+  scr.querySelectorAll('[data-c3co], [data-c1sig], .ash-co.c1-sco').forEach(el => { const cs = getComputedStyle(el); if(cs.position !== 'absolute' || el.classList.contains('c4-tourco')) return;
+    const r = el.getBoundingClientRect(), box = el.closest('section.ash, .dp, .c1-tt'), lim = Math.min(fy, box ? box.getBoundingClientRect().bottom : fy) - 8, over = r.bottom - lim;
+    if(over > 0 && r.height < lim - 60) el.style.top = Math.round((parseFloat(cs.top) || 0) - over) + 'px'; });
+}
+/* the take-off: Skip on the take-off screen and on the wall; the wall without Working space and Return to HQ */
+function c4Wall(){
+  document.body.classList.toggle('c4', !!on3()); if(!on3() || IS_DISPLAY) return;
+  const t = step() && step().t, run = t === 'takeoff' && S.rnd && S.rnd.takeoff && !S.rnd.takeoffDone, box = document.querySelector('.w-btns'), lab = bt(T3('takeoff.skip').button || 'Skip take-off');
+  const skip = () => { try{ if(typeof wallView !== 'undefined' && wallView) setWallView(false); }catch(e){} if(S.rnd){ delete S.rnd.takeoff; S.rnd.takeoffDone = true; } save(); next(); };
+  let b = document.getElementById('c4SkipTk'); if(run && box && !b){ box.insertAdjacentHTML('afterbegin', `<button class="btn primary" id="c4SkipTk">${lab} &#9654;</button>`); b = document.getElementById('c4SkipTk'); b.onclick = skip; }
+  if(!run && b) b.remove();
+  if(t === 'takeoff' && !S.rnd.takeoffDone){ const go = screen().querySelector('#toGo'); if(go && !screen().querySelector('#c4TkSkip')){ go.insertAdjacentHTML('beforebegin', `<button class="btn big" id="c4TkSkip">${lab} &#9654;</button>`); on('c4TkSkip', skip); } }
+}
+/* the Day page is the one review screen: the wall closes when it is drawn; Launch Day's has a tour, one part at a time */
+if(H.dayPage){ const dp4 = H.dayPage;
+  H.dayPage = o => { try{ if(on3() && !IS_DISPLAY && typeof wallView !== 'undefined' && wallView) setWallView(false); }catch(e){} dp4(o); try{ c4Tour(o.d); }catch(e){ console.error(e); } }; }
+function c4Tour(d){
+  const rule = String(WBS().dayPageTour || 'Launch Day'); document.querySelectorAll('.c4-shade, .c4-tourco').forEach(x => x.remove());
+  if(!on3() || /off|never|no\b/i.test(rule) || d !== 1 || X3().seen.dayTour || UI.c3back) return;
+  const scr = screen(), i = UI.c4tour || 0, el = [scr.querySelector('.c2-prof'), scr.querySelector('.c2-rt'), scr.querySelector('.c3-fra') || scr.querySelector('.c2-read'), scr.querySelector('.actbar')][i];
+  if(!el){ X3().seen.dayTour = S.day || 1; return; }
+  scr.querySelectorAll('.c4-focus').forEach(x => x.classList.remove('c4-focus')); el.classList.add('c4-focus');
+  document.body.insertAdjacentHTML('beforeend', '<div class="c4-shade" aria-hidden="true"></div><div class="c4-hole" aria-hidden="true"></div>' + c3Co(T3('day.tour.' + (i + 1)), 'c4TourNext', `${i + 1} of 4`, 'c4-tourco pu'));
+  const co = document.querySelector('.c4-tourco'), R0 = el.getBoundingClientRect(), below = R0.bottom + 14 + co.offsetHeight < innerHeight - 8;
+  co.style.position = 'fixed'; co.style.top = Math.round(below ? R0.bottom + 14 : R0.top - co.offsetHeight - 14) + 'px'; co.style.left = Math.round(Math.min(Math.max(8, R0.left), innerWidth - co.offsetWidth - 8)) + 'px';
+  if(!below) co.classList.add('c4-up');
+  const hole = document.querySelector('.c4-hole'); Object.assign(hole.style, { top: R0.top + 'px', left: R0.left + 'px', width: R0.width + 'px', height: R0.height + 'px' });
+  on('c4TourNext', () => { document.querySelectorAll('.c4-shade, .c4-hole, .c4-tourco').forEach(x => x.remove()); if(i >= 3){ X3().seen.dayTour = S.day || 1; UI.c4tour = 0; save(); } else UI.c4tour = i + 1; render(); });
+}
+const c4Render0 = render;
+render = function(){ const r = c4Render0.apply(this, arguments); try{ if(on3()){ c4Wall(); c4Clamp(); requestAnimationFrame(() => { try{ c4Clamp(); }catch(e){} }); } if(!(step() && step().t === 'results') && !(S.wk && S.wk.dayDone === S.day && step().t === 'weekRun')) document.querySelectorAll('.c4-shade, .c4-hole, .c4-tourco').forEach(x => x.remove()); }catch(e){ console.error(e); } return r; };
+const tkPre4 = window.__tkPre;
+window.__tkPre = R => { try{ const b = document.getElementById('c4TourNext'); if(b){ b.click(); return 'Day page tour: next'; } const k = document.getElementById('c4SkipTk') || document.getElementById('c4TkSkip'); if(k && R && R.skipTakeoff){ k.click(); return 'skipped the take-off'; } }catch(e){} return tkPre4 ? tkPre4(R) : null; };
+
+window.__c3 = { tpOn, groups:c3Groups, x:X3, pct:c3FraPct, npMode, npWorked };
 }

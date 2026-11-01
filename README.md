@@ -380,6 +380,13 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Round 2: Bertie's 10:49 play notes (1 Nov 2026)
+
+Built in chapter one (`p6i_1737.js` section 9, `p1_head_c3.css`, `p6c_desks.js`); words in the workbook through `tools/merge_1049.py`, marked PLACEHOLDER and listed in `docs/Placeholders-for-Fable.md`. The report for Bertie is `docs/Round-2-Playnotes-1049.md`, with screenshots in `docs/screenshots/playnotes-1049/`.
+- One-line signals and minimal callouts; callouts kept on screen; no fare stepper in the Studio's flight panel; turnaround hatch after the last flight.
+- Skip take-off; no Working space or Return to HQ on the wall; the Day page is the one review screen, with a four-step dimmed tour on Launch Day.
+- Two plans: the new plan stays locked until he presses **Work out my plan ▶**. For the first change of week 1 (or a new route) that opens a whole-plan sheet like Launch Day, compared with yesterday's plan; then Before / after; then Choose. Later changes keep the Changes sheet.
+
 ### Chapter one after the 17:37 play notes: the eight screens (31 Oct 2026, evening)
 
 Claude Design's hand-off (`data/incoming/handoff-1737-31-oct/`, DESIGN.md installed from it) is built, chapter one only, in `src/opening/parts/p6i_1737.js` and `p1_head_c3.css`. The report is `docs/Handoff-1737-Report.md`; the screenshots are in `docs/screenshots/handoff-1737/`.

@@ -1,0 +1,57 @@
+00:00  START
+00:00  Studio · Week 1 · Mon 2 Sep
+00:01  ★ MARK
+00:04  “I need the turnaround hashed area to be after Paris so that I don't get confused why I can't drop a flight right next to it.”
+00:06  ★ MARK
+00:22  “I also think here the fares in green, 38 out of 38, 100 pounds, 38 out of 38, they should be slightly bigger and maybe next to the change with the 80 and the plus.”
+00:30  Studio: flight selected · Week 1 · Mon 2 Sep
+00:32  ★ MARK
+00:58  “Or actually get rid of the 80 with the plus, the steppers and just have the seats filled at each fare but make them a bit more prominent.”
+01:09  Sums · Week 1 · Mon 2 Sep
+01:30  ★ MARK
+01:31  “For these, I'd rather it said build the formula and maybe just then press enter and remove the other words because for my pupils that will just take a little bit more brain power.”
+01:54  “And it's not really necessary. Same with this one. Just put work it out on paper and then put write someone beside it.”
+02:13  ★ MARK
+02:20  “On here, the button is cut off. I think it says, I'm not sure what it says.”
+02:35  ★ MARK
+02:43  “And again, this call out should just probably say, calculate the profit.”
+02:52  “Now you will create the profit for your plan. Actually not even that. Just say profit equals total revenue, take away total costs.”
+03:13  “And here that is cut off. So change that.”
+03:20  ★ MARK
+03:26  “So yeah, a consistent just make the call outs, the bare minimum information that is actually useful.”
+03:32  Ready to fly · Week 1 · Mon 2 Sep
+03:35  Take-off · Week 1 · Mon 2 Sep
+03:37  “Also, can we enable this take off to be skipped? I don't actually think we need the working space button anymore or the top return to HQ button anymore.”
+03:44  Operations Wall · Week 1 · Mon 2 Sep
+03:46  ★ MARK
+03:55  Take-off · Week 1 · Mon 2 Sep
+03:57  Operations Wall · Week 1 · Mon 2 Sep
+04:01  Operations Wall · Week 1 · Mon 2 Sep
+04:13  ★ MARK
+04:17  Launch Day: Day page · Week 1 · Mon 2 Sep
+04:22  “And again, is there any way that we could put this information on the screen before we might need to get rid of some of the information on the screen before.”
+04:25  ★ MARK
+04:36  “So it's just one review screen. And then maybe we could do the whole focal point sort of talk through of what each things are where the rest goes dim as a focal point with a call out.”
+04:49  “Again, I think this call out can just say, build a new plan for tomorrow to compare with yesterday's plan.”
+04:52  Studio · Week 1 · Tue 3 Sep
+05:02  ★ MARK
+05:11  “So I don't know yet, but I'm worried that it's already working stuff out before we've actually done it.”
+05:26  ★ MARK
+05:36  “So that green button should possibly say work out cost out plan with the choose it above above being grayed out because they shouldn't be able to select that at this point until they've worked out the new plan.”
+05:56  Studio: flight selected · Week 1 · Tue 3 Sep
+06:10  Sums · Week 1 · Tue 3 Sep
+06:24  ★ MARK
+06:27  “I'm not sure, but I'm not sure this screen should come yet. I think we should have done some calculations because this could be an opportunity to just practice the launch day calculations again.”
+06:42  “Yeah, I think I like the layout of it. So it could be useful later on in the game. But I think at this point, if they've unlocked Frankfurt, they should have the opportunity to do more calculations to practice the launch day sequence.”
+07:07  “But with just less demonstrations because I think once they've actually calculated, yeah, because I think here if they started calculating those fares and then underneath is yesterday's spreadsheet, then they could do the build calculations.”
+07:33  ★ MARK
+07:50  “As you know, I've just noticed here it suggests we're going to Dublin twice and Frankfurt twice.”
+07:59  “I think what would be better is to show this spreadsheet as yesterday's so with two Dublin's and two Paris's and then the new spreadsheet to work out, which is one France, one Paris and two Frankfurt's.”
+08:16  “And then to compare the difference between those two plans in total. I'm not sure it makes sense to compare to Frankfurt's with two Dublin's.”
+08:25  “Because the other one is comparing one France with two French flights, which is obviously going to be the two French flights are better.”
+08:35  “It should be the plan overall. And I think maybe that's what I couldn't work out what was going on yesterday.”
+08:51  “So if anything, I think if they've unlocked Frankfurt, they do the same launch day calculations and then launch and then maybe on the Wednesday they do this whole calculating the difference so they can compare the difference yesterday.”
+08:53  ★ MARK
+09:09  “But today they're actually calculating the difference. I mean, on the Wednesday. And I think it's worth you code trying to build this for then Claude design to improve the look if need be, because we've got the basic principles of what we need it to look like.”
+09:38  “You should be able to do something all right.”
+09:42  STOP
