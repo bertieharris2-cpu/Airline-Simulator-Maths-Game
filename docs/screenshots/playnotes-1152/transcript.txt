@@ -1,0 +1,74 @@
+00:00  START
+00:00  Sums · Week 1 · Mon 2 Sep
+00:41  ★ MARK
+00:42  “Launch Day, the profit callout is cut off on the right. The callout here should be touching the pink box,”
+01:03  ★ MARK
+01:11  “also the title, instead of build it on the sheet, I'd like you... Actually, never mind. I think here,”
+01:29  ★ MARK
+01:31  “remove the finance made example, made up example, that should only be there when demonstrating,”
+01:38  “then it can disappear. I think at the start of this, this should be review the day,”
+01:39  Ready to fly · Week 1 · Mon 2 Sep
+01:41  Take-off · Week 1 · Mon 2 Sep
+01:43  Operations Wall · Week 1 · Mon 2 Sep
+01:46  Launch Day: Day page · Week 1 · Mon 2 Sep
+01:52  ★ MARK
+01:56  “you should be able to see the whole thing, and then it dims the rest. At the moment,”
+02:05  “the callout is too bright, and what it's pointing at is too dim, so everything needs to be a little”
+02:11  “bit brighter. This is a better brightness. The only thing I'd say about this is,”
+02:16  ★ MARK
+02:34  ★ MARK
+02:40  “there is no graph now, that might be just a note to park, depending on how the other review screens”
+03:01  “go. I don't think we need to now work it out, because I've only just put down one flight,”
+03:04  Studio · Week 1 · Tue 3 Sep
+03:23  ★ MARK
+03:29  “I think we can just get rid of that callout completely. I think for the callout,”
+03:36  Studio: flight selected · Week 1 · Tue 3 Sep
+03:39  Studio · Week 1 · Tue 3 Sep
+03:41  Studio: flight selected · Week 1 · Tue 3 Sep
+03:57  Sums · Week 1 · Tue 3 Sep
+04:32  “it should just say, build the formula, rather than build it on the sheet,”
+04:36  “and we don't need the bit below it. Also, I would like the second”
+04:51  “ticket revenue to be a work it out on paper, and actually, to build it on the sheet, it should say,”
+05:04  “build the formula underneath calculate the total revenue, or build a formula to calculate”
+05:15  “the total revenue. Here, it's missed off, work it out on paper, that callout. Again,”
+05:30  ★ MARK
+05:40  “not sure what it says, but it should say, work it out on paper, and then the callout content”
+05:45  “doesn't need to be as detailed. It should say, calculate the difference in profit, write some x.”
+06:35  ★ MARK
+06:35  “I don't think we need this third callout, and I don't think we need this fourth callout either.”
+07:02  ★ MARK
+07:05  Studio: flight selected · Week 1 · Tue 3 Sep
+07:08  “Now, the choose buttons should both be green, so it's not indicating one over the other.”
+07:19  Week 1 is flying · Week 1 · Tue 3 Sep
+07:21  Week 1 is flying · Week 1 · Wed 4 Sep
+07:22  Week 1 is flying · Week 1 · Thu 5 Sep
+07:24  Week 1 is flying · Week 1 · Fri 6 Sep
+07:25  Day page · Week 1 · Fri 6 Sep
+07:33  Week 1 is flying · Week 1 · Sun 8 Sep
+07:33  Day page · Week 1 · Sun 8 Sep
+07:33  Sunday review · Week 1 · Sun 8 Sep
+07:45  “Here, I think it doesn't need the finance shows you first on made-up numbers,”
+07:54  “then you add up your own week, doesn't need that. For that animation, it should have shown the cursor”
+08:04  ★ MARK
+08:07  “moving to the add button as on previous pages. Again, build it on the sheet. I don't think we”
+08:27  “need this, or it should just have the button, now my turn, and then here, it should say,”
+08:35  ★ MARK
+08:36  “build the formula, and then in the box, calculate the total profit for the week.”
+08:59  ★ MARK
+08:59  “Maybe just before this, if they get it right, it should just say,”
+09:10  “or have a green button saying, an easier method with an arrow.”
+09:18  “Again, the callout should just say, here's a simpler way to do it in a spreadsheet,”
+09:23  “not the sentence underneath that says, finance shows you on the same made-up numbers, blah,”
+09:28  “blah, blah. Again, this needs to show the cursor, again, on that demonstration, please,”
+09:34  ★ MARK
+09:44  “and apply the same thing to build the formula as before, make it simpler.”
+09:59  “Then, before this callout comes up, it should show that the profit this week,”
+10:00  ★ MARK
+10:04  “that should come up in green, just so they know they've got the answer right.”
+10:06  “Then, a button saying, now calculate the average, and the callout here needs to point”
+10:27  ★ MARK
+10:29  “more at this and say, now it's your turn. I think at this point, get rid of the how”
+10:43  ★ MARK
+10:45  “good was the plan callout with help me investigate, I think just leave that for now.”
+10:51  Home · Week 2 · Mon 9 Sep
+10:58  STOP
