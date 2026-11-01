@@ -2,7 +2,7 @@
 
 Claude Design turned your 11:52 and 12:05 play notes into pictures of seven screens, plus your ten callout rules. You checked the pictures and asked for one change: in each sum's box, the method goes on top in its colour ("Build the formula" in blue, "Work it out on paper" in gold), with the task underneath.
 
-All of it is now in the chapter-one game (`airline-opening-prototype.html`). The hand-off itself is in `data/incoming/handoff-round3-1-nov/`, and its DESIGN.md is installed at the top of the repo. Screenshots of the new version, in the order a pupil meets them, are in `docs/screenshots/round-3/`.
+All of it is now in the chapter-one game (`airline-opening-prototype.html`). The hand-off itself is in `data/incoming/handoff-round3-1-nov/`, and its DESIGN.md is installed at the top of the repo. Screenshots of the new version are in `docs/screenshots/round-3/`: 01–27 are Launch Day to Tuesday, and the ones starting with x are the week 1 Sunday (x01–x17) and Monday 9 Sep (x18–x36).
 
 
 ## The short version
@@ -44,7 +44,7 @@ The new words are all placeholders in the workbook, listed for Fable in `docs/Pl
 
 ## Checks
 
-`chapter1.test.js` passes (see below), and I played through three runs with screenshots:
+`chapter1.test.js` passes (39 checks, none failed). I also played through three runs with screenshots:
 - Launch Day to Thursday: Launch Day sums, take-off skip, the walk-through, two plans, the new-plan sheet, Before / after, choose, fly;
 - the week 1 Sunday from start to finish;
 - Monday 9 Sep's what-if sheet to Set my fares.
