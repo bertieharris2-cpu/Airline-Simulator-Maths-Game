@@ -44,6 +44,9 @@ if(typeof INTRO !== 'undefined' && INTRO.tank && typeof INTRO.tank.what === 'fun
     return out; };
 }
 
+/* ---------- the teacher panel's note on a save made ready by hand (2 Nov: the BR pupil's save lands on the Sunday accounts) ---------- */
+if(typeof MIG_STEP_WORDS !== 'undefined' && !MIG_STEP_WORDS.weekReview) MIG_STEP_WORDS.weekReview = 'Sunday accounts';
+
 /* ---------- the chapter-one review: what comes next ---------- */
 const v8Next0 = nextChapterLine;
 nextChapterLine = function(){

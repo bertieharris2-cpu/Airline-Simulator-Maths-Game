@@ -2,6 +2,8 @@
 
 During the design-and-flow phase (from 1 Nov 2026) Claude Code makes up any figure or word a screen needs, so Bertie and Claude Design can keep going. Each one lives in the workbook like everything else, marked "PLACEHOLDER" in its notes. When Bertie is happy with the flow, this list is the hand-over: Fable checks, replaces or improves each one, and makes the data hang together.
 
+**2 Nov 2026: Fable's pass is back (workbook v6.7, installed by `tools/merge_v67.py`).** Each row now carries her note; her report is `data/incoming/fable-v6.7-2-nov/Fable-Data-Pass-Report-2-Nov.md`. The rows marked "v6.7 install" below are new, made up while installing it, and wait for her next pass.
+
 **2 Nov 2026: handed over.** Bertie asked for Fable's data pass. The covering note, with this list sorted by sheet and the figure runs, is `docs/Fable-Handoff-Data-Pass-2-Nov-2026.md`.
 
 | Round | Where in the workbook | What | Made up |
@@ -53,3 +55,9 @@ During the design-and-flow phase (from 1 Nov 2026) Claude Code makes up any figu
 | 4 review fixes (2 Nov) | ScreenText `wi2.co1.less` | Week 2 what-if, the first callout when his fare is already at the top, so the what-if tries a lower fare | "What if {city} were £{step} less?" (made up by Claude Code) |
 | 4 review fixes | ScreenText `wi2.co4.less`, `wi2.co4.less.up`, `wi2.co4.down` | The what-if's month callout when the money moves the other way from the fare: lower fare and less money · lower fare that fills more seats and makes more money · higher fare that loses enough people to make less money | "£{step} less a ticket = {month} less a month" · "£{step} less a ticket = {month} more a month" · "£{step} more a ticket = {month} less a month" (made up by Claude Code) |
 | 4 review fixes | (in code) Red Kite's Monday card for several routes | One card names every route taken that Monday ("Amsterdam, Frankfurt and Geneva"); its board is headed "DEPARTURES · LONDON" with one row for each route, using the three times in `news.rival.times` in turn | Made up by Claude Code |
+| v6.7 install (2 Nov) | Airports LHR T5 `turnaroundMin` | The home turnaround. Fable set Settings `homeTurnaroundMin` 35 → 30, but the game reads the home terminal's row first, so her change only works with this row at 30 too | 30 (to match her note: 2 × Frankfurt + Paris in 12 h 00) |
+| v6.7 install | Settings `graph2Measure` | Graph 2's measure, as she asked: 'one plane all day' or 'one flight' | 'one plane all day' (what the game did, and what she called sound) |
+| v6.7 install | ScreenText `news.board` | "The airline's owners want…": the change her report describes, which was missing from her file | Her words |
+| v6.7 install | ScreenText `brief1.lead`, `brief1.steps` | Launch Day's first page, moved from code so she can set it; the snacks step is gone (her suggestion), so it's four steps | The old words without snacks |
+| v6.7 install | ScreenText `intro.tank.lead` | December's "Buying fuel ahead" first line, moved from code | Her suggested words |
+| v6.7 install | ScreenText `end.next` | The chapter-one review's "What comes next" line, moved from code; chapter 2's own row on the Chapters sheet is untouched | Chapter 2's newIdea without "reputation revealed". Her "Your stars, public since week 4" doesn't fit a line about what comes next |
