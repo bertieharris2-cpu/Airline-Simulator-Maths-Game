@@ -10,6 +10,19 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zzb. Bertie's decisions on Fable's report (2 Nov 2026)
+
+This is for chapter one. `tools/merge_decisions_2nov.py` (run after `merge_v67.py`) adds four Settings rows. Fable's own v6.7 file is now installed; it differs from the rebuilt copy only in her five full notes.
+- **The gentle Board only** (`boardReviewChapterOne` off). p6k wraps `soAuditData`: in chapter one the month-end audit never takes its board form (`board` false, one line, no average day), and `soBoardWaiting` is false. The plain Finance audit stays.
+- **Red Kite needs spare time** (`rivalNeedsSpare` yes). `c6RivalCheck` counts weeks per route in `S.c6.idle`:
+  - at each check, an unflown route adds the weeks since the last check (`S.c6.lastCheck`), but only if `c6Spare(id)` says a plane that can reach it had room for one more return flight;
+  - flying it, or it being open to him for under 4 days, sets the count to 0;
+  - the takeover comes at `rivalIgnoreWeeks`.
+- **Graph question** (`graphQuestionInPauseLimit` no, `graphQuestionEveryWeeks` 2):
+  - `c7Question` drops the `c1Room()` condition and skips a week straight after one with a question;
+  - p6l wraps `c1Asked` to leave `gq:` entries out of the pause's count. It is still numbered and in the record;
+  - `chapter1.test.js` leaves `gq:` out of its two-a-pause checks.
+
 ## 0zza. Fable's v6.7, and a pupil's save made ready (2 Nov 2026)
 
 This is for chapter one.

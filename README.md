@@ -380,6 +380,15 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Bertie's decisions on Fable's report (2 Nov 2026)
+
+These are in chapter one, set by `tools/merge_decisions_2nov.py`:
+- only the gentle Board (the old monthly board review is parked);
+- Red Kite only counts weeks when he had time to fly the route;
+- the graph question is outside the pause's two and comes at most every other week.
+
+Fares and week 1's Day pages are unchanged.
+
 ### Fable's v6.7 installed, and a pupil's save made ready (2 Nov 2026)
 
 `tools/merge_v67.py` installs Fable's workbook v6.7. It is rebuilt from the recorded comparison, because the uploaded file was lost in a container restart. It also does her asks:

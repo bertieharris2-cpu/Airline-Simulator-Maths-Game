@@ -61,3 +61,6 @@ During the design-and-flow phase (from 1 Nov 2026) Claude Code makes up any figu
 | v6.7 install | ScreenText `brief1.lead`, `brief1.steps` | Launch Day's first page, moved from code so she can set it; the snacks step is gone (her suggestion), so it's four steps | The old words without snacks |
 | v6.7 install | ScreenText `intro.tank.lead` | December's "Buying fuel ahead" first line, moved from code | Her suggested words |
 | v6.7 install | ScreenText `end.next` | The chapter-one review's "What comes next" line, moved from code; chapter 2's own row on the Chapters sheet is untouched | Chapter 2's newIdea without "reputation revealed". Her "Your stars, public since week 4" doesn't fit a line about what comes next |
+| Bertie's decisions (2 Nov, on Fable's report) | Settings `boardReviewChapterOne` | Decision 1: the gentle Board only; the old monthly board review is parked in chapter one | off (Bertie's rule, not a placeholder) |
+| Bertie's decisions | Settings `rivalNeedsSpare` | Decision 2: a week only counts towards Red Kite taking a route when his planes had time to fly it | yes (Bertie's rule) |
+| Bertie's decisions | Settings `graphQuestionInPauseLimit`, `graphQuestionEveryWeeks` | Decision 3: the graph question isn't one of the pause's two, and comes at most every other week | no · 2 (Bertie's rule) |
