@@ -4,7 +4,7 @@
 // teacher's toolkit (Run, its answers and auto-plan; a second Twin Otter joins at the start of week 3), and the rules checked:
 //   - no event cards and no news in chapter one (parked); no snacks;
 //   - the second-plane shop opens on Settings secondPlaneShopFromDay (day 22 since hand-off 1c), not before;
-//   - at most two counted questions at every pause, and none between pauses; one on Launch Day (hand-off 3: the paper sum);
+//   - at most two counted questions at every pause, and none between pauses (the graph question, gq:, is outside the two: Bertie, 2 Nov); one on Launch Day (hand-off 3: the paper sum);
 //   - hand-off 2a (31 Oct): Launch Day and Tuesday to Saturday end on the Day page (Keep for tomorrow / Change my plan); no plan
 //     check and no Home in week 1; counted questions in week 1 only from a daily change, within Settings dailyChangeCountedWeek;
 //   - Launch Day's fuel is charged at the workbook's price and is in Total costs;
@@ -75,7 +75,7 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   ok(!mid1.length, `no Home in week 1 after Launch Day${mid1.length ? ' (days ' + mid1.join(', ') + ')' : ''}`);
   console.log('Parked: events, news, snacks'); ok(!types.event, `no event card in chapter one${types.event ? ' (days ' + types.event.join(', ') + ')' : ''}`);
   ok(!snacks.length, `no snacks control or cabin sales${snacks.length ? ' (days ' + [...new Set(snacks)].join(', ') + ')' : ''}`);
-  console.log('Questions at each pause'); const Q = await J(`JSON.stringify((rec().entries || []).filter(e => e.type === 'calc').map(e => ({ key:e.key, day:e.day, pause:c1PauseOf(e.day), q:e.question || e.doc || '' })))`);
+  console.log('Questions at each pause'); const Q = await J(`JSON.stringify((rec().entries || []).filter(e => e.type === 'calc' && !/^gq:/.test(e.key)).map(e => ({ key:e.key, day:e.day, pause:c1PauseOf(e.day), q:e.question || e.doc || '' })))`);
   const by = {}; Q.forEach(e => (by[e.pause] = by[e.pause] || []).push(e));
   Object.keys(by).sort((a, z) => a - z).forEach(k => { const keys = [...new Set(by[k].map(e => e.key))]; console.log(`    ${k === '1' ? 'Launch Day' : 'pause ' + k} (${by[k][0] && by[k][0].day ? 'day ' + [...new Set(by[k].map(e => e.day))].join('/') : ''}): ${keys.length} · ${keys.join(' | ')}`); });
   const over = Object.entries(by).filter(([k, l]) => new Set(l.map(e => e.key)).size > 2); ok(!over.length, `never more than two counted questions a pause${over.length ? ' (over: ' + over.map(([k]) => k).join(', ') + ')' : ''}`);
@@ -111,7 +111,7 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
       if(d.t === 'plan' && [8, 14, 15, 21, 22, 28, 29].includes(d.day) && !G[d.day]) G[d.day] = await QJ(`JSON.stringify({ wi:c1WiOn(), fuel:(+WBS().fuelDeskFromDay || 0) <= S.day, shop:shopPlanes(S.day).length, opening:routesOpening(S.day).map(r => r.id), mad:routeOpen(routeById('mad'), S.day), extras:!document.body.classList.contains('n15-wk1') })`);
       await qstep('plan'); }
     const PG = await QJ('JSON.stringify(window.__pg)'), ST = await QJ('JSON.stringify(window.__strip)'), has = (d, t) => (PG[d] || []).some(x => x.t === t), title = (d, t) => ((PG[d] || []).find(x => x.t === t) || {}).h || '';
-    const QK = await QJ(`JSON.stringify((rec().entries || []).filter(e => e.type === 'calc').map(e => ({ key:e.key, day:e.day, pause:c1PauseOf(e.day), q:e.question || e.doc || '' })))`), per = P => new Set(QK.filter(e => e.pause === P).map(e => e.key)).size;
+    const QK = await QJ(`JSON.stringify((rec().entries || []).filter(e => e.type === 'calc' && !/^gq:/.test(e.key)).map(e => ({ key:e.key, day:e.day, pause:c1PauseOf(e.day), q:e.question || e.doc || '' })))`), per = P => new Set(QK.filter(e => e.pause === P).map(e => e.key)).size;
     console.log('    pages: ' + [8, 15, 22, 29, 36].map(d => `day ${d}: ` + (PG[d] || []).map(x => x.t).join(' ')).join(' / '));
     console.log('    counted: ' + [1, 8, 15, 22, 29, 36].map(P => `${P === 1 ? 'Launch Day' : 'P' + ({ 8:1, 15:2, 22:3, 29:4, 36:5 })[P]} ${per(P)}`).join(', ') + ' · ' + [...new Set(QK.map(e => e.key))].join(' | '));
     // Bertie 31 Oct (evening): the what-if sheet and its two counted questions move to week 2; the Fuel desk stays in week 3

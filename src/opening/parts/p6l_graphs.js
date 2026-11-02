@@ -113,11 +113,22 @@ function c7G2Html(o){
 
 /* ---------- the question ---------- */
 function c7Gap(from){ try{ return window.__c6 && window.__c6.gap(from); }catch(e){ return null; } }
+const c7InLimit = () => !/^(no|off)$/i.test(String(SET().graphQuestionInPauseLimit || 'yes').trim());
+/* outside the limit, the pause's count of counted questions (c1Asked, p6a) leaves the graph question out */
+if(typeof c1Asked === 'function'){
+  const c7Asked0 = c1Asked;
+  c1Asked = function(pause, all){ const n = c7Asked0.apply(this, arguments); if(!on7() || c7InLimit()) return n;
+    const P = pause || c1PauseOf(S.day), g = new Set(); ((typeof rec === 'function' && rec().entries) || []).forEach(e => { if(e.type === 'calc' && /^gq:/.test(e.key) && c1PauseOf(e.day) === P) g.add(e.key); });
+    return n - g.size; };
+}
 function c7Question(from){
   const Y = X7(); if(Y.q[from] !== undefined) return Y.q[from] || null;
   const g = c7Gap(from), share = +(SET().graphQuestionGapShare) || 0.1;
-  const big = g && g.best > 0 && (g.best - g.yours) / g.best > share, room = typeof c1Room === 'function' ? c1Room() : true;
-  if(!big || !room){ Y.q[from] = null; return null; }
+  // Bertie, 2 Nov (decision 3): the question is not one of the pause's two (graphQuestionInPauseLimit no), and comes at most every
+  // other week (graphQuestionEveryWeeks 2): none if one was asked in the weeks just before
+  const every = Math.max(1, Math.round(+(SET().graphQuestionEveryWeeks) || 1)), recent = [...Array(every - 1).keys()].some(k => Y.q[from - 7 * (k + 1)]);
+  const big = g && g.best > 0 && (g.best - g.yours) / g.best > share, room = !c7InLimit() || (typeof c1Room === 'function' ? c1Room() : true);
+  if(!big || !room || recent){ Y.q[from] = null; return null; }
   const kind = Y.qLast === 'paper' ? 'read' : 'paper', key = `gq:${kind}:${from}`; Y.qLast = kind;
   const q = { kind, key };
   if(kind === 'paper') q.want = Math.max(0, Math.round(g.best) - Math.round(g.yours));

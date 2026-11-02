@@ -9,7 +9,9 @@
          planes had spare time for at least one more flight of that route (Bertie: one small airline can't carry everyone).
      3 · THE BOARD HAS A WORD, GENTLY: the gap between his week and the best plan with his planes is at least boardGapShare
          (10%) of the best for boardGapWeeks (3) weeks running: c6Board decides; p6l shows it as Monday's news card. No fine.
-   Every setting is a PLACEHOLDER (tools/merge_r4.py, docs/Placeholders-for-Fable.md).
+   Every setting is a PLACEHOLDER (tools/merge_r4.py, docs/Placeholders-for-Fable.md). Bertie's decisions of 2 Nov (after Fable's
+   v6.7 report): Red Kite only counts weeks he had time to fly the route (rivalNeedsSpare), and the old monthly board review is
+   parked in chapter one (boardReviewChapterOne).
    ===================================================================== */
 {
 const on6 = () => typeof ch1 === 'function' && ch1();
@@ -22,11 +24,21 @@ const canFrom = r => { let d = null; (S.fleet || []).forEach(f => { const p = pl
 const openedOn = (r, upto) => { for(let d = 1; d <= upto; d++) if(routeOpen(r, d)) return d; return null; };
 
 /* ---------- 1 · the rival ---------- */
+/* Bertie, 2 Nov (decision 2, Settings rivalNeedsSpare): a week only counts towards the takeover when he had time to fly the route
+   that week (a plane that can reach it had room for one more return flight), as the stars rule does. The weeks are counted one
+   check at a time (Y.idle), and flying the route starts the count again. */
+const needSpare = () => !/^(no|off)$/i.test(String(SET().rivalNeedsSpare || 'yes').trim());
 function c6RivalCheck(to){
   const Y = X6(), wks = num6('rivalIgnoreWeeks', 3), share = Math.min(0.9, num6('rivalTakesShare', 0.33)), out = [];
+  const prev = Y.lastCheck && Y.lastCheck < to ? Y.lastCheck : to - 7, span = Math.max(1, Math.round((to - prev) / 7)); Y.lastCheck = to; Y.idle = Y.idle || {};
   openRoutes(to).forEach(r => { if(Y.rival[r.id]) return; const o = openedOn(r, to); if(!o || o <= 1) return;   // Launch Day's routes are his from the start
     const can = canFrom(r); if(!can) return;   // none of his planes can reach it yet: he isn't ignoring it
-    const idleFrom = Math.max(o, can, lastFlown(r.id, to) + 1); if(to - idleFrom + 1 < 7 * wks) return;
+    const idleFrom = Math.max(o, can, lastFlown(r.id, to) + 1);
+    if(needSpare()){
+      if(lastFlown(r.id, to) > prev || Math.max(o, can) > to - 3){ Y.idle[r.id] = 0; return; }   // flown in these days, or barely open to him yet
+      if(c6Spare(r.id)) Y.idle[r.id] = (Y.idle[r.id] || 0) + span;                                 // he had time for it and didn't fly it
+      if((Y.idle[r.id] || 0) < wks) return;
+    } else if(to - idleFrom + 1 < 7 * wks) return;
     Y.rival[r.id] = { day:to + 1, share };
     out.push({ route:r.id, text:tx6('rival.news', { city:r.city }, `Red Kite takes over ${r.city} from Monday. About a third of its passengers will fly with them for good.`), bad:true, c6:true });
     try{ rec().pend.events.push({ day:to, title:'Rival', choice:`Red Kite took ${r.city} (not flown for ${wks} weeks)`, cost:0 }); }catch(e){} });
@@ -74,5 +86,13 @@ s2Opener = function(pl, L, hid, changed){
   if(on6()){ try{ const to = 7 * (weekNo(S.day || 1) - 1); if(to >= 7 && !X6().done['r' + to]){ X6().done['r' + to] = 1; const L = c6RivalCheck(to); if(L.length) addNews(L.map(l => ({ tag:'RIVAL', text:l.text, cls:'warn' }))); } }catch(e){ console.error(e); } }   // weeks with no Sunday review
   return c6Op0.apply(this, arguments);   // the Board's note and Red Kite's news are Monday's news cards now (p6l, round 4 graphs)
 };
-window.__c6 = { rivalCheck:c6RivalCheck, gap:c6Gap, board:c6Board, spare:c6Spare };
+/* ---------- 4 · the old monthly board review is parked in chapter one (Bertie, 2 Nov, decision 1; Settings boardReviewChapterOne) ----------
+   The month-end Finance audit stays; its "board" form (the letter, the extra line and average day, the plan held until it changes)
+   does not come: the gentle Board above is the only Board in chapter one. */
+const oldBoardOff = () => on6() && /^(off|no)$/i.test(String(SET().boardReviewChapterOne || 'off').trim());
+const c6Aud0 = soAuditData;
+soAuditData = function(){ const D = c6Aud0.apply(this, arguments); if(D && D.board && oldBoardOff()){ D.board = false; D.lines = (D.lines || []).slice(0, 1); D.parkedBoard = true; } return D; };
+const c6Wait0 = soBoardWaiting;
+soBoardWaiting = function(){ return oldBoardOff() ? false : c6Wait0.apply(this, arguments); };
+window.__c6 = { rivalCheck:c6RivalCheck, gap:c6Gap, board:c6Board, spare:c6Spare, oldBoardOff };
 }
