@@ -380,6 +380,20 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Hand-off to Fable for a data pass (2 Nov 2026)
+
+`docs/Fable-Handoff-Data-Pass-2-Nov-2026.md` is the covering note. It says what Fable is asked to do and how the workbook gets into the game. It also lists every placeholder by sheet, then the figure runs and Bertie's open decisions. It goes with `data/Airline-World-Workbook.xlsx`, `docs/Placeholders-for-Fable.md`, `docs/Review-2-Nov-2026.md` and `data/Import-Report.md`.
+
+### The quick fixes from the 2 Nov check-up (2 Nov 2026)
+
+These are in chapter one. Words are added to the workbook by `tools/merge_r4c.py` (run it after `merge_r4b.py`), marked PLACEHOLDER. The report is in `docs/Review-2-Nov-2026.md`.
+- One Red Kite card on a Monday names every route it took.
+- Graph 1's labels no longer overlap when there are many weeks.
+- There are no week-14 pictures on 28 December.
+- The what-if says "less" when it tries a lower fare, and its month line follows the money.
+- Σ SUM works with the keyboard.
+- The Ready button is dark on green, in sentence case.
+
 ### Round 4, part two: Claude Design's Sunday graphs (2 Nov 2026)
 
 Built in chapter one: `p6l_graphs.js` and CSS in `p1_head_c3.css`. Route colours, settings and words are added to the workbook by `tools/merge_r4b.py` (run it after `merge_r4.py`), all marked PLACEHOLDER. Report: `docs/Round-4-Graphs-Report.md`; screenshots: `docs/screenshots/round-4-graphs/`; hand-off: `data/incoming/handoff-round4-2-nov/` (its DESIGN.md is installed).

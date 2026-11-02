@@ -19,6 +19,14 @@
 const I = window.__c2i || {}, H = window.__c2h || {};
 const on3 = () => typeof ch1 === 'function' && ch1();
 const T3 = (id, v) => h21Text(id, v), T3H = s => h21Html(s);
+/* review 2 Nov 2026: at the top fare the what-if fare is lower, so its callouts say "less" (ScreenText wi2.co1.less, wi2.co4.less; else the "more" words turned round) */
+/* the what-if callouts say "less" for a lower fare, and the month follows the money (a lower fare can fill more seats):
+   id = fare up, money up · id.less = fare down, money down · id.less.up = fare down, money up · id.down = fare up, money down */
+const c8Less = (fareDown, id, v, moneyDown) => { if(moneyDown === undefined) moneyDown = fareDown;
+  const key = id + (fareDown ? '.less' : '') + (fareDown && !moneyDown ? '.up' : '') + (!fareDown && moneyDown ? '.down' : '');
+  if(key === id) return T3(id, v); let T = null; try{ T = T3(key, v); }catch(e){} if(T && T.title) return T;
+  T = Object.assign({}, T3(id, v)); let n = 0; const L = x => String(x || '').replace(/\bmore\b/g, () => (n++ === 0 ? fareDown : moneyDown) ? 'less' : 'more');
+  T.title = L(T.title); n = 1; T.text = (T.text || []).map(x => L(x)); return T; };
 const tx = (id, k, v, d) => { const t = T3(id, v).text; return t[k] !== undefined && t[k] !== '' ? t[k] : (d || ''); };
 const bt = s => esc(String(s || '').replace(/\s*▶\s*$/, '').replace(/\s*▸\s*$/, '')).trim();
 const X3 = () => { const X = c1Ex(); return X.c3 || (X.c3 = { seen:{} }); };
@@ -609,7 +617,7 @@ function c3WiPage(st, Q){
   root.querySelectorAll('[data-ashtab]').forEach(b => b.onclick = () => { if(b.getAttribute('aria-disabled') === 'true') return; });   // the other sheets are read after Set my fares
   const ln = root.querySelector('.ash-line');
   if(stage === 'co1'){ const a0 = root.querySelector('section.ash[data-ash]'); if(a0) a0.classList.add('c3-hold'); if(ln) ln.innerHTML = '';
-    gw.insertAdjacentHTML('beforeend', c3Co(T3('wi2.co1', { city:r.city, step, seats:num(alt.pax), fare:money(d.f1) }), 'c3WiGot', '', 'pu')); const co = gw.querySelector('[data-c3co]'); if(window.__c5) window.__c5.under(co, cell('C3')); else c3PlaceUnder(co, cell('C3'));
+    gw.insertAdjacentHTML('beforeend', c3Co(c8Less(d.f1 < d.f0, 'wi2.co1', { city:r.city, step, seats:num(alt.pax), fare:money(d.f1) }), 'c3WiGot', '', 'pu')); const co = gw.querySelector('[data-c3co]'); if(window.__c5) window.__c5.under(co, cell('C3')); else c3PlaceUnder(co, cell('C3'));
     on('c3WiGot', () => { W3.co = 1; save(); render(); }); }
   root.querySelectorAll('[data-c1sig]').forEach(x => x.remove());
   if(act && (stage === 'b4' || stage === 'q1' || stage === 'q2')){
@@ -621,7 +629,7 @@ function c3WiPage(st, Q){
       on('c5WiWatch', () => { W3['go' + stage] = true; save(); render(); }); }
     else { if(a0) a0.classList.add('c1-demo'); c5WiDemo(sp); } }
   if(stage === 'month'){ const d6 = cell('D6'); if(d6) d6.classList.add('c1-glow');
-    if(!W3.got){ const T = T3('wi2.co4', { step, month:money(Math.abs(more * 7 * mw)), d:money(more), w:money(more * 7), m:money(more * 7 * mw) });
+    if(!W3.got){ const T = c8Less(d.f1 < d.f0, 'wi2.co4', { step, month:money(Math.abs(more * 7 * mw)), d:money(more), w:money(more * 7), m:money(more * 7 * mw) }, more < 0);
       gw.insertAdjacentHTML('beforeend', c3Co(Object.assign({}, T, { button:'Got it' }), 'c3WiTry', '', 'pu')); const co = gw.querySelector('[data-c3co]'); if(window.__c5) window.__c5.under(co, cell('D6')); else c3PlaceUnder(co, cell('D6')); }
     on('c3WiTry', () => { W3.got = 1; save(); render(); }); }
   on('nx', () => { if(!done) return; UI.ashJust = null; resetEntry(); UI.justDone = null; next(); });

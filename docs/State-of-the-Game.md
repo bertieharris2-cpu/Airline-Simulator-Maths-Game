@@ -10,6 +10,23 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zz. The quick fixes from the 2 Nov check-up (2 Nov 2026)
+
+This is for chapter one. Report: `docs/Review-2-Nov-2026.md` (the update note at the top). `tools/merge_r4c.py` (run after `merge_r4b.py`) adds ScreenText `wi2.co1.less`, `wi2.co4.less`, `wi2.co4.less.up`, `wi2.co4.down`, all PLACEHOLDER.
+
+- **p6l_graphs.js:**
+  - `c7NewsDue()` returns `{kind:'rival', ids, keys}` for every route taken that Monday, and `c7NewsCard` draws one card. With several routes, the board is "DEPARTURES · LONDON" with one row for each route.
+  - `c7G1Svg` uses the week number alone when "Wk n" doesn't fit its slot. Marker names go on the first of two rows whose last name they don't touch: the full list, then the short form, then none. The SVG's `aria-label` carries the latest week's yours, best and gap.
+  - `c7Ctx()` for `review` only uses a week when it is the last entry in `S.history` (on 28 Dec the last entry is December).
+  - `c7Page(from, go, orig, planNext)` says "Plan week n" only on the Sunday sheets, or when `periodOf(S.round) === 'week'`. Otherwise it keeps the game's own `#nx` label.
+  - Escape closes `.c7-drop`, and the question's notes have `role="status"`.
+- **p6i_1737.js:** `c8Less(fareDown, id, v, moneyDown)` picks `id`, `id.less`, `id.less.up` or `id.down`. If the row is missing, it swaps the first "more" for the fare's direction and the second for the money's.
+- **p6j_round3.js:**
+  - `c5Task` keeps a question as a question, and the paper and Build lines don't add "." or ", then press Enter" after a "?".
+  - A capture-phase keydown makes Enter/Space on a `.ash-c[data-ref]` do Σ SUM's range, using `sumA`/`sumB`/`sumOne`, as the pointer does. A wrong column gives `sumWrongCol`.
+- **p6c_desks.js:** null guard on `.c1-msg` when a block is dropped outside the timetable.
+- **p6h_daily.js + p1_head_c3.css:** the Ready step's `#startOps` is in sentence case (keeping "Operations Wall"), with class `c8-go`: `--on-go` text, no capitals, no letter-spacing.
+
 ## 0zy. Round 4 graphs: Claude Design's Sunday graphs (2 Nov 2026)
 
 This is for chapter one. Report: `docs/Round-4-Graphs-Report.md`; hand-off: `data/incoming/handoff-round4-2-nov/`, with DESIGN.md installed. `tools/merge_r4b.py` adds:

@@ -9,6 +9,19 @@ I changed nothing in the game for this. It's a report, and the decisions are you
 
 The screenshots this report mentions are in `docs/screenshots/review-2-nov/`.
 
+> **Update, later on 2 Nov: the quick fixes are in.** You said yes, so I did the ones from the end of section 4 that needed no new pictures (screenshots in `docs/screenshots/review-2-nov/fixes/`):
+> - **One Red Kite card a Monday.** If Red Kite takes three routes on the same Monday, he gets one card: "Red Kite Air now flies to Amsterdam, Frankfurt and Geneva", with a board of its departures from London, one row for each route (fix-01).
+> - **Graph 1 with lots of weeks.** Once the weeks get narrow, the labels under the bars are just the week number. A route's name goes on whichever of the two rows has room; if neither has room, the triangle stays without its name (fix-02).
+> - **No more "Plan week 15" on 28 December.** The chapter's last review is of December, so it no longer shows week 14's pictures. After the week-14 review (9 Dec), the pictures page keeps the game's own button, because the next step is December's plan, not a week's.
+> - **The what-if at the top fare.** When his fare is already at the top, the what-if tries a lower fare, and now says so: "What if Dublin were £3 less?". The month line follows the money, not the fare. At £3 less, three more people fly, so it reads "£3 less a ticket = £6,720 more a month" (fix-03). The new wordings are workbook rows marked PLACEHOLDER.
+> - **The odd task lines.** A question stays a question ("How much more…? Write SUM 9 beside it."), with no stray full stop or "then press Enter" after a question mark.
+> - **The dragging error.** The page error when he let go of a flight outside the timetable is fixed.
+> - **Σ SUM with the keyboard.** On a day cell, Enter (or Space) marks the first cell, Enter on the last cell finishes the range, and Enter again checks it, just like dragging. The line under the sheet still says "drag" for now.
+> - **The green button.** "Send to Operations Wall" is in dark text on the green, in ordinary sentence case, and the instruction above it names it the same way (fix-04).
+> - **Graphs, small accessibility touches.** Graph 1 tells a screen reader the latest week's figures ("Wk 14: Yours £45,799, Best plan £45,799, Gap £0"), Escape closes Last week's graphs, and "Not quite. One more try." is read out.
+>
+> I left **the fare briefing** alone: it's on the Briefings shelf only, which is what you chose on 31 Oct. `chapter1.test.js` still passes.
+
 
 ## 1. How different choices play out
 

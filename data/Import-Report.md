@@ -585,6 +585,10 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `news.board`: A NOTE FROM THE BOARD · The Board would like a word · Three weeks running, your plan made less than the best plan. · {airline} · THE BOARD · Profit is good. · Our shareholders want the most profit our planes can make. · Signed, the Board of {airline} · Monday news · {date} · [Plan the week ▶]
 - `pics.q.wrong`: Not quite. One more try. · The answer: {answer}. · ✓ Right: {answer}
 - `news.rival.times`: 07:10 · 12:40 · 17:55
+- `wi2.co1.less`: NEW · WHAT IF · What if {city} were £{step} less? · [Got it]
+- `wi2.co4.less`: A LITTLE ADDS UP · £{step} less a ticket = {month} less a month · [Got it]
+- `wi2.co4.less.up`: A LITTLE ADDS UP · £{step} less a ticket = {month} more a month · [Got it]
+- `wi2.co4.down`: A LITTLE ADDS UP · £{step} more a ticket = {month} less a month · [Got it]
 
 ## Identity and photos (CR5)
 

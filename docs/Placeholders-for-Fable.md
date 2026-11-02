@@ -2,6 +2,8 @@
 
 During the design-and-flow phase (from 1 Nov 2026) Claude Code makes up any figure or word a screen needs, so Bertie and Claude Design can keep going. Each one lives in the workbook like everything else, marked "PLACEHOLDER" in its notes. When Bertie is happy with the flow, this list is the hand-over: Fable checks, replaces or improves each one, and makes the data hang together.
 
+**2 Nov 2026: handed over.** Bertie asked for Fable's data pass. The covering note, with this list sorted by sheet and the figure runs, is `docs/Fable-Handoff-Data-Pass-2-Nov-2026.md`.
+
 | Round | Where in the workbook | What | Made up |
 | --- | --- | --- | --- |
 | 1 (17:37 hand-off, 31 Oct) | Routes `colour` | Bar colours on Before / after | Dublin #2d7f68, Paris #3b6aa8, Frankfurt #7a5aa8 (from Claude Design's pictures); every other route uses `routeColourDefault` |
@@ -48,3 +50,6 @@ During the design-and-flow phase (from 1 Nov 2026) Claude Code makes up any figu
 | 4 graphs | ScreenText `news.rival`, `news.rival.times` | Red Kite's Monday news card: eyebrow, title, line, board header, LONDON, RED KITE AIR, footer, button; departures 07:10, 12:40, 17:55 | From the pictures; the board names the airport by city and code (no airport names in the workbook) |
 | 4 graphs | ScreenText `news.board` | The Board's Monday news card: eyebrow, title, line, the note's three lines, signature, footer, button | From the pictures |
 | 4 graphs | (rule, in code) Graph 2's figure | Profit for each hour of plane time = what one of his planes makes flying the route all day (as many flights as fit, his fare or the usual fare, next week's demand) ÷ the hours flown | Claude Code's reading of "profit a flight ÷ hours there and back" (see the round 4 graphs report) |
+| 4 review fixes (2 Nov) | ScreenText `wi2.co1.less` | Week 2 what-if, the first callout when his fare is already at the top, so the what-if tries a lower fare | "What if {city} were £{step} less?" (made up by Claude Code) |
+| 4 review fixes | ScreenText `wi2.co4.less`, `wi2.co4.less.up`, `wi2.co4.down` | The what-if's month callout when the money moves the other way from the fare: lower fare and less money · lower fare that fills more seats and makes more money · higher fare that loses enough people to make less money | "£{step} less a ticket = {month} less a month" · "£{step} less a ticket = {month} more a month" · "£{step} more a ticket = {month} less a month" (made up by Claude Code) |
+| 4 review fixes | (in code) Red Kite's Monday card for several routes | One card names every route taken that Monday ("Amsterdam, Frankfurt and Geneva"); its board is headed "DEPARTURES · LONDON" with one row for each route, using the three times in `news.rival.times` in turn | Made up by Claude Code |

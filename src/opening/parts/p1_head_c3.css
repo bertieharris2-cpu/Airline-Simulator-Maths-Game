@@ -228,3 +228,6 @@ body.c5 .c7-nl{display:flex;flex-direction:column}
 body.c5 .c7-nl p{margin:12px 0 0;font:400 15px/1.55 var(--font-sans);color:var(--text)}
 body.c5 .c7-nl small{margin-top:auto;font:400 13px/1 var(--font-sans);color:var(--text-soft)}
 body.c5 .c7-nr .c7-leg{margin:4px 0 0 40px}
+
+/* 2 Nov review: the Ready button in sentence case on the green go colour */
+.c8-go{color:var(--on-go)!important;letter-spacing:normal!important;text-transform:none!important}

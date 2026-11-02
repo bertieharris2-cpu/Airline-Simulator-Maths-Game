@@ -338,7 +338,7 @@ function c1BindTt(){
       const ff = document.getElementById('c1Float'); if(ff) ff.remove();
       let nb = lane.querySelector('.c1-new'); if(!nb){ const r = routeById(id); nb = document.createElement('div'); nb.className = 'c1-blk c1-new drag'; nb.innerHTML = `<span class="c1-grip"></span><span class="c1-bh">${flagSvg(r.flag, 16)}<b>${esc(r.city)}</b><em class="mono">${p.seats}</em></span><span class="c1-bar"><i style="width:0"></i></span><span class="c1-bt mono"></span>`; screen().querySelectorAll('.c1-new').forEach(z => z.remove()); lane.appendChild(nb); }
       nb.style.left = (100 * (t - s0) / span).toFixed(3) + '%'; nb.style.width = (100 * trip / span).toFixed(3) + '%'; nb.classList.toggle('bad', !g.fit.ok); nb.querySelector('.c1-bt').textContent = `${c1Hm(t)}–${c1Hm(t + trip)}`;
-      root.querySelectorAll('.c1-row').forEach(r => { if(r !== row){ r.querySelectorAll('.c1-start,.c1-endl').forEach(z => z.remove()); const m = r.querySelector('.c1-msg'); m.className = 'c1-msg'; m.textContent = ''; } });
+      root.querySelectorAll('.c1-row').forEach(r => { if(r !== row){ r.querySelectorAll('.c1-start,.c1-endl').forEach(z => z.remove()); const m = r.querySelector('.c1-msg'); if(m){ m.className = 'c1-msg'; m.textContent = ''; } } });
       c1DragShow(g, row, t, trip, g.fit); };
     tk.onpointerup = tk.onpointercancel = e => { const g = c1Drag; if(!g || g.tk !== tk) return; try{ tk.releasePointerCapture(e.pointerId); }catch(err){}
       setTimeout(() => { c1Drag = null; }, 0); const ok = g.moved && g.j !== null && g.fit && g.fit.ok;

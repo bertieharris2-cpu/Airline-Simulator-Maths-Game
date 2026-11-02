@@ -71,9 +71,12 @@ function c7G1Svg(o){
   const maxV = Math.max(step, ...wk.map(x => Math.max(x.g.yours, x.g.best))), top = (Math.floor(maxV / step) + 1) * step;
   const fs = o.small ? 11.5 : 13.5, x0 = o.small ? 40 : 48, rm = o.figs && o.weeks.length >= n ? 84 : 10, x1 = W - rm, y0 = 8, bot = o.small ? 46 : 60, y1 = H - bot;
   const y = v => y1 - Math.max(0, v) / top * (y1 - y0), sw = (x1 - x0) / n, bw = Math.min(o.small ? 20 : 30, sw * 0.32), gp = Math.min(6, sw * 0.08), gid = (o.id || 'c7') + 'Gap';
-  let s = `<svg class="c7-g1" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(T7('pics.g1').title || 'Your plan against the best plan')}"><defs>${PAT(gid)}</defs>`;
+  const LG = T7('pics.g1').text, lw = wk[wk.length - 1];
+  let aria = T7('pics.g1').title || 'Your plan against the best plan';
+  if(lw) aria += `. ${tl('pics.g1', 3, 'Wk {n}', { n:lw.wk }).replace('{n}', lw.wk)}: ${LG[0] || 'Yours'} ${money(lw.g.yours)}, ${LG[1] || 'Best plan'} ${money(Math.max(lw.g.best, lw.g.yours))}, ${LG[2] || 'Gap'} ${money(Math.max(0, lw.g.best - lw.g.yours))}.`;
+  let s = `<svg class="c7-g1" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(aria)}"><defs>${PAT(gid)}</defs>`;
   for(let v = 0; v <= top; v += step){ const yy = y(v).toFixed(1); s += `<line x1="${x0}" x2="${x1}" y1="${yy}" y2="${yy}" class="${v ? 'c7-gl' : 'c7-ax'}"/>`; if(v % (2 * step) === 0) s += `<text x="${x0 - 8}" y="${(+yy + 4).toFixed(1)}" text-anchor="end" class="c7-yl" font-size="${fs - 1}">${k$(v)}</text>`; }
-  let lastMark = -9, row = 0;
+  const ends = [-1e9, -1e9], cw = fs * 0.56;
   o.weeks.forEach((x, i) => { const cx = x0 + sw * (i + 0.5), L = cx - gp / 2 - bw, Rb = cx + gp / 2;
     if(x.g){ const yo = x.g.yours, b = Math.max(x.g.best, yo);
       if(yo > 0) s += `<rect x="${L.toFixed(1)}" y="${y(yo).toFixed(1)}" width="${bw.toFixed(1)}" height="${(y(0) - y(yo)).toFixed(1)}" class="c7-yo"/>`;
@@ -81,12 +84,18 @@ function c7G1Svg(o){
       s += `<rect x="${Rb.toFixed(1)}" y="${y(b).toFixed(1)}" width="${bw.toFixed(1)}" height="${(y(0) - y(b)).toFixed(1)}" class="c7-be"/>`;
       if(o.figs && x === last){ const fx = Rb + bw + 8; let yb = y(b) + 4, yy = y(Math.max(0, yo)) + 4; if(yy - yb < 16) yb = yy - 16;
         s += `<text x="${fx.toFixed(1)}" y="${yb.toFixed(1)}" class="c7-fb" font-size="${fs + 0.5}">${money(b)}</text><text x="${fx.toFixed(1)}" y="${yy.toFixed(1)}" class="c7-fy ${yo < 0 ? 'neg' : ''}" font-size="${fs + 0.5}">${money(yo)}</text>`; } }
-    s += `<text x="${cx.toFixed(1)}" y="${(y1 + 16).toFixed(1)}" text-anchor="middle" class="c7-wl" font-size="${fs}">${esc(tl('pics.g1', 3, 'Wk {n}', { n:x.wk }).replace('{n}', x.wk))}</text>`;
-    if(x.opened && x.opened.length && !o.noMarks){
-      row = i - lastMark === 1 ? 1 - row : 0; lastMark = i;
-      let t = x.opened.join(' · '); const room = sw * (row ? 2.2 : 2.6); if(t.length * fs * 0.56 > room) t = x.opened.length > 1 ? tl('pics.g1', 4, 'New routes') : x.opened[0];
-      const tw = t.length * fs * 0.56, tx = Math.max(tw / 2 + 2, Math.min(W - tw / 2 - 2, cx)), ty = y1 + 22;
-      s += `<path d="M${cx.toFixed(1)} ${ty} l5 8 h-10 z" class="c7-tri"/><text x="${tx.toFixed(1)}" y="${(ty + 20 + row * 14).toFixed(1)}" text-anchor="middle" class="c7-ml" font-size="${fs - 1}">${esc(t)}</text>`; } });
+    // narrow slots (many weeks): the week number alone
+    let wl = tl('pics.g1', 3, 'Wk {n}', { n:x.wk }).replace('{n}', x.wk); if(wl.length * cw > sw * 0.94) wl = String(x.wk);
+    s += `<text x="${cx.toFixed(1)}" y="${(y1 + 16).toFixed(1)}" text-anchor="middle" class="c7-wl" font-size="${fs}">${esc(wl)}</text>`;
+    if(x.opened && x.opened.length && !o.noMarks){ const ty = y1 + 22, mc = (fs - 1) * 0.56;
+      s += `<path d="M${cx.toFixed(1)} ${ty} l5 8 h-10 z" class="c7-tri"/>`;
+      // the names on the first of two rows where they don't touch the last name; shorter if they don't fit; none if neither row has room
+      const full = x.opened.join(' · '), cands = (full.length * mc > sw * 2.6 ? [] : [full]).concat(x.opened.length > 1 ? [tl('pics.g1', 4, 'New routes')] : [x.opened[0]]);
+      let put = null;
+      for(const t of cands){ const tw = t.length * mc, tx = Math.max(tw / 2 + 2, Math.min(W - tw / 2 - 2, cx));
+        for(let r = 0; r < 2 && !put; r++) if(tx - tw / 2 >= ends[r] + 6) put = { t, tx, r, end:tx + tw / 2 };
+        if(put) break; }
+      if(put){ ends[put.r] = put.end; s += `<text x="${put.tx.toFixed(1)}" y="${(ty + 20 + put.r * 14).toFixed(1)}" text-anchor="middle" class="c7-ml" font-size="${fs - 1}">${esc(put.t)}</text>`; } } });
   return s + '</svg>';
 }
 const KITE = '<svg class="c7-kite" viewBox="0 0 40 40" aria-label="Red Kite Air"><rect width="40" height="40" fill="#7a1428"/><path d="M8 19.5 L19 16 L21.5 6.5 L24 16 L33 13.5 L26.5 20 L29 21 L24.5 23 L22 33 L19.5 23 L11 24 L15 20.5 Z" fill="#f1e9dc"/></svg>';
@@ -117,7 +126,7 @@ function c7Question(from){
 }
 function c7QHtml(from, q){
   const n = sumNo(q.key), box = typeof c1SumBox === 'function' ? c1SumBox(n) : `SUM ${n}`, W = T7('pics.q.wrong', { answer:q.kind === 'paper' ? money(q.want) : (routeById(q.want) || {}).city });
-  const note = q.ok ? `<p class="c7-qn ok">${esc(W.text[q.shown ? 1 : 2] || (q.shown ? `The answer: ${money(q.want)}.` : '✓ Right'))}</p>` : q.note ? `<p class="c7-qn">${esc(q.note)}</p>` : '';
+  const note = q.ok ? `<p class="c7-qn ok" role="status">${esc(W.text[q.shown ? 1 : 2] || (q.shown ? `The answer: ${money(q.want)}.` : '✓ Right'))}</p>` : q.note ? `<p class="c7-qn" role="status">${esc(q.note)}</p>` : '';
   if(q.kind === 'paper'){ const T = T7('pics.q.paper', { sum:'{sum}' }), line = esc((T.text[0] || 'How much more could your plan have made this week? Write {sum} beside it.')).replace('{sum}', box);
     return `<div class="c7-q paper ${q.ok ? 'ok' : ''}" id="c7Q" role="group" aria-label="${esc(T.title || 'Work it out on paper')}"><i class="c7-qp" aria-hidden="true"></i><div class="c5-sig-m">${C1_ICO.paper}<b>${esc(T.title || 'Work it out on paper')}</b></div><p class="c5-sig-t">${line}</p>
       <div class="c7-qa"><label class="c7-ans"><span>£</span><input id="c7Ans" inputmode="decimal" autocomplete="off" aria-label="Your answer" ${q.ok ? `value="${num(q.want)}" disabled` : ''}></label>${q.ok ? '' : `<button class="c1-key c7-ent" id="c7Enter">${esc(T.button || 'Enter')} &#8629;</button>`}</div>${note}</div>`; }
@@ -146,17 +155,20 @@ function c7Answer(from, given){
 function c7Ctx(){
   const st = step(), t = st && st.t; if(!on7() || !t) return null;
   if(t === 'weekReview' && S.wk && S.wk.from) return { from:S.wk.from, t };
-  if(t === 'review'){ const H = (S.history || []).filter(x => x.type === 'week'), h = H[H.length - 1]; if(h && h.to - h.from === 6) return { from:h.from, t }; }
+  // only when the period just reviewed is that week (on 28 Dec the review is of December, not of week 14)
+  if(t === 'review'){ const H = S.history || [], h = H[H.length - 1]; if(h && h.type === 'week' && h.to - h.from === 6) return { from:h.from, t }; }
   return null;
 }
-function c7Page(from, go){
+function c7Page(from, go, orig, planNext){
   const wk = weekNo(from), q = c7Question(from), weeks = c7G1(from), rows = c7G2(from), P = T7('pics.page', { n:wk, next:wk + 1 });
   const qHtml = q ? c7QHtml(from, q) : '';
   const g1 = `<section class="bv-panel c7-p c7-p1"><h2>${esc(T7('pics.g1').title || 'Your plan against the best plan')}</h2>${c7Legend()}<div class="c7-g1w">${c7G1Svg({ w:520, h:q && q.kind === 'paper' ? 300 : 430, weeks, figs:true, id:'c7a' })}</div>${q && q.kind === 'paper' ? qHtml : ''}</section>`;
   const g2 = `<section class="bv-panel c7-p c7-p2"><h2>${esc(T7('pics.g2').title || 'Where the money is')}</h2>${c7G2Html({ rows, bw:236, space:q && q.kind === 'read' ? 250 : 400, hi:q && q.kind === 'read' && q.ok ? q.want : null })}${q && q.kind === 'read' ? qHtml : ''}</section>`;
   const sub = P.text[0] || 'Your week in pictures', hint = P.text[1] || `Sunday review · week ${wk}`, can = !q || q.ok;
+  // "Plan week n" only when the next step is a week's plan; at the chapter's end the footer keeps the game's own button (e.g. the chapter review)
+  const nxLabel = planNext || !orig ? esc((P.button || `Plan week ${wk + 1} ▶`).replace('▶', '').trim()) : esc(orig.replace(/[▶►]/g, '').trim());
   screen().innerHTML = shell(deskPage({ title:esc(P.title || `How did week ${wk} go?`), sub:esc(sub), cls:'c7-page', body:`<div class="c7-two">${g1}${g2}</div>` }),
-    deskBar(esc(hint), `<button class="bv-btn big" id="c7Back">${esc(T7('pics.back').button || '◀ Back to the sums')}</button><button class="bv-btn go big" id="nx" ${can ? '' : 'disabled'}>${esc((P.button || `Plan week ${wk + 1} ▶`).replace('▶', '')).trim()} &#9654;</button>`));
+    deskBar(esc(hint), `<button class="bv-btn big" id="c7Back">${esc(T7('pics.back').button || '◀ Back to the sums')}</button><button class="bv-btn go big" id="nx" ${can ? '' : 'disabled'}>${nxLabel} &#9654;</button>`));
   // the question's pointer at the latest week's bars (Graph 1) or the top row (Graph 2)
   try{ const qe = document.getElementById('c7Q'); if(qe){ const pt = qe.querySelector('.c7-qp');
       if(q.kind === 'paper'){ const svg = screen().querySelector('.c7-p1 svg'), bars = svg && svg.querySelectorAll('.c7-be'), b = bars && bars[bars.length - 1];
@@ -171,8 +183,10 @@ function c7Page(from, go){
 function c7AfterRender(){
   const C = c7Ctx(); if(!C) return; const wk = weekNo(C.from); if(wk < fromWeek()) return;
   const nx = document.getElementById('nx'); if(!nx || nx.disabled) return;   // the sums come first
-  const go = nx.onclick, Y = X7();
-  if(UI.c7pics === C.from) return c7Page(C.from, go ? () => go.call(nx) : null);
+  const go = nx.onclick, Y = X7(), orig = nx.textContent.trim();
+  // the next step is a week's plan on the Sunday sheets, and after a week's review while the weeks go on (from 9 Dec the game plans a month)
+  const planNext = C.t === 'weekReview' || (typeof periodOf === 'function' && periodOf(S.round) === 'week');
+  if(UI.c7pics === C.from) return c7Page(C.from, go ? () => go.call(nx) : null, orig, planNext);
   // in the line under the sheet (the Sunday sheet) or the footer (the Monday review): Your week in pictures ▶; Plan week waits until he has seen them
   const label = esc((T7('pics.go').button || 'Your week in pictures ▶').replace('▶', '').trim());
   const btn = `<button class="bv-btn go big c7-go" id="c7Pics">${label} &#9654;</button>`;
@@ -205,11 +219,15 @@ function c7Monday(){
   on('c7Mon', () => { UI.c7mon = UI.c7mon === S.day ? null : S.day; render(); });
 }
 
+document.addEventListener('keydown', e => { if(e.key !== 'Escape' || !on7() || UI.c7mon !== S.day || !document.querySelector('.c7-drop')) return;
+  e.preventDefault(); UI.c7mon = null; render(); const b = document.getElementById('c7Mon'); if(b) b.focus(); });
+
 /* ---------- 6 · Monday news: Red Kite takes a route, the Board's note ---------- */
 function c7NewsDue(){
   if(!on7() || S.phase === 'setup') return null; const st = step(); if(!st || st.t !== 'plan') return null;
   const Y = X7(), mon = monOf(S.day || 1), R = (S.c6 && S.c6.rival) || {};
-  const r = Object.keys(R).find(id => R[id].day === mon && !Y.news['r:' + id + ':' + mon] && routeById(id)); if(r) return { kind:'rival', id:r, key:'r:' + r + ':' + mon };
+  const ids = Object.keys(R).filter(id => R[id].day === mon && !Y.news['r:' + id + ':' + mon] && routeById(id));
+  if(ids.length) return { kind:'rival', ids, keys:ids.map(id => 'r:' + id + ':' + mon) };
   let B = null; try{ B = window.__c6 && window.__c6.board(); }catch(e){}
   if(B && B.wk === weekNo(S.day || 1) && !Y.news['b:' + B.wk] && (!S.c6 || S.c6.boardSeen !== B.wk)) return { kind:'board', B, key:'b:' + B.wk };
   return null;
@@ -217,8 +235,13 @@ function c7NewsDue(){
 function c7NewsCard(N, st){
   const day = S.day || 1, air = (S.airline && S.airline.name) || 'your airline', date = typeof dateShort === 'function' ? dateShort(day) : '';
   let head, card;
-  if(N.kind === 'rival'){ const r = routeById(N.id), T = T7('news.rival', { city:r.city, airport:`${r.city.toUpperCase()} ${r.code || r.airportCode || ''}`.trim(), date }), times = T7('news.rival.times').text.length ? T7('news.rival.times').text : ['07:10', '12:40', '17:55'];
-    const board = `<div class="c7-dboard" role="img" aria-label="${esc(`Red Kite Air's departures from ${r.city}`)}"><div class="c3-bh">${esc(T.text[1] || `DEPARTURES · ${r.city.toUpperCase()}`)}</div>${times.map(t => `<div class="c7-dfl"><span class="mono">${esc(t)}</span><span>${esc(T.text[2] || 'LONDON')}</span><b class="c7-rk">${esc(T.text[3] || 'RED KITE AIR')}</b></div>`).join('')}</div>`;
+  if(N.kind === 'rival'){ const rs = N.ids.map(routeById), times = T7('news.rival.times').text.length ? T7('news.rival.times').text : ['07:10', '12:40', '17:55'];
+    const and = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`, one = rs.length === 1, r = rs[0];
+    const T = T7('news.rival', { city:and(rs.map(x => x.city)), airport:one ? `${r.city.toUpperCase()} ${r.code || r.airportCode || ''}`.trim() : '{home}', date }), home = T7('news.rival').text[2] || 'LONDON';
+    // one route: its departures to London; several (one card a Monday): the departures from London, a row for each route it took
+    const rowsB = one ? times.map(t => [t, home]) : rs.map((x, i) => [times[i % times.length], x.city.toUpperCase()]);
+    const bh = (T.text[1] || `DEPARTURES · ${one ? r.city.toUpperCase() : home}`).replace('{home}', home);
+    const board = `<div class="c7-dboard" role="img" aria-label="${esc(one ? `Red Kite Air's departures from ${r.city}` : `Red Kite Air's departures to ${and(rs.map(x => x.city))}`)}"><div class="c3-bh">${esc(bh)}</div>${rowsB.map(([t, to]) => `<div class="c7-dfl"><span class="mono">${esc(t)}</span><span>${esc(to)}</span><b class="c7-rk">${esc(T.text[3] || 'RED KITE AIR')}</b></div>`).join('')}</div>`;
     head = { eye:T.eyebrow || 'NEWS · RED KITE AIR', cls:'rk', title:T.title || `Red Kite Air now flies to ${r.city}`, line:T.text[0] || `Fewer people will want to fly ${r.city} with you.`, btn:T.button || 'Plan the week ▶', hint:T.text[4] || `Monday news · ${date}` }; card = board; }
   else { const T = T7('news.board', { airline:air.toUpperCase(), date }), wkN = N.B.wk, weeks = c7G1(7 * (wkN - 2) + 1).filter(x => x.wk >= wkN - (num7('boardGapWeeks', 3)));
     const note = `<div class="c7-note"><div class="c7-nl"><span class="c3-bh">${esc(T.text[1] || `${air.toUpperCase()} · THE BOARD`)}</span><p>${esc(T.text[2] || 'Profit is good.')}<br>${esc(T.text[3] || 'Our shareholders want the most profit our planes can make.')}</p><small>${esc((T.text[4] || `Signed, the Board of ${air}`).replace(air.toUpperCase(), air))}</small></div>
@@ -226,7 +249,7 @@ function c7NewsCard(N, st){
     head = { eye:T.eyebrow || 'A NOTE FROM THE BOARD', cls:'cy', title:T.title || 'The Board would like a word', line:T.text[0] || 'Three weeks running, your plan made less than the best plan.', btn:T.button || 'Plan the week ▶', hint:T.text[5] || `Monday news · ${date}` }; card = note; }
   screen().innerHTML = shell(`<div class="c7-news"><p class="c7-crumb">${esc(air)} HQ · Plan</p>${card}<span class="bv-eyebrow c7-eye ${head.cls}">${esc(head.eye)}</span><h1 class="c7-nt">${esc(head.title)}</h1><p class="c7-nline">${esc(head.line)}</p>
     <button class="bv-btn primary big" id="c7NewsGo">${esc(head.btn.replace('▶', '').trim())} &#9654;</button></div>`, deskBar(esc(head.hint), ''));
-  on('c7NewsGo', () => { const Y = X7(); Y.news[N.key] = S.day || 1; if(N.kind === 'board' && S.c6) S.c6.boardSeen = N.B.wk; save(); render(); });
+  on('c7NewsGo', () => { const Y = X7(); (N.keys || [N.key]).forEach(k => { Y.news[k] = S.day || 1; }); if(N.kind === 'board' && S.c6) S.c6.boardSeen = N.B.wk; save(); render(); });
 }
 const c7Plan0 = R.plan;
 R.plan = st => { try{ const N = c7NewsDue(); if(N) return c7NewsCard(N, st); }catch(e){ console.error(e); } return c7Plan0(st); };

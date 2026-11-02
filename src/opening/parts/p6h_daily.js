@@ -487,7 +487,7 @@ function c2Pair(){
 const c2Ready0 = R.ready;
 R.ready = st => { const r = c2Ready0.apply(this, arguments);
   try{ if(ch1()){ const b = document.getElementById('startOps'), p = b && [...screen().querySelectorAll('.tf-todo, p')].find(x => /Press .+ when it is right/i.test(x.textContent));
-    if(b && p){ const name = b.textContent.trim().toLowerCase().replace(/(^|\s)\S/g, m => m.toUpperCase()).replace(/\bTo\b/, 'to'); p.innerHTML = C2H(C2('ready.todo', { button:name }).text[0] || `Check the plan. Press **${name}** when it is right.`); } } }catch(e){}
+    if(b && p){ const t0 = b.textContent.trim().toLowerCase(), name = (t0.charAt(0).toUpperCase() + t0.slice(1)).replace(/\boperations wall\b/i, 'Operations Wall'); b.textContent = name; b.classList.add('c8-go'); p.innerHTML = C2H(C2('ready.todo', { button:name }).text[0] || `Check the plan. Press **${name}** when it is right.`); } } }catch(e){}
   return r; };
 
 /* ---------- 8 · the plan opener (weeks 2-4): no Monday sums for revenue or profit any more (the comparison sheet is all ƒ),
