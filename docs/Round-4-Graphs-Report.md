@@ -68,7 +68,7 @@ I played these in the test toolkit, with no page errors:
 
 To make the question and the news cards appear, I made up gaps and a rival.
 
-`chapter1.test.js`: still running when this was first pushed; the result follows below.
+`chapter1.test.js` passes: 39 checks, none failed, no page errors. That includes the full run from Launch Day to the chapter review, which goes through every week's pictures page, and "never more than two counted questions a pause".
 
 
 *Round 4 of about 10.*
