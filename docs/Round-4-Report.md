@@ -1,5 +1,7 @@
 # Round 4: what happens to a pupil who coasts (2 Nov 2026)
 
+> **Update, later on 2 Nov:** Claude Design's round 4 hand-off replaced two things described below. The Board's note is now a Monday news card, and so is Red Kite taking a route; the panel on the plan opener and the row in the This week list have gone. The rules behind them are unchanged. See `docs/Round-4-Graphs-Report.md`.
+
 You wanted a pupil who sticks with one plan to feel it when new routes open and he doesn't change anything. You picked three ideas:
 - Red Kite takes a route he ignores;
 - his reputation dips, but carefully;

@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 292 | 10 draft, 282 live, 11 placeholder, 1 withdrawn |
+| Settings | 296 | 10 draft, 286 live, 11 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -573,6 +573,18 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `rival.news`: Red Kite takes over {city} from Monday. About a third of its passengers will fly with them for good.
 - `board.note`: A word from the Board · Last week your plan made {yours}. The best plan with your planes would have made {best}. · Making a profit is good. Shareholders want the most profit your planes can make. · [Understood]
 - `rival.week`: Red Kite has taken over {city}. About a third of its passengers now fly with them for good.
+- `pics.go`: [Your week in pictures ▶]
+- `pics.page`: How did week {n} go? · Your week in pictures · Sunday review · week {n} · [Plan week {next} ▶]
+- `pics.back`: [◀ Back to the sums]
+- `pics.g1`: Your plan against the best plan · Yours · Best plan · Gap · Wk {n} · New routes
+- `pics.g2`: Where the money is · Profit for each hour of plane time · not in your plan
+- `pics.q.paper`: Work it out on paper · How much more could your plan have made this week? Write {sum} beside it. · [Enter]
+- `pics.q.read`: Read the graph · Which route earns most for each hour of plane time? Pick one. It counts as {sum}.
+- `pics.monday`: [Last week's graphs]
+- `news.rival`: NEWS · RED KITE AIR · Red Kite Air now flies to {city} · Fewer people will want to fly {city} with you. · DEPARTURES · {airport} · LONDON · RED KITE AIR · Monday news · {date} · [Plan the week ▶]
+- `news.board`: A NOTE FROM THE BOARD · The Board would like a word · Three weeks running, your plan made less than the best plan. · {airline} · THE BOARD · Profit is good. · Our shareholders want the most profit our planes can make. · Signed, the Board of {airline} · Monday news · {date} · [Plan the week ▶]
+- `pics.q.wrong`: Not quite. One more try. · The answer: {answer}. · ✓ Right: {answer}
+- `news.rival.times`: 07:10 · 12:40 · 17:55
 
 ## Identity and photos (CR5)
 

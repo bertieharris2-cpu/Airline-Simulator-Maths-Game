@@ -10,6 +10,27 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zy. Round 4 graphs: Claude Design's Sunday graphs (2 Nov 2026)
+
+This is for chapter one. Report: `docs/Round-4-Graphs-Report.md`; hand-off: `data/incoming/handoff-round4-2-nov/`, with DESIGN.md installed. `tools/merge_r4b.py` adds:
+- Routes `colour` for every chapter-one route;
+- Settings `graphsFromWeek`, `graphQuestionGapShare`, `graph1MinWeeks`, `graph1StepPounds`;
+- ScreenText `pics.*`, `news.rival`, `news.rival.times`, `news.board`.
+
+All of it is PLACEHOLDER.
+
+**New part `p6l_graphs.js`** (block-scoped, last). State lives in `S.c7`: `{ seen:{from:day}, g2:{from:rows}, q:{from:{kind,key,want,opts,ok,shown,tries,wrong}|null}, qLast, news:{key:day} }`.
+
+- **Which week a review is about:** `c7Ctx()` reads `weekReview` from `S.wk.from`, and `review` from the last week entry in `S.history`.
+- **The button after the sums:** a `render` wrapper calls `c7AfterRender()`. Once `#nx` exists and is enabled (the sums are done), it adds `#c7Pics` to the sheet's `.ash-line`, or to the footer when there's no sheet. `#nx` is removed until `S.c7.seen[from]`.
+- **The pictures page:** `UI.c7pics === from` draws `c7Page(from, go)`. `go` is the saved `#nx.onclick`, and the page's Plan week button is `#nx` again, so the toolkit's "next" still works.
+- **Graph 1:** `c7G1(lastFrom)` takes p6k's `__c6.gap(from)` for every week. `c6Gap` is now ready on the review's Sunday and uses `S.wk.missed` when the review has one. `c7G1Svg` draws it, with the best figure clamped to at least his own week.
+- **Graph 2:** `c7G2(from)` runs a `dryRun` on day `from + 9` over the routes open on Sunday that a plane in `S.fleet` can reach. It takes `planLines` with one plane flying the route as often as `canAddTrip` allows, minus that plane flying nothing, divided by the hours flown (`TIME.roundTrip`). The fare is his own, or `basePrice` when the route isn't in his plan. The rows are cached; the kite shows when `S.c6.rival[id].day <= from + 7`.
+- **The question:** `c7Question(from)` asks only when (best − yours) / best > `graphQuestionGapShare` and `c1Room()`. It alternates paper and read. It's numbered with `sumNo('gq:<kind>:<from>')`, recorded as a Calculate (`recOpen`/`recAttempt`), allows two tries (`twoTriesOn`, `paperRecShown`), and is answered by `c7Answer(from, given)`.
+- **Monday:** `c7Monday()` puts `#c7Mon` before `#c1Undo`, or at the start of `.c1-ttact`, or in the `.dp-head`. `UI.c7mon === S.day` opens `.c7-drop`, positioned absolutely in `.shell-main`.
+- **News cards:** an `R.plan` wrapper shows `c7NewsCard` while `c7NewsDue()` finds an unseen rival with `day === Monday`, or `__c6.board()` for this week. `#c7NewsGo` marks it seen and sets `S.c6.boardSeen`. p6k's opener panel and This-week row are removed.
+- **Toolkit:** `__tkPre` clicks `#c7NewsGo`, and `#c7Pics` when there's no `#nx`. `__tkSums` gets "the graph question".
+
 ## 0zx. Round 4: consequences for coasting (2 Nov 2026)
 
 This is for chapter one. Report: `docs/Round-4-Report.md`. Settings `rivalIgnoreWeeks`, `rivalTakesShare`, `starsTurnedAwayNeedsSpare`, `boardGapShare`, `boardGapWeeks` and ScreenText `rival.news`, `rival.week`, `board.note` come from `tools/merge_r4.py`, all PLACEHOLDER. The Sunday graphs, the graph question and the plan-screen button are waiting on Claude Design.

@@ -8,7 +8,7 @@
      2 · REPUTATION DIPS, CAREFULLY: the stars' "turned away 1 in 3, two weeks running" rule only counts in a week when his
          planes had spare time for at least one more flight of that route (Bertie: one small airline can't carry everyone).
      3 · THE BOARD HAS A WORD, GENTLY: the gap between his week and the best plan with his planes is at least boardGapShare
-         (10%) of the best for boardGapWeeks (3) weeks running: Monday's plan opens with a short note from the Board. No fine.
+         (10%) of the best for boardGapWeeks (3) weeks running: c6Board decides; p6l shows it as Monday's news card. No fine.
    Every setting is a PLACEHOLDER (tools/merge_r4.py, docs/Placeholders-for-Fable.md).
    ===================================================================== */
 {
@@ -57,8 +57,8 @@ window.__c6taOk = (id, k) => !on6() || /^(no|off)$/i.test(String(SET().starsTurn
 function c6Gap(from){
   const Y = X6(); if(Y.gap[from]) return Y.gap[from];
   const h = (S.history || []).filter(x => x.from >= from && x.to <= from + 6), profit = h.reduce((t, x) => t + (x.profit || 0), 0);
-  if(!h.length || (S.day || 1) <= from + 6) return null;
-  let M = null; try{ M = missedProfitLine(profit, 7, from); }catch(e){ return null; }
+  if(!h.length || !h.some(x => x.to >= from + 6)) return null;   // the whole week has flown
+  let M = S.wk && S.wk.from === from && S.wk.missed ? S.wk.missed : null; try{ M = M || missedProfitLine(profit, 7, from); }catch(e){ return null; }
   return (Y.gap[from] = { yours:M.yours, best:M.best, missed:M.missed });
 }
 function c6Board(){
@@ -72,18 +72,7 @@ function c6Board(){
 const c6Op0 = s2Opener;
 s2Opener = function(pl, L, hid, changed){
   if(on6()){ try{ const to = 7 * (weekNo(S.day || 1) - 1); if(to >= 7 && !X6().done['r' + to]){ X6().done['r' + to] = 1; const L = c6RivalCheck(to); if(L.length) addNews(L.map(l => ({ tag:'RIVAL', text:l.text, cls:'warn' }))); } }catch(e){ console.error(e); } }   // weeks with no Sunday review
-  let h = c6Op0.apply(this, arguments); if(!on6() || typeof h !== 'string') return h;
-  try{ const mon = 7 * (weekNo(S.day || 1) - 1) + 1, R = X6().rival, took = Object.keys(R).filter(id => R[id].day === mon && routeById(id));
-    if(took.length) h = h.replace('<ul class="s2-cl op2-list">', '<ul class="s2-cl op2-list">' + took.map(id => `<li class="op2-r c6-rival"><span class="op2-i">${ICO2.news || ICO2.info}</span><span class="op2-t">${esc(tx6('rival.week', { city:routeById(id).city }, `Red Kite has taken over ${routeById(id).city}. About a third of its passengers now fly with them for good.`))}</span></li>`).join('')); }catch(e){ console.error(e); }
-  try{ const B = c6Board(); if(!B || B.wk !== weekNo(S.day || 1) || X6().boardSeen === B.wk) return h;
-    const T = (() => { try{ return h21Text('board.note', { yours:money(B.last.yours), best:money(B.last.best) }); }catch(e){ return { title:'', text:[] }; } })();
-    const note = `<section class="bv-panel c6-board" role="note"><h2>${esc(T.title || 'A word from the Board')}</h2>${(T.text.length ? T.text : [`Last week your plan made ${money(B.last.yours)}. The best plan with your planes would have made ${money(B.last.best)}.`, 'Making a profit is good. Shareholders want the most profit your planes can make.']).map(t => `<p>${h21Html(t)}</p>`).join('')}<button class="bv-btn" id="c6BoardOk">${esc(T.button || 'Understood')}</button></section>`;
-    return note + h; }catch(e){ console.error(e); return h; }
+  return c6Op0.apply(this, arguments);   // the Board's note and Red Kite's news are Monday's news cards now (p6l, round 4 graphs)
 };
-document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('#c6BoardOk'); if(!b) return; X6().boardSeen = weekNo(S.day || 1); save(); render(); });
-
-/* the toolkit presses Understood */
-const tkPre6 = window.__tkPre;
-window.__tkPre = R => { try{ const b = document.getElementById('c6BoardOk'); if(b){ b.click(); return "the Board's note: understood"; } }catch(e){} return tkPre6 ? tkPre6(R) : null; };
 window.__c6 = { rivalCheck:c6RivalCheck, gap:c6Gap, board:c6Board, spare:c6Spare };
 }

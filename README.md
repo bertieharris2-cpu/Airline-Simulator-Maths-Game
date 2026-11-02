@@ -380,6 +380,13 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Round 4, part two: Claude Design's Sunday graphs (2 Nov 2026)
+
+Built in chapter one: `p6l_graphs.js` and CSS in `p1_head_c3.css`. Route colours, settings and words are added to the workbook by `tools/merge_r4b.py` (run it after `merge_r4.py`), all marked PLACEHOLDER. Report: `docs/Round-4-Graphs-Report.md`; screenshots: `docs/screenshots/round-4-graphs/`; hand-off: `data/incoming/handoff-round4-2-nov/` (its DESIGN.md is installed).
+- **Your week in pictures** (from week 2, after the last Sunday sum): Graph 1, "Your plan against the best plan" (his week in gold, the best plan as an outline, the gap striped amber); Graph 2, "Where the money is" (profit for each hour of plane time for each route).
+- **One counted question, only when the gap is large:** alternately a paper sum under Graph 1, or Read the graph under Graph 2.
+- **Monday:** Last week's graphs ▾ on the plan page, plus news cards when Red Kite takes a route or the Board has a word. The cards replace part one's opener panel and This-week row.
+
 ### Round 4: what happens to a pupil who coasts on one plan (2 Nov 2026)
 
 Built in chapter one: `p6k_round4.js`, a one-line hook in `p5w_d104.js`, and CSS in `p1_head_c3.css`. Settings and words are added to the workbook by `tools/merge_r4.py` (run it after `merge_r3.py`), all marked PLACEHOLDER. Report: `docs/Round-4-Report.md`; screenshots: `docs/screenshots/round-4/`. The two Sunday graphs are Claude Design's job (hand-off "the Sunday graphs, round 4").
