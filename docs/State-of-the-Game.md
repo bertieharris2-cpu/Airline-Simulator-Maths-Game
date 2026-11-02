@@ -10,6 +10,15 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zzc. Hard sums as formulas (2 Nov 2026)
+
+This is for chapter one. Bertie: dividing by a four-digit number, and seats filled as a percentage, are too hard by hand at Years 5–6, so they are Build the formula questions ("like a calculator paper": learning what to do). Five-digit differences stay on paper. `tools/merge_formula_2nov.py` (run after `merge_decisions_2nov.py`) adds Settings `hardSumsAsFormula` yes and ScreenText `pauseq.formula` (placeholder words).
+- **p6g `asFormula(sum, qs, o, line)`** turns a `paper()` sum into `how:'formula'`: he clicks the cells and the operations, `ashBuilt` calls its `answer`, which records a `calc` entry (method "the formula built on the sheet; the sheet worked it out"), so it is still one of the pause's two counted questions. The build itself is a `build` entry at Formula level, as for the best-day question.
+- **Time to afford** (`C1Q.timeToAfford`): B4 ÷ B5; the sheet shows the days rounded up.
+- **Seats filled** (`reviewRotation` `load_factor`, and the older Sunday-sheet copy in p6b used when `countingPriority` is off): a new row holds 100, and the formula is Passengers ÷ Seats × 100.
+- The page's line under the title and the signal say Build the formula instead of "Work it out in your book".
+- `hardSumsAsFormula` no puts both back on paper as before.
+
 ## 0zzb. Bertie's decisions on Fable's report (2 Nov 2026)
 
 This is for chapter one. `tools/merge_decisions_2nov.py` (run after `merge_v67.py`) adds four Settings rows. Fable's own v6.7 file is now installed; it differs from the rebuilt copy only in her five full notes.

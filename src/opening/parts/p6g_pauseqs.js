@@ -90,6 +90,17 @@ function paper(Q, qs, o){
     hints:() => (o.hints || []).concat([{ t:`Check: about ${o.unit === '£' || !o.unit ? money(ashRound(o.want)) : num(ashRound(o.want))}.`, est:true }]), how2:() => '' };
   return sum;
 }
+/* Bertie, 2 Nov 2026: a sum too big to work out by hand at Years 5–6 (÷ a four-digit number, an awkward fraction as a percentage) is
+   a "Build the formula" question instead: he clicks the cells and the operations, the sheet works it out (like a calculator).
+   It is still one of the pause's counted questions. */
+function hardAsFormula(){ return ch1() && !/^\s*(no|off)/i.test(String(((typeof WBS === 'function' ? WBS() : {}) || {}).hardSumsAsFormula || 'yes')); }
+function formulaWords(){ let t = []; try{ t = (c1T('pauseq.formula', {}) || {}).text || []; }catch(e){} return { sub:t[0] || 'Question {i} of {k} from Finance. Build the formula on the sheet.', hundred:t[1] || 'A hundred (for a percentage)' }; }
+function asFormula(sum, qs, o, line){ if(!hardAsFormula()) return sum;
+  sum.how = 'formula'; sum.built = !!qs.ok; sum.recO = { type:'calc', relKey:o.rel, doc:o.doc, level:'Calculate' }; if(line) sum.lineBuild = line;
+  sum.answer = () => { try{ const e = recOpen(sum.recKey, { type:'calc', relKey:o.rel, doc:o.doc, ask:o.title, question:o.question, unit:o.unit || '£', correct:o.want, correctText:o.answerText, ops:o.vals || [], op:o.ops[0], level:'Calculate', method:'the formula built on the sheet; the sheet worked it out' });
+      recAttempt(e, { ok:true, given:o.answerText, value:o.want, method:'the formula built on the sheet; the sheet worked it out' }); e.status = 'checked'; }catch(x){}
+    qs.ok = true; if(o.onOk) o.onOk(); save(); return { ok:true }; };
+  return sum; }
 const done1 = (sum, qs) => qs.ok ? { tgt:sum.tgt, refs:sum.refs, ops:sum.ops, words:sum.words, val:sum.answerText } : null;
 
 const C1Q = {
@@ -101,11 +112,11 @@ const C1Q = {
     make:(Q, qs) => { const f = taFig(Q.d.pid), pf = planeById(Q.d.pid).shopFromDay || 1, V = { plane:f.short, price:money(f.price), cash:money(f.cash), rate:money(f.rate) };
       const rows = [{ r:1, t:'hdr' }, { r:2, label:`Price of the ${f.short}`, ic:'plane' }, { r:3, label:'Cash now', ic:'coins' }, { r:4, label:'Still to find', ic:'note' }, { r:5, label:'Profit a day (last 7 days)', ic:'chart' }, { r:6, label:'Days to afford', ic:'cal', gold:true, t:'tot' }];
       const v = { B2:{ t:money(f.price) }, B3:{ t:money(f.cash) }, B4:{ t:money(f.still), f:true }, B5:{ t:money(f.rate) } };
-      const s = paper(Q, qs, { title:`How long until you can afford the ${f.short}?`, tgt:'B6', refs:['B4', 'B5'], ops:['÷'], words:'Still to find ÷ Profit a day', want:f.days, alt:f.exact, altTol:0.05, unit:'days', rel:'timeToAfford',
+      const o = { title:`How long until you can afford the ${f.short}?`, tgt:'B6', refs:['B4', 'B5'], ops:['÷'], words:'Still to find ÷ Profit a day', want:f.days, alt:f.exact, altTol:0.05, unit:'days', rel:'timeToAfford',
         doc:`Time to afford: ${f.name}`, question:`${money(f.still)} ÷ ${money(f.rate)} a day`, vals:[f.still, f.rate], answerText:`${num(f.days)} days`,
         parse:raw => { const x = parseFloat(String(raw).replace(/[^\d.]/g, '')); return isNaN(x) ? null : x; },
         note:val => val > f.still ? 'That is more days than pounds: divide what is still to find by the profit a day.' : `Check: ${money(f.still)} ÷ ${money(f.rate)}, then round up to a whole day. One more try.`,
-        hints:[{ t:`${money(f.still)} ÷ ${money(f.rate)}. A part of a day still needs a whole day, so round up.` }] });
+        hints:[{ t:`${money(f.still)} ÷ ${money(f.rate)}. A part of a day still needs a whole day, so round up.` }] }, s = asFormula(paper(Q, qs, o), qs, o, 'Build it: Still to find ÷ Profit a day. The sheet works it out and rounds up to a whole day.');
       if(qs.ok) v.B6 = { t:`${num(f.days)} days` };
       const T = TQ('pauseq.timeToAfford', V); if(pf > (S.day || 1)) T.text.splice(1, 0, `The ${f.short} goes on sale on ${dateShort(pf)}.`);
       return { T, sp:sheet(Q, { cols:[{ c:'B', w:170, top:pf > (S.day || 1) ? `on sale ${dateShort(pf)}` : 'the shop', main:f.short }], rows, v, sums:[s], act:qs.ok ? null : s, doneF:done1(s, qs), doneLine:qs.ok ? `About ${num(f.days)} days of flying like last week. The shop is on the Fleet desk.` : '' }),
@@ -230,14 +241,14 @@ const C1Q = {
         s = paper(Q, qs, { title:RQ.question || 'What is the difference between the best and the worst day?', tgt:'B' + rr, refs:['B' + rb, 'B' + rw], ops:['−'], words:'Best day − Worst day', want, rel:'difference',
           doc:`${capFirst(periodWords(L))}: the range`, question:`${money(best.p)} − ${money(worst.p)}`, vals:[best.p, worst.p], answerText:ans,
           hints:[{ t:`The range is how far apart they are: ${money(best.p)} − ${money(worst.p)}.` }] }); }
-      else { const rp = r++, rs = r++, rr = r++, pax = L.pax || 0, seats = Math.max(1, L.seats || 1), exact = pax / seats * 100, want = Math.round(exact); ans = want + '%';
-        rows.push({ r:rp, label:`Passengers, ${periodWords(L)}`, ic:'person' }, { r:rs, label:`Seats, ${periodWords(L)}`, ic:'person' }, { r:rr, label:'Seats filled (%)', ic:'chart', gold:true, t:'tot' });
-        v['B' + rp] = { t:num(pax), f:true }; v['B' + rs] = { t:num(seats), f:true }; if(qs.ok) v['B' + rr] = { t:ans };
-        s = paper(Q, qs, { title:RQ.question || `What share of seats were filled in ${periodWords(L)}?`, tgt:'B' + rr, refs:['B' + rp, 'B' + rs], ops:['÷'], words:'Passengers ÷ Seats, then × 100', want, alt:exact, altTol:1, unit:'%', rel:'percentage',
+      else { const F = hardAsFormula(), rp = r++, rs = r++, rh = F ? r++ : 0, rr = r++, pax = L.pax || 0, seats = Math.max(1, L.seats || 1), exact = pax / seats * 100, want = Math.round(exact); ans = want + '%';
+        rows.push({ r:rp, label:`Passengers, ${periodWords(L)}`, ic:'person' }, { r:rs, label:`Seats, ${periodWords(L)}`, ic:'person' }, ...(F ? [{ r:rh, label:formulaWords().hundred, ic:'note' }] : []), { r:rr, label:'Seats filled (%)', ic:'chart', gold:true, t:'tot' });
+        v['B' + rp] = { t:num(pax), f:true }; v['B' + rs] = { t:num(seats), f:true }; if(F) v['B' + rh] = { t:'100' }; if(qs.ok) v['B' + rr] = { t:ans };
+        const o = { title:RQ.question || `What share of seats were filled in ${periodWords(L)}?`, tgt:'B' + rr, refs:F ? ['B' + rp, 'B' + rs, 'B' + rh] : ['B' + rp, 'B' + rs], ops:F ? ['÷', '×'] : ['÷'], words:F ? 'Passengers ÷ Seats × 100' : 'Passengers ÷ Seats, then × 100', want, alt:exact, altTol:1, unit:'%', rel:'percentage',
           doc:`${capFirst(periodWords(L))}: seats filled`, question:`${num(pax)} ÷ ${num(seats)} × 100`, vals:[pax, seats], answerText:ans,
           parse:raw => { const x = parseFloat(String(raw).replace(/[%\s,]/g, '')); return isNaN(x) ? null : x; },
           note:val => val > 100 ? 'A share of the seats can\'t be more than 100%: passengers ÷ seats, then × 100.' : `Check: ${num(pax)} ÷ ${num(seats)}, then × 100. One more try.`,
-          hints:[{ t:`Passengers ÷ seats gives the share as a decimal: ${num(pax)} ÷ ${num(seats)}. Then × 100 makes it a percentage.` }] }); }
+          hints:[{ t:`Passengers ÷ seats gives the share as a decimal: ${num(pax)} ÷ ${num(seats)}. Then × 100 makes it a percentage.` }] }; s = asFormula(paper(Q, qs, o), qs, o, 'Build it: Passengers ÷ Seats × 100. The sheet works it out.'); }
       return { T:TQ('pauseq.reviewRotation', V), sp:sheet(Q, { title:'', cols:[{ c:'B', w:170, top:fmtRange(L.from, L.to), main:capFirst(periodWords(L)) }], rows, v, sums:[s], act:qs.ok ? null : s, doneF:done1(s, qs), doneLine:qs.ok ? `✓ ${ans}` : '' }),
         done:qs.ok ? `✓ **${ans}**` : '' }; } }
 };
@@ -278,12 +289,12 @@ R.c1q = st => {
   const wi = M.wi && isDone ? `<p class="c1q-wi"><button class="op2-a" data-c1wigo>What if ›</button> try any fare on the What if sheet.</p>` : '';
   const ctx = `<section class="bv-panel support c1q-ctx"><p class="bv-eyebrow">${esc(M.T.eyebrow || '')}${M.T.eyebrow ? ' · ' : ''}${esc(`QUESTION ${i + 1} OF ${k}`)}</p><h2>${esc(M.T.title)}</h2>${M.T.text.map(t => `<p>${c1Html(t)}</p>`).join('')}${pick}${wi}${waits}</section>`;
   let ins = '';
-  if(a) ins = a.pick ? c1SignalHtml({ kind:'build', title:a.title, lines:[esc(a.lineBuild || ''), 'The sheet fills in the day.'] }) : c1SignalHtml({ kind:'paper', title:a.title, lines:c1PaperLines(a.no, a.tgt) });
+  if(a) ins = a.pick || a.how === 'formula' ? c1SignalHtml({ kind:'build', title:a.title, lines:[esc(a.lineBuild || ''), 'The sheet fills in the day.'] }) : c1SignalHtml({ kind:'paper', title:a.title, lines:c1PaperLines(a.no, a.tgt) });
   else if(isDone) ins = c1DoneHtml(M.done, sp.sums[0].tgt);
   const mid = sp ? ashHtml(sp) : '';
   const body = `<div class="bv rv2 rbw ash-rv c1-rv c1q ${a || M.pick ? 'c1-busy' : ''}"><div class="rv2-col rv2-what">${ctx}</div><div class="rv2-col rv2-mid">${mid}</div><div class="rv2-col rv2-ins c1-ins">${ins}</div></div>`;
   const btn = !isDone ? '' : last ? `<button class="bv-btn go big" id="nx">${esc((F.button || 'Carry on ▶').replace('▶', '').trim())} &#9654;</button>` : `<button class="bv-btn primary big" id="c1qNext">${esc((P.button || 'Next question ▶').replace('▶', '').trim())} &#9654;</button>`;
-  screen().innerHTML = shell(deskPage({ title:P.title, sub:P.text[0] || '', cls:'rbw-page rv-page rv2-page ash-rvp c1-rvp c1q-page', body }), deskBar(F.text[0] || '', btn));
+  screen().innerHTML = shell(deskPage({ title:P.title, sub:(sp && (sp.sums || []).some(x => x.how === 'formula') ? formulaWords().sub.replace('{i}', i + 1).replace('{k}', k).replace('{n}', n) : P.text[0]) || '', cls:'rbw-page rv-page rv2-page ash-rvp c1-rvp c1q-page', body }), deskBar(F.text[0] || '', btn));
   if(sp){ ashBind(sp); const root = screen(), grid = root.querySelector(`[data-ash="${CSS.escape(sp.id)}"]`), cell = ref => grid && grid.querySelector(`.ash-c[data-ref="${ref}"]`);
     if(grid) c1BarEnter(sp, grid);
     const sig = root.querySelector('.c1-ins [data-c1sig]'); if(sig && a) c1Place(sig, cell(a.tgt), 'side', { x:0 });

@@ -46,4 +46,17 @@ The rest look comfortable:
 Chapter one has no fuel sum now. The 8,000 × £1.47 in your BR pupil's old save isn't asked any more.
 
 
+## Later the same day: the two hard sums are now formulas
+
+You said dividing by a four-digit number is too hard by hand, and the same goes for seats filled as a percentage. Both are now **Build the formula** questions, like a calculator paper. He clicks the cells and the operations, and the sheet works out the answer. The five-digit differences stay on paper.
+
+- **Time to afford a plane (week 4):** he builds *Still to find ÷ Profit a day* (B4 ÷ B5). The sheet shows the days, rounded up ("6 days").
+- **Seats filled (%):** the sheet has a new row that holds 100. He builds *Passengers ÷ Seats × 100*, and the sheet shows the percentage ("99%").
+- The page and the box under the cell say "Build the formula" instead of "Work it out in your book".
+- Each one still counts as one of the pause's two questions and goes in his record. The record notes that the sheet worked it out.
+
+It's a workbook setting, `hardSumsAsFormula` (yes). Setting it to "no" puts both sums back on paper. Two bits of wording are made up and marked as placeholders for Fable: the line under the page title, and the label of the 100 row ("A hundred (for a percentage)").
+
+`chapter1.test.js` passes: 39 checks, none failed. The pupil-save test passes too: 7 checks, none failed. I also built both sums by hand in the game to check the clicks work.
+
 *Round 4 of about 10.*

@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 304 | 9 draft, 295 live, 10 placeholder, 1 withdrawn |
+| Settings | 305 | 9 draft, 296 live, 10 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -582,6 +582,7 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `brief1.steps`: Your Week 1 plan: {n} simple steps · Build your timetable · Choose how many services to fly, where to and when. Make the best use of the aircraft's day. · Set fares · Choose a ticket price for each route. A higher fare earns more a ticket, but fewer people want to fly. · Work out the key numbers · Tickets, profit and fuel by hand, on the same page as the plan. The model shows the rest. · Run the week · Confirm the plan and watch the airline fly Monday to Sunday. Then the review: what did the week earn?
 - `intro.tank.lead`: You have bought fuel ahead since week 3; in December you buy a month at a time.
 - `end.next`: Chapter {n}, {name}, opens on {date}: long haul, overnight rotations and time zones; the 787 by lease; the airline type chosen. That part of the game is not built yet.
+- `pauseq.formula`: Question {i} of {k} from Finance. Build the formula on the sheet. · A hundred (for a percentage)
 
 ## Identity and photos (CR5)
 
