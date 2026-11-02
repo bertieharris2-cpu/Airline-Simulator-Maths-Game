@@ -50,7 +50,9 @@ function c7G2(from){
           const p = planeById(S.fleet[j].planeId), base = currentPlan(); base.fleet.forEach(x => { x.sched = []; x.deps = null; }); base.prices = Object.assign({}, S.prices);
           if(!mine.includes(r.id) || !base.prices[r.id]) base.prices[r.id] = (mine.includes(r.id) && S.prices[r.id]) || r.basePrice;
           const empty = planLines(base).v.profit, x = base.fleet[j], sch = [];
-          while(sch.length < (WORLD.maxTrips || 4) && canAddTrip(p, sch, r)) sch.push(r.id);
+          // Settings graph2Measure (v6.7): 'one plane all day' (as many flights as fit) or 'one flight' (one return flight)
+          const cap = /one flight/i.test(String(SET().graph2Measure || '')) ? 1 : (WORLD.maxTrips || 4);
+          while(sch.length < cap && canAddTrip(p, sch, r)) sch.push(r.id);
           if(!sch.length) return; x.sched = sch;
           const full = planLines(base).v.profit, hours = sch.length * TIME.roundTrip(p, r) / 60;
           out[r.id] = hours > 0 ? (full - empty) / hours : 0; });

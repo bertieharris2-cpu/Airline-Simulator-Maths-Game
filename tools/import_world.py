@@ -617,12 +617,15 @@ for grp in sorted({r['unlockDay'] for r in routes}):
         if re.search(r'\blong(er)?\b', t) and r['km'] < hi:
             issue('error', 'Routes', f'{r["id"]}: the story says "longer", but it is the shorter of the routes opening on day {grp} ({both}). The game shows the story next to the flight time.')
 
-# leg times on quarter hours (the README sheet's promise)
+# leg times on quarter hours (the README sheet's promise); Settings legRounding 'up to the next quarter hour' (Fable, v6.7) rounds them
+# in the game (chapter one), so the check looks at the rounded leg
 live_planes = [a for a in all_aircraft if a['status'] == 'live']
+leg_up = str(settings.get('legRounding') or '').strip().lower().startswith('up')
 for r in [x for x in all_routes if x['status'] == 'live']:
     bad = []
     for a in live_planes:
         mins = r['distanceKm'] / a['speedKmh'] * 60
+        if leg_up: mins = -(-round(mins, 6) // 15) * 15
         if abs(mins / 15 - round(mins / 15)) > 1e-9: bad.append(f'{a["name"]} {mins:.0f} min')
     if bad: issue('check', 'Routes', f'{r["id"]} ({r["distanceKm"]} km): legs not on a quarter hour: {", ".join(bad)}.')
 

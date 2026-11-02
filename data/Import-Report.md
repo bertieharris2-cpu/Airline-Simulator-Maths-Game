@@ -2,13 +2,13 @@
 
 *Written by `tools/import_world.py` on 02 Nov 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
-**0 to fix, 22 to check, 7 notes.**
+**0 to fix, 11 to check, 7 notes.**
 
 ## Loaded
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 296 | 10 draft, 286 live, 11 placeholder, 1 withdrawn |
+| Settings | 300 | 9 draft, 291 live, 10 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -47,17 +47,6 @@
 - **RouteNews:** hajj_2032: route `none` is not on the Routes sheet.
 - **RouteNews:** hajj_2033: route `none` is not on the Routes sheet.
 - **Routes:** ist is loaded, but its archetype "long_haul_mixed" is not live. The game uses the route's own demand table and applies no business/leisure or season multipliers to it.
-- **Routes:** par (300 km): legs not on a quarter hour: Saab 340 40 min, ATR 72 40 min, Embraer E190 20 min, Airbus A220 20 min, Airbus A320 20 min, Boeing 737 20 min, Boeing 787 Dreamliner 20 min, Airbus A350 20 min, Boeing 747 20 min, Airbus A380 20 min, Embraer E175 20 min, Boeing 757 20 min, Airbus A340 20 min, Boeing 777 20 min.
-- **Routes:** fra (650 km): legs not on a quarter hour: DHC-6 Twin Otter 130 min, Saab 340 87 min, ATR 72 87 min, Embraer E190 43 min, Airbus A220 43 min, Airbus A320 43 min, Boeing 737 43 min, Boeing 787 Dreamliner 43 min, Airbus A350 43 min, Boeing 747 43 min, Airbus A380 43 min, Embraer E175 43 min, Boeing 757 43 min, Airbus A340 43 min, Boeing 777 43 min.
-- **Routes:** yyz (5700 km): legs not on a quarter hour: Saab 340 760 min, ATR 72 760 min, Embraer E190 380 min, Airbus A220 380 min, Airbus A320 380 min, Boeing 737 380 min, Boeing 787 Dreamliner 380 min, Airbus A350 380 min, Boeing 747 380 min, Airbus A380 380 min, Embraer E175 380 min, Boeing 757 380 min, Airbus A340 380 min, Boeing 777 380 min.
-- **Routes:** los (5000 km): legs not on a quarter hour: DHC-6 Twin Otter 1000 min, Saab 340 667 min, ATR 72 667 min, Embraer E190 333 min, Airbus A220 333 min, Airbus A320 333 min, Boeing 737 333 min, Boeing 787 Dreamliner 333 min, Airbus A350 333 min, Boeing 747 333 min, Airbus A380 333 min, Embraer E175 333 min, Boeing 757 333 min, Airbus A340 333 min, Boeing 777 333 min.
-- **Routes:** del (6700 km): legs not on a quarter hour: DHC-6 Twin Otter 1340 min, Saab 340 893 min, ATR 72 893 min, Embraer E190 447 min, Airbus A220 447 min, Airbus A320 447 min, Boeing 737 447 min, Boeing 787 Dreamliner 447 min, Airbus A350 447 min, Boeing 747 447 min, Airbus A380 447 min, Embraer E175 447 min, Boeing 757 447 min, Airbus A340 447 min, Boeing 777 447 min.
-- **Routes:** tyo (9600 km): legs not on a quarter hour: Saab 340 1280 min, ATR 72 1280 min, Embraer E190 640 min, Airbus A220 640 min, Airbus A320 640 min, Boeing 737 640 min, Boeing 787 Dreamliner 640 min, Airbus A350 640 min, Boeing 747 640 min, Airbus A380 640 min, Embraer E175 640 min, Boeing 757 640 min, Airbus A340 640 min, Boeing 777 640 min.
-- **Routes:** cpt (9700 km): legs not on a quarter hour: DHC-6 Twin Otter 1940 min, Saab 340 1293 min, ATR 72 1293 min, Embraer E190 647 min, Airbus A220 647 min, Airbus A320 647 min, Boeing 737 647 min, Boeing 787 Dreamliner 647 min, Airbus A350 647 min, Boeing 747 647 min, Airbus A380 647 min, Embraer E175 647 min, Boeing 757 647 min, Airbus A340 647 min, Boeing 777 647 min.
-- **Routes:** sin (10900 km): legs not on a quarter hour: DHC-6 Twin Otter 2180 min, Saab 340 1453 min, ATR 72 1453 min, Embraer E190 727 min, Airbus A220 727 min, Airbus A320 727 min, Boeing 737 727 min, Boeing 787 Dreamliner 727 min, Airbus A350 727 min, Boeing 747 727 min, Airbus A380 727 min, Embraer E175 727 min, Boeing 757 727 min, Airbus A340 727 min, Boeing 777 727 min.
-- **Routes:** syd (17200 km): legs not on a quarter hour: DHC-6 Twin Otter 3440 min, Saab 340 2293 min, ATR 72 2293 min, Embraer E190 1147 min, Airbus A220 1147 min, Airbus A320 1147 min, Boeing 737 1147 min, Boeing 787 Dreamliner 1147 min, Airbus A350 1147 min, Boeing 747 1147 min, Airbus A380 1147 min, Embraer E175 1147 min, Boeing 757 1147 min, Airbus A340 1147 min, Boeing 777 1147 min.
-- **Routes:** hkg (9600 km): legs not on a quarter hour: Saab 340 1280 min, ATR 72 1280 min, Embraer E190 640 min, Airbus A220 640 min, Airbus A320 640 min, Boeing 737 640 min, Boeing 787 Dreamliner 640 min, Airbus A350 640 min, Boeing 747 640 min, Airbus A380 640 min, Embraer E175 640 min, Boeing 757 640 min, Airbus A340 640 min, Boeing 777 640 min.
-- **Routes:** lax (8750 km): legs not on a quarter hour: DHC-6 Twin Otter 1750 min, Saab 340 1167 min, ATR 72 1167 min, Embraer E190 583 min, Airbus A220 583 min, Airbus A320 583 min, Boeing 737 583 min, Boeing 787 Dreamliner 583 min, Airbus A350 583 min, Boeing 747 583 min, Airbus A380 583 min, Embraer E175 583 min, Boeing 757 583 min, Airbus A340 583 min, Boeing 777 583 min.
 
 ## Notes
 
@@ -518,7 +507,7 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `ld3.mine`: Your turn: your plan's profit · Click **Total revenue**, press **−**, click **Total costs**. Then press [Enter]. The sheet works it out.
 - `ld3.footer`: Launch Day · the profit. · Launch Day · your profit. · Launch Day · watch Finance, on made-up numbers.
 - `wk1.co.add`: WEEK 1 ACCOUNTS · One way to find the week's total profit: add each day · [Watch ▶]
-- `wk1.co.sum`: A SIMPLER WAY · Here's a simpler way to do it in a spreadsheet · [Watch ▶]
+- `wk1.co.sum`: A SIMPLER WAY · A quicker way to do it in a spreadsheet · [Watch ▶]
 - `wk1.avg.watch`: WATCH · Watch: Finance works out the average a day · Watch: Finance clicks **Profit this week**, presses **÷**, clicks **Days flown**, then presses **Enter**.
 - `wk1.avg.mine`: Now it's your turn: calculate the average a day
 - `wi2.title`: What if you change a fare? · Plan week {n} · {date}
@@ -581,14 +570,18 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `pics.q.paper`: Work it out on paper · How much more could your plan have made this week? Write {sum} beside it. · [Enter]
 - `pics.q.read`: Read the graph · Which route earns most for each hour of plane time? Pick one. It counts as {sum}.
 - `pics.monday`: [Last week's graphs]
-- `news.rival`: NEWS · RED KITE AIR · Red Kite Air now flies to {city} · Fewer people will want to fly {city} with you. · DEPARTURES · {airport} · LONDON · RED KITE AIR · Monday news · {date} · [Plan the week ▶]
-- `news.board`: A NOTE FROM THE BOARD · The Board would like a word · Three weeks running, your plan made less than the best plan. · {airline} · THE BOARD · Profit is good. · Our shareholders want the most profit our planes can make. · Signed, the Board of {airline} · Monday news · {date} · [Plan the week ▶]
-- `pics.q.wrong`: Not quite. One more try. · The answer: {answer}. · ✓ Right: {answer}
+- `news.rival`: NEWS · RED KITE AIR · Red Kite Air now flies to {city} · Fewer people will want to fly to {city} with you. · DEPARTURES · {airport} · LONDON · RED KITE AIR · Monday news · {date} · [Plan the week ▶]
+- `news.board`: A NOTE FROM THE BOARD · The Board would like a word · Three weeks running, your plan made less than the best plan. · {airline} · THE BOARD · Profit is good. · The airline's owners want the most profit our planes can make. · Signed, the Board of {airline} · Monday news · {date} · [Plan the week ▶]
+- `pics.q.wrong`: Not quite. One more try. · The answer: {answer}. (Best plan − yours.) · ✓ Right: {answer}
 - `news.rival.times`: 07:10 · 12:40 · 17:55
 - `wi2.co1.less`: NEW · WHAT IF · What if {city} were £{step} less? · [Got it]
 - `wi2.co4.less`: A LITTLE ADDS UP · £{step} less a ticket = {month} less a month · [Got it]
 - `wi2.co4.less.up`: A LITTLE ADDS UP · £{step} less a ticket = {month} more a month · [Got it]
 - `wi2.co4.down`: A LITTLE ADDS UP · £{step} more a ticket = {month} less a month · [Got it]
+- `brief1.lead`: Your first week in charge · Build the timetable, set the fares, work out the key numbers, then run your first week of operations. Every decision changes demand, revenue, costs and profit.
+- `brief1.steps`: Your Week 1 plan: {n} simple steps · Build your timetable · Choose how many services to fly, where to and when. Make the best use of the aircraft's day. · Set fares · Choose a ticket price for each route. A higher fare earns more a ticket, but fewer people want to fly. · Work out the key numbers · Tickets, profit and fuel by hand, on the same page as the plan. The model shows the rest. · Run the week · Confirm the plan and watch the airline fly Monday to Sunday. Then the review: what did the week earn?
+- `intro.tank.lead`: You have bought fuel ahead since week 3; in December you buy a month at a time.
+- `end.next`: Chapter {n}, {name}, opens on {date}: long haul, overnight rotations and time zones; the 787 by lease; the airline type chosen. That part of the game is not built yet.
 
 ## Identity and photos (CR5)
 

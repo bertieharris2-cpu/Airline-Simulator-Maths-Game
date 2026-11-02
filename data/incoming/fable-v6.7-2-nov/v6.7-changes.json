@@ -1,0 +1,1142 @@
+[
+ {
+  "sheet": "README",
+  "op": "add",
+  "key": "v6.7 (2 Nov) — Fable's data pass on chapter one, from the game's copy. Settings: 14 placeholders checked; graphQuestionGapShare 0.10 → 0.15; legRounding added (legs round up to the quarter hour); homeTurnaroundMin 35 → 30; rivalTakeover note added · Routes colour: 18 checked against BertieV4's role colours. Amsterdam #c0703a → #a8714f and Barcelona #a8874f → #9c8a62 (the originals read as amber and gold, which mean warning and money); the other 16 kept · Wording: '£3.00 a litre' → '£2.94'; stray 'snacks' removed from Launch Day text; December's fuel line and the end's 'reputation revealed' corrected (2 cells) · ScreenText: 84 placeholders checked. rival.week and board.note retired (no longer shown); 'shareholders' → 'the airline's owners' on the Board's card; 'fly {city}' → 'fly to {city}'; the graph question's answer line now says what it is (best plan − yours); 'Here's a simpler way' → 'A quicker way'; launch.compare flagged against D109. Decisions left to Bertie (rules, not figures): the two Boards; whether Red Kite takes only routes he had time to fly; a cap on the graph question; the strength of the fare swing; week-1 Day pages. See Fable-Data-Pass-Report-2-Nov.md.",
+  "values": [
+   "v6.7 (2 Nov) — Fable's data pass on chapter one, from the game's copy. Settings: 14 placeholders checked; graphQuestionGapShare 0.10 → 0.15; legRounding added (legs round up to the quarter hour); homeTurnaroundMin 35 → 30; rivalTakeover note added · Routes colour: 18 checked against BertieV4's role colours. Amsterdam #c0703a → #a8714f and Barcelona #a8874f → #9c8a62 (the originals read as amber and gold, which mean warning and money); the other 16 kept · Wording: '£3.00 a litre' → '£2.94'; stray 'snacks' removed from Launch Day text; December's fuel line and the end's 'reputation revealed' corrected (2 cells) · ScreenText: 84 placeholders checked. rival.week and board.note retired (no longer shown); 'shareholders' → 'the airline's owners' on the Board's card; 'fly {city}' → 'fly to {city}'; the graph question's answer line now says what it is (best plan − yours); 'Here's a simpler way' → 'A quicker way'; launch.compare flagged against D109. Decisions left to Bertie (rules, not figures): the two Boards; whether Red Kite takes only routes he had time to fly; a cap on the graph question; the strength of the fare swing; week-1 Day pages. See Fable-Data-Pass-Report-2-Nov.md."
+  ]
+ },
+ {
+  "sheet": "Settings",
+  "op": "add",
+  "key": "legRounding",
+  "values": [
+   "legRounding",
+   "up to the next quarter hour",
+   "Fable, 2 Nov: flight legs round UP to the quarter hour for every aircraft (Paris on a Saab 40 → 45 min; Frankfurt on a Twin Otter 130 → 135 min). Clears the importer's chapter-one flags without changing distances.",
+   "live"
+  ]
+ },
+ {
+  "sheet": "Settings",
+  "op": "add",
+  "key": "rivalTakeover",
+  "values": [
+   "rivalTakeover",
+   "on (routes left unflown)",
+   "Fable, 2 Nov: this is the 'Red Kite takes over an unflown route' mechanic Bertie asked for on 2 Nov. It is separate from the Red Kite undercut event, which stays parked (rivalUndercut off).",
+   "live"
+  ]
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "homeTurnaroundMin",
+  "col": "Value",
+  "old": 35,
+  "oldCut": false,
+  "new": 30,
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "homeTurnaroundMin",
+  "col": "Notes",
+  "old": "T5. T4 = 55",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: 35 → 30 (a Twin Otter turnaround). With legs rounded to the quarter, two Frankfurt flights and one Paris take 12 h 00 and fit the 12-hour duty day; Dublin ×2 + Paris ×2 take 11 h 30.",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "fuelLaunchDay",
+  "col": "Status",
+  "old": "draft v6.2",
+  "oldCut": false,
+  "new": "live",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "dailyChangeCountedPerDay",
+  "col": "Notes",
+  "old": "D111: at most one counted sum on a Day page: the ticket-revenue difference a day of the change he is making, built.",
+  "oldCut": false,
+  "new": "D111; Tuesday is the exception (tuesdayCountedSums 2). Fable, 2 Nov: checked",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "routeColourDefault",
+  "col": "Notes",
+  "old": "Claude Code 31 Oct (17:37 hand-off, section 3): a route's colour on the Before / after graph when its Routes row has none.",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. A quiet slate blue; every chapter-one route now has its own colour.",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "routeColourDefault",
+  "col": "Status",
+  "old": "placeholder",
+  "oldCut": false,
+  "new": "live",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "newPlanSheet",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check. When a change in week 1 is worked out on the whole-plan sheet (Launch Day sums again) ",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. A flow setting, kept as built; Bertie changes it if the flow changes.",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "dayPageTour",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check. The Day page's guided tour (one part at a time, the rest dimmed): Launch Day only.",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Kept: the walk-through once, on Launch Day.",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "tuesdayCountedSums",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check. Counted paper sums on the first new-plan sheet of week 1 (Tuesday): his second route's ticket r",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Kept at 2 (Bertie: both count). With dailyChangeCountedWeek 3, Tuesday's two leave one more for Wed–Sat; wit …",
+  "cut": true
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "rivalIgnoreWeeks",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4): Fable to check. Weeks a route that opened after Launch Day can go unflown, while one of his planes can reach it",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Bertie's figure ('say, three weeks'). Whether a route counts as ignored only when his planes had time to fly it  …",
+  "cut": true
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "rivalTakesShare",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4): Fable to check. Share of that route's passengers Red Kite takes, for good, from the Monday after.",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Bertie's 'about a third'. If it proves harsh once routes he later wants are a third smaller for good, 0.25 is the gentler sett …",
+  "cut": true
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "starsTurnedAwayNeedsSpare",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4): Fable to check. Chapter one: the stars' turned-away rule only counts in a week when his planes had time for one",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Right: stars should move because of choices, not because the planes were small.",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "boardGapShare",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4): Fable to check. The gap between his week's profit and the best plan with his planes, as a share of the best, th",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. 10% of the best plan with his planes is a fair line for 'large'.",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "boardGapWeeks",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4): Fable to check. Weeks running with a large gap before the Board's note opens Monday's plan. No fine in chapter ",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked.",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "graphsFromWeek",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check. The first Sunday review with Your week in pictures (the two graphs). Week 1's Sunday is ",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked.",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "graphQuestionGapShare",
+  "col": "Value",
+  "old": 0.1,
+  "oldCut": false,
+  "new": 0.15,
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "graphQuestionGapShare",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check. The graph question (counted) only comes in a week when the gap is more than this share o",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: raised from 0.10 to 0.15 so the graph question fires on a real gap, not a near miss (the test keeper's gaps were 20 …",
+  "cut": true
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "graph1MinWeeks",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check. Graph 1 is always at least this many week-slots wide, so the first weeks do not make gia",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked.",
+  "cut": false
+ },
+ {
+  "sheet": "Settings",
+  "op": "set",
+  "key": "graph1StepPounds",
+  "col": "Notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check. Graph 1: a line every £5,000, a label every second line; the scale runs from £0 to the n",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Weekly profits run £5,000–£28,000 in chapter one, so a line every £5,000 reads well.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "signal.build",
+  "col": "notes",
+  "old": "Hand-off 2 section 1 (30 Oct 2026). Cyan strip with the 3 × 3 grid icon. The question, what to do and what happens come from the sum's own row. · PLACEHOLDER (",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "signal.paper",
+  "col": "notes",
+  "old": "Gold strip with the pencil icon. [SUM n] is the Sum box; [Enter] is drawn as a key. · PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "launch.compare",
+  "col": "notes",
+  "old": "Retired (hand-off 3, 30 Oct 2026, evening): the watch panel and One flight, two ways are gone from Launch Day. · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: CHECK. The Launch Day comparison was taken off Launch Day on 30 Oct (D109, launchDayComparison = none). If this row still  …",
+  "cut": true
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "launch.job",
+  "col": "notes",
+  "old": "Hand-off 3 section 1, step 1. Nothing starts until he presses Watch. · PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.add.watch",
+  "col": "notes",
+  "old": "Hand-off 2a section 5, 31 Oct 2026 evening: add each day, then Σ SUM, side by side · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.add.lineDone",
+  "col": "notes",
+  "old": "Hand-off 2a section 5, 31 Oct 2026 evening: add each day, then Σ SUM, side by side · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.add.signal",
+  "col": "notes",
+  "old": "Hand-off 2a section 5, 31 Oct 2026 evening: add each day, then Σ SUM, side by side · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.add.total",
+  "col": "notes",
+  "old": "Hand-off 2a section 5, 31 Oct 2026 evening: add each day, then Σ SUM, side by side · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.sum.watch",
+  "col": "notes",
+  "old": "Hand-off 2a section 5, 31 Oct 2026 evening: add each day, then Σ SUM, side by side · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.sum.signal",
+  "col": "notes",
+  "old": "Hand-off 2a section 5, 31 Oct 2026 evening: add each day, then Σ SUM, side by side · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.sum.same",
+  "col": "notes",
+  "old": "Hand-off 2a section 5, 31 Oct 2026 evening: add each day, then Σ SUM, side by side · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "changes.head.week1",
+  "col": "notes",
+  "old": "Claude Code 31 Oct: \"Today's plan\" from Claude Design's 17:37 hand-off (section 4) and DESIGN.md, approved by Bertie: the sheet is worked the evening the pla",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "tp.title",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "tp.lane.old",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "tp.choice",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "tp.compare",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "tp.footer",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "tp.co1",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "tp.co2",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ba.title",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ba.co1",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ba.co3.than",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ba.table",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "chg3.head.diff",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ld3.job",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ld3.footer",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3)",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.co.add",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3)",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.co.sum",
+  "col": "title",
+  "old": "Here's a simpler way to do it in a spreadsheet",
+  "oldCut": false,
+  "new": "A quicker way to do it in a spreadsheet",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.co.sum",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3)",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.avg.watch",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3)",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.avg.mine",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3)",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.co1",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3)",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.co4",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3)",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.footer",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3)",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "tp.co1.week",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "tp.co2.week",
+  "col": "notes",
+  "old": "Claude Code 31 Oct 2026, the 17:37 hand-off (Claude Design): approved wording from the screens; Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, play not",
+  "oldCut": true,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ba.co4.np",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "np.title",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "np.cols",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "np.rows",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "np.diff",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "np.line",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "np.footer",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "day.tour.1",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "day.tour.2",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "day.tour.3",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "day.tour.4",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check · PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "takeoff.skip",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, play notes 10:49): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ld3.mine.task",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ld3.mine.line",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "day.tour.0",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "np.task",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "np.tk2",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ba.np.co1",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ba.np.co2",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "ba.np.footer",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.easier",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.sum.same2",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.avg.go",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wk1.avg.fin",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.task",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.line",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.x7",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.x7.go",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.x4",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.x4.go",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 1 Nov 2026, round 3): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "rival.news",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "board.note",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: retired (replaced by the Monday news cards). Kept for reference.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "rival.week",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: retired (replaced by the Monday news cards). Kept for reference.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.go",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.page",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.back",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.g1",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.g2",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.q.paper",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.q.read",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.monday",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "news.rival",
+  "col": "text",
+  "old": "Fewer people will want to fly {city} with you.|DEPARTURES · {airport}|LONDON|RED KITE AIR|Monday news · {date}",
+  "oldCut": false,
+  "new": "Fewer people will want to fly to {city} with you.|DEPARTURES · {airport}|LONDON|RED KITE AIR|Monday news · {date}",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "news.rival",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "news.board",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.q.wrong",
+  "col": "text",
+  "old": "Not quite. One more try.|The answer: {answer}.|✓ Right: {answer}",
+  "oldCut": false,
+  "new": "Not quite. One more try.|The answer: {answer}. (Best plan − yours.)|✓ Right: {answer}",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "pics.q.wrong",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "news.rival.times",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, round 4 graphs): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.co1.less",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, review quick fixes): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.co4.less",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, review quick fixes): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.co4.less.up",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, review quick fixes): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "ScreenText",
+  "op": "set",
+  "key": "wi2.co4.down",
+  "col": "notes",
+  "old": "PLACEHOLDER (Claude Code, 2 Nov 2026, review quick fixes): Fable to check",
+  "oldCut": false,
+  "new": "Fable, 2 Nov: checked. Words plain enough for Years 5–6; placeholders like {city} and {n} kept.",
+  "cut": false
+ },
+ {
+  "sheet": "Routes",
+  "op": "set",
+  "key": "ams",
+  "col": "colour",
+  "old": "#c0703a",
+  "oldCut": false,
+  "new": "#a8714f",
+  "cut": false
+ },
+ {
+  "sheet": "Routes",
+  "op": "set",
+  "key": "bcn",
+  "col": "colour",
+  "old": "#a8874f",
+  "oldCut": false,
+  "new": "#9c8a62",
+  "cut": false
+ },
+ {
+  "sheet": "Calendar",
+  "op": "set",
+  "key": "2",
+  "col": "headline 1",
+  "old": "The rest of week one runs on your plan.",
+  "oldCut": false,
+  "new": "Each day of week one ends on its Day page: how today went, then keep or change tomorrow.",
+  "cut": false
+ },
+ {
+  "sheet": "Market",
+  "op": "set",
+  "key": "7",
+  "col": "headline",
+  "old": "FUEL SPIKE! £3.00 a litre this week.",
+  "oldCut": false,
+  "new": "FUEL SPIKE! £2.94 a litre this week.",
+  "cut": false
+ },
+ {
+  "sheet": "Events",
+  "op": "set",
+  "key": "fuel_shock",
+  "col": "text",
+  "old": "Fuel jumps to £3.00 a litre.",
+  "oldCut": false,
+  "new": "Fuel jumps to £2.94 a litre.",
+  "cut": false
+ }
+]
