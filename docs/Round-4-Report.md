@@ -81,7 +81,7 @@ I played three runs in the test toolkit, with no page errors:
 - **Three made-up bad weeks before Mon 30 Sep.** The Board's note opened the plan, and Understood closed it.
 - **From week 5 to Mon 14 Oct.** "Red Kite has taken over Amsterdam / Barcelona" sat at the top of This week.
 
-`chapter1.test.js`: still running when this was first pushed; the result follows below.
+`chapter1.test.js` passes: 39 checks, none failed, and no page errors, including the full run where the test pupil keeps his plan from Launch Day to day 37. As agreed, I didn't check whether the figures make sense.
 
 
 *Round 4 of about 10.*
