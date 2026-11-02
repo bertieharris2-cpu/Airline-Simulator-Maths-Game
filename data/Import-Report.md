@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 01 Nov 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 02 Nov 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **0 to fix, 22 to check, 7 notes.**
 
@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 287 | 10 draft, 277 live, 11 placeholder, 1 withdrawn |
+| Settings | 292 | 10 draft, 282 live, 11 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -570,6 +570,9 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `wi2.x7.go`: Finance shows you a week.
 - `wi2.x4`: Watch: Finance clicks **A week**, presses **×**, types **{w}**, then presses **Enter**.
 - `wi2.x4.go`: Finance shows you a month.
+- `rival.news`: Red Kite takes over {city} from Monday. About a third of its passengers will fly with them for good.
+- `board.note`: A word from the Board · Last week your plan made {yours}. The best plan with your planes would have made {best}. · Making a profit is good. Shareholders want the most profit your planes can make. · [Understood]
+- `rival.week`: Red Kite has taken over {city}. About a third of its passengers now fly with them for good.
 
 ## Identity and photos (CR5)
 

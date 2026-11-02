@@ -380,6 +380,13 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Round 4: what happens to a pupil who coasts on one plan (2 Nov 2026)
+
+Built in chapter one: `p6k_round4.js`, a one-line hook in `p5w_d104.js`, and CSS in `p1_head_c3.css`. Settings and words are added to the workbook by `tools/merge_r4.py` (run it after `merge_r3.py`), all marked PLACEHOLDER. Report: `docs/Round-4-Report.md`; screenshots: `docs/screenshots/round-4/`. The two Sunday graphs are Claude Design's job (hand-off "the Sunday graphs, round 4").
+- **A rival takes an ignored route.** Red Kite takes a route over if it opened after Launch Day and has gone unflown for 3 weeks, counting only time when one of his planes could reach it. From the Monday it takes about a third of that route's passengers, for good. This shows on the Sunday review, in the news, and at the top of Monday's This week list.
+- **Reputation dips, carefully.** The stars' "turned away 1 in 3, two weeks running" rule only counts in a week when his planes had time for one more flight of that route.
+- **The Board has a word.** After 3 weeks running at least 10% below the best plan with his planes, Monday's plan opens with a short note from the Board, with an Understood button. There's no fine.
+
 ### Round 3: Claude Design's "fewer words" hand-off (1 Nov 2026)
 
 Built in chapter one: `p6j_round3.js` (the rules for every screen), plus changes in `p6i_1737.js`, `p6b_signal.js` and `p1_head_c3.css`. Words are in the workbook through `tools/merge_r3.py`, marked PLACEHOLDER. Report: `docs/Round-3-Report.md`; screenshots: `docs/screenshots/round-3/`.

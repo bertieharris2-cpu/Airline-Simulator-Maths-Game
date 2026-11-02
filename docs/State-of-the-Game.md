@@ -10,6 +10,29 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zx. Round 4: consequences for coasting (2 Nov 2026)
+
+This is for chapter one. Report: `docs/Round-4-Report.md`. Settings `rivalIgnoreWeeks`, `rivalTakesShare`, `starsTurnedAwayNeedsSpare`, `boardGapShare`, `boardGapWeeks` and ScreenText `rival.news`, `rival.week`, `board.note` come from `tools/merge_r4.py`, all PLACEHOLDER. The Sunday graphs, the graph question and the plan-screen button are waiting on Claude Design.
+
+**New part `p6k_round4.js`** (block-scoped, after p6j). State lives in `S.c6`: `{ rival:{id:{day,share}}, gap:{from:{yours,best,missed}}, done:{'r'+to}, board:{wk,last}, lastBoard, boardSeen }`.
+
+- **The rival.** `c6RivalCheck(to)` looks at open routes that:
+  - opened after day 1;
+  - have a plane in `S.fleet` that can reach them (the clock starts at `f.acquired`);
+  - have gone unflown since `max(opened, canFrom, lastFlown + 1)` for at least `7 × rivalIgnoreWeeks` days.
+
+  It sets `rival[id] = {day: to + 1, share}`, returns review lines (`bad`), and adds a record event.
+- **How the rival is applied.**
+  - `neglectShare` adds the share from its day onwards (capped at 0.9). The old neglect leak is unchanged; DESIGN.md's "Red Kite flies them for now" chance line still stands.
+  - `neglectUpdate` (ch1) runs the check once per week's `to`. The lines show on the Sunday review; in weekly play, p4zc turns them into RIVAL news.
+  - In the `s2Opener` wrapper, a week that had no review runs the check itself and adds the news. The wrapper also puts `rival.week` rows (`.c6-rival`) at the top of the This week list for routes taken that Monday.
+- **The stars.** `window.__c6taOk(id, k)` is checked in `d104Drivers` after the share test. `c6Spare` is true when a plane in the current plan has spare day minutes (span − Σ(roundTrip + home)) of at least that route's round trip. Setting `starsTurnedAwayNeedsSpare` to `no` brings back the old rule.
+- **The Board.**
+  - `c6Gap(from)` caches `missedProfitLine` for a past week.
+  - `c6Board()` fires once every `boardGapWeeks` weeks, when each of the last n weeks has `missed / best ≥ boardGapShare`.
+  - The `s2Opener` wrapper puts `section.c6-board` (`board.note`, `#c6BoardOk` sets `boardSeen`) above the opener. `__tkPre` presses Understood.
+- **Debug:** `window.__c6 = { rivalCheck, gap, board, spare }`.
+
 ## 0zw. Round 3: Claude Design's "fewer words" hand-off (1 Nov 2026)
 
 Built for chapter one; report `docs/Round-3-Report.md`; hand-off in `data/incoming/handoff-round3-1-nov/` (DESIGN.md installed); words and the setting `tuesdayCountedSums` via `tools/merge_r3.py` (after `merge_1049.py`), all PLACEHOLDER.

@@ -139,3 +139,9 @@ body.c5 .ash-co.c4-start{width:300px}
 body.c5 .ash-co.c4-start .c1-sco-ptr{display:none}
 body.c5 .c3-ch b.c4-wait{white-space:nowrap;font-size:12px}
 body.c5 .c2-paired .c2-pair{min-height:495px}
+/* round 4: the Board's note on Monday's plan opener */
+body.c5 .c6-board{border-left:3px solid var(--gold);padding:12px 16px;margin-bottom:10px}
+body.c5 .c6-board h2{margin:2px 0 6px;font-size:17px}
+body.c5 .c6-board p{margin:0 0 4px;font-size:14px}
+body.c5 .c6-board .bv-btn{margin-top:6px}
+body.c5 .op2 .op2-r.c6-rival .op2-i{color:var(--amber)}

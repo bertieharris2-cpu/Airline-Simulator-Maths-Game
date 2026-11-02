@@ -358,6 +358,7 @@ function d104Drivers(G, k, quiet){
   G.since.push({ k, on:!d104OffWeek(k) });
   Object.keys(A).forEach(id => { const x = A[id], share = x.want > 0 ? Math.max(0, x.want - x.pax) / x.want : 0, r = routeById(id);
     if(k < weekNo(d104TA().from) || share < 1 / d104TA().n - 1e-9) return;
+    if(typeof window.__c6taOk === 'function' && !window.__c6taOk(id, k)) return;   // round 4 (ch1): only when his planes had time for one more flight
     if(G.ta[id] === k - 1 && !(D.taHit && D.taHit[id])){ (D.taHit || (D.taHit = {}))[id] = k; star(-0.5, `${r ? r.city : id} turned away ${d104TAWords()}, two weeks running`); }
     G.ta[id] = k; });
   if(G.free && G.days >= 7){ if(G.freeLast === k - 1 && !D.freeHit){ D.freeHit = k; star(0.5, 'Free snacks two weeks running'); } G.freeLast = k; }

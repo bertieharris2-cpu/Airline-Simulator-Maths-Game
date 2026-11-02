@@ -29,3 +29,11 @@ During the design-and-flow phase (from 1 Nov 2026) Claude Code makes up any figu
 | 3 | ScreenText `ba.np.co1`, `ba.np.co2`, `ba.np.footer` | Before / after after the sums: two callouts, Choose a plan ▶ | From the pictures |
 | 3 | ScreenText `wk1.co.add`, `wk1.co.sum`, `wk1.add.*`, `wk1.sum.*`, `wk1.easier`, `wk1.avg.*` | Week 1 Sunday: title-only callouts, the green lines and buttons, the tasks | From the pictures |
 | 3 | ScreenText `wi2.co1`, `wi2.task`, `wi2.line`, `wi2.x7`, `wi2.x7.go`, `wi2.x4`, `wi2.x4.go`, `wi2.co4`, `wi2.footer` | Week 2 what-if: no ticket-revenue demo, Finance's × 7 and × 4 | From the pictures; the "Finance shows you a week / month." lines before Watch written by Claude Code |
+| 4 (Bertie's "coasting" ideas, 2 Nov) | Settings `rivalIgnoreWeeks` | Weeks a route that opened after Launch Day can go unflown (while one of his planes can reach it) before Red Kite takes it over | 3 (Bertie: "say, three weeks") |
+| 4 | Settings `rivalTakesShare` | Share of that route's passengers Red Kite takes, for good | 0.33 ("about a third") |
+| 4 | Settings `starsTurnedAwayNeedsSpare` | The stars' "turned away 1 in 3, two weeks running" rule only counts when his planes had time for one more flight of that route | yes |
+| 4 | Settings `boardGapShare` | How far below the best plan with his planes a week must be to count as a large gap (the Board's note; later the Sunday graph question) | 0.1 (10%) |
+| 4 | Settings `boardGapWeeks` | Weeks running with a large gap before the Board's note | 3 |
+| 4 | ScreenText `rival.news` | The Sunday review line and the news when Red Kite takes a route | "Red Kite takes over {city} from Monday. About a third of its passengers will fly with them for good." |
+| 4 | ScreenText `rival.week` | The same, in Monday's This week list | "Red Kite has taken over {city}. About a third of its passengers now fly with them for good." |
+| 4 | ScreenText `board.note` | The Board's note at the top of Monday's plan: title, two lines, button | "A word from the Board" · "Last week your plan made {yours}. The best plan with your planes would have made {best}." · "Making a profit is good. Shareholders want the most profit your planes can make." · Understood |
