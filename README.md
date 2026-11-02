@@ -380,6 +380,15 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### Fable's v6.7 installed, and a pupil's save made ready (2 Nov 2026)
+
+`tools/merge_v67.py` installs Fable's workbook v6.7. It is rebuilt from the recorded comparison, because the uploaded file was lost in a container restart. It also does her asks:
+- Graph 2's measure as a setting;
+- three wordings moved into ScreenText;
+- the home terminal's turnaround at 30 so her 30 minutes takes effect.
+
+The game reads `legRounding` in chapter one. `tools/saves/ready_br_week2.py` makes a pupil's 22 Oct save (end of week 2) ready for today's game, checked by `src/opening/tests/pupilsave.test.js`. Report: `docs/Report-v6.7-and-pupil-save-2-Nov-2026.md`.
+
 ### Hand-off to Fable for a data pass (2 Nov 2026)
 
 `docs/Fable-Handoff-Data-Pass-2-Nov-2026.md` is the covering note. It says what Fable is asked to do and how the workbook gets into the game. It also lists every placeholder by sheet, then the figure runs and Bertie's open decisions. It goes with `data/Airline-World-Workbook.xlsx`, `docs/Placeholders-for-Fable.md`, `docs/Review-2-Nov-2026.md` and `data/Import-Report.md`.

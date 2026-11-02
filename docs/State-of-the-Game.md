@@ -10,6 +10,32 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zza. Fable's v6.7, and a pupil's save made ready (2 Nov 2026)
+
+This is for chapter one.
+
+**Workbook v6.7** is Fable's data pass. Her report is in `data/incoming/fable-v6.7-2-nov/`. `tools/merge_v67.py` installs it:
+- The uploaded file was lost in a container restart before it was committed, so the script rebuilds it from the cell-by-cell comparison (`v6.7-changes.json`). Every value and word is exact; five long notes were cut short. If the original file is put back in that folder, it's installed as it is.
+- On top of v6.7:
+  - `news.board` gets "The airline's owners" (in her report, missing from her file);
+  - Airports LHR T5 `turnaroundMin` goes to 30. `TIME.home` reads the home terminal's row first, so without this her `homeTurnaroundMin` 30 had no effect;
+  - Settings `graph2Measure` is added;
+  - ScreenText rows `brief1.lead`, `brief1.steps`, `intro.tank.lead` and `end.next` are added.
+- `import_world.py`: the quarter-hour check applies `legRounding` (22 checks → 11).
+
+**New part `p6m_v67.js`** (block-scoped, chapter one):
+- `legMinutes` rounds a workbook route's leg up to the quarter hour when `legRounding` starts with "up" (Frankfurt on a Twin Otter 130 → 135 min);
+- `R.brief1` reads `brief1.*`, and `INTRO.tank.what` reads `intro.tank.lead`;
+- `nextChapterLine` reads `end.next` up to the chapter-one end;
+- `MIG_STEP_WORDS.weekReview` is "Sunday accounts".
+
+`p6l_graphs.js` reads `graph2Measure`: "one flight" gives one return flight; otherwise as many as fit.
+
+**A pupil's save:** airline BR, 22 Oct build, end of week 2, on the old week-2 briefing.
+- `tools/saves/ready_br_week2.py` makes it ready, from `src/opening/tests/fixtures/pupil-BR-week2-ASIM5.txt` to `pupil-BR-week2-ready-ASIM5.txt`.
+- It lands on the week-2 Sunday accounts in today's format. His old week-2 total and average come out of the record (ids renumbered). `S.upg` and `repBank`/`repLog` are cleared.
+- `pupilsave.test.js` checks it: 7 ok. A test-mode run on his plan reached the chapter-one end with no page errors.
+
 ## 0zz. The quick fixes from the 2 Nov check-up (2 Nov 2026)
 
 This is for chapter one. Report: `docs/Review-2-Nov-2026.md` (the update note at the top). `tools/merge_r4c.py` (run after `merge_r4b.py`) adds ScreenText `wi2.co1.less`, `wi2.co4.less`, `wi2.co4.less.up`, `wi2.co4.down`, all PLACEHOLDER.
