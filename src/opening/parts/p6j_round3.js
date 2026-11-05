@@ -40,22 +40,66 @@ c1SignalHtml = function(o){
 };
 window.__c5task = c5Task;
 
-/* ---------- rule 5 · under the cell, pointer touching; sideways to stay in the panel; above the cell only if there is no room below ---------- */
+/* ---------- rule 5 · the box beside its cell, pointer touching, never on the cell or on anything he needs to read ----------
+   Bertie, 5 Nov 2026: "they are in the way a little of the cell". Round 3 put every box right under its cell; on a narrow sheet
+   that covered the rows below, the line under the sheet and its Give me a hint link, and could sit on the cell's own edge.
+   Now the box tries its places in turn and takes the first that covers no figure, label, heading or link and stays inside
+   the page: right of the cell (pointer on its left edge), under it, left of it, then above it. If none is clear, the one
+   that covers least. There is always a gap between the box and the cell; the pointer bridges it. */
 function c5Bounds(el){
   const P = (el.closest('.dp') || el.closest('.desk-page') || el.closest('section.ash') || screen()).getBoundingClientRect(), bar = screen().querySelector('.actbar, .deskbar');
-  const B = bar ? bar.getBoundingClientRect().top : innerHeight; return { left:P.left, right:P.right, bottom:Math.min(P.bottom, B) - 6 };
+  const B = bar ? bar.getBoundingClientRect().top : innerHeight; return { left:P.left, right:P.right, top:Math.max(0, P.top), bottom:Math.min(P.bottom, B) - 6 };
+}
+/* what a box must not cover: everything on the sheet with words or figures in it, the formula bar, the line under the sheet (its
+   words and links, not its empty width), hints, other callouts */
+function c5Obstacles(el, cellEl){
+  const sec = cellEl.closest('section.ash') || cellEl.closest('.ash-gridw') || screen(), out = [];
+  const add = x => { if(!x || x === cellEl || x === el || el.contains(x) || x.contains(el)) return; [...x.getClientRects()].forEach(r => { if(r.width > 1 && r.height > 1) out.push(r); }); };
+  sec.querySelectorAll('.ash-grid > *').forEach(x => { if((x.textContent || '').trim()) add(x); });
+  sec.querySelectorAll('.ash-fb, .ash-top, .ash-hints, .ash-how, .ash-co, .c1-done').forEach(add);
+  sec.querySelectorAll('.ash-line').forEach(x => { try{ const rg = document.createRange(); rg.selectNodeContents(x); [...rg.getClientRects()].forEach(r => { if(r.width > 1 && r.height > 1) out.push(r); }); }catch(e){ add(x); } });
+  screen().querySelectorAll('[data-c1sig], .c1-co').forEach(x => { if(x !== el && !x.contains(el)) add(x); });
+  return out;
 }
 function c5Under(el, cellEl){
   if(!el || !cellEl) return; const host = el.offsetParent || el.parentElement; if(!host) return;
-  el.style.position = 'absolute'; el.style.right = 'auto'; el.style.bottom = 'auto';
-  const H0 = host.getBoundingClientRect(), H = { left:H0.left + host.clientLeft - host.scrollLeft, top:H0.top + host.clientTop - host.scrollTop }, C = cellEl.getBoundingClientRect(), W = el.offsetWidth, Ht = el.offsetHeight, P = c5Bounds(el);
-  let left = C.left + C.width / 2 - 34; left = Math.max(P.left + 8, Math.min(left, P.right - W - 8));
-  let top = C.bottom + 10, up = false; if(top + Ht > P.bottom && C.top - Ht - 10 > 0){ top = C.top - Ht - 10; up = true; }
-  el.style.left = Math.round(left - H.left) + 'px'; el.style.top = Math.round(top - H.top) + 'px';
-  el.classList.toggle('ptr-down', up); el.classList.toggle('ptr-up', !up);
-  const ptr = el.querySelector('.c1-sig-ptr, .c1-sco-ptr'); if(ptr){ ptr.style.left = Math.round(Math.max(12, Math.min(W - 26, C.left + C.width / 2 - left - 7))) + 'px'; }
-  el.dataset.c5p = '1';
+  el.style.position = 'absolute'; el.style.right = 'auto'; el.style.bottom = 'auto'; el.style.width = ''; el.style.boxSizing = '';
+  // on a small screen the sheet is scaled to fit (p4zx): everything is measured on screen, then turned into the host's own units
+  const H0 = host.getBoundingClientRect(), k = host.offsetWidth ? H0.width / host.offsetWidth || 1 : 1, C = cellEl.getBoundingClientRect(), P = c5Bounds(el);
+  const toX = x => (x - H0.left) / k - host.clientLeft + host.scrollLeft, toY = y => (y - H0.top) / k - host.clientTop + host.scrollTop;
+  const W0 = el.offsetWidth * k, GAP = 11, PM = 16, obs = c5Obstacles(el, cellEl), midY = C.top + C.height / 2, midX = C.left + C.width / 2;
+  const heightAt = W => { el.style.boxSizing = 'border-box'; el.style.width = (W / k) + 'px'; return el.offsetHeight * k; };
+  const cover = R => obs.reduce((t, o) => t + Math.max(0, Math.min(R.r, o.right) - Math.max(R.l, o.left)) * Math.max(0, Math.min(R.b, o.bottom) - Math.max(R.t, o.top)), 0);
+  const outside = R => Math.max(0, P.left + 4 - R.l) + Math.max(0, R.r - (P.right - 4)) + Math.max(0, P.top + 2 - R.t) + Math.max(0, R.b - P.bottom);
+  const cands = [];
+  // 1 · right of the cell, as narrow as 260px if that is all the room there is, the pointer at the cell's middle
+  { const room = P.right - 4 - (C.right + GAP), W = Math.min(W0, room);
+    if(W >= 260){ const Ht = heightAt(W); [0.5, 0.25, 0.75, PM / Ht, 1 - PM / Ht].forEach(f => { const t = midY - Ht * f; if(midY < t + PM - 0.5 || midY > t + Ht - PM + 0.5) return;
+      cands.push({ side:'right', W, R:{ l:C.right + GAP, t, r:C.right + GAP + W, b:t + Ht } }); }); } }
+  // 2 · under the cell (round 3's place), slid sideways but keeping the pointer over the cell
+  // 3 · left of the cell; 4 · above the cell
+  { const W = Math.min(W0, P.right - P.left - 8), Ht = heightAt(W);
+    [midX - 34, C.left, C.right - W, midX - W / 2].forEach(l => { l = Math.max(P.left + 4, Math.min(l, P.right - 4 - W)); if(midX < l + 12 || midX > l + W - 12) return;
+      cands.push({ side:'under', W, R:{ l, t:C.bottom + GAP, r:l + W, b:C.bottom + GAP + Ht } }); });
+    const roomL = C.left - GAP - (P.left + 4), WL = Math.min(W0, roomL);
+    if(WL >= 260){ const HL = heightAt(WL), t = Math.max(P.top + 2, Math.min(midY - HL / 2, midY - PM)); if(midY <= t + HL - PM) cands.push({ side:'left', W:WL, R:{ l:C.left - GAP - WL, t, r:C.left - GAP, b:t + HL } }); }
+    [midX - 34, C.left, C.right - W].forEach(l => { l = Math.max(P.left + 4, Math.min(l, P.right - 4 - W)); if(midX < l + 12 || midX > l + W - 12) return;
+      cands.push({ side:'above', W, R:{ l, t:C.top - GAP - Ht, r:l + W, b:C.top - GAP } }); }); }
+  let best = null;
+  cands.forEach((c, i) => { const bad = outside(c.R) * 10000 + cover(c.R); if(!best || bad < best.bad) best = Object.assign({ bad, i }, c); });
+  if(!best) best = { side:'under', W:W0, R:{ l:Math.max(P.left + 4, midX - 34), t:C.bottom + GAP } };
+  if(best.W === W0){ el.style.width = ''; el.style.boxSizing = ''; } else heightAt(best.W);
+  el.style.left = Math.round(toX(best.R.l)) + 'px'; el.style.top = Math.round(toY(best.R.t)) + 'px';
+  ['ptr-up', 'ptr-down', 'ptr-left', 'ptr-right'].forEach(k => el.classList.remove(k));
+  el.classList.add({ right:'ptr-left', left:'ptr-right', under:'ptr-up', above:'ptr-down' }[best.side]);
+  const ptr = el.querySelector('.c1-sig-ptr, .c1-sco-ptr');
+  if(ptr){ ptr.style.left = ptr.style.top = ptr.style.right = ptr.style.bottom = '';
+    if(best.side === 'right' || best.side === 'left') ptr.style.top = Math.round((midY - best.R.t) / k - 7) + 'px';
+    else ptr.style.left = Math.round(Math.max(12, Math.min(best.W / k - 26, (midX - best.R.l) / k - 7))) + 'px'; }
+  el.dataset.c5p = best.side;
 }
+/* re-place when the window changes size (the sheet's columns move) */
+{ let c5T = 0; addEventListener('resize', () => { clearTimeout(c5T); c5T = setTimeout(() => { try{ if(on5()) c5PlaceAll(); }catch(e){} }, 120); }); }
 window.__c5under = c5Under;
 const c5Place0 = c1Place;
 c1Place = function(el, cellEl, mode, box){ if(on5() && el && el.classList && el.classList.contains('c5-sig')) return c5Under(el, cellEl); return c5Place0.apply(this, arguments); };

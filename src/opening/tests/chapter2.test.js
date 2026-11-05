@@ -10,7 +10,7 @@
 // finds both; Premium misses the fuel invoice, finds it on the second look in May, and misses the year-1 accounts).
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os');
-const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-full.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch2') + '/'; fs.mkdirSync(OUT, { recursive:true });
+const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch2') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 400);
 const CODE = process.env.CODE || path.join(os.tmpdir(), 'airline-ch1-end.txt'), TYPE = process.env.TYPE || 'value';   // the airline type chosen on day 127
 if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: UPTO=200 SHOTS=0 SAVE=${CODE} node week.test.js`); process.exit(1); }

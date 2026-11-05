@@ -12,7 +12,7 @@
 //   - hunt h5 at the review on 31 August 2033: Value finds it, Premium misses it and pays one month more.
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os');
-const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-full.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch4') + '/'; fs.mkdirSync(OUT, { recursive:true });
+const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch4') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 1100), TYPE = process.env.TYPE || 'value';
 const CODE = process.env.CODE || path.join(os.tmpdir(), `airline-ch3-end-${TYPE}.txt`);
 if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=${TYPE} SAVE=${CODE} node chapter3.test.js`); process.exit(1); }

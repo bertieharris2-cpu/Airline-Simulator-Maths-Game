@@ -122,6 +122,9 @@ body.c5 .c5-sig-t .c1-sumbox{margin:0 3px}
 body.c5 .c1-sig.c5-sig .c1-sig-ptr{position:absolute;width:12px;height:12px;background:#0c2a4c;border:1.5px solid var(--cyan);border-right:0;border-bottom:0;transform:rotate(45deg);top:-7.5px;left:28px}
 body.c5 .c1-sig.c5-sig.paper .c1-sig-ptr{border-color:var(--gold)}
 body.c5 .c1-sig.c5-sig.ptr-down .c1-sig-ptr{top:auto;bottom:-7.5px;transform:rotate(225deg)}
+/* 5 Nov 2026: a box beside its cell, the pointer on its side edge (top set by the placement) */
+body.c5 .c1-sig.c5-sig.ptr-left .c1-sig-ptr{left:-7.5px;transform:rotate(-45deg)}
+body.c5 .c1-sig.c5-sig.ptr-right .c1-sig-ptr{left:auto;right:-7.5px;transform:rotate(135deg)}
 body.c5 .c2-paired .rv2-ins > .c1-sig.c5-sig{position:absolute!important;width:372px}
 body.c5 .c2-paired .c1-sig.c5-sig .c1-sig-ptr{display:block}
 body.c5 .c5-go{display:inline-flex}

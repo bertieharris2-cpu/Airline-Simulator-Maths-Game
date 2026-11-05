@@ -11,7 +11,7 @@
 // accounts with the average month, the A380 offer and the end card naming chapter 4.
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os');
-const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-full.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch3') + '/'; fs.mkdirSync(OUT, { recursive:true });
+const FILE = 'file://' + path.resolve(__dirname, '../../..', process.env.GAME || 'airline-opening-prototype.html'), OUT = (process.env.OUT || os.tmpdir() + '/airline-ch3') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const W = +(process.env.W || 1680), H = +(process.env.H || 940), SHOTS = process.env.SHOTS !== '0', UPTO = +(process.env.UPTO || 800), TYPE = process.env.TYPE || 'value';
 const CODE = process.env.CODE || path.join(os.tmpdir(), `airline-ch2-end-${TYPE}.txt`);
 if(!fs.existsSync(CODE)){ console.log(`No save code at ${CODE}. Make one: TYPE=${TYPE} SAVE=${CODE} node chapter2.test.js`); process.exit(1); }

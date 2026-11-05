@@ -380,6 +380,15 @@ The opening is being made excellent before the later campaign continues. `airlin
 - **Data:** the Livery sheet (palette, stripes, tail symbols, logo shapes, name suggestions), the Aircraft `artworkId` and photo columns and the Settings keys `blockedFlightCodes`, `soundDefault`, `revealSeconds` are a **v4.3 draft** written by `tools/workbook_v43_draft.py` for Fable to adopt. What the pupil chooses lives in the save: `S.airline.flightCode`, `S.airline.logo`, and `registration`, `name`, `livery` on each fleet entry.
 - **Sound** is off until the teacher turns it on (teacher panel), with a mute control in the top bar; **Reduce motion** is a teacher toggle and the computer's own setting is honoured too.
 
+### One game file again; boxes beside their cells; a second pupil's save (5 Nov 2026)
+
+*Bertie: "reknit all the separate parts of the game together" (one file, he chose), "check placement of the callouts because they are in the way a little of the cell. Also the text on this is confusing", and a second pupil's save.*
+- **One file.** `airline-opening-prototype.html` is the whole game again: chapter one as it is now, then chapters 2 to 4 as they were on 30 Oct (`tools/merge_5nov.py` sets `buildEndsAfterChapter` to 0; `build.py` builds every part). The frozen `airline-opening-full.html` is gone. The chapter-one review's card leads on ("On to Christmas and New Year ▶") to chapter 2 on 6 Jan 2031. Jump to… has chapter one's TEST saves, then January 2031, June 2031, chapter 3 and chapter 4.
+- **The sum's box** takes the first place around its cell (right, under, left, above) that covers no figure, label or link, with its pointer touching the cell. On a small screen the old box landed on the cell: the sheet is scaled to fit, and it was placed in unscaled pixels.
+- **Its words.** The modelling question's box says "Calculate the difference in profit for one flight. Write SUM n beside it." (placeholder words) instead of "Dublin: £90 or £100? …". Paper sums no longer show an empty Show me how. Σ SUM sits in the key row, so Undo is no longer under the × key.
+- **The GY pupil's save** (gubby airlines, Thu 12 Sep) carries on mid-week 2 without the crew-sickness card (`tools/saves/ready_gy_week2.py`).
+- **Checks:** `chapter1.test.js` (the one-file checks replace the two-file ones), `pupilsave.test.js` (13), and the chapter 2, 3 and 4 tests again.
+
 ### Bertie's decisions on Fable's report (2 Nov 2026)
 
 These are in chapter one, set by `tools/merge_decisions_2nov.py`:
@@ -581,6 +590,7 @@ For discussion with Claude Chat, not built: the Launch Day sheet's order (demons
 - **Checks:** `playnotes.test.js` (20: the zip, the microphone stopped and restarted, the kept copy after a reload) and `chapter1.test.js` (23).
 
 ### Two game files: chapter one, and the frozen full game (30 Oct 2026)
+*Ended on 5 Nov 2026: one game file again (see above).*
 *Bertie: "split the game at this point. Just work on chapter one and then work out the kinks and the figures afterwards."*
 - **`airline-opening-prototype.html` is chapter one only.** `python3 src/opening/build.py` builds it without the chapter-four part (`p4zs_ch4.js`) and the long-haul engine (`p4zh_longhaul.js`); the chapter 2 and 3 parts stay in because chapter one's screens use their helpers, but nothing after the chapter-one review is reached. Jump to… has the chapter-one TEST saves only.
 - **`airline-opening-full.html` is the whole game, frozen on 30 Oct:** every part, the Steady path's Jump to… saves (to chapter 4), and no chapter-one end card. It is rebuilt only with `python3 src/opening/build.py --full`, when Bertie says so.

@@ -8,7 +8,8 @@
 //   - hand-off 2a (31 Oct): Launch Day and Tuesday to Saturday end on the Day page (Keep for tomorrow / Change my plan); no plan
 //     check and no Home in week 1; counted questions in week 1 only from a daily change, within Settings dailyChangeCountedWeek;
 //   - Launch Day's fuel is charged at the workbook's price and is in Total costs;
-//   - the build stops at the chapter-one review with the one card; every chapter-one Jump to… save loads;
+//   - one game file again (Bertie, 5 Nov 2026): the chapter-one review's card leads on (On to Christmas and New Year ▶) to chapter 2
+//     on 6 Jan 2031 (day 127); a January 2031 save opens here; every chapter-one Jump to… save loads;
 //   - hand-off 1c (31 Oct): a second TEST airline that keeps its plan, Launch Day to day 37: week 2 with nothing new on the
 //     flying page; the what-if sheet and its two questions on day 8; the Fuel desk on day 15; the shop, the four routes and View trade-offs on day 22;
 //     Madrid on day 29; weekly play from day 36 with no second review of Sunday; two counted questions at every pause from P2
@@ -58,7 +59,7 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   for(let g = 0; g < 500; g++){ const d = await look(); if(d.t === 'chapterReview' || d.t === 'protoEnd' || d.day >= 118) break;
     if(d.day === SHOP && d.t === 'plan' && !(await E('S.c1plane || 0'))){ await E("(S.c1plane = 1, acquirePlane(planeById('dhc6'), 'buy'), render(), 1)"); await p.evaluate(() => window.__tk.autoPlan()); }
     await step(d.day < SHOP && !(await E('S.c1plane || 0')) ? 'plan' : d.day < WEEKLY - 1 ? 'review' : 'plan'); }
-  for(let g = 0; g < 40; g++){ const d = await look(); if(d.t === 'protoEnd') break; await step('review'); }
+  for(let g = 0; g < 40; g++){ const d = await look(); if(d.t === 'protoEnd') break; await step('chapterEnd'); }   // one game (5 Nov): stop on the chapter-one card, not on through chapter 2
   console.log('Launch Day fuel'); const h1 = await J('JSON.stringify(S.history.find(h => h.from === 1) || null)');
   ok(fuel1 && fuel1.litres > 0 && fuel1.price === +(await E("+((String(WBS().fuelLaunchDay || '').match(/£(\\d+(?:\\.\\d+)?)/) || [])[1] || 0)")) && fuel1.cost >= fuel1.fuel, `fuel is charged on Launch Day at the workbook's price (${fuel1 ? `${fuel1.litres} L at £${fuel1.price} = £${fuel1.fuel}` : 'not found'})`);
   ok(h1 && h1.fuelPaid > 0 && fuel1 && h1.costs === fuel1.cost, `the Launch Day results' Total costs are the plan's, fuel included (£${h1 && h1.costs})`);
@@ -87,9 +88,16 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   // every pause is a Sunday review or a Monday plan (from week 5 the review opens the Monday; the months start on a Monday)
   const wd = await J(`JSON.stringify(Object.fromEntries(${JSON.stringify([...new Set(Q.map(e => e.day))])}.map(d => [d, calDate(d).getUTCDay()])))`);
   const mid = Q.filter(e => e.day > 7 && ![0, 1].includes(wd[e.day])); ok(!mid.length, `no questions between pauses${mid.length ? ' (' + mid.map(e => e.key + ' day ' + e.day).join(', ') + ')' : ''}`);
-  console.log('The end of the build'); const end = await J("JSON.stringify({ t:step().t, text:(screen().textContent || '').replace(/\\s+/g, ' '), next:!!document.getElementById('peNext'), fin:!!S.finished, day:S.day })");
-  ok(end.t === 'protoEnd' && /End of chapter one/.test(end.text) && !end.next, `the chapter-one review ends with the one card, no way on (${end.t}, day ${end.day})`);
+  console.log('The end of chapter one'); const end = await J("JSON.stringify({ t:step().t, text:(screen().textContent || '').replace(/\\s+/g, ' '), next:(document.getElementById('peNext') || {}).textContent || '', fin:!!S.finished, day:S.day })");
+  ok(end.t === 'protoEnd' && !!end.next && !/test build stops here/i.test(end.text), `the chapter-one review ends on its card with the way on: "${String(end.next).trim()}" (${end.t}, day ${end.day})`);
   await p.screenshot({ path:OUT + 'end.png' });
+  // one game (5 Nov): on through Christmas to chapter 2
+  await p.click('#peNext').catch(() => {}); await p.waitForTimeout(400);
+  for(let g = 0; g < 60 && (await at()).day < 127; g++){ await p.evaluate(() => window.__tk.run('plan')).catch(() => {}); await p.waitForTimeout(200);
+    const n = await p.$('#nx:not([disabled]), #peNext, #enterHq, #chGo, #startDay'); if(n) await n.click().catch(() => {}); }
+  const c2 = await J("JSON.stringify({ day:S.day, t:step().t, ch:(WORLD.chapter || {}).chapter || 0 })");
+  ok(c2.day >= 127 && c2.ch >= 2, `then on through Christmas to chapter 2 on Mon 6 Jan 2031 (day ${c2.day}, chapter ${c2.ch}, ${c2.t})`);
+  await p.screenshot({ path:OUT + 'chapter2.png' });
   console.log('Briefings seen', await E("JSON.stringify(Object.keys((S.brief || {}).seen || {}))"));
   console.log('Hand-off 1c: a TEST airline that keeps its plan, Launch Day to day 37');
   { const q = await b.newPage({ viewport:{ width:1366, height:768 } }), qerrs = []; q.on('pageerror', e => qerrs.push(e.message)); q.on('dialog', d => d.accept());
@@ -134,17 +142,13 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   ok(idx.length >= 7, `${idx.length} chapter-one TEST saves (Launch Day, P1–P5, the review)`);
   for(const j of idx){ const r = await p.evaluate(c => { try{ const s = window.__sim.loadCode(c); return { day:s.day, test:!!s.test }; }catch(e){ return { err:e.message }; } }, fs.readFileSync(path.join(dir, j.file), 'utf8').trim());
     ok(!r.err && r.day === j.day, `${j.label} loads on day ${r.day}${r.err ? ' — ' + r.err : ''}`); }
-  console.log('Two files: chapter one, and the frozen full game'); const late = fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', 'day-127.txt'), 'utf8').trim();
+  console.log('One game file (5 Nov 2026)'); const late = fs.readFileSync(path.join(__dirname, 'fixtures', 'jumps', 'day-127.txt'), 'utf8').trim();
   const lr = await p.evaluate(c => { try{ return { day:window.__sim.loadCode(c).day }; }catch(e){ return { err:e.message }; } }, late);
-  ok(lr.err && /after chapter one/.test(lr.err) && /airline-opening-full\.html/.test(lr.err), `a save from January 2031 is turned away here, pointing to the full file (${lr.err || 'loaded on day ' + lr.day})`);
-  ok(await E("typeof isLongHaul") === 'undefined' && await E("C1_FULL") === false, 'this file is chapter one only: the long-haul and chapter-four parts are left out');
-  const fullPath = path.resolve(ROOT, 'airline-opening-full.html');
-  if(fs.existsSync(fullPath)){ const q = await b.newPage(), ferrs = []; q.on('pageerror', e => ferrs.push(e.message));
-    await q.goto('file://' + fullPath); await q.waitForFunction(() => window.__sim, null, { timeout:30000 });
-    const fr = await q.evaluate(c => { try{ return { day:window.__sim.loadCode(c).day, full:window.__sim.evalIn('C1_FULL'), lh:window.__sim.evalIn('typeof isLongHaul') }; }catch(e){ return { err:e.message }; } }, late);
-    ok(!fr.err && fr.day === 127 && fr.full === true && fr.lh === 'function' && !ferrs.length, `the full file opens it on day ${fr.day}, every part in, no end card${fr.err ? ' — ' + fr.err : ''}${ferrs.length ? ' (errors: ' + ferrs[0] + ')' : ''}`);
-    await q.close(); }
-  else ok(false, 'airline-opening-full.html is missing (python3 src/opening/build.py --full)');
+  ok(!lr.err && lr.day === 127, `a save from January 2031 opens here (${lr.err || 'day ' + lr.day})`);
+  ok(await E("typeof isLongHaul") === 'function' && await E("c1BuildEnds()") === 0, 'every part is in: the long-haul and chapter-four parts too, and the build does not end at the chapter-one review');
+  const JK = await p.evaluate(() => Object.keys(JSON.parse(document.getElementById('data-jumps').textContent)));
+  ok(['c1p0', 'c1p6', 'd127', 'd274', 'd365', 'd736'].every(k => JK.includes(k)) && !JK.includes('d1') && !JK.includes('d92'), `Jump to…: chapter one's TEST saves, then the Steady path's from January 2031 (${JK.join(', ')})`);
+  ok(!fs.existsSync(path.resolve(ROOT, 'airline-opening-full.html')), 'no second game file (airline-opening-full.html is gone)');
   ok(!errs.length, `no page errors${errs.length ? ': ' + errs.slice(0, 3).join(' | ') : ''}`);
   console.log(`\n${pass} ok, ${fail} failed`); await b.close(); process.exit(fail ? 1 : 0);
 })();

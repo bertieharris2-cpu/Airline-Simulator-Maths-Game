@@ -13,7 +13,7 @@
 const { chromium } = require('playwright');
 const path = require('path'), fs = require('fs'), os = require('os'), { spawnSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '../../..'), FILE = 'file://' + path.resolve(ROOT, process.env.GAME || 'airline-opening-prototype.html'),
-  FULL = 'file://' + path.resolve(ROOT, process.env.GAME_FULL || 'airline-opening-full.html');   // the year's record (day 365) is past chapter one: the frozen full file
+  FULL = 'file://' + path.resolve(ROOT, process.env.GAME_FULL || 'airline-opening-prototype.html');   // the year's record (day 365) is past chapter one: the frozen full file
 const OUT = (process.env.OUT || os.tmpdir() + '/airline-numbers') + '/'; fs.mkdirSync(OUT, { recursive:true });
 const SHOTS = process.env.SHOTS !== '0', checks = [], errs = [];
 const ok = (name, cond, info) => checks.push((cond ? 'ok   ' : 'FAIL ') + name + (info !== undefined ? ' ' + JSON.stringify(info) : ''));

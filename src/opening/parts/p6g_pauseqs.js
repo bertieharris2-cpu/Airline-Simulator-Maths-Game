@@ -87,7 +87,7 @@ function paper(Q, qs, o){
       qs.tries = (qs.tries || 0) + 1;
       if(qs.tries >= 2 && twoTriesOn()){ qs.ok = true; qs.shown = true; try{ paperRecShown(key); }catch(x){} if(o.onOk) o.onOk(); save(); return { shown:true }; }
       return { note:o.note ? o.note(val) : ashWrong(o.ops[0], o.vals || [], val, o.want, o.unit || '£') }; },
-    hints:() => (o.hints || []).concat([{ t:`Check: about ${o.unit === '£' || !o.unit ? money(ashRound(o.want)) : num(ashRound(o.want))}.`, est:true }]), how2:() => '' };
+    hints:() => (o.hints || []).concat([{ t:`Check: about ${o.unit === '£' || !o.unit ? money(ashRound(o.want)) : num(ashRound(o.want))}.`, est:true }]), task:o.task };   // no Show me how: it had no example to show (5 Nov)
   return sum;
 }
 /* Bertie, 2 Nov 2026: a sum too big to work out by hand at Years 5–6 (÷ a four-digit number, an awkward fraction as a percentage) is
@@ -168,6 +168,7 @@ const C1Q = {
       const v = { B2:{ t:num(a.pax) }, C2:{ t:num(b.pax) }, B3:{ t:money(a.rev), f:true }, C3:{ t:money(b.rev), f:true }, B4:{ t:money(a.cost) }, C4:{ t:money(b.cost) }, B5:{ t:money(a.profit), f:true, cls:a.profit < 0 ? 'soft' : '' }, C5:{ t:money(b.profit), f:true, cls:b.profit < 0 ? 'soft' : '' } };
       const s = paper(Q, qs, { title:`${r.city}: ${money(ch.f0)} or ${money(ch.f1)}?`, tgt:'B7', refs:['C5', 'B5'], ops:['−'], words:`At ${money(ch.f1)} − Now`, want:d, rel:'difference',
         doc:`Modelling: ${r.city} at ${money(ch.f0)} against ${money(ch.f1)}`, question:`${money(b.profit)} − ${money(a.profit)}`, vals:[b.profit, a.profit], answerText:ashSigned(d, true),
+        task:c1T('pauseq.modelChange.task', {}).text[0] || 'Calculate the difference in profit for one flight',
         hints:[{ t:`Profit a flight at ${money(ch.f1)} − profit a flight now: ${money(b.profit)} − ${money(a.profit)}.` }] });
       if(qs.ok){ v.B7 = { t:ashSigned(d, true), cls:d > 0 ? 'pos' : '' }; v.B8 = { t:ashSigned(d * n, true), f:true, cls:d > 0 ? 'pos' : '' }; v.B9 = { t:ashSigned(d * n * 7, true), f:true, cls:d > 0 ? 'pos' : '' }; }
       const T = Q.d.form === 'table' ? TQ('pauseq.modelChange', { city:r.city, now:money(ch.f0), fare:money(ch.f1) }) : TQ('pauseq.modelChange.pick', { gate });
@@ -289,7 +290,7 @@ R.c1q = st => {
   const wi = M.wi && isDone ? `<p class="c1q-wi"><button class="op2-a" data-c1wigo>What if ›</button> try any fare on the What if sheet.</p>` : '';
   const ctx = `<section class="bv-panel support c1q-ctx"><p class="bv-eyebrow">${esc(M.T.eyebrow || '')}${M.T.eyebrow ? ' · ' : ''}${esc(`QUESTION ${i + 1} OF ${k}`)}</p><h2>${esc(M.T.title)}</h2>${M.T.text.map(t => `<p>${c1Html(t)}</p>`).join('')}${pick}${wi}${waits}</section>`;
   let ins = '';
-  if(a) ins = a.pick || a.how === 'formula' ? c1SignalHtml({ kind:'build', title:a.title, lines:[esc(a.lineBuild || ''), 'The sheet fills in the day.'] }) : c1SignalHtml({ kind:'paper', title:a.title, lines:c1PaperLines(a.no, a.tgt) });
+  if(a) ins = a.pick || a.how === 'formula' ? c1SignalHtml({ kind:'build', title:a.title, task:a.task, lines:[esc(a.lineBuild || ''), 'The sheet fills in the day.'] }) : c1SignalHtml({ kind:'paper', title:a.title, task:a.task, lines:c1PaperLines(a.no, a.tgt) });
   else if(isDone) ins = c1DoneHtml(M.done, sp.sums[0].tgt);
   const mid = sp ? ashHtml(sp) : '';
   const body = `<div class="bv rv2 rbw ash-rv c1-rv c1q ${a || M.pick ? 'c1-busy' : ''}"><div class="rv2-col rv2-what">${ctx}</div><div class="rv2-col rv2-mid">${mid}</div><div class="rv2-col rv2-ins c1-ins">${ins}</div></div>`;

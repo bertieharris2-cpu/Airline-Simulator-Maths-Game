@@ -482,13 +482,15 @@ ashHtml = function(sp){
   const i = html.indexOf('<div class="ash-fb"'), j = i < 0 ? -1 : html.indexOf('</div>', i); if(i < 0 || j < 0) return html;
   let fb = html.slice(i, j + 6);
   fb = fb.replace(/<button data-ashop="(×|÷|\+|−)" aria-label="[^"]*">[^<]*<\/button>/g, '');   // the operators move to the key row
+  // 5 Nov 2026 (DESIGN.md: "Σ SUM joins them once he has been shown it"): Σ SUM moves to the key row too; in the bar it pushed Undo under ×
+  let sumKey = ''; fb = fb.replace(/<button class="sum" data-ashop="sum"([^>]*)>Σ SUM<\/button>/, (m, a) => { sumKey = `<button class="c1-k c1-ks" data-ashop="sum"${a}>Σ SUM</button>`; return ''; });
   fb = fb.replace(/<span class="ash-f">([\s\S]*?)<\/span><small/, (m, f) => { const n = (f.match(/<b>/g) || []).length; let k = 0;
     return '<span class="ash-f">' + (n === 2 && !/SUM\(/.test(f) ? f.replace(/<b>/g, b => ++k === 2 ? '<b class="r2">' : b) : f) + '</span><small'; });
   const act = sp.act, st = ashSt(sp.id), building = /data-ashref=/.test(html), typing = /data-ashin=/.test(html);
   const held = !!(act && act.sumKey && st.sigma && st.sumA && !st.drag), opsOn = building && !st.ready && !st.sigma, enterOn = (building && st.ready) || held || typing;
   const pr = UI.c1Press && Date.now() - UI.c1Press.at < 300 ? UI.c1Press.op : null;
-  const keys = `<div class="c1-keys ${opsOn || enterOn ? '' : 'dim'}" role="group" aria-label="Formula keys">${['×', '÷', '+', '−'].map(o => `<button class="c1-k ${pr === o ? 'press' : ''}" data-ashop="${o}" ${opsOn ? '' : 'disabled'} aria-label="${o}">${o}</button>`).join('')}<button class="c1-k c1-ke ${pr === 'enter' ? 'press' : ''}" data-c1kenter ${enterOn ? '' : 'disabled'} aria-label="Enter">Enter ↵</button></div>`;
-  return html.slice(0, i) + `<div class="c1-fbrow">${fb}${keys}</div>` + html.slice(j + 6);
+  const keys = `<div class="c1-keys ${opsOn || enterOn ? '' : 'dim'}" role="group" aria-label="Formula keys">${sumKey}${['×', '÷', '+', '−'].map(o => `<button class="c1-k ${pr === o ? 'press' : ''}" data-ashop="${o}" ${opsOn ? '' : 'disabled'} aria-label="${o}">${o}</button>`).join('')}<button class="c1-k c1-ke ${pr === 'enter' ? 'press' : ''}" data-c1kenter ${enterOn ? '' : 'disabled'} aria-label="Enter">Enter ↵</button></div>`;
+  return html.slice(0, i) + `<div class="c1-fbrow ${sumKey ? 'c1-fbsum' : ''}">${fb}${keys}</div>` + html.slice(j + 6);
 };
 const c1KBind0 = ashBind;
 ashBind = function(sp){

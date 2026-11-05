@@ -1,15 +1,15 @@
 """Builds the game from the parts in this folder:
 
-    airline-opening-prototype.html   the game: the revised Operating Plan Studio (p4ze + p1_head_studio2.css), Days (p4zf),
-                                     chapter 2 (p4zg, p4zh, p4zj), the Working pad (p4zk) and, last, the Night Ops
-                                     look (p4zz + p1_head_nightops.css). One file (Bertie, 13 Oct 2026).
+    airline-opening-prototype.html   the game, one file (Bertie, 13 Oct 2026; again from 5 Nov 2026: "reknit all the separate
+                                     parts of the game together"): every part. Chapter one is today's (its changes are behind
+                                     ch1(), the game date); chapters 2-4 are as they were when they were parked on 30 Oct.
+                                     Jump to…: chapter one's TEST saves at each pause, then the Steady path's from January 2031.
 
-    airline-opening-full.html        the whole game, frozen on 30 Oct 2026 while work is on chapter one only (Bertie):
-                                     every part, the Steady path's Jump to… saves, and no chapter-one end card.
-                                     Built only with --full.
+    From 30 Oct to 5 Nov 2026 the game was two files: chapter one only, and airline-opening-full.html, the whole game frozen
+    on 30 Oct. Settings buildEndsAfterChapter = 1 in the workbook makes this build chapter one only again (it leaves out
+    CH1_SKIP's parts and the later chapters' Jump to… saves, and the game stops at the chapter-one review).
 
-    python3 src/opening/build.py          chapter one: airline-opening-prototype.html, without CH1_SKIP's parts
-    python3 src/opening/build.py --full   also rebuilds the frozen full file (only when Bertie says so)
+    python3 src/opening/build.py
 
 Checks every JSON data block and the JavaScript syntax (node --check), and lists in
 overrides.txt every function defined in more than one part (a later part wins).
@@ -68,22 +68,22 @@ for f in sorted(glob.glob(os.path.join(HERE, 'tests', 'fixtures', 'jumps', 'day-
 # chapter one (30 Oct 2026): TEST saves at each pause, made by tools/make_ch1_jumps.js; while the build ends after chapter one
 # (Settings buildEndsAfterChapter = 1) they replace the Steady path's jumps, which would land past the end of the build
 C1J = os.path.join(HERE, 'tests', 'fixtures', 'jumps-ch1')
+try:
+    wbj = json.loads(re.search(r'id="data-workbook">(.*?)</script>', p2, re.S).group(1))
+    ends = int(float(str((wbj.get('settings') or {}).get('buildEndsAfterChapter') or 0) or 0))
+except Exception:
+    ends = 0
 if os.path.exists(os.path.join(C1J, 'index.json')):
-    try:
-        wbj = json.loads(re.search(r'id="data-workbook">(.*?)</script>', p2, re.S).group(1))
-        ends = int(float(str((wbj.get('settings') or {}).get('buildEndsAfterChapter') or 0) or 0))
-    except Exception:
-        ends = 0
-    steady = jumps
-    if ends == 1:
-        jumps = {}
+    # chapter one's own TEST saves replace the Steady path's chapter-one ones (made with the game before 30 Oct); one game
+    # (5 Nov 2026) keeps the Steady path's from January 2031, past the chapter-one review (day 118)
+    jumps = {} if ends == 1 else {k: v for k, v in jumps.items() if v['day'] > 118}
     for k, row in enumerate(json.load(open(os.path.join(C1J, 'index.json'), encoding='utf-8'))):
         code = open(os.path.join(C1J, row['file']), encoding='utf-8').read().strip()
         if not code.startswith('ASIM5.'): continue
         raw = base64.b64decode(code[6:]).decode('utf-8')
         jumps['c1p%d' % k] = {'label': row['label'], 'day': row['day'] + k / 100.0, 'gz': base64.b64encode(gzip.compress(raw.encode('utf-8'), 9)).decode('ascii')}
 jumpsTag = lambda J: '<script type="application/json" id="data-jumps">%s</script>' % json.dumps(J, separators=(',', ':'))
-print(len(jumps), 'chapter-one test airlines for Jump to… (%d KB)' % (sum(len(j['gz']) for j in jumps.values()) // 1024))
+print(len(jumps), 'test airlines for Jump to… (%d KB)' % (sum(len(j['gz']) for j in jumps.values()) // 1024))
 p2 = p2.replace('<!--PHOTOS-->', '<script type="application/json" id="data-photos">%s</script>' % json.dumps(photos, separators=(',', ':')))
 print(len(art), 'aircraft drawings;', len(photos), 'photos embedded' + ('; over 150 KB: ' + ', '.join(big) if big else ''))
 head = r('parts', 'p1_head.html')
@@ -108,10 +108,8 @@ def build(name, js_list, css='', ovr='overrides.txt', data=''):
 # one game: the shared parts, then the revised Studio, Days, chapter 2 and the Working pad, then the display part
 GAME = JS[:-1] + ['p4ze_studio2.js', 'p4zf_flightdays.js', 'p4zg_chapter2.js', 'p4zh_longhaul.js', 'p4zj_types.js', 'p4zk_pad.js', 'p4zl_fleetshop.js', 'p4zm_buyonly.js', 'p4zn_ch2events.js', 'p4zo_ch3money.js', 'p4zp_runthrough.js', 'p4zq_milestones.js', 'p4zr_paper.js', 'p4zt_decide.js', 'p4zs_ch4.js', 'p4zu_fuelstore.js', 'p4zv_flightplan.js', 'p4zw_intelwall.js', 'p4zx_fit.js', 'p4zy_paint2.js', 'p4zz_nightops.js', 'p5a_review.js', 'p5b_desk.js', 'p5c_fuel.js', 'p5d_sound.js', 'p5e_colour.js', 'p5f_brief.js', 'p5g_testkit.js', 'p5h_screens3.js', 'p5i_playnotes.js', 'p5j_sheet.js', 'p5k_design1.js', 'p5l_year1.js', 'p5m_events.js', 'p5n_wio2.js', 'p5o_review2.js', 'p5p_opener2.js', 'p5q_fuel2.js', 'p5r_d103.js', 'p5s_sweep.js', 'p5t_sheet.js', 'p5u_sheet_pages.js', 'p5v_sheet_more.js', 'p5w_d104.js', 'p5x_nosnacks.js', 'p5y_h21.js', 'p6a_ch1.js', 'p6b_signal.js', 'p6c_desks.js', 'p6d_teacher.js', 'p6e_notes1915.js', 'p6f_afterlaunch.js', 'p6g_pauseqs.js', 'p6h_daily.js', 'p6i_1737.js', 'p6j_round3.js', 'p6k_round4.js', 'p6l_graphs.js', 'p6m_v67.js'] + JS[-1:]
 CSS = r('parts', 'p1_head_studio2.css') + r('parts', 'p1_head_nightops.css') + r('parts', 'p1_head_screens.css') + r('parts', 'p1_head_screens3.css') + r('parts', 'p1_head_design1.css') + r('parts', 'p1_head_design2.css') + r('parts', 'p1_head_sheet.css') + r('parts', 'p1_head_h21.css') + r('parts', 'p1_head_ch1.css') + r('parts', 'p1_head_c2.css') + r('parts', 'p1_head_c3.css')
-# chapter one only (Bertie, 30 Oct 2026): the chapter-four part and the long-haul engine are left out; the chapter 2 and 3
-# parts stay, because chapter one's screens call their helpers (charges, cashFloor, ratingText…), but nothing past the
-# chapter-one review (day 118) is reached: the build ends there
+# one game (Bertie, 5 Nov 2026): every part. With Settings buildEndsAfterChapter = 1 it is chapter one only again (30 Oct to
+# 5 Nov): the chapter-four part and the long-haul engine are left out (chapter one's screens still call the chapter 2 and 3
+# parts' helpers: charges, cashFloor, ratingText…) and the game stops at the chapter-one review (day 118)
 CH1_SKIP = ['p4zs_ch4.js', 'p4zh_longhaul.js']
-build('airline-opening-prototype.html', [f for f in GAME if f not in CH1_SKIP], CSS, data=jumpsTag(jumps))
-if '--full' in sys.argv:
-    build('airline-opening-full.html', GAME, CSS, ovr='overrides-full.txt', data=jumpsTag(steady if os.path.exists(os.path.join(C1J, 'index.json')) else jumps) + '<script type="application/json" id="data-build">{"full":true}</script>')
+build('airline-opening-prototype.html', [f for f in GAME if ends != 1 or f not in CH1_SKIP], CSS, data=jumpsTag(jumps))

@@ -1,6 +1,6 @@
 # Import report: Airline-World-Workbook.xlsx
 
-*Written by `tools/import_world.py` on 02 Nov 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
+*Written by `tools/import_world.py` on 05 Nov 2026. Loaded: live, optional rows. Written to `src/opening/parts/p2_data.html` as `data-workbook`; rebuild the prototype to use it.*
 
 **0 to fix, 11 to check, 7 notes.**
 
@@ -8,7 +8,7 @@
 
 | Sheet | Loaded | Rows by status |
 | --- | --- | --- |
-| Settings | 305 | 9 draft, 296 live, 10 placeholder, 1 withdrawn |
+| Settings | 305 | 8 draft, 297 live, 10 placeholder, 1 withdrawn |
 | Archetypes | 5 | 2 later, 5 live, 2 note row |
 | Routes | 29 | 29 live |
 | RouteCatalogue | 0 | 21 moved |
@@ -581,8 +581,9 @@ Bertie's handover of 21 Oct, section 11: the formula-only sums, the day Σ SUM u
 - `brief1.lead`: Your first week in charge · Build the timetable, set the fares, work out the key numbers, then run your first week of operations. Every decision changes demand, revenue, costs and profit.
 - `brief1.steps`: Your Week 1 plan: {n} simple steps · Build your timetable · Choose how many services to fly, where to and when. Make the best use of the aircraft's day. · Set fares · Choose a ticket price for each route. A higher fare earns more a ticket, but fewer people want to fly. · Work out the key numbers · Tickets, profit and fuel by hand, on the same page as the plan. The model shows the rest. · Run the week · Confirm the plan and watch the airline fly Monday to Sunday. Then the review: what did the week earn?
 - `intro.tank.lead`: You have bought fuel ahead since week 3; in December you buy a month at a time.
-- `end.next`: Chapter {n}, {name}, opens on {date}: long haul, overnight rotations and time zones; the 787 by lease; the airline type chosen. That part of the game is not built yet.
+- `end.next`: Chapter {n}, {name}, opens on {date}: long haul, overnight rotations and time zones; the 787 by lease; the airline type chosen.
 - `pauseq.formula`: Question {i} of {k} from Finance. Build the formula on the sheet. · A hundred (for a percentage)
+- `pauseq.modelChange.task`: Calculate the difference in profit for one flight
 
 ## Identity and photos (CR5)
 

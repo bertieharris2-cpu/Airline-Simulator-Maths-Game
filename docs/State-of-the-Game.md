@@ -10,6 +10,27 @@
 - **Bugs marked "verified":** reproduced in a browser or by a test.
 - **All other bugs:** from reading the code.
 
+## 0zzd. One game file again, the boxes beside their cells, and a second pupil's save (5 Nov 2026)
+
+**One game file** (Bertie: "reknit all the separate parts of the game together"; he chose one file over keeping chapters 2–4 parked).
+- `tools/merge_5nov.py` (run after `merge_formula_2nov.py`): Settings `buildEndsAfterChapter` 1 → 0; ScreenText `end.next` without "That part of the game is not built yet."
+- `build.py` builds `airline-opening-prototype.html` from every part (CH1_SKIP only applies when `buildEndsAfterChapter` = 1). Jump to…: chapter one's TEST saves (`c1p0`–`c1p6`), then the Steady path's from January 2031 (`d127`, `d274`, `d365`, `d736`). `--full` and `airline-opening-full.html` are gone.
+- With the setting at 0, `c1BuildEnds()` is 0: the chapter-one review's card keeps "On to Christmas and New Year ▶", a later save loads, and chapter 2 opens on day 127.
+- Chapter-one changes are still behind `ch1()`, so chapters 2–4 play as on 30 Oct. The chapter 2–4 tests default to this file again.
+
+**The Question Signal's place** (Bertie: "they are in the way a little of the cell").
+- p6j `c5Under` tries its places in turn and takes the first that covers nothing he needs to read (`c5Obstacles`: every grid item with text, the formula bar, the line under the sheet's words and links, hints, other callouts) and stays inside the page: right of the cell (pointer on its left edge, `ptr-left`), under it, left of it (`ptr-right`), above it. Otherwise, the one that covers least. A gap of 11px always separates it from the cell.
+- The real bug: on a small screen p4zx scales the sheet to fit, and the old placement mixed screen and sheet pixels, so the box landed short, on the cell. Positions are now measured on screen and divided by the scale.
+- It re-places on window resize.
+
+**The box's words.** The pause page passes the sum's `task` to the signal. The modelling question's is ScreenText `pauseq.modelChange.task` ("Calculate the difference in profit for one flight"; it was the title, "Dublin: £90 or £100?"). `paper()` sums no longer show an empty Show me how.
+
+**The formula bar.** Σ SUM moves into the key row (DESIGN.md: "Σ SUM joins them"); it had pushed Undo under the × key. On a narrow sheet the keys wrap under the bar (the bar keeps 160px, 230px with Σ SUM).
+
+**Test mode.** The answer peek (`.tk-ans`) sits beside a sheet cell. Before, as a grid item, it fell into the grid's next empty slot ("= 190" at the bottom left).
+
+**A second pupil's save, GY (gubby airlines).** `tools/saves/ready_gy_week2.py`: saved on Thu 12 Sep (day 11, week 2) on the crew-sickness card. The card goes (events are parked); he carries on with the rest of week 2 on the Wall, then today's Sunday accounts. His ½ star banked from advertising stays (he paid £300 for it). `pupilsave.test.js` checks both saves (13 ok).
+
 ## 0zzc. Hard sums as formulas (2 Nov 2026)
 
 This is for chapter one. Bertie: dividing by a four-digit number, and seats filled as a percentage, are too hard by hand at Years 5–6, so they are Build the formula questions ("like a calculator paper": learning what to do). Five-digit differences stay on paper. `tools/merge_formula_2nov.py` (run after `merge_decisions_2nov.py`) adds Settings `hardSumsAsFormula` yes and ScreenText `pauseq.formula` (placeholder words).

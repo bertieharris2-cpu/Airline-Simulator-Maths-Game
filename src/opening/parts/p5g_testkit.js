@@ -143,7 +143,9 @@ function tkShowTag(){
   document.querySelectorAll('.tk-ans').forEach(x => x.remove()); if(!tkOn() || !settings.tkShow) return;
   const a = tkFind(); if(!a) return; const el = a.at && tkQ(a.at); const txt = typeof a.value === 'number' ? a.value.toLocaleString('en-GB', { maximumFractionDigits:2 }) : String(a.value);
   const tag = document.createElement('span'); tag.className = 'tk-ans'; tag.textContent = '= ' + txt; tag.title = 'Test mode: the answer (not checked)';
-  if(el && el.parentNode) el.insertAdjacentElement('afterend', tag); else { tag.classList.add('float'); document.body.appendChild(tag); }
+  const cellEl = el && el.closest && el.closest('.ash-c');   // 5 Nov 2026: inside a sheet cell, as a grid item it fell into the grid's next empty slot (bottom left)
+  if(cellEl){ tag.classList.add('in-cell'); cellEl.appendChild(tag); }
+  else if(el && el.parentNode) el.insertAdjacentElement('afterend', tag); else { tag.classList.add('float'); document.body.appendChild(tag); }
 }
 
 /* ---------- 3. Auto-plan: the engine's best standing plan for the week, with the planes owned ---------- */
@@ -157,7 +159,7 @@ function tkAutoPlan(quiet){
 
 /* ---------- 4. Run: answer, plan and move on until the screen asked for ---------- */
 const TK_REVIEWS = ['weekReview', 'review', 'results', 'chapterReview', 'audit'], TK_DECIDE = ['event', 'shop2', 'acquire', 'atype', 'capChallenge', 'hunt', 'brief', 'upgprop'];
-const TK_STOPS = { plan:'the next plan', review:'the next review', decision:'the next decision', fuel:'the Fuel desk', month:'next month' };
+const TK_STOPS = { plan:'the next plan', review:'the next review', decision:'the next decision', fuel:'the Fuel desk', month:'next month', chapterEnd:'the end of the chapter' };   // chapterEnd: 5 Nov 2026, one game file again
 let tkRunning = null;
 function tkStop(){ if(tkRunning){ tkRunning.stop = true; } }
 function tkMonthStart(d){ const c = calDate(d), n = Date.UTC(c.getUTCFullYear(), c.getUTCMonth() + 1, 1); return d + Math.round((n - c.getTime()) / 86400000); }
@@ -169,6 +171,7 @@ function tkAtStop(stop, R){
   if(stop === 'decision') return TK_DECIDE.includes(t) || !!document.getElementById('bfLayer');
   if(stop === 'fuel') return t === 'fuelDesk';
   if(stop === 'month') return (t === 'plan' || t === 'hq') && S.day >= R.month;
+  if(stop === 'chapterEnd') return t === 'protoEnd';
   return false;
 }
 const tkNx = () => { const b = tkQ('#nx'); return b && !b.disabled && !b.hidden && tkSeen(b) ? b : null; };
