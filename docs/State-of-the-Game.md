@@ -29,6 +29,12 @@
 
 **Test mode.** The answer peek (`.tk-ans`) sits beside a sheet cell. Before, as a grid item, it fell into the grid's next empty slot ("= 190" at the bottom left).
 
+**Checks on the one file.**
+- `chapter1.test.js`: 41 ok. It runs to the chapter-one card with the test kit's new Run-to "the end of the chapter" stop, then on to chapter 2 on day 127.
+- `chapter2.test.js` (CODE = `jumps-ch1/ch1-6.txt`): 111 ok, 1 failed. Two chapter-one SUM numbers were handed out but never done in the 30 Oct TEST airline (26, a week-10 plan-change sheet; 44, a week-17 review revenue sum). This predates today; to look at in chapter one.
+- `chapter3.test.js`: 66 ok. `chapter4.test.js`: 59 ok. No page errors anywhere.
+- `pupilsave.test.js`: 13 ok.
+
 **A second pupil's save, GY (gubby airlines).** `tools/saves/ready_gy_week2.py`: saved on Thu 12 Sep (day 11, week 2) on the crew-sickness card. The card goes (events are parked); he carries on with the rest of week 2 on the Wall, then today's Sunday accounts. His ½ star banked from advertising stays (he paid £300 for it). `pupilsave.test.js` checks both saves (13 ok).
 
 ## 0zzc. Hard sums as formulas (2 Nov 2026)

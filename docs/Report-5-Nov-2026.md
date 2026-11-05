@@ -57,17 +57,17 @@ The ready code is in `pupil-GY-week2-ready-ASIM5.txt`, which I've sent you.
 The old frozen copy, `airline-opening-full.html`, is gone; it's still in the project's history if we ever need it.
 
 **One thing to expect.** Because chapters 2 to 4 are the 30 October game, the pupil will feel the join when chapter 2 starts. For example:
-- **Snacks come back** (the test saw the snacks control from day 365).
+- **Snacks come back in chapter 3** (a test run saw the snacks control from 1 September 2031).
 - **Sums turn up between the pauses** (the test saw them on days in chapters 2 and 3).
 - **The old rules apply again**, such as the events, the monthly board review and the old style of questions.
 
-That's how you asked for them to be kept. When you want chapter two brought in line, say so.
+There are rough edges too: chapter 2's first briefing has a heading cut short ("DUBAI'S SHOPPING FESTIVAL RU"). That's how you asked for them to be kept. When you want chapter two brought in line, say so.
 
 **Checks:**
-- **The chapter-one test** (`chapter1.test.js`) now checks the one file instead of the two: the review card's way on, a January 2031 save opening, every part present. RESULT_C1
+- **The chapter-one test** (`chapter1.test.js`) now checks the one file instead of the two: the review card's way on, a January 2031 save opening, every part present. 41 checks, none failed. I looked at both screens myself: the card reads "Next: Christmas and New Year, when the winter timetable flies by itself. Then chapter 2, Going long, opens on Monday 6 January 2031".
 - **Chapter 2** played from chapter one's review save, through Christmas, to its own end card: 111 checks passed, no page errors. One check failed, and it's about chapter one, not the join: in the test airline's chapter one, two SUM numbers (26 and 44) were handed out for sums that were never done. One was a plan-change sheet he left; the other was a review revenue sum. In a pupil's book that would show as a skipped number. It predates today; I'll look at it with the rest of chapter one.
 - **Chapter 3:** 66 checks, none failed, no page errors.
-- **Chapter 4:** RESULT_C4
+- **Chapter 4:** 59 checks, none failed, no page errors.
 
 I've updated CLAUDE.md to say there's one game file again. Work still goes into chapter one unless you say otherwise, and the chapter 2, 3 and 4 tests are run again to show nothing there breaks.
 

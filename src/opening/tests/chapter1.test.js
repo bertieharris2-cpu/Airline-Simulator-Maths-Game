@@ -58,7 +58,7 @@ let pass = 0, fail = 0; const ok = (c, m) => { if(c){ pass++; console.log('  ok 
   fuel1 = await J("(() => { const pl = currentPlan(), L = planLines(pl), litres = plannedLitres(pl), price = fuelOn(1); return JSON.stringify({ litres:Math.round(litres), price, fuel:Math.round(litres * price), vfuel:Math.round(L.v.fuel || 0), cost:Math.round(L.v.cost || 0), paid:fuelPaid() }); })()");
   for(let g = 0; g < 500; g++){ const d = await look(); if(d.t === 'chapterReview' || d.t === 'protoEnd' || d.day >= 118) break;
     if(d.day === SHOP && d.t === 'plan' && !(await E('S.c1plane || 0'))){ await E("(S.c1plane = 1, acquirePlane(planeById('dhc6'), 'buy'), render(), 1)"); await p.evaluate(() => window.__tk.autoPlan()); }
-    await step(d.day < SHOP && !(await E('S.c1plane || 0')) ? 'plan' : d.day < WEEKLY - 1 ? 'review' : 'plan'); }
+    await step(d.day >= 92 ? 'chapterEnd' : d.day < SHOP && !(await E('S.c1plane || 0')) ? 'plan' : d.day < WEEKLY - 1 ? 'review' : 'plan'); }   // one game (5 Nov): December runs to the chapter-one card, not on into chapter 2
   for(let g = 0; g < 40; g++){ const d = await look(); if(d.t === 'protoEnd') break; await step('chapterEnd'); }   // one game (5 Nov): stop on the chapter-one card, not on through chapter 2
   console.log('Launch Day fuel'); const h1 = await J('JSON.stringify(S.history.find(h => h.from === 1) || null)');
   ok(fuel1 && fuel1.litres > 0 && fuel1.price === +(await E("+((String(WBS().fuelLaunchDay || '').match(/£(\\d+(?:\\.\\d+)?)/) || [])[1] || 0)")) && fuel1.cost >= fuel1.fuel, `fuel is charged on Launch Day at the workbook's price (${fuel1 ? `${fuel1.litres} L at £${fuel1.price} = £${fuel1.fuel}` : 'not found'})`);
