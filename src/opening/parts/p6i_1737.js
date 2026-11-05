@@ -161,8 +161,11 @@ function c3TpDecorate(){
   const had = scr.querySelector('.c3-cmp'); if(had) had.outerHTML = cmp; else if(sumEl) sumEl.outerHTML = cmp; else { const tt = scr.querySelector('[data-c1tt]'); if(tt) tt.insertAdjacentHTML('afterend', cmp); }
   const bar = scr.querySelector('.actbar'); if(bar){ const hint = bar.querySelector('.dk-hint, .ab-hint, p'); if(hint) hint.textContent = (has && !worked && FT.text[4 + (wk ? 1 : 0)]) || FT.text[(worked ? 2 : 0) + (wk ? 1 : 0)] || 'Choose the plan that flies tomorrow.';
     bar.querySelectorAll('button').forEach(b => { if(b.id === 'c3TpBack') return; if(/Work out my plan|Ready to fly|Next/.test(b.textContent) || b.id === 'nx') b.remove(); });
-    const back = bar.querySelector('#s2Back, .bv-btn.back, [id$="Back"]'); if(back && back.id !== 'c3TpBack') back.remove();
-    if(!bar.querySelector('#c3TpBack')){ const box = bar.querySelector('.ab-btns, .dk-btns') || bar.lastElementChild; if(box) box.insertAdjacentHTML('afterbegin', `<button class="bv-btn big" id="c3TpBack">&#9664; Back</button>`); }
+    // Bertie, 5 Nov 2026: on Change network the page keeps its own ◀ Return to operating plan (back to the new plan, flights added);
+    // the two-plans Back there threw the new plan away and went to last week's
+    const netw = !!(UI.s2 && UI.s2.mode === 'network');
+    const back = bar.querySelector('#s2Back, .bv-btn.back, [id$="Back"]'); if(back && back.id !== 'c3TpBack' && !(netw && back.id === 's2Back')) back.remove();
+    if(!netw && !bar.querySelector('#c3TpBack')){ const box = bar.querySelector('.ab-btns, .dk-btns') || bar.lastElementChild; if(box) box.insertAdjacentHTML('afterbegin', `<button class="bv-btn big" id="c3TpBack">&#9664; Back</button>`); }
     // the footer's green button works the new plan out; Choose ▶ on the new plan waits for it
     const wb = bar.querySelector('#c3TpWork'); if(wb) wb.remove();
     if(!worked){ const box = bar.querySelector('#c3TpBack') && bar.querySelector('#c3TpBack').parentElement; if(box) box.insertAdjacentHTML('beforeend', `<button class="bv-btn go big" id="c3TpWork" ${has && !same ? '' : 'disabled'}>${bt(FT.button || 'Work out my plan')} &#9654;</button>`); } }
@@ -186,6 +189,8 @@ function c3ChooseOld(){
 function c3ChooseNew(){ UI.c3ba = { key:tpKey(), co:1, wk:tpWk() }; UI.c3tp = null; UI.ashTab = 'c2ba'; save(); next(); }
 function c3TpBack(){
   const X = I.c2X();
+  // Bertie, 5 Nov 2026: Back on Change network goes back to the plan being built, with the flights just added (it threw them away)
+  if(UI.s2 && UI.s2.mode === 'network' && step().t === 'plan'){ UI.s2.mode = 'plan'; UI.view = null; save(); render(); return; }
   // from week 2: back to the week's opener, last week's plan as it was
   if(tpWk()){ const old = tpOld(); if(old) applyPlan(old); UI.c3tp = null; UI.c3ba = null; if(UI.s2) UI.s2.mode = 'opener'; save(); render(); return; }
   // the Launch Day evening: the day has turned, so the Day page is drawn again over the plan step (both plans kept)
