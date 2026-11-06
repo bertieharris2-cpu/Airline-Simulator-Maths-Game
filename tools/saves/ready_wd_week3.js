@@ -1,0 +1,20 @@
+// the wind dragon save: let the game convert it, then start week 3 on Monday 16 Sep (day 15) and write the code out
+const { chromium } = require('playwright'); const fs = require('fs');
+const FILE = 'file:///home/user/Airline-Simulator-Maths-Game/airline-opening-prototype.html', OUT = __dirname + '/';
+const CODE = fs.readFileSync(process.argv[2], 'utf8').trim();
+(async () => { const b = await chromium.launch(), p = await (await b.newContext({ viewport:{ width:1366, height:768 } })).newPage(), errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept());
+  await p.goto(FILE); await p.evaluate(() => localStorage.clear()); await p.reload(); await p.waitForTimeout(600);
+  await p.evaluate(() => { const s = window.__sim.settings(); s.flightSecs = 600; s.autoWall = false; s.opsSound = false; });
+  await p.keyboard.press('Control+Shift+T'); await p.waitForSelector('#teacher:not([hidden])'); await p.fill('#tCode', CODE); await p.click('#tCodeLoad'); await p.waitForTimeout(800);
+  await p.keyboard.press('Escape'); const cl = await p.$('#tClose'); if(cl) await cl.click().catch(() => {}); await p.waitForTimeout(400);
+  const E = s => p.evaluate(x => window.__sim.evalIn(x), s);
+  console.log(await E(`(() => { const bs = WORLD.rounds.map((w, i) => [i, beatDay(i), w.period, w.weekPhase]).filter(x => x[1] >= 14 && x[1] <= 16); return JSON.stringify(bs); })()`));
+  const r = await E(`(() => { const b = WORLD.rounds.findIndex((w, i) => beatDay(i) === 15 && (w.weekPhase === 'plan' || w.period === 'week'));
+    if(b < 0) return 'no beat'; delete S.oneOffDay; delete S.needsRestart; delete S.wk;
+    S.migrated.landedStep = 'plan'; S.migrated.landedDay = 15;
+    S.migrated.notes = (S.migrated.notes || []).filter(n => !/one planning day|became Tue 17 Sep/.test(n)).concat(['Made ready by Claude Code, 6 Nov 2026: he carries on from Monday 16 September, the start of week 3, with his plan (Dublin twice and Paris at 06:00, 10:20 and 19:10, Dublin £90 and Paris £100). His week 2 is kept as one week in his history; the old game kept no day-by-day figures, so there are no week-2 Sunday accounts to redo.']);
+    S.period = null; startProtoDay(b); save(); render(); return JSON.stringify({ b, day:S.day, t:step().t, steps:S.steps.map(x => x.t), cash:Math.round(S.cash), plan:S.fleet[0].schedule, deps:S.deps, prices:S.prices }); })()`);
+  console.log(r);
+  await p.waitForTimeout(800); await p.screenshot({ path:OUT + 'wd-2.png' });
+  const code = await E('saveCode()'); fs.writeFileSync(OUT + 'wd-ready.txt', code + '\n'); console.log('code', code.length);
+  console.log(errs.slice(0, 5)); await b.close(); })();
